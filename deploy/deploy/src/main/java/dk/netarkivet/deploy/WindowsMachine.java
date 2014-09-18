@@ -46,7 +46,6 @@ public class WindowsMachine extends Machine {
      * @param parentSettings The Settings to be inherited from the PhysicalLocation, where this machine is placed.
      * @param param The machine parameters to be inherited from the PhysicalLocation.
      * @param netarchiveSuiteSource The name of the NetarchiveSuite package file. Must be '.zip'.
-     * @param logProp The logging property file, to be copied into machine directory.
      * @param securityPolicy The security policy file, to be copied into machine directory.
      * @param dbFile The harvest definition database file.
      * @param arcdbFile The archive database.
@@ -54,9 +53,9 @@ public class WindowsMachine extends Machine {
      * @param externalJarFolder The folder containing the external jar library files.
      */
     public WindowsMachine(Element root, XmlStructure parentSettings, Parameters param, String netarchiveSuiteSource,
-            File logProp, File slf4JConfig, File securityPolicy, File dbFile, File arcdbFile, boolean resetDir,
+            File slf4JConfig, File securityPolicy, File dbFile, File arcdbFile, boolean resetDir,
             File externalJarFolder) {
-        super(root, parentSettings, param, netarchiveSuiteSource, logProp, slf4JConfig, securityPolicy, dbFile,
+        super(root, parentSettings, param, netarchiveSuiteSource, slf4JConfig, securityPolicy, dbFile,
                 arcdbFile, resetDir, externalJarFolder);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE;
@@ -64,14 +63,15 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * On windows machines console output can cause problems so any uses of java.util.logging.ConsoleHandler are
+     * On windows machines console output can cause problems so any uses of ConsoleHandler are
      * removed.
      *
      * @param logProperties the original contents of the logging properties file.
      * @return logging properties with the ConsoleHandler removed
      */
-    @Override
-    protected String modifyLogProperties(String logProperties) {
+    /* Is this necessaray with the logback?
+     @Override
+     protected String modifyLogProperties(String logProperties) {
         String output;
         // First delete any instances followed by a comma - ie
         // not as last handler
@@ -80,7 +80,7 @@ public class WindowsMachine extends Machine {
         // last
         output = output.replaceAll(",\\s*java.util.logging.ConsoleHandler", "");
         return output;
-    }
+    } */
 
     /**
      * Creates the operation system specific installation script for this machine.
@@ -636,7 +636,7 @@ public class WindowsMachine extends Machine {
                 "End If",
                 "Set oExec = WshShell.exec(java & \" ${machineparameters} -classpath \"\"${classpath}\"\""
                         + " -Ddk.netarkivet.settings.file=\"\"${confdirpath}settings_${id}.xml\"\""
-                        + "${jdklogger}${slf4jlogger}" + "${securityManagement}" + " ${appname}" + "\")",
+                        + "${slf4jlogger}" + "${securityManagement}" + " ${appname}" + "\")",
                 "Set fso= CreateObject(\"Scripting.FileSystemObject\")",
                 "Set f=fso.OpenTextFile(\".\\conf\\${killpsname}\",2,True)",
                 "f.WriteLine \"taskkill /F /PID \" & oExec.ProcessID",
@@ -656,8 +656,6 @@ public class WindowsMachine extends Machine {
                 "  Do While oExec.StdErr.AtEndOfStream <> True",
                 "    Set outFile = CreateObject(\"Scripting.FileSystemObject\").OpenTextFile(\"${startlogname}\", 8, True)",
                 "    outFile.WriteLine oExec.StdErr.ReadLine", "    outFile.close", "  Loop", "Loop"};
-        protected static final String jdkLogger = " -Dorg.apache.commons.logging.Log=\"\"org.apache.commons.logging.impl.Jdk14Logger\"\""
-                + " -Djava.util.logging.config.file=\"\"${confdirpath}log_${id}.prop\"\"";
         protected static final String slf4jLogger = " -Dlogback.configurationFile=\"\"${confdirpath}logback_${id}.xml\"\"";
         protected static final String securityManagement = " -Djava.security.manager -Djava.security.policy=\"\"${confdirpath}security.policy\"\"";
     }
@@ -705,11 +703,6 @@ public class WindowsMachine extends Machine {
                 env.put("killpsname", killPsName);
                 env.put("tmprunpsname", tmpRunPsName);
                 env.put("startlogname", startLogName);
-                if (inheriteJulPropFile != null) {
-                    env.put("jdklogger", Template.untemplate(windowsStartVbsScriptTpl.jdkLogger, env, true));
-                } else {
-                    env.put("jdklogger", "");
-                }
                 if (inheritedSlf4jConfigFile != null) {
                     env.put("slf4jlogger", Template.untemplate(windowsStartVbsScriptTpl.slf4jLogger, env, true));
                 } else {

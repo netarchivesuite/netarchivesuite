@@ -27,7 +27,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -36,33 +35,33 @@ import java.sql.SQLException;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import ch.qos.logback.classic.Level;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.SlowTest;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 
 /**
  * Test class for the Database utilities in HarvestDBConnection, especially the ones related to backup of the database.
  */
 @SuppressWarnings({"unused"})
 public class HarvestDBConnectionTester extends DataModelTestCase {
-
-    private File logfile = new File("tests/testlogs/netarkivtest.log");
+    private LogbackRecorder logbackRecorder;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         createTestTable();
+        logbackRecorder = LogbackRecorder.startRecorder();
     }
 
     @After
     public void tearDown() throws Exception {
         super.tearDown();
+        logbackRecorder.stop();
     }
 
     /**
@@ -95,8 +94,6 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
 
     /**
      * Check that read locks are released after use.
-     *
-     * @throws InterruptedException
      */
     @Category(SlowTest.class)
     @Test
@@ -166,9 +163,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
         while (stateref[0] != state && stateref[0] != -1) {
             try {
                 Thread.sleep(10);
-            } catch (InterruptedException e) {
-                // Ignored, just retesting anyway.
-            }
+            } catch (InterruptedException e) {}
         }
         if (stateref[0] == -1) {
             throw new Error("Other thread failed");
@@ -180,7 +175,6 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
      */
     @Category(SlowTest.class)
     @Test
-    @Ignore("Log parsing did not find expected string")
     public void testSetStringMaxLength() throws SQLException {
         Connection c = null;
         try {
@@ -197,10 +191,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
             // and that storedContents equals to variable 'contents'
             DBUtils.setStringMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
 
-            // Check, that no WARNING has been written to the log
-            LogUtils.flushLogs(HarvestDBConnection.class.getName());
-            FileAsserts.assertFileNotContains("Log should not have given warning as yet", logfile,
-                    "setStringMaxLength\nWARNING: fieldname");
+            logbackRecorder.assertLogNotContains("setStringMaxLength\nWARNING: fieldname");
             // execute query, and retrieve data
             s.execute();
             String storedContents = retrieveStoredString(id);
@@ -216,10 +207,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
             } catch (PermissionDenied e) {
                 fail("Should never throw PermissionDenied exception");
             }
-            // Check, that WARNING has been written to the log
-            LogUtils.flushLogs(HarvestDBConnection.class.getName());
-            FileAsserts.assertFileContains("Log should have given warning", "setStringMaxLength\nWARNING: fieldname",
-                    logfile);
+            logbackRecorder.assertLogContains(Level.WARN, "fieldname of null is longer than the allowed");
             s.execute();
             storedContents = retrieveStoredString(id);
             assertEquals("storedContents differs from original", contents.substring(0, maxSize), storedContents);
@@ -235,7 +223,6 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
      */
     @Category(SlowTest.class)
     @Test
-    @Ignore("Log parsing did not find expected string")
     public void testSetClobMaxLength() throws SQLException {
         Connection c = null;
         try {
@@ -253,10 +240,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
             // and that storedContents equals to variable 'contents'
             DBUtils.setClobMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
 
-            // Check, that no WARNING has been written to the log
-            LogUtils.flushLogs(HarvestDBConnection.class.getName());
-            FileAsserts.assertFileNotContains("Log should not have given warning as yet", logfile,
-                    "setClobMaxLength\nWARNING: fieldname");
+            logbackRecorder.assertLogNotContains("setClobMaxLength\nWARNING: fieldname");
 
             s.execute();
             String storedContents = retrieveStoredClob(id);
@@ -273,11 +257,8 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
             } catch (PermissionDenied e) {
                 fail("Should never throw PermissionDenied exception");
             }
-            // Check, that a WARNING has been written to the log
 
-            LogUtils.flushLogs(HarvestDBConnection.class.getName());
-            FileAsserts.assertFileContains("Log should have given warning",
-                    "setClobMaxLength\nWARNING: The field 'fieldname'", logfile);
+            logbackRecorder.assertLogContains(Level.WARN, "The field 'fieldname' is 8 characters long");
             s.execute();
             storedContents = retrieveStoredClob(id);
             assertEquals("storedContents differs from original", contents.substring(0, (int) maxSize), storedContents);
@@ -386,8 +367,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
      * Delete the given table from the table if it exists. Furthermore delete the given table from table
      * 'schemaversions'
      *
-     * @param tablename a given table that we want to have deleted
-     * @throws SQLException
+     * @param tablename a given table that we want to have deleted.
      */
     private void deleteTableIfExists(String tablename) throws SQLException {
         Connection con = HarvestDBConnection.get();

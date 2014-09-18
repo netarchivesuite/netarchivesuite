@@ -24,7 +24,6 @@ package dk.netarkivet.wayback.batch.copycode;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpParser;
@@ -41,6 +40,10 @@ import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourcestore.indexer.HTTPRecordAnnotater;
 import org.archive.wayback.util.Adapter;
 import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+;
 
 /**
  * Adapts certain WARCRecords into SearchResults. DNS and response records are mostly straightforward, but SearchResult
@@ -51,8 +54,7 @@ import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
  */
 public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<WARCRecord, CaptureSearchResult> {
 
-    private static final Logger LOGGER = Logger.getLogger(NetarchiveSuiteWARCRecordToSearchResultAdapter.class
-            .getName());
+    private static final Logger log = LoggerFactory.getLogger(NetarchiveSuiteWARCRecordToSearchResultAdapter.class);
 
     private static final String VERSION = "0.1.0";
     private static final String WARC_FILEDESC_VERSION = "warc/warcinfo" + VERSION;
@@ -131,7 +133,7 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
             result.setMimeType(WARC_FILEDESC_VERSION);
 
         } else {
-            LOGGER.info("Skipping record type : " + type);
+            log.info("Skipping record type : {}",type);
         }
 
         return result;
@@ -181,7 +183,7 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
                 result.setUrlKey(urlKey);
             } catch (URIException e) {
                 String shortUrl = (origUrl.length() < 100) ? origUrl : origUrl.substring(0, 100);
-                LOGGER.warning("FAILED canonicalize(" + shortUrl + "):" + file + " " + offset);
+                log.warn("FAILED canonicalize({}):{} {}", shortUrl, file, offset);
                 result.setUrlKey(origUrl);
             }
         }

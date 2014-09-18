@@ -32,18 +32,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * Miscellanous utilities for getting system resources.
  */
 public class SystemUtils {
-
-    private static final Logger log = LoggerFactory.getLogger(SystemUtils.class);
-
     /** Hostname for this machine used when no name can be found, or when the actual name doesn't matter. */
     public static final String LOCALHOST = "localhost";
 
@@ -78,14 +72,10 @@ public class SystemUtils {
         try {
             InetAddress localhost = InetAddress.getLocalHost();
             String localhostName = localhost.getCanonicalHostName();
-            String localhostIp = localhost.getHostAddress();
-            if (log.isTraceEnabled()) {
-                log.trace("[getLocalHostName] Resolved: {} ({})", localhostName, localhostIp);
-            }
             return localhostName;
         } catch (UnknownHostException e) {
             // If no interfaces, use default;
-            log.warn("Unable to resolve localhostname. Returning the default '{}'", LOCALHOST);
+            System.out.println("Unable to resolve localhostname. Returning the default " + LOCALHOST);
         }
         return hostname;
     }

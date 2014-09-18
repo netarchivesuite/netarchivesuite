@@ -31,9 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -47,10 +44,6 @@ import dk.netarkivet.common.utils.StringTree;
  * replica id/name.
  */
 public class Replica {
-
-    /** the class log. */
-    private static Logger log = LoggerFactory.getLogger(Replica.class);
-
     /** The id of this replica. */
     private final String id;
     /** The name of this replica. */
@@ -106,9 +99,7 @@ public class Replica {
         ArgumentNotValid.checkNotNullOrEmpty(id, "String id");
         initializeKnownReplicasList();
         if (!knownReplicas.containsKey(id)) {
-            String message = "Can't find replica with id '" + id + "', only know of " + knownReplicas.keySet();
-            log.debug(message);
-            throw new UnknownID(message);
+            throw new UnknownID("Can't find replica with id '" + id + "', only know of " + knownReplicas.keySet());
         }
         return knownReplicas.get(id);
     }
@@ -136,10 +127,8 @@ public class Replica {
             }
         }
         if (!found) {
-            String message = "Can't find replica with name '" + name + "', only know of names for "
-                    + knownReplicas.keySet();
-            log.debug(message);
-            throw new UnknownID(message);
+            throw new UnknownID("Can't find replica with name '" + name + "', only know of names for " +
+                                knownReplicas.keySet());
         }
         return resRep;
     }

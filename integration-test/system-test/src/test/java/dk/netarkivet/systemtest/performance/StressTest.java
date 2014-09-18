@@ -144,9 +144,7 @@ public class StressTest extends ExtendedTestCase {
                 + "./lib/dk.netarkivet.harvester.jar:" + "./lib/dk.netarkivet.archive.jar:"
                 + "./lib/dk.netarkivet.monitor.jar:$CLASSPATH;java "
                 + "-Xmx1536m  -Ddk.netarkivet.settings.file=./conf/settings_GUIApplication.xml "
-                + "-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger "
-                + "-Djava.util.logging.config.file=./conf/log_GUIApplication.prop "
-                + "-Djava.security.manager -Djava.security.policy=./conf/security.policy "
+                + "-Dlogback.configurationFile=./conf/logback_GUIApplication.xml "
                 + "dk.netarkivet.harvester.tools.HarvestdatabaseUpdateApplication "
                 + "< /dev/null > start_harvestdatabaseUpdateApplication.log 2>&1 ");
     }

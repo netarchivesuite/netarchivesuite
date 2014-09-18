@@ -39,7 +39,7 @@
             <onMismatch>NEUTRAL</onMismatch>
         </filter>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -63,7 +63,7 @@
         </rollingPolicy>
         <encoder>
             <charset>UTF-8</charset>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -76,31 +76,11 @@
         <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</pattern>
     </appender>
 
-    <logger name="org" level="WARN" />
-    <logger name="org.archive" level="WARN" />
-    <logger name="org.archive.io.arc" level="ERROR" />
-    <logger name="org.archive.crawler.filer" level="ERROR" />
-    <logger name="org.archive.crawler.framework.Filter" level="ERROR" />
-    <logger name="org.archive.crawler.framework.ToeThread" level="ERROR" />
-    <logger name="org.archive.crawler.prefetch.QuotaEnforcer" level="WARN" />
-
-    <logger name="org.apache.jsp" level="INFO" />
-    <logger name="org.mortbay.jetty.servlet.ServletHandler" level="WARN" />
-
-    <logger name="dk.netarkivet" level="INFO" />
-    <logger name="dk.netarkivet.common.distribute.JMSConnection" level="INFO" />
-
-    <logger name="sun.jmx" level="WARN" />
-
-    <logger name="Harvest Definition" level="ERROR" />
-    <logger name="Bit Preservation" level="ERROR" />
-    <logger name="History" level="ERROR" />
-    <logger name="QA" level="ERROR" />
-    <logger name="Status" level="ERROR" />
-
-    <root level="DEBUG">
+    <root level="WARN">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
         <appender-ref ref="MONITOR" />
     </root>
+
+    <logger name="dk.netarkivet" level="INFO" />
 </configuration>

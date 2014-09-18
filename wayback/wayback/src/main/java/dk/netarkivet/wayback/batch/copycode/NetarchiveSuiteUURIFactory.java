@@ -28,8 +28,6 @@ import gnu.inet.encoding.IDNAException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +36,8 @@ import org.apache.commons.httpclient.URIException;
 import org.archive.net.LaxURLCodec;
 import org.archive.net.UURI;
 import org.archive.util.TextUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.unimi.dsi.mg4j.util.MutableString;
 
@@ -48,15 +48,7 @@ import it.unimi.dsi.mg4j.util.MutableString;
 @SuppressWarnings({"serial", "unused"})
 public class NetarchiveSuiteUURIFactory extends UURI {
     private static final long serialVersionUID = -6146295130382209042L;
-
-    /**
-     * Logging instance.
-     */
-    private static Logger logger = Logger.getLogger(NetarchiveSuiteUURIFactory.class.getName());
-
-    /**
-     * The single instance of this factory.
-     */
+    private static Logger log = LoggerFactory.getLogger(NetarchiveSuiteUURIFactory.class);
     private static final NetarchiveSuiteUURIFactory factory = new NetarchiveSuiteUURIFactory();
 
     /**
@@ -64,34 +56,34 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * <p>
      * From the RFC Appendix B:
      * <p>
-     * 
+     * <p>
      * <pre>
      * URI Generic Syntax                August 1998
-     * 
+     *
      * B. Parsing a URI Reference with a Regular Expression
-     * 
+     *
      * As described in Section 4.3, the generic URI syntax is not sufficient
      * to disambiguate the components of some forms of URI.  Since the
      * "greedy algorithm" described in that section is identical to the
      * disambiguation method used by POSIX regular expressions, it is
      * natural and commonplace to use a regular expression for parsing the
      * potential four components and fragment identifier of a URI reference.
-     * 
+     *
      * The following line is the regular expression for breaking-down a URI
      * reference into its components.
-     * 
+     *
      * ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?
      * 12            3  4          5       6  7        8 9
-     * 
+     *
      * The numbers in the second line above are only to assist readability;
      * they indicate the reference points for each subexpression (i.e., each
      * paired parenthesis).  We refer to the value matched for subexpression
      * <n> as $<n>.  For example, matching the above expression to
-     * 
+     *
      * http://www.ics.uci.edu/pub/ietf/uri/#Related
-     * 
+     *
      * results in the following subexpression matches:
-     * 
+     *
      * $1 = http:
      * $2 = http
      * $3 = //www.ics.uci.edu
@@ -101,11 +93,11 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * $7 = <undefined>
      * $8 = #Related
      * $9 = Related
-     * 
+     *
      * where <undefined> indicates that the component is not present, as is
      * the case for the query component in the above example.  Therefore, we
      * can determine the value of the four components and fragment as
-     * 
+     *
      * scheme    = $2
      * authority = $4
      * path      = $5
@@ -301,9 +293,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     private UURI create(String uri, String charset) throws URIException {
         UURI uuri = new UURI(fixup(uri, null, charset), true, charset) {
         };
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine("URI " + uri + " PRODUCT " + uuri.toString() + " CHARSET " + charset);
-        }
+        log.debug("URI {} PRODUCT {} CHARSET {}", uri, uuri.toString(), charset);
         return validityCheck(uuri);
     }
 
@@ -318,10 +308,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
                 base.getProtocolCharset()) {
         }) {
         };
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine(" URI " + relative + " PRODUCT " + uuri.toString() + " CHARSET " + base.getProtocolCharset()
-                    + " BASE " + base);
-        }
+        log.debug(" URI {} PRODUCT {} CHARSET {} BASE {}", relative, uuri.toString(), base.getProtocolCharset(), base);
         return validityCheck(uuri);
     }
 
@@ -353,7 +340,6 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      *
      * @param uri URI as string.
      * @param base May be null.
-     * @param e True if the uri is already escaped.
      * @return A fixed up URI string.
      * @throws URIException
      */
@@ -497,9 +483,9 @@ public class NetarchiveSuiteUURIFactory extends UURI {
         // Preallocate. The '1's and '2's in below are space for ':',
         // '//', etc. URI characters.
         MutableString s = new MutableString(((uriScheme != null) ? uriScheme.length() : 0) + 1 // ';'
-                + ((uriAuthority != null) ? uriAuthority.length() : 0) + 2 // '//'
-                + ((uriPath != null) ? uriPath.length() : 0) + 1 // '?'
-                + ((uriQuery != null) ? uriQuery.length() : 0));
+                                            + ((uriAuthority != null) ? uriAuthority.length() : 0) + 2 // '//'
+                                            + ((uriPath != null) ? uriPath.length() : 0) + 1 // '?'
+                                            + ((uriQuery != null) ? uriQuery.length() : 0));
         appendNonNull(s, uriScheme, ":", true);
         appendNonNull(s, uriAuthority, "//", false);
         appendNonNull(s, uriPath, "", false);

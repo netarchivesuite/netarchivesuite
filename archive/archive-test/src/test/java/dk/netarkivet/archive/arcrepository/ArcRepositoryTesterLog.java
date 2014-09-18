@@ -24,78 +24,55 @@ package dk.netarkivet.archive.arcrepository;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.utils.ChecksumCalculator;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-/**
- * Unit test for webarchive API. The logging of webarchive operations is tested.
- */
 @SuppressWarnings({"deprecation"})
 public class ArcRepositoryTesterLog {
-
     protected final Logger log = LoggerFactory.getLogger(ArcRepositoryTesterLog.class);
-
     private UseTestRemoteFile rf = new UseTestRemoteFile();
-
-    private static File CONTROLLER_LOG_FILE = new File("tests/testlogs/netarkivtest.log");
-
     private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/arcrepository/data");
 
-    /**
-     * The directory storing the arcfiles in the already existing bitarchive - including credentials and admin-files.
-     */
+    /** The directory storing the arcfiles in the already existing bitarchive - including credentials and admin-files. */
     private static final File ORIGINALS_DIR = new File(new File(TEST_DIR, "logging"), "originals");
 
-    /**
-     * List of files that can be used in the scripts (content of the ORIGINALS_DIR).
-     */
-    private static final List<String> FILES = Arrays.asList(new String[] {"logging1.ARC", "logging2.ARC"});
-
-    /**
-     * A Controller object.
-     */
-    ArcRepository arcRepos;
+    private LogbackRecorder logbackRecorder;
 
     @Before
     public void setUp() throws IOException {
         ServerSetUp.setUp();
-        arcRepos = ServerSetUp.getArcRepository();
         rf.setUp();
+        logbackRecorder = LogbackRecorder.startRecorder();
     }
 
     @After
     public void tearDown() {
         rf.tearDown();
         ServerSetUp.tearDown();
+        logbackRecorder.stopRecorder();
     }
 
     /**
      * Test logging of store command.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testLogStore() throws Exception {
-        String fileName = FILES.get(0).toString();
-        // store the file;
-        File f = new File(ORIGINALS_DIR, fileName);
+        final String FILE_NAME =  "logging1.ARC";
+        File f = new File(ORIGINALS_DIR, FILE_NAME);
 
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(f.getName(), new StoreMessage(Channels.getThisReposClient(), f),
@@ -106,13 +83,9 @@ public class ArcRepositoryTesterLog {
                 ReplicaStoreState.UPLOAD_COMPLETED);
 
         StoreMessage msg = new StoreMessage(Channels.getError(), f);
-        arcRepos.store(msg.getRemoteFile(), msg);
+        ServerSetUp.getArcRepository().store(msg.getRemoteFile(), msg);
         UploadWaiting.waitForUpload(f, this);
-        // And check for proper logging:
-        LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains("Log contains file after storing.", fileName, CONTROLLER_LOG_FILE);
-        FileAsserts.assertFileContains("Log should contain the words 'Store started' after storing.", "Store started",
-                CONTROLLER_LOG_FILE);
+        logbackRecorder.assertLogContains(Level.INFO, FILE_NAME);
+        logbackRecorder.assertLogContains(Level.INFO, "Store started");
     }
-
 }

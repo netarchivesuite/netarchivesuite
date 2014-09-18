@@ -52,18 +52,8 @@ public final class ScriptConstants {
     static final String OPTION_SETTINGS = "Ddk.netarkivet.settings.file=";
     /** Ddk.netarkivet.settings.file=\"\". */
     static final String OPTION_SETTINGS_WIN = OPTION_SETTINGS + "\"\"";
-    /**
-     * Dorg.apache.commons.logging.Log=" + "org.apache.commons.logging.impl.Jdk14Logger.
-     */
-    static final String OPTION_LOG_COMPLETE = "Dorg.apache.commons.logging.Log="
-            + "org.apache.commons.logging.impl.Jdk14Logger";
-    /** Djava.util.logging.config.file=. */
-    static final String OPTION_LOG_CONFIG = "Djava.util.logging.config.file=";
     /** Dlogback.configurationFile=. */
     static final String OPTION_LOGBACK_CONFIG = "Dlogback.configurationFile=";
-    /** Djava.util.logging.config.file=\"\". */
-    static final String OPTION_LOG_CONFIG_WIN = OPTION_LOG_CONFIG + "\"\"";
-    /** Djava.util.logging.config.file=\"\". */
     static final String OPTION_LOGBACK_CONFIG_WIN = OPTION_LOGBACK_CONFIG + "\"\"";
     /** Djava.security.manager. */
     static final String OPTION_SECURITY_MANAGER = "Djava.security.manager";

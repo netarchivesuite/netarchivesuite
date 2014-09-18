@@ -45,8 +45,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -57,9 +55,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 @SuppressWarnings({"unchecked"})
 public class XmlUtils {
-
-    private static final Logger log = LoggerFactory.getLogger(XmlUtils.class);
-
     /**
      * Read and parse an XML-file, and return a Document object representing this object.
      *
@@ -71,14 +66,12 @@ public class XmlUtils {
         ArgumentNotValid.checkNotNull(f, "File f");
         SAXReader reader = new SAXReader();
         if (!f.canRead()) {
-            log.debug("Could not read file: '{}'", f);
             throw new IOFailure("Could not read file: '" + f + "'");
         }
 
         try {
             return reader.read(f);
         } catch (DocumentException e) {
-            log.warn("Could not parse the file as XML: '{}'", f, e);
             throw new IOFailure("Could not parse the file as XML: '" + f + "'", e);
         }
     }
@@ -96,7 +89,6 @@ public class XmlUtils {
         try {
             return reader.read(resourceAsStream);
         } catch (DocumentException e) {
-            log.warn("Could not parse inputstream as XML: {}", resourceAsStream, e);
             throw new IOFailure("Could not parse inputstream as XML:" + resourceAsStream, e);
         }
     }
@@ -117,7 +109,7 @@ public class XmlUtils {
         Node xpathNode = doc.selectSingleNode(xpath);
         if (xpathNode == null) {
             throw new IOFailure("Element '" + xpath + "' could not be found in the document '"
-                    + doc.getRootElement().getName() + "'!");
+                                + doc.getRootElement().getName() + "'!");
         }
         xpathNode.setText(value);
     }
@@ -137,7 +129,7 @@ public class XmlUtils {
         List<Node> xpathNodes = doc.selectNodes(xpath);
         if (xpathNodes == null) {
             throw new IOFailure("Element '" + xpath + "' could not be found in the document '"
-                    + doc.getRootElement().getName() + "'!");
+                                + doc.getRootElement().getName() + "'!");
         }
         for (int i = 0; i < xpathNodes.size(); ++i) {
             xpathNodes.get(i).setText(value);
@@ -177,19 +169,16 @@ public class XmlUtils {
                     validator.validate(new DOMSource(document));
                 } catch (SAXException e) {
                     // instance document is invalid!
-                    final String msg = "Settings file '" + settingsFile + "' does not validate using '" + xsdFile + "'";
-                    log.warn(msg, e);
-                    throw new ArgumentNotValid(msg, e);
+                    throw new ArgumentNotValid(
+                            "Settings file '" + settingsFile + "' does not validate using '" + xsdFile + "'", e);
                 }
             } catch (IOException e) {
                 throw new IOFailure("Error while validating: ", e);
             } catch (ParserConfigurationException e) {
                 final String msg = "Error validating settings file '" + settingsFile + "'";
-                log.warn(msg, e);
                 throw new ArgumentNotValid(msg, e);
             } catch (SAXException e) {
                 final String msg = "Error validating settings file '" + settingsFile + "'";
-                log.warn(msg, e);
                 throw new ArgumentNotValid(msg, e);
             }
         }
@@ -227,15 +216,10 @@ public class XmlUtils {
      */
     public static Document documentFromString(String xml) throws DocumentException {
         Document doc;
-        try {
-            SAXReader reader = new SAXReader();
-            StringReader in = new StringReader(xml);
-            doc = reader.read(in);
-            in.close();
-        } catch (DocumentException e) {
-            log.warn("Failed to read the contents of the string as XML:{}", xml);
-            throw e;
-        }
+        SAXReader reader = new SAXReader();
+        StringReader in = new StringReader(xml);
+        doc = reader.read(in);
+        in.close();
         return doc;
     }
 

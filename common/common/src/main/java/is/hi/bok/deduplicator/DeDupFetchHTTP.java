@@ -26,8 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.httpclient.HttpConnection;
 import org.apache.commons.httpclient.HttpMethod;
@@ -48,6 +46,8 @@ import org.archive.crawler.settings.SimpleType;
 import org.archive.crawler.settings.Type;
 import org.archive.httpclient.HttpRecorderMethod;
 import org.archive.util.ArchiveUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.utils.AllDocsCollector;
 
@@ -66,7 +66,7 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
 
     private static final long serialVersionUID = ArchiveUtils.classnameBasedUID(DeDupFetchHTTP.class, 1);
 
-    private static Logger logger = Logger.getLogger(FetchHTTP.class.getName());
+    private static Logger log = LoggerFactory.getLogger(FetchHTTP.class.getName());
 
     protected IndexSearcher index;
     protected IndexReader indexReader;
@@ -220,7 +220,7 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
                     } else if (scheme.equals(SCHEME_TIMESTAMP_OR_ETAG)) {
                         ret = datestampIndicatesNonChange(method, doc) || etagIndicatesNonChange(method, doc);
                     } else {
-                        logger.log(Level.SEVERE, "Unknown decision sceme: " + scheme);
+                        log.error("Unknown decision sceme: {}",scheme);
                     }
                 }
             }
@@ -332,7 +332,7 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
                 return docToEval;
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error accessing index.", e);
+            log.error("Error accessing index.", e);
         }
         return null;
     }
@@ -356,21 +356,21 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
             IndexReader reader = DirectoryReader.open(indexDir);
             index = new IndexSearcher(reader);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Unable to find/open index.", e);
+            log.error("Unable to find/open index.", e);
         }
 
         // Mime filter
         try {
             mimefilter = (String) getAttribute(ATTR_MIME_FILTER);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Unable to get attribute " + ATTR_MIME_FILTER, e);
+            log.error("Unable to get attribute " + ATTR_MIME_FILTER, e);
         }
 
         // Filter mode (blacklist (default) or whitelist)
         try {
             blacklist = ((String) getAttribute(ATTR_FILTER_MODE)).equals(DEFAULT_FILTER_MODE);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Unable to get attribute " + ATTR_FILTER_MODE, e);
+            log.error("Unable to get attribute " + ATTR_FILTER_MODE, e);
         }
 
         // Date format of last-modified is EEE, dd MMM yyyy HH:mm:ss z
@@ -382,7 +382,7 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
         try {
             useSparseRangeFilter = ((Boolean) getAttribute(ATTR_USE_SPARSE_RANGE_FILTER)).booleanValue();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Unable to get attribute " + ATTR_USE_SPARSE_RANGE_FILTER, e);
+            log.error("Unable to get attribute " + ATTR_USE_SPARSE_RANGE_FILTER, e);
             useSparseRangeFilter = DEFAULT_USE_SPARSE_RANGE_FILTER;
         }
     }

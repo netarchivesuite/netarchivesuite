@@ -33,8 +33,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -60,6 +58,8 @@ import org.archive.uid.GeneratorFactory;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.XmlUtils;
 import org.archive.util.anvl.ANVLRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
@@ -78,7 +78,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
 
     private static final long serialVersionUID = -2006725968882994351L;
 
-    private static final Logger logger = Logger.getLogger(WARCWriterProcessor.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(WARCWriterProcessor.class);
 
     public long getDefaultMaxFileSize() {
         return 1000000000L; // 1 SI giga-byte (109 bytes), per WARC appendix A
@@ -202,16 +202,16 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
             if (shouldWrite(curi)) {
                 write(scheme, curi);
             } else {
-                logger.info("This writer does not write out scheme " + scheme + " content");
+                log.info("This writer does not write out scheme {} content", scheme);
             }
         } catch (IOException e) {
             curi.addLocalizedError(this.getName(), e, "WriteRecord: " + curi.toString());
-            logger.log(Level.SEVERE, "Failed write of Record: " + curi.toString(), e);
+            log.error("Failed write of Record: " + curi.toString(), e);
         }
     }
 
     protected void write(final String lowerCaseScheme, final CrawlURI curi) throws IOException {
-        logger.info("writing warc record for " + curi);
+        log.info("writing warc record for {}", curi);
         WriterPoolMember writer = getPool().borrowFile();
         long position = writer.getPosition();
         // See if we need to open a new file because we've exceeed maxBytes.
@@ -239,7 +239,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
             } else if (lowerCaseScheme.equals("ftp")) {
                 writeFtpRecords(w, curi, baseid, timestamp);
             } else {
-                logger.warning("No handler for scheme " + lowerCaseScheme);
+                log.warn("No handler for scheme " + lowerCaseScheme);
             }
         } catch (IOException e) {
             // Invalidate this file (It gets a '.invalid' suffix).
@@ -559,7 +559,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
             record.addLabelValue("ip", host.getHostAddress());
             record.addLabelValue("hostname", host.getCanonicalHostName());
         } catch (UnknownHostException e) {
-            logger.log(Level.WARNING, "unable top obtain local crawl engine host", e);
+            log.warn("unable top obtain local crawl engine host", e);
         }
 
         // conforms to ISO 28500:2009 as of May 2009
@@ -606,7 +606,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
                 loadPersistentJobData(doc);
             }
         } catch (IOException e) {
-            logger.log(Level.WARNING, "obtaining warcinfo", e);
+            log.warn("Obtaining warcinfo", e);
         }
 
         // add fields from harvesInfo.xml version 0.4

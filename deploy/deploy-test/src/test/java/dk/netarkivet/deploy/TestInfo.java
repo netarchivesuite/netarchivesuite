@@ -38,7 +38,6 @@ public class TestInfo {
     // argument files
     public static final File IT_CONF_FILE = new File(WORKING_DIR, "deploy_config.xml");
     public static final File IT_CONF_SINGLE_FILE = new File(WORKING_DIR, "deploy_single_config.xml");
-    public static final File IT_CONF_DATABASE_FILE = new File(WORKING_DIR, "deploy_database_config.xml");
     public static final File FILE_NETATCHIVE_SUITE = new File(WORKING_DIR, "null.zip");
     public static final File FILE_SECURITY_POLICY = new File(WORKING_DIR, "security.policy");
     public static final File FILE_LOG_PROP = new File(WORKING_DIR, "log.prop");
@@ -51,7 +50,7 @@ public class TestInfo {
     public static final String ARGUMENT_NETARCHIVE_SUITE_FILE = Constants.ARG_INIT_ARG
             + Constants.ARG_NETARCHIVE_SUITE_FILE;
     public static final String ARGUMENT_SECURITY_FILE = Constants.ARG_INIT_ARG + Constants.ARG_SECURITY_FILE;
-    public static final String ARGUMENT_LOG_PROPERTY_FILE = Constants.ARG_INIT_ARG + Constants.ARG_JUL_PROPERTY_FILE;
+    public static final String ARGUMENT_SLF4J_CONFIG_FILE = Constants.ARG_INIT_ARG + Constants.ARG_SLF4J_CONFIG_FILE;
     public static final String ARGUMENT_OUTPUT_DIRECTORY = Constants.ARG_INIT_ARG + Constants.ARG_OUTPUT_DIRECTORY;
     public static final String ARGUMENT_HARVEST_DATABASE_FILE = Constants.ARG_INIT_ARG + Constants.ARG_DATABASE_FILE;
     public static final String ARGUMENT_ARCHIVE_DATABASE_FILE = Constants.ARG_INIT_ARG + Constants.ARG_ARC_DB;
@@ -59,4 +58,7 @@ public class TestInfo {
     public static final String ARGUMENT_EVALUATE = Constants.ARG_INIT_ARG + Constants.ARG_EVALUATE;
     public static final String ARGUMENT_JAR_FOLDER = Constants.ARG_INIT_ARG + Constants.ARG_JAR_FOLDER;
     public static final String ARGUMENT_TEST_ARG = "1000,1005,test,test@kb.dk";
+
+    public static final String TEST_RESOURCES = "src/test/resources/";
+    public static final String LOGBACK_CONFIG = TEST_RESOURCES + "logback-test.xml";
 }

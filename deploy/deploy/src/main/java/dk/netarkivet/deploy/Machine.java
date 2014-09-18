@@ -63,8 +63,6 @@ public abstract class Machine {
     protected String scriptExtension;
     /** The name of the NetarchiveSuite.zip file. */
     protected String netarchiveSuiteFileName;
-    /** The inherited java.util.logging prop file. */
-    protected File inheriteJulPropFile;
     /** The inherited SLF4J config file. */
     protected File inheritedSlf4jConfigFile;
     /** The inherited security.policy file. */
@@ -90,7 +88,6 @@ public abstract class Machine {
      * @param parentSettings The setting inherited by the parent.
      * @param param The machine parameters inherited by the parent.
      * @param netarchiveSuiteSource The name of the NetarchiveSuite package file.
-     * @param julProp The logging property file.
      * @param securityPolicy The security policy file.
      * @param dbFileName The name of the database file.
      * @param archiveDbFileName The name of the archive database file.
@@ -100,21 +97,19 @@ public abstract class Machine {
      * netarchiveSuiteSource, logProp, securityPolicy.
      */
     public Machine(Element subTreeRoot, XmlStructure parentSettings, Parameters param, String netarchiveSuiteSource,
-            File julProp, File slf4JConfig, File securityPolicy, File dbFileName, File archiveDbFileName,
+            File slf4JConfig, File securityPolicy, File dbFileName, File archiveDbFileName,
             boolean resetDir, File externalJarFolder) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element subTreeRoot");
         ArgumentNotValid.checkNotNull(parentSettings, "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
         ArgumentNotValid.checkNotNull(netarchiveSuiteSource, "String netarchiveSuiteSource");
-        // ArgumentNotValid.checkNotNull(julProp, "File logProp");
-        // ArgumentNotValid.checkNotNull(slf4JConfig, "File slf4JConfig");
+        ArgumentNotValid.checkNotNull(slf4JConfig, "File slf4JConfig");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
 
         settings = new XmlStructure(parentSettings.getRoot());
         machineRoot = subTreeRoot;
         machineParameters = new Parameters(param);
         netarchiveSuiteFileName = netarchiveSuiteSource;
-        inheriteJulPropFile = julProp;
         inheritedSlf4jConfigFile = slf4JConfig;
         inheritedSecurityPolicyFile = securityPolicy;
         databaseFile = dbFileName;
@@ -206,14 +201,8 @@ public abstract class Machine {
         createRestartScript(machineDirectory);
         // copy the security policy file
         createSecurityPolicyFile(machineDirectory);
-        if (inheriteJulPropFile != null) {
-            // create the java.util.logging property files
-            createJulPropertyFiles(machineDirectory);
-        }
-        if (inheritedSlf4jConfigFile != null) {
-            // create the SLF4J property files
-            createSlf4jConfigFiles(machineDirectory);
-        }
+        // create the SLF4J property files
+        createSlf4jConfigFiles(machineDirectory);
         // create the jmx remote files
         createJmxRemotePasswordFile(machineDirectory);
         createJmxRemoteAccessFile(machineDirectory);
@@ -326,42 +315,6 @@ public abstract class Machine {
         } catch (IOException e) {
             log.warn("IOException while creating security policy file: ", e);
             throw new IOFailure("Cannot create security policy file.", e);
-        }
-    }
-
-    /**
-     * Creates a the java.util.logging property file for every application. This is done by taking the inherited log
-     * file and changing "APPID" in the file into the identification of the application.
-     *
-     * @param directory The local directory for this machine
-     * @throws IOFailure If an error occurred during the creationg of the log property file.
-     */
-    protected void createJulPropertyFiles(File directory) throws IOFailure {
-        // make log property file for every application
-        for (Application app : applications) {
-            // make file
-            File logProp = new File(directory, Constants.JUL_PROP_APPLICATION_PREFIX + app.getIdentification()
-                    + Constants.JUL_PROP_APPLICATION_SUFFIX);
-            try {
-                // init writer
-                PrintWriter logPrinter = new PrintWriter(logProp, getTargetEncoding());
-
-                try {
-                    // read the inherited log property file.
-                    String prop = FileUtils.readFile(inheriteJulPropFile);
-
-                    // append stuff!
-                    prop = prop.replace(Constants.LOG_PROPERTY_APPLICATION_ID_TAG, app.getIdentification());
-                    prop = modifyLogProperties(prop);
-                    // write to file.
-                    logPrinter.write(prop);
-                } finally {
-                    logPrinter.close();
-                }
-            } catch (IOException e) {
-                log.warn("IOException while creating log property file:", e);
-                throw new IOFailure("Cannot create log property file.", e);
-            }
         }
     }
 

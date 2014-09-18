@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -43,11 +42,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -340,16 +337,12 @@ public class IntegrityTestSuite {
             NetarkivetMessage msg = new TestMessage(Channels.getAnyBa(), sendQ);
             conn.send(msg);
             assertTrue("No msg ID must be there twice", set.add(msg.getID()));
-            Logger log = Logger.getLogger(getClass().getName());
-            log.finest("Generated message ID " + msg.getID());
         }
         conn = JMSConnectionFactory.getInstance();
         for (int i = 0; i < 100; i++) {
             NetarkivetMessage msg = new TestMessage(Channels.getAnyBa(), sendQ);
             conn.send(msg);
             assertTrue("No msg ID must be there twice", set.add(msg.getID()));
-            Logger log = Logger.getLogger(getClass().getName());
-            log.finest("Generated message ID " + msg.getID());
         }
         // To test messages are unique between processes, run the unittest by
         // two
@@ -369,18 +362,15 @@ public class IntegrityTestSuite {
      */
     @Test
     public void testProvokeNullPointer() throws Exception {
+        LogbackRecorder logbackRecorder = LogbackRecorder.startRecorder();
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
         File testFile1 = new File("tests/dk/netarkivet/common/distribute/data/originals/arc_record0.txt");
-        File LOGFILE = new File("tests/testlogs/netarkivtest.log");
         int tries = 100;
         for (int i = 0; i < tries; i++) {
             RemoteFile rf = RemoteFileFactory.getInstance(testFile1, true, false, true);
             rf.cleanup();
         }
-        LogUtils.flushLogs(FTPRemoteFile.class.getName());
-        LogUtils.flushLogs(this.getClass().getName());
-        String log = FileUtils.readFile(LOGFILE);
-        FileAsserts.assertFileNotContains(log, LOGFILE, "NullPointerException");
+        logbackRecorder.assertLogNotContains("NullPointerException");
     }
 
     /**

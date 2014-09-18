@@ -36,7 +36,6 @@ import org.junit.Test;
 
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestUtils;
 
 /**
  * Unit test for the BinSearch class.
@@ -85,6 +84,7 @@ public class BinSearchTester {
      * Test the BinSearch.getLinesInFile(File, String) with Danish letters.
      * <p>
      * FIXME Fails in Hudson (Properly because the test is dependent on the environment lang settings )
+     * Should convert to a integration test in group 'Danish' as this is a deployment specific test.
      */
     @Test
     @Ignore("Netarchivesuite bug 1913")
@@ -101,9 +101,6 @@ public class BinSearchTester {
         // pure ASCII -- domain names are IDNA-encoded, and paths are %XX-
         // encoded.
         // See Netarchivesuite bug 1913 for this issue.
-        if (!TestUtils.runningAs("SUN")) {
-            return;
-        }
         List<String> danish = findLinesInFile(TestInfo.CDX_FILE1, "http://download.");
         assertEquals("Should get exactly three lines for download.", 3, danish.size());
         assertEquals("Should have read the danish line correctly", "http://download.macromedia.com/påb/", danish.get(1));

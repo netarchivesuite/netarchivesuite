@@ -98,7 +98,7 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_EVALUATE + "yes", TestInfo.ARGUMENT_JAR_FOLDER + TestInfo.EXTERNALS_DIR};
         DeployApplication.main(args);
 
@@ -125,7 +125,7 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + single_it_conf_xml_name,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir};
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir};
         DeployApplication.main(args);
         // compare the resulting output files with the target files
         String differences = TestFileUtils.compareDirsText(TestInfo.SINGLE_TARGET_DIR, TestInfo.TMPDIR);
@@ -150,7 +150,7 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + database_it_conf_xml_name,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName,
                 TestInfo.ARGUMENT_ARCHIVE_DATABASE_FILE + arcDatabaseName};
         pss.tearDown();
@@ -177,7 +177,7 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName,
                 TestInfo.ARGUMENT_TEST + TestInfo.ARGUMENT_TEST_ARG};
         DeployApplication.main(args);
@@ -200,9 +200,11 @@ public class DeployTester {
      */
     @Test
     public void testDeployArguments1() {
-        String[] args = {"-FAIL" + itConfXmlName, TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+        String[] args = {"-FAIL" + itConfXmlName,
+                TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
@@ -222,10 +224,15 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + "ERROR",
-                TestInfo.ARGUMENT_CONFIG_FILE + "ERROR", TestInfo.ARGUMENT_SECURITY_FILE + "ERROR",
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + "ERROR", TestInfo.ARGUMENT_JAR_FOLDER + "ERROR",
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + "ERROR",
+                TestInfo.ARGUMENT_CONFIG_FILE + "ERROR",
+                TestInfo.ARGUMENT_SECURITY_FILE + "ERROR",
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE +
+                TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_JAR_FOLDER + "ERROR",
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + "ERROR",};
         DeployApplication.main(args);
 
@@ -263,7 +270,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + "config.ERROR",
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
@@ -284,7 +292,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + "null.ERROR",
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
@@ -305,7 +314,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + "security.ERROR",
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
@@ -326,7 +336,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + "log.ERROR", TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG + "error",
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
@@ -335,8 +346,6 @@ public class DeployTester {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_JUL_PROPERTY_EXTENSION,
-                pssMsg.startsWith(Constants.MSG_ERROR_JUL_PROPERTY_EXTENSION));
     }
 
     /**
@@ -347,7 +356,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + "database.ERROR"};
         DeployApplication.main(args);
 
@@ -368,7 +378,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_ARCHIVE_DATABASE_FILE + "database.ERROR"};
         DeployApplication.main(args);
 
@@ -389,7 +400,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_JAR_FOLDER + "/ERROR/er.ror"};
         DeployApplication.main(args);
 
@@ -411,7 +423,8 @@ public class DeployTester {
                 // TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
@@ -433,7 +446,8 @@ public class DeployTester {
                 TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 // TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
@@ -454,7 +468,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 // TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
@@ -468,15 +483,16 @@ public class DeployTester {
     }
 
     /**
-     * tests when enough arguments are given, but the log property file is missing.
+     * tests when enough arguments are given, but the logback config file is missing.
      */
     @Test
     public void testDeployArgumentsLack4() {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                // TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
-                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir, TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
+                // TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + testLogPropFile,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
         // get message and exit value
@@ -484,8 +500,8 @@ public class DeployTester {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_LOG_CONFIG_FILE_FOUND,
-                pssMsg.startsWith(Constants.MSG_ERROR_NO_LOG_CONFIG_FILE_FOUND));
+        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_SLF4J_CONFIG_FILE_ARG,
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_SLF4J_CONFIG_FILE_ARG));
     }
 
     /**
@@ -496,7 +512,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + "ERROR.xml",
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
@@ -517,7 +534,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + "ERROR.zip",
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
@@ -538,7 +556,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + "ERROR.policy",
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
@@ -559,7 +578,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + "ERROR.prop", TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG + "corrupt",
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName};
         DeployApplication.main(args);
 
@@ -568,8 +588,6 @@ public class DeployTester {
         String pssMsg = pss.getErr();
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
-        assertTrue("The error message should start with: " + Constants.MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND,
-                pssMsg.startsWith(Constants.MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND));
     }
 
     /**
@@ -580,7 +598,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + "ERROR.jar"};
         DeployApplication.main(args);
 
@@ -601,8 +620,10 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName, TestInfo.ARGUMENT_TEST + "ERROR"};
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName,
+                TestInfo.ARGUMENT_TEST + "ERROR"};
         DeployApplication.main(args);
 
         // get message and exit value
@@ -622,7 +643,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName,
                 TestInfo.ARGUMENT_TEST + "1000,2000,test,test@kb.dk"};
         DeployApplication.main(args);

@@ -280,10 +280,6 @@ public final class Constants {
     static final String JMX_ACCESS_FILE_PATH_DEFAULT = "conf/" + JMX_ACCESS_FILE_NAME;
     /** The name of the security policy file. */
     static final String SECURITY_POLICY_FILE_NAME = "security.policy";
-    /** The prefix for the log property file for the application. */
-    static final String JUL_PROP_APPLICATION_PREFIX = "log_";
-    /** The suffix for the log property file for the application. */
-    static final String JUL_PROP_APPLICATION_SUFFIX = ".prop";
 
     /** The prefix for the SLF4J config file for the application. */
     static final String SLF4J_CONFIG_APPLICATION_PREFIX = "logback_";
@@ -357,8 +353,6 @@ public final class Constants {
     static final String EXTENSION_ZIP_FILES = ".zip";
     /** The extension on policy files. */
     static final String EXTENSION_POLICY_FILES = ".policy";
-    /** The extension on property files. */
-    static final String EXTENSION_JUL_PROPERTY_FILES = ".prop";
     /** The extension on jar files. */
     static final String EXTENSION_JAR_FILES = ".jar";
     /** The extension on vb-script files. */
@@ -412,8 +406,6 @@ public final class Constants {
     public static final String ARG_NETARCHIVE_SUITE_FILE = "Z";
     /** For giving the security file as argument. */
     public static final String ARG_SECURITY_FILE = "S";
-    /** For giving the java.util.loggin property file as argument. */
-    public static final String ARG_JUL_PROPERTY_FILE = "L";
     /** For giving the SLF4J xml file as argument. */
     public static final String ARG_SLF4J_CONFIG_FILE = "B";
     /** For giving the optional output directory as argument. */
@@ -473,9 +465,7 @@ public final class Constants {
     public static final String MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG = "No NetarchiveSuite file argument: -Z (Must end with '.zip').\n";
     /** The error message when no security file is given. */
     public static final String MSG_ERROR_NO_SECURITY_FILE_ARG = "No security file argument: -S (Must end with '.policy').\n";
-    /** The error message when no java.util.logging property file is given. */
-    public static final String MSG_ERROR_NO_JUL_PROPERTY_FILE_ARG = "No log property file argument: -L (Must end with '.prop').\n";
-    /** The error message when no log property file is given. */
+    /** The error message when no slf4j log property file is given. */
     public static final String MSG_ERROR_NO_SLF4J_CONFIG_FILE_ARG = "No SLF4J configuration file argument: -B (Must end with '.xml').\n";
     /** The error message when config file does not exist. */
     public static final String MSG_ERROR_NO_CONFIG_FILE_FOUND = "Reference to non-existing config file (-C argument).";
@@ -483,11 +473,8 @@ public final class Constants {
     public static final String MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND = "Reference to non-existing NetarchiveSuite file (-Z argument).";
     /** The error message when security file does not exist. */
     public static final String MSG_ERROR_NO_SECURITY_FILE_FOUND = "Reference to non-existing security file (-S argument).";
-    /** The error message when java.util.logging property file does not exist. */
-    public static final String MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND = "Reference to non-existing log property file (-L argument).";
-    /** The error message when SLF4J config file does not exist. */
+   /** The error message when SLF4J config file does not exist. */
     public static final String MSG_ERROR_NO_SLF4J_CONFIG_FILE_FOUND = "Reference to non-existing SLF4J config file (-B argument).";
-    public static final String MSG_ERROR_NO_LOG_CONFIG_FILE_FOUND = "Reference to non-existing log config file (-L/-B argument).";
     /** The error message when database file does not exist. */
     public static final String MSG_ERROR_NO_DATABASE_FILE_FOUND = "Reference to non-existing database file (-D argument).";
     /** The error message when archive database file does not exist. */
@@ -503,9 +490,7 @@ public final class Constants {
     public static final String MSG_ERROR_NETARCHIVESUITE_EXTENSION = "NetarchiveSuite file must be '.zip'.\n";
     /** The error message for wrong security file extension. */
     public static final String MSG_ERROR_SECURITY_EXTENSION = "Security policy file must be '.policy'.\n";
-    /** The error message for wrong java.util.logging property file extension. */
-    public static final String MSG_ERROR_JUL_PROPERTY_EXTENSION = "Log property file must be '.prop'.\n";
-    /** The error message for wrong SLF4J config file extension. */
+   /** The error message for wrong SLF4J config file extension. */
     public static final String MSG_ERROR_SLF4J_CONFIG_EXTENSION = "SLF4J config file must be '.xml'.\n";
     /** The error message for wrong database extension. */
     public static final String MSG_ERROR_DATABASE_EXTENSION = "Database file must have extension '.jar' or '.zip'";

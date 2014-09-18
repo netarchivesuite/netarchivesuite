@@ -24,8 +24,6 @@ package dk.netarkivet.harvester.tools;
 
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanException;
@@ -38,6 +36,8 @@ import org.archive.crawler.framework.CrawlController;
 import org.archive.crawler.settings.SimpleType;
 import org.archive.crawler.settings.StringList;
 import org.archive.net.UURIFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
@@ -61,11 +61,7 @@ import twitter4j.URLEntity;
  */
 @SuppressWarnings({"deprecation", "serial"})
 public class TwitterDecidingScope extends DecidingScope {
-
-    /**
-     * Logger for this class.
-     */
-    static Logger logger = Logger.getLogger(TwitterDecidingScope.class.getName());
+    static Logger log = LoggerFactory.getLogger(TwitterDecidingScope.class);
 
     /**
      * Here we define bean properties which specify the search parameters for Twitter
@@ -167,7 +163,7 @@ public class TwitterDecidingScope extends DecidingScope {
             throw new RuntimeException(e1);
         }
         for (Object keyword : keywords) {
-            logger.info("Twitter Scope keyword: " + keyword);
+            log.info("Twitter Scope keyword: {}", keyword);
         }
         // If keywords or geoLocations is missing, add a list with a single empty string so that the main loop is
         // executed at least once.
@@ -177,7 +173,7 @@ public class TwitterDecidingScope extends DecidingScope {
         if (geoLocations == null || geoLocations.isEmpty()) {
             geoLocations = new StringList("geolocations", "empty geolocation list", new String[] {""});
         }
-        logger.info("Twitter Scope will queue " + pages + " page(s) of results.");
+        log.info("Twitter Scope will queue {} page(s) of results.", pages);
         // Nested loop over keywords, geo_locations and pages.
         for (Object keyword : keywords) {
             String keywordString = (String) keyword;
@@ -231,7 +227,7 @@ public class TwitterDecidingScope extends DecidingScope {
                             }
                         }
                     } catch (TwitterException e1) {
-                        logger.log(Level.SEVERE, e1.getMessage());
+                        log.error(e1.getMessage());
                     }
                 }
             }
@@ -303,7 +299,7 @@ public class TwitterDecidingScope extends DecidingScope {
             System.out.println("Adding seed: '" + curi.toString() + "'");
             addSeed(curi);
         } catch (URIException e1) {
-            logger.log(Level.SEVERE, e1.getMessage());
+            log.error(e1.getMessage());
             e1.printStackTrace();
         }
     }

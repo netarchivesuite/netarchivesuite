@@ -51,6 +51,10 @@ import ch.qos.logback.core.spi.FilterReply;
  * }
  * </code>
  * </pre>
+ *
+ * Remember to call the stopRecorder method on the logRecorder instance when finished. The properbility
+ * of doing this on a consistent basis is increased if the LogbackRecorder.startRecorder() and stopRecorder calls
+ * are made as part of the @Before and @After test methods.
  */
 public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.logback.classic.spi.ILoggingEvent> {
 
@@ -121,6 +125,17 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
                 sb.append("\nFound matches for other log levels though: " + matchedLevels );
             }
             Assert.fail(sb.toString());
+        }
+    }
+
+    public synchronized void assertLogNotContains(String str) {
+        Iterator<ch.qos.logback.classic.spi.ILoggingEvent> iter = events.iterator();
+        boolean bMatched = false;
+        while (!bMatched && iter.hasNext()) {
+            bMatched = (iter.next().getFormattedMessage().indexOf(str) != -1);
+        }
+        if (bMatched) {
+            Assert.fail("Able to match in log: " + str);
         }
     }
 
