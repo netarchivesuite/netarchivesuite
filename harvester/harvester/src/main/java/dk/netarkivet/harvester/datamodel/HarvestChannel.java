@@ -28,7 +28,6 @@ import javax.servlet.jsp.PageContext;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.I18n;
-import dk.netarkivet.harvester.harvesting.HarvestController;
 
 /**
  * Harvest channels are used to dispatch harvest jobs to specific pools of crawlers. Channels can accept either only

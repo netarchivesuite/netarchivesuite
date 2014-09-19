@@ -26,7 +26,6 @@
     <module>deploy</module>
     <module>harvester</module>
     <module>monitor</module>
-    <module>h1</module>
     <module>wayback</module>
     <module>integration-test</module>
     <module>build-tools</module>

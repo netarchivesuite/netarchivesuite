@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.archive.crawler.Heritrix;
 import org.dom4j.Element;
 
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -36,7 +35,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * dependent operation system. This class only contains the operating system specific functions.
  */
 public class LinuxMachine extends Machine {
-    /**
+
+	public static final String HERITRIX_1_CLASSNAME = "org.archive.crawler.Heritrix";
+
+	/**
      * The constructor. Starts by initialising the parent abstract class, then sets the operating system dependent
      * variables.
      *
@@ -425,7 +427,7 @@ public class LinuxMachine extends Machine {
                         appPrint.println();
                         // - PIDS = $(ps -wwfe | grep heritrix | grep -v grep
                         // | grep path\settings_app.xml | awk "{print \\$2}")
-                        appPrint.println(ScriptConstants.getLinuxPIDS(Heritrix.class.getName(), getConfDirPath(),
+                        appPrint.println(ScriptConstants.getLinuxPIDS(HERITRIX_1_CLASSNAME, getConfDirPath(),
                                 app.getIdentification()));
                         // - if [ -n "$PIDS" ]; then
                         appPrint.println(ScriptConstants.LINUX_IF_N_EXIST + Constants.SPACE + Constants.QUOTE_MARK
@@ -441,7 +443,7 @@ public class LinuxMachine extends Machine {
                         appPrint.println(ScriptConstants.SLEEP_2);
                         appPrint.println();
                         // See if Process is still around
-                        appPrint.println(ScriptConstants.getLinuxPIDS(Heritrix.class.getName(), getConfDirPath(),
+                        appPrint.println(ScriptConstants.getLinuxPIDS(HERITRIX_1_CLASSNAME, getConfDirPath(),
                                 app.getIdentification()));
                         // if still around
                         appPrint.println(ScriptConstants.LINUX_IF_N_EXIST + Constants.SPACE + Constants.QUOTE_MARK

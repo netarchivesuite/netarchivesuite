@@ -30,7 +30,6 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
-import dk.netarkivet.harvester.scheduler.HarvestSchedulerMonitorServer;
 
 /**
  * This message is sent by the {@link HarvestSchedulerMonitorServer} to the {@link HarvestMonitor} to notify it that a

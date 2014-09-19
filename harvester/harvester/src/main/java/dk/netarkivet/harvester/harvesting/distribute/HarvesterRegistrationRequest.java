@@ -26,7 +26,6 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
-import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**

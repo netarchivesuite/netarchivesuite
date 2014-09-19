@@ -24,7 +24,7 @@
 package dk.netarkivet.common.utils;
 
 import org.apache.commons.httpclient.URIException;
-import org.archive.net.UURI;
+import org.archive.url.UsableURI;
 
 /**
  * Fixed UURI which extends UURI to fix an NPE bug in getReferencedHost.
@@ -33,7 +33,7 @@ import org.archive.net.UURI;
  * http://webteam.archive.org/jira/browse/HER-616
  */
 @SuppressWarnings({"serial"})
-public class FixedUURI extends UURI {
+public class FixedUURI extends UsableURI {
 
     protected FixedUURI() {
         super();
@@ -43,7 +43,7 @@ public class FixedUURI extends UURI {
         super(string, b, string1);
     }
 
-    protected FixedUURI(UURI uuri, UURI uuri1) throws URIException {
+    protected FixedUURI(UsableURI uuri, UsableURI uuri1) throws URIException {
         super(uuri, uuri1);
     }
 

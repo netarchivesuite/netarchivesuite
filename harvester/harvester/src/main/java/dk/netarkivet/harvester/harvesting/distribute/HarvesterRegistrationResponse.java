@@ -27,7 +27,6 @@ import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
-import dk.netarkivet.harvester.scheduler.HarvesterStatusReceiver;
 
 /**
  * Message sent by the {@link HarvesterStatusReceiver} after processing a {@link HarvesterRegistrationRequest} message.

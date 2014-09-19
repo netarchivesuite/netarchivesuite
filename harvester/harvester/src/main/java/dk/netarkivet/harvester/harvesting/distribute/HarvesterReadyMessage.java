@@ -28,7 +28,6 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
-import dk.netarkivet.harvester.scheduler.JobDispatcher;
 
 /**
  * The {@link HarvestControllerServer} periodically sends {@link HarvesterReadyMessage}s to the {@link JobDispatcher} to

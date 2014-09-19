@@ -35,7 +35,7 @@ import java.util.Set;
 
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CrawlURI;
-import org.archive.net.UURI;
+import org.archive.url.UsableURI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -449,7 +449,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      * @throws URIException If unable to create valid URI from the given string
      */
     private String getDomainNameFromURIString(String uriAsString) throws URIException {
-        UURI uuri = new FixedUURI(uriAsString, false);
+        UsableURI uuri = new FixedUURI(uriAsString, false);
         String hostName = uuri.getReferencedHost();
         if (hostName == null) {
             log.debug("Not possible to extract domainname from URL: {}", uriAsString);
