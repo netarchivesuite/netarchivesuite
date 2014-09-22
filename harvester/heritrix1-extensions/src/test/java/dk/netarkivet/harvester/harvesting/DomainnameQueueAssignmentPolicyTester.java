@@ -32,7 +32,6 @@ import org.archive.net.UURI;
 import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.FixedUURI;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
