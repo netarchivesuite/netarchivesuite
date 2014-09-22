@@ -374,8 +374,6 @@ public class AdminDataTester {
 
     /**
      * Test that a valid file can be read, and that an invalid file gives appropriate log entries and invalid entries.
-     *
-     * @throws Exception
      */
     @Test
     public void testReadCurrentVersion() throws Exception {
@@ -395,8 +393,6 @@ public class AdminDataTester {
         String checksum1 = "xxx";
         ArchiveStoreState dummyStoreState = new ArchiveStoreState(ReplicaStoreState.UPLOAD_STARTED);
         addLineToFile(datafile, filename1 + " " + checksum1 + " " + dummyStoreState.toString());
-        // System.out.println(datafile.getAbsolutePath() + ":" +
-        // FileUtils.readFile(datafile));
 
         lr.reset();
 

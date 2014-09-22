@@ -98,7 +98,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_EVALUATE + "yes", TestInfo.ARGUMENT_JAR_FOLDER + TestInfo.EXTERNALS_DIR};
         DeployApplication.main(args);
 
@@ -125,7 +126,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + single_it_conf_xml_name,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir};
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir};
         DeployApplication.main(args);
         // compare the resulting output files with the target files
         String differences = TestFileUtils.compareDirsText(TestInfo.SINGLE_TARGET_DIR, TestInfo.TMPDIR);
@@ -150,7 +152,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + database_it_conf_xml_name,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName,
                 TestInfo.ARGUMENT_ARCHIVE_DATABASE_FILE + arcDatabaseName};
         pss.tearDown();
@@ -177,7 +180,8 @@ public class DeployTester {
         String[] args = {TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                 TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
-                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG, TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_SLF4J_CONFIG_FILE + TestInfo.LOGBACK_CONFIG,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_HARVEST_DATABASE_FILE + databaseName,
                 TestInfo.ARGUMENT_TEST + TestInfo.ARGUMENT_TEST_ARG};
         DeployApplication.main(args);
@@ -242,7 +246,7 @@ public class DeployTester {
 
         assertEquals("Exit value asserted 1.", 1, pseVal);
         assertTrue("The error message should start with (but was: " + pssMsg + "): "
-                + Constants.MSG_ERROR_TOO_MANY_ARGUMENTS, pssMsg.startsWith(Constants.MSG_ERROR_TOO_MANY_ARGUMENTS));
+                   + Constants.MSG_ERROR_TOO_MANY_ARGUMENTS, pssMsg.startsWith(Constants.MSG_ERROR_TOO_MANY_ARGUMENTS));
     }
 
     /**

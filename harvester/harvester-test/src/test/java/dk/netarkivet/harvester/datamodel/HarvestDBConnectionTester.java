@@ -191,7 +191,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
             // and that storedContents equals to variable 'contents'
             DBUtils.setStringMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
 
-            logbackRecorder.assertLogNotContains("setStringMaxLength\nWARNING: fieldname");
+            logbackRecorder.assertLogNotContains("fieldname of null is longer than the allowed");
             // execute query, and retrieve data
             s.execute();
             String storedContents = retrieveStoredString(id);
@@ -240,7 +240,7 @@ public class HarvestDBConnectionTester extends DataModelTestCase {
             // and that storedContents equals to variable 'contents'
             DBUtils.setClobMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
 
-            logbackRecorder.assertLogNotContains("setClobMaxLength\nWARNING: fieldname");
+            logbackRecorder.assertLogNotContains("The field 'fieldname' is 8 characters long");
 
             s.execute();
             String storedContents = retrieveStoredClob(id);

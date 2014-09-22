@@ -24,6 +24,8 @@ package dk.netarkivet.deploy;
 
 import java.io.File;
 
+import dk.netarkivet.testutils.TestResourceUtils;
+
 public class TestInfo {
     // directories
     public static final File DATA_DIR = new File("tests/dk/netarkivet/deploy/data");
@@ -59,6 +61,5 @@ public class TestInfo {
     public static final String ARGUMENT_JAR_FOLDER = Constants.ARG_INIT_ARG + Constants.ARG_JAR_FOLDER;
     public static final String ARGUMENT_TEST_ARG = "1000,1005,test,test@kb.dk";
 
-    public static final String TEST_RESOURCES = "src/test/resources/";
-    public static final String LOGBACK_CONFIG = TEST_RESOURCES + "logback-test.xml";
+    public static final String LOGBACK_CONFIG = TestResourceUtils.getFilePath("logback-test.xml");
 }

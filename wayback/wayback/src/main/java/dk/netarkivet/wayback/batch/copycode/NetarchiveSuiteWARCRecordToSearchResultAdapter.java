@@ -133,7 +133,7 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
             result.setMimeType(WARC_FILEDESC_VERSION);
 
         } else {
-            log.info("Skipping record type : {}",type);
+            log.info("Skipping record type : {}", type);
         }
 
         return result;
@@ -260,7 +260,7 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
         int eolCharCount = getEolCharsCount(statusBytes);
         if (eolCharCount <= 0) {
             throw new RecoverableIOException("Failed to read http status where one " + " was expected: "
-                    + ((statusBytes == null) ? "(null)" : new String(statusBytes)));
+                                             + ((statusBytes == null) ? "(null)" : new String(statusBytes)));
         }
         String statusLine = EncodingUtil.getString(statusBytes, 0, statusBytes.length - eolCharCount,
                 ARCConstants.DEFAULT_ENCODING);

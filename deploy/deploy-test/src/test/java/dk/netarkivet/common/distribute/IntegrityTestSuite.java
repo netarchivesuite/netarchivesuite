@@ -75,6 +75,7 @@ public class IntegrityTestSuite {
     private JMSConnection conn;
 
     ReloadSettings rs = new ReloadSettings();
+    private LogbackRecorder logbackRecorder;
 
     @Before
     public void setUp() {
@@ -85,10 +86,12 @@ public class IntegrityTestSuite {
         JMSConnectionFactory.getInstance().cleanup();
         conn = JMSConnectionFactory.getInstance();
         pes.setUp();
+        logbackRecorder = LogbackRecorder.startRecorder();
     }
 
     @After
     public void tearDown() {
+        logbackRecorder.stopRecorder();
         ChannelsTesterHelper.resetChannels();
         JMSConnectionFactory.getInstance().cleanup();
         pes.tearDown();

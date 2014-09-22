@@ -38,8 +38,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * whilst sending heartbeats.
  */
 public class HeartBeatSender extends TimerTask {
-    /** The log. */
-    private final Logger log = LoggerFactory.getLogger(HeartBeatSender.class);
+    private static final Logger log = LoggerFactory.getLogger(HeartBeatSender.class);
     /** the receiver to receive heartbeats. */
     private ChannelID receiver;
     /** the BitarchiveServer of this HeartBeatSender. */

@@ -60,9 +60,7 @@ import dk.netarkivet.common.utils.Settings;
  */
 @Deprecated
 public abstract class AdminData {
-
-    /** The log. */
-    private Logger log = LoggerFactory.getLogger(AdminData.class);
+    private static final Logger log = LoggerFactory.getLogger(AdminData.class);
 
     /** Admindata version. VersionNumber is the current version. */
     public static final String VERSION_NUMBER = "0.4";

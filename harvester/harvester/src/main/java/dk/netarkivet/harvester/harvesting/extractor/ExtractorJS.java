@@ -22,6 +22,7 @@
 package dk.netarkivet.harvester.harvesting.extractor;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import org.apache.commons.httpclient.URIException;
@@ -36,8 +37,6 @@ import org.archive.net.UURI;
 import org.archive.util.DevUtils;
 import org.archive.util.TextUtils;
 import org.archive.util.UriUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Processes Javascript files for strings that are likely to be crawlable URIs.
@@ -48,7 +47,7 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
 
     private static final long serialVersionUID = -2231962381454717720L;
 
-    private static Logger log = LoggerFactory.getLogger(ExtractorJS.class);
+    private static final Logger LOGGER = Logger.getLogger(ExtractorJS.class.getName());
 
     // finds whitespace-free strings in Javascript
     // (areas between paired ' or " characters, possibly backslash-quoted
@@ -116,7 +115,7 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
             curi.addLocalizedError(this.getName(), e, "Failed get of replay char sequence.");
         }
         if (cs == null) {
-            log.warn("Failed getting ReplayCharSequence: " + curi.toString());
+            LOGGER.warning("Failed getting ReplayCharSequence: " + curi.toString());
             return;
         }
 
@@ -134,7 +133,7 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
                 try {
                     cs.close();
                 } catch (IOException ioe) {
-                    log.warn(TextUtils.exceptionToString("Failed close of ReplayCharSequence.", ioe));
+                    LOGGER.warning(TextUtils.exceptionToString("Failed close of ReplayCharSequence.", ioe));
                 }
             }
         }
@@ -164,7 +163,7 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
                     if (controller != null) {
                         controller.logUriError(e, curi.getUURI(), string);
                     } else {
-                        log.info(curi + ", " + string + ": " + e.getMessage());
+                        LOGGER.info(curi + ", " + string + ": " + e.getMessage());
                     }
                 }
             } else {

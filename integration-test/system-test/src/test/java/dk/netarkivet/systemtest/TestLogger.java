@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * logs from the applications logs.
  */
 public class TestLogger {
-    private Logger log;
+    private final Logger log;
 
     public TestLogger(Class<?> logHandle) {
         log = LoggerFactory.getLogger(logHandle);

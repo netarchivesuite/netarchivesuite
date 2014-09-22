@@ -75,7 +75,7 @@ public class IntegrityTestsFTP {
     private File testFile2;
     private File testFile3;
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected static final Logger log = LoggerFactory.getLogger(IntegrityTestsFTP.class);
 
     ReloadSettings rs = new ReloadSettings();
 
@@ -131,14 +131,14 @@ public class IntegrityTestsFTP {
 
             if (currentUploadedFile != null) {
                 if (!theFTPClient.deleteFile(currentUploadedFile)) {
-                    log.warn("deleteFile operation failed on " + currentUploadedFile + ". Reply from ftpserver: "
-                            + theFTPClient.getReplyString());
+                    log.warn("deleteFile operation failed on {}. Reply from ftpserver: {}",
+                            currentUploadedFile, theFTPClient.getReplyString());
                 }
             }
         }
 
         if (!theFTPClient.logout()) {
-            log.warn("logout operation failed. Reply from ftp-server: " + theFTPClient.getReplyString());
+            log.warn("logout operation failed. Reply from ftp-server: {}", theFTPClient.getReplyString());
         }
 
         theFTPClient.disconnect();

@@ -69,11 +69,9 @@ public class ConstantsTester {
                         try {
                             Date t = format.parse(date);
                             if (!t.equals(time)) {
-                                System.out.println("Time " + time + " != " + t);
                                 failed[0] = true;
                             }
                         } catch (ParseException e) {
-                            System.out.println("ParseException " + e);
                             failed[0] = true;
                         }
                     }

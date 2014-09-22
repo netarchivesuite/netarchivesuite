@@ -44,8 +44,7 @@ public class LoggingOutputStream extends OutputStream {
     /** The level at which messages are logged. */
     private LoggingLevel loggingLevel;
 
-    /** The Log to which messages are logged. */
-    private Logger logger;
+    private final Logger logger;
 
     /** A prefix by which log-messages from this class can be recognised. */
     private String prefix;

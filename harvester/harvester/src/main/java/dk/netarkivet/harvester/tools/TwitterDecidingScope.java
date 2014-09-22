@@ -61,7 +61,7 @@ import twitter4j.URLEntity;
  */
 @SuppressWarnings({"deprecation", "serial"})
 public class TwitterDecidingScope extends DecidingScope {
-    static Logger log = LoggerFactory.getLogger(TwitterDecidingScope.class);
+    private static final Logger log = LoggerFactory.getLogger(TwitterDecidingScope.class);
 
     /**
      * Here we define bean properties which specify the search parameters for Twitter

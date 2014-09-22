@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -42,6 +45,10 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * location is {@link #DEFAULT_SETTINGS_FILEPATH}.
  */
 public class Settings {
+
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(Settings.class);
+
     /**
      * The objects representing the contents of the settings xml files. For handling multithreaded instances this list
      * must be initialised through the method Collections.synchronizedList().
@@ -257,6 +264,9 @@ public class Settings {
                 if (result.size() == 0) {
                     continue;
                 }
+                if (log.isDebugEnabled()) {
+                    log.debug("Value found in loaded data: {}", StringUtils.conjoin(",", result));
+                }
                 return result.toArray(new String[result.size()]);
             }
         }
@@ -267,6 +277,9 @@ public class Settings {
                 List<String> result = settingsXml.getList(key);
                 if (result.size() == 0) {
                     continue;
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("Value found in classpath data: {}", StringUtils.conjoin(",", result));
                 }
                 return result.toArray(new String[result.size()]);
             }
@@ -332,6 +345,8 @@ public class Settings {
         for (File settingsFile : settingsFiles) {
             if (settingsFile.isFile()) {
                 simpleXmlList.add(new SimpleXml(settingsFile));
+            } else {
+                log.warn("The file '{}' is not a file, and therefore not loaded", settingsFile.getAbsolutePath());
             }
             if (settingsFile.lastModified() > lastModified) {
                 lastModified = settingsFile.lastModified();
@@ -354,6 +369,8 @@ public class Settings {
                 .getResourceAsStream(defaultClasspathSettingsPath);
         if (stream != null) {
             defaultClasspathSettingsXmlList.add(new SimpleXml(stream));
+        } else {
+            log.warn("Unable to read the settings file represented by path: '{}'", defaultClasspathSettingsPath);
         }
     }
 

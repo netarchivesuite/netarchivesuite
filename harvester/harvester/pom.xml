@@ -95,6 +95,13 @@
       <version>1</version>
     </dependency>
 
+    <!-- Move to Heritrix specific module when this is ready. -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.2</version>
+    </dependency>
+
     <!-- HarvestJobManager -->
 
     <dependency>

@@ -48,7 +48,7 @@ import it.unimi.dsi.mg4j.util.MutableString;
 @SuppressWarnings({"serial", "unused"})
 public class NetarchiveSuiteUURIFactory extends UURI {
     private static final long serialVersionUID = -6146295130382209042L;
-    private static Logger log = LoggerFactory.getLogger(NetarchiveSuiteUURIFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(NetarchiveSuiteUURIFactory.class);
     private static final NetarchiveSuiteUURIFactory factory = new NetarchiveSuiteUURIFactory();
 
     /**

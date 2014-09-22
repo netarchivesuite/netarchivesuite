@@ -71,7 +71,7 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
 
     private static final long serialVersionUID = ArchiveUtils.classnameBasedUID(DeDuplicator.class, 1);
 
-    private static Logger logger = Logger.getLogger(DeDuplicator.class.getName());
+    private static final Logger logger = Logger.getLogger(DeDuplicator.class.getName());
 
     protected IndexSearcher index = null;
     protected IndexReader indexReader = null;

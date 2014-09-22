@@ -66,7 +66,7 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
 
     private static final long serialVersionUID = ArchiveUtils.classnameBasedUID(DeDupFetchHTTP.class, 1);
 
-    private static Logger log = LoggerFactory.getLogger(FetchHTTP.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(FetchHTTP.class.getName());
 
     protected IndexSearcher index;
     protected IndexReader indexReader;

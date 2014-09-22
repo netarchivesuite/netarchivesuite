@@ -407,7 +407,7 @@ public final class Constants {
     /** For giving the security file as argument. */
     public static final String ARG_SECURITY_FILE = "S";
     /** For giving the SLF4J xml file as argument. */
-    public static final String ARG_SLF4J_CONFIG_FILE = "B";
+    public static final String ARG_SLF4J_CONFIG_FILE = "L";
     /** For giving the optional output directory as argument. */
     public static final String ARG_OUTPUT_DIRECTORY = "O";
     /** For giving the optional database file as argument. */
