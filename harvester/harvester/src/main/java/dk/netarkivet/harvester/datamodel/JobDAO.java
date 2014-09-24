@@ -221,4 +221,10 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      */
     public abstract JobStatus getJobStatus(Long jobID);
 
+    /**
+     * Get a list of AliasInfo objects for all the domains included in the job.
+     *
+     * @return a list of AliasInfo objects for all the domains included in the job.
+     */
+    public abstract List<AliasInfo> getJobAliasInfo(Job job);
 }

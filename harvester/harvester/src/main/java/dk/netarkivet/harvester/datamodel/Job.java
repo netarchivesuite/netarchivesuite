@@ -214,7 +214,7 @@ public class Job implements Serializable, JobInfo {
     /** This variable is right now the same as harvestdefinitions.audience field. */
     private String harvestAudience;
 
-    Job() {
+    protected Job() {
         this.status = JobStatus.NEW;
     }
 
@@ -231,7 +231,8 @@ public class Job implements Serializable, JobInfo {
      * @param harvestNum the run number of the harvest definition
      * @throws ArgumentNotValid if cfg or priority is null or harvestID is invalid, or if any limit < -1
      */
-    Job(Long harvestID, DomainConfiguration cfg, HarvestChannel channel, long forceMaxObjectsPerDomain,
+    public Job(Long harvestID, DomainConfiguration cfg, Document orderXMLdoc, HarvestChannel channel,
+            long forceMaxObjectsPerDomain,
             long forceMaxBytesPerDomain, long forceMaxJobRunningTime, int harvestNum) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
@@ -261,7 +262,7 @@ public class Job implements Serializable, JobInfo {
         domainConfigurationMap = new HashMap<String, String>();
         origHarvestDefinitionID = harvestID;
         orderXMLname = cfg.getOrderXmlName();
-        orderXMLdoc = TemplateDAO.getInstance().read(cfg.getOrderXmlName()).getTemplate();
+        this.orderXMLdoc = orderXMLdoc;//TemplateDAO.getInstance().read(cfg.getOrderXmlName()).getTemplate();
 
         this.channel = channel.getName();
         this.isSnapshot = channel.isSnapshot();
@@ -283,7 +284,6 @@ public class Job implements Serializable, JobInfo {
         // The seedlist, configuration map, and max/min limits are changed
         // as result of this method-call.
         addConfiguration(cfg);
-        addGlobalCrawlerTraps(orderXMLdoc);
 
         // Set MaxJobrunningTime for this job
         setMaxJobRunningTime(forceMaxJobRunningTime);
@@ -337,55 +337,6 @@ public class Job implements Serializable, JobInfo {
         this.harvestNum = harvestNum;
         this.continuationOF = continuationOf;
         underConstruction = false;
-    }
-
-    /**
-     * Create new Job configured according to the properties of the supplied DomainConfiguration.
-     *
-     * @param harvestID the id of the harvestdefinition
-     * @param channel the {@link HarvestChannel}
-     * @param cfg the configuration to base the Job on
-     * @param harvestNum Which run of the harvest definition this is.
-     * @return newly created Job.
-     * @throws ArgumentNotValid if cfg is null or harvestID is invalid
-     */
-    public static Job createJob(Long harvestID, HarvestChannel channel, DomainConfiguration cfg, int harvestNum) {
-        // Use -1 to indicate no limits for max objects and max bytes.
-        return new Job(harvestID, cfg, channel, Constants.HERITRIX_MAXOBJECTS_INFINITY,
-                Constants.HERITRIX_MAXBYTES_INFINITY, Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, harvestNum);
-    }
-
-    /**
-     * Create new instance of Job suitable for snapshot harvesting. This job is configured according to the properties
-     * of the supplied DomainConfiguration. The maximum number of objects retrieved from all domains added to this job
-     * is determined by maxObjectsPerDomain, regardless of the configuration settings, that are overridden.
-     *
-     * @param harvestID the id of the harvestdefinition
-     * @param channel the channel for the job
-     * @param cfg the configuration to base the Job on
-     * @param maxObjectsPerDomain the maximum number of objects to harvest from a domain, overrides individual
-     * configuration settings unless the domain has overrideLimits set. 0 means no limit.
-     * @param maxBytesPerDomain the maximum number of bytes to harvest from a domain, overrides individual configuration
-     * settings unless the domain has overrideLimits set. -1 means no limit.
-     * @param maxJobRunningTime The maximum of seconds which the harvest can spend on the harvest. 0 means no limit.
-     * @param harvestNum Which run of the harvest definition this is (should always be 1).
-     * @return SnapShotJob
-     * @throws ArgumentNotValid if cfg is null or harvestID is invalid
-     */
-    public static Job createSnapShotJob(Long harvestID, HarvestChannel channel, DomainConfiguration cfg,
-            long maxObjectsPerDomain, long maxBytesPerDomain, long maxJobRunningTime, int harvestNum)
-            throws ArgumentNotValid {
-        return new Job(harvestID, cfg, channel, maxObjectsPerDomain, maxBytesPerDomain, maxJobRunningTime, harvestNum);
-    }
-
-    /**
-     * Reads a list of all active global crawler trap expressions from the database and adds them to the crawl template
-     * for this job.
-     */
-    private void addGlobalCrawlerTraps(Document orderXmlDoc) {
-        GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
-        HeritrixTemplate.editOrderXMLAddCrawlerTraps(orderXmlDoc, Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
-                dao.getAllActiveTrapExpressions());
     }
 
     /**
@@ -702,7 +653,7 @@ public class Job implements Serializable, JobInfo {
      */
     public void setSeedList(String seedList) {
         ArgumentNotValid.checkNotNullOrEmpty(seedList, "seedList");
-        seedListSet = new HashSet<String>();
+        seedListSet = new HashSet<>();
         BufferedReader reader = new BufferedReader(new StringReader(seedList));
         String seed;
         try {
@@ -715,8 +666,6 @@ public class Job implements Serializable, JobInfo {
         } finally {
             IOUtils.closeQuietly(reader);
         }
-
-        log.trace("Now {} seeds in the list", seedListSet.size());
     }
 
     /**
@@ -845,12 +794,7 @@ public class Job implements Serializable, JobInfo {
         this.isSnapshot = isSnapshot;
     }
 
-    /**
-     * toString method for the Job class.
-     *
-     * @return a human readable string representing this object.
-     * @see Object#toString()
-     */
+    @Override
     public String toString() {
         return "Job " + getJobID() + " (state = " + getStatus() + ", HD = " + getOrigHarvestDefinitionID()
                 + ", channel = " + getChannel() + ", snapshot = " + isSnapshot() + ", forcemaxcount = "
@@ -929,32 +873,6 @@ public class Job implements Serializable, JobInfo {
      */
     public long getMaxJobRunningTime() {
         return forceMaxRunningTime;
-    }
-
-    /**
-     * Invoke default method for deserializing object, and reinitialise the logger.
-     *
-     * @param s stream with serialized object.
-     */
-    private void readObject(ObjectInputStream s) {
-        try {
-            s.defaultReadObject();
-        } catch (Exception e) {
-            throw new IOFailure("Unexpected error during deserialization", e);
-        }
-    }
-
-    /**
-     * Invoke default method for serializing object.
-     *
-     * @param s stream to serialize object to.
-     */
-    private void writeObject(ObjectOutputStream s) {
-        try {
-            s.defaultWriteObject();
-        } catch (Exception e) {
-            throw new IOFailure("Unexpected error during serialization", e);
-        }
     }
 
     /**
@@ -1081,20 +999,6 @@ public class Job implements Serializable, JobInfo {
                 this.uploadErrorDetails += "\n" + uploadErrorDetails;
             }
         }
-    }
-
-    /**
-     * Get a list of AliasInfo objects for all the domains included in the job.
-     *
-     * @return a list of AliasInfo objects for all the domains included in the job.
-     */
-    public List<AliasInfo> getJobAliasInfo() {
-        List<AliasInfo> aliases = new ArrayList<AliasInfo>();
-        DomainDAO dao = DomainDAO.getInstance();
-        for (String domain : getDomainConfigurationMap().keySet()) {
-            aliases.addAll(dao.getAliases(domain));
-        }
-        return aliases;
     }
 
     /**

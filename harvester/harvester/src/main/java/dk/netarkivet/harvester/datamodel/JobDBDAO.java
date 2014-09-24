@@ -1126,4 +1126,17 @@ public class JobDBDAO extends JobDAO {
         }
     }
 
+    /**
+     * Get a list of AliasInfo objects for all the domains included in the job.
+     *
+     * @return a list of AliasInfo objects for all the domains included in the job.
+     */
+    public List<AliasInfo> getJobAliasInfo(Job job) {
+        List<AliasInfo> aliases = new ArrayList<AliasInfo>();
+        DomainDAO dao = DomainDAO.getInstance();
+        for (String domain : job.getDomainConfigurationMap().keySet()) {
+            aliases.addAll(dao.getAliases(domain));
+        }
+        return aliases;
+    }
 }

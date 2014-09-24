@@ -108,7 +108,7 @@ public class JobTester extends DataModelTestCase {
         Domain poelse = Domain.getDefaultDomain("pølse.dk");
         dao.create(poelse);
         DomainConfiguration dc = poelse.getDefaultConfiguration();
-        Job job = Job.createJob(1234L, highChan, dc, 0);
+        Job job = createJob(1234L, highChan, dc, 0);
         String seedList = job.getSeedListAsString();
         Pattern p = Pattern.compile("^http://www\\.xn--plse-gra\\.dk$", Pattern.MULTILINE);
         Matcher m = p.matcher(seedList);
@@ -122,7 +122,7 @@ public class JobTester extends DataModelTestCase {
         dc = poelse.getDefaultConfiguration();
         dc.addSeedList(poelse, withUrlList);
         dao.update(poelse);
-        job = Job.createJob(12342L, highChan, dc, 0);
+        job = createJob(12342L, highChan, dc, 0);
         seedList = job.getSeedListAsString();
         for (String s : new String[] {"http://www.xn--plse-gra.dk/enfil", "http://www.xn--plse-gra.dk/enpølse",
                 "http://www.uden.dk/enpølse", "http://www.xn--plse-gra.dk:8080/port",
@@ -150,7 +150,7 @@ public class JobTester extends DataModelTestCase {
         dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator.reset();
         Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "3");
         Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "0");
-        Job job = Job.createJob(42L, highChan, dc1, 0);
+        Job job = createJob(42L, highChan, dc1, 0);
         // should be okay, relative size difference below 3
         job.addConfiguration(dc2);
         // should be okay, relative size difference now above 3!
@@ -171,7 +171,7 @@ public class JobTester extends DataModelTestCase {
     public void testSetAndGet() throws IOException {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
 
-        Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
+        Job job = createJob(TestInfo.HARVESTID, highChan, dc, 0);
 
         assertNotNull("A valid job definition expected", job);
 
@@ -206,7 +206,7 @@ public class JobTester extends DataModelTestCase {
     @Test
     public void testGetAndSetStatus() {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
-        Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
+        Job job = createJob(TestInfo.HARVESTID, highChan, dc, 0);
         assertEquals("Status of a new Job - expected", JobStatus.NEW, job.getStatus());
 
         job.setStatus(JobStatus.SUBMITTED);
@@ -220,7 +220,7 @@ public class JobTester extends DataModelTestCase {
     @Test
     public void testOrderSetStatus() {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
-        Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
+        Job job = createJob(TestInfo.HARVESTID, highChan, dc, 0);
 
         // Test valid order of status changes:
         for (int i = JobStatus.NEW.ordinal(); i <= JobStatus.FAILED.ordinal(); i++) {
@@ -250,7 +250,7 @@ public class JobTester extends DataModelTestCase {
     @Test
     public void testIllegalJumpInStatus() {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
-        Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
+        Job job = createJob(TestInfo.HARVESTID, highChan, dc, 0);
         job.setStatus(JobStatus.DONE);
         try {
             job.setStatus(JobStatus.NEW);
@@ -267,7 +267,7 @@ public class JobTester extends DataModelTestCase {
     @Test
     public void testLegalJumpInStatus() {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
-        Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
+        Job job = createJob(TestInfo.HARVESTID, highChan, dc, 0);
         job.setStatus(JobStatus.FAILED_REJECTED);
         job.setStatus(JobStatus.FAILED);
     }
@@ -282,7 +282,7 @@ public class JobTester extends DataModelTestCase {
 
         Domain defaultDomain = TestInfo.getDefaultDomain();
         DomainConfiguration dc = TestInfo.getDefaultConfig(defaultDomain);
-        Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
+        Job job = createJob(TestInfo.HARVESTID, highChan, dc, 0);
         DefaultJobGenerator jobGen = new DefaultJobGenerator();
         try {
             jobGen.canAccept(job, null);
@@ -303,8 +303,7 @@ public class JobTester extends DataModelTestCase {
 
         // Make a job with limit of 2000000 defined by harvest definition
         dc.setMaxBytes(5000000);
-        job = Job.createSnapShotJob(TestInfo.HARVESTID, highChan, dc, -1L, 2000000,
-                Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
+        job = createJob(TestInfo.HARVESTID, highChan, dc, -1L, 2000000, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
 
         anotherConfig.setMaxBytes(2000000);
         assertTrue("Should accept config with same limit", jobGen.canAccept(job, anotherConfig));
@@ -338,7 +337,7 @@ public class JobTester extends DataModelTestCase {
     @Test
     public void testAddConfiguration() {
         DomainConfiguration defaultConfig = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
-        Job job = Job.createJob(TestInfo.HARVESTID, highChan, defaultConfig, 0);
+        Job job = createJob(TestInfo.HARVESTID, highChan, defaultConfig, 0);
 
         try {
             job.addConfiguration(null);
@@ -415,14 +414,14 @@ public class JobTester extends DataModelTestCase {
     public void testInvalidArgs() {
         // HarvestID
         try {
-            Job.createJob(null, highChan, DomainDAO.getInstance().read("netarkivet.dk").getDefaultConfiguration(), 0);
+            createJob(null, highChan, DomainDAO.getInstance().read("netarkivet.dk").getDefaultConfiguration(), 0);
             fail("Argument invalid");
         } catch (ArgumentNotValid e) {
             // expected
         }
 
         try {
-            Job.createJob(Long.valueOf(-1L), highChan, DomainDAO.getInstance().read("netarkivet.dk")
+            createJob(Long.valueOf(-1L), highChan, DomainDAO.getInstance().read("netarkivet.dk")
                     .getDefaultConfiguration(), 0);
             fail("Argument invalid");
         } catch (ArgumentNotValid e) {
@@ -431,7 +430,7 @@ public class JobTester extends DataModelTestCase {
 
         // DomainConfiguration
         try {
-            Job.createJob(TestInfo.HARVESTID, highChan, null, 0);
+            createJob(TestInfo.HARVESTID, highChan, null, 0);
             fail("Argument invalid");
         } catch (ArgumentNotValid e) {
             // expected
@@ -439,7 +438,7 @@ public class JobTester extends DataModelTestCase {
 
         // startdate
         try {
-            Job job = Job.createJob(Long.valueOf(0L), highChan, DomainDAO.getInstance().read("netarkivet.dk")
+            Job job = createJob(Long.valueOf(0L), highChan, DomainDAO.getInstance().read("netarkivet.dk")
                     .getDefaultConfiguration(), 0);
             job.setActualStart(null);
             fail("Argument invalid");
@@ -449,7 +448,7 @@ public class JobTester extends DataModelTestCase {
 
         // channel
         try {
-            Job job = Job.createJob(Long.valueOf(0L), null, DomainDAO.getInstance().read("netarkivet.dk")
+            Job job = createJob(Long.valueOf(0L), null, DomainDAO.getInstance().read("netarkivet.dk")
                     .getDefaultConfiguration(), 0);
             job.setActualStart(new Date());
             fail("Argument invalid");
@@ -459,7 +458,7 @@ public class JobTester extends DataModelTestCase {
 
         // enddate
         try {
-            Job job = Job.createJob(Long.valueOf(0L), highChan, DomainDAO.getInstance().read("netarkivet.dk")
+            Job job = createJob(Long.valueOf(0L), highChan, DomainDAO.getInstance().read("netarkivet.dk")
                     .getDefaultConfiguration(), 0);
             job.setActualStop(null);
             fail("Argument invalid");
@@ -470,7 +469,7 @@ public class JobTester extends DataModelTestCase {
         // startdate < enddate
         RememberNotifications.resetSingleton();
         try {
-            Job job = Job.createJob(Long.valueOf(0L), highChan, DomainDAO.getInstance().read("netarkivet.dk")
+            Job job = createJob(Long.valueOf(0L), highChan, DomainDAO.getInstance().read("netarkivet.dk")
                     .getDefaultConfiguration(), 0);
 
             Date d1 = new Date(0);
@@ -485,7 +484,7 @@ public class JobTester extends DataModelTestCase {
         }
 
         try {
-            Job job = Job.createJob(Long.valueOf(0), highChan, DomainDAO.getInstance().read("netarkivet.dk")
+            Job job = createJob(Long.valueOf(0), highChan, DomainDAO.getInstance().read("netarkivet.dk")
                     .getDefaultConfiguration(), 0);
             Date d1 = new Date(0);
             Date d2 = new Date(1000);
@@ -507,7 +506,7 @@ public class JobTester extends DataModelTestCase {
     public void testPriority() {
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
-        Job job0 = Job.createJob(Long.valueOf(1L), highChan, d.getDefaultConfiguration(), 0);
+        Job job0 = createJob(Long.valueOf(1L), highChan, d.getDefaultConfiguration(), 0);
         assertEquals("Job should have channel " + "FOCUSED", "FOCUSED", job0.getChannel());
         Job job1 = Job.createSnapShotJob(Long.valueOf(1), lowChan, d.getDefaultConfiguration(), 2000L, -1L,
                 Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
@@ -572,7 +571,7 @@ public class JobTester extends DataModelTestCase {
         }
 
         // test capping of forceMaxObjectsPerDomain:
-        Job job = Job.createJob(TestInfo.HARVESTID, highChan, defaultConfig, 0);
+        Job job = createJob(TestInfo.HARVESTID, highChan, defaultConfig, 0);
         assertEquals("forceMaxObjectsPerDomain not capped to domain config", defaultConfig.getMaxObjects(),
                 job.getForceMaxObjectsPerDomain());
 
@@ -600,7 +599,7 @@ public class JobTester extends DataModelTestCase {
     @Test
     public void testSerializability() throws IOException, ClassNotFoundException {
         // make a job:
-        Job job = Job.createJob(Long.valueOf(42), highChan, TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+        Job job = createJob(Long.valueOf(42), highChan, TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
 
         // Write and read
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -661,7 +660,7 @@ public class JobTester extends DataModelTestCase {
         String domain2name = dc2.getDomainName();
 
         // Make a job with the two configurations
-        Job j = Job.createJob(Long.valueOf(42L), highChan, dc1, 0);
+        Job j = createJob(Long.valueOf(42L), highChan, dc1, 0);
         j.addConfiguration(dc2);
 
         // Check that there are no crawlertraps for the first domain and exactly
@@ -760,7 +759,7 @@ public class JobTester extends DataModelTestCase {
         DomainDAO ddao = DomainDAO.getInstance();
         Domain d = ddao.read(TestInfo.EXISTINGDOMAINNAME);
         DomainConfiguration cfg = d.getDefaultConfiguration();
-        Job j = Job.createJob(42L, highChan, cfg, 2);
+        Job j = createJob(42L, highChan, cfg, 2);
         assertEquals("Should have no max bytes limit after creation", 500000000, j.getMaxBytesPerDomain());
         final long maxBytes = 222 * 1024 * 1024;
         m.invoke(j, maxBytes);
@@ -796,7 +795,7 @@ public class JobTester extends DataModelTestCase {
         DomainDAO ddao = DomainDAO.getInstance();
         Domain d = ddao.read(TestInfo.EXISTINGDOMAINNAME);
         DomainConfiguration cfg = d.getDefaultConfiguration();
-        Job j = Job.createJob(42L, highChan, cfg, 2);
+        Job j = createJob(42L, highChan, cfg, 2);
 
         Document orderXML = j.getOrderXMLdoc();
         final String xpath = "/crawl-order/controller/map[@name='pre-fetch-processors']"
@@ -840,7 +839,7 @@ public class JobTester extends DataModelTestCase {
     @Test
     public void testgetJobAliasInfo() {
         DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
-        Job job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
+        Job job = createJob(TestInfo.HARVESTID, highChan, dc, 0);
         DomainConfiguration anotherConfig = TestInfo.getConfigurationNotDefault(TestInfo.getDomainNotDefault());
         job.addConfiguration(anotherConfig);
         // domains in job: job.getDomainConfigurationMap().keySet();
@@ -863,7 +862,7 @@ public class JobTester extends DataModelTestCase {
         d = ddao.read("alias3.dk");
         d.updateAlias("dr.dk");
         ddao.update(d);
-        job = Job.createJob(TestInfo.HARVESTID, highChan, dc, 0);
+        job = createJob(TestInfo.HARVESTID, highChan, dc, 0);
         job.addConfiguration(dc1);
         job.addConfiguration(dc2);
         // this should give us a List of size 3:
@@ -929,13 +928,13 @@ public class JobTester extends DataModelTestCase {
     @Category(SlowTest.class)
     @Test
     public void testGetSubmittedDate() {
-        Job job = Job.createJob(Long.valueOf(42), highChan, TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+        Job job = createJob(Long.valueOf(42), highChan, TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
         assertNull("Should be null, before being set explicitly", job.getSubmittedDate());
         Date now = new Date();
         job.setSubmittedDate(now);
         assertEquals("Should be set correctly, after being set explicitly", now, job.getSubmittedDate());
 
-        job = Job.createJob(Long.valueOf(43), highChan, TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+        job = createJob(Long.valueOf(43), highChan, TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
 
         JobDAO.getInstance().create(job);
         Long jobID = job.getJobID();
@@ -951,13 +950,13 @@ public class JobTester extends DataModelTestCase {
     @Category(SlowTest.class)
     @Test
     public void testGetCreationDate() {
-        Job job = Job.createJob(Long.valueOf(42), highChan, TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+        Job job = createJob(Long.valueOf(42), highChan, TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
         assertNull("Should be null, before being set explicitly", job.getCreationDate());
         Date now = new Date();
         job.setCreationDate(now);
         assertEquals("Should be set correctly, after being set explicitly", now, job.getCreationDate());
 
-        job = Job.createJob(Long.valueOf(43), highChan, TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+        job = createJob(Long.valueOf(43), highChan, TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
 
         JobDAO.getInstance().create(job);
         Long jobID = job.getJobID();
@@ -982,7 +981,7 @@ public class JobTester extends DataModelTestCase {
         GlobalCrawlerTrapListDAO trapDao = GlobalCrawlerTrapListDAO.getInstance();
         trapDao.create(list1);
         trapDao.create(list2);
-        Job job = Job.createJob(Long.valueOf(42), highChan, TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+        Job job = new Job();
         Document doc = job.getOrderXMLdoc();
         String TRAPS_XPATH = "/crawl-order/controller/newObject" + "/newObject[@name='decide-rules']"
                 + "/map[@name='rules']/newObject[@name='" + Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME + "']";
@@ -999,23 +998,19 @@ public class JobTester extends DataModelTestCase {
     @Category(SlowTest.class)
     @Test
     public void testSetSeedlist() {
-        Job job = Job.createJob(Long.valueOf(42), highChan, TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+        Job job = new Job();
         String nullSeedlist = null;
         String emptySeedlist = "";
         String validSeedlist = "http://www.netarkivet.dk\nhttp://www.kb.dk";
         try {
             job.setSeedList(nullSeedlist);
             fail("Operation setSeedList should fail w/ null argument, but didn't");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
+        } catch (ArgumentNotValid e) {}
 
         try {
             job.setSeedList(emptySeedlist);
             fail("Operation setSeedList should fail w/ empty argument, but didn't");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
+        } catch (ArgumentNotValid e) {}
 
         try {
             job.setSeedList(validSeedlist);
@@ -1023,6 +1018,5 @@ public class JobTester extends DataModelTestCase {
             fail("Operation setSeedList shouldn't fail w/ valid argument '" + validSeedlist
                     + "' but did with exception: " + e);
         }
-
     }
 }
