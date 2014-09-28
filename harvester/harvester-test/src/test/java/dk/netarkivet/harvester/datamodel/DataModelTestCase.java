@@ -63,7 +63,6 @@ import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
  * A generic superclass for the harvest definition tests. This sets up the various DAOs etc.
  */
 public class DataModelTestCase {
-
     Logger log = LoggerFactory.getLogger(DataModelTestCase.class);
 
     SetSystemProperty derbyLog = new SetSystemProperty("derby.stream.error.file", new File(TestInfo.TEMPDIR,

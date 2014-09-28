@@ -92,8 +92,7 @@ public class JobDBDAO extends JobDAO {
      */
     public synchronized void create(Job job) {
         ArgumentNotValid.checkNotNull(job, "Job job");
-        // Check that job.getOrigHarvestDefinitionID() refers to
-        // existing harvestdefinition
+        // Check that job.getOrigHarvestDefinitionID() refers to existing harvestdefinition.
         Long harvestId = job.getOrigHarvestDefinitionID();
         if (!HarvestDefinitionDAO.getInstance().exists(harvestId)) {
             throw new UnknownID("No harvestdefinition with ID=" + harvestId);
@@ -359,7 +358,7 @@ public class JobDBDAO extends JobDAO {
      * @throws IOFailure if there was some problem talking to the database.
      */
     @Override
-    public Job read(Long jobID) {
+    public Job read(long jobID) {
         ArgumentNotValid.checkNotNull(jobID, "jobID");
         Connection connection = HarvestDBConnection.get();
         try {

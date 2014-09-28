@@ -112,7 +112,6 @@ public class DomainConfiguration implements Named {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         ArgumentNotValid.checkNotNull(passwords, "passwords");
         ArgumentNotValid.checkNotNullOrEmpty(seedlists, "seedlists");
-        ArgumentNotValid.checkNotNull(passwords, "passwords");
 
         this.configName = theConfigName;
         this.domainName = domainName;

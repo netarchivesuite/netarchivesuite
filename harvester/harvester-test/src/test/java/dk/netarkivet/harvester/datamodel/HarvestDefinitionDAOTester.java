@@ -332,7 +332,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     public void testGetHarvestRunInfo() throws Exception {
         // enforce migration of domain database.
         DomainDAO dao = DomainDAO.getInstance();
-        assertNotNull("dao should never be null", dao);
+        assertNotNull("jobDAO should never be null", dao);
         // Migrate
         TemplateDAO tdao = TemplateDAO.getInstance();
         assertNotNull("tdao should never be null", tdao);
@@ -358,7 +358,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         addRunInfo(newHd, 3, "statsbiblioteket.dk", 13, 100, JobStatus.FAILED);
 
         // This run only has unfinished jobs
-        Job j3 = DefaultJobGenerator.getNewJob(newHd, dcs.get(0));
+        Job j3 = JobTester.createDefaultJob();//DefaultJobGenerator.getNewJob(newHd, dcs.get(0));
         j3.setHarvestNum(4);
         j3.setStatus(JobStatus.SUBMITTED);
         jdao.create(j3);
@@ -370,7 +370,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         jdao.update(j2);
 
         // An unfinished job
-        j3 = DefaultJobGenerator.getNewJob(newHd, dcs.get(0));
+        j3 = JobTester.createDefaultJob();//DefaultJobGenerator.getNewJob(newHd, dcs.get(0));
         j3.setHarvestNum(5);
         j3.setStatus(JobStatus.STARTED);
         jdao.create(j3);
@@ -436,7 +436,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         final DomainDAO ddao = DomainDAO.getInstance();
         Domain d = ddao.read(domain);
         final DomainConfiguration dc = d.getDefaultConfiguration();
-        Job j = DefaultJobGenerator.getNewJob(hd, dc);
+        Job j = JobTester.createDefaultJob();//DefaultJobGenerator.getNewJob(hd, dc);
         j.setHarvestNum(run);
         JobDAO jdao = JobDAO.getInstance();
         jdao.create(j);

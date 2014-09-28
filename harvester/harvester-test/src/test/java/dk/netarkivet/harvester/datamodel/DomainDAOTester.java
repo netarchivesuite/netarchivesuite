@@ -388,7 +388,7 @@ public class DomainDAOTester extends DataModelTestCase {
         // HarvestInfo old_hi1 = new HarvestInfo(hd.getOid(), domain1.getName(), config1.getName(), then);
         // old_hi1.setStopReason(StopReason.SIZE_LIMIT);
         // config1.addHarvestInfo(old_hi1);
-        // dao.update(domain1);
+        // jobDAO.update(domain1);
 
         // Three harvest infos, one for each type
         Date now = new Date(time + 1000);

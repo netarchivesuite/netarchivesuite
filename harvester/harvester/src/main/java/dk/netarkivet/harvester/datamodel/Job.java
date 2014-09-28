@@ -28,8 +28,6 @@ import gnu.inet.encoding.IDNAException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.net.MalformedURLException;
@@ -63,8 +61,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.ArchiveFileNaming;
 import dk.netarkivet.harvester.harvesting.ArchiveFileNamingFactory;
 import dk.netarkivet.harvester.harvesting.JobInfo;
-import dk.netarkivet.harvester.scheduler.jobgen.JobGenerator;
-import dk.netarkivet.harvester.scheduler.jobgen.JobGeneratorFactory;
 
 /**
  * This class represents one job to run by Heritrix. It's based on a number of configurations all based on the same
@@ -81,7 +77,6 @@ import dk.netarkivet.harvester.scheduler.jobgen.JobGeneratorFactory;
  */
 @SuppressWarnings({"serial"})
 public class Job implements Serializable, JobInfo {
-
     private transient static final Logger log = LoggerFactory.getLogger(Job.class);
 
     // Persistent fields stored in and read from DAO
@@ -264,8 +259,7 @@ public class Job implements Serializable, JobInfo {
         orderXMLname = cfg.getOrderXmlName();
         this.orderXMLdoc = orderXMLdoc;//TemplateDAO.getInstance().read(cfg.getOrderXmlName()).getTemplate();
 
-        this.channel = channel.getName();
-        this.isSnapshot = channel.isSnapshot();
+        setHarvestChannel(channel);
 
         long maxObjects = NumberUtils.minInf(forceMaxObjectsPerDomain, cfg.getMaxObjects());
         setMaxObjectsPerDomain(maxObjects);
@@ -357,14 +351,6 @@ public class Job implements Serializable, JobInfo {
             final String msg = "Cannot modify job " + this + " as it is no longer under construction";
             log.debug(msg);
             throw new IllegalState(msg);
-        }
-
-        // Will accept unacceptable configurations if the map is empty so far
-        // This allows configurations that exceed the normal max number of
-        // objects
-        JobGenerator jobGen = JobGeneratorFactory.getInstance();
-        if (!jobGen.canAccept(this, cfg) && !domainConfigurationMap.isEmpty()) {
-            throw new ArgumentNotValid("This job cannot accept the configuration '" + cfg + "'");
         }
 
         // Check orderxml-name
@@ -760,6 +746,11 @@ public class Job implements Serializable, JobInfo {
      */
     void setEdition(long edition) {
         this.edition = edition;
+    }
+
+    public void setHarvestChannel(HarvestChannel harvestChannel) {
+        this.channel = harvestChannel.getName();
+        this.isSnapshot = harvestChannel.isSnapshot();
     }
 
     /**
