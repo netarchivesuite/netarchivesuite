@@ -36,12 +36,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.archive.format.arc.ARCConstants;
 import org.archive.io.ArchiveRecord;
+import org.archive.io.WriterPoolSettings;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 import org.archive.io.arc.ARCWriter;
+import org.archive.io.arc.WriterPoolSettingsData;
 import org.archive.util.ArchiveUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,12 +146,18 @@ public final class ARCUtils {
         PrintStream ps = null;
         try {
             ps = new PrintStream(new FileOutputStream(newFile));
+            /*
             aw = new ARCWriter(new AtomicInteger(), ps,
             // This name is used for the first (file metadata) record
                     newFile, false, // Don't compress
                     // Use current time
                     ArchiveUtils.get14DigitDate(System.currentTimeMillis()), null // No particular file metadata to add
             );
+            */
+            WriterPoolSettings settings = new WriterPoolSettingsData(
+            		ARCConstants.ARC_FILE_EXTENSION, null, ARCConstants.DEFAULT_MAX_ARC_FILE_SIZE, false, null, null);
+            // This name is used for the first (file metadata) record
+            aw = new ARCWriter(new AtomicInteger(), ps, newFile, settings);
         } catch (IOException e) {
             if (ps != null) {
                 ps.close();
@@ -208,10 +217,15 @@ public final class ARCUtils {
      * @throws IOException redirect from ARCWriter constructure
      */
     public static ARCWriter getToolsARCWriter(PrintStream stream, File destinationArcfile) throws IOException {
+    	/*
         return new ARCWriter(new AtomicInteger(), stream, destinationArcfile, false, // Don't compress
                 // Use current time
                 ArchiveUtils.get14DigitDate(System.currentTimeMillis()), null // //No particular file metadata to add
         );
+        */
+        WriterPoolSettings settings = new WriterPoolSettingsData(
+        		ARCConstants.ARC_FILE_EXTENSION, null, ARCConstants.DEFAULT_MAX_ARC_FILE_SIZE, false, null, null);
+        return new ARCWriter(new AtomicInteger(), stream, destinationArcfile, settings);
     }
 
     /**
