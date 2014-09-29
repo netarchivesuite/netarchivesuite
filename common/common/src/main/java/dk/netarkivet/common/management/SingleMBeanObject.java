@@ -31,9 +31,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.StandardMBean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -53,10 +50,6 @@ import dk.netarkivet.common.utils.SystemUtils;
  * @param <I> The Type of Object to expose as an MBean. Currently only used with {@link SingleMBeanObject}
  */
 public class SingleMBeanObject<I> {
-
-    /** Initialise the log for this class. */
-    private static final Logger log = LoggerFactory.getLogger(SingleMBeanObject.class);
-
     /** Properties for the ObjectName name. */
     private Hashtable<String, String> nameProperties = new Hashtable<String, String>();
     /** The domain for this SingleMBeanObject. */
@@ -108,14 +101,12 @@ public class SingleMBeanObject<I> {
             nameProperties.put(Constants.PRIORITY_KEY_CHANNEL, val);
         } catch (UnknownID e) {
             nameProperties.put(Constants.PRIORITY_KEY_CHANNEL, "");
-            log.trace("PRIORITY_KEY_CHANNEL set to empty string");
         }
         try {
             String val = Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)).getName();
             nameProperties.put(Constants.PRIORITY_KEY_REPLICANAME, val);
         } catch (UnknownID e) {
             nameProperties.put(Constants.PRIORITY_KEY_REPLICANAME, "");
-            log.trace("PRIORITY_KEY_REPLICANAME set to empty string");
         }
 
         this.mBeanServer = mBeanServer;
@@ -161,11 +152,8 @@ public class SingleMBeanObject<I> {
         try {
             name = new ObjectName(domain, nameProperties);
             mBeanServer.registerMBean(new StandardMBean(exposedObject, asInterface), name);
-            log.trace("Registered mbean '{}'", name);
         } catch (InstanceAlreadyExistsException e) {
-            String msg = "this MBean '" + name + "' is already registered on the MBeanServer";
-            log.warn(msg, e);
-            throw new IllegalState(msg, e);
+            throw new IllegalState("this MBean '" + name + "' is already registered on the MBeanServer", e);
         } catch (JMException e) {
             throw new IOFailure("Unable to register MBean '" + name + "'", e);
         }
@@ -177,7 +165,7 @@ public class SingleMBeanObject<I> {
      *
      * @throws IOFailure on trouble unregistering.
      */
-    public void unregister() {
+    public void unregister() throws IOFailure {
         MBeanServer mbserver = mBeanServer;
         try {
             if (name != null) {

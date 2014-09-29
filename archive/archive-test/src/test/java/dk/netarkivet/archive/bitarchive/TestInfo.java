@@ -36,8 +36,6 @@ public class TestInfo {
     static final File WORKING_DIR = new File(DATA_DIR, "working");
     static final File FILE_DIR = new File(WORKING_DIR, "filedir");
 
-    static final File LOGFILE = new File("tests/testlogs", "netarkivtest.log");
-    static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
     static final File BATCH_OUTPUT_FILE = new File(WORKING_DIR, "batch_output.log");
 
     static String baAppId = "bitArchiveApp_1";

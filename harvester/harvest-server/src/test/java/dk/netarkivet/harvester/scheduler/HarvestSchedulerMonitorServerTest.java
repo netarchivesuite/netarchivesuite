@@ -41,6 +41,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import ch.qos.logback.classic.Level;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.utils.Notifications;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
@@ -213,7 +214,7 @@ public class HarvestSchedulerMonitorServerTest {
         assertEquals((long) job1.getJobID(), jobEndedMessageArgumentCaptor.getValue().getJobId());
         assertEquals(JobStatus.DONE, jobEndedMessageArgumentCaptor.getValue().getJobStatus());
 
-        logRecorder.assertLogContains("Received CrawlStatusMessage for job 1 with new status DONE, current state is " +
+        logRecorder.assertLogContains(Level.WARN, "Received CrawlStatusMessage for job 1 with new status DONE, current state is " +
                 "SUBMITTED");
     }
 
@@ -248,8 +249,8 @@ public class HarvestSchedulerMonitorServerTest {
         assertEquals((long) job1.getJobID(), jobEndedMessageArgumentCaptor.getValue().getJobId());
         assertEquals(JobStatus.FAILED, jobEndedMessageArgumentCaptor.getValue().getJobStatus());
 
-        logRecorder.assertLogContains(ERROR_MESSAGE);
-        logRecorder.assertLogContains("Job 1 failed: ");
+        logRecorder.assertLogContains(Level.WARN, ERROR_MESSAGE);
+        logRecorder.assertLogContains(Level.WARN, "Job 1 failed: ");
     }
 
     /**

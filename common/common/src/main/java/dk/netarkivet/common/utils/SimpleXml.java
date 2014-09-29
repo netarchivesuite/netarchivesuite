@@ -37,8 +37,6 @@ import org.dom4j.Namespace;
 import org.dom4j.Node;
 import org.dom4j.XPath;
 import org.dom4j.dom.DOMDocument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -49,9 +47,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
  */
 @SuppressWarnings({"unused", "unchecked"})
 public class SimpleXml {
-
-    protected static final Logger log = LoggerFactory.getLogger(SimpleXml.class);
-
     /** The underlying XML Document object that we give access to. */
     private Document xmlDoc;
 
@@ -109,7 +104,6 @@ public class SimpleXml {
         source = f.toString();
 
         if (!f.exists()) {
-            log.warn("XML file '{}' does not exist", f.getAbsolutePath());
             throw new IOFailure("XML file '" + f.getAbsolutePath() + "' does not exist");
         }
 

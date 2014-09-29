@@ -128,7 +128,7 @@
             <artifactId>maven-dependency-plugin</artifactId>
             <executions>
               <execution>
-                <id>copy-releasezipball</id>
+                <id>copy-distribution-zip</id>
                 <phase>package</phase>
                 <goals>
                   <goal>copy</goal>
@@ -137,7 +137,7 @@
                   <artifactItems>
                     <artifactItem>
                       <groupId>${project.groupId}</groupId>
-                      <artifactId>releasezipball</artifactId>
+                      <artifactId>distribution</artifactId>
                       <version>${project.version}</version>
                       <type>zip</type>
                       <outputDirectory>${project.build.directory}</outputDirectory>

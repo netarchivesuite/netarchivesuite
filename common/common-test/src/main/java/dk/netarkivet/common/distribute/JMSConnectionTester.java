@@ -33,7 +33,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Enumeration;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -420,9 +419,6 @@ public class JMSConnectionTester {
     }
 
     public static class DummyServer implements MessageListener {
-
-        private final Logger log = Logger.getLogger(getClass().getName());
-
         public int msgOK = 0;
         public int msgNotOK = 0;
         public int msgReceived = 0;
@@ -433,7 +429,6 @@ public class JMSConnectionTester {
          * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
          */
         public void onMessage(Message msg) {
-            log.fine("DummyServer received message: " + msg);
             NetarkivetMessage netMsg = JMSConnection.unpack(msg);
             msgReceived = (netMsg.isOk() ? ++msgOK : ++msgNotOK);
         }

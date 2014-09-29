@@ -56,7 +56,6 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
@@ -117,9 +116,6 @@ public class IntegrityTestsHCSJMSException {
     @Test
     @Ignore("Incorrect handling of 'Cannot connect to JMS' situation")
     public void testJMSExceptionWhileCrawling() throws Exception {
-        if (!TestUtils.runningAs("CSR")) {
-            return;
-        }
         // Get the exception handler for the connection
         JMSConnection con = JMSConnectionFactory.getInstance();
         Field queueConnectionField = con.getClass().getSuperclass().getDeclaredField("myQConn");

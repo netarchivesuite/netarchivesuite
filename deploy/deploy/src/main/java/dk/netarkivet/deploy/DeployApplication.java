@@ -58,8 +58,6 @@ public final class DeployApplication {
     private static File netarchiveSuiteFile;
     /** The security policy file. */
     private static File secPolicyFile;
-    /** The java.util.logging property file. */
-    private static File julPropFile;
     /** SLF4J xml configuration file. */
     private static File slf4jConfigFile;
     /** The database file. */
@@ -126,8 +124,6 @@ public final class DeployApplication {
             String netarchiveSuiteFileName = ap.getCommandLine().getOptionValue(Constants.ARG_NETARCHIVE_SUITE_FILE);
             // Retrieving the security policy filename
             String secPolicyFileName = ap.getCommandLine().getOptionValue(Constants.ARG_SECURITY_FILE);
-            // Retrieving the jul.util.logging property filename
-            String julPropFileName = ap.getCommandLine().getOptionValue(Constants.ARG_JUL_PROPERTY_FILE);
             // Retrieving the SLF4J xml filename
             String slf4jConfigFileName = ap.getCommandLine().getOptionValue(Constants.ARG_SLF4J_CONFIG_FILE);
             // Retrieving the output directory name
@@ -164,24 +160,7 @@ public final class DeployApplication {
             // check secPolicyFileName and retrieve the corresponding file
             initSecPolicyFile(secPolicyFileName);
 
-            int loggers = 0;
-
-            // check logPropFileName and retrieve the corresponding file
-            if (julPropFileName != null) {
-                initJulPropFile(julPropFileName);
-                ++loggers;
-            }
-
-            // check slf4jXmlFileName and retrieve the corresponding file
-            if (slf4jConfigFileName != null) {
-                initSLF4JXmlFile(slf4jConfigFileName);
-                ++loggers;
-            }
-
-            if (loggers == 0) {
-                System.err.print(Constants.MSG_ERROR_NO_LOG_CONFIG_FILE_FOUND);
-                System.exit(1);
-            }
+            initSLF4JXmlFile(slf4jConfigFileName);
 
             // check database
             initDatabase(databaseFileName);
@@ -202,7 +181,7 @@ public final class DeployApplication {
             initJarFolder(jarFolderName);
 
             // Make the configuration based on the input data
-            deployConfig = new DeployConfiguration(deployConfigFile, netarchiveSuiteFile, secPolicyFile, julPropFile,
+            deployConfig = new DeployConfiguration(deployConfigFile, netarchiveSuiteFile, secPolicyFile,
                     slf4jConfigFile, outputDir, dbFile, arcDbFile, resetDirectory, externalJarFolder, sourceEncoding);
 
             // Write the scripts, directories and everything
@@ -299,35 +278,6 @@ public final class DeployApplication {
             System.err.print(Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND);
             System.out.println();
             System.out.println("Couldn't find file: " + secPolicyFile.getAbsolutePath());
-            System.exit(1);
-        }
-    }
-
-    /**
-     * Checks the java.util.logging property file argument and retrieves the file.
-     *
-     * @param julPropFileName The java.util.logging property argument.
-     */
-    private static void initJulPropFile(String julPropFileName) {
-        // check whether log property file name is given as argument
-        if (julPropFileName == null) {
-            System.err.print(Constants.MSG_ERROR_NO_JUL_PROPERTY_FILE_ARG);
-            System.out.println();
-            System.exit(1);
-        }
-        // check whether the log property file has correct extensions
-        if (!julPropFileName.endsWith(Constants.EXTENSION_JUL_PROPERTY_FILES)) {
-            System.err.print(Constants.MSG_ERROR_JUL_PROPERTY_EXTENSION);
-            System.out.println();
-            System.exit(1);
-        }
-        // get the file
-        julPropFile = new File(julPropFileName);
-        // check whether the log property file exists.
-        if (!julPropFile.exists()) {
-            System.err.print(Constants.MSG_ERROR_NO_JUL_PROPERTY_FILE_FOUND);
-            System.out.println();
-            System.out.println("Couldn't find file: " + julPropFile.getAbsolutePath());
             System.exit(1);
         }
     }
@@ -557,7 +507,6 @@ public final class DeployApplication {
             options.addOption(Constants.ARG_CONFIG_FILE, HAS_ARG, "Config file.");
             options.addOption(Constants.ARG_NETARCHIVE_SUITE_FILE, HAS_ARG, "The NetarchiveSuite package file.");
             options.addOption(Constants.ARG_SECURITY_FILE, HAS_ARG, "Security property file.");
-            options.addOption(Constants.ARG_JUL_PROPERTY_FILE, HAS_ARG, "java.util.logging property file.");
             options.addOption(Constants.ARG_SLF4J_CONFIG_FILE, HAS_ARG, "SLF4J config file.");
             options.addOption(Constants.ARG_OUTPUT_DIRECTORY, HAS_ARG, "[OPTIONAL] output directory.");
             options.addOption(Constants.ARG_DATABASE_FILE, HAS_ARG, "[OPTIONAL] Database file.");

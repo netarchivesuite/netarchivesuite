@@ -9,10 +9,10 @@
     <version>5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>releasezipball</artifactId>
+  <artifactId>distribution</artifactId>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - deploy - releasezipball</name>
+  <name>Netarchivesuite - deploy - distribution</name>
 
   <dependencies>
     <dependency>
@@ -161,7 +161,7 @@
               <classifier>prod</classifier>
               <finalName>NetarchiveSuite-${project.version}</finalName>
               <descriptors>
-                <descriptor>src/main/assembly/release.xml</descriptor>
+                <descriptor>src/main/assembly/distribution.xml</descriptor>
               </descriptors>
               <tarLongFileMode>gnu</tarLongFileMode>
             </configuration>

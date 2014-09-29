@@ -36,11 +36,12 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.junit.Ignore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -75,8 +76,7 @@ public class IntegrityTestsFTPRemoteFile {
 
     RemoteFile rf;
 
-    // A named logger for this class is retrieved
-    protected final Logger logger = Logger.getLogger(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(IntegrityTestsFTPRemoteFile.class);
 
     ReloadSettings rs = new ReloadSettings();
 
@@ -137,14 +137,14 @@ public class IntegrityTestsFTPRemoteFile {
 
             if (currentUploadedFile != null) {
                 if (!theFTPClient.deleteFile(currentUploadedFile)) {
-                    logger.warning("deleteFile operation failed on " + currentUploadedFile + ". Reply from ftpserver: "
-                            + theFTPClient.getReplyString());
+                    log.warn("deleteFile operation failed on {}. Reply from ftpserver: {}",
+                            currentUploadedFile, theFTPClient.getReplyString());
                 }
             }
         }
 
         if (!theFTPClient.logout()) {
-            logger.warning("logout operation failed. Reply from ftp-server: " + theFTPClient.getReplyString());
+            log.warn("logout operation failed. Reply from ftp-server: {}", theFTPClient.getReplyString());
         }
 
         theFTPClient.disconnect();

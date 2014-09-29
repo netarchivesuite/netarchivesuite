@@ -250,14 +250,12 @@ public class Settings {
      */
     public static String[] getAll(String key) throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(key, "key");
-        log.debug("Searching for a setting for key: {}", key);
         String val = System.getProperty(key);
         if (val != null) {
-            log.debug("value for key found in property:{}", val);
             return new String[] {val};
         }
         if (fileSettingsXmlList.isEmpty()) {
-            log.warn("The list of loaded data settings is empty. Is this OK?");
+            System.out.print("The list of loaded data settings is empty. Is this OK?");
         }
         // Key not in System.properties try loaded data instead
         synchronized (fileSettingsXmlList) {
@@ -325,8 +323,6 @@ public class Settings {
         List<File> settingsFiles = getSettingsFiles();
         for (File settingsFile : settingsFiles) {
             if (settingsFile.lastModified() > lastModified) {
-                log.info("Do reload of settings, as the file '{}' has changed since last reload",
-                        settingsFile.getAbsolutePath());
                 reload();
                 return;
             }

@@ -21,6 +21,7 @@
   </properties>
 
   <modules>
+    <module>build-tools</module>
     <module>archive</module>
     <module>common</module>
     <module>deploy</module>
@@ -28,7 +29,6 @@
     <module>monitor</module>
     <module>wayback</module>
     <module>integration-test</module>
-    <module>build-tools</module>
   </modules>
 
   <licenses>

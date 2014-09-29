@@ -35,7 +35,7 @@ public class TestWindowsMachine extends WindowsMachine {
     public TestWindowsMachine(Element root, XmlStructure parentSettings, Parameters param,
             String netarchiveSuiteSource, File logProp, File slf4JConfig, File securityPolicy, File dbFile,
             File arcdbFile, boolean resetDir, File externalJarFolder) {
-        super(root, parentSettings, param, netarchiveSuiteSource, logProp, slf4JConfig, securityPolicy, dbFile,
+        super(root, parentSettings, param, netarchiveSuiteSource, slf4JConfig, securityPolicy, dbFile,
                 arcdbFile, resetDir, externalJarFolder);
     }
 
@@ -93,21 +93,6 @@ public class TestWindowsMachine extends WindowsMachine {
                         + Constants.SETTINGS_PREFIX
                         + id
                         + Constants.EXTENSION_XML_FILES
-                        + Constants.QUOTE_MARK
-                        + Constants.QUOTE_MARK
-
-                        // TODO check to see if inherited inheriteJulPropFile is not null
-                        + Constants.SPACE
-                        + Constants.DASH
-                        + ScriptConstants.OPTION_LOG_COMPLETE
-
-                        // TODO check to see if inherited inheriteJulPropFile is not null
-                        + Constants.SPACE + Constants.DASH
-                        + ScriptConstants.OPTION_LOG_CONFIG_WIN
-                        + ScriptConstants.doubleBackslashes(getConfDirPath())
-                        + Constants.LOG_PREFIX
-                        + id
-                        + Constants.EXTENSION_JUL_PROPERTY_FILES
                         + Constants.QUOTE_MARK
                         + Constants.QUOTE_MARK
 

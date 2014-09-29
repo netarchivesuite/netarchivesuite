@@ -47,7 +47,7 @@ public class ExtractorJS extends Extractor implements CoreAttributeConstants {
 
     private static final long serialVersionUID = -2231962381454717720L;
 
-    private static Logger LOGGER = Logger.getLogger("dk.netarkivet.harvester.harvesting.extractor.ExtractorJS");
+    private static final Logger LOGGER = Logger.getLogger(ExtractorJS.class.getName());
 
     // finds whitespace-free strings in Javascript
     // (areas between paired ' or " characters, possibly backslash-quoted

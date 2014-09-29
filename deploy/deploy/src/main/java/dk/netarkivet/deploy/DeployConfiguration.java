@@ -52,9 +52,7 @@ public class DeployConfiguration {
     private File netarchiveSuiteFile;
     /** The security policy file. */
     private File secPolicyFile;
-    /** The java.util.logging property file. */
-    private File julPropFile;
-    /** The SLF4J config file. */
+     /** The SLF4J config file. */
     private File slf4jConfigFile;
     /** The directory for output. */
     private File outputDir;
@@ -73,7 +71,6 @@ public class DeployConfiguration {
      * @param deployConfigFileName Name of configuration file.
      * @param netarchiveSuiteFileName Name of installation file.
      * @param secPolicyFileName Name of security policy file.
-     * @param julPropFileName Name of the log property file.
      * @param outputDirName Directory for the output.
      * @param dbFileName Name of the database.
      * @param arcdbFileName The name of the archive database.
@@ -84,18 +81,16 @@ public class DeployConfiguration {
      * secPolicyFileName, logPropFileName.
      */
     public DeployConfiguration(File deployConfigFileName, File netarchiveSuiteFileName, File secPolicyFileName,
-            File julPropFileName, File slf4jConfigFileName, String outputDirName, File dbFileName, File arcdbFileName,
+            File slf4jConfigFileName, String outputDirName, File dbFileName, File arcdbFileName,
             boolean resetDir, File externalJarFolder, String sourceEncoding) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(deployConfigFileName, "No config file");
         ArgumentNotValid.checkNotNull(netarchiveSuiteFileName, "No installation file");
         ArgumentNotValid.checkNotNull(secPolicyFileName, "No security file");
-        // ArgumentNotValid.checkNotNull(julPropFileName, "No julPropFileName file");
         // ArgumentNotValid.checkNotNull(slf4jConfigFileName, "No slf4jConfigFileName file");
 
         deployConfigFile = deployConfigFileName;
         netarchiveSuiteFile = netarchiveSuiteFileName;
         secPolicyFile = secPolicyFileName;
-        julPropFile = julPropFileName;
         slf4jConfigFile = slf4jConfigFileName;
         databaseFileName = dbFileName;
         arcDatabaseFileName = arcdbFileName;
@@ -140,7 +135,7 @@ public class DeployConfiguration {
         List<Element> physList = config.getChildren(Constants.DEPLOY_PHYSICAL_LOCATION);
         // get all physical locations into the list
         for (Element elem : physList) {
-            physLocs.add(new PhysicalLocation(elem, settings, machineParam, netarchiveSuiteFile.getName(), julPropFile,
+            physLocs.add(new PhysicalLocation(elem, settings, machineParam, netarchiveSuiteFile.getName(),
                     slf4jConfigFile, secPolicyFile, databaseFileName, arcDatabaseFileName, resetDirectory, jarFolder));
         }
     }
