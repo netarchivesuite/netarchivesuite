@@ -71,7 +71,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     /** The executor used to schedule the generator jobs. */
     private PeriodicTaskExecutor genExec;
 
-    /** @see HarvesterSettings#JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL. */
+    /** @see HarvesterSettings#JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL */
     private static final boolean postponeUnregisteredChannel = Settings
             .getBoolean(HarvesterSettings.JOBGEN_POSTPONE_UNREGISTERED_HARVEST_CHANNEL);
 

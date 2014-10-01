@@ -109,7 +109,7 @@ public class JobDispatcherTest {
         prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
         String originalDomain = "netarkiv.dk";
         String aliasDomain = "netatarkivalias.dk";
-        when(jobMock.getJobAliasInfo()).thenReturn(
+        when(jobDAO.getJobAliasInfo(any(Job.class))).thenReturn(
                 Arrays.asList(new AliasInfo[] {new AliasInfo("netatarkivalias.dk", "netarkiv.dk", new Date())}));
 
         jobDispatcher.submitNextNewJob(SELECTIVE_HARVEST_CHANNEL);

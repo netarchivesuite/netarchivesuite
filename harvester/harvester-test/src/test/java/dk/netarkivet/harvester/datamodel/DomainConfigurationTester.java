@@ -340,4 +340,10 @@ public class DomainConfigurationTester extends DataModelTestCase {
                         countObjectRetrieved, stopReason));
     }
 
+    public static DomainConfiguration createDefaultDomainConfiguration() {
+        SeedList seedList = new SeedList("SeedList1", "netarchivesuite.org");
+        return new DomainConfiguration(
+                "DefaultDomain", "defaultdomain.org", new DomainHistory(),
+                new ArrayList<String>(), Arrays.asList(new SeedList[] {seedList}), new ArrayList<Password>());
+    }
 }

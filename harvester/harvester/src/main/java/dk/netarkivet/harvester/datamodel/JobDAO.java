@@ -94,7 +94,7 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      * @throws UnknownID If the job with the given jobID does not exist in persistent storage.
      * @throws IOFailure If the loaded ID of job does not match the expected.
      */
-    public abstract Job read(Long jobID) throws ArgumentNotValid, UnknownID, IOFailure;
+    public abstract Job read(long jobID) throws ArgumentNotValid, UnknownID, IOFailure;
 
     /**
      * Update a Job in persistent storage.
@@ -221,4 +221,10 @@ public abstract class JobDAO implements DAO, Iterable<Job> {
      */
     public abstract JobStatus getJobStatus(Long jobID);
 
+    /**
+     * Get a list of AliasInfo objects for all the domains included in the job.
+     *
+     * @return a list of AliasInfo objects for all the domains included in the job.
+     */
+    public abstract List<AliasInfo> getJobAliasInfo(Job job);
 }

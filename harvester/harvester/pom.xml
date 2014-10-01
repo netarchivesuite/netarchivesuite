@@ -151,6 +151,17 @@
             </manifest>
           </archive>
         </configuration>
+        <!-- test-jar containing test utils needed by harvester-test module -->
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <forceCreation>true</forceCreation>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

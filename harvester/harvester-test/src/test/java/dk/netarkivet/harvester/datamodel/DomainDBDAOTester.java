@@ -429,7 +429,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
     @Category(SlowTest.class)
     @Test
     public void testGetDomainJobInfo() {
-        // DomainDAO dao = DomainDAO.getInstance();
+        // DomainDAO jobDAO = DomainDAO.getInstance();
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
         HarvestDefinition hd = hdDao.read(Long.valueOf(42));
         DefaultJobGenerator jobGen = new DefaultJobGenerator();

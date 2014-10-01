@@ -25,6 +25,8 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.util.List;
 
+import org.dom4j.Document;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 
@@ -122,4 +124,8 @@ public abstract class GlobalCrawlerTrapListDAO implements DAO {
      */
     public abstract boolean exists(String name);
 
+    /**
+     * Reads a list of all active global crawler trap expressions from the database and adds them to the crawl template.
+     */
+    public abstract void addGlobalCrawlerTraps(Document orderXmlDoc);
 }

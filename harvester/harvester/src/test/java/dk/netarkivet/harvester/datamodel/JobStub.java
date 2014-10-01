@@ -13,6 +13,4 @@ public class JobStub extends Job {
     public void setOrigHarvestDefinitionID(Long origHarvestDefinitionID) {
         this.origHarvestDefinitionID = origHarvestDefinitionID;
     }
-
-
 }
