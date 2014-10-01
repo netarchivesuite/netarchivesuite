@@ -13,11 +13,14 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <slf4j.version>1.7.7</slf4j.version>
-    <jwat.version>1.0.1</jwat.version>
     <!-- maven-java-formatter-plugin -->
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <slf4j.version>1.7.7</slf4j.version>
+    <logback.version>1.0.13</logback.version>
+    <!-- Change to 1.1.5 when released, includes WARC writer fix. -->
+    <webarchive-commons.version>1.1.5-SNAPSHOT</webarchive-commons.version>
+    <jwat.version>1.0.1</jwat.version>
   </properties>
 
   <modules>
@@ -125,13 +128,13 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.0.13</version>
+        <version>${logback.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.netpreserve.commons</groupId>
         <artifactId>webarchive-commons</artifactId>
-        <version>1.1.3</version>
+        <version>${webarchive-commons.version}</version>
       </dependency>
 
       <dependency>

@@ -31,12 +31,15 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.archive.format.warc.WARCConstants;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.ArchiveRecordHeader;
 import org.archive.io.warc.WARCReader;
 import org.archive.io.warc.WARCReaderFactory;
 import org.archive.io.warc.WARCWriter;
-import org.archive.util.ArchiveUtils;
+import org.archive.io.warc.WARCWriterPoolSettings;
+import org.archive.io.warc.WARCWriterPoolSettingsData;
+import org.archive.uid.UUIDGenerator;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -109,10 +112,16 @@ public class WARCUtilsTester {
      * @throws IOException
      */
     public static WARCWriter getTestWARCWriter(PrintStream stream, File warcfile) throws IOException {
+    	/*
         return new WARCWriterNAS(new AtomicInteger(), stream, warcfile, false, // Don't compress
                 ArchiveUtils.get14DigitDate(System.currentTimeMillis()), // Use current time
                 null // No particular file metadata to add
         );
+        */
+        WARCWriterPoolSettings settings = new WARCWriterPoolSettingsData(
+        		WARCConstants.WARC_FILE_EXTENSION, null, WARCConstants.DEFAULT_MAX_WARC_FILE_SIZE, false,
+        		null, null, new UUIDGenerator());
+        return new WARCWriter(new AtomicInteger(), stream, warcfile, settings);
     }
 
     @Test

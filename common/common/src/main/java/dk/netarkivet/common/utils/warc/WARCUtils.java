@@ -38,13 +38,18 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.archive.format.warc.WARCConstants;
+import org.archive.format.warc.WARCConstants.WARCRecordType;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.ArchiveRecordHeader;
-import org.archive.io.warc.WARCConstants;
 import org.archive.io.warc.WARCReader;
 import org.archive.io.warc.WARCReaderFactory;
 import org.archive.io.warc.WARCRecord;
+import org.archive.io.warc.WARCRecordInfo;
 import org.archive.io.warc.WARCWriter;
+import org.archive.io.warc.WARCWriterPoolSettings;
+import org.archive.io.warc.WARCWriterPoolSettingsData;
+import org.archive.uid.UUIDGenerator;
 import org.archive.util.anvl.ANVLRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,13 +81,19 @@ public class WARCUtils {
         PrintStream ps = null;
         try {
             ps = new PrintStream(new FileOutputStream(newFile));
-            writer = new WARCWriterNAS(new AtomicInteger(), ps,
+            /*
+            writer = new WARCWriter(new AtomicInteger(), ps,
             // This name is used for the first (file metadata) record
                     newFile, false, // Don't compress
                     // Use current time
                     ArchiveDateConverter.getWarcDateFormat().format(new Date()), null // No particular file metadata to
                                                                                       // add
             );
+            */
+            WARCWriterPoolSettings settings = new WARCWriterPoolSettingsData(
+            		WARCConstants.WARC_FILE_EXTENSION, null, WARCConstants.DEFAULT_MAX_WARC_FILE_SIZE, false,
+            		null, null, new UUIDGenerator());
+            writer = new WARCWriter(new AtomicInteger(), ps, newFile, settings);
         } catch (IOException e) {
             if (ps != null) {
                 ps.close();
@@ -130,7 +141,7 @@ public class WARCUtils {
         ignoreHeadersMap.add("reader-identifier");
         ignoreHeadersMap.add("absolute-offset");
         ignoreHeadersMap.add("content-length");
-        ignoreHeadersMap.add("warc-date");
+        //ignoreHeadersMap.add("warc-date");
         ignoreHeadersMap.add("warc-record-id");
         ignoreHeadersMap.add("warc-type");
         ignoreHeadersMap.add("warc-target-uri");
@@ -177,8 +188,9 @@ public class WARCUtils {
             ANVLRecord namedFields = new ANVLRecord();
 
             // Copy to headers from the original WARC record to the new one.
-            // Since we store the headres lowercase, we recase them.
+            // Since we store the headers lowercase, we recase them.
             // Non WARC header header are lowercase and loose their case.
+            /*
             Iterator<Entry<String, Object>> headerIter = header.getHeaderFields().entrySet().iterator();
             Entry<String, Object> headerEntry;
             String headerName;
@@ -194,14 +206,41 @@ public class WARCUtils {
                     namedFields.addLabelValue(headerName, headerEntry.getValue().toString());
                 }
             }
+            */
 
             InputStream in = record;
             // getContentBegin only works for WARC and in H1.44.x!
             Long payloadLength = header.getLength() - record.getHeader().getContentBegin();
 
+            WARCRecordType type = WARCRecordType.valueOf(warcType);
+            WARCRecordInfo newRecord = new WARCRecordInfo();
+            Iterator<Entry<String, Object>> headerIter = header.getHeaderFields().entrySet().iterator();
+            Entry<String, Object> headerEntry;
+            String headerName;
+            String headerNameCased;
+            while (headerIter.hasNext()) {
+                headerEntry = headerIter.next();
+                if (!ignoreHeadersMap.contains(headerEntry.getKey())) {
+                    headerName = headerEntry.getKey();
+                    headerNameCased = headerNamesCaseMap.get(headerName);
+                    if (headerNameCased != null) {
+                        headerName = headerNameCased;
+                    }
+                    newRecord.addExtraHeader(headerName, headerEntry.getValue().toString());
+                }
+            }
+            newRecord.setType(type);
+            newRecord.setUrl(url);
+            newRecord.setMimetype(mimetype);
+            newRecord.setRecordId(recordId);
+            newRecord.setContentStream(in);
+            newRecord.setContentLength(payloadLength);
+        	aw.writeRecord(newRecord);
+
             // Write WARC record with type=warcType
+        	/*
             if ("metadata".equals(warcType)) {
-                aw.writeMetadataRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
+            	aw.writeMetadataRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
             } else if ("request".equals(warcType)) {
                 aw.writeRequestRecord(url, dateStr, mimetype, recordId, namedFields, in, payloadLength);
             } else if ("resource".equals(warcType)) {
@@ -215,6 +254,7 @@ public class WARCUtils {
             } else {
                 throw new IOFailure("Unknown WARC-Type!");
             }
+            */
         } catch (Exception e) {
             throw new IOFailure("Error occurred while writing an WARC record" + record, e);
         }

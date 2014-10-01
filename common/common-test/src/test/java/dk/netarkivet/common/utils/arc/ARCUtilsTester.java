@@ -36,13 +36,16 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.archive.format.arc.ARCConstants;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.ArchiveRecordHeader;
+import org.archive.io.WriterPoolSettings;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCWriter;
+import org.archive.io.arc.WriterPoolSettingsData;
 import org.archive.util.ArchiveUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -310,6 +313,7 @@ public class ARCUtilsTester {
      * @throws IOException
      */
     public static ARCWriter getTestARCWriter(PrintStream stream, File arcfile) throws IOException {
+    	/*
         return new ARCWriter(new AtomicInteger(), stream, arcfile, false, // Don't
                 // compress
                 ArchiveUtils.get14DigitDate(System.currentTimeMillis()), // Use
@@ -317,6 +321,11 @@ public class ARCUtilsTester {
                 // time
                 null // No particular file metadata to add
         );
+        */
+        WriterPoolSettings settings = new WriterPoolSettingsData(
+        		ARCConstants.ARC_FILE_EXTENSION, null, ARCConstants.DEFAULT_MAX_ARC_FILE_SIZE, false, null, null);
+        return new ARCWriter(new AtomicInteger(), stream, arcfile, settings);
+
     }
 
 }
