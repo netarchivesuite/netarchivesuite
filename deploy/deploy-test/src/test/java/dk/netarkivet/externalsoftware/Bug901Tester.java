@@ -60,7 +60,7 @@ public class Bug901Tester {
 
     @After
     protected void tearDown() throws Exception {
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
+        FileUtils.removeRecursively(WORKING_DIR);
     }
 
     /**

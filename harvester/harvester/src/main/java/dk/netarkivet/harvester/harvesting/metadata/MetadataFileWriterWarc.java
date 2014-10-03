@@ -34,7 +34,9 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
-import org.archive.io.warc.WARCConstants;
+import org.archive.format.warc.WARCConstants;
+import org.archive.format.warc.WARCConstants.WARCRecordType;
+import org.archive.io.warc.WARCRecordInfo;
 import org.archive.io.warc.WARCWriter;
 import org.archive.util.anvl.ANVLRecord;
 import org.slf4j.Logger;
@@ -109,17 +111,29 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             throw new IllegalState("Epic fail creating URI from UUID!");
         }
         warcInfoUID = recordId;
-        ANVLRecord namedFields = new ANVLRecord(1);
-        namedFields.addLabelValue("WARC-Filename", filename);
 
         try {
             byte[] payloadAsBytes = payloadToInfoRecord.getUTF8Bytes();
 
             String blockDigest = ChecksumCalculator.calculateSha1(new ByteArrayInputStream(payloadAsBytes));
+            /*
+            ANVLRecord namedFields = new ANVLRecord(1);
+            namedFields.addLabelValue("WARC-Filename", filename);
             namedFields.addLabelValue("WARC-Block-Digest", "sha1:" + blockDigest);
-
-            writer.writeWarcinfoRecord(datestring, "application/warc-fields", recordId, namedFields,
-                    (InputStream) new ByteArrayInputStream(payloadAsBytes), payloadAsBytes.length);
+            */
+            //writer.writeWarcinfoRecord(datestring, "application/warc-fields", recordId, namedFields,
+            //        (InputStream) new ByteArrayInputStream(payloadAsBytes), payloadAsBytes.length);
+            WARCRecordType type = WARCRecordType.valueOf("warcinfo");
+            WARCRecordInfo newRecord = new WARCRecordInfo();
+            newRecord.setType(type);
+            newRecord.setMimetype("application/warc-fields");
+            newRecord.setRecordId(recordId);
+            newRecord.setContentStream(new ByteArrayInputStream(payloadAsBytes));
+            newRecord.setContentLength(payloadAsBytes.length);
+            newRecord.addExtraHeader(WARCConstants.HEADER_KEY_FILENAME, filename);
+            newRecord.addExtraHeader(WARCConstants.HEADER_KEY_DATE, datestring);
+            newRecord.addExtraHeader(WARCConstants.HEADER_KEY_BLOCK_DIGEST, blockDigest);
+        	writer.writeRecord(newRecord);
         } catch (IOException e) {
             throw new IllegalState("Error inserting warcinfo record", e);
         }
@@ -138,7 +152,6 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         log.info("{} {}", fileToArchive, fileToArchive.length());
 
         String blockDigest = ChecksumCalculator.calculateSha1(fileToArchive);
-
         String create14DigitDate = ArchiveDateConverter.getWarcDateFormat().format(new Date());
         URI recordId;
         try {
@@ -149,14 +162,27 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         InputStream in = null;
         try {
             in = new FileInputStream(fileToArchive);
+            /*
             ANVLRecord namedFields = new ANVLRecord(3);
-
             namedFields.addLabelValue(WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
             namedFields.addLabelValue("WARC-Warcinfo-ID", generateEncapsulatedRecordID(warcInfoUID));
             namedFields.addLabelValue("WARC-IP-Address", SystemUtils.getLocalIP());
-
-            writer.writeResourceRecord(URL, create14DigitDate, mimetype, recordId, namedFields, in,
-                    fileToArchive.length());
+            */
+            //writer.writeResourceRecord(URL, create14DigitDate, mimetype, recordId, namedFields, in,
+            //        fileToArchive.length());
+            WARCRecordType type = WARCRecordType.valueOf("resource");
+            WARCRecordInfo newRecord = new WARCRecordInfo();
+            newRecord.setType(type);
+            newRecord.setUrl(URL);
+            newRecord.setMimetype(mimetype);
+            newRecord.setRecordId(recordId);
+            newRecord.setContentStream(in);
+            newRecord.setContentLength(fileToArchive.length());
+            newRecord.addExtraHeader(WARCConstants.HEADER_KEY_DATE, create14DigitDate);
+            newRecord.addExtraHeader(WARCConstants.HEADER_KEY_BLOCK_DIGEST, blockDigest);
+            newRecord.addExtraHeader("WARC-Warcinfo-ID", generateEncapsulatedRecordID(warcInfoUID));
+            newRecord.addExtraHeader(WARCConstants.HEADER_KEY_IP, SystemUtils.getLocalIP());
+        	writer.writeRecord(newRecord);
         } catch (FileNotFoundException e) {
             throw new IOFailure("Unable to open file: " + fileToArchive.getPath(), e);
         } catch (IOException e) {
@@ -185,17 +211,32 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         ByteArrayInputStream in = new ByteArrayInputStream(payload);
         String blockDigest = ChecksumCalculator.calculateSha1(in);
         in = new ByteArrayInputStream(payload); // A re-read is necessary here!
+        /*
         ANVLRecord namedFields = new ANVLRecord(3);
         namedFields.addLabelValue(WARCConstants.HEADER_KEY_BLOCK_DIGEST, "sha1:" + blockDigest);
         namedFields.addLabelValue("WARC-Warcinfo-ID", generateEncapsulatedRecordID(warcInfoUID));
         namedFields.addLabelValue("WARC-IP-Address", SystemUtils.getLocalIP());
+        */
         URI recordId;
         try {
             recordId = new URI("urn:uuid:" + UUID.randomUUID().toString());
         } catch (URISyntaxException e) {
             throw new IllegalState("Epic fail creating URI from UUID!");
         }
-        writer.writeResourceRecord(uri, create14DigitDate, contentType, recordId, namedFields, in, payload.length);
+        //writer.writeResourceRecord(uri, create14DigitDate, contentType, recordId, namedFields, in, payload.length);
+        WARCRecordType type = WARCRecordType.valueOf("resource");
+        WARCRecordInfo newRecord = new WARCRecordInfo();
+        newRecord.setType(type);
+        newRecord.setUrl(uri);
+        newRecord.setMimetype(contentType);
+        newRecord.setRecordId(recordId);
+        newRecord.setContentStream(in);
+        newRecord.setContentLength(payload.length);
+        newRecord.addExtraHeader(WARCConstants.HEADER_KEY_DATE, create14DigitDate);
+        newRecord.addExtraHeader(WARCConstants.HEADER_KEY_BLOCK_DIGEST, blockDigest);
+        newRecord.addExtraHeader("WARC-Warcinfo-ID", generateEncapsulatedRecordID(warcInfoUID));
+        newRecord.addExtraHeader(WARCConstants.HEADER_KEY_IP, SystemUtils.getLocalIP());
+        writer.writeRecord(newRecord);
     }
 
 }

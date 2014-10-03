@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import is.hi.bok.deduplicator.DeDuplicator;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -48,13 +49,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.httpclient.URIException;
 import org.apache.commons.io.IOUtils;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCRecord;
-import org.archive.net.UURI;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -73,7 +72,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.FixedUURI;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.XmlUtils;
@@ -93,7 +91,6 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import is.hi.bok.deduplicator.DeDuplicator;
 
 //import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 
@@ -702,28 +699,6 @@ public class HeritrixTests {
     public void testIfDefaultOrderXmlIsStillValid() {
         File order = TestInfo.DEFAULT_ORDERXML_FILE;
         validateOrder(order);
-    }
-
-    /**
-     * Verify, that FixedUURI solves bug 820, and that the class org.archive.net.UURI still has the problem. When bug
-     * 820 is resolved in the Heritrix class, this test will fail, and FixedUURI can be removed.
-     */
-    @Test
-    public void testBug820() throws URIException {
-        String troublesomeURL = "http/www.test.foo";
-        try {
-            new FixedUURI(troublesomeURL, false).getReferencedHost();
-        } catch (NullPointerException e) {
-            fail("Should not throw an NullPointerException here: " + e);
-        }
-
-        try {
-            new UURI(troublesomeURL, false) {
-            }.getReferencedHost();
-            fail("Bug 820 seems to be solved now. We can now remove FixedUURI");
-        } catch (NullPointerException e) {
-            // Expected
-        }
     }
 
     /**

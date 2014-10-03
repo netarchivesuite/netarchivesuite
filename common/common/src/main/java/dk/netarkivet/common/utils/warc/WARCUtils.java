@@ -185,7 +185,7 @@ public class WARCUtils {
                 throw new IllegalState("Epic fail creating URI from UUID!");
             }
 
-            ANVLRecord namedFields = new ANVLRecord();
+            //ANVLRecord namedFields = new ANVLRecord();
 
             // Copy to headers from the original WARC record to the new one.
             // Since we store the headers lowercase, we recase them.
