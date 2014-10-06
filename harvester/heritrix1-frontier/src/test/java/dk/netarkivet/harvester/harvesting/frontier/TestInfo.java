@@ -24,11 +24,23 @@ package dk.netarkivet.harvester.harvesting.frontier;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.net.URL;
 
 public class TestInfo {
 
-    // General dirs:
-    protected static final File BASEDIR = new File("tests/dk/netarkivet/harvester/harvesting/frontier/data");
+	protected static ClassLoader clsLdr = new TestInfo().getClass().getClassLoader();
+
+	public static final File getTestResourceFile(String fname) {
+	    URL url = clsLdr.getResource(fname);
+        String path = url.getFile();
+        path = path.replaceAll("%5b", "[");
+        path = path.replaceAll("%5d", "]");
+	    File file = new File(path);
+	    return file;
+	}
+
+	// General dirs:
+    protected static final File BASEDIR = getTestResourceFile("dk/netarkivet/harvester/harvesting/frontier/data");
 
     protected static final File WORKDIR = new File(BASEDIR, "working");
 
@@ -41,4 +53,5 @@ public class TestInfo {
             }
         });
     }
+
 }

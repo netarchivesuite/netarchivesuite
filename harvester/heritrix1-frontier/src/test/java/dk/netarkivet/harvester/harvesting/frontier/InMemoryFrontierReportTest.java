@@ -46,24 +46,22 @@ public class InMemoryFrontierReportTest {
     @Before
     public void setUp() throws Exception {
         rs.setUp();
-
         Settings.set(CommonSettings.CACHE_DIR, TestInfo.WORKDIR.getAbsolutePath());
     }
 
     @After
     public void tearDown() throws Exception {
-
         File[] testDirs = TestInfo.WORKDIR.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
                 return pathname.isDirectory();
             }
         });
-
-        for (File dir : testDirs) {
-            FileUtils.removeRecursively(dir);
+        if (testDirs != null) {
+            for (File dir : testDirs) {
+                FileUtils.removeRecursively(dir);
+            }
         }
-
         rs.tearDown();
     }
 
@@ -71,7 +69,6 @@ public class InMemoryFrontierReportTest {
     public void testAll() throws IOException {
         for (File reportFile : TestInfo.getFrontierReportSamples()) {
             InMemoryFrontierReport report = parse(reportFile);
-
             BufferedReader in = new BufferedReader(new FileReader(reportFile));
             String inLine = in.readLine(); // discard header line
             while ((inLine = in.readLine()) != null) {

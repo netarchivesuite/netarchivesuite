@@ -49,7 +49,6 @@ import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
 
@@ -406,10 +405,12 @@ public abstract class AbstractHarvestReport implements HarvestReport {
             // test if any annotations exist
             String[] annotations = parts[ANNOTATION_PART_INDEX].split(",");
             for (String annotation : annotations) {
-                if (annotation.trim().startsWith(ContentSizeAnnotationPostProcessor.CONTENT_SIZE_ANNOTATION_PREFIX)) {
+            	// ContentSizeAnnotationPostProcessor.CONTENT_SIZE_ANNOTATION_PREFIX
+                if (annotation.trim().startsWith(Heritrix1Constants.CONTENT_SIZE_ANNOTATION_PREFIX)) {
                     try {
+                    	// ContentSizeAnnotationPostProcessor.CONTENT_SIZE_ANNOTATION_PREFIX
                         byteCounter = Long.parseLong(annotation
-                                .substring(ContentSizeAnnotationPostProcessor.CONTENT_SIZE_ANNOTATION_PREFIX.length()));
+                                .substring(Heritrix1Constants.CONTENT_SIZE_ANNOTATION_PREFIX.length()));
                     } catch (NumberFormatException e) {
                         throw new ArgumentNotValid("Unparsable annotation in field 12 of crawl.log: '"
                                 + parts[ANNOTATION_PART_INDEX] + "'.", e);

@@ -1,0 +1,10 @@
+/* AUTOMATICALLY GENERATED ON Tue Jun 15 12:31:18 CEST 2010*/
+/* DO NOT EDIT */
+
+grant {
+  permission java.security.AllPermission;
+  permission java.io.FilePermission
+	"<<ALL FILES>>", "read, write, delete, execute";
+};
+
+

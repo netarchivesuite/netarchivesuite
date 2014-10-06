@@ -135,6 +135,60 @@
         <groupId>org.netpreserve.commons</groupId>
         <artifactId>webarchive-commons</artifactId>
         <version>${webarchive-commons.version}</version>
+        <exclusions>
+          <!--exclusion>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+          </exclusion-->
+          <exclusion>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.htmlparser</groupId>
+            <artifactId>htmlparser</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.googlecode.juniversalchardet</groupId>
+            <artifactId>juniversalchardet</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.pig</groupId>
+            <artifactId>pig</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.gnu.inet</groupId>
+            <artifactId>libidn</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>dsiutils</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+          </exclusion>
+        </exclusions> 
       </dependency>
 
       <dependency>
