@@ -32,7 +32,6 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,7 +40,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -52,9 +50,6 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.utils.DomainUtils;
-import dk.netarkivet.common.utils.NotificationType;
-import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -254,10 +249,10 @@ public class Job implements Serializable, JobInfo {
         }
 
         // setup initial members
-        domainConfigurationMap = new HashMap<String, String>();
+        domainConfigurationMap = new HashMap<>();
         origHarvestDefinitionID = harvestID;
         orderXMLname = cfg.getOrderXmlName();
-        this.orderXMLdoc = orderXMLdoc;//TemplateDAO.getInstance().read(cfg.getOrderXmlName()).getTemplate();
+        this.orderXMLdoc = orderXMLdoc;
 
         setHarvestChannel(channel);
 
@@ -274,12 +269,8 @@ public class Job implements Serializable, JobInfo {
         minCountObjects = expectation;
         this.harvestNum = harvestNum;
 
-        // ingest the configuration just as any other configuration
-        // The seedlist, configuration map, and max/min limits are changed
-        // as result of this method-call.
         addConfiguration(cfg);
 
-        // Set MaxJobrunningTime for this job
         setMaxJobRunningTime(forceMaxJobRunningTime);
         setArchiveFormatInTemplate(Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT));
         status = JobStatus.NEW;
@@ -342,6 +333,9 @@ public class Job implements Serializable, JobInfo {
      */
     public void addConfiguration(DomainConfiguration cfg) {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
+        if (domainConfigurationMap.containsKey(cfg.getDomainName())) {
+            throw new ArgumentNotValid("Job already has a configuration for Domain " + cfg.getDomainName());
+        }
 
         if (log.isTraceEnabled()) {
             log.trace("Adding configuration '{}' to job '{}'", cfg.toString(), cfg.getName());
@@ -353,13 +347,11 @@ public class Job implements Serializable, JobInfo {
             throw new IllegalState(msg);
         }
 
-        // Check orderxml-name
         if (!cfg.getOrderXmlName().equals(getOrderXMLName())) {
             throw new ArgumentNotValid("Job requires the orderxml file:'" + getOrderXMLName() + "' not:'"
                     + cfg.getOrderXmlName() + "' used by the configuration:'" + cfg.getName());
         }
 
-        // Add configuration in map
         domainConfigurationMap.put(cfg.getDomainName(), cfg.getName());
 
         // Add the seeds from the configuration to the Job seeds.
@@ -522,9 +514,7 @@ public class Job implements Serializable, JobInfo {
     public void setActualStart(Date actualStart) {
         ArgumentNotValid.checkNotNull(actualStart, "actualStart");
         if (actualStop != null && actualStop.before(actualStart)) {
-            String errorMsg = "Start time (" + actualStart + ") is after end time: " + actualStop;
-            log.error(errorMsg);
-            NotificationsFactory.getInstance().notify(errorMsg, NotificationType.ERROR);
+            throw new ArgumentNotValid("Start time (" + actualStart + ") is after end time: " + actualStop);
         }
         this.actualStart = (Date) actualStart.clone();
     }
@@ -534,18 +524,15 @@ public class Job implements Serializable, JobInfo {
      * before actualStart.
      *
      * @param actualStop A Date object representing the time when this job was stopped.
+     * @throws ArgumentNotValid
      */
-    public void setActualStop(Date actualStop) {
+    public void setActualStop(Date actualStop) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(actualStop, "actualStop");
         if (actualStart == null) {
-            String warnMsg = "Value of actualStart is null";
-            log.warn(warnMsg);
-            NotificationsFactory.getInstance().notify(warnMsg, NotificationType.WARNING);
+            throw new ArgumentNotValid("actualStart must be defined before setting actualStop");
         }
-        if (actualStart != null && actualStop.before(actualStart)) {
-            String errorMsg = "End time (" + actualStop + ") is before start time: " + actualStart;
-            log.warn(errorMsg);
-            NotificationsFactory.getInstance().notify(errorMsg, NotificationType.WARNING);
+        if (actualStop.before(actualStart)) {
+            throw new ArgumentNotValid("End time (" + actualStop + ") is before start time: " + actualStart);
         }
         this.actualStop = (Date) actualStop.clone();
     }
@@ -576,59 +563,6 @@ public class Job implements Serializable, JobInfo {
      */
     public Document[] getSettingsXMLdocs() {
         return settingsXMLdocs;
-    }
-
-    /**
-     * Returns a list of sorted seeds for this job. The sorting is by domain, and inside each domain, the list is sorted
-     * by url
-     *
-     * @return a list of sorted seeds for this job.
-     */
-    public List<String> getSortedSeedList() {
-        Map<String, Set<String>> urlMap = new HashMap<String, Set<String>>();
-        for (String seed : seedListSet) {
-            String url;
-            // Assume the protocol is http://, if it is missing
-            if (!seed.matches(Constants.PROTOCOL_REGEXP)) {
-                url = "http://" + seed;
-            } else {
-                url = seed;
-            }
-            String domain = getDomain(url);
-            if (domain == null) {
-                // stop processing this url, and continue to the next seed
-                continue;
-            }
-            Set<String> set;
-            if (urlMap.containsKey(domain)) {
-                set = urlMap.get(domain);
-            } else {
-                set = new TreeSet<String>();
-                urlMap.put(domain, set);
-            }
-            set.add(seed);
-
-        }
-        List<String> result = new ArrayList<String>();
-        for (Set<String> set : urlMap.values()) {
-            result.addAll(set);
-        }
-        return result;
-    }
-
-    /**
-     * Get the domain, that the given URL belongs to.
-     *
-     * @param url an URL
-     * @return the domain, that the given URL belongs to, or null if unable to do so.
-     */
-    private String getDomain(String url) {
-        try {
-            URL uri = new URL(url);
-            return DomainUtils.domainNameFromHostname(uri.getHost());
-        } catch (MalformedURLException e) {
-            throw new ArgumentNotValid("The string '" + url + "' is not a valid URL");
-        }
     }
 
     /**
@@ -810,7 +744,7 @@ public class Job implements Serializable, JobInfo {
      * @param maxObjectsPerDomain The forceMaxObjectsPerDomain to set. 0 means no limit.
      * @throws IOFailure Thrown from auxiliary method editOrderXML_maxObjectsPerDomain.
      */
-    private void setMaxObjectsPerDomain(long maxObjectsPerDomain) {
+    protected void setMaxObjectsPerDomain(long maxObjectsPerDomain) {
         if (!underConstruction) {
             final String msg = "Cannot modify job " + this + " as it is no longer under construction";
             log.debug(msg);
@@ -830,7 +764,7 @@ public class Job implements Serializable, JobInfo {
      *
      * @param maxBytesPerDomain The maxBytesPerDomain to set, or -1 for no limit.
      */
-    private void setMaxBytesPerDomain(long maxBytesPerDomain) {
+    protected void setMaxBytesPerDomain(long maxBytesPerDomain) {
         if (!underConstruction) {
             final String msg = "Cannot modify job " + this + " as it is no longer under construction";
             log.debug(msg);
@@ -849,7 +783,7 @@ public class Job implements Serializable, JobInfo {
      *
      * @param maxJobRunningTime The maxJobRunningTime in seconds to set, or 0 for no limit.
      */
-    private void setMaxJobRunningTime(long maxJobRunningTime) {
+    protected void setMaxJobRunningTime(long maxJobRunningTime) {
         if (!underConstruction) {
             final String msg = "Cannot modify job " + this + " as it is no longer under construction";
             log.debug(msg);

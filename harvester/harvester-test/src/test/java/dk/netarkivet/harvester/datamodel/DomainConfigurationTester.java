@@ -346,4 +346,11 @@ public class DomainConfigurationTester extends DataModelTestCase {
                 "DefaultDomain", "defaultdomain.org", new DomainHistory(),
                 new ArrayList<String>(), Arrays.asList(new SeedList[] {seedList}), new ArrayList<Password>());
     }
+
+    public static DomainConfiguration createDefaultDomainConfiguration(String name) {
+        SeedList seedList = new SeedList("SeedList1", "netarchivesuite.org");
+        return new DomainConfiguration(
+                name, name, new DomainHistory(),
+                new ArrayList<String>(), Arrays.asList(new SeedList[] {seedList}), new ArrayList<Password>());
+    }
 }
