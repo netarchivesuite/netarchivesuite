@@ -49,8 +49,10 @@ import org.mockito.ArgumentCaptor;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.AliasInfo;
+import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -128,7 +130,8 @@ public class JobDispatcherTest {
     public void testSubmitNewJobsMakesDuplicateReductionInfo() throws DocumentException {
         prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
         Document doc = OrderXmlBuilder.create().enableDeduplication().getOrderXml();
-        when(jobMock.getOrderXMLdoc()).thenReturn(doc);
+        HeritrixTemplate h1temp = new H1HeritrixTemplate(doc);
+        when(jobMock.getOrderXMLdoc()).thenReturn(h1temp);
         List<Long> jobIDsForDuplicateReduction = Arrays.asList(new Long[] {1L});
         when(jobDAO.getJobIDsForDuplicateReduction(jobMock.getJobID())).thenReturn(jobIDsForDuplicateReduction);
 
@@ -198,7 +201,8 @@ public class JobDispatcherTest {
         Job job = mock(Job.class);
         when(job.getJobID()).thenReturn(jobID);
         when(job.getOrigHarvestDefinitionID()).thenReturn(9L);
-        when(job.getOrderXMLdoc()).thenReturn(new DefaultDocument());
+        when(job.getOrderXMLdoc()).thenReturn(
+        		new H1HeritrixTemplate(new DefaultDocument())); //FIXME only works for H1 templates
         return job;
     }
 

@@ -109,7 +109,7 @@ public class Job implements Serializable, JobInfo {
     /** The name of the harvest template used by the job. */
     private String orderXMLname;
     /** The harvest template used by the job. */
-    private Document orderXMLdoc;
+    private HeritrixTemplate orderXMLdoc;
     /** The list of Heritrix settings files. */
     private File[] settingsXMLfiles;
     /** The corresponding Dom4j Documents for these files. */
@@ -261,7 +261,7 @@ public class Job implements Serializable, JobInfo {
         domainConfigurationMap = new HashMap<String, String>();
         origHarvestDefinitionID = harvestID;
         orderXMLname = cfg.getOrderXmlName();
-        orderXMLdoc = TemplateDAO.getInstance().read(cfg.getOrderXmlName()).getTemplate();
+        orderXMLdoc = TemplateDAO.getInstance().read(cfg.getOrderXmlName());
 
         this.channel = channel.getName();
         this.isSnapshot = channel.isSnapshot();
@@ -300,7 +300,7 @@ public class Job implements Serializable, JobInfo {
             log.debug(msg);
             throw new IllegalState(msg);
         }
-        HeritrixTemplate.editOrderXML_ArchiveFormat(orderXMLdoc, archiveFormat);
+        orderXMLdoc.setArchiveFormat(archiveFormat);
     }
 
     /**
@@ -322,7 +322,7 @@ public class Job implements Serializable, JobInfo {
      */
     Job(Long harvestID, Map<String, String> configurations, String channel, boolean snapshot,
             long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain, long forceMaxJobRunningTime, JobStatus status,
-            String orderXMLname, Document orderXMLdoc, String seedlist, int harvestNum, Long continuationOf) {
+            String orderXMLname, HeritrixTemplate orderXMLdoc, String seedlist, int harvestNum, Long continuationOf) {
         origHarvestDefinitionID = harvestID;
         domainConfigurationMap = configurations;
         this.channel = channel;
@@ -382,9 +382,9 @@ public class Job implements Serializable, JobInfo {
      * Reads a list of all active global crawler trap expressions from the database and adds them to the crawl template
      * for this job.
      */
-    private void addGlobalCrawlerTraps(Document orderXmlDoc) {
+    private void addGlobalCrawlerTraps(HeritrixTemplate orderXmlDoc) {
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
-        HeritrixTemplate.editOrderXMLAddCrawlerTraps(orderXmlDoc, Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
+        orderXmlDoc.insertCrawlerTraps(Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
                 dao.getAllActiveTrapExpressions());
     }
 
@@ -469,7 +469,7 @@ public class Job implements Serializable, JobInfo {
             }
         }
 
-        HeritrixTemplate.editOrderXMLAddPerDomainCrawlerTraps(orderXMLdoc, cfg);
+        orderXMLdoc.editOrderXMLAddPerDomainCrawlerTraps(cfg);
 
         // TODO update limits in settings files - see also bug 269
 
@@ -618,7 +618,7 @@ public class Job implements Serializable, JobInfo {
      *
      * @param doc A orderxml to be used by this job
      */
-    public void setOrderXMLDoc(Document doc) {
+    public void setOrderXMLDoc(HeritrixTemplate doc) {
         ArgumentNotValid.checkNotNull(doc, "doc");
         this.orderXMLdoc = doc;
     }
@@ -628,7 +628,7 @@ public class Job implements Serializable, JobInfo {
      *
      * @return the XML as a org.dom4j.Document
      */
-    public Document getOrderXMLdoc() {
+    public HeritrixTemplate getOrderXMLdoc() {
         return orderXMLdoc;
     }
 
@@ -753,9 +753,9 @@ public class Job implements Serializable, JobInfo {
         }
 
         if ((this.status == JobStatus.NEW || this.status == JobStatus.RESUBMITTED) && newStatus == JobStatus.SUBMITTED) {
-            HeritrixTemplate.editOrderXML_configureQuotaEnforcer(orderXMLdoc, maxObjectsIsSetByQuotaEnforcer,
-                    forceMaxBytesPerDomain, forceMaxObjectsPerDomain);
+            orderXMLdoc.configureQuotaEnforcer(maxObjectsIsSetByQuotaEnforcer, forceMaxBytesPerDomain, forceMaxObjectsPerDomain);
         }
+            
 
         if (this.status == JobStatus.SUBMITTED && newStatus == JobStatus.STARTED) {
             setActualStart(new Date());
@@ -881,9 +881,11 @@ public class Job implements Serializable, JobInfo {
             log.debug(msg);
             throw new IllegalState(msg);
         }
+        
         this.forceMaxObjectsPerDomain = maxObjectsPerDomain;
-        HeritrixTemplate.editOrderXML_maxObjectsPerDomain(orderXMLdoc, maxObjectsPerDomain,
-                maxObjectsIsSetByQuotaEnforcer);
+        orderXMLdoc.setMaxObjectsPerDomain(maxObjectsPerDomain); // FIXME? add argument to maxObjectsIsSetByQuotaEnforcer to method setMaxObjectsPerDomain  
+        //orderXMLdoc.editOrderXML_maxObjectsPerDomain(orderXMLdoc, maxObjectsPerDomain,
+        //        maxObjectsIsSetByQuotaEnforcer);
 
         if (0L == maxObjectsPerDomain && 0L != forceMaxBytesPerDomain) {
             setMaxBytesPerDomain(0L);
@@ -902,7 +904,8 @@ public class Job implements Serializable, JobInfo {
             throw new IllegalState(msg);
         }
         this.forceMaxBytesPerDomain = maxBytesPerDomain;
-        HeritrixTemplate.editOrderXML_maxBytesPerDomain(orderXMLdoc, maxBytesPerDomain);
+        orderXMLdoc.setMaxBytesPerDomain(maxBytesPerDomain);
+        //H1HeritrixTemplate.editOrderXML_maxBytesPerDomain(orderXMLdoc, maxBytesPerDomain);
 
         if (0L == maxBytesPerDomain && 0L != forceMaxObjectsPerDomain) {
             setMaxObjectsPerDomain(0L);
@@ -921,7 +924,7 @@ public class Job implements Serializable, JobInfo {
             throw new IllegalState(msg);
         }
         this.forceMaxRunningTime = maxJobRunningTime;
-        HeritrixTemplate.editOrderXML_maxJobRunningTime(orderXMLdoc, maxJobRunningTime);
+        orderXMLdoc.setMaxJobRunningTime(maxJobRunningTime);
     }
 
     /**

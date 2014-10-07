@@ -182,7 +182,8 @@ public class DataModelTestCase {
 
         Map<String, String> dcmap = new HashMap<String, String>();
         dcmap.put("netarkivet.dk", hd1.getDomainConfigurations().next().getName());
-        Document defaultOrderXmlDocument = TemplateDAO.getInstance().read("default_orderxml").getTemplate();
+        /** FIXME is this code still used. */
+        HeritrixTemplate defaultOrderXmlDocument = TemplateDAO.getInstance().read("default_orderxml");
         Job j2 = getNewNetarkivetJob(hd1, dcmap, false, defaultOrderXmlDocument, 0);
 
         JobDAO.getInstance().create(j2);
@@ -220,7 +221,7 @@ public class DataModelTestCase {
     }
 
     private static Job getNewNetarkivetJob(HarvestDefinition hd, Map<String, String> dcmap, boolean snapshot,
-            Document defaultOrderXmlDocument, int harvestNum) {
+            HeritrixTemplate defaultOrderXmlDocument, int harvestNum) {
         Job j = new Job(hd.getOid(), dcmap, "test", snapshot, Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", harvestNum, null);

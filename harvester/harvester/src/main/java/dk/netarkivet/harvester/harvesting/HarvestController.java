@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.dom4j.Document;
-import org.dom4j.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,7 +155,7 @@ public class HarvestController {
 
         files.writeOrderXml(job.getOrderXMLdoc());
         // Only retrieve index if deduplication is not disabled in the template.
-        if (HeritrixTemplate.isDeduplicationEnabledInTemplate(job.getOrderXMLdoc())) {
+        if (job.getOrderXMLdoc().IsDeduplicationEnabled()) {
             log.debug("Deduplication enabled. Fetching deduplication index..");
             files.setIndexDir(fetchDeduplicateIndex(metadataEntries));
         } else {
@@ -237,17 +235,10 @@ public class HarvestController {
      * @param files Heritrix files related to this harvestjob.
      */
     private void insertHeritrixRecoverPathInOrderXML(Job job, HeritrixFiles files) {
-        Document order = job.getOrderXMLdoc();
-        final String RECOVERLOG_PATH_XPATH = "/crawl-order/controller/string[@name='recover-path']";
-        Node orderXmlNode = order.selectSingleNode(RECOVERLOG_PATH_XPATH);
-        if (orderXmlNode != null) {
-            orderXmlNode.setText(files.getRecoverBackupGzFile().getAbsolutePath());
-            log.debug("The Heritrix recover path now refers to '{}'.", files.getRecoverBackupGzFile().getAbsolutePath());
-            job.setOrderXMLDoc(order);
-        } else {
-            throw new IOFailure("Unable to locate the '" + RECOVERLOG_PATH_XPATH + "' element in order.xml: "
-                    + order.asXML());
-        }
+    	
+        HeritrixTemplate temp = job.getOrderXMLdoc(); 
+    	temp.setRecoverlogNode(files.getRecoverBackupGzFile());
+    	job.setOrderXMLDoc(temp); // Update template associated with job
     }
 
     /**

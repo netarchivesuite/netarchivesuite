@@ -47,7 +47,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
+import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobUtils;
@@ -175,7 +175,7 @@ public class HarvestControllerTester {
         FileAsserts.assertFileContains("Should have correct order.xml file", "OneLevel-order", orderXml);
 
         // Verify that order.xml is a valid HeritrixTemplate
-        new HeritrixTemplate(XmlUtils.getXmlDoc(orderXml), true);
+        new H1HeritrixTemplate(XmlUtils.getXmlDoc(orderXml), true);
 
         FileAsserts.assertFileContains("Should have correct seeds.txt file", j.getSeedListAsString(), seedsTxt);
         FileAsserts.assertFileContains("Should have URL in file", "metadata://netarkivet.dk", metadataFile);

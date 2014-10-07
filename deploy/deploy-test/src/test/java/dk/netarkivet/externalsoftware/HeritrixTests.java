@@ -78,7 +78,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
-import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
+import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncherFactory;
@@ -609,7 +609,7 @@ public class HeritrixTests {
         // Not sure what the bytelimit should be to be consistent with what we presently expect Heritrix
         // to do
         long byteLimit = 500000;
-        String xpath = HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
+        String xpath = H1HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
         Node groupMaxSuccessKbNode = orderDocument.selectSingleNode(xpath);
         if (groupMaxSuccessKbNode != null) {
             // Divide by 1024 since Heritrix uses KB rather than bytes,

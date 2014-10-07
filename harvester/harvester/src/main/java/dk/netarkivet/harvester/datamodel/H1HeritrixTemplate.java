@@ -22,6 +22,10 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +37,7 @@ import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +48,6 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
 /**
  * Class encapsulating the Heritrix order.xml. Enables verification that dom4j Document obey the constraints required by
@@ -52,10 +56,12 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
  * The class assumes the type of order.xml used in configuring Heritrix version 1.10+. Information about the Heritrix
  * crawler, and its processes and modules can be found in the Heritrix developer and user manuals found on <a
  * href="http://crawler.archive.org">http://crawler.archive.org<a/>
+ * 
+ * 
  */
-public class HeritrixTemplate {
+public class H1HeritrixTemplate extends HeritrixTemplate {
 
-    private static final Logger log = LoggerFactory.getLogger(HeritrixTemplate.class);
+    private static final Logger log = LoggerFactory.getLogger(H1HeritrixTemplate.class);
 
     /** the dom4j Document hiding behind this instance of HeritrixTemplate. */
     private Document template;
@@ -117,13 +123,13 @@ public class HeritrixTemplate {
     /**
      * Xpath for the deduplicator index directory node in order.xml documents.
      */
-    public static final String DEDUPLICATOR_INDEX_LOCATION_XPATH = HeritrixTemplate.DEDUPLICATOR_XPATH
+    public static final String DEDUPLICATOR_INDEX_LOCATION_XPATH = H1HeritrixTemplate.DEDUPLICATOR_XPATH
             + "/string[@name='index-location']";
 
     /**
      * Xpath for the boolean telling if the deduplicator is enabled in order.xml documents.
      */
-    public static final String DEDUPLICATOR_ENABLED = HeritrixTemplate.DEDUPLICATOR_XPATH + "/boolean[@name='enabled']";
+    public static final String DEDUPLICATOR_ENABLED = H1HeritrixTemplate.DEDUPLICATOR_XPATH + "/boolean[@name='enabled']";
 
     /** Xpath for the 'disk-path' in the order.xml . */
     public static final String DISK_PATH_XPATH = "//crawl-order/controller" + "/string[@name='disk-path']";
@@ -223,7 +229,7 @@ public class HeritrixTemplate {
      * @throws ArgumentNotValid if doc is null, or verify is true and doc does not obey the constraints required by our
      * software.
      */
-    public HeritrixTemplate(Document doc, boolean verify) {
+    public H1HeritrixTemplate(Document doc, boolean verify) {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
         String xpath;
         Node node;
@@ -276,11 +282,15 @@ public class HeritrixTemplate {
      *
      * @param doc
      */
-    public HeritrixTemplate(Document doc) {
+    public H1HeritrixTemplate(Document doc) {
         this(doc, true);
     }
 
-    /**
+    public H1HeritrixTemplate(String templateAsString) {
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
      * return the template.
      *
      * @return the template
@@ -325,7 +335,7 @@ public class HeritrixTemplate {
         // placed before (cf. issue NAS-2205)
         // If no such rule exists then we append the crawler traps as to the existing decideRuleds.
 
-        Node rulesMapNode = orderXMLdoc.selectSingleNode(HeritrixTemplate.DECIDERULES_MAP_XPATH);
+        Node rulesMapNode = orderXMLdoc.selectSingleNode(H1HeritrixTemplate.DECIDERULES_MAP_XPATH);
         if (rulesMapNode == null || !(rulesMapNode instanceof Element)) {
             throw new IllegalState("Unable to update order.xml document. It does not have the right form to add"
                     + "crawler trap deciderules.");
@@ -338,7 +348,7 @@ public class HeritrixTemplate {
 
         // If an acceptiIfPrerequisite node exists, detach and insert before it
         Node acceptIfPrerequisiteNode = orderXMLdoc
-                .selectSingleNode(HeritrixTemplate.DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH);
+                .selectSingleNode(H1HeritrixTemplate.DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH);
         if (acceptIfPrerequisiteNode != null) {
             List<Node> elements = rulesMap.elements();
             int insertPosition = elements.indexOf(acceptIfPrerequisiteNode);
@@ -384,7 +394,7 @@ public class HeritrixTemplate {
         // Get the regexps to exclude
         List<String> crawlerTraps = cfg.getCrawlertraps();
         String elementName = cfg.getDomainName();
-        HeritrixTemplate.editOrderXMLAddCrawlerTraps(orderXmlDoc, elementName, crawlerTraps);
+        H1HeritrixTemplate.editOrderXMLAddCrawlerTraps(orderXmlDoc, elementName, crawlerTraps);
     }
 
     /**
@@ -411,54 +421,54 @@ public class HeritrixTemplate {
 
         if (arcMode) {
             // enable ARC writing in Heritrix and disable WARC writing if needed.
-            if (orderXML.selectSingleNode(HeritrixTemplate.ARCSDIR_XPATH) != null
-                    && orderXML.selectSingleNode(HeritrixTemplate.ARCS_ENABLED_XPATH) != null) {
-                XmlUtils.setNode(orderXML, HeritrixTemplate.ARCSDIR_XPATH,
+            if (orderXML.selectSingleNode(H1HeritrixTemplate.ARCSDIR_XPATH) != null
+                    && orderXML.selectSingleNode(H1HeritrixTemplate.ARCS_ENABLED_XPATH) != null) {
+                XmlUtils.setNode(orderXML, H1HeritrixTemplate.ARCSDIR_XPATH,
                         dk.netarkivet.common.Constants.ARCDIRECTORY_NAME);
-                XmlUtils.setNode(orderXML, HeritrixTemplate.ARCS_ENABLED_XPATH, "true");
-                if (orderXML.selectSingleNode(HeritrixTemplate.WARCS_ENABLED_XPATH) != null) {
-                    XmlUtils.setNode(orderXML, HeritrixTemplate.WARCS_ENABLED_XPATH, "false");
+                XmlUtils.setNode(orderXML, H1HeritrixTemplate.ARCS_ENABLED_XPATH, "true");
+                if (orderXML.selectSingleNode(H1HeritrixTemplate.WARCS_ENABLED_XPATH) != null) {
+                    XmlUtils.setNode(orderXML, H1HeritrixTemplate.WARCS_ENABLED_XPATH, "false");
                 }
             } else {
                 throw new IllegalState("Unable to choose ARC as Heritrix archive format because "
                         + " one of the following xpaths are invalid in the given order.xml: "
-                        + HeritrixTemplate.ARCSDIR_XPATH + "," + HeritrixTemplate.ARCS_ENABLED_XPATH);
+                        + H1HeritrixTemplate.ARCSDIR_XPATH + "," + H1HeritrixTemplate.ARCS_ENABLED_XPATH);
             }
         } else if (warcMode) { // WARCmode
             // enable ARC writing in Heritrix and disable WARC writing if needed.
-            if (orderXML.selectSingleNode(HeritrixTemplate.WARCSDIR_XPATH) != null
-                    && orderXML.selectSingleNode(HeritrixTemplate.WARCS_ENABLED_XPATH) != null) {
-                XmlUtils.setNode(orderXML, HeritrixTemplate.WARCSDIR_XPATH,
+            if (orderXML.selectSingleNode(H1HeritrixTemplate.WARCSDIR_XPATH) != null
+                    && orderXML.selectSingleNode(H1HeritrixTemplate.WARCS_ENABLED_XPATH) != null) {
+                XmlUtils.setNode(orderXML, H1HeritrixTemplate.WARCSDIR_XPATH,
                         dk.netarkivet.common.Constants.WARCDIRECTORY_NAME);
-                XmlUtils.setNode(orderXML, HeritrixTemplate.WARCS_ENABLED_XPATH, "true");
-                if (orderXML.selectSingleNode(HeritrixTemplate.ARCS_ENABLED_XPATH) != null) {
-                    XmlUtils.setNode(orderXML, HeritrixTemplate.ARCS_ENABLED_XPATH, "false");
+                XmlUtils.setNode(orderXML, H1HeritrixTemplate.WARCS_ENABLED_XPATH, "true");
+                if (orderXML.selectSingleNode(H1HeritrixTemplate.ARCS_ENABLED_XPATH) != null) {
+                    XmlUtils.setNode(orderXML, H1HeritrixTemplate.ARCS_ENABLED_XPATH, "false");
                 }
 
                 // Update the WARCWriterProcessorSettings with settings values
-                setIfFound(orderXML, HeritrixTemplate.WARCS_SKIP_IDENTICAL_DIGESTS_XPATH,
+                setIfFound(orderXML, H1HeritrixTemplate.WARCS_SKIP_IDENTICAL_DIGESTS_XPATH,
                         HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS,
                         Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS));
 
-                setIfFound(orderXML, HeritrixTemplate.WARCS_WRITE_METADATA_XPATH,
+                setIfFound(orderXML, H1HeritrixTemplate.WARCS_WRITE_METADATA_XPATH,
                         HarvesterSettings.HERITRIX_WARC_WRITE_METADATA,
                         Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA));
 
-                setIfFound(orderXML, HeritrixTemplate.WARCS_WRITE_REQUESTS_XPATH,
+                setIfFound(orderXML, H1HeritrixTemplate.WARCS_WRITE_REQUESTS_XPATH,
                         HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS,
                         Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS));
 
-                setIfFound(orderXML, HeritrixTemplate.WARCS_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS_XPATH,
+                setIfFound(orderXML, H1HeritrixTemplate.WARCS_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS_XPATH,
                         HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS,
                         Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS));
-                setIfFound(orderXML, HeritrixTemplate.WARCS_WRITE_REVISIT_FOR_NOT_MODIFIED_XPATH,
+                setIfFound(orderXML, H1HeritrixTemplate.WARCS_WRITE_REVISIT_FOR_NOT_MODIFIED_XPATH,
                         HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED,
                         Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED));
 
             } else {
                 throw new IllegalState("Unable to choose WARC as Heritrix archive format because "
                         + " one of the following xpaths are invalid in the given order.xml: "
-                        + HeritrixTemplate.WARCSDIR_XPATH + "," + HeritrixTemplate.WARCS_ENABLED_XPATH
+                        + H1HeritrixTemplate.WARCSDIR_XPATH + "," + H1HeritrixTemplate.WARCS_ENABLED_XPATH
                         + ". order.xml: " + orderXML.asXML());
             }
 
@@ -481,7 +491,7 @@ public class HeritrixTemplate {
      */
     public static void editOrderXML_maxJobRunningTime(Document orderXMLdoc, long maxJobRunningTime) {
         // get and set the "max-time-sec" node of the orderXMLdoc
-        String xpath = HeritrixTemplate.MAXTIMESEC_PATH_XPATH;
+        String xpath = H1HeritrixTemplate.MAXTIMESEC_PATH_XPATH;
         Node groupMaxTimeSecNode = orderXMLdoc.selectSingleNode(xpath);
         if (groupMaxTimeSecNode != null) {
             String currentMaxTimeSec = groupMaxTimeSecNode.getText();
@@ -506,8 +516,8 @@ public class HeritrixTemplate {
     public static void editOrderXML_maxObjectsPerDomain(Document orderXMLdoc, long forceMaxObjectsPerDomain,
             boolean maxObjectsIsSetByQuotaEnforcer) {
 
-        String xpath = (maxObjectsIsSetByQuotaEnforcer ? HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH
-                : HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
+        String xpath = (maxObjectsIsSetByQuotaEnforcer ? H1HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH
+                : H1HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
 
         Node orderXmlNode = orderXMLdoc.selectSingleNode(xpath);
         if (orderXmlNode != null) {
@@ -548,7 +558,7 @@ public class HeritrixTemplate {
                     || forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
         }
 
-        String xpath = HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
+        String xpath = H1HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
         Node qeNode = orderXMLdoc.selectSingleNode(xpath);
         if (qeNode != null) {
             qeNode.setText(Boolean.toString(quotaEnabled));
@@ -570,7 +580,7 @@ public class HeritrixTemplate {
      */
     public static void editOrderXML_maxBytesPerDomain(Document orderXMLdoc, long forceMaxBytesPerDomain) {
         // get and set the group-max-all-kb Node of the orderXMLdoc:
-        String xpath = HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
+        String xpath = H1HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
         Node groupMaxSuccessKbNode = orderXMLdoc.selectSingleNode(xpath);
         if (groupMaxSuccessKbNode != null) {
             if (forceMaxBytesPerDomain == 0) {
@@ -588,18 +598,9 @@ public class HeritrixTemplate {
         }
     }
 
-    /**
-     * Return true if the given order.xml file has deduplication enabled.
-     *
-     * @param doc An order.xml document
-     * @return True if Deduplicator is enabled.
-     */
-    public static boolean isDeduplicationEnabledInTemplate(Document doc) {
-        ArgumentNotValid.checkNotNull(doc, "Document doc");
-        Node xpathNode = doc.selectSingleNode(HeritrixTemplate.DEDUPLICATOR_ENABLED);
-        return xpathNode != null && xpathNode.getText().trim().equals("true");
-    }
-
+    
+    
+    
     /**
      * This method prepares the orderfile used by the Heritrix crawler. </p> 1. alters the orderfile in the
      * following-way: (overriding whatever is in the orderfile)</br>
@@ -619,20 +620,141 @@ public class HeritrixTemplate {
      * @throws IOFailure - When the orderfile could not be saved to disk When a specific node is not found in the
      * XML-document When the SAXReader cannot parse the XML
      */
-    public static void makeOrderfileReadyForHeritrix(HeritrixFiles files) throws IOFailure {
-        Document doc = XmlUtils.getXmlDoc(files.getOrderXmlFile());
-        XmlUtils.setNode(doc, HeritrixTemplate.DISK_PATH_XPATH, files.getCrawlDir().getAbsolutePath());
+    //public void makeOrderfileReadyForHeritrix(HeritrixFiles files) throws IOFailure {
+    
 
-        XmlUtils.setNodes(doc, HeritrixTemplate.ARCHIVEFILE_PREFIX_XPATH, files.getArchiveFilePrefix());
+	@Override
+	public boolean isValid() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-        XmlUtils.setNode(doc, HeritrixTemplate.SEEDS_FILE_XPATH, files.getSeedsTxtFile().getAbsolutePath());
+	@Override
+	public void configureQuotaEnforcer(boolean maxObjectsIsSetByQuotaEnforcer,
+			long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain) {
+		// TODO Auto-generated method stub
+		
+	}
 
-        if (isDeduplicationEnabledInTemplate(doc)) {
-            XmlUtils.setNode(doc, HeritrixTemplate.DEDUPLICATOR_INDEX_LOCATION_XPATH, files.getIndexDir()
-                    .getAbsolutePath());
+	@Override
+	public void setMaxBytesPerDomain(Long maxbytesL) {
+		// TODO Auto-generated method stub	
+	}
+
+	@Override
+	public Long getMaxBytesPerDomain() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setMaxObjectsPerDomain(Long maxobjectsL) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Long getMaxObjectsPerDomain() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+     * Return true if the templatefile has deduplication enabled.
+     *
+     * @return True if Deduplicator is enabled.
+     */
+	@Override
+	public boolean IsDeduplicationEnabled() {
+        Node xpathNode = template.selectSingleNode(H1HeritrixTemplate.DEDUPLICATOR_ENABLED);
+        return xpathNode != null && xpathNode.getText().trim().equals("true");
+	}
+
+	@Override
+	public void setArchiveFormat(String archiveFormat) {
+		
+		
+	}
+
+	@Override
+	public void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void writeTemplate(OutputStream os) throws IOException, ArgumentNotValid{
+		
+		XMLWriter writer;
+		try {
+			writer = new XMLWriter(os);
+			writer.write(this.template);
+		} catch (UnsupportedEncodingException e) {
+			String errMsg = "The encoding of this template is unsupported by this environment";
+			log.error(errMsg, e);
+			throw new ArgumentNotValid(errMsg, e);
+		} 
+	}
+	
+	public String getText()  {
+		return this.template.getText();
+	}
+
+	@Override
+	public void insertCrawlerTraps(String elementName, List<String> crawlertraps) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public boolean hasContent() {
+		return this.template.hasContent();
+	}
+
+	@Override
+	public void writeToFile(File orderXmlFile) {
+		XmlUtils.writeXmlToFile(this.template, orderXmlFile);
+	}
+
+	@Override
+	public void setRecoverlogNode(File recoverlogGzFile) {
+        final String RECOVERLOG_PATH_XPATH = "/crawl-order/controller/string[@name='recover-path']";
+        Node orderXmlNode = template.selectSingleNode(RECOVERLOG_PATH_XPATH);
+        if (orderXmlNode != null) {
+            orderXmlNode.setText(recoverlogGzFile.getAbsolutePath());
+            log.debug("The Heritrix recover path now refers to '{}'.", recoverlogGzFile.getAbsolutePath());
+        } else {
+            throw new IOFailure("Unable to locate the '" + RECOVERLOG_PATH_XPATH + "' element in order.xml: "
+                    + template.asXML());
         }
+	}
 
-        files.writeOrderXml(doc);
-    }
+	@Override
+	public void setDeduplicationIndexLocation(String absolutePath) {
+		XmlUtils.setNode(template, DEDUPLICATOR_INDEX_LOCATION_XPATH, absolutePath);		
+	}
 
+	@Override
+	public void setSeedsFilePath(String absolutePath) {
+		XmlUtils.setNode(template, SEEDS_FILE_XPATH, absolutePath);
+	}
+
+	@Override
+	public void setArchiveFilePrefix(String archiveFilePrefix) {
+		XmlUtils.setNodes(template, H1HeritrixTemplate.ARCHIVEFILE_PREFIX_XPATH, archiveFilePrefix);
+	}
+
+	@Override
+	public void setDiskPath(String absolutePath) {
+		XmlUtils.setNode(template, DISK_PATH_XPATH, absolutePath);
+	}
+
+	@Override
+	public void removeDeduplicatorIfPresent() {
+		Node xpathNode = template.selectSingleNode(DEDUPLICATOR_XPATH);
+	    if (xpathNode != null) {
+	        xpathNode.detach();
+	    }
+		
+	}	
+	
+	
 }

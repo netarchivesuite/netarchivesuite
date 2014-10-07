@@ -27,8 +27,6 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +35,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 
 /**
@@ -130,17 +128,21 @@ public class HeritrixFilesTester {
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        DocumentFactory docFactory = DocumentFactory.getInstance();
+        
+        //DocumentFactory docFactory = DocumentFactory.getInstance();
+        /*
         try {
             hf.writeOrderXml(docFactory.createDocument());
             fail("ArgumentNotValid exception with Document with no contents");
         } catch (ArgumentNotValid e) {
             // Expected
         }
+        */
 
         // test, that order xml is written, if argument is valid
 
-        Document doc = XmlUtils.getXmlDoc(TestInfo.ORDER_FILE);
+        //Document doc = XmlUtils.getXmlDoc(TestInfo.ORDER_FILE);
+        HeritrixTemplate doc = HeritrixTemplate.read(TestInfo.ORDER_FILE); 
         try {
             hf.writeOrderXml(doc);
         } catch (Exception e) {

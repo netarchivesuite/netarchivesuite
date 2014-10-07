@@ -29,8 +29,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.dom4j.Document;
-import org.dom4j.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -190,22 +188,20 @@ abstract class AbstractJobGenerator implements JobGenerator {
      * @param job the job
      */
     protected void editJobOrderXml(Job job) {
-        Document doc = job.getOrderXMLdoc();
+        HeritrixTemplate doc = job.getOrderXMLdoc();
         if (DEDUPLICATION_ENABLED) {
             // Check that the Deduplicator element is present in the
             // OrderXMl and enabled. If missing or disabled log a warning
-            if (!HeritrixTemplate.isDeduplicationEnabledInTemplate(doc)) {
+        	
+            if (!doc.IsDeduplicationEnabled()) {
                 log.warn("Unable to perform deduplication for this job as the required DeDuplicator element is "
                         + "disabled or missing from template");
             }
         } else {
             // Remove deduplicator Element from OrderXML if present
-            Node xpathNode = doc.selectSingleNode(HeritrixTemplate.DEDUPLICATOR_XPATH);
-            if (xpathNode != null) {
-                xpathNode.detach();
-                job.setOrderXMLDoc(doc);
-                log.info("Removed DeDuplicator element because Deduplication is disabled");
-            }
+        	doc.removeDeduplicatorIfPresent();
+        	job.setOrderXMLDoc(doc);
+	        log.info("Removed DeDuplicator element because Deduplication is disabled");   
         }
     }
 

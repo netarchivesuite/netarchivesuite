@@ -133,7 +133,7 @@ public class JobDBDAO extends JobDAO {
             statement.setLong(7, job.getMaxJobRunningTime());
             DBUtils.setStringMaxLength(statement, 8, job.getOrderXMLName(), Constants.MAX_NAME_SIZE, job,
                     "order.xml name");
-            final String orderreader = job.getOrderXMLdoc().asXML();
+            final String orderreader = job.getOrderXMLdoc().getXML();
             DBUtils.setClobMaxLength(statement, 9, orderreader, Constants.MAX_ORDERXML_SIZE, job, "order.xml");
             DBUtils.setClobMaxLength(statement, 10, job.getSeedListAsString(), Constants.MAX_COMBINED_SEED_LIST_SIZE,
                     job, "seedlist");
@@ -305,7 +305,7 @@ public class JobDBDAO extends JobDAO {
             statement.setLong(6, job.getMaxJobRunningTime());
             DBUtils.setStringMaxLength(statement, 7, job.getOrderXMLName(), Constants.MAX_NAME_SIZE, job,
                     "order.xml name");
-            final String orderreader = job.getOrderXMLdoc().asXML();
+            final String orderreader = job.getOrderXMLdoc().getXML();
             DBUtils.setClobMaxLength(statement, 8, orderreader, Constants.MAX_ORDERXML_SIZE, job, "order.xml");
             DBUtils.setClobMaxLength(statement, 9, job.getSeedListAsString(), Constants.MAX_COMBINED_SEED_LIST_SIZE,
                     job, "seedlist");
@@ -401,14 +401,14 @@ public class JobDBDAO extends JobDAO {
             long forceMaxRunningTime = result.getLong(6);
             String orderxml = result.getString(7);
 
-            Document orderXMLdoc = null;
+            HeritrixTemplate orderXMLdoc = null;
 
             boolean useClobs = DBSpecifics.getInstance().supportsClob();
             if (useClobs) {
                 Clob clob = result.getClob(8);
-                orderXMLdoc = getOrderXMLdocFromClob(clob);
+                orderXMLdoc = HeritrixTemplate.getOrderXMLdocFromClob(clob);
             } else {
-                orderXMLdoc = XmlUtils.documentFromString(result.getString(8));
+                orderXMLdoc = HeritrixTemplate.read(result.getString(8));
             }
             String seedlist = "";
             if (useClobs) {
@@ -494,33 +494,16 @@ public class JobDBDAO extends JobDAO {
                     + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
-        } catch (DocumentException e) {
+        }
+        /* catch (DocumentException e) {
             String message = "XML error reading job " + jobID + " in database";
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
+        */
     }
 
-    /**
-     * Try to extract an orderxmldoc from a given Clob. This method is used by the read() method, which catches the
-     * thrown DocumentException.
-     *
-     * @param clob a given Clob returned from the database
-     * @return a Document object based on the data in the Clob
-     * @throws SQLException If data from the clob cannot be fetched.
-     * @throws DocumentException If unable to create a Document object based on the data in the Clob
-     */
-    private Document getOrderXMLdocFromClob(Clob clob) throws SQLException, DocumentException {
-        Document doc;
-        try {
-            SAXReader reader = new SAXReader();
-            doc = reader.read(clob.getCharacterStream());
-        } catch (DocumentException e) {
-            log.warn("Failed to read the contents of the clob as XML:" + clob.getSubString(1, (int) clob.length()));
-            throw e;
-        }
-        return doc;
-    }
+    
 
     /**
      * Return a list of all jobs with the given status, ordered by id.
@@ -801,7 +784,7 @@ public class JobDBDAO extends JobDAO {
                 + " WHERE currenthd.harvest_id=?" + " AND fullharvests.harvest_id" + "=harvestdefinitions.harvest_id"
                 + " AND harvestdefinitions.submitted<currenthd.submitted" + " ORDER BY harvestdefinitions.submitted "
                 + HarvestStatusQuery.SORT_ORDER.DESC.name(), firstHarvest);
-        // Follow the chain of orginating IDs back
+        // Follow the chain of originating IDs back
         // FIXME Rewrite this loop!
         for (Long originatingHarvest = olderHarvest; originatingHarvest != null; originatingHarvest = DBUtils
                 .selectFirstLongValueIfAny(connection,

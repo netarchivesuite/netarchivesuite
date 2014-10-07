@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StreamUtils;
-import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 
 /**
  * This class encapsulates all the files that Heritrix gets from our system, and all files we read from Heritrix.
@@ -203,11 +202,11 @@ public class HeritrixFiles {
      * @param doc The intended content of order.xml
      * @throws ArgumentNotValid, if doc is null or empty
      */
-    public void writeOrderXml(Document doc) {
+    public void writeOrderXml(HeritrixTemplate doc) {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
-        ArgumentNotValid.checkTrue(doc.hasContent(), "XML document must not be empty");
+        ArgumentNotValid.checkTrue(doc.hasContent(), "HeritrixTemplate document must not be empty");
         log.debug("Writing order-file to disk as file: {}", getOrderXmlFile().getAbsolutePath());
-        XmlUtils.writeXmlToFile(doc, getOrderXmlFile());
+        doc.writeToFile(getOrderXmlFile());
     }
 
     /**

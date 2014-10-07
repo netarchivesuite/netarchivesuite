@@ -232,6 +232,11 @@ public class HarvesterSettings {
     /**
      * <b>settings.harvester.harvesting.serverDir</b>: <br>
      * Each job gets a subdir of this dir. Job data is written and Heritrix writes to that subdir.
+     * TODO verify, if this is OK for Heritrix3 as well as Heritrix1
+     * NOTE THAT the jobsdir in Heritrix3 consists of 
+     * 
+     * TODO Remember to update HeritrixFiles or make H1HeritrixFiles and H3HeritrixFiles.
+     * 
      */
     public static String HARVEST_CONTROLLER_SERVERDIR = "settings.harvester.harvesting.serverDir";
 
@@ -296,21 +301,15 @@ public class HarvesterSettings {
     public static String HARVEST_MONITOR_DISPLAYED_HISTORY_SIZE = "settings.harvester.monitor.displayedHistorySize";
 
     /**
-     * <b>settings.harvester.snapshotChannelId</b>: <br>
-     * ID of the unique harvest channel for broad crawls.
-     *
-     * @see dk.netarkivet.harvester.datamodel.HarvestChannel
-     */
-    /*
-     * public static String SNAPSHOT_HARVEST_CHANNEL_ID = "settings.harvester.snapshotChannelId";
-     */
-
-    /**
      * <b>settings.harvester.harvesting.heritrix.crawlLoopWaitTime</b>:<br>
      * Time interval in seconds to wait during a crawl loop in the harvest controller. Default value is 20 seconds.
+     * 
+     * FIXME Maybe move this from the heritrix settings (settings.harvester.harvesting.heritrix) to 
+     * settings.harvester.harvesting.controller.  
+     * 
      */
     public static String CRAWL_LOOP_WAIT_TIME = "settings.harvester.harvesting.heritrix.crawlLoopWaitTime";
-
+    
     /**
      * <b>settings.harvester.harvesting.sendReadyInterval</b>:<br>
      * Time interval in seconds to wait before transmitting a {@link HarvesterReadyMessage} to the {@link JobDispatcher}
@@ -385,20 +384,21 @@ public class HarvesterSettings {
      * Note that apart from pausing a job, modifications done directly on Heritrix may cause unexpected breakage.
      */
     public static String HERITRIX_GUI_PORT = "settings.harvester.harvesting.heritrix.guiPort";
-
+    
     /**
      * <b>settings.harvester.harvesting.heritrix.jmxPort</b>: <br>
-     * The port that Heritrix uses to expose its JMX interface. This port must not be used by anything else on the
+     * The port that Heritrix 1.14.4 uses to expose its JMX interface. This port must not be used by anything else on the
      * machine, but does not need to be accessible from other machines unless you want to be able to use jconsole to
      * access Heritrix directly. Note that apart from pausing a job, modifications done directly on Heritrix may cause
-     * unexpected breakage.
+     * unexpected breakage. Irrelevant for Heritrix 3.2
      */
     public static String HERITRIX_JMX_PORT = "settings.harvester.harvesting.heritrix.jmxPort";
 
     /**
      * <b>settings.harvester.harvesting.heritrix.jmxUsername</b>: <br>
-     * The username used to connect to Heritrix JMX interface The username must correspond to the value stored in the
+     * The username used to connect to Heritrix 1.14.4 JMX interface The username must correspond to the value stored in the
      * jmxremote.password file (name defined in setting settings.common.jmx.passwordFile).
+     * Irrelevant for Heritrix 3.2
      */
     public static String HERITRIX_JMX_USERNAME = "settings.harvester.harvesting.heritrix.jmxUsername";
 
@@ -406,6 +406,7 @@ public class HarvesterSettings {
      * <b>settings.harvester.harvesting.heritrix.jmxPassword</b>: <br>
      * The password used to connect to Heritrix JMX interface The password must correspond to the value stored in the
      * jmxremote.password file (name defined in setting settings.common.jmx.passwordFile).
+     * Irrelevant for Heritrix 3.2
      */
     public static String HERITRIX_JMX_PASSWORD = "settings.harvester.harvesting.heritrix.jmxPassword";
 
@@ -455,7 +456,7 @@ public class HarvesterSettings {
 
     /**
      * <b>settings.harvester.harvesting.metadata.heritrixFilePattern</b> This setting allows to filter which Heritrix
-     * files should be stored in the metadata ARC.
+     * files should be stored in the metadata (W)ARC file..
      *
      * @see Pattern
      */
@@ -463,7 +464,7 @@ public class HarvesterSettings {
 
     /**
      * <b>settings.harvester.harvesting.metadata.reportFilePattern</b> This setting allows to filter which Heritrix
-     * files that should be stored in the metadata ARC are to be classified as a report.
+     * files that should be stored in the metadata (W)ARC file are to be classified as a report.
      *
      * @see Pattern
      */
@@ -471,7 +472,7 @@ public class HarvesterSettings {
 
     /**
      * <b>settings.harvester.harvesting.metadata.logFilePattern</b> This setting allows to filter which Heritrix log
-     * files should be stored in the metadata ARC.
+     * files should be stored in the metadata (W)ARC file.
      *
      * @see Pattern
      */
@@ -489,6 +490,8 @@ public class HarvesterSettings {
      * <b>settings.harvester.harvesting.metadata.archiveFilesReportName</b> If
      * {@link #METADATA_GENERATE_ARCHIVE_FILES_REPORT} is set to true, sets the name of the generated report file.
      * Default value is 'archivefiles-report.txt'.
+     * 
+     * FIXME: not easily portable to H3, as the 
      *
      * @see HarvestDocumentation#documentHarvest(dk.netarkivet.harvester.harvesting.IngestableFiles)
      */
@@ -561,6 +564,16 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED = "settings.harvester.harvesting.heritrix.warc.writeRevisitForNotModified";
 
+    /**
+     * <b>settings.harvester.harvesting.heritrix.version</b> Represents the version of Heritrix used by Netarchivesuite 
+     * The default is h3. The optional value is h1.
+     * 
+     * If h1 is chosen, we assume that our templates is h1, as well.
+     * If h3 is chosen, we assume that our templates is h3, as well.
+     * There is no attempt at migration from one to the other. This must be done by an commandline-tool.
+     */
+    public static String HERITRIX_VERSION = "settings.harvester.harvesting.heritrix.version";
+    
     /**
      * <b>settings.harvester.performer</b>: <br>
      * The agent performing these harvests. The default is: ""

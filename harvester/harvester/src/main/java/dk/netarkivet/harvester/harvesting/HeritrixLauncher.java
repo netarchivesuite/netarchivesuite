@@ -97,7 +97,7 @@ public abstract class HeritrixLauncher {
     }
 
     public void setupOrderfile(HeritrixFiles files) {
-        HeritrixTemplate.makeOrderfileReadyForHeritrix(files);
+        HeritrixTemplate.makeTemplateReadyForHeritrix(files);
     }
 
 }

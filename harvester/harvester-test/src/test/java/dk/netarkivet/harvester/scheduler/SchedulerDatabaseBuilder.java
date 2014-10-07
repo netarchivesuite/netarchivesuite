@@ -40,7 +40,7 @@ import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.Frequency;
 import dk.netarkivet.harvester.datamodel.HarvestDAOUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
+import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Password;
 import dk.netarkivet.harvester.datamodel.Schedule;
@@ -98,23 +98,23 @@ public class SchedulerDatabaseBuilder {
         // Add templates.
         TemplateDAO tdao = TemplateDAO.getInstance();
 
-        HeritrixTemplate ht;
+        H1HeritrixTemplate ht;
 
         File DefaultOrderXml = new File(TestInfo.orderTemplatesOriginalsDir, "default_orderxml.xml");
         File OneLevelOrderXml = new File(TestInfo.orderTemplatesOriginalsDir, "OneLevel-order.xml");
         File FullSiteOrderXml = new File(TestInfo.orderTemplatesOriginalsDir, "FullSite-order.xml");
         File Max_20_2_OrderXml = new File(TestInfo.orderTemplatesOriginalsDir, "Max_20_2-order.xml");
 
-        ht = new HeritrixTemplate(XmlUtils.getXmlDoc(DefaultOrderXml), true);
+        ht = new H1HeritrixTemplate(XmlUtils.getXmlDoc(DefaultOrderXml), true);
         tdao.create("default_orderxml", ht);
 
-        ht = new HeritrixTemplate(XmlUtils.getXmlDoc(FullSiteOrderXml), true);
+        ht = new H1HeritrixTemplate(XmlUtils.getXmlDoc(FullSiteOrderXml), true);
         tdao.create("FullSite-order", ht);
 
-        ht = new HeritrixTemplate(XmlUtils.getXmlDoc(OneLevelOrderXml), true);
+        ht = new H1HeritrixTemplate(XmlUtils.getXmlDoc(OneLevelOrderXml), true);
         tdao.create("OneLevel-order", ht);
 
-        ht = new HeritrixTemplate(XmlUtils.getXmlDoc(Max_20_2_OrderXml), true);
+        ht = new H1HeritrixTemplate(XmlUtils.getXmlDoc(Max_20_2_OrderXml), true);
         tdao.create("Max_20_2-order", ht);
 
         // Create domain netarkivet.dk and its configurations.

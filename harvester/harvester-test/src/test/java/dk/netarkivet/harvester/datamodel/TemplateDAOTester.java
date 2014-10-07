@@ -78,20 +78,27 @@ public class TemplateDAOTester extends DataModelTestCase {
         String defaultOrderXmlName = Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML);
         assertTrue("The default orderxml should exist", dao.exists(defaultOrderXmlName));
         HeritrixTemplate doc = dao.read(defaultOrderXmlName);
-        String doc1String = doc.getTemplate().asXML();
+        H1HeritrixTemplate docH1 = (H1HeritrixTemplate)doc;
+        String doc1String = docH1.getTemplate().asXML();
         final String newOrderXmlName = "newTemplate";
         dao.create(newOrderXmlName, doc);
         assertTrue("The new orderxml should exist", dao.exists(newOrderXmlName));
         HeritrixTemplate newDoc = dao.read(newOrderXmlName);
-        assertEquals("The XML for the new template should be the same", doc1String, newDoc.getTemplate().asXML());
+        H1HeritrixTemplate newDocH1 = (H1HeritrixTemplate)newDoc;
+        assertEquals("The XML for the new template should be the same", doc1String, 
+        		newDocH1.getTemplate().asXML());
 
         doc = dao.read(defaultOrderXmlName);
         File f = new File("tests/dk/netarkivet/harvester/datamodel/data/default_orderxml.xml");
         Document doc2 = XmlUtils.getXmlDoc(f);
-        dao.update(defaultOrderXmlName, new HeritrixTemplate(doc2));
+        dao.update(defaultOrderXmlName, new H1HeritrixTemplate(doc2));
         // Check, that when you read again the DOMAIN_DEFAULT_ORDERXML
         // You get the same content as you saved to the DB.
-        Document doc3 = dao.read(defaultOrderXmlName).getTemplate();
+        
+        HeritrixTemplate doc3H = dao.read(defaultOrderXmlName);
+        H1HeritrixTemplate doc3H1 = (H1HeritrixTemplate) doc3H;
+        Document doc3 = doc3H1.getTemplate();
+        
         doc2.normalize();
         doc3.normalize();
         assertEquals("Text of doc2 and doc3 is equal", doc2.asXML(), doc3.asXML());
@@ -104,13 +111,15 @@ public class TemplateDAOTester extends DataModelTestCase {
         String defaultOrderXmlName = Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML);
         assertTrue("The default orderxml should exist", dao.exists(defaultOrderXmlName));
 
-        Document doc = dao.read(defaultOrderXmlName).getTemplate();
+        // FIXME H1 template test ONLY
+        Document doc = ((H1HeritrixTemplate)dao.read(defaultOrderXmlName)).getTemplate();
 
         assertNull("Template should have no foo element", doc.getRootElement().attribute("foo"));
 
         doc.getRootElement().addAttribute("foo", "bar");
-        dao.update(defaultOrderXmlName, new HeritrixTemplate(doc));
-        Document doc2 = dao.read(defaultOrderXmlName).getTemplate();
+        HeritrixTemplate temp = new H1HeritrixTemplate(doc);
+        dao.update(defaultOrderXmlName, temp);
+        Document doc2 = ((H1HeritrixTemplate)dao.read(defaultOrderXmlName)).getTemplate();
         assertNotNull("Template should now have foo element", doc2.getRootElement().attribute("foo"));
         assertEquals("Foo element should be bar", "bar", doc2.getRootElement().attribute("foo").getStringValue());
     }

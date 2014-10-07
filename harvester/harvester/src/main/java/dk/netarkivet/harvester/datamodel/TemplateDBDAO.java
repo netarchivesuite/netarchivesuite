@@ -33,9 +33,6 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,21 +91,21 @@ public class TemplateDBDAO extends TemplateDAO {
                 String string = res.getString(1);
                 // log.debug("clob=" + string);
                 orderTemplateReader = new StringReader(string);
-            }
-            SAXReader reader = new SAXReader();
-            // TODO Check what happens on non-ascii
-            Document orderXMLdoc = reader.read(orderTemplateReader);
-            return new HeritrixTemplate(orderXMLdoc);
+            }            
+            return HeritrixTemplate.read(orderTemplateReader);
         } catch (SQLException e) {
             final String message = "SQL error finding order.xml for " + orderXmlName + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
+       /*
         } catch (DocumentException e) {
             final String message = "Error parsing order.xml string for " + orderXmlName;
             log.warn(message, e);
             throw new IOFailure(message, e);
-        } finally {
+            */
+        }
+         finally {
             DBUtils.closeStatementIfOpen(s);
             HarvestDBConnection.release(c);
         }

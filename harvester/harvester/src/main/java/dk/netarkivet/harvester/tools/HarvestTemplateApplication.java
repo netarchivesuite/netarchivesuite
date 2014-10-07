@@ -34,6 +34,7 @@ import org.dom4j.io.XMLWriter;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 
@@ -127,8 +128,7 @@ public class HarvestTemplateApplication {
             TemplateDAO dao = TemplateDAO.getInstance();
             HeritrixTemplate doc = dao.read(templateName);
             OutputStream os = new FileOutputStream(templateName + ".xml");
-            XMLWriter writer = new XMLWriter(os);
-            writer.write(doc.getTemplate());
+            doc.writeTemplate(os);
         } catch (IOException e) {
             System.err.println("Error downloading template '" + templateName + "': " + e);
             e.printStackTrace(System.err);
@@ -156,7 +156,7 @@ public class HarvestTemplateApplication {
                 try {
                     // Try to convert orderxml-file to Document object
                     Document doc = XmlUtils.getXmlDoc(templateFile);
-                    HeritrixTemplate ht = new HeritrixTemplate(doc);
+                    H1HeritrixTemplate ht = new H1HeritrixTemplate(doc);
                     dao.update(templateName, ht);
                     System.out.println("The template '" + templateName + "' has now been updated.");
                 } catch (IOFailure e) {
@@ -186,7 +186,7 @@ public class HarvestTemplateApplication {
                 try {
                     // Try to convert orderxml-file to Document object
                     Document doc = XmlUtils.getXmlDoc(templateFile);
-                    HeritrixTemplate ht = new HeritrixTemplate(doc);
+                    H1HeritrixTemplate ht = new H1HeritrixTemplate(doc);
                     dao.create(templateName, ht);
                     System.out.println("The template '" + templateName + "' has now been created.");
                 } catch (IOFailure e) {
