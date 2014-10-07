@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<crawl-order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="heritrix_settings.xsd">
+    <meta>
+        <name>default_orderxml</name>
+        <description>Default Profile</description>
+        <operator>Admin</operator>
+        <organization/>
+        <audience/>
+        <date>20080118111217</date>
+    </meta>
+    <controller>
+        <string name="settings-directory">settings</string>
+        <string name="disk-path"/>
+        <string name="logs-path">logs</string>
+        <string name="checkpoints-path">checkpoints</string>
+        <string name="state-path">state</string>
+        <string name="scratch-path">scratch</string>
+        <long name="max-bytes-download">0</long>
+        <long name="max-document-download">0</long>
+        <long name="max-time-sec">0</long>
+        <integer name="max-toe-threads">50</integer>
+        <integer name="recorder-out-buffer-bytes">4096</integer>
+        <integer name="recorder-in-buffer-bytes">65536</integer>
+        <integer name="bdb-cache-percent">40</integer>
+        <!-- DecidingScope migrated from DomainScope -->
+        <newObject name="scope" class="org.archive.crawler.deciderules.DecidingScope">
+            <boolean name="enabled">true</boolean>
+            <string name="seedsfile">seeds.txt</string>
+            <boolean name="reread-seeds-on-config">true</boolean>
+            <!-- DecideRuleSequence. Multiple DecideRules applied in order with last non-PASS the resulting decision -->
+            <newObject name="decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+
+                <map name="rules">
+                    <newObject name="rejectByDefault" class="org.archive.crawler.deciderules.RejectDecideRule"/>
+                    <newObject name="acceptURIFromSeedDomains" class="dk.netarkivet.harvester.harvesting.OnNSDomainsDecideRule">
+                        <string name="decision">ACCEPT</string>
+                        <string name="surts-source-file"/>
+                        <boolean name="seeds-as-surt-prefixes">true</boolean>
+                        <string name="surts-dump-file"/>
+                        <boolean name="also-check-via">false</boolean>
+                        <boolean name="rebuild-on-reconfig">true</boolean>
+                    </newObject>
+                    <newObject name="rejectIfTooManyHops" class="org.archive.crawler.deciderules.TooManyHopsDecideRule">
+                        <integer name="max-hops">25</integer>
+                    </newObject>
+                    <newObject name="rejectIfPathological" class="org.archive.crawler.deciderules.PathologicalPathDecideRule">
+                        <integer name="max-repetitions">3</integer>
+                    </newObject>
+                    <newObject name="acceptIfTranscluded" class="org.archive.crawler.deciderules.TransclusionDecideRule">
+                        <integer name="max-trans-hops">5</integer>
+                        <integer name="max-speculative-hops">1</integer>
+                    </newObject>
+                    <newObject name="pathdepthfilter" class="org.archive.crawler.deciderules.TooManyPathSegmentsDecideRule">
+                        <integer name="max-path-depth">20</integer>
+                    </newObject>
+                    <newObject name="acceptIfPrerequisite" class="org.archive.crawler.deciderules.PrerequisiteAcceptDecideRule">
+                    </newObject>
+                    <newObject name="globale_crawlertraps" class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule">
+                        <string name="decision">REJECT</string>
+                        <string name="list-logic">OR</string>
+                        <stringList name="regexp-list">
+<string>.*twitter\.com.*(rss|logged|time.*\d\d:\d\d:\d\d).*</string>
+<string>.*\/earch\/.*\/earch\/.*</string>
+<string>.*ddc\.dk.*campaignmonitor.*campaignmonitor.*</string>
+<string>.*thumbshots\.com.*url=[a-zA-Z0-9-]{1,}\.[a-z]{2,3}$.*</string>
+<string>.*css.*css.*css(\w|\/\w|\.).*</string>
+<string>.*func=post.*do=reply.*</string>
+<string>.*replytocom=.*</string>
+<string>.*messages\.php\?msg_send=.*</string>
+<string>.*add2wishlist.*</string>
+<string>.*add2Basket.*</string>
+<string>.*CartCmd=add.*Product.*</string>
+<string>.*toughroad\.dk.*(contact-me\/\w|toughroad\.dk|login|da\/kontakt|(1\.6\.2|6\.0\.65|XMLDOM|XMLHTTP|urlencoded|forward\/)$).*</string>
+<string>.*basket.*method=add.*</string>
+<string>.*order\/cart\/add\/.*</string>
+<string>.*ProductComparisonWizard.*</string>
+<string>.*sendlink.*</string>
+<string>.*forum.*(newthread|order=(asc|desc)|printthread|newreply|mode=(hybrid|threaded)).*</string>
+<string>.*blogger\.com.*(login|comment|signup|feeds|Login|post-edit|share-post-menu).*</string>
+<string>.*UserAdmin.*UserRecoverPassword.*</string>
+<string>.*sexcounter\.com.*</string>
+<string>.*tradedoubler\.com\/click\?a.*</string>
+<string>.*rate_item.*rating=.*</string>
+<string>.*life\.com.*in-gallery.*</string>
+<string>.*photobucket\.com.*</string>
+<string>.*ebay\.com.*</string>
+<string>.*bigfishgames\.com.*</string>
+<string>.*webmercs\.com.*Login.*</string>
+<string>.*(add.*product|AddProduct|AddToOrder|AddToBasket|addtocart|action=add|basket.*tilfoej|cart\.php.*add|command=add.*cart=|add_cart).*</string>
+<string>.*main\.php\?g2_view=core\.UserAdmin.*User.*</string>
+<string>.*facebook\.com.*((\.(11|0\.4))|\/J)$.*</string>
+<string>.*facebook\.com.*(\/\/.*\/\/|feeds\/page).*</string>
+<string>.*(af-za|ar-ar|az-az|be-by|bg-bg|bn-in|bs-ba|ca-es|cs-cz|cy-gb|de-de|el-gr|en-gb|eo-eo|es-es|es-la|et-ee|eu-es|fa-ir|fb-lt|fi-fi|fr-fr|fy-nl|ga-ie|gl-es|he-il|hi-in|hr-hr|hu-hu|hy-am|id-id|is-is|it-it|ja-jp|ka-ge|ko-kr|ku-tr|la-va|lt-lt|lv-lv|mk-mk|ml-in|ms-my|nb-no|ne-np|nl-nl|nn-no|pa-in|pl-pl|ps-af|pt-br|pt-pt|ro-ro|ru-ru|sk-sk|sl-si|sq-al|sr-rs|sv-se|sw-ke|ta-in|te-in|th-th|tl-ph|tr-tr|uk-ua|vi-vn|zh-cn|zh-hk|zh-tw)\.facebook\.com.*</string>
+<string>.*expectporn\.com.*</string>
+<string>.*domain-export\.com.*viewsimilar.*</string>
+<string>.*doubleclick\.net.*</string>
+<string>.*adsrv\.ads\.eniro\.com.*</string>
+<string>.*ecs-dk\.kelkoo\.dk.*(ts=\d{12,}|\/sitesearchGo).*</string>
+<string>.*forward302.*(google\.com|YahooRelatedLink).*</string>
+<string>.*youtube\.com.*(algorithm|results\?search_query=|feature=related|feeds.*alt=rss).*</string>
+<string>.*iloapp.*Mobile\?Mobile.*</string>
+<string>.*hangman1.*</string>
+<string>.*mailto.*</string>
+<string>.*linkven.*</string>
+<string>.*city-map\.(de|nl|pl|si|at).*</string>
+<string>.*ratepic.*rate=.*</string>
+<string>.*jcalpro.*date.*</string>
+<string>.*tx_cal_controller.*</string>
+<string>.*tx_calendar_pi1.*</string>
+<string>.*([dD]ate|[dD]ato|[wW]eek|[mM]onth|[mM]aaned|[Yy]ear|[dD]ay).*([dD]ate|[dD]ato|[wW]eek|[mM]onth|[mM]aaned|[Yy]ear|[dD]ay).*</string>
+<string>.*([Tt](ell|ip)|[sS]end|[Mm]ail|[Ff]riend).*([Ff]riend|[Vv]en|[Pp]age|[Ll]ink|[Ss]end|[Mm]ail|[Ss]ide|[Mm]obil|[Uu][Rr][Ll]).*</string>
+<string>.*(album=|displayimage).*lang=(albanian|arabic|basque|brazilian_portuguese|bulgarian|catalan|chinese_big5|chinese_gb|czech|dutch|english_gb|estonian|finnish|french|galician|georgian|german|german_sie|greek|hebrew|hindi|hungarian|indonesian|italian|japanese|korean|latvian|lithuanian|macedonian|norwegian|persian|polish|portuguese|romanian|russian|serbian|serbian_cy|slovak|slovenian|spanish|swedish|thai|turkish|ukrainian|vietnamese|welsh|xxx).*</string>
+<string>.*(c|C|K|k)alend(a|e)r.*(cal_controller|Date=|date=|Date|dato=|heute=|week=|month|maaned=|year|value=|day=|date(F|f)ield|displaymonth|displayweek|(c|C|k|K)alend(a|e)r).*</string>
+<string>.*(w|t)iki.*(feed=(rss|atom)|from=[0-9]{14,}|(l|L)og_|days=(1|3)|limit=(1|2|4|6|7|8|9)).*</string>
+<string>.*\/internet\/\?qs=.*</string>
+<string>.*\/internet\/expand\.aspx\?qs=.*</string>
+<string>.*\/parking\.php4\?ses=.*</string>
+<string>.*Recentchanges.*hide.*=.*</string>
+<string>.*[cC]al[Mm]onth=.*</string>
+<string>.*[Ii]ndex\.php\?[yY]=.*</string>
+<string>.*[Aa]ction.*(add_product|buy|=AddToBasket|=DayView|=display.*year=|=edit|=history|=MonthView|=WeekView|=remove_product|order).*</string>
+<string>.*\/coppermine\/login\.php\?referer=.*</string>
+<string>.*\/images.*\/images.*</string>
+<string>.*\/login\.php.*referer=login\.php.*</string>
+<string>.*\/login\.php\?referer=.*</string>
+<string>.*\/mustcheck\/\/error_msg\/\/page.*</string>
+<string>.*\/mustselect\/\/.*</string>
+<string>.*\/photo.*\/photo.*</string>
+<string>.*\/scripts.*\/scripts.*</string>
+<string>.*\/skiftsprog.*\/skiftsprog.*</string>
+<string>.*\/skins.*\/skins.*</string>
+<string>.*\/stories.*\/stories.*</string>
+<string>.*\/styles.*\/styles.*</string>
+<string>.*\/typo3conf\/.*\/typo3conf\/.*</string>
+<string>.*\?cmno=.*cyear=.*</string>
+<string>.*\?m=20.*</string>
+<string>.*\?q=event.*month.*</string>
+<string>.*=mini_cal.*d=.*</string>
+<string>.*addthis\.com\/bookmark.*</string>
+<string>.*(addbasket|addtobasket|add_to_basket|add_to_cart=|return_from_cart=|addtowishlist).*</string>
+<string>.*adlog\.com\.com.*</string>
+<string>.*admin\/login\.html\?id=.*</string>
+<string>.*adstream_mjx\.ads.*click_nx\.ads.*</string>
+<string>.*aktivitetskalender.*id=.*</string>
+<string>.*album=.*pos=.*lang=.*</string>
+<string>.*album=favpics.*</string>
+<string>.*album=random.*cat=.*pos=.*</string>
+<string>.*album=topn.*cat=.*</string>
+<string>.*album=toprated.*cat=.*</string>
+<string>.*anbefal.*</string>
+<string>.*application\/Bricksite.*</string>
+<string>.*basket.*additem.*</string>
+<string>.*blogger\.com\/next-blog\?navBar=true.*</string>
+<string>.*book\/calendarPopup.*</string>
+<string>.*book\/priceCalendar.*</string>
+<string>.*book\/stbookingkalender\.php\?X=.*y=.*</string>
+<string>.*booking.*dato=.*</string>
+<string>.*bookingboks.*</string>
+<string>.*bookingsystem\.asp\?date=.*</string>
+<string>.*bookingsystemtime\.asp\?dato=.*</string>
+<string>.*Bricksite\/Modules.*</string>
+<string>.*Bricksite\/Pages\/Welcome\/Bricksite.*</string>
+<string>.*Bricksite\/Systemfiles.*</string>
+<string>.*cal.*date=.*</string>
+<string>.*cal_controller\[getdate].*</string>
+<string>.*cal_controller\[view].*</string>
+<string>.*cal_print\.php\?month.*</string>
+<string>.*cal=.*getdate=.*</string>
+<string>.*cal=month.*view=.*</string>
+<string>.*CalDate=.*</string>
+<string>.*calendar.*cal_id=.*</string>
+<string>.*calendar.*m=.*</string>
+<string>.*calendar.*Y=.*</string>
+<string>.*Calendar\.asp\?Time.*</string>
+<string>.*calendar\.aspx.*</string>
+<string>.*calendar\.google\.com.*</string>
+<string>.*calendar\.php\?.*</string>
+<string>.*calendar\/embed.*</string>
+<string>.*calendar_menu\/event.*</string>
+<string>.*calendarix_extended.*</string>
+<string>.*calender\.php.*year=.*</string>
+<string>.*calender\/\?m=.*</string>
+<string>.*cart\.asp\?mode=add.*</string>
+<string>.*catalog\/product_compare.*</string>
+<string>.*checkinCalendar.*</string>
+<string>.*checkout\/cart.*</string>
+<string>.*click_nx\.ads.*adstream_mjx\.ads.*</string>
+<string>.*com_dwod.*</string>
+<string>.*com_events.*view_month.*</string>
+<string>.*com_extcalendar.*Itemid=.*</string>
+<string>.*comcast\.net.*othastar.*</string>
+<string>.*component.*(((year|week|day)\.listevents)|(month\.calendar)|(search\.form))\/20[0-9]{2,}\/(0[1-9]{1,}|1[0-2]{1,})\/((0[1-9]{1,})|([1-2]{1,}[0-9]{1,})|(3[0-1]{1,}))\/.*</string>
+<string>.*courseBookingCalendar.*</string>
+<string>.*curid=.*diff=.*oldid=.*</string>
+<string>.*CustomDWCart\.asp.*</string>
+<string>.*Daily.*caldate=.*</string>
+<string>.*date.*extmode.*</string>
+<string>.*Date_From.*</string>
+<string>.*Date_To.*</string>
+<string>.*DatePicker\/Bricksite.*</string>
+<string>.*default\.asp\?id=.*date=.*</string>
+<string>.*default\.aspx\?.*year=.*</string>
+<string>.*displayimage\.php.*album=.*lang=.*</string>
+<string>.*displayimage\.php.*slideshow=.*</string>
+<string>.*dwodp_live.*</string>
+<string>.*e107_plugins\/calendar_menu\/event\.php\?.*</string>
+<string>.*easycalendar\/index\.php\?PageSection=.*</string>
+<string>.*Edit.*Page=.*</string>
+<string>.*Edit\.aspx.*</string>
+<string>.*event.*month\/all.*</string>
+<string>.*EventMonth.*EventCalendar.*</string>
+<string>.*events-calendar.*</string>
+<string>.*extmode.*date.*</string>
+<string>.*fbconnect_postThis.*</string>
+<string>.*fileadmin.*fileadmin.*</string>
+<string>.*flickr\.com.*(format=rss_200|format=atom|intl=us|[a-z0-9]{10,}\/|start_index=|=slideshow)$.*</string>
+<string>.*g2_view=search\.SearchScan.*g2.*</string>
+<string>.*galleri\/login\.php.*</string>
+<string>.*gallery2\/main\.php\?g2_view=cart\.ViewCart.*g2_navId=.*</string>
+<string>.*google\.com\/calendar.*</string>
+<string>.*google\.com\/calendar\/embed.*</string>
+<string>.*grafMM1=.*grafYY1=.*</string>
+<string>.*group\.calendar.*</string>
+<string>.*hangman\.php\?letters=.*</string>
+<string>.*home\.php\?date=.*</string>
+<string>.*homepage_calendar\.asp.*</string>
+<string>.*HotelSearchResults.*</string>
+<string>.*id=dag.*tx_calendar_pi1.*</string>
+<string>.*id=maaned.*tx_calendar_pi1.*</string>
+<string>.*id=uge.*tx_calendar_pi1.*</string>
+<string>.*index\.lasso\?d=.*</string>
+<string>.*Index\.php.*date=.*</string>
+<string>.*index\.php.*maaned=.*</string>
+<string>.*index\.php\?Booking.*Y=.*</string>
+<string>.*index\.php\?date=.*</string>
+<string>.*index\.php\?id=.*month.*</string>
+<string>.*index\.php\?Kalender.*Y=.*</string>
+<string>.*index\.php\?m=.*</string>
+<string>.*index\.php\?month=.*</string>
+<string>.*index\.php\?option=com_extcalendar.*Itemid=.*</string>
+<string>.*index\.php\?option=com_gcalendar.*</string>
+<string>.*index\.php\?option=com_jcalpro.*Itemid.*</string>
+<string>.*index_html\?mon=.*</string>
+<string>.*input_calendar.*days.*</string>
+<string>.*Javascript\/Bricksite\/Systemfiles.*</string>
+<string>.*javascripts\/javascripts.*</string>
+<string>.*jcalpro.*extmode=cal.*</string>
+<string>.*kalender\.asp.*d=.*</string>
+<string>.*kalender\.asp\?md=.*</string>
+<string>.*KALENDER\/DDCevents.*</string>
+<string>.*kalender\/minical.*</string>
+<string>.*kalender-dag-visning.*</string>
+<string>.*kalender-maaneds-visning.*</string>
+<string>.*kalenderoffentliginclude.*</string>
+<string>.*lang=.*lang=.*</string>
+<string>.*left\.asp\?date=.*</string>
+<string>.*limit=.*date=.*</string>
+<string>.*linkator\.php\?date=.*</string>
+<string>.*List.*caldate=.*</string>
+<string>.*lizearle\.com.*</string>
+<string>.*Login.*Login.*</string>
+<string>.*m=.*y=.*</string>
+<string>.*main\.php\?mo=.*</string>
+<string>.*maned\?month.*</string>
+<string>.*maxchars\/\/minchars\/\/mustfill.*</string>
+<string>.*md=.*aar=.*</string>
+<string>.*mdr=.*aar=.*</string>
+<string>.*MediaWiki.*Movearticle.*</string>
+<string>.*mod\.calendar.*</string>
+<string>.*module=crpCalendar.*func=.*</string>
+<string>.*module=Kalendern.*func=view.*</string>
+<string>.*modules\/piCal\/index\.php\?caldate=.*</string>
+<string>.*month.*cHash=.*</string>
+<string>.*Mozilla\/Mozilla.*</string>
+<string>.*Mozilla\/text\/text.*</string>
+<string>.*maaned=.*aar=.*</string>
+<string>.*nbjmup.*typo3conf.*</string>
+<string>.*nbjmup.*fileadmin.*templates.*css.*</string>
+<string>.*nbjmup.*fileadmin.*user_upload.*</string>
+<string>.*nbjmup.*nbjmup.*</string>
+<string>.*nbjmup.*typo3temp.*</string>
+<string>.*nbjmup\+.*</string>
+<string>.*news\.php\?y=.*</string>
+<string>.*next.*nextmonth.*</string>
+<string>.*Next_Day.*</string>
+<string>.*Next_Month.*</string>
+<string>.*Next_Week.*</string>
+<string>.*opac\/soegeresultat\?query=.*</string>
+<string>.*opendocument.*monthshown.*</string>
+<string>.*option=com_gcalendar.*Itemid=.*</string>
+<string>.*pagelayout\/compiledmenu\/.*</string>
+<string>.*parking\.php\?ses=.*</string>
+<string>.*pg=event_handling.*id=.*</string>
+<string>.*photogallery\/login\.php.*</string>
+<string>.*portal\.php\?month=.*</string>
+<string>.*posting.*mode=newtopic.*</string>
+<string>.*posting.*mode=quote.*</string>
+<string>.*posting.*mode=reply.*</string>
+<string>.*PostSchedule.*view=month.*</string>
+<string>.*Previous_Day.*</string>
+<string>.*Previous_Month.*</string>
+<string>.*PreviousSearchId.*</string>
+<string>.*print_programStadium.*</string>
+<string>.*print_team[iI]nfo.*</string>
+<string>.*printable=yes.*</string>
+<string>.*printLink=true.*</string>
+<string>.*product_compare.*</string>
+<string>.*product_reviews_write.*</string>
+<string>.*product_reviews_write.*</string>
+<string>.*productalert\/add.*</string>
+<string>.*productid=.*cartcmd=add.*</string>
+<string>.*qs=06oENya.*</string>
+<string>.*recommend.*</string>
+<string>.*redir.*redir.*redir.*</string>
+<string>.*refreshCalendar.*</string>
+<string>.*ReturnUrl=\/password.*ReturnUrl=\/password.*</string>
+<string>.*search\.SearchScan.*g2_form.*</string>
+<string>.*Seneste.*ndringer.*hide.*</string>
+<string>.*shop.*orderby=.*date.*limit=.*</string>
+<string>.*Special:Recentchanges.*limit=.*</string>
+<string>.*Special:Userlogin.*</string>
+<string>.*startdate=.*enddate=.*</string>
+<string>.*static=tbkalender.*</string>
+<string>.*Systemfiles\/Bricksite\/Systemfiles.*</string>
+<string>.*tiki-lastchanges.*</string>
+<string>.*title=Speciel.*Seneste.*namespace=.*</string>
+<string>.*title=Speciel:Henvisningsliste.*</string>
+<string>.*title=Speciel:Hvad_linker_hertil.*</string>
+<string>.*title=Speciel:Loglister.*page=.*</string>
+<string>.*title=Speciel:Recentchanges.*</string>
+<string>.*title=Speciel:Search.*</string>
+<string>.*title=Speciel:Seneste.*</string>
+<string>.*true.*calendaraction.*</string>
+<string>.*type=basket.*shopid=.*</string>
+<string>.*typo3conf.*typo3conf.*</string>
+<string>.*typo3temp.*typo3temp.*</string>
+<string>.*vcal.*(day|week|year|month).*</string>
+<string>.*view_day.*</string>
+<string>.*view_month.*</string>
+<string>.*view_week.*</string>
+<string>.*view_year.*</string>
+<string>.*view=comment\.ShowAllComments.*g2_itemId=.*</string>
+<string>.*view=ecard\.SendEcard.*</string>
+<string>.*view=rss\.SimpleRender.*</string>
+<string>.*wishlist.*add.*</string>
+<string>.*www\.infokatalogas\.lt.*</string>
+<string>.*www\.www.*Bricksite.*</string>
+<string>.*www\.www\..*</string>
+<string>.*y=.*m=.*</string>
+<string>.*aar=.*maaned=.*dag=.*</string>
+<string>.*acs\.org.*</string>
+<string>.*acm\.org.*</string>
+<string>.*ams\.org.*</string>
+<string>.*ansinet\.org.*</string>
+<string>.*arjournals\.annualreviews\.org.*</string>
+<string>.*bepress\.com.*</string>
+<string>.*bioline\.org\.br.*</string>
+<string>.*biomedcentral\.com.*</string>
+<string>.*blackwell-synergy\.com.*</string>
+<string>.*census\.gov.*</string>
+<string>.*content\.karger\.com.*</string>
+<string>.*csa\.com.*</string>
+<string>.*current-reports\.com.*</string>
+<string>.*elibrary\.unm\.edu.*</string>
+<string>.*emeraldinsight\.com.*</string>
+<string>.*emis\.de.*</string>
+<string>.*extenza-eps\.com.*</string>
+<string>.*future-drugs\.com.*</string>
+<string>.*gateway\.ovid\.com.*</string>
+<string>.*gateway\.proquest\.com.*</string>
+<string>.*haworthpress\.com.*</string>
+<string>.*heinonline\.org.*</string>
+<string>.*home\.mdconsult\.com.*</string>
+<string>.*ias\.ac\.in.*</string>
+<string>.*ieee\.org.*</string>
+<string>.*ieeexplore\.ieee\.org.*</string>
+<string>.*ingenta\.com.*</string>
+<string>.*ingentaconnect\.com.*</string>
+<string>.*internurse\.com.*</string>
+<string>.*iop\.org.*</string>
+<string>.*ispub\.com.*</string>
+<string>.*journals\.cambridge\.org.*</string>
+<string>.*journals\.humanapress\.com.*</string>
+<string>.*journalsonline\.tandf\.co\.uk.*</string>
+<string>.*journals\.tubitak\.gov\.tr.*</string>
+<string>.*journals\.uchicago\.edu.*</string>
+<string>.*jstage\.jst\.go\.jp.*</string>
+<string>.*jstor\.org.*</string>
+<string>.*karger\.ch.*</string>
+<string>.*kluwerlawonline\.com.*</string>
+<string>.*leaonline\.com.*</string>
+<string>.*liebertonline\.com.*</string>
+<string>.*medind\.nic\.in.*</string>
+<string>.*metapress\.com.*</string>
+<string>.*mitpressjournals\.org.*</string>
+<string>.*muse\.jhu\.edu.*</string>
+<string>.*nature\.com.*</string>
+<string>.*news\.nnyln\.net.*</string>
+<string>.*new\.sourceoecd\.org.*</string>
+<string>.*numdam\.org.*</string>
+<string>.*ojps\.aip\.org.*</string>
+<string>.*online\.sagepub\.com.*</string>
+<string>.*portal\.acm\.org.*</string>
+<string>.*projecteuclid\.org.*</string>
+<string>.*pubmedcentral\.gov.*</string>
+<string>.*pubs\.acs\.org.*</string>
+<string>.*purl\.access\.gpo\.gov.*</string>
+<string>.*rsc\.org.*</string>
+<string>.*saber\.ula\.ve.*</string>
+<string>.*scielo\.br.*</string>
+<string>.*scielo\.cl.*</string>
+<string>.*scielo\.isciii\.es.*</string>
+<string>.*scielo-mx\.bvs\.br.*</string>
+<string>.*scielo\.org\.ve.*</string>
+<string>.*scielo\.sld\.cu.*</string>
+<string>.*sciencedirect\.com.*</string>
+<string>.*search\.ebscohost\.com.*</string>
+<string>.*search\.epnet\.com.*</string>
+<string>.*siam\.org.*</string>
+<string>.*springerlink\.com.*</string>
+<string>.*taylorandfrancis\.metapress\.com.*</string>
+<string>.*thieme-connect\.com.*</string>
+<string>.*worldscinet\.com.*</string>
+<string>.*www3\.interscience\.wiley\.com.*</string>
+<string>.*www-gdz\.sub\.uni-goettingen\.de.*</string>
+<string>.*tlg\.uci\.edu.*</string>
+                        </stringList>
+                    </newObject>
+                </map> <!-- end rules -->
+            </newObject> <!-- end decide-rules -->
+        </newObject> <!-- End DecidingScope -->
+        <map name="http-headers">
+            <string name="user-agent">Mozilla/5.0 (compatible; heritrix/1.14.4 +http://netarkivet.dk/webcrawler/)</string>
+            <string name="from">info@netarkivet.dk</string>
+        </map>
+        <newObject name="robots-honoring-policy" class="org.archive.crawler.datamodel.RobotsHonoringPolicy">
+            <string name="type">ignore</string>
+            <boolean name="masquerade">false</boolean>
+            <text name="custom-robots"/>
+            <stringList name="user-agents">
+            </stringList>
+        </newObject>
+        <newObject name="frontier" class="org.archive.crawler.frontier.BdbFrontier">
+            <float name="delay-factor">1.0</float>
+            <integer name="max-delay-ms">1000</integer>
+            <integer name="min-delay-ms">300</integer>
+            <integer name="max-retries">3</integer>
+            <long name="retry-delay-seconds">300</long>
+            <integer name="preference-embed-hops">1</integer>
+            <integer name="total-bandwidth-usage-KB-sec">3000</integer>
+            <integer name="max-per-host-bandwidth-usage-KB-sec">500</integer>
+
+            <string name="queue-assignment-policy">dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy</string>
+
+            <string name="force-queue-assignment"/>
+            <boolean name="pause-at-start">false</boolean>
+            <boolean name="pause-at-finish">false</boolean>
+            <boolean name="source-tag-seeds">false</boolean>
+            <boolean name="recovery-log-enabled">false</boolean>
+            <boolean name="hold-queues">true</boolean>
+            <integer name="balance-replenish-amount">3000</integer>
+            <integer name="error-penalty-amount">100</integer>
+            <long name="queue-total-budget">-1</long>
+            <string name="cost-policy">org.archive.crawler.frontier.UnitCostAssignmentPolicy</string>
+            <long name="snooze-deactivate-ms">300000</long>
+            <integer name="target-ready-backlog">50</integer>
+            <string name="uri-included-structure">org.archive.crawler.util.BdbUriUniqFilter</string>
+        </newObject>
+
+        <map name="uri-canonicalization-rules">
+            <newObject name="stillinger_i_staten_timecode" class="org.archive.crawler.url.canonicalize.RegexRule">
+                <boolean name="enabled">true</boolean>
+                <string name="matching-regex">^(.*stillinger-i-staten.dk.*)(tc=.*)$</string>
+                <string name="format">${1}</string>
+                <string name="comment">fjerner tc=... fra stillinger-i-staten.dk</string>
+            </newObject>
+            <newObject name="Lowercase" class="org.archive.crawler.url.canonicalize.LowercaseRule">
+                <boolean name="enabled">true</boolean>
+            </newObject>
+            <newObject name="Userinfo" class="org.archive.crawler.url.canonicalize.StripUserinfoRule">
+                <boolean name="enabled">true</boolean>
+            </newObject>
+            <newObject name="WWW" class="org.archive.crawler.url.canonicalize.StripWWWRule">
+                <boolean name="enabled">false</boolean>
+            </newObject>
+            <newObject name="SessionIDs" class="org.archive.crawler.url.canonicalize.StripSessionIDs">
+                <boolean name="enabled">true</boolean>
+            </newObject>
+            <newObject name="QueryStrPrefix" class="org.archive.crawler.url.canonicalize.FixupQueryStr">
+                <boolean name="enabled">true</boolean>
+            </newObject>
+        </map>
+        <!-- Heritrix pre-fetch processors -->
+        <map name="pre-fetch-processors">
+
+            <newObject name="QuotaEnforcer" class="org.archive.crawler.prefetch.QuotaEnforcer">
+                <boolean name="force-retire">false</boolean>
+                <boolean name="enabled">true</boolean>
+                <newObject name="QuotaEnforcer#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+                <long name="server-max-fetch-successes">-1</long>
+                <long name="server-max-success-kb">-1</long>
+                <long name="server-max-fetch-responses">-1</long>
+                <long name="server-max-all-kb">-1</long>
+
+                <long name="host-max-fetch-successes">-1</long>
+                <long name="host-max-success-kb">-1</long>
+                <long name="host-max-fetch-responses">-1</long>
+                <long name="host-max-all-kb">-1</long>
+
+                <long name="group-max-fetch-successes">-1</long>
+                <long name="group-max-success-kb">-1</long>
+                <long name="group-max-fetch-responses">-1</long>
+                <long name="group-max-all-kb">-1</long>
+
+            </newObject>
+
+            <newObject name="Preselector" class="org.archive.crawler.prefetch.Preselector">
+                <boolean name="enabled">true</boolean>
+                <newObject name="Preselector#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+                <boolean name="override-logger">false</boolean>
+                <boolean name="recheck-scope">true</boolean>
+                <boolean name="block-all">false</boolean>
+                <string name="block-by-regexp"/>
+                <string name="allow-by-regexp"/>
+            </newObject>
+            <newObject name="Preprocessor" class="org.archive.crawler.prefetch.PreconditionEnforcer">
+                <boolean name="enabled">true</boolean>
+                <newObject name="Preprocessor#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+                <integer name="ip-validity-duration-seconds">21600</integer>
+                <integer name="robot-validity-duration-seconds">86400</integer>
+                <boolean name="calculate-robots-only">false</boolean>
+            </newObject>
+        </map>
+        <!--End of Heritrix pre-fetch processors -->
+        <!-- Heritrix fetch processors -->
+        <map name="fetch-processors">
+            <newObject name="DNS" class="org.archive.crawler.fetcher.FetchDNS">
+                <boolean name="enabled">true</boolean>
+                <newObject name="DNS#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+                <boolean name="accept-non-dns-resolves">false</boolean>
+                <boolean name="digest-content">true</boolean>
+                <string name="digest-algorithm">sha1</string>
+
+            </newObject>
+            <newObject name="HTTP" class="org.archive.crawler.fetcher.FetchHTTP">
+                <boolean name="enabled">true</boolean>
+                <newObject name="HTTP#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+                <newObject name="midfetch-decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+                <integer name="timeout-seconds">1200</integer>
+                <integer name="sotimeout-ms">20000</integer>
+                <integer name="fetch-bandwidth">0</integer>
+                <long name="max-length-bytes">0</long>
+                <boolean name="ignore-cookies">false</boolean>
+                <boolean name="use-bdb-for-cookies">true</boolean>
+                <string name="load-cookies-from-file"/>
+                <string name="save-cookies-to-file"/>
+                <string name="trust-level">open</string>
+                <stringList name="accept-headers">
+                </stringList>
+                <string name="http-proxy-host"/>
+                <string name="http-proxy-port"/>
+                <string name="default-encoding">ISO-8859-1</string>
+                <boolean name="digest-content">true</boolean>
+                <string name="digest-algorithm">sha1</string>
+                <boolean name="send-if-modified-since">true</boolean>
+                <boolean name="send-if-none-match">true</boolean>
+                <boolean name="send-connection-close">true</boolean>
+                <boolean name="send-referer">true</boolean>
+                <boolean name="send-range">false</boolean>
+                <string name="http-bind-address"/>
+            </newObject>
+        </map> <!-- end of Heritrix Fetch processors -->
+
+        <!-- Heritrix extract processors -->
+        <map name="extract-processors">
+            <newObject name="ExtractorHTTP" class="org.archive.crawler.extractor.ExtractorHTTP">
+                <boolean name="enabled">true</boolean>
+                <newObject name="ExtractorHTTP#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+            </newObject>
+            <newObject name="ExtractorHTML" class="org.archive.crawler.extractor.ExtractorHTML">
+                <boolean name="enabled">true</boolean>
+                <newObject name="ExtractorHTML#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+                <boolean name="extract-javascript">true</boolean>
+                <boolean name="treat-frames-as-embed-links">false</boolean>
+                <boolean name="ignore-form-action-urls">true</boolean>
+                <boolean name="extract-value-attributes">false</boolean>
+                <boolean name="ignore-unexpected-html">true</boolean>
+            </newObject>
+            <newObject name="ExtractorCSS" class="org.archive.crawler.extractor.ExtractorCSS">
+                <boolean name="enabled">true</boolean>
+                <newObject name="ExtractorCSS#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+            </newObject>
+            <newObject name="ExtractorJS" class="org.archive.crawler.extractor.ExtractorJS">
+                <boolean name="enabled">true</boolean>
+                <newObject name="ExtractorJS#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+            </newObject>
+            <newObject name="ExtractorSWF" class="org.archive.crawler.extractor.ExtractorSWF">
+                <boolean name="enabled">true</boolean>
+                <newObject name="ExtractorSWF#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+            </newObject>
+            <newObject name="ExtractorImpliedURI1" class="org.archive.crawler.extractor.ExtractorImpliedURI">
+                <boolean name="enabled">true</boolean>
+                <string name="trigger-regexp">^(http://www.e-pages.dk/urban/[0-9]*/)$</string>
+                <string name="build-pattern">$1print.pdf</string>
+                <boolean name="remove-trigger-uris">false</boolean>
+            </newObject>
+        </map> <!-- end of Heritrix extract processors -->
+        <!-- Heritrix write processors -->
+        <map name="write-processors">
+            <newObject name="DeDuplicator" class="is.hi.bok.deduplicator.DeDuplicator">
+                <boolean name="enabled">true</boolean>
+                <map name="filters">
+                </map>
+                <string name="index-location"/>
+                <string name="matching-method">By URL</string>
+                <boolean name="try-equivalent">true</boolean>
+                <boolean name="change-content-size">false</boolean>
+                <string name="mime-filter">^text/.*</string>
+                <string name="filter-mode">Blacklist</string>
+                <string name="analysis-mode">Timestamp</string>
+                <string name="log-level">SEVERE</string>
+                <string name="origin"/>
+                <string name="origin-handling">Use index information</string>
+                <boolean name="stats-per-host">true</boolean>
+		<boolean name="use-sparse-range-filter">true</boolean>
+            </newObject>
+            <newObject name="Archiver" class="org.archive.crawler.writer.ARCWriterProcessor">
+                <boolean name="enabled">true</boolean>
+                <newObject name="Archiver#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+                <boolean name="compress">false</boolean>
+                <string name="prefix">IAH</string>
+                <string name="suffix">${HOSTNAME}</string>
+                <integer name="max-size-bytes">100000000</integer>
+                <stringList name="path">
+                    <string>arcs</string>
+                </stringList>
+                <integer name="pool-max-active">5</integer>
+                <integer name="pool-max-wait">300000</integer>
+                <long name="total-bytes-to-write">0</long>
+                <boolean name="skip-identical-digests">false</boolean>
+            </newObject>
+
+<newObject name="WARCArchiver" class="dk.netarkivet.harvester.harvesting.WARCWriterProcessor">
+<boolean name="enabled">false</boolean>
+<newObject name="WARCArchiver#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+<map name="rules"/>
+</newObject>
+<boolean name="compress">false</boolean>
+<string name="prefix">netarkivet</string>
+<string name="suffix">${HOSTNAME}</string>
+<long name="max-size-bytes">1000000000</long>
+<stringList name="path"> <string>warcs</string> </stringList>
+<integer name="pool-max-active">5</integer>
+<integer name="pool-max-wait">300000</integer>
+<long name="total-bytes-to-write">0</long>
+<boolean name="skip-identical-digests">false</boolean>
+<boolean name="write-requests">true</boolean>
+<boolean name="write-metadata">true</boolean>
+<boolean name="write-revisit-for-identical-digests">true</boolean>
+<boolean name="write-revisit-for-not-modified">true</boolean>
+</newObject>
+        </map> <!-- End of Heritrix write processors -->
+        <!-- Heritrix post processors -->
+        <map name="post-processors">
+            <newObject name="Updater" class="org.archive.crawler.postprocessor.CrawlStateUpdater">
+                <boolean name="enabled">true</boolean>
+                <newObject name="Updater#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+            </newObject>
+            <newObject name="LinksScoper" class="org.archive.crawler.postprocessor.LinksScoper">
+                <boolean name="enabled">true</boolean>
+                <newObject name="LinksScoper#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+                <boolean name="override-logger">false</boolean>
+                <boolean name="seed-redirects-new-seed">false</boolean>
+                <integer name="preference-depth-hops">-1</integer>
+
+                <newObject name="scope-rejected-url-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+            </newObject>
+
+            <newObject name="Scheduler" class="org.archive.crawler.postprocessor.FrontierScheduler">
+                <boolean name="enabled">true</boolean>
+                <newObject name="Scheduler#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+            </newObject>
+
+            <newObject name="ContentSize" class="dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor">
+                <boolean name="enabled">true</boolean>
+                <newObject name="ContentSize#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+                    <map name="rules">
+                    </map>
+                </newObject>
+            </newObject>
+
+        </map>  <!-- end of Heritrix post processors -->
+
+        <map name="loggers">
+            <newObject name="crawl-statistics" class="org.archive.crawler.admin.StatisticsTracker">
+                <integer name="interval-seconds">20</integer>
+            </newObject>
+        </map>
+        <string name="recover-path"/>
+        <boolean name="checkpoint-copy-bdbje-logs">true</boolean>
+        <boolean name="recover-retain-failures">false</boolean>
+        <newObject name="credential-store" class="org.archive.crawler.datamodel.CredentialStore">
+            <map name="credentials">
+                <newObject name="licitationen_login_1" class="org.archive.crawler.datamodel.credential.Rfc2617Credential">
+                    <string name="credential-domain">www.licitationen.dk</string>
+                    <string name="realm">Dagbladet Licitationen</string>
+                    <string name="login">453587</string>
+                    <string name="password">2730Alle</string>
+                </newObject>
+                <newObject name="mymusic_login_1" class="org.archive.crawler.datamodel.credential.HtmlFormCredential">
+                    <string name="credential-domain">www.mymusic.dk</string>
+                    <string name="login-uri">http://www.mymusic.dk/konto/login2.asp</string>
+                    <string name="http-method">POST</string>
+                    <map name="form-items">
+                        <string name="username">atman</string>
+                        <string name="password">ziggyzig</string>
+                        <string name="autologin">y</string>
+                    </map>
+                </newObject>
+                <newObject name="arto_login_1" class="org.archive.crawler.datamodel.credential.HtmlFormCredential">
+                    <string name="credential-domain">www.arto.dk</string>
+                    <string name="login-uri">http://www.arto.dk/r2/frames/navigation.asp</string>
+                    <string name="http-method">POST</string>
+                    <map name="form-items">
+                        <string name="action">submit</string>
+                        <string name="brugernavn">Statsbib</string>
+                        <string name="kodeord">bogorm</string>
+                        <string name="AutoLogin">Ja</string>
+                        <string name="loginKnap">Log ind</string>
+                    </map>
+                </newObject>
+				<newObject name="Heerfordt.dk" class="org.archive.crawler.datamodel.credential.HtmlFormCredential">
+                    <string name="credential-domain">heerfordt.dk</string>
+                    <string name="login-uri">http://heerfordt.dk/</string>
+                    <string name="http-method">POST</string>
+                    <map name="form-items">
+                        <string name="Brugernavn">Vilhelm</string>
+                        <string name="Pw">Caroline</string>
+                        <string name="Login">Login</string>
+                    </map>
+                </newObject>
+            </map>
+        </newObject>
+    </controller>
+</crawl-order>
