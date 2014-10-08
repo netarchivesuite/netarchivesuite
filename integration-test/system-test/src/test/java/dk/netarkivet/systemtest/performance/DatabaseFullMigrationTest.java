@@ -78,7 +78,7 @@ public class DatabaseFullMigrationTest extends StressTest {
         }
     }
 
-    private void doGenerateSnapshot() {
+    private void doGenerateSnapshot() throws InterruptedException {
         WebDriver driver = new FirefoxDriver();
         ApplicationManager applicationManager = new ApplicationManager(environmentManager);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
@@ -113,6 +113,22 @@ public class DatabaseFullMigrationTest extends StressTest {
         for (WebElement form: allForms) {
             if (form.findElement(By.tagName("input")).getAttribute("value").equals(harvestName)){
                 form.findElement(By.linkText("Activate")).click();
+            }
+        }
+        //Wait five minutes and see if job creation has started
+        Thread.sleep(5*60*1000L);
+        driver.findElement(By.linkText("Systemstate")).click();
+        driver.findElement(By.linkText("HarvestJobManagerApplication")).click();
+        driver.findElement(By.partialLinkText("index=*")).click();
+        assertTrue(driver.getPageSource().contains(harvestName), "Page should contain harvest name: " + harvestName);
+        //Wait 30 minutes a see if any jobs have been generated
+        Thread.sleep(5*60*1000L);
+        driver.findElement(By.linkText("Harvest status")).click();
+        WebElement select = driver.findElement(By.name("JOB_STATUS"));
+        List<WebElement> options = driver.findElements(By.tagName("option"));
+        for (WebElement option: options) {
+            if (option.getAttribute("value").equals("ALL")) {
+                option.click();
             }
         }
     }
