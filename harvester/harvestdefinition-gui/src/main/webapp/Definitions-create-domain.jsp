@@ -117,14 +117,14 @@ Parameters:
     <span id="focusElement">
         <textarea cols="20" rows="10" name="<%=Constants.DOMAINLIST_PARAM%>"></textarea>
     </span><br />
-    <input type="submit" value=<fmt:message key="harvestdefinition.domains.create"/> />
+    <input type="submit" value="<fmt:message key="harvestdefinition.domains.create"/>" />
 </form>
 <br />
 <fmt:message key="harvestdefinition.domains.import"/>
 <form method="post" action="Definitions-ingest-domains.jsp"
       enctype="multipart/form-data">
     <input size="50" type="file" name="<%=Constants.DOMAINLIST_PARAM%>"
-           value=<fmt:message key="harvestdefinition.domains.domainlist"/>/>
+           value="<fmt:message key="harvestdefinition.domains.domainlist"/>"/>
     <input type="submit" value="<fmt:message key="ingest"/>" />
 </form>
 
