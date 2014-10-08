@@ -114,7 +114,7 @@ public class StreamUtilsTester {
     @Test
     public void testCopyInputStreamToJspWriter() throws Exception {
         JspWriter writer = mock(JspWriter.class);
-        String testString = "This is a testsgtring";
+        String testString = "This is a teststring";
         InputStream is = new ByteArrayInputStream(testString.getBytes());
         StreamUtils.copyInputStreamToJspWriter(is, writer);
 

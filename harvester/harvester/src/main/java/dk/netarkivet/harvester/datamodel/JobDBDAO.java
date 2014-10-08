@@ -359,7 +359,6 @@ public class JobDBDAO extends JobDAO {
      */
     @Override
     public Job read(long jobID) {
-        ArgumentNotValid.checkNotNull(jobID, "jobID");
         Connection connection = HarvestDBConnection.get();
         try {
             return read(connection, jobID);
