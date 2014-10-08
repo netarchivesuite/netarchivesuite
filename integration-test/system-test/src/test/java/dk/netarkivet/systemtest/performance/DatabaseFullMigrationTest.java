@@ -22,19 +22,21 @@
  */
 package dk.netarkivet.systemtest.performance;
 
-import java.util.Date;
+import static org.testng.Assert.fail;
+
 import java.util.concurrent.TimeUnit;
 
+import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.environment.ApplicationManager;
-import dk.netarkivet.systemtest.functional.DomainsPageTest;
-import dk.netarkivet.systemtest.functional.ExtendedFieldTest;
+import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
 import dk.netarkivet.systemtest.page.PageHelper;
 
 @SuppressWarnings("unused")
@@ -43,12 +45,13 @@ public class DatabaseFullMigrationTest extends StressTest {
     @Test(groups = {"guitest", "performancetest"})
     public void dbFullMigrationTest() throws Exception {
         addDescription("Test complete backup-database ingest from production produces a functional NAS system.");
-        doStuff();
+        //doUpdateFileStatus();
+        doUpdateChecksumAndFileStatus();
     }
 
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
-        if (true) {
+        if (false) {
             shutdownPreviousTest();
             fetchProductionData();
             deployComponents();
@@ -61,12 +64,13 @@ public class DatabaseFullMigrationTest extends StressTest {
 
     @AfterClass
     public void teardownTestEnvironment() throws Exception {
-        if (true) {
+        if (false) {
             shutdownTest();
         }
     }
 
-    private void doStuff() throws Exception {
+    private void doUpdateFileStatus() throws Exception {
+        Long stepTimeout = 2*3600*1000L;
         WebDriver driver = new FirefoxDriver();
         ApplicationManager applicationManager = new ApplicationManager(environmentManager);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
@@ -74,19 +78,74 @@ public class DatabaseFullMigrationTest extends StressTest {
         PageHelper.initialize(driver, baseUrl);
         applicationManager.waitForGUIToStart(60);
         addFixture("Opening NAS front page.");
-        DomainsPageTest domainsPageTest = new DomainsPageTest();
-        domainsPageTest.usedConfigurationsTest(driver, (new Date()).getTime() + ".dk");
-        ExtendedFieldTest extendedFieldTest = new ExtendedFieldTest();
-        extendedFieldTest.extendedDomainStringFieldTest(driver, (new Date()).getTime() + "");
-        // Add dependency injection of EnvironmentManager so this can work:
-        // HarvestHistoryForDomainPageTest harvestHistoryForDomainPageTest = new HarvestHistoryForDomainPageTest();
-        // harvestHistoryForDomainPageTest.historySortedTablePagingTest();
         addStep("Opening bitpreservation section of GUI.",
                 "The page should open and show the number of files in the archive.");
         driver.manage().timeouts().pageLoadTimeout(10L, TimeUnit.MINUTES);
         driver.findElement(By.linkText("Bitpreservation")).click();
-        driver.getPageSource().matches("Number of files:.*[0-9]+");
+        WebElement updateLink = driver.findElement(By.linkText("Update filestatus for KB"));
+        String idNumber = "KBN_number";
+        String idMissing = "KBN_missng";
+        String numberS = driver.findElement(By.id(idNumber)).getText();
+        String missingS = driver.findElement(By.id(idMissing)).getText();
+        System.out.println("Status files/missing = " + numberS + "/" + missingS);
+        updateLink.click();
+        Long startTime = System.currentTimeMillis();
+        long timeRun = System.currentTimeMillis() - startTime;
+        while (!numberS.equals("0")) {
+            Thread.sleep(300000L);
+            driver.findElement(By.linkText("Bitpreservation")).click();
+            numberS = driver.findElement(By.id(idNumber)).getText();
+            missingS = driver.findElement(By.id(idMissing)).getText();
+            System.out.println("Status files/missing = " + numberS + "/" + missingS);
+            timeRun = System.currentTimeMillis() - startTime;
+            System.out.println("Time elapsed " + timeRun /1000 + "s.");
+            if (timeRun > stepTimeout) {
+                fail("Failed to update file status for whole archive after " + timeRun/1000 + "s.");
+            }
+        }
+        TestEventManager.getInstance().addResult("File status successfully updated after " + timeRun /1000 + "s.");
         driver.close();
     }
+
+    private void doUpdateChecksumAndFileStatus() throws Exception {
+        Long stepTimeout = 2*3600*1000L;
+        WebDriver driver = new FirefoxDriver();
+        ApplicationManager applicationManager = new ApplicationManager(environmentManager);
+        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        String baseUrl = environmentManager.getGuiHost() + ":" + environmentManager.getGuiPort();
+        PageHelper.initialize(driver, baseUrl);
+        applicationManager.waitForGUIToStart(60);
+        addFixture("Opening NAS front page.");
+        addStep("Opening bitpreservation section of GUI.",
+                "The page should open and show the number of files in the archive.");
+        driver.manage().timeouts().pageLoadTimeout(10L, TimeUnit.MINUTES);
+        driver.findElement(By.linkText("Bitpreservation")).click();
+        WebElement updateLink = driver.findElement(By.linkText("Update checksum and filestatus for CS"));
+        /*String idNumber = "KBN_number";
+        String idMissing = "KBN_missng";
+        String numberS = driver.findElement(By.id(idNumber)).getText();
+        String missingS = driver.findElement(By.id(idMissing)).getText();
+        System.out.println("Status files/missing = " + numberS + "/" + missingS);*/
+        updateLink.click();
+       /* Long startTime = System.currentTimeMillis();
+        long timeRun = System.currentTimeMillis() - startTime;
+        while (!numberS.equals("0")) {
+            Thread.sleep(300000L);
+            driver.findElement(By.linkText("Bitpreservation")).click();
+            numberS = driver.findElement(By.id(idNumber)).getText();
+            missingS = driver.findElement(By.id(idMissing)).getText();
+            System.out.println("Status files/missing = " + numberS + "/" + missingS);
+            timeRun = System.currentTimeMillis() - startTime;
+            System.out.println("Time elapsed " + timeRun /1000 + "s.");
+            if (timeRun > stepTimeout) {
+                fail("Failed to update file status for whole archive after " + timeRun/1000 + "s.");
+            }
+        }
+        TestEventManager.getInstance().addResult("File status successfully updated after " + timeRun /1000 + "s.");
+        driver.close();*/
+    }
+
+
+
 
 }
