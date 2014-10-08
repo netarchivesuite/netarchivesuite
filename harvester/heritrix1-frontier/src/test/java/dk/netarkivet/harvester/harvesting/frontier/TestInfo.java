@@ -28,7 +28,7 @@ import java.net.URL;
 
 public class TestInfo {
 
-	protected static ClassLoader clsLdr = new TestInfo().getClass().getClassLoader();
+	protected static ClassLoader clsLdr = TestInfo.class.getClassLoader();
 
 	public static final File getTestResourceFile(String fname) {
 	    URL url = clsLdr.getResource(fname);

@@ -29,12 +29,15 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.util.Date;
 
+import org.dom4j.Document;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.harvester.datamodel.DomainConfiguration;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
@@ -90,7 +93,9 @@ public class PersistentJobDataTester {
     @Test
     public void testWrite() throws Exception {
         PersistentJobData pjd = new PersistentJobData(crawldir);
-        Job testJob = TestInfo.getJob();
+        //Job testJob = TestInfo.getJob();
+        Job testJob = new Job(41L, (DomainConfiguration)null,
+        		(Document)null, new HarvestChannel("channelno5", false, false, "channel no.5"), 101, 102, 103, 104 );
         testJob.setJobID(42L);
         testJob.setSubmittedDate(new Date());
         testJob.setHarvestAudience("Default Audience");

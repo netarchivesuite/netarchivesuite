@@ -43,7 +43,7 @@ import dk.netarkivet.harvester.harvesting.PersistentJobData.XmlState.OKSTATE;
  * Class PersistentJobData holds information about an ongoing harvest. Presently the information is stored in a
  * XML-file.
  */
-public class PersistentJobData {
+public class PersistentJobData implements JobInfo {
 
     /** The logger to use. */
     private static final Logger log = LoggerFactory.getLogger(PersistentJobData.class);

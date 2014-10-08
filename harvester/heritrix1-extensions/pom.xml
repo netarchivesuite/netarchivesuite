@@ -69,12 +69,21 @@
       <groupId>org.archive</groupId>
       <artifactId>heritrix</artifactId>
       <version>1.14.4</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>it.unimi.dsi</groupId>
+      <artifactId>mg4j</artifactId>
+      <version>1.0.1</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>berkeleydb</groupId>
       <artifactId>je</artifactId>
       <version><!-- FIXME: 3.3.82 -->3.2.76</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
