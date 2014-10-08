@@ -34,6 +34,7 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.harvester.datamodel.AliasInfo;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
@@ -165,7 +166,8 @@ public class JobDispatcher {
      */
     private List<MetadataEntry> createMetadata(Job job) {
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
-        MetadataEntry aliasMetadataEntry = MetadataEntry.makeAliasMetadataEntry(job.getJobAliasInfo(),
+        List<AliasInfo> aliasInfos = jobDao.getJobAliasInfo(job);
+        MetadataEntry aliasMetadataEntry = MetadataEntry.makeAliasMetadataEntry(aliasInfos,
                 job.getOrigHarvestDefinitionID(), job.getHarvestNum(), job.getJobID());
         if (aliasMetadataEntry != null) {
             // Add an entry documenting that this job

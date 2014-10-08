@@ -24,18 +24,23 @@ package dk.netarkivet.common.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
+import javax.servlet.jsp.JspWriter;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.mockobjects.servlet.MockJspWriter;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -106,15 +111,14 @@ public class StreamUtilsTester {
         // TODO: Test with streams that cause errors if closed.
     }
 
-    /** test that method copyInputStreamToJspWriter works. */
     @Test
     public void testCopyInputStreamToJspWriter() throws Exception {
-        StringBuffer buf = new StringBuffer();
-        MyMockJspWriter writer = new MyMockJspWriter(buf);
-        String testfileAsString = FileUtils.readFile(TESTFILE);
-        StreamUtils.copyInputStreamToJspWriter(new FileInputStream(TESTFILE), writer);
+        JspWriter writer = mock(JspWriter.class);
+        String testString = "This is a teststring";
+        InputStream is = new ByteArrayInputStream(testString.getBytes());
+        StreamUtils.copyInputStreamToJspWriter(is, writer);
 
-        assertEquals(testfileAsString, buf.toString());
+        verify(writer).write(anyString(), anyInt(), anyInt());
     }
 
     @Test
@@ -122,17 +126,5 @@ public class StreamUtilsTester {
         String testfileAsString = FileUtils.readFile(TESTFILE);
 
         assertEquals(testfileAsString, StreamUtils.getInputStreamAsString(new FileInputStream(TESTFILE)));
-    }
-
-    private class MyMockJspWriter extends MockJspWriter {
-        private StringBuffer buf;
-
-        public MyMockJspWriter(StringBuffer buf) {
-            this.buf = buf;
-        }
-
-        public void write(String str, int off, int len) {
-            buf.append(str.substring(off, len));
-        }
     }
 }

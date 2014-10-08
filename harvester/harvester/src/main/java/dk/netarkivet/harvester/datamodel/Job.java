@@ -28,13 +28,10 @@ import gnu.inet.encoding.IDNAException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,7 +40,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -54,17 +50,12 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.utils.DomainUtils;
-import dk.netarkivet.common.utils.NotificationType;
-import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.ArchiveFileNaming;
 import dk.netarkivet.harvester.harvesting.ArchiveFileNamingFactory;
 import dk.netarkivet.harvester.harvesting.JobInfo;
-import dk.netarkivet.harvester.scheduler.jobgen.JobGenerator;
-import dk.netarkivet.harvester.scheduler.jobgen.JobGeneratorFactory;
 
 /**
  * This class represents one job to run by Heritrix. It's based on a number of configurations all based on the same
@@ -81,7 +72,6 @@ import dk.netarkivet.harvester.scheduler.jobgen.JobGeneratorFactory;
  */
 @SuppressWarnings({"serial"})
 public class Job implements Serializable, JobInfo {
-
     private transient static final Logger log = LoggerFactory.getLogger(Job.class);
 
     // Persistent fields stored in and read from DAO
@@ -214,7 +204,7 @@ public class Job implements Serializable, JobInfo {
     /** This variable is right now the same as harvestdefinitions.audience field. */
     private String harvestAudience;
 
-    Job() {
+    protected Job() {
         this.status = JobStatus.NEW;
     }
 
@@ -231,7 +221,8 @@ public class Job implements Serializable, JobInfo {
      * @param harvestNum the run number of the harvest definition
      * @throws ArgumentNotValid if cfg or priority is null or harvestID is invalid, or if any limit < -1
      */
-    Job(Long harvestID, DomainConfiguration cfg, HarvestChannel channel, long forceMaxObjectsPerDomain,
+    public Job(Long harvestID, DomainConfiguration cfg, Document orderXMLdoc, HarvestChannel channel,
+            long forceMaxObjectsPerDomain,
             long forceMaxBytesPerDomain, long forceMaxJobRunningTime, int harvestNum) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
@@ -258,13 +249,12 @@ public class Job implements Serializable, JobInfo {
         }
 
         // setup initial members
-        domainConfigurationMap = new HashMap<String, String>();
+        domainConfigurationMap = new HashMap<>();
         origHarvestDefinitionID = harvestID;
         orderXMLname = cfg.getOrderXmlName();
-        orderXMLdoc = TemplateDAO.getInstance().read(cfg.getOrderXmlName()).getTemplate();
+        this.orderXMLdoc = orderXMLdoc;
 
-        this.channel = channel.getName();
-        this.isSnapshot = channel.isSnapshot();
+        setHarvestChannel(channel);
 
         long maxObjects = NumberUtils.minInf(forceMaxObjectsPerDomain, cfg.getMaxObjects());
         setMaxObjectsPerDomain(maxObjects);
@@ -279,13 +269,8 @@ public class Job implements Serializable, JobInfo {
         minCountObjects = expectation;
         this.harvestNum = harvestNum;
 
-        // ingest the configuration just as any other configuration
-        // The seedlist, configuration map, and max/min limits are changed
-        // as result of this method-call.
         addConfiguration(cfg);
-        addGlobalCrawlerTraps(orderXMLdoc);
 
-        // Set MaxJobrunningTime for this job
         setMaxJobRunningTime(forceMaxJobRunningTime);
         setArchiveFormatInTemplate(Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT));
         status = JobStatus.NEW;
@@ -340,55 +325,6 @@ public class Job implements Serializable, JobInfo {
     }
 
     /**
-     * Create new Job configured according to the properties of the supplied DomainConfiguration.
-     *
-     * @param harvestID the id of the harvestdefinition
-     * @param channel the {@link HarvestChannel}
-     * @param cfg the configuration to base the Job on
-     * @param harvestNum Which run of the harvest definition this is.
-     * @return newly created Job.
-     * @throws ArgumentNotValid if cfg is null or harvestID is invalid
-     */
-    public static Job createJob(Long harvestID, HarvestChannel channel, DomainConfiguration cfg, int harvestNum) {
-        // Use -1 to indicate no limits for max objects and max bytes.
-        return new Job(harvestID, cfg, channel, Constants.HERITRIX_MAXOBJECTS_INFINITY,
-                Constants.HERITRIX_MAXBYTES_INFINITY, Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, harvestNum);
-    }
-
-    /**
-     * Create new instance of Job suitable for snapshot harvesting. This job is configured according to the properties
-     * of the supplied DomainConfiguration. The maximum number of objects retrieved from all domains added to this job
-     * is determined by maxObjectsPerDomain, regardless of the configuration settings, that are overridden.
-     *
-     * @param harvestID the id of the harvestdefinition
-     * @param channel the channel for the job
-     * @param cfg the configuration to base the Job on
-     * @param maxObjectsPerDomain the maximum number of objects to harvest from a domain, overrides individual
-     * configuration settings unless the domain has overrideLimits set. 0 means no limit.
-     * @param maxBytesPerDomain the maximum number of bytes to harvest from a domain, overrides individual configuration
-     * settings unless the domain has overrideLimits set. -1 means no limit.
-     * @param maxJobRunningTime The maximum of seconds which the harvest can spend on the harvest. 0 means no limit.
-     * @param harvestNum Which run of the harvest definition this is (should always be 1).
-     * @return SnapShotJob
-     * @throws ArgumentNotValid if cfg is null or harvestID is invalid
-     */
-    public static Job createSnapShotJob(Long harvestID, HarvestChannel channel, DomainConfiguration cfg,
-            long maxObjectsPerDomain, long maxBytesPerDomain, long maxJobRunningTime, int harvestNum)
-            throws ArgumentNotValid {
-        return new Job(harvestID, cfg, channel, maxObjectsPerDomain, maxBytesPerDomain, maxJobRunningTime, harvestNum);
-    }
-
-    /**
-     * Reads a list of all active global crawler trap expressions from the database and adds them to the crawl template
-     * for this job.
-     */
-    private void addGlobalCrawlerTraps(Document orderXmlDoc) {
-        GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
-        HeritrixTemplate.editOrderXMLAddCrawlerTraps(orderXmlDoc, Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
-                dao.getAllActiveTrapExpressions());
-    }
-
-    /**
      * Adds a configuration to this Job. Seedlists and settings are updated accordingly.
      *
      * @param cfg the configuration to add
@@ -397,6 +333,9 @@ public class Job implements Serializable, JobInfo {
      */
     public void addConfiguration(DomainConfiguration cfg) {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
+        if (domainConfigurationMap.containsKey(cfg.getDomainName())) {
+            throw new ArgumentNotValid("Job already has a configuration for Domain " + cfg.getDomainName());
+        }
 
         if (log.isTraceEnabled()) {
             log.trace("Adding configuration '{}' to job '{}'", cfg.toString(), cfg.getName());
@@ -408,21 +347,11 @@ public class Job implements Serializable, JobInfo {
             throw new IllegalState(msg);
         }
 
-        // Will accept unacceptable configurations if the map is empty so far
-        // This allows configurations that exceed the normal max number of
-        // objects
-        JobGenerator jobGen = JobGeneratorFactory.getInstance();
-        if (!jobGen.canAccept(this, cfg) && !domainConfigurationMap.isEmpty()) {
-            throw new ArgumentNotValid("This job cannot accept the configuration '" + cfg + "'");
-        }
-
-        // Check orderxml-name
         if (!cfg.getOrderXmlName().equals(getOrderXMLName())) {
             throw new ArgumentNotValid("Job requires the orderxml file:'" + getOrderXMLName() + "' not:'"
                     + cfg.getOrderXmlName() + "' used by the configuration:'" + cfg.getName());
         }
 
-        // Add configuration in map
         domainConfigurationMap.put(cfg.getDomainName(), cfg.getName());
 
         // Add the seeds from the configuration to the Job seeds.
@@ -585,9 +514,7 @@ public class Job implements Serializable, JobInfo {
     public void setActualStart(Date actualStart) {
         ArgumentNotValid.checkNotNull(actualStart, "actualStart");
         if (actualStop != null && actualStop.before(actualStart)) {
-            String errorMsg = "Start time (" + actualStart + ") is after end time: " + actualStop;
-            log.error(errorMsg);
-            NotificationsFactory.getInstance().notify(errorMsg, NotificationType.ERROR);
+            throw new ArgumentNotValid("Start time (" + actualStart + ") is after end time: " + actualStop);
         }
         this.actualStart = (Date) actualStart.clone();
     }
@@ -597,18 +524,15 @@ public class Job implements Serializable, JobInfo {
      * before actualStart.
      *
      * @param actualStop A Date object representing the time when this job was stopped.
+     * @throws ArgumentNotValid
      */
-    public void setActualStop(Date actualStop) {
+    public void setActualStop(Date actualStop) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(actualStop, "actualStop");
         if (actualStart == null) {
-            String warnMsg = "Value of actualStart is null";
-            log.warn(warnMsg);
-            NotificationsFactory.getInstance().notify(warnMsg, NotificationType.WARNING);
+            throw new ArgumentNotValid("actualStart must be defined before setting actualStop");
         }
-        if (actualStart != null && actualStop.before(actualStart)) {
-            String errorMsg = "End time (" + actualStop + ") is before start time: " + actualStart;
-            log.warn(errorMsg);
-            NotificationsFactory.getInstance().notify(errorMsg, NotificationType.WARNING);
+        if (actualStop.before(actualStart)) {
+            throw new ArgumentNotValid("End time (" + actualStop + ") is before start time: " + actualStart);
         }
         this.actualStop = (Date) actualStop.clone();
     }
@@ -642,59 +566,6 @@ public class Job implements Serializable, JobInfo {
     }
 
     /**
-     * Returns a list of sorted seeds for this job. The sorting is by domain, and inside each domain, the list is sorted
-     * by url
-     *
-     * @return a list of sorted seeds for this job.
-     */
-    public List<String> getSortedSeedList() {
-        Map<String, Set<String>> urlMap = new HashMap<String, Set<String>>();
-        for (String seed : seedListSet) {
-            String url;
-            // Assume the protocol is http://, if it is missing
-            if (!seed.matches(Constants.PROTOCOL_REGEXP)) {
-                url = "http://" + seed;
-            } else {
-                url = seed;
-            }
-            String domain = getDomain(url);
-            if (domain == null) {
-                // stop processing this url, and continue to the next seed
-                continue;
-            }
-            Set<String> set;
-            if (urlMap.containsKey(domain)) {
-                set = urlMap.get(domain);
-            } else {
-                set = new TreeSet<String>();
-                urlMap.put(domain, set);
-            }
-            set.add(seed);
-
-        }
-        List<String> result = new ArrayList<String>();
-        for (Set<String> set : urlMap.values()) {
-            result.addAll(set);
-        }
-        return result;
-    }
-
-    /**
-     * Get the domain, that the given URL belongs to.
-     *
-     * @param url an URL
-     * @return the domain, that the given URL belongs to, or null if unable to do so.
-     */
-    private String getDomain(String url) {
-        try {
-            URL uri = new URL(url);
-            return DomainUtils.domainNameFromHostname(uri.getHost());
-        } catch (MalformedURLException e) {
-            throw new ArgumentNotValid("The string '" + url + "' is not a valid URL");
-        }
-    }
-
-    /**
      * Set the seedlist of the job from the seedList argument. Individual seeds are separated by a '\n' character.
      * Duplicate seeds are removed.
      *
@@ -702,7 +573,7 @@ public class Job implements Serializable, JobInfo {
      */
     public void setSeedList(String seedList) {
         ArgumentNotValid.checkNotNullOrEmpty(seedList, "seedList");
-        seedListSet = new HashSet<String>();
+        seedListSet = new HashSet<>();
         BufferedReader reader = new BufferedReader(new StringReader(seedList));
         String seed;
         try {
@@ -715,8 +586,6 @@ public class Job implements Serializable, JobInfo {
         } finally {
             IOUtils.closeQuietly(reader);
         }
-
-        log.trace("Now {} seeds in the list", seedListSet.size());
     }
 
     /**
@@ -813,6 +682,11 @@ public class Job implements Serializable, JobInfo {
         this.edition = edition;
     }
 
+    public void setHarvestChannel(HarvestChannel harvestChannel) {
+        this.channel = harvestChannel.getName();
+        this.isSnapshot = harvestChannel.isSnapshot();
+    }
+
     /**
      * @return the associated {@link HarvestChannel} name.
      */
@@ -845,12 +719,7 @@ public class Job implements Serializable, JobInfo {
         this.isSnapshot = isSnapshot;
     }
 
-    /**
-     * toString method for the Job class.
-     *
-     * @return a human readable string representing this object.
-     * @see Object#toString()
-     */
+    @Override
     public String toString() {
         return "Job " + getJobID() + " (state = " + getStatus() + ", HD = " + getOrigHarvestDefinitionID()
                 + ", channel = " + getChannel() + ", snapshot = " + isSnapshot() + ", forcemaxcount = "
@@ -875,7 +744,7 @@ public class Job implements Serializable, JobInfo {
      * @param maxObjectsPerDomain The forceMaxObjectsPerDomain to set. 0 means no limit.
      * @throws IOFailure Thrown from auxiliary method editOrderXML_maxObjectsPerDomain.
      */
-    private void setMaxObjectsPerDomain(long maxObjectsPerDomain) {
+    protected void setMaxObjectsPerDomain(long maxObjectsPerDomain) {
         if (!underConstruction) {
             final String msg = "Cannot modify job " + this + " as it is no longer under construction";
             log.debug(msg);
@@ -895,7 +764,7 @@ public class Job implements Serializable, JobInfo {
      *
      * @param maxBytesPerDomain The maxBytesPerDomain to set, or -1 for no limit.
      */
-    private void setMaxBytesPerDomain(long maxBytesPerDomain) {
+    protected void setMaxBytesPerDomain(long maxBytesPerDomain) {
         if (!underConstruction) {
             final String msg = "Cannot modify job " + this + " as it is no longer under construction";
             log.debug(msg);
@@ -914,7 +783,7 @@ public class Job implements Serializable, JobInfo {
      *
      * @param maxJobRunningTime The maxJobRunningTime in seconds to set, or 0 for no limit.
      */
-    private void setMaxJobRunningTime(long maxJobRunningTime) {
+    protected void setMaxJobRunningTime(long maxJobRunningTime) {
         if (!underConstruction) {
             final String msg = "Cannot modify job " + this + " as it is no longer under construction";
             log.debug(msg);
@@ -929,32 +798,6 @@ public class Job implements Serializable, JobInfo {
      */
     public long getMaxJobRunningTime() {
         return forceMaxRunningTime;
-    }
-
-    /**
-     * Invoke default method for deserializing object, and reinitialise the logger.
-     *
-     * @param s stream with serialized object.
-     */
-    private void readObject(ObjectInputStream s) {
-        try {
-            s.defaultReadObject();
-        } catch (Exception e) {
-            throw new IOFailure("Unexpected error during deserialization", e);
-        }
-    }
-
-    /**
-     * Invoke default method for serializing object.
-     *
-     * @param s stream to serialize object to.
-     */
-    private void writeObject(ObjectOutputStream s) {
-        try {
-            s.defaultWriteObject();
-        } catch (Exception e) {
-            throw new IOFailure("Unexpected error during serialization", e);
-        }
     }
 
     /**
@@ -1081,20 +924,6 @@ public class Job implements Serializable, JobInfo {
                 this.uploadErrorDetails += "\n" + uploadErrorDetails;
             }
         }
-    }
-
-    /**
-     * Get a list of AliasInfo objects for all the domains included in the job.
-     *
-     * @return a list of AliasInfo objects for all the domains included in the job.
-     */
-    public List<AliasInfo> getJobAliasInfo() {
-        List<AliasInfo> aliases = new ArrayList<AliasInfo>();
-        DomainDAO dao = DomainDAO.getInstance();
-        for (String domain : getDomainConfigurationMap().keySet()) {
-            aliases.addAll(dao.getAliases(domain));
-        }
-        return aliases;
     }
 
     /**

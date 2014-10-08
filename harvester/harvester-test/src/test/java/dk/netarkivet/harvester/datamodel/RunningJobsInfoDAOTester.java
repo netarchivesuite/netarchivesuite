@@ -58,6 +58,6 @@ public class RunningJobsInfoDAOTester extends DataModelTestCase {
         dao.getFullJobHistory(42l);
         dao.getMostRecentByJobId(42L);
         dao.removeInfoForJob(42L);
-        // dao.storeFrontierReport(filterId, report);
+        // jobDAO.storeFrontierReport(filterId, report);
     }
 }

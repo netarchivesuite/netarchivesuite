@@ -23,13 +23,6 @@
 package dk.netarkivet.harvester.scheduler;
 
 import java.io.File;
-import java.sql.SQLException;
-
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import dk.netarkivet.harvester.datamodel.Job;
 
 /**
  * Contains test information about all scheduler test data.
@@ -52,22 +45,4 @@ public class TestInfo {
 
     public TestInfo() {
     }
-
-    /**
-     * Get a simple job.
-     *
-     * @return Job
-     */
-    static Job getJob() {
-        // This job doesn't get an ID here, because we want to see what happens
-        // with an ID-less job, too.
-        try {
-            DataModelTestCase.addHarvestDefinitionToDatabaseWithId(0L);
-        } catch (SQLException e) {
-            throw new IOFailure(e.getMessage());
-        }
-        return Job.createJob(0L, new HarvestChannel("test", false, true, ""),
-                DomainDAO.getInstance().read("netarkivet.dk").getConfiguration("Engelsk_netarkiv_et_niveau"), 0);
-    }
-
 }

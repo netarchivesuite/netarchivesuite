@@ -27,6 +27,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/** Provides functionality for generating xml document nodes ad-hoc for test purposes. The NodeTraverser
+ * uses a builder pattern to chain childnode calls to create multilevel structures. Example <p>
+ *     Node deduplicationNode = NodeTraverser.create(orderxmlDoc).getChildNode("crawl-order", null)
+ .getChildNode("controller", null).getChildNode("map", "write-processors")
+ .getChildNode("newObject", "DeDuplicator").getChildNode("boolean", "enabled").getNode();
+ * </p>
+ */
 public class NodeTraverser {
     private final Document doc;
     private Node currentNode;
@@ -44,6 +51,12 @@ public class NodeTraverser {
         return new NodeTraverser(doc);
     }
 
+    /** Will create a NodeTraverser for accessing the indicated node. If the current node does
+     * existes it will be created.
+     * @param element The tag for the element to make available, eg. <crawl-order>.....
+     * @param name A optional name attribute to add to the element if created.
+     * @return The NodeTraverser reference, which can be used to create further child nodes.
+     */
     public NodeTraverser getChildNode(String element, String name) {
         Node childNode = null;
         NodeList nodes = currentNode.getChildNodes();

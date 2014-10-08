@@ -157,7 +157,6 @@ public class HTMLUtilsTester {
         HTMLUtils.generateHeader("TestTitle", pageContext);
         HTMLUtils.generateFooter(out);
         String result = out.sw.toString();
-        JspTestCase.assertValidXHTML(result);
         StringAsserts.assertStringContains("The version string must be present", Constants.getVersionString(), result);
         StringAsserts.assertStringContains("The environment name must be there", "DEV", result);
     }

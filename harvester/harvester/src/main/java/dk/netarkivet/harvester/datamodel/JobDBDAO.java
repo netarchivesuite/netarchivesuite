@@ -92,8 +92,7 @@ public class JobDBDAO extends JobDAO {
      */
     public synchronized void create(Job job) {
         ArgumentNotValid.checkNotNull(job, "Job job");
-        // Check that job.getOrigHarvestDefinitionID() refers to
-        // existing harvestdefinition
+        // Check that job.getOrigHarvestDefinitionID() refers to existing harvestdefinition.
         Long harvestId = job.getOrigHarvestDefinitionID();
         if (!HarvestDefinitionDAO.getInstance().exists(harvestId)) {
             throw new UnknownID("No harvestdefinition with ID=" + harvestId);
@@ -359,8 +358,7 @@ public class JobDBDAO extends JobDAO {
      * @throws IOFailure if there was some problem talking to the database.
      */
     @Override
-    public Job read(Long jobID) {
-        ArgumentNotValid.checkNotNull(jobID, "jobID");
+    public Job read(long jobID) {
         Connection connection = HarvestDBConnection.get();
         try {
             return read(connection, jobID);
@@ -1126,4 +1124,17 @@ public class JobDBDAO extends JobDAO {
         }
     }
 
+    /**
+     * Get a list of AliasInfo objects for all the domains included in the job.
+     *
+     * @return a list of AliasInfo objects for all the domains included in the job.
+     */
+    public List<AliasInfo> getJobAliasInfo(Job job) {
+        List<AliasInfo> aliases = new ArrayList<AliasInfo>();
+        DomainDAO dao = DomainDAO.getInstance();
+        for (String domain : job.getDomainConfigurationMap().keySet()) {
+            aliases.addAll(dao.getAliases(domain));
+        }
+        return aliases;
+    }
 }
