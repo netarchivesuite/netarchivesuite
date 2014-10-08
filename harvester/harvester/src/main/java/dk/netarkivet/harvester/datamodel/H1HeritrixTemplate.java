@@ -390,12 +390,14 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
      * @param cfg The DomainConfiguration for which to generate crawler trap deciderules
      * @throws IllegalState If unable to update order.xml due to wrong order.xml format
      */
+    /*
     public static void editOrderXMLAddPerDomainCrawlerTraps(Document orderXmlDoc, DomainConfiguration cfg) {
         // Get the regexps to exclude
         List<String> crawlerTraps = cfg.getCrawlertraps();
         String elementName = cfg.getDomainName();
         H1HeritrixTemplate.editOrderXMLAddCrawlerTraps(orderXmlDoc, elementName, crawlerTraps);
     }
+    */
 
     /**
      * Make sure that Heritrix will archive its data in the chosen archiveFormat.
@@ -516,8 +518,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
     public static void editOrderXML_maxObjectsPerDomain(Document orderXMLdoc, long forceMaxObjectsPerDomain,
             boolean maxObjectsIsSetByQuotaEnforcer) {
 
-        String xpath = (maxObjectsIsSetByQuotaEnforcer ? H1HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH
-                : H1HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
+        String xpath = (maxObjectsIsSetByQuotaEnforcer ? GROUP_MAX_FETCH_SUCCESS_XPATH : QUEUE_TOTAL_BUDGET_XPATH);
 
         Node orderXmlNode = orderXMLdoc.selectSingleNode(xpath);
         if (orderXmlNode != null) {
@@ -567,39 +568,6 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
         }
     }
 
-    /**
-     * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of bytes to
-     * retrieve per domain. This method updates 'group-max-all-kb' element of the 'QuotaEnforcer' node, which again is a
-     * subelement of 'pre-fetch-processors' node. with the value of the argument forceMaxBytesPerDomain
-     *
-     * @param forceMaxBytesPerDomain The maximum number of byte to retrieve per domain, or -1 for no limit. Note that
-     * the number is divided by 1024 before being inserted into the orderXml, as Heritrix expects KB.
-     * @throws PermissionDenied If unable to replace the QuotaEnforcer node of the orderXMLdoc Document
-     * @throws IOFailure If the group-max-all-kb element cannot be found. TODO This group-max-all-kb check also be
-     * performed in TemplateDAO.create, TemplateDAO.update
-     */
-    public static void editOrderXML_maxBytesPerDomain(Document orderXMLdoc, long forceMaxBytesPerDomain) {
-        // get and set the group-max-all-kb Node of the orderXMLdoc:
-        String xpath = H1HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
-        Node groupMaxSuccessKbNode = orderXMLdoc.selectSingleNode(xpath);
-        if (groupMaxSuccessKbNode != null) {
-            if (forceMaxBytesPerDomain == 0) {
-                groupMaxSuccessKbNode.setText("0");
-            } else if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY) {
-                // Divide by 1024 since Heritrix uses KB rather than bytes,
-                // and add 1 to avoid to low limit due to rounding.
-                groupMaxSuccessKbNode.setText(Long
-                        .toString((forceMaxBytesPerDomain / Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1));
-            } else {
-                groupMaxSuccessKbNode.setText(String.valueOf(Constants.HERITRIX_MAXBYTES_INFINITY));
-            }
-        } else {
-            throw new IOFailure("Unable to locate QuotaEnforcer object in order.xml: " + orderXMLdoc.asXML());
-        }
-    }
-
-    
-    
     
     /**
      * This method prepares the orderfile used by the Heritrix crawler. </p> 1. alters the orderfile in the
@@ -636,9 +604,36 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
 		
 	}
 
+	/**
+    * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of bytes to
+    * retrieve per domain. This method updates 'group-max-all-kb' element of the 'QuotaEnforcer' node, which again is a
+    * subelement of 'pre-fetch-processors' node. with the value of the argument forceMaxBytesPerDomain
+    *
+    * @param forceMaxBytesPerDomain The maximum number of byte to retrieve per domain, or -1 for no limit. Note that
+    * the number is divided by 1024 before being inserted into the orderXml, as Heritrix expects KB.
+    * @throws PermissionDenied If unable to replace the QuotaEnforcer node of the orderXMLdoc Document
+    * @throws IOFailure If the group-max-all-kb element cannot be found. TODO This group-max-all-kb check also be
+    * performed in TemplateDAO.create, TemplateDAO.update
+    */
 	@Override
-	public void setMaxBytesPerDomain(Long maxbytesL) {
-		// TODO Auto-generated method stub	
+	public void setMaxBytesPerDomain(Long forceMaxBytesPerDomain) {
+		// get and set the group-max-all-kb Node of the orderXMLdoc:
+        String xpath = H1HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
+        Node groupMaxSuccessKbNode = template.selectSingleNode(xpath);
+        if (groupMaxSuccessKbNode != null) {
+            if (forceMaxBytesPerDomain == 0) {
+                groupMaxSuccessKbNode.setText("0");
+            } else if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY) {
+                // Divide by 1024 since Heritrix uses KB rather than bytes,
+                // and add 1 to avoid to low limit due to rounding.
+                groupMaxSuccessKbNode.setText(Long
+                        .toString((forceMaxBytesPerDomain / Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1));
+            } else {
+                groupMaxSuccessKbNode.setText(String.valueOf(Constants.HERITRIX_MAXBYTES_INFINITY));
+            }
+        } else {
+            throw new IOFailure("Unable to locate QuotaEnforcer object in order.xml: " + template.asXML());
+        }	
 	}
 
 	@Override
@@ -699,8 +694,56 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
 	}
 
 	@Override
-	public void insertCrawlerTraps(String elementName, List<String> crawlertraps) {
-		// TODO Auto-generated method stub
+	public void insertCrawlerTraps(String elementName, List<String> crawlerTraps) {
+		if (crawlerTraps.size() == 0) {
+            return;
+        }
+
+        // Get the node to update
+        // If there is an acceptIfPrerequisite decideRule in the template, crawler traps should be
+        // placed before (cf. issue NAS-2205)
+        // If no such rule exists then we append the crawler traps as to the existing decideRuleds.
+
+        Node rulesMapNode = template.selectSingleNode(DECIDERULES_MAP_XPATH);
+        if (rulesMapNode == null || !(rulesMapNode instanceof Element)) {
+            throw new IllegalState("Unable to update order.xml document. It does not have the right form to add"
+                    + "crawler trap deciderules.");
+        }
+
+        Element rulesMap = (Element) rulesMapNode;
+
+        // Create the root node and append it top existing rules
+        Element decideRule = rulesMap.addElement("newObject");
+
+        // If an acceptiIfPrerequisite node exists, detach and insert before it
+        Node acceptIfPrerequisiteNode = template
+                .selectSingleNode(DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH);
+        if (acceptIfPrerequisiteNode != null) {
+            List<Node> elements = rulesMap.elements();
+            int insertPosition = elements.indexOf(acceptIfPrerequisiteNode);
+            decideRule.detach();
+            elements.add(insertPosition, decideRule);
+        } else {
+            rulesMap.elements().size();
+        }
+
+        // Add all regexps in the list to a single MatchesListRegExpDecideRule
+        decideRule.addAttribute("name", elementName);
+        decideRule.addAttribute("class", MatchesListRegExpDecideRule.class.getName());
+
+        Element decision = decideRule.addElement("string");
+        decision.addAttribute("name", "decision");
+        decision.addText("REJECT");
+
+        Element listlogic = decideRule.addElement("string");
+        listlogic.addAttribute("name", "list-logic");
+        listlogic.addText("OR");
+
+        Element regexpList = decideRule.addElement("stringList");
+        regexpList.addAttribute("name", "regexp-list");
+        for (String trap : crawlerTraps) {
+            regexpList.addElement("string").addText(trap);
+        }
 		
 	}
 	

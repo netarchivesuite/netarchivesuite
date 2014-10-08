@@ -1,0 +1,341 @@
+/*
+ * #%L
+ * Netarchivesuite - harvester
+ * %%
+ * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ *             the National Library of France and the Austrian National Library.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
+package dk.netarkivet.harvester.tools;
+
+import java.net.URLEncoder;
+import java.util.List;
+
+import javax.management.AttributeNotFoundException;
+import javax.management.MBeanException;
+import javax.management.ReflectionException;
+
+import org.apache.commons.httpclient.URIException;
+import org.archive.crawler.datamodel.CandidateURI;
+import org.archive.crawler.deciderules.DecidingScope;
+import org.archive.crawler.framework.CrawlController;
+import org.archive.crawler.settings.SimpleType;
+import org.archive.crawler.settings.StringList;
+import org.archive.net.UURIFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import twitter4j.GeoLocation;
+import twitter4j.MediaEntity;
+import twitter4j.Query;
+import twitter4j.QueryResult;
+import twitter4j.Tweet;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.URLEntity;
+
+/**
+ * Heritrix CrawlScope that uses the Twitter Search API (https://dev.twitter.com/docs/api/1/get/search) to add seeds to
+ * a crawl. The following parameters to twitter search are supported: keywords: a list equivalent twitters "query" text.
+ * geo_locations: as defined in the twitter api. language: quivalent to twitter's "lang" parameter. These may be
+ * omitted. In practice only "keywords" works well in the current version of twitter.
+ * <p>
+ * <p>
+ * In addition, the number of results to be considered is determined by the parameters "pages" and
+ * "twitter_results_per_page".
+ */
+@SuppressWarnings({"deprecation", "serial"})
+public class TwitterDecidingScope extends DecidingScope {
+    private static final Logger log = LoggerFactory.getLogger(TwitterDecidingScope.class);
+
+    /**
+     * Here we define bean properties which specify the search parameters for Twitter
+     *
+     */
+
+    /**
+     * Attribute/value pair. The list of keywords to search for
+     */
+    public static final String ATTR_KEYWORDS = "keywords";
+    private StringList keywords;
+
+    /**
+     * Attribute/value pair. The number of pages of results to process.
+     */
+    public static final String ATTR_PAGES = "pages";
+    private int pages = 1;
+
+    /**
+     * Attribute/value pair. The number of results per twitter page.
+     */
+    public static final String ATTR_RESULTS_PER_PAGE = "twitter_results_per_page";
+    private int resultsPerPage = 100;
+
+    /**
+     * Attribute/value pair. A list of geo_locations to include in the search. These have the form lat,long,radius,units
+     * e.g. 100.1,10.5,25.0,km
+     */
+    public static final String ATTR_GEOLOCATIONS = "geo_locations";
+    private StringList geoLocations;
+
+    /**
+     * Attribute/value pair. If set, the language to which results are restricted. Unfortunately the twitter language
+     * identification heuristics are so poor that this option is unusable. (Broken. See
+     * http://code.google.com/p/twitter-api/issues/detail?id=1942 )
+     */
+    public static final String ATTR_LANG = "language";
+    private String language = "all";
+
+    /**
+     * Attribute/value pair specifying whether embedded links should be queued.
+     */
+    public static final String ATTR_QUEUE_LINKS = "queue_links";
+    private boolean queueLinks = true;
+
+    /**
+     * Attribute/value pair specifying whether the status of discovered users should be harvested.
+     */
+    public static final String ATTR_QUEUE_USER_STATUS = "queue_user_status";
+    private boolean queueUserStatus = true;
+
+    /**
+     * Attribute/value pair specifying whether one should additionally queue all links embedded in a users status.
+     */
+    public static final String ATTR_QUEUE_USER_STATUS_LINKS = "queue_user_status_links";
+    private boolean queueUserStatusLinks = true;
+
+    /**
+     * Attribute/value pair specifying whether an html search for the given keyword(s) should also be queued.
+     */
+    public static final String ATTR_QUEUE_KEYWORD_LINKS = "queue_keyword_links";
+    private boolean queueKeywordLinks = true;
+
+    private Twitter twitter;
+    private int tweetCount = 0;
+    private int linkCount = 0;
+
+    /**
+     * This routine makes any necessary Twitter API calls and queues the content discovered.
+     *
+     * @param controller The controller for this crawl.
+     */
+    @Override
+    public void initialize(CrawlController controller) {
+        super.initialize(controller);
+        twitter = (new TwitterFactory()).getInstance();
+        keywords = null;
+        try {
+            keywords = (StringList) super.getAttribute(ATTR_KEYWORDS);
+            pages = ((Integer) super.getAttribute(ATTR_PAGES)).intValue();
+            geoLocations = (StringList) super.getAttribute(ATTR_GEOLOCATIONS);
+            language = (String) super.getAttribute(ATTR_LANG);
+            if (language == null) {
+                language = "all";
+            }
+            resultsPerPage = (Integer) super.getAttribute(ATTR_RESULTS_PER_PAGE);
+            queueLinks = (Boolean) super.getAttribute(ATTR_QUEUE_LINKS);
+            queueUserStatus = (Boolean) super.getAttribute(ATTR_QUEUE_USER_STATUS);
+            queueUserStatusLinks = (Boolean) super.getAttribute(ATTR_QUEUE_USER_STATUS_LINKS);
+            queueKeywordLinks = (Boolean) super.getAttribute(ATTR_QUEUE_KEYWORD_LINKS);
+        } catch (AttributeNotFoundException e1) {
+            e1.printStackTrace();
+            throw new RuntimeException(e1);
+        } catch (MBeanException e1) {
+            e1.printStackTrace();
+            throw new RuntimeException(e1);
+        } catch (ReflectionException e1) {
+            e1.printStackTrace();
+            throw new RuntimeException(e1);
+        }
+        for (Object keyword : keywords) {
+            log.info("Twitter Scope keyword: {}", keyword);
+        }
+        // If keywords or geoLocations is missing, add a list with a single empty string so that the main loop is
+        // executed at least once.
+        if (keywords == null || keywords.isEmpty()) {
+            keywords = new StringList("keywords", "empty keyword list", new String[] {""});
+        }
+        if (geoLocations == null || geoLocations.isEmpty()) {
+            geoLocations = new StringList("geolocations", "empty geolocation list", new String[] {""});
+        }
+        log.info("Twitter Scope will queue {} page(s) of results.", pages);
+        // Nested loop over keywords, geo_locations and pages.
+        for (Object keyword : keywords) {
+            String keywordString = (String) keyword;
+            for (Object geoLocation : geoLocations) {
+                String urlQuery = (String) keyword;
+                Query query = new Query();
+                query.setRpp(resultsPerPage);
+                if (language != null && !language.equals("")) {
+                    query.setLang(language);
+                    urlQuery += " lang:" + language;
+                    keywordString += " lang:" + language;
+                }
+                urlQuery = "http://twitter.com/search/" + URLEncoder.encode(urlQuery);
+                if (queueKeywordLinks) {
+                    addSeedIfLegal(urlQuery);
+                }
+                for (int page = 1; page <= pages; page++) {
+                    query.setPage(page);
+                    if (!keyword.equals("")) {
+                        query.setQuery(keywordString);
+                    }
+                    if (!geoLocation.equals("")) {
+                        String[] locationArray = ((String) geoLocation).split(",");
+                        try {
+                            GeoLocation location = new GeoLocation(Double.parseDouble(locationArray[0]),
+                                    Double.parseDouble(locationArray[1]));
+                            query.setGeoCode(location, Double.parseDouble(locationArray[2]), locationArray[3]);
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    try {
+                        final QueryResult result = twitter.search(query);
+                        List<Tweet> tweets = result.getTweets();
+                        for (Tweet tweet : tweets) {
+                            long id = tweet.getId();
+                            String fromUser = tweet.getFromUser();
+                            String tweetUrl = "http://www.twitter.com/" + fromUser + "/status/" + id;
+                            addSeedIfLegal(tweetUrl);
+                            tweetCount++;
+                            if (queueLinks) {
+                                extractEmbeddedLinks(tweet);
+                            }
+                            if (queueUserStatus) {
+                                String statusUrl = "http://twitter.com/" + tweet.getFromUser() + "/";
+                                addSeedIfLegal(statusUrl);
+                                linkCount++;
+                                if (queueUserStatusLinks) {
+                                    queueUserStatusLinks(tweet.getFromUser());
+                                }
+                            }
+                        }
+                    } catch (TwitterException e1) {
+                        log.error(e1.getMessage());
+                    }
+                }
+            }
+
+        }
+        System.out.println(TwitterDecidingScope.class + " added " + tweetCount + " tweets and " + linkCount
+                + " other links.");
+    }
+
+    /**
+     * Adds links to embedded url's and media in a tweet.
+     *
+     * @param tweet The tweet from which links are to be extracted.
+     */
+    private void extractEmbeddedLinks(Tweet tweet) {
+        final URLEntity[] urlEntities = tweet.getURLEntities();
+        if (urlEntities != null) {
+            for (URLEntity urlEntity : urlEntities) {
+                addSeedIfLegal(urlEntity.getURL().toString());
+                addSeedIfLegal(urlEntity.getExpandedURL().toString());
+                linkCount++;
+            }
+        }
+        final MediaEntity[] mediaEntities = tweet.getMediaEntities();
+        if (mediaEntities != null) {
+            for (MediaEntity mediaEntity : mediaEntities) {
+                final String mediaUrl = mediaEntity.getMediaURL().toString();
+                addSeedIfLegal(mediaUrl);
+                linkCount++;
+            }
+        }
+    }
+
+    /**
+     * Searches for a given users recent tweets and queues and embedded material found.
+     *
+     * @param user The twitter username (without the @ prefix).
+     */
+    private void queueUserStatusLinks(String user) {
+        Query query = new Query();
+        query.setQuery("@" + user);
+        query.setRpp(20);
+        if (!language.equals("")) {
+            query.setLang(language);
+        }
+        try {
+            List<Tweet> results = twitter.search(query).getTweets();
+            if (results != null && !results.isEmpty()) {
+                System.out.println("Extracting embedded links for user " + user);
+            }
+            for (Tweet result : results) {
+                if (result.getIsoLanguageCode().equals(language) || language.equals("")) {
+                    extractEmbeddedLinks(result);
+                }
+            }
+        } catch (TwitterException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Adds a url as a seed if possible. Otherwise just prints an error description and returns.
+     *
+     * @param tweetUrl The url to be added.
+     */
+    private void addSeedIfLegal(String tweetUrl) {
+        try {
+            CandidateURI curi = CandidateURI.createSeedCandidateURI(UURIFactory.getInstance(tweetUrl));
+            System.out.println("Adding seed: '" + curi.toString() + "'");
+            addSeed(curi);
+        } catch (URIException e1) {
+            log.error(e1.getMessage());
+            e1.printStackTrace();
+        }
+    }
+
+    /**
+     * Constructor for the method. Sets up all known attributes.
+     *
+     * @param name the name of this scope.
+     */
+    public TwitterDecidingScope(String name) {
+        super(name);
+        addElementToDefinition(new StringList(ATTR_KEYWORDS, "Keywords to search for"));
+        addElementToDefinition(new SimpleType(ATTR_PAGES, "Number of pages of twitter results to use.", new Integer(1)));
+        addElementToDefinition(new StringList(ATTR_GEOLOCATIONS, "Geolocations to search for, comma separated as "
+                + "lat,long,radius,units e.g. 56.0,10.1,200.0,km"));
+        addElementToDefinition(new SimpleType(ATTR_LANG, "Exclusive language for search", ""));
+        addElementToDefinition(new SimpleType(ATTR_RESULTS_PER_PAGE,
+                "Number of results per twitter search page (max 100)", new Integer(100)));
+        addElementToDefinition(new SimpleType(ATTR_QUEUE_KEYWORD_LINKS,
+                "Whether to queue an html search result for the specified keywords", new Boolean(true)));
+        addElementToDefinition(new SimpleType(ATTR_QUEUE_LINKS, "Whether to queue links discovered in search results",
+                new Boolean(true)));
+        addElementToDefinition(new SimpleType(ATTR_QUEUE_USER_STATUS,
+                "Whether to queue an html status listing for discovered users.", new Boolean(true)));
+        addElementToDefinition(new SimpleType(ATTR_QUEUE_USER_STATUS_LINKS,
+                "Whether to search for and queue links embedded in the status of discovered users.", new Boolean(true)));
+    }
+
+    /**
+     * Adds a candidate uri as a seed for the crawl.
+     *
+     * @param curi The crawl uri to be added.
+     * @return whether the uri was added as a seed.
+     */
+    @Override
+    public boolean addSeed(CandidateURI curi) {
+        return super.addSeed(curi);
+    }
+}
