@@ -25,6 +25,7 @@ package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
 
+import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.StopReason;
 
 /**
@@ -153,5 +154,10 @@ public class TestInfo {
     public static final File DATA_DIR = new File("tests/dk/netarkivet/harvester/harvesting/distribute/data/");
     static final String HarvestInfofilename = "harvestInfo.xml";
     static final File TEST_CRAWL_DIR = new File("tests/dk/netarkivet/harvester/harvesting/data/crawldir");
+    
+	public static Job getJob() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
