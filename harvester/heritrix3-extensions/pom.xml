@@ -38,6 +38,10 @@
           <groupId>org.netpreserve.commons</groupId>
           <artifactId>webarchive-commons</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.archive</groupId>
+          <artifactId>heritrix</artifactId>
+        </exclusion> 
       </exclusions>
     </dependency>
     <dependency>

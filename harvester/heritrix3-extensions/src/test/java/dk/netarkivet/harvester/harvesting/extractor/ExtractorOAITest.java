@@ -26,15 +26,17 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
 import java.util.Collection;
 
 import org.apache.commons.httpclient.URIException;
-import org.archive.crawler.datamodel.CrawlURI;
-import org.archive.crawler.extractor.Extractor;
-import org.archive.crawler.extractor.Link;
 import org.archive.io.ReplayCharSequence;
+import org.archive.modules.CrawlURI;
+import org.archive.modules.extractor.Extractor;
+import org.archive.modules.extractor.Link;
 import org.archive.net.UURIFactory;
-import org.archive.util.HttpRecorder;
+//import org.archive.util.HttpRecorder;
 import org.junit.Test;
 
 @SuppressWarnings({"serial"})
@@ -85,6 +87,26 @@ public class ExtractorOAITest {
         public CharSequence subSequence(int start, int end) {
             return seq.subSequence(start, end);
         }
+
+		public Charset getCharset() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public CharacterCodingException getCodingException() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public long getDecodeExceptionCount() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		public boolean isOpen() {
+			// TODO Auto-generated method stub
+			return false;
+		}
     }
 
     /**
