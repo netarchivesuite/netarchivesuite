@@ -945,6 +945,17 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements WARCWrit
         addIfNotBlank(record,"http-header-from",
                 provider.getOperatorFrom());
 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         // really ugly to return as List<String>, but changing would require 
         // larger refactoring
         return Collections.singletonList(record.toString());
