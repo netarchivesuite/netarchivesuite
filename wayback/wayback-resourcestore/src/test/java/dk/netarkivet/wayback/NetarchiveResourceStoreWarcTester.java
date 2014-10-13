@@ -70,7 +70,6 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import dk.netarkivet.wayback.indexer.IndexerTestCase;
 
 /**
  * Unit test for testNetarchiveResourceStore with WARC files.

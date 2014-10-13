@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.URIException;
-import org.archive.net.UURI;
+import org.archive.url.UsableURI;
 
 /**
  * This is a cut'n'paste job from the wayback subversion repository, with calls to UURIFactory replaced with calls to
@@ -111,8 +111,8 @@ public class NetarchiveSuiteUrlOperations {
                 }
             }
         }
-        UURI absBaseURI;
-        UURI resolvedURI = null;
+        UsableURI absBaseURI;
+        UsableURI resolvedURI = null;
         try {
             absBaseURI = NetarchiveSuiteUURIFactory.getInstance(baseUrl);
             resolvedURI = NetarchiveSuiteUURIFactory.getInstance(absBaseURI, url);

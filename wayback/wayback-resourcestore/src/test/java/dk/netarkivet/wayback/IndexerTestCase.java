@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.wayback.indexer;
+package dk.netarkivet.wayback;
 
 import static org.junit.Assert.assertTrue;
 

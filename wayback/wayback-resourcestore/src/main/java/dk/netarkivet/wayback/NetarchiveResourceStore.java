@@ -78,7 +78,7 @@ public class NetarchiveResourceStore implements ResourceStore {
     public Resource retrieveResource(CaptureSearchResult captureSearchResult) throws ResourceNotAvailableException {
         long offset;
         String responseCode = null;
-        Map<String, String> metadata = new HashMap<String, String>();
+        Map<String, Object> metadata = new HashMap<String, Object>();
         ARCRecord arcRecord;
         ArchiveRecordHeader header;
 
@@ -182,18 +182,20 @@ public class NetarchiveResourceStore implements ResourceStore {
             throw new ResourceNotAvailableException(e.getMessage());
         }
         final String statusCode = responseCode;
-        final Map<String, String> metadataF = metadata;
+        final Map<String, Object> metadataF = metadata;
         // TODO This the sleaziest thing in this class. Why does the
         // ARCRecord give the wrong status code if we don't override this method?
         Resource resource = new ArcResource(arcRecord, (ArchiveReader) null) {
             public int getStatusCode() {
                 return Integer.parseInt(statusCode);
             }
-
+            // FIXME incompatible, needed?
+            /*
             @Override
             public Map<String, String> getHttpHeaders() {
                 return metadataF;
             }
+            */
         };
         logger.info("Returning resource '" + resource + "'");
         return resource;

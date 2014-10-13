@@ -30,10 +30,11 @@ import org.apache.commons.httpclient.HttpParser;
 import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.EncodingUtil;
+import org.archive.format.arc.ARCConstants;
+import org.archive.format.warc.WARCConstants;
+import org.archive.format.warc.WARCConstants.WARCRecordType;
 import org.archive.io.ArchiveRecordHeader;
 import org.archive.io.RecoverableIOException;
-import org.archive.io.arc.ARCConstants;
-import org.archive.io.warc.WARCConstants;
 import org.archive.io.warc.WARCRecord;
 import org.archive.wayback.UrlCanonicalizer;
 import org.archive.wayback.core.CaptureSearchResult;
@@ -42,8 +43,6 @@ import org.archive.wayback.util.Adapter;
 import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-;
 
 /**
  * Adapts certain WARCRecords into SearchResults. DNS and response records are mostly straightforward, but SearchResult
@@ -85,11 +84,18 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
         }
     }
 
+	public static final int WT_RESPONSE = WARCRecordType.response.ordinal();
+	public static final int WT_REVISIT = WARCRecordType.revisit.ordinal();
+	public static final int WT_REQUEST = WARCRecordType.request.ordinal();
+	public static final int WT_METADATA = WARCRecordType.metadata.ordinal();
+	public static final int WT_WARCINFO = WARCRecordType.warcinfo.ordinal();
+
     private CaptureSearchResult adaptInner(WARCRecord rec) throws IOException {
 
         ArchiveRecordHeader header = rec.getHeader();
 
-        String type = header.getHeaderValue(WARCConstants.HEADER_KEY_TYPE).toString();
+        String typeStr = header.getHeaderValue(WARCConstants.HEADER_KEY_TYPE).toString();
+        int type = WARCRecordType.valueOf(typeStr).ordinal();
         // if(type.equals(WARCConstants.WARCINFO)) {
         // LOGGER.info("Skipping record type : " + type);
         // return null;
@@ -97,7 +103,7 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
 
         CaptureSearchResult result = genericResult(rec);
 
-        if (type.equals(WARCConstants.RESPONSE)) {
+        if (type == WT_RESPONSE) {
             String mime = annotater.transformHTTPMime(header.getMimetype());
             if (mime != null && mime.equals("text/dns")) {
                 // close to complete reading, then the digest is legit
@@ -108,34 +114,28 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
             } else {
                 result = adaptWARCHTTPResponse(result, rec);
             }
-        } else if (type.equals(WARCConstants.REVISIT)) {
+        } else if (type == WT_REVISIT) {
             // also set the mime type:
             result.setMimeType("warc/revisit");
-
-        } else if (type.equals(WARCConstants.REQUEST)) {
-
+        } else if (type == WT_REQUEST) {
             if (processAll) {
                 // also set the mime type:
                 result.setMimeType("warc/request");
             } else {
                 result = null;
             }
-        } else if (type.equals(WARCConstants.METADATA)) {
-
+        } else if (type == WT_METADATA) {
             if (processAll) {
                 // also set the mime type:
                 result.setMimeType("warc/metadata");
             } else {
                 result = null;
             }
-        } else if (type.equals(WARCConstants.WARCINFO)) {
-
+        } else if (type == WT_WARCINFO) {
             result.setMimeType(WARC_FILEDESC_VERSION);
-
         } else {
             log.info("Skipping record type : {}", type);
         }
-
         return result;
     }
 
@@ -166,8 +166,9 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
 
         String origUrl = header.getUrl();
         if (origUrl == null) {
-            String type = header.getHeaderValue(WARCConstants.HEADER_KEY_TYPE).toString();
-            if (type.equals(WARCConstants.WARCINFO)) {
+            String typeStr = header.getHeaderValue(WARCConstants.HEADER_KEY_TYPE).toString();
+            int type = WARCRecordType.valueOf(typeStr).ordinal();
+            if (type == WT_WARCINFO) {
                 String filename = header.getHeaderValue(WARCConstants.HEADER_KEY_FILENAME).toString();
                 result.setOriginalUrl("filedesc:" + filename);
                 result.setUrlKey("filedesc:" + filename);
@@ -175,7 +176,6 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
                 result.setOriginalUrl(DEFAULT_VALUE);
                 result.setUrlKey(DEFAULT_VALUE);
             }
-
         } else {
             result.setOriginalUrl(origUrl);
             try {
@@ -306,4 +306,5 @@ public class NetarchiveSuiteWARCRecordToSearchResultAdapter implements Adapter<W
     public void setAnnotater(HTTPRecordAnnotater annotater) {
         this.annotater = annotater;
     }
+
 }

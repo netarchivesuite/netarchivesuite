@@ -16,6 +16,7 @@
 
   <modules>
     <module>wayback</module>
+    <module>wayback-resourcestore</module>
     <module>wayback-test</module>
   </modules>
 

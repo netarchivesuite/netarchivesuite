@@ -23,7 +23,7 @@
 package dk.netarkivet.wayback.batch.copycode;
 
 import org.apache.commons.httpclient.URIException;
-import org.archive.net.UURI;
+import org.archive.url.UsableURI;
 import org.archive.wayback.util.url.AggressiveUrlCanonicalizer;
 
 /**
@@ -61,11 +61,11 @@ public class NetarchiveSuiteAggressiveUrlCanonicalizer extends AggressiveUrlCano
         // as building UURIs is *not* a cheap operation.
 
         // unescape anything that can be:
-        UURI tmpURI = NetarchiveSuiteUURIFactory.getInstance(searchUrl);
+        UsableURI tmpURI = NetarchiveSuiteUURIFactory.getInstance(searchUrl);
         tmpURI.setPath(tmpURI.getPath());
 
         // convert to UURI to perform required URI fixup:
-        UURI searchURI = NetarchiveSuiteUURIFactory.getInstance(tmpURI.getURI());
+        UsableURI searchURI = NetarchiveSuiteUURIFactory.getInstance(tmpURI.getURI());
 
         // replace ' ' with '+' (this is only to match Alexa's canonicalization)
         String newPath = searchURI.getEscapedPath().replace("%20", "+");

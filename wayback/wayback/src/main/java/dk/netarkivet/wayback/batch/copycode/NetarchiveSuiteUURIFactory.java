@@ -24,6 +24,7 @@ package dk.netarkivet.wayback.batch.copycode;
 
 import gnu.inet.encoding.IDNA;
 import gnu.inet.encoding.IDNAException;
+import it.unimi.dsi.mg4j.util.MutableString;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -33,20 +34,18 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.archive.net.LaxURLCodec;
-import org.archive.net.UURI;
+import org.archive.url.LaxURLCodec;
+import org.archive.url.UsableURI;
 import org.archive.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import it.unimi.dsi.mg4j.util.MutableString;
 
 /**
  * This is a cut and paste version of the class org.archive.net.UURIFactory, but omitting calls to read system
  * properties. It can therefore be used in batch jobs without violating our security permissions.
  */
 @SuppressWarnings({"serial", "unused"})
-public class NetarchiveSuiteUURIFactory extends UURI {
+public class NetarchiveSuiteUURIFactory extends UsableURI {
     private static final long serialVersionUID = -6146295130382209042L;
     private static final Logger log = LoggerFactory.getLogger(NetarchiveSuiteUURIFactory.class);
     private static final NetarchiveSuiteUURIFactory factory = new NetarchiveSuiteUURIFactory();
@@ -235,7 +234,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * @return An instance of UURI
      * @throws URIException
      */
-    public static UURI getInstance(String uri) throws URIException {
+    public static UsableURI getInstance(String uri) throws URIException {
         return NetarchiveSuiteUURIFactory.factory.create(uri);
     }
 
@@ -245,7 +244,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * @return An instance of UURI
      * @throws URIException
      */
-    public static UURI getInstance(String uri, String charset) throws URIException {
+    public static UsableURI getInstance(String uri, String charset) throws URIException {
         return NetarchiveSuiteUURIFactory.factory.create(uri, charset);
     }
 
@@ -255,7 +254,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * @return An instance of UURI
      * @throws URIException
      */
-    public static UURI getInstance(UURI base, String relative) throws URIException {
+    public static UsableURI getInstance(UsableURI base, String relative) throws URIException {
         return NetarchiveSuiteUURIFactory.factory.create(base, relative);
     }
 
@@ -267,7 +266,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * @return True if passed string looks like it could be an URL.
      */
     public static boolean hasSupportedScheme(String possibleUrl) {
-        boolean hasScheme = UURI.hasScheme(possibleUrl);
+        boolean hasScheme = UsableURI.hasScheme(possibleUrl);
         if (!hasScheme || NetarchiveSuiteUURIFactory.factory.schemes == null) {
             return hasScheme;
         }
@@ -280,8 +279,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * @return Instance of UURI.
      * @throws URIException
      */
-    private UURI create(String uri) throws URIException {
-        return create(uri, UURI.getDefaultProtocolCharset());
+    private UsableURI create(String uri) throws URIException {
+        return create(uri, UsableURI.getDefaultProtocolCharset());
     }
 
     /**
@@ -290,8 +289,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * @return Instance of UURI.
      * @throws URIException
      */
-    private UURI create(String uri, String charset) throws URIException {
-        UURI uuri = new UURI(fixup(uri, null, charset), true, charset) {
+    private UsableURI create(String uri, String charset) throws URIException {
+    	UsableURI uuri = new UsableURI(fixup(uri, null, charset), true, charset) {
         };
         log.debug("URI {} PRODUCT {} CHARSET {}", uri, uuri.toString(), charset);
         return validityCheck(uuri);
@@ -303,8 +302,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * @return Instance of UURI.
      * @throws URIException
      */
-    private UURI create(UURI base, String relative) throws URIException {
-        UURI uuri = new UURI(base, new UURI(fixup(relative, base, base.getProtocolCharset()), true,
+    private UsableURI create(UsableURI base, String relative) throws URIException {
+    	UsableURI uuri = new UsableURI(base, new UsableURI(fixup(relative, base, base.getProtocolCharset()), true,
                 base.getProtocolCharset()) {
         }) {
         };
@@ -323,9 +322,9 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * @return The passed <code>uuri</code> so can easily inline this check.
      * @throws URIException
      */
-    protected UURI validityCheck(UURI uuri) throws URIException {
-        if (uuri.getRawURI().length > UURI.MAX_URL_LENGTH) {
-            throw new URIException("Created (escaped) uuri > " + UURI.MAX_URL_LENGTH + ": " + uuri.toString());
+    protected UsableURI validityCheck(UsableURI uuri) throws URIException {
+        if (uuri.getRawURI().length > UsableURI.MAX_URL_LENGTH) {
+            throw new URIException("Created (escaped) uuri > " + UsableURI.MAX_URL_LENGTH + ": " + uuri.toString());
         }
         return uuri;
     }
@@ -350,9 +349,9 @@ public class NetarchiveSuiteUURIFactory extends UURI {
             throw new URIException("URI length is zero (and not relative).");
         }
 
-        if (uri.length() > UURI.MAX_URL_LENGTH) {
+        if (uri.length() > UsableURI.MAX_URL_LENGTH) {
             // We check length here and again later after all convertions.
-            throw new URIException("URI length > " + UURI.MAX_URL_LENGTH + ": " + uri);
+            throw new URIException("URI length > " + UsableURI.MAX_URL_LENGTH + ": " + uri);
         }
 
         // Replace nbsp with normal spaces (so that they get stripped if at
