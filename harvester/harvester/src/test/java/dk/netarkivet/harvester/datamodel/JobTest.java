@@ -57,7 +57,7 @@ import dk.netarkivet.testutils.TestFileUtils;
  * Test class for the Job class.
  */
 @SuppressWarnings({"unchecked"})
-public class JobTester {
+public class JobTest {
     private static final HarvestChannel FOCUSED_CHANNEL = new HarvestChannel("FOCUSED", false, true, "");
     private static final HarvestChannel SNAPSHOT_CHANNEL = new HarvestChannel("SNAPSHOT", true, true, "");
 
@@ -189,14 +189,14 @@ public class JobTester {
     public void testAddConfiguration() {
         Job job = createDefaultJob();
 
-        DomainConfiguration anotherConfig = DomainConfigurationTester.createDefaultDomainConfiguration("kaarefc.dk");
+        DomainConfiguration anotherConfig = DomainConfigurationTest.createDefaultDomainConfiguration("kaarefc.dk");
         job.addConfiguration(anotherConfig);
         assertEquals(2, job.getDomainConfigurationMap().size());
     }
 
     @Test
     public void testExceedLimitsInInitialConfiguration() {
-        DomainConfiguration domainConfiguration = DomainConfigurationTester.createDefaultDomainConfiguration();
+        DomainConfiguration domainConfiguration = DomainConfigurationTest.createDefaultDomainConfiguration();
 
         HarvestInfo hi = new HarvestInfo(Long.valueOf(1L), domainConfiguration.getDomainName(),
                 domainConfiguration.getName(),
@@ -214,7 +214,7 @@ public class JobTester {
 
     @Test(expected = ArgumentNotValid.class)
     public void testAddDuplicateConfiguration() {
-        DomainConfiguration defaultConfig = DomainConfigurationTester.createDefaultDomainConfiguration();
+        DomainConfiguration defaultConfig = DomainConfigurationTest.createDefaultDomainConfiguration();
         Job job = createDefaultJob(defaultConfig);
         job.addConfiguration(defaultConfig);
     }
@@ -252,7 +252,7 @@ public class JobTester {
     public void testNullHarvestIDInConstructor() {
         Long nullHarvestID = null;
         new Job(nullHarvestID,
-                DomainConfigurationTester.createDefaultDomainConfiguration(),
+                DomainConfigurationTest.createDefaultDomainConfiguration(),
                 OrderXmlBuilder.createDefault().getOrderXml(),
                 FOCUSED_CHANNEL, -1, -1, -1, 1);
     }
@@ -261,7 +261,7 @@ public class JobTester {
     public void testNegativeHarvestIDInConstructor() {
         Long negativHarvestID = -1L;
         new Job(negativHarvestID,
-                DomainConfigurationTester.createDefaultDomainConfiguration(),
+                DomainConfigurationTest.createDefaultDomainConfiguration(),
                 OrderXmlBuilder.createDefault().getOrderXml(),
                 FOCUSED_CHANNEL, -1, -1, -1, 1);
     }
@@ -279,7 +279,7 @@ public class JobTester {
     public void testNullChannelInConstructor() {
         HarvestChannel nullHarvestChannel = null;
         new Job(1L,
-                DomainConfigurationTester.createDefaultDomainConfiguration(),
+                DomainConfigurationTest.createDefaultDomainConfiguration(),
                 OrderXmlBuilder.createDefault().getOrderXml(),
                 nullHarvestChannel, -1, -1, -1, 1);
     }
@@ -318,7 +318,7 @@ public class JobTester {
     @Test
     public void testForceMaxObjectsPerDomain() {
         // test capping of forceMaxObjectsPerDomain:
-        DomainConfiguration domainConfiguration = DomainConfigurationTester.createDefaultDomainConfiguration();
+        DomainConfiguration domainConfiguration = DomainConfigurationTest.createDefaultDomainConfiguration();
         Job job = createDefaultJob(domainConfiguration);
         assertEquals("forceMaxObjectsPerDomain not capped to domain config",
                 domainConfiguration.getMaxObjects(),
@@ -344,7 +344,7 @@ public class JobTester {
         int harvestNum = 1;
         new Job(
                 harvestId,
-                DomainConfigurationTester.createDefaultDomainConfiguration(),
+                DomainConfigurationTest.createDefaultDomainConfiguration(),
                 OrderXmlBuilder.createDefault().getOrderXml(),
                 FOCUSED_CHANNEL,
                 forceMaxObjectsPerDomain,
@@ -360,7 +360,7 @@ public class JobTester {
         int harvestNum = 1;
         new Job(
                 harvestId,
-                DomainConfigurationTester.createDefaultDomainConfiguration(),
+                DomainConfigurationTest.createDefaultDomainConfiguration(),
                 OrderXmlBuilder.createDefault().getOrderXml(),
                 FOCUSED_CHANNEL,
                 forceMaxObjectsPerDomain,
@@ -412,10 +412,10 @@ public class JobTester {
     @Test
     public void testAddConfigurationUpdatesOrderXml() {
         // Make a configuration with no crawlertraps
-        DomainConfiguration dc1 = DomainConfigurationTester.createDefaultDomainConfiguration();
+        DomainConfiguration dc1 = DomainConfigurationTest.createDefaultDomainConfiguration();
 
         // Make a configuration with two crawlertraps
-        DomainConfiguration dc2 = DomainConfigurationTester.createDefaultDomainConfiguration("otherDomain.org");
+        DomainConfiguration dc2 = DomainConfigurationTest.createDefaultDomainConfiguration("otherDomain.org");
         List<String> traps = new ArrayList<>();
 
         String crawlerTrap1 = "xyz.*";
@@ -490,7 +490,7 @@ public class JobTester {
      */
     @Test
     public void testCreateJob() {
-        DomainConfiguration domainConfiguration = DomainConfigurationTester.createDefaultDomainConfiguration();
+        DomainConfiguration domainConfiguration = DomainConfigurationTest.createDefaultDomainConfiguration();
         domainConfiguration.setMaxBytes(-1);
         final int harvestNum = 4;
         long harvestId = 1;
@@ -557,7 +557,7 @@ public class JobTester {
         int harvestNum = 1;
         return new Job(
                 harvestId,
-                DomainConfigurationTester.createDefaultDomainConfiguration(),
+                DomainConfigurationTest.createDefaultDomainConfiguration(),
                 OrderXmlBuilder.createDefault().getOrderXml(),
                 FOCUSED_CHANNEL,
                 forceMaxObjectsPerDomain,

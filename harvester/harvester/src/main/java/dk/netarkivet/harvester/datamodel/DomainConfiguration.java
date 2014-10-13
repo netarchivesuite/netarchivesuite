@@ -264,13 +264,28 @@ public class DomainConfiguration implements Named {
     public void addSeedList(Domain domain, SeedList seedlist) {
         ArgumentNotValid.checkNotNull(seedlist, "seedlist");
         SeedList domainSeedlist = domain.getSeedList(seedlist.getName());
-        if (!domainSeedlist.equals(seedlist)) {
+        if (domainSeedlist == null || !domainSeedlist.equals(seedlist)) {
             String message = "Cannot add seedlist " + seedlist + " to " + this + " as it differs from the one defined "
                     + "for " + domain + ": " + domainSeedlist;
             log.debug(message);
             throw new PermissionDenied(message);
         }
         seedlists.add(domainSeedlist);
+    }
+
+    /**
+     * Sets the used seedlists to the given list. Note: list is copied.
+     *
+     * @param newSeedlists The seedlists to use.
+     * @param domain The domain where the seedlists should come from
+     * @throws ArgumentNotValid if the seedslists are null
+     */
+    public void setSeedLists(Domain domain, List<SeedList> newSeedlists) {
+        ArgumentNotValid.checkNotNull(newSeedlists, "newSeedlists");
+        this.seedlists = new ArrayList<SeedList>(newSeedlists.size());
+        for (SeedList s : newSeedlists) {
+            addSeedList(domain, s);
+        }
     }
 
     /**
@@ -461,21 +476,6 @@ public class DomainConfiguration implements Named {
             }
         }
         return false;
-    }
-
-    /**
-     * Sets the used seedlists to the given list. Note: list is copied.
-     *
-     * @param newSeedlists The seedlists to use.
-     * @param domain The domain where the seedlists should come from
-     * @throws ArgumentNotValid if the seedslists are null
-     */
-    public void setSeedLists(Domain domain, List<SeedList> newSeedlists) {
-        ArgumentNotValid.checkNotNull(newSeedlists, "newSeedlists");
-        this.seedlists = new ArrayList<SeedList>(newSeedlists.size());
-        for (SeedList s : newSeedlists) {
-            addSeedList(domain, s);
-        }
     }
 
     /**

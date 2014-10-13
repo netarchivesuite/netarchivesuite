@@ -8,10 +8,10 @@ import org.junit.Test;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.Constants;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
-import dk.netarkivet.harvester.datamodel.DomainConfigurationTester;
+import dk.netarkivet.harvester.datamodel.DomainConfigurationTest;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobTester;
+import dk.netarkivet.harvester.datamodel.JobTest;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
 
@@ -30,9 +30,9 @@ public class DefaultJobGeneratorTest extends AbstractJobGeneratorTest {
      */
     @Test
     public void testCanAcceptByteLimit() {
-        DomainConfiguration domainConfiguration = DomainConfigurationTester.createDefaultDomainConfiguration();
-        DomainConfiguration anotherConfig = DomainConfigurationTester.createDefaultDomainConfiguration("nondefault.org");
-        Job job = JobTester.createDefaultJob();
+        DomainConfiguration domainConfiguration = DomainConfigurationTest.createDefaultDomainConfiguration();
+        DomainConfiguration anotherConfig = DomainConfigurationTest.createDefaultDomainConfiguration("nondefault.org");
+        Job job = JobTest.createDefaultJob();
         DefaultJobGenerator jobGen = new DefaultJobGenerator();
         assertFalse("Job should not accept configuration associated with domain " +
                         domainConfiguration.getDomainName(),
@@ -79,7 +79,7 @@ public class DefaultJobGeneratorTest extends AbstractJobGeneratorTest {
 
     @Test (expected = ArgumentNotValid.class)
     public void testCanAcceptNullConfiguration() {
-        Job job = JobTester.createDefaultJob();
+        Job job = JobTest.createDefaultJob();
         createJobGenerator().canAccept(job, null);
     }
 }

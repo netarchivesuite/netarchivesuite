@@ -77,7 +77,7 @@ public class JobDAOTester extends DataModelTestCase {
     private static final HarvestChannel FOCUSED_CHANNEL = new HarvestChannel("FOCUSED", false, true, "");
     private static final HarvestChannel SNAPSHOT_CHANNEL = new HarvestChannel("SNAPSHOT", true, true, "");
     private JobDAO jobDAO;
-    private DomainConfiguration domainConfiguration;
+    private static DomainConfiguration domainConfiguration;
 
     @Before
     public void setUp() throws Exception {
@@ -727,7 +727,7 @@ public class JobDAOTester extends DataModelTestCase {
 
     @Test
     public void testMaxBytesBug652() throws Exception {
-        DomainConfiguration defaultConfig = DomainConfigurationTester.createDefaultDomainConfiguration();
+        DomainConfiguration defaultConfig = DomainConfigurationTest.createDefaultDomainConfiguration();
         defaultConfig.setMaxBytes(-1);
 
         Job job =  new Job(TestInfo.HARVESTID, defaultConfig, OrderXmlBuilder.createDefault().getOrderXml(),
@@ -746,8 +746,8 @@ public class JobDAOTester extends DataModelTestCase {
         }
     }
 
-    private Job createJob(int harvestNum) {
-        return new Job(TestInfo.HARVESTID, domainConfiguration, OrderXmlBuilder.createDefault().getOrderXml(),
+    public static Job createJob(int harvestNum) {
+        return new Job(TestInfo.HARVESTID, TestInfo.getDRConfiguration(), OrderXmlBuilder.createDefault().getOrderXml(),
                 FOCUSED_CHANNEL, Constants.HERITRIX_MAXOBJECTS_INFINITY,
                 Constants.HERITRIX_MAXBYTES_INFINITY, Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, harvestNum);
     }

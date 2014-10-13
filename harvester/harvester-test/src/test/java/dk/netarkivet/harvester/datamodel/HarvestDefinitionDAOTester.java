@@ -46,7 +46,6 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.SlowTest;
-import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.LogbackRecorder;
 
@@ -358,7 +357,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         addRunInfo(newHd, 3, "statsbiblioteket.dk", 13, 100, JobStatus.FAILED);
 
         // This run only has unfinished jobs
-        Job j3 = JobTester.createDefaultJob();//DefaultJobGenerator.getNewJob(newHd, dcs.get(0));
+        Job j3 = JobTest.createDefaultJob();//DefaultJobGenerator.getNewJob(newHd, dcs.get(0));
         j3.setHarvestNum(4);
         j3.setStatus(JobStatus.SUBMITTED);
         jdao.create(j3);
@@ -370,7 +369,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         jdao.update(j2);
 
         // An unfinished job
-        j3 = JobTester.createDefaultJob();//DefaultJobGenerator.getNewJob(newHd, dcs.get(0));
+        j3 = JobTest.createDefaultJob();//DefaultJobGenerator.getNewJob(newHd, dcs.get(0));
         j3.setHarvestNum(5);
         j3.setStatus(JobStatus.STARTED);
         jdao.create(j3);
@@ -436,7 +435,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         final DomainDAO ddao = DomainDAO.getInstance();
         Domain d = ddao.read(domain);
         final DomainConfiguration dc = d.getDefaultConfiguration();
-        Job j = JobTester.createDefaultJob();//DefaultJobGenerator.getNewJob(hd, dc);
+        Job j = JobTest.createDefaultJob();//DefaultJobGenerator.getNewJob(hd, dc);
         j.setHarvestNum(run);
         JobDAO jdao = JobDAO.getInstance();
         jdao.create(j);

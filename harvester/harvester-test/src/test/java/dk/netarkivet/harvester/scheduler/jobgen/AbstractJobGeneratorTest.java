@@ -23,7 +23,7 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobTester;
+import dk.netarkivet.harvester.datamodel.JobTest;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 
 public abstract class AbstractJobGeneratorTest extends DataModelTestCase {
@@ -65,7 +65,7 @@ public abstract class AbstractJobGeneratorTest extends DataModelTestCase {
         dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator.reset();
         Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "3");
         Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "0");
-        Job job = JobTester.createDefaultJob(dc1);
+        Job job = JobTest.createDefaultJob(dc1);
         // should be okay, relative size difference below 3
         job.addConfiguration(dc2);
         assertFalse(createJobGenerator().canAccept(job, dc3));
