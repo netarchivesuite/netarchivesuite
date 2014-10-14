@@ -69,7 +69,7 @@
       <groupId>org.archive</groupId>
       <artifactId>heritrix</artifactId>
       <version>1.14.4</version>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
