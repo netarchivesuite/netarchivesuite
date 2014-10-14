@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.netarchivesuite</groupId>
+    <artifactId>harvester-pom</artifactId>
+    <version>5.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.netarchivesuite</groupId>
+  <artifactId>heritrix3-bundler</artifactId>
+  <version>5.0-SNAPSHOT</version>
+
+  <packaging>pom</packaging>
+
+  <name>Netarchivesuite - Heritrix3 Bundler</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>builds.archive.org,maven2</id>
+      <url>http://builds.archive.org/maven2</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>heritrix3-extensions</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.archive.heritrix</groupId>
+      <artifactId>heritrix</artifactId>
+      <version>3.2.0</version>
+      <classifier>dist</classifier>
+      <type>zip</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>distro-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <appendAssemblyId>false</appendAssemblyId>
+              <classifier>prod</classifier>
+              <finalName>NetarchiveSuite-${project.artifactId}-${project.version}</finalName>
+              <descriptors>
+                <descriptor>src/main/assembly/distribution.xml</descriptor>
+              </descriptors>
+              <tarLongFileMode>gnu</tarLongFileMode>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

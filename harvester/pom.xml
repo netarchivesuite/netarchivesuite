@@ -21,6 +21,7 @@
     <module>history-gui</module>
     <module>qa-gui</module>
     <module>heritrix3-extensions</module>
+    <module>heritrix3-bundler</module>
   </modules>
 
   <dependencies>

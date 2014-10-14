@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    <id>dist</id>
+
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <includeBaseDirectory>false</includeBaseDirectory >
+<!--
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/../../unclassified/</directory>
+            <includes>
+                <include>archivedatabasedir/**</include>
+                <include>harvestdefinitionbasedir/**</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/</directory>
+            <includes>
+                <include>examples/**</include>
+                <include>README.txt</include>
+                <include>derby.properties</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/heritrix/</directory>
+            <includes>
+                <include>modules/**</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/</directory>
+            <includes>
+                <include>heritrix/**</include>
+            </includes>
+            <outputDirectory>/lib/</outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/../deploy/</directory>
+            <includes>
+                <include>scripts/**</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>./</directory>
+            <outputDirectory>/conf</outputDirectory>
+            <excludes>
+                <exclude>*/**</exclude>
+            </excludes>
+        </fileSet>
+
+        <fileSet>
+            <directory>./</directory>
+            <outputDirectory>/log</outputDirectory>
+            <excludes>
+                <exclude>*/**</exclude>
+            </excludes>
+        </fileSet>
+    </fileSets>
+-->
+    <!-- groupId:artifactId:type[:classifier]:version -->
+    <dependencySets>
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>org.archive.heritrix:heritrix:zip:dist</include>
+            </includes>
+            <unpack>true</unpack>
+            <outputDirectory>/</outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>*:jar</include>
+            </includes>
+            <outputDirectory>/heritrix-3.2.0/lib/</outputDirectory>
+        </dependencySet>
+<!--
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>org.netarchivesuite:*:jar</include>
+            </includes>
+            <outputFileNameMapping>dk.netarkivet.${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <outputDirectory>/lib/</outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>org.apache.derby:*:jar</include>
+            </includes>
+            <outputDirectory>/lib/db/</outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>org.apache.derby:*:jar</include>
+            </includes>
+            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <outputDirectory>/lib/db/</outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>*:jar</include>
+            </includes>
+-->
+            <!--excludes>
+                <exclude>org.netarchivesuite:*:jar</exclude>
+                <exclude>org.apache.derby:*:jar</exclude>
+            </excludes-->
+<!--
+            <outputDirectory>/lib/</outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>*:war</include>
+            </includes>
+            <outputFileNameMapping>${artifact.build.finalName}.${artifact.extension}</outputFileNameMapping>
+-->
+            <!--outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping-->
+<!--
+            <outputDirectory>/webpages/</outputDirectory>
+        </dependencySet>
+-->
+    </dependencySets>
+</assembly>

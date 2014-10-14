@@ -240,13 +240,13 @@
       </plugin>
 
       <!-- Generate javadoc jar. Note: Java 8 (doclint) check has been disabled. -->
-      <plugin>
+      <!--plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <linksource>true</linksource>
-          <quiet>true</quiet>
+          <quiet>true</quiet-->
           <!-- Note: This fails with a JVM older than Java 8 -->
-          <additionalparam>-Xdoclint:none</additionalparam>
+          <!--additionalparam>-Xdoclint:none</additionalparam>
         </configuration>
         <executions>
           <execution>
@@ -257,7 +257,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin-->
     </plugins>
   </build>
 
