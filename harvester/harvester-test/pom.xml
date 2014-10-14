@@ -43,10 +43,25 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>harvest-scheduler</artifactId>
+      <artifactId>common-test</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>harvester</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!--dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>harvest-scheduler</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency-->
 
     <dependency>
       <groupId>junit</groupId>
@@ -91,20 +106,6 @@
       <artifactId>mg4j</artifactId>
       <version>1.0.1</version>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>common-test</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>harvester</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-      <type>test-jar</type>
     </dependency>
 
     <dependency>
