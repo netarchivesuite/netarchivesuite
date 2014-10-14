@@ -72,8 +72,9 @@ public class WARCWriterProcessorTester {
 
         XmlUtils.setNode(doc, DISK_PATH_XPATH, orderWith.getParentFile().getAbsolutePath());
         XmlUtils.writeXmlToFile(doc, orderWith);
-
-        WARCWriterProcessor p = new WARCWriterProcessor("testing");
+        
+        
+        //WARCWriterProcessor p = new WARCWriterProcessor("testing");
         // FIXME
         //p.getFirstrecordBody(orderWith);
         // String output = p.getFirstrecordBody(TestInfo.ORDER_FOR_TESTING_WARCINFO);
@@ -87,9 +88,13 @@ public class WARCWriterProcessorTester {
 
         XmlUtils.setNode(doc, DISK_PATH_XPATH, orderWithOut.getParentFile().getAbsolutePath());
         XmlUtils.writeXmlToFile(doc, orderWithOut);
-
+        // FIXME
+        /*
         WARCWriterProcessor p = new WARCWriterProcessor("testing");
         p.getFirstrecordBody(orderWithOut);
+        */
+        
+        
         // String output = p.getFirstrecordBody(TestInfo.ORDER_FOR_TESTING_WARCINFO);
         // System.out.println(output);
     }

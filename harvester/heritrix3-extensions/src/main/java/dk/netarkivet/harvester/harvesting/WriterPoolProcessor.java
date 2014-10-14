@@ -17,7 +17,7 @@
  *  limitations under the License.
  */
 
-package org.archive.modules.writer;
+package dk.netarkivet.harvester.harvesting;
 
 import static org.archive.modules.CoreAttributeConstants.A_DNS_SERVER_IP_LABEL;
 import static org.archive.modules.fetcher.FetchStatusCodes.S_DNS_SUCCESS;
@@ -53,6 +53,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.Lifecycle;
+
+//FIXME is this necessary to import. Can we instead extend WARCWriterProcessor.
 
 /**
  * Abstract implementation of a file pool processor.

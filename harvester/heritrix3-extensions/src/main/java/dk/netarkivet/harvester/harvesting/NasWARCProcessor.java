@@ -1,0 +1,187 @@
+package dk.netarkivet.harvester.harvesting;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+//import java.util.logging.Level;
+import org.archive.modules.CrawlMetadata;
+import org.archive.modules.writer.WARCWriterProcessor;
+import org.archive.util.ArchiveUtils;
+import org.archive.util.anvl.ANVLRecord;
+
+/**
+ * An attempt to add custom metadata to the WARCInfo records written
+ * by Heritrix by just extending the org.archive.modules.writer.WARCWriterProcessor;
+ * This was not possible in H1.
+ * @author svc
+ * 
+ * TODO Add new properties to the NasWARCProcessor 
+ * 
+ */
+public class NasWARCProcessor extends WARCWriterProcessor {
+
+	public NasWARCProcessor() {
+		super();
+	}
+	
+	List<String> cachedMetadata;
+	
+	 /**
+     * metadata items.
+     * Add to bean WARCProcessor bean as as
+     * <property name="metadataItems"> 
+     * <map>
+     *   <entry key="Brugernavn" value="Vilhelm"/>
+     *   <entry key="Pw" value="Caroline"/>
+     *   <entry key="Login" value="Login"/>
+     * </map>
+
+     */
+    protected Map<String,String> metadataItems = new HashMap<String,String>();
+    public Map<String,String> getFormItems() {
+        return this.metadataItems;
+    }
+    public void setMetadataItems(Map<String,String> metadataItems) {
+        this.metadataItems = metadataItems;
+    }
+
+	
+	@Override
+	public List<String> getMetadata() {
+        if (cachedMetadata != null) {
+            return cachedMetadata;
+        }
+        ANVLRecord record = new ANVLRecord();
+        record.addLabelValue("software", "Heritrix/" +
+                ArchiveUtils.VERSION + " http://crawler.archive.org");
+        try {
+            InetAddress host = InetAddress.getLocalHost();
+            record.addLabelValue("ip", host.getHostAddress());
+            record.addLabelValue("hostname", host.getCanonicalHostName());
+        } catch (UnknownHostException e) {
+            //logger.log(Level.WARNING,"unable top obtain local crawl engine host",e);
+        }
+        
+        // conforms to ISO 28500:2009 as of May 2009
+        // as described at http://bibnum.bnf.fr/WARC/ 
+        // latest draft as of November 2008
+        record.addLabelValue("format","WARC File Format 1.0"); 
+        record.addLabelValue("conformsTo","http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf");
+        
+        // Get other values from metadata provider
+
+        CrawlMetadata provider = getMetadataProvider();
+
+        addIfNotBlank(record,"operator", provider.getOperator());
+        addIfNotBlank(record,"publisher", provider.getOrganization());
+        addIfNotBlank(record,"audience", provider.getAudience());
+        addIfNotBlank(record,"isPartOf", provider.getJobName());
+        // TODO: make date match 'job creation date' as in Heritrix 1.x
+        // until then, leave out (plenty of dates already in WARC 
+        // records
+//            String rawDate = provider.getBeginDate();
+//            if(StringUtils.isNotBlank(rawDate)) {
+//                Date date;
+//                try {
+//                    date = ArchiveUtils.parse14DigitDate(rawDate);
+//                    addIfNotBlank(record,"created",ArchiveUtils.getLog14Date(date));
+//                } catch (ParseException e) {
+//                    logger.log(Level.WARNING,"obtaining warc created date",e);
+//                }
+//            }
+        addIfNotBlank(record,"description", provider.getDescription());
+        addIfNotBlank(record,"robots", provider.getRobotsPolicyName().toLowerCase());
+
+        addIfNotBlank(record,"http-header-user-agent",
+                provider.getUserAgent());
+        addIfNotBlank(record,"http-header-from",
+                provider.getOperatorFrom());
+        
+        
+        String netarchiveSuiteComment = "#added by NetarchiveSuite "
+                + dk.netarkivet.common.Constants.getVersionString();
+        ANVLRecord recordNAS = new ANVLRecord(); // Previously new ANVLRecord(7); 
+
+        recordNAS.addLabelValue("harvestInfo.version", 
+        		//pjd.getVersion());
+        		metadataItems.get("harvestInfo.version"));
+        
+        recordNAS.addLabelValue("harvestInfo.jobId", 
+        		//"" + pjd.getJobID());
+        		metadataItems.get("harvestInfo.jobId"));
+        
+        recordNAS.addLabelValue("harvestInfo.channel", 
+        		//pjd.getChannel());
+        		metadataItems.get("harvestInfo.channel"));
+        
+        recordNAS.addLabelValue("harvestInfo.harvestNum", 
+        		//"" + pjd.getJobHarvestNum());
+        		metadataItems.get("harvestInfo.harvestNum"));
+        
+        recordNAS.addLabelValue("harvestInfo.origHarvestDefinitionID", 
+        		//"" + pjd.getOrigHarvestDefinitionID());
+        		metadataItems.get("harvestInfo.origHarvestDefinitionID"));
+        
+        recordNAS.addLabelValue("harvestInfo.maxBytesPerDomain", 
+        		//"" + pjd.getMaxBytesPerDomain());
+        		metadataItems.get("harvestInfo.maxBytesPerDomain"));
+        
+        recordNAS.addLabelValue("harvestInfo.maxObjectsPerDomain", 
+        		//"" + pjd.getMaxObjectsPerDomain());
+        		metadataItems.get("harvestInfo.maxObjectsPerDomain"));
+        
+        recordNAS.addLabelValue("harvestInfo.orderXMLName", 
+        		//pjd.getOrderXMLName());
+        		metadataItems.get("harvestInfo.orderXMLName"));
+        
+        recordNAS.addLabelValue("harvestInfo.origHarvestDefinitionName", 
+        		//pjd.getharvestName());
+        		metadataItems.get("harvestInfo.origHarvestDefinitionName"));
+        
+        //if (pjd.getScheduleName() != null) {
+        //    recordNAS.addLabelValue("harvestInfo.scheduleName", pjd.getScheduleName());
+        //}
+        if (metadataItems.containsKey("harvestInfo.scheduleName")) {
+        	recordNAS.addLabelValue("harvestInfo.scheduleName", 
+        			metadataItems.get("harvestInfo.scheduleName"));
+        }
+        
+        recordNAS.addLabelValue("harvestInfo.harvestFilenamePrefix", 
+        		//pjd.getHarvestFilenamePrefix());
+        		metadataItems.get("harvestInfo.harvestFilenamePrefix"));
+        
+        recordNAS.addLabelValue("harvestInfo.jobSubmitDate", 
+        		//pjd.getJobSubmitDate());
+        		metadataItems.get("harvestInfo.jobSubmitDate"));
+        
+        /*if (pjd.getPerformer() != null) {
+            recordNAS.addLabelValue("harvestInfo.performer", pjd.getPerformer());
+        }*/
+        if (metadataItems.containsKey("harvestInfo.performer")) {
+        	recordNAS.addLabelValue("harvestInfo.performer",
+        			metadataItems.get("harvestInfo.performer"));
+        }
+        
+        /*
+        if (pjd.getAudience() != null) {
+            recordNAS.addLabelValue("harvestInfo.audience", pjd.getAudience());
+        }*/
+        
+        if (metadataItems.containsKey("harvestInfo.audience")) {
+        	recordNAS.addLabelValue("harvestInfo.audience",
+        			metadataItems.get("harvestInfo.audience"));
+        }
+        
+        // really ugly to return as List<String>, but changing would require 
+        // larger refactoring
+        cachedMetadata = Collections.singletonList(record.toString() 
+        		+ netarchiveSuiteComment + "\n" + recordNAS.toString());
+        return cachedMetadata;
+    }
+	
+}
