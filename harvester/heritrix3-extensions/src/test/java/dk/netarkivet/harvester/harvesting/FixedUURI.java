@@ -46,10 +46,11 @@ public class FixedUURI extends UURI {
     protected FixedUURI(UURI uuri, UURI uuri1) throws URIException {
         super(uuri, uuri1);
     }
-
+    /*
+     * FIXME or remove class altogether
     public FixedUURI(String string, boolean b) throws URIException {
         super(string, b);
-    }
+    }*/
 
     /**
      * Return the hostname for this URI, giving the looked-up host on dns-URLS.

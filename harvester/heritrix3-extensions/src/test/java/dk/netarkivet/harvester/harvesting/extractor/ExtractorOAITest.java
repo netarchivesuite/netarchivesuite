@@ -26,15 +26,18 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
 import java.util.Collection;
 
 import org.apache.commons.httpclient.URIException;
-import org.archive.crawler.datamodel.CrawlURI;
-import org.archive.crawler.extractor.Extractor;
-import org.archive.crawler.extractor.Link;
 import org.archive.io.ReplayCharSequence;
+import org.archive.modules.CrawlURI;
+import org.archive.modules.extractor.Extractor;
+import org.archive.modules.extractor.Link;
 import org.archive.net.UURIFactory;
-import org.archive.util.HttpRecorder;
+import org.archive.util.Recorder;
+//import org.archive.util.HttpRecorder;
 import org.junit.Test;
 
 @SuppressWarnings({"serial"})
@@ -85,6 +88,26 @@ public class ExtractorOAITest {
         public CharSequence subSequence(int start, int end) {
             return seq.subSequence(start, end);
         }
+        /** FIXME **/
+		public Charset getCharset() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		/** FIXME **/
+		public CharacterCodingException getCodingException() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		/** FIXME **/
+		public long getDecodeExceptionCount() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+		/** FIXME **/
+		public boolean isOpen() {
+			// TODO Auto-generated method stub
+			return false;
+		}
     }
 
     /**
@@ -95,8 +118,8 @@ public class ExtractorOAITest {
     public void testExtract() throws URIException, InterruptedException {
         CrawlURI curi = new CrawlURI(UURIFactory.getInstance(uri)) {
             @Override
-            public HttpRecorder getHttpRecorder() {
-                return new HttpRecorder(new File("/"), "") {
+            public Recorder getRecorder() {
+                return new Recorder(new File("/"), "") {
                     @Override
                     public ReplayCharSequence getReplayCharSequence() throws IOException {
                         return new TestReplayCharSequence(xmlText);
@@ -105,13 +128,19 @@ public class ExtractorOAITest {
             }
         };
         curi.setContentType("text/xml");
-        Extractor x = new ExtractorOAI("foobar") {
+        Extractor x = new ExtractorOAI() {
+        	//FIXME the isHttpTransactionContentToProcess method no longer exists
+        	// Probably replace with ???? Look in Migrated ExtractorOAI
+        	/*
             @Override
             protected boolean isHttpTransactionContentToProcess(CrawlURI curi) {
                 return true;
-            }
+            }*/
         };
-        x.innerProcess(curi);
+        // The innerProcess no longer exists in the Extractor API
+        //x.innerProcess(curi);
+        // TODO check if this works.
+        x.process(curi);
         Collection<Link> links = curi.getOutLinks();
         Link link1 = links.iterator().next();
         assertTrue(link1.getDestination().toString().contains("resumptionToken=foobar"));
