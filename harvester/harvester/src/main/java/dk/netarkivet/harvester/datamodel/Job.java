@@ -514,7 +514,7 @@ public class Job implements Serializable, JobInfo {
     public void setActualStart(Date actualStart) {
         ArgumentNotValid.checkNotNull(actualStart, "actualStart");
         if (actualStop != null && actualStop.before(actualStart)) {
-            throw new ArgumentNotValid("Start time (" + actualStart + ") is after end time: " + actualStop);
+            log.warn("Job(" + getJobID()+ "): Start time (" + actualStart + ") is after end time: " + actualStop);
         }
         this.actualStart = (Date) actualStart.clone();
     }
@@ -529,10 +529,9 @@ public class Job implements Serializable, JobInfo {
     public void setActualStop(Date actualStop) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(actualStop, "actualStop");
         if (actualStart == null) {
-            throw new ArgumentNotValid("actualStart must be defined before setting actualStop");
-        }
-        if (actualStop.before(actualStart)) {
-            throw new ArgumentNotValid("End time (" + actualStop + ") is before start time: " + actualStart);
+            log.warn("Job(" + getJobID()+ "): actualStart must be defined before setting actualStop");
+        } else if (actualStop.before(actualStart)) {
+            log.warn("Job(" + getJobID()+ "): actualStop (" + actualStop + ") is before actualStart: " + actualStart);
         }
         this.actualStop = (Date) actualStop.clone();
     }

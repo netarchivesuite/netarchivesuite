@@ -44,22 +44,31 @@ import java.util.Set;
 import org.archive.crawler.deciderules.DecideRuleSequence;
 import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Node;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
+import ch.qos.logback.classic.Level;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
+import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.TestFileUtils;
 
-/**
- * Test class for the Job class.
- */
-@SuppressWarnings({"unchecked"})
 public class JobTest {
     private static final HarvestChannel FOCUSED_CHANNEL = new HarvestChannel("FOCUSED", false, true, "");
     private static final HarvestChannel SNAPSHOT_CHANNEL = new HarvestChannel("SNAPSHOT", true, true, "");
+
+    private LogbackRecorder logRecorder;
+
+    @Before
+    public void initialise() {
+        logRecorder = LogbackRecorder.startRecorder();
+    }
+
+    public void cleanup() {
+        logRecorder.stopRecorder();
+    }
 
     @Test
     public void testSeedList() throws IOException {
@@ -296,24 +305,24 @@ public class JobTest {
         job.setActualStop(null);
     }
 
-    @Test(expected = ArgumentNotValid.class)
+    @Test
     public void testActualStopBeforeActualStart() {
         Job job = createDefaultJob();
         job.setActualStart(new Date(1));
         job.setActualStop(new Date(0));
+        logRecorder.assertLogContains(Level.WARN, "actualStop");
     }
 
-    @Test(expected = ArgumentNotValid.class)
+    @Test
     public void testActualStopAndNullActualStart() {
         Job job = createDefaultJob();
         job.setActualStop(new Date(0));
+        logRecorder.assertLogContains(Level.WARN, "actualStop");
     }
 
     /**
      * Tests that it is possible to set the maximum number of objects to be retrieved per domain i.e. that the order.xml
      * that is used as base for this Job is edited accordingly.
-     *
-     * @throws DocumentException Thrown if SAXReader() has problems parsing the order.xml file.
      */
     @Test
     public void testForceMaxObjectsPerDomain() {
