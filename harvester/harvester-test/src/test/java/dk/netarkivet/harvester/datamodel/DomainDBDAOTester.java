@@ -137,9 +137,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         try {
             dao.update(d);
             fail("Should fail with wrong edition");
-        } catch (PermissionDenied e) {
-            // expected
-        }
+        } catch (PermissionDenied e) {}
 
         // If the savepoint is not released after rollback, this will fail.
         d = dao.read("netarkivet.dk");
@@ -253,9 +251,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         while (done[0] < 3) {
             try {
                 Thread.sleep(100L);
-            } catch (InterruptedException e) {
-                // Not significant
-            }
+            } catch (InterruptedException e) {}
         }
         if (scheduleException[0] != null) {
             System.out.println("Schedule: " + scheduleException[0] + scheduleException[0].getStackTrace());
@@ -429,7 +425,6 @@ public class DomainDBDAOTester extends DataModelTestCase {
     @Category(SlowTest.class)
     @Test
     public void testGetDomainJobInfo() {
-        // DomainDAO jobDAO = DomainDAO.getInstance();
         HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
         HarvestDefinition hd = hdDao.read(Long.valueOf(42));
         DefaultJobGenerator jobGen = new DefaultJobGenerator();

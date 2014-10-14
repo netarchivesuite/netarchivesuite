@@ -61,6 +61,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
+import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.harvester.webinterface.HarvestStatusTester;
 
@@ -76,7 +77,7 @@ public class JobDAOTester extends DataModelTestCase {
     private static final HarvestChannel FOCUSED_CHANNEL = new HarvestChannel("FOCUSED", false, true, "");
     private static final HarvestChannel SNAPSHOT_CHANNEL = new HarvestChannel("SNAPSHOT", true, true, "");
     private JobDAO jobDAO;
-    private DomainConfiguration domainConfiguration;
+    private static DomainConfiguration domainConfiguration;
 
     @Before
     public void setUp() throws Exception {
@@ -690,8 +691,63 @@ public class JobDAOTester extends DataModelTestCase {
         }
     }
 
-    private Job createJob(int harvestNum) {
-        return new Job(TestInfo.HARVESTID, domainConfiguration, OrderXmlBuilder.createDefault().getOrderXml(),
+    @Test
+    public void testgetJobAliasInfo() {
+        DomainConfiguration dc = TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
+        Job job = createJob(0);
+        DomainConfiguration anotherConfig = TestInfo.getConfigurationNotDefault(TestInfo.getDomainNotDefault());
+        job.addConfiguration(anotherConfig);
+        // domains in job: job.getDomainConfigurationMap().keySet();
+        DomainDAO ddao = DomainDAO.getInstance();
+        List<AliasInfo> aliases = jobDAO.getJobAliasInfo(job);
+        // aliases equals #domains being skipped because a domain in job.getDomainConfigurationMap().keySet()
+        // is the aliasFather for that domain
+        assertTrue("No domains are skipped, as no aliases are defined", aliases.isEmpty());
+        DomainDefinition.createDomains("alias1.dk", "alias2.dk", "alias3.dk");
+        Domain d = ddao.read("kb.dk");
+        DomainConfiguration dc1 = TestInfo.getConfig(d, "aliasKonfig");
+        d = ddao.read("dr.dk");
+        DomainConfiguration dc2 = TestInfo.getConfig(d, "aliasKonfig2");
+        d = ddao.read("alias1.dk");
+        d.updateAlias("kb.dk");
+        ddao.update(d);
+        d = ddao.read("alias2.dk");
+        d.updateAlias("kb.dk");
+        ddao.update(d);
+        d = ddao.read("alias3.dk");
+        d.updateAlias("dr.dk");
+        ddao.update(d);
+        job = createJob(1);
+        job.addConfiguration(dc1);
+        job.addConfiguration(dc2);
+        // this should give us a List of size 3:
+        aliases = jobDAO.getJobAliasInfo(job);
+        assertEquals("There should be 3 AliasInfo objects in the List returned", 3, aliases.size());
+    }
+
+    @Test
+    public void testMaxBytesBug652() throws Exception {
+        DomainConfiguration defaultConfig = DomainConfigurationTest.createDefaultDomainConfiguration();
+        defaultConfig.setMaxBytes(-1);
+
+        Job job =  new Job(TestInfo.HARVESTID, defaultConfig, OrderXmlBuilder.createDefault().getOrderXml(),
+                FOCUSED_CHANNEL, Constants.HERITRIX_MAXOBJECTS_INFINITY,
+                Constants.HERITRIX_MAXBYTES_INFINITY, Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, 0);;
+        // test default value of forceMaxObjectsPerDomain:
+        assertEquals("No limit of value of forceMaxObjectsPerDomain expected", -1, job.getMaxBytesPerDomain());
+        JobDAO jDao = JobDAO.getInstance();
+        jDao.create(job); // save job in Database.
+        Iterator<Job> jobIterator = jDao.getAll();
+        while (jobIterator.hasNext()) {
+            Job j1 = jobIterator.next();
+            if (j1.getMaxBytesPerDomain() == 1) {
+                fail("Maxbytes (-1) stored as (1)");
+            }
+        }
+    }
+
+    public static Job createJob(int harvestNum) {
+        return new Job(TestInfo.HARVESTID, TestInfo.getDRConfiguration(), OrderXmlBuilder.createDefault().getOrderXml(),
                 FOCUSED_CHANNEL, Constants.HERITRIX_MAXOBJECTS_INFINITY,
                 Constants.HERITRIX_MAXBYTES_INFINITY, Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, harvestNum);
     }

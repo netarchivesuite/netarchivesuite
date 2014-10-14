@@ -40,7 +40,7 @@ public class StressTest extends ExtendedTestCase {
 
     @BeforeTest(alwaysRun = true)
     protected void setupTest() {
-        environmentManager = new TestEnvironmentManager(TESTNAME, null, 8073);
+        environmentManager = new TestEnvironmentManager(TESTNAME, "kb-test-adm-001.kb.dk", 8073);
     }
 
     protected void shutdownPreviousTest() throws Exception {
@@ -118,6 +118,10 @@ public class StressTest extends ExtendedTestCase {
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaVersionsHarvestDB);
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateOrdertemplatesHarvestDB);
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchedulesDB);
+            addFixture("Replacing checksum database with empty data");
+            environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "mkdir CS");
+            environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "touch CS/checksum_CS.md5");
+            environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "touch CS/removed_CS.checksum");
         } else {
             addFixture("Ingesting full production admindb backup.");
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
@@ -127,10 +131,11 @@ public class StressTest extends ExtendedTestCase {
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                     "pg_restore -U test -d " + TESTNAME.toLowerCase()
                             + "_harvestdb  --no-owner --schema public /tmp/prod_harvestdb.dump.out");
+
+            addFixture("Replacing checksum database with prod data");
+            environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf CS");
+            environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "ln -s /tmp/CS CS");
         }
-        addFixture("Replacing checksum database with prod data");
-        environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf CS");
-        environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "ln -s /tmp/CS CS");
     }
 
     protected void enableHarvestDatabaseUpgrade() throws Exception {
