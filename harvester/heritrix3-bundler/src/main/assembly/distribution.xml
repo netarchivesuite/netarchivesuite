@@ -2,75 +2,14 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-    <id>dist</id>
+    <id>heritrix3-dist</id>
 
     <formats>
         <format>zip</format>
     </formats>
 
     <includeBaseDirectory>false</includeBaseDirectory >
-<!--
-    <fileSets>
-        <fileSet>
-            <directory>${project.basedir}/../../unclassified/</directory>
-            <includes>
-                <include>archivedatabasedir/**</include>
-                <include>harvestdefinitionbasedir/**</include>
-            </includes>
-            <outputDirectory>/</outputDirectory>
-        </fileSet>
 
-        <fileSet>
-            <directory>${project.basedir}/src/main/resources/</directory>
-            <includes>
-                <include>examples/**</include>
-                <include>README.txt</include>
-                <include>derby.properties</include>
-            </includes>
-            <outputDirectory>/</outputDirectory>
-        </fileSet>
-
-        <fileSet>
-            <directory>${project.basedir}/src/main/resources/heritrix/</directory>
-            <includes>
-                <include>modules/**</include>
-            </includes>
-            <outputDirectory>/</outputDirectory>
-        </fileSet>
-
-        <fileSet>
-            <directory>${project.basedir}/src/main/resources/</directory>
-            <includes>
-                <include>heritrix/**</include>
-            </includes>
-            <outputDirectory>/lib/</outputDirectory>
-        </fileSet>
-
-        <fileSet>
-            <directory>${project.basedir}/../deploy/</directory>
-            <includes>
-                <include>scripts/**</include>
-            </includes>
-            <outputDirectory>/</outputDirectory>
-        </fileSet>
-
-        <fileSet>
-            <directory>./</directory>
-            <outputDirectory>/conf</outputDirectory>
-            <excludes>
-                <exclude>*/**</exclude>
-            </excludes>
-        </fileSet>
-
-        <fileSet>
-            <directory>./</directory>
-            <outputDirectory>/log</outputDirectory>
-            <excludes>
-                <exclude>*/**</exclude>
-            </excludes>
-        </fileSet>
-    </fileSets>
--->
     <!-- groupId:artifactId:type[:classifier]:version -->
     <dependencySets>
         <dependencySet>
@@ -79,6 +18,15 @@
                 <include>org.archive.heritrix:heritrix:zip:dist</include>
             </includes>
             <unpack>true</unpack>
+            <unpackOptions>
+                <excludes>
+                  <exclude>*/lib/ant*</exclude>
+                  <exclude>*/lib/ant*.jar</exclude>
+                  <exclude>*/lib/oro-2.0.8.LICENSE</exclude>
+                  <exclude>*/lib/junit-*.jar</exclude>
+                  <exclude>*/lib/junit.*</exclude>
+                </excludes>
+            </unpackOptions>
             <outputDirectory>/</outputDirectory>
         </dependencySet>
 
@@ -87,60 +35,52 @@
             <includes>
                 <include>*:jar</include>
             </includes>
+            <excludes>
+                <exclude>fastutil:fastutil:jar</exclude>
+                <exclude>org.gnu.inet:libidn:jar</exclude>
+                <exclude>com.google.guava:guava:jar</exclude>
+                <exclude>org.postgresql:postgresql:jar</exclude>
+                <exclude>commons-fileupload:commons-fileupload:jar</exclude>
+                <exclude>commons-httpclient:commons-httpclient:jar</exclude>
+                <exclude>commons-cli:commons-cli:jar</exclude>
+                <exclude>commons-codec:commons-codec:jar</exclude>
+                <exclude>commons-io:commons-io:jar</exclude>
+                <exclude>commons-lang:commons-lang:jar</exclude>
+                <exclude>commons-logging:commons-logging:jar</exclude>
+                <exclude>commons-net:commons-net:jar</exclude>
+                <exclude>berkeleydb:je:jar</exclude>
+                <exclude>org.jwat:jwat-common:jar</exclude>
+                <exclude>com.sun.messaging.mq:*:jar</exclude>
+                <!-- hibernate -->
+                <exclude>org.hibernate:*:jar</exclude>
+                <exclude>antlr:antlr:jar</exclude>
+                <exclude>commons-collections:commons-collections:jar</exclude>
+                <exclude>javax.transaction:jta:jar</exclude>
+                <exclude>c3p0:c3p0:jar</exclude>
+                <!-- jetty -->
+                <exclude>org.eclipse.jetty:*:jar</exclude>
+                <exclude>org.eclipse.jetty.websocket:*:jar</exclude>
+                <exclude>org.eclipse.jetty.orbit:*:jar</exclude>
+                <exclude>org.glassfish:*:jar</exclude>
+                <exclude>org.glassfish.web:*:jar</exclude>
+                <exclude>javax.servlet:*:jar</exclude>
+                <exclude>javax.servlet.jsp:*:jar</exclude>
+                <exclude>org.ow2.asm:*:jar</exclude>
+                <!-- jfreechat-->
+                <exclude>jfree:*:jar</exclude>
+                <!-- mail -->
+                <exclude>javax.mail:mail:jar</exclude>
+                <exclude>javax.activation:activation:jar</exclude>
+                <!-- xml -->
+                <exclude>jaxen:jaxen:jar</exclude>
+                <exclude>jdom:jdom:jar</exclude>
+                <exclude>xml-apis:xml-apis:jar</exclude>
+                <exclude>xom:xom:jar</exclude>
+                <exclude>xalan:xalan:jar</exclude>
+                <exclude>xerces:*:jar</exclude>
+                <exclude>com.ibm.icu:icu4j:jar</exclude>
+            </excludes>
             <outputDirectory>/heritrix-3.2.0/lib/</outputDirectory>
         </dependencySet>
-<!--
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>org.netarchivesuite:*:jar</include>
-            </includes>
-            <outputFileNameMapping>dk.netarkivet.${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
-            <outputDirectory>/lib/</outputDirectory>
-        </dependencySet>
-
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>org.apache.derby:*:jar</include>
-            </includes>
-            <outputDirectory>/lib/db/</outputDirectory>
-        </dependencySet>
-
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>org.apache.derby:*:jar</include>
-            </includes>
-            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
-            <outputDirectory>/lib/db/</outputDirectory>
-        </dependencySet>
-
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>*:jar</include>
-            </includes>
--->
-            <!--excludes>
-                <exclude>org.netarchivesuite:*:jar</exclude>
-                <exclude>org.apache.derby:*:jar</exclude>
-            </excludes-->
-<!--
-            <outputDirectory>/lib/</outputDirectory>
-        </dependencySet>
-
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>*:war</include>
-            </includes>
-            <outputFileNameMapping>${artifact.build.finalName}.${artifact.extension}</outputFileNameMapping>
--->
-            <!--outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping-->
-<!--
-            <outputDirectory>/webpages/</outputDirectory>
-        </dependencySet>
--->
     </dependencySets>
 </assembly>
