@@ -54,7 +54,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.SlowTest;
-import dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator;
 import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
@@ -76,13 +75,10 @@ public class JobDAOTester extends DataModelTestCase {
     @Category(SlowTest.class)
     @Test
     public void testGetCountJobs() throws Exception {
-        HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
-        HarvestDefinition hd = hdDao.read(Long.valueOf(42));
-        DefaultJobGenerator jobGen = new DefaultJobGenerator();
-        int jobsMade = jobGen.generateJobs(hd);
-        assertEquals("Must find same number of jobs as we created", jobsMade, jobDAO.getCountJobs());
-        jobsMade = jobGen.generateJobs(hd);
-        assertEquals("Must find all the jobs we have created", 2 * jobsMade, jobDAO.getCountJobs());
+        createDefaultJobInDB(0);
+        assertEquals(1, jobDAO.getCountJobs());
+        createDefaultJobInDB(1);
+        assertEquals(2, jobDAO.getCountJobs());
     }
 
     /**
