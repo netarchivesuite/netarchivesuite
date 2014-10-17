@@ -56,6 +56,7 @@ public class SelectiveHarvestTest extends SeleniumTest {
     @Test(groups = {"guitest", "functest"})
     public void selectiveHarvestListingTest() throws Exception {
         addDescription("Verify the functionality of the harvest listings.");
+        addReference("http://netarchive.dk/suite/TEST1");
         addStep("Create a selective harvest", "The harvest should be created successfully a be listed in the HD list");
         String harvest1ID = createHarverstID();
         SelectiveHarvestPageHelper.createSelectiveHarvest(harvest1ID);

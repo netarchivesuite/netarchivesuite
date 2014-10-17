@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.harvester.test.utils;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -38,11 +36,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
-import dk.netarkivet.testutils.TestResourceUtils;
 
 public class OrderXmlBuilder {
+    public static final String DEFAULT_ORDE_XML_NAME = "FullSite-order";
     private final Document orderxmlDoc;
     private static DocumentBuilder builder;
 
@@ -88,11 +84,12 @@ public class OrderXmlBuilder {
      * Creates a default orderXmlDoc based on the order.xml file on the classpath.
      */
     public static synchronized OrderXmlBuilder createDefault() {
-        String filePath = TestResourceUtils.getFilePath("order.xml");
         try {
-            return new OrderXmlBuilder(getParser().parse(new File(filePath)));
-        } catch (SAXException | IOException e) {
-            throw new RuntimeException("Failed to read order.xml from path " + filePath, e);
+            return new OrderXmlBuilder(getParser().parse(
+                    OrderXmlBuilder.class.getClassLoader().getResourceAsStream("order.xml")));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read order.xml from path " +
+                    OrderXmlBuilder.class.getClassLoader().getResource("order.xml"), e);
         }
     }
 

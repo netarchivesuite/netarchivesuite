@@ -29,6 +29,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -329,22 +330,15 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     @Category(SlowTest.class)
     @Test
     public void testGetHarvestRunInfo() throws Exception {
-        // enforce migration of domain database.
-        DomainDAO dao = DomainDAO.getInstance();
-        assertNotNull("jobDAO should never be null", dao);
         // Migrate
         TemplateDAO tdao = TemplateDAO.getInstance();
-        assertNotNull("tdao should never be null", tdao);
-        ScheduleDAO sdao = ScheduleDAO.getInstance();
+        assertNotNull("TemplateDAO should never be null", tdao);
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+
+        ensureHarvestDefinitionExists(TestInfo.HARVESTID);
+        HarvestDefinition newHd = hddao.read(TestInfo.HARVESTID);
+
         JobDAO jdao = JobDAO.getInstance();
-
-        List<DomainConfiguration> dcs = IteratorUtils.toList(hddao.getSnapShotConfigurations());
-        HarvestDefinition newHd = HarvestDefinition.createPartialHarvest(dcs, sdao.read("DefaultSchedule"), "RunInfo",
-                "", "Everybody");
-        newHd.setActive(false); // Can't have it doing stuff behind our backs
-        hddao.create(newHd);
-
         Job j1 = addRunInfo(newHd, 2, "netarkivet.dk", 10, 100, JobStatus.DONE);
         Job j2 = addRunInfo(newHd, 2, "dr.dk", 11, 100, JobStatus.DONE);
         j1.setActualStart(getDate(2005, 2, 13));
@@ -357,22 +351,21 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         addRunInfo(newHd, 3, "statsbiblioteket.dk", 13, 100, JobStatus.FAILED);
 
         // This run only has unfinished jobs
-        Job j3 = JobTest.createDefaultJob();//DefaultJobGenerator.getNewJob(newHd, dcs.get(0));
-        j3.setHarvestNum(4);
+        Job j3 = JobDAOTester.createDefaultJobInDB(4);
         j3.setStatus(JobStatus.SUBMITTED);
-        jdao.create(j3);
+        jdao.update(j3);
 
         // This run has a mix of finished and unfinished
+        DomainDAOTester.getDomain("kb.dk");
         j2 = addRunInfo(newHd, 5, "kb.dk", 17, 100, JobStatus.DONE);
         j2.setActualStart(getDate(2005, 2, 11));
         j2.setActualStop(getDate(2005, 2, 17));
         jdao.update(j2);
 
         // An unfinished job
-        j3 = JobTest.createDefaultJob();//DefaultJobGenerator.getNewJob(newHd, dcs.get(0));
-        j3.setHarvestNum(5);
+        j3 = JobDAOTester.createDefaultJobInDB(5);
         j3.setStatus(JobStatus.STARTED);
-        jdao.create(j3);
+        jdao.update(j3);
 
         // Should have no info for unharvested HD
         List<HarvestRunInfo> runInfos = hddao.getHarvestRunInfo(43L);
@@ -435,13 +428,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         final DomainDAO ddao = DomainDAO.getInstance();
         Domain d = ddao.read(domain);
         final DomainConfiguration dc = d.getDefaultConfiguration();
-        Job j = JobTest.createDefaultJob();//DefaultJobGenerator.getNewJob(hd, dc);
-        j.setHarvestNum(run);
-        JobDAO jdao = JobDAO.getInstance();
-        jdao.create(j);
+        Job j = JobDAOTester.createDefaultJobInDB(run);
 
         j.setStatus(status);
-        jdao.update(j);
+        JobDAO.getInstance().update(j);
 
         d.getHistory().addHarvestInfo(
                 (new HarvestInfo(hd.getOid(), j.getJobID(), domain, dc.getName(), new Date(), bytes, docs,
@@ -449,8 +439,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
         d.updateConfiguration(dc);
         ddao.update(d);
-        final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
-        hddao.update(hd);
+        HarvestDefinitionDAO.getInstance().update(hd);
         return j;
     }
 
@@ -709,4 +698,13 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         return new Date(1000 * (System.currentTimeMillis() / 1000));
     }
 
+    public static void ensureHarvestDefinitionExists(long id) {
+        if (!HarvestDefinitionDAO.getInstance().exists(id)) {
+            try {
+                DataModelTestCase.addHarvestDefinitionToDatabaseWithId(id);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }

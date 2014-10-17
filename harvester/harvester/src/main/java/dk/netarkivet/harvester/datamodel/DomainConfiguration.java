@@ -92,7 +92,6 @@ public class DomainConfiguration implements Named {
      * @param passwords Passwords to use in this configuration.
      */
     public DomainConfiguration(String theConfigName, Domain domain, List<SeedList> seedlists, List<Password> passwords) {
-        // ArgumentNotValid.checkNotNull(domain, "Domain domain");
         this(theConfigName, domain.getName(), domain.getHistory(), domain.getCrawlerTraps(), seedlists, passwords);
     }
 

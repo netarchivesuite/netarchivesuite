@@ -455,28 +455,24 @@ public class DomainDBDAOTester extends DataModelTestCase {
     @Category(SlowTest.class)
     @Test
     public void testGetDomainHarvestInfo() {
-        HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
-        HarvestDefinition hd = hdDao.read(Long.valueOf(42));
-
-        DefaultJobGenerator jobGen = new DefaultJobGenerator();
-        jobGen.generateJobs(hd);
-        JobDAO jdao = JobDBDAO.getInstance();
-        Iterator<Job> jobs = jdao.getAll();
-        Job j = jobs.next();
-        Job j1 = jobs.next();
-        Map<String, String> dcMap = j.getDomainConfigurationMap();
-        String theDomainName = "netarkivet.dk";
-        String configName = dcMap.get(theDomainName);
-        long now = (new Date()).getTime();
-        long day = 3600 * 24L;
-        j1.setActualStart(new Date(now - day));
-        jdao.update(j1);
+        Job job1 = JobDAOTester.createDefaultJobInDB(0);
+        Job job2 = JobDAOTester.createDefaultJobInDB(1);
+        Map<String, String> dcMap = job1.getDomainConfigurationMap();
+        Map.Entry<String, String> domainConfMapping = job1.getDomainConfigurationMap().entrySet().iterator().next();
+        String theDomainName = domainConfMapping.getKey();
+        String configName = domainConfMapping.getValue();
+        final Date NOW = new Date();
+        final Date ONE_DAY_AGO = new Date(System.currentTimeMillis()-3600*24*1000);
+        job1.setActualStart(NOW);
+        job2.setActualStart(ONE_DAY_AGO);
+        JobDAO.getInstance().update(job1);
+        JobDAO.getInstance().update(job2);
         // Fake that the job has been run by inserting a historyInfo
         // entry in the database for this job_id, config_id, harvest_id combination.
-        HarvestInfo hi1 = new HarvestInfo(j.getOrigHarvestDefinitionID(), j.getJobID(), theDomainName, configName,
+        HarvestInfo hi1 = new HarvestInfo(job1.getOrigHarvestDefinitionID(), job1.getJobID(), theDomainName, configName,
                 new Date(), 10000L, 64L, StopReason.OBJECT_LIMIT);
-        HarvestInfo hi2 = new HarvestInfo(j1.getOrigHarvestDefinitionID(), j1.getJobID(), theDomainName, configName,
-                new Date(now - day), 10000L, 64L, StopReason.OBJECT_LIMIT);
+        HarvestInfo hi2 = new HarvestInfo(job2.getOrigHarvestDefinitionID(), job2.getJobID(), theDomainName, configName,
+                ONE_DAY_AGO, 10000L, 64L, StopReason.OBJECT_LIMIT);
 
         Connection c = HarvestDBConnection.get();
         try {

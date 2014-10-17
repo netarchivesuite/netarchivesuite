@@ -338,7 +338,7 @@ public class Job implements Serializable, JobInfo {
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("Adding configuration '{}' to job '{}'", cfg.toString(), cfg.getName());
+            log.trace("Adding configuration '{}' to job '{}'", cfg, cfg.getName());
         }
 
         if (!underConstruction) {

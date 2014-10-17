@@ -197,8 +197,9 @@ public class JobDBDAO extends JobDAO {
                 statement = dbconnection.prepareStatement("INSERT INTO job_configs " + "( job_id, config_id ) "
                         + "SELECT ?, configurations.config_id " + "  FROM domains, configurations, " + tmpTable
                         + " WHERE domains.name = " + tmpTable + ".domain_name"
-                        + "   AND domains.domain_id = configurations.domain_id" + "   AND configurations.name = "
-                        + tmpTable + ".config_name");
+                        + "   AND domains.domain_id = configurations.domain_id"
+                        //+ "   AND configurations.name = " + tmpTable + ".config_name"
+                );
                 statement.setLong(1, jobID);
                 int rows = statement.executeUpdate();
                 if (rows != domainConfigurationMap.size()) {

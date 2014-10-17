@@ -38,6 +38,7 @@ import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
 
 /**
  * Tests for the DomainConfiguration class. Also widely tested from other places.
@@ -278,16 +279,15 @@ public class DomainConfigurationTest {
     }
 
     public static DomainConfiguration createDefaultDomainConfiguration() {
-        SeedList seedList = new SeedList("SeedList1", "netarchivesuite.org");
-        return new DomainConfiguration(
-                "DefaultDomain", "defaultdomain.org", new DomainHistory(),
-                new ArrayList<>(), Arrays.asList(new SeedList[] {seedList}), new ArrayList<>());
+        return createDefaultDomainConfiguration("defaultdomain.org");
     }
 
     public static DomainConfiguration createDefaultDomainConfiguration(String name) {
         SeedList seedList = new SeedList("SeedList1", "netarchivesuite.org");
-        return new DomainConfiguration(
+        DomainConfiguration domainConfiguration = new DomainConfiguration(
                 name, name, new DomainHistory(),
                 new ArrayList<>(), Arrays.asList(new SeedList[] {seedList}), new ArrayList<>());
+        domainConfiguration.setOrderXmlName(OrderXmlBuilder.DEFAULT_ORDE_XML_NAME);
+        return domainConfiguration;
     }
 }
