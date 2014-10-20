@@ -88,8 +88,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     @Test
     public void testRejectFailedJob() throws SQLException {
         JobDAO jobDAO = JobDBDAO.getInstance();
-        Job job = JobDAOTester.createJob(0);
-        jobDAO.create(job);
+        Job job = JobDAOTester.createDefaultJobInDB(0);
         job.setStatus(JobStatus.FAILED);
         JobDAO.getInstance().update(job);
         HarvestStatus.rejectFailedJob(null, null, job.getJobID());
@@ -107,10 +106,9 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     @Test
     public void testUnrejectRejectedJob() throws SQLException {
         JobDAO jobDAO = JobDBDAO.getInstance();
-        Job job = JobTest.createDefaultJob();
-        jobDAO.create(job);
+        Job job = JobDAOTester.createDefaultJobInDB(0);
         job.setStatus(JobStatus.FAILED_REJECTED);
-        JobDAO.getInstance().update(job);
+        jobDAO.update(job);
         HarvestStatus.unrejectRejectedJob(null, null, job.getJobID());
         assertEquals("Job should now be in status FAILED", jobDAO.read(job.getJobID()).getStatus(), JobStatus.FAILED);
         try {
@@ -124,8 +122,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     @Test
     public void testProcessRequest() throws Exception {
         JobDAO jobDAO = JobDBDAO.getInstance();
-        Job job = JobTest.createDefaultJob();
-        jobDAO.create(job);
+        Job job = JobDAOTester.createDefaultJobInDB(0);
 
         int origJobs = jobDAO.getCountJobs();
 
@@ -173,7 +170,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         assertEquals("Should not have generated any new jobs", origJobs, jobDAO.getCountJobs());
 
         // correct parameter, check resubmit
-        JobDAOTester.changeStatus(1, JobStatus.FAILED);
+        JobDAOTester.changeStatus(job.getJobID(), JobStatus.FAILED);
         parms.put(Constants.JOB_RESUBMIT_PARAM, new String[] {"1"});
         HarvestStatus.processRequest(new TestPageContext(servletRequest), I18N);
         assertEquals("Should have generated one new job", origJobs + 1, jobDAO.getCountJobs());

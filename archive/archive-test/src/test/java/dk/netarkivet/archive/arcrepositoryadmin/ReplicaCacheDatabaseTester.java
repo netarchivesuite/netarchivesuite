@@ -34,9 +34,13 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-import org.apache.commons.collections.IteratorUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -149,7 +153,7 @@ public class ReplicaCacheDatabaseTester {
                 cache.getNumberOfMissingFilesInLastUpdate(Replica.getReplicaFromId("THREE")));
 
         // check that the getMissingFilesInLastUpdate works appropriately.
-        List<String> misFiles = IteratorUtils.toList(cache.getMissingFilesInLastUpdate(
+        List<String> misFiles = toArrayList(cache.getMissingFilesInLastUpdate(
                 Replica.getReplicaFromId("THREE")).iterator());
 
         List<String> allFilenames = new ArrayList<String>();
@@ -188,7 +192,7 @@ public class ReplicaCacheDatabaseTester {
                 FileUtils.countLines(csFile2), cache.getNumberOfFiles(Replica.getReplicaFromId("THREE")));
 
         // Check that all files are wrong for replica 'THREE'
-        List<String> wrongFiles = IteratorUtils.toList(cache.getWrongFilesInLastUpdate(
+        List<String> wrongFiles = toArrayList(cache.getWrongFilesInLastUpdate(
                 Replica.getReplicaFromId("THREE")).iterator());
 
         assertEquals("All the files should be wrong for replica 'THREE': " + wrongFiles + " == " + allFilenames,
@@ -379,5 +383,10 @@ public class ReplicaCacheDatabaseTester {
         fw.close();
 
         return res;
+    }
+
+    private static <T> ArrayList<T> toArrayList(final Iterator<T> iterator) {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }
