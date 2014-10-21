@@ -31,23 +31,22 @@ flipactive=<definitionName>
 If set, the harvest-definition with the given name is changed from active to
 inactive or vice-versa.
 --%>
-<%@ page import="org.hibernate.usertype.UserCollectionType,
-                 dk.netarkivet.common.utils.I18n,
+<%@ page import="dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
-                 dk.netarkivet.harvester.datamodel.HarvestDefinition,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.CookieUtils"
          pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
-%><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
-    private static final I18n I18N
-            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+        %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+        %>
+<fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
+        /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
+    private static final I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 
-    private static final String COMMANDWIDTH="12%";
+    private static final String COMMANDWIDTH = "12%";
 
 %><%
     HTMLUtils.setUTF8(request);
@@ -62,52 +61,51 @@ inactive or vice-versa.
                     flipactive);
             return;
         } else {
-        	// disallow going to active mode, if no domainconfigurations
-        	// associated with this harvestdefinition
-        	if (!hd.isActive() &&
-				dao.getSparseDomainConfigurations(hd.getOid()).isEmpty()) {
-					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                    	"errormsg;harvestdefinition.0.cannot.be.activated;"
-                    	+ "no.domains.selected.for.harvesting", hd.getName());
-            	return;
-        	}
-	        dao.flipActive(hd);
+            // disallow going to active mode, if no domainconfigurations
+            // associated with this harvestdefinition
+            if (!hd.isActive() && dao.getSparseDomainConfigurations(hd.getOid()).isEmpty()) {
+                HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+                        "errormsg;harvestdefinition.0.cannot.be.activated;" + "no.domains.selected.for.harvesting",
+                        hd.getName());
+                return;
+            }
+            dao.flipActive(hd);
             response.sendRedirect("Definitions-selective-harvests.jsp");
             return;
-        }        
+        }
     }
     HTMLUtils.generateHeader(pageContext);
 %>
 
 <h3 class="page_heading"><fmt:message key="pagetitle;selective.harvests"/></h3>
 
-<% String showInactiveDefinitionsParam = 
-CookieUtils.getParameterValue(request, Constants.SHOW_INACTIVE_PARAM);
-  boolean showInactiveHDs; // Default is 'true'.
-  if (showInactiveDefinitionsParam == null ||
-       showInactiveDefinitionsParam.isEmpty() ||
-       showInactiveDefinitionsParam.equals("true")) {
-     showInactiveHDs = true;
-   } else {
-      showInactiveHDs = false;
-   }
-   String flipShowHideInactiveLink = "Definitions-selective-harvests.jsp?" + Constants.SHOW_INACTIVE_PARAM
-                                      + "=" + !showInactiveHDs;
-   CookieUtils.setCookie(response, Constants.SHOW_INACTIVE_PARAM, Boolean.toString(showInactiveHDs));
+<% String showInactiveDefinitionsParam =
+        CookieUtils.getParameterValue(request, Constants.SHOW_INACTIVE_PARAM);
+    boolean showInactiveHDs; // Default is 'true'.
+    if (showInactiveDefinitionsParam == null || showInactiveDefinitionsParam.isEmpty() ||
+            showInactiveDefinitionsParam.equals("true")) {
+        showInactiveHDs = true;
+    } else {
+        showInactiveHDs = false;
+    }
+    String flipShowHideInactiveLink = "Definitions-selective-harvests.jsp?" + Constants.SHOW_INACTIVE_PARAM
+            + "=" + !showInactiveHDs;
+    CookieUtils.setCookie(response, Constants.SHOW_INACTIVE_PARAM, Boolean.toString(showInactiveHDs));
 %>
-   <a href="<%=HTMLUtils.escapeHtmlValues(flipShowHideInactiveLink)%>">
-<% if (showInactiveHDs) { %>
-        <fmt:message key="harvestdefinition.selective.hide.inactive"/>
-<% } else { %>
-        <fmt:message key="harvestdefinition.selective.show.inactive"/>
-<% } %>
-   </a>
+<a href="<%=HTMLUtils.escapeHtmlValues(flipShowHideInactiveLink)%>">
+    <% if (showInactiveHDs) { %>
+    <fmt:message key="harvestdefinition.selective.hide.inactive"/>
+    <% } else { %>
+    <fmt:message key="harvestdefinition.selective.show.inactive"/>
+    <% } %>
+</a>
 <%
     Iterable<SparsePartialHarvest> isph =
             dao.getSparsePartialHarvestDefinitions(!showInactiveHDs);
     if (!isph.iterator().hasNext()) { %>
 <p>
-<fmt:message key="harvestdefinition.selective.no.harvestdefinition"/>
+    <fmt:message key="harvestdefinition.selective.no.harvestdefinition"/>
+
 <p>
         <% } else { %>
 <table class="selection_table" cols="6">
@@ -126,28 +124,21 @@ CookieUtils.getParameterValue(request, Constants.SHOW_INACTIVE_PARAM);
 
         for (SparsePartialHarvest sph : isph) {
             String name = sph.getName();
-            String editLink = "Definitions-edit-selective-harvest.jsp?"
-                    + Constants.HARVEST_PARAM + "="
+            String editLink = "Definitions-edit-selective-harvest.jsp?" + Constants.HARVEST_PARAM + "="
                     + HTMLUtils.encode(name);
-            String historicLink = "/History/Harveststatus-perhd.jsp?"
-                    + Constants.HARVEST_PARAM + "="
+            String historicLink = "/History/Harveststatus-perhd.jsp?"  + Constants.HARVEST_PARAM + "="
                     + HTMLUtils.encode(name);
-            String seedsLink = "/History/Harveststatus-seeds.jsp?"
-                + Constants.HARVEST_PARAM + "="
-                + HTMLUtils.encode(name);
+            String seedsLink = "/History/Harveststatus-seeds.jsp?" + Constants.HARVEST_PARAM + "="
+                    + HTMLUtils.encode(name);
 
             String isActive;
             String flipActiveText;
             if (sph.isActive()) {
-                isActive = I18N.getString(response.getLocale(),
-                        "active");
-                flipActiveText = I18N.getString(response.getLocale(),
-                        "deactivate");
+                isActive = I18N.getString(response.getLocale(), "active");
+                flipActiveText = I18N.getString(response.getLocale(), "deactivate");
             } else {
-                isActive = I18N.getString(response.getLocale(),
-                        "inactive");
-                flipActiveText = I18N.getString(response.getLocale(),
-                        "activate");
+                isActive = I18N.getString(response.getLocale(), "inactive");
+                flipActiveText = I18N.getString(response.getLocale(), "activate");
             }
             String flipactiveLink
                     = "<a href=\"\" onclick=\"document.getElementById('flipActiveForm"
@@ -156,25 +147,31 @@ CookieUtils.getParameterValue(request, Constants.SHOW_INACTIVE_PARAM);
                     + "</a>";
     %>
     <tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
-        <td><%=HTMLUtils.escapeHtmlValues(name)%></td>
-        <td><%=sph.getNumEvents()%></td>
-        <td>
-        <% // Only output the date, if the HarvestDefinition is active
-        if (sph.isActive()) { %>
-           <fmt:formatDate type="both" value="<%=sph.getNextDate()%>"/>
-        <% } else { out.print(Constants.NoNextDate); } %>
+        <td><%=HTMLUtils.escapeHtmlValues(name)%>
         </td>
-        <td width="<%=COMMANDWIDTH%>"><%=HTMLUtils.escapeHtmlValues(isActive)%></td>
-        <td width="<%=COMMANDWIDTH%>"><form
-                           id="flipActiveForm<%=sph.getOid()%>"
-                           action="Definitions-selective-harvests.jsp"
-                           method="post"
-                        ><input
-                           type="hidden"
-                           name="<%=Constants.FLIPACTIVE_PARAM%>"
-                           value="<%=HTMLUtils.escapeHtmlValues(sph.getName())%>"
-                         /><%=flipactiveLink%>
-                        </form>
+        <td><%=sph.getNumEvents()%>
+        </td>
+        <td>
+            <% // Only output the date, if the HarvestDefinition is active
+                if (sph.isActive()) { %>
+            <fmt:formatDate type="both" value="<%=sph.getNextDate()%>"/>
+            <% } else {
+                out.print(Constants.NoNextDate);
+            } %>
+        </td>
+        <td width="<%=COMMANDWIDTH%>"><%=HTMLUtils.escapeHtmlValues(isActive)%>
+        </td>
+        <td width="<%=COMMANDWIDTH%>">
+            <form
+                    id="flipActiveForm<%=sph.getOid()%>"
+                    action="Definitions-selective-harvests.jsp"
+                    method="post"
+                    ><input
+                    type="hidden"
+                    name="<%=Constants.FLIPACTIVE_PARAM%>"
+                    value="<%=HTMLUtils.escapeHtmlValues(sph.getName())%>"
+                    /><%=flipactiveLink%>
+            </form>
         </td>
         <td width="<%=COMMANDWIDTH%>">
             <a href="<%=HTMLUtils.escapeHtmlValues(editLink)%>">
@@ -187,24 +184,24 @@ CookieUtils.getParameterValue(request, Constants.SHOW_INACTIVE_PARAM);
             </a>
         </td>
         <td width="<%=COMMANDWIDTH%>">
-            <% if (inclHistory)  { %>
-                <a href="<%=HTMLUtils.escapeHtmlValues(historicLink)%>">
-                   <fmt:message key="harvestdefinition.linktext.historical"/></a>
+            <% if (inclHistory) { %>
+            <a href="<%=HTMLUtils.escapeHtmlValues(historicLink)%>">
+                <fmt:message key="harvestdefinition.linktext.historical"/></a>
             <% } else { %>
-                <fmt:message key="harvestdefinition.linktext.no.historical"/>
+            <fmt:message key="harvestdefinition.linktext.no.historical"/>
             <% } %>
         </td>
     </tr>
     <%
-    } //for each harvest
+        } //for each harvest
     %>
 </table>
 <%
-} //else (if no harvest)
+    } //else (if no harvest)
 %>
 <a href="Definitions-edit-selective-harvest.jsp?createnew=1">
-        <fmt:message key="create.new.selective.harvestdefinition"/>
+    <fmt:message key="create.new.selective.harvestdefinition"/>
 </a>
 <%
-HTMLUtils.generateFooter(out);
+    HTMLUtils.generateFooter(out);
 %>
