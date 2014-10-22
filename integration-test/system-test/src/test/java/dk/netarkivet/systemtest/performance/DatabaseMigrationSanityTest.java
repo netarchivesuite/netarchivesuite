@@ -56,6 +56,7 @@ public class DatabaseMigrationSanityTest extends StressTest {
     public void setupTestEnvironment() throws Exception {
         if (true) {
             shutdownPreviousTest();
+            checkUpdateTimes();
             fetchProductionData();
             deployComponents();
             replaceDatabasesWithProd(true);
@@ -66,6 +67,8 @@ public class DatabaseMigrationSanityTest extends StressTest {
         }
     }
 
+    //Do we want to whut down the test after it has run, or leave it available for manual inspection after failure?
+    //It will be torn down, in any case, the next time it is run.
     public void teardownTestEnvironment() throws Exception {
         if (true) {
             shutdownTest();
