@@ -250,7 +250,7 @@ public class TestInfo {
 
     public static DomainConfiguration getDRConfiguration() {
         DomainDAO dao = DomainDAO.getInstance();
-        return dao.read("dr.dk").getConfiguration("fuld_dybde");
+        return dao.read("dr.dk").getDefaultConfiguration();
     }
 
     public static DomainConfiguration getNetarkivetConfiguration() {

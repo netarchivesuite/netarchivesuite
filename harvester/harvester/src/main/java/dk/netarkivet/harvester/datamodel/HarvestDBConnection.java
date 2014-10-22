@@ -96,8 +96,7 @@ public final class HarvestDBConnection {
                 }
             }
 
-            final Connection connection = dataSource.getConnection();
-            return connection;
+            return dataSource.getConnection();
         } catch (SQLException e) {
             final String message = "Can't connect to database with DBurl: '" + jdbcUrl + "' using driver '"
                     + dbSpec.getDriverClassName() + "'" + "\n" + ExceptionUtils.getSQLExceptionCause(e);

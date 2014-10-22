@@ -254,7 +254,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             String options = result.getString(5);
             int datatype = result.getInt(6);
             // TODO maybe this cast is not necessary
-            boolean mandatory = (result.getInt(7) != 0);
+            boolean mandatory = result.getInt(7) != 0;
             int sequencenr = result.getInt(8);
             int maxlen = result.getInt(9);
 
@@ -270,7 +270,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
     }
 
     @Override
-    public synchronized List<ExtendedField> getAll(long aExtendedFieldTypeId) {
+    public List<ExtendedField> getAll(long aExtendedFieldTypeId) {
         Connection c = HarvestDBConnection.get();
         try {
             List<Long> idList = DBUtils.selectLongList(c, "SELECT extendedfield_id FROM extendedfield "
