@@ -182,6 +182,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
         controller = HarvestController.getInstance();
 
+        //FIXME
+        //FIXME this code is only relevant for Heritrix 1
+        //FIXME
+        
         // Set properties "heritrix.version" and
         // "org.archive.crawler.frontier.AbstractFrontier
         // .queue-assignment-policy"
@@ -541,8 +545,13 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         StringBuilder errorMessage = new StringBuilder();
         HarvestReport dhr = null;
         List<File> failedFiles = new ArrayList<File>();
-
-        HeritrixFiles files = new HeritrixFiles(crawlDir, harvestInfo);
+        // FIXME
+        // FIXME
+        // FIXME
+        //HeritrixFiles files = new HeritrixFiles(crawlDir, harvestInfo);
+        HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(crawlDir, harvestInfo);
+        //HeritrixFiles files = HeritrixFiles.getH3HeritrixFiles(crawlDir, harvestJob)(crawlDir, harvestInfo);
+        
         try {
             log.info("Store files in directory '{}' " + "from jobID: {}.", crawlDir, jobID);
             dhr = controller.storeFiles(files, errorMessage, failedFiles);

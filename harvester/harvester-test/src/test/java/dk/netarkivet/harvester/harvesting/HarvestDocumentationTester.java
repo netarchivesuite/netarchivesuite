@@ -70,10 +70,13 @@ public class HarvestDocumentationTester {
     ReloadSettings rs = new ReloadSettings();
 
     private JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID), TestInfo.HARVEST_ID);
-    private HeritrixFiles Okfiles = new HeritrixFiles(TestInfo.WORKING_DIR, harvestJob);
+    //FIXME hardwired to H1 heritrixFiles
+    private HeritrixFiles Okfiles = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, harvestJob);
     private IngestableFiles OkIngestables = null;
-    private HeritrixFiles filesWithNonexistingDir = new HeritrixFiles(new File("foodoesnotexist"), harvestJob);
-    private HeritrixFiles filesWithExistingFileInsteadOfDir = new HeritrixFiles(TestInfo.ORDER_FILE, harvestJob);
+  //FIXME hardwired to H1 heritrixFiles
+    private HeritrixFiles filesWithNonexistingDir = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(new File("foodoesnotexist"), harvestJob);
+  //FIXME hardwired to H1 heritrixFiles
+    private HeritrixFiles filesWithExistingFileInsteadOfDir = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.ORDER_FILE, harvestJob);
 
     @Before
     public void setUp() {
@@ -120,8 +123,8 @@ public class HarvestDocumentationTester {
         MetadataEntry.storeMetadataToDisk(l, metadatadir);
 
         JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID), 117L);
-
-        HeritrixFiles files = new HeritrixFiles(TestInfo.WORKING_DIR, harvestJob);
+        //FIXME hardwired to a H1 HeritrixFiles
+        HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, harvestJob);
         IngestableFiles inf = new IngestableFiles(files);
 
         HarvestDocumentation.documentHarvest(inf);
@@ -196,7 +199,8 @@ public class HarvestDocumentationTester {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.METADATA_TEST_DIR_INCONSISTENT, arcsDir);
         // JobInfo for harvestId 117
         JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID), 117L);
-        HeritrixFiles files117 = new HeritrixFiles(TestInfo.WORKING_DIR, harvestJob);
+        //FIXME hardwired to a H1 heritrixFiles
+        HeritrixFiles files117 = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, harvestJob);
         OkIngestables = new IngestableFiles(files117);
 
         HarvestDocumentation.documentHarvest(OkIngestables);
@@ -394,7 +398,9 @@ public class HarvestDocumentationTester {
 
         // JobInfo for harvestId 117
         JobInfo harvestJob = new JobInfoTestImpl(42L, 117L);
-        HeritrixFiles files117 = new HeritrixFiles(TestInfo.WORKING_DIR, harvestJob);
+        
+        HeritrixFiles files117 = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		TestInfo.WORKING_DIR, harvestJob);
         OkIngestables = new IngestableFiles(files117);
 
         m.invoke(null, ArchiveProfile.ARC_PROFILE, arcsDir, OkIngestables);

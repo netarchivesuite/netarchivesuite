@@ -94,7 +94,7 @@ public class HeritrixFilesTester {
      */
     @Test
     public void testAlternateConstructor() {
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(42L, 42L));
+        HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(42L, 42L));
         // check, that crawlDir is correctly set
         assertEquals("crawlDir should be set up correctly.", TestInfo.HERITRIX_TEMP_DIR.getAbsolutePath(), hf
                 .getCrawlDir().getAbsolutePath());

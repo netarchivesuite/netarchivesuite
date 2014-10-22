@@ -37,12 +37,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                  org.apache.commons.fileupload.disk.DiskFileItemFactory,
                  org.apache.commons.fileupload.servlet.ServletFileUpload,
                  org.apache.commons.fileupload.FileItem,
-                 org.dom4j.Document,
                  dk.netarkivet.common.exceptions.ArgumentNotValid,
                  dk.netarkivet.common.exceptions.IOFailure,
                  dk.netarkivet.common.utils.FileUtils,
                  dk.netarkivet.common.utils.I18n,
-                 dk.netarkivet.common.utils.XmlUtils,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.Constants,
                  dk.netarkivet.harvester.datamodel.HeritrixTemplate,
@@ -122,15 +120,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     try {
         // 1: Try to convert orderxml-file to HeritrixTemplate object
         // This throws ArgumentNotValid, if xml is invalid according to out requirements
-        Document doc;
+        HeritrixTemplate doc;
         try {
-            doc = XmlUtils.getXmlDoc(orderXmlFile);
+        	doc = HeritrixTemplate.read(orderXmlFile);
+            //doc = XmlUtils.getXmlDoc(orderXmlFile);
         } catch (ArgumentNotValid e) {
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                     "errormsg;invalid.order.file.0", orderXmlToReplace, e);
             return;
         }
-        HeritrixTemplate ht = new HeritrixTemplate(doc);
+        //HeritrixTemplate ht = new HeritrixTemplate(doc);
         // 2: Update orderxml: 'orderXmlToReplace' if it exists, otherwise
         // create
 
@@ -141,7 +140,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                         orderXmlToReplace);
                 return;
             }
-            dao.update(orderXmlToReplace, ht);
+            dao.update(orderXmlToReplace, doc);
             message = I18N.getString(response.getLocale(),
                     "harvest.template.0.has.been.updated", orderXmlToReplace);
         } else {
@@ -151,7 +150,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                         orderXmlToUpload);
                 return;
             }
-            dao.create(orderXmlToUpload, ht);
+            dao.create(orderXmlToUpload, doc);
             message = I18N.getString(response.getLocale(),
                     "harvest.template.0.has.been.created", orderXmlToUpload);
         }

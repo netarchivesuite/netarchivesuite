@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.sql.Clob;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +130,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate {
         this.template = template;
     }
 
-    /**
+    public H3HeritrixTemplate(Clob clob) {
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
      * return the template.
      *
      * @return the template

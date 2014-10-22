@@ -399,7 +399,10 @@ public class HeritrixTests {
         LuceneUtils.makeDummyIndex(tempDir);
         runHeritrix(TestInfo.ORDER_FILE_MAX_OBJECTS, TestInfo.SEEDS_FILE_MAX_OBJECTS, tempDir);
 
-        HeritrixFiles hFiles = new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(0L, 0L));
+        HeritrixFiles hFiles = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(0L, 0L));
+        
+        
         File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
         HarvestReport hhr = new LegacyHarvestReport(hFiles);
         Long tv2_objects = hhr.getObjectCount("tv2.dk");
@@ -627,7 +630,8 @@ public class HeritrixTests {
         LuceneUtils.makeDummyIndex(tempDir);
         runHeritrix(MaxbytesOrderFile, TestInfo.SEEDS_DEFAULT, tempDir);
         // File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
-        HeritrixFiles hFiles = new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(0L, 0L));
+        HeritrixFiles hFiles = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles( 
+        		TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(0L, 0L));
         AbstractHarvestReport hhr = new LegacyHarvestReport(hFiles);
         Long netarkivet_bytes = hhr.getByteCount("netarkivet.dk");
         long lastNetarkivetBytes = getLastFetchedBytesForDomain("netarkivet.dk");

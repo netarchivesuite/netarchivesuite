@@ -408,7 +408,7 @@ public class JobDBDAO extends JobDAO {
                 Clob clob = result.getClob(8);
                 orderXMLdoc = HeritrixTemplate.getOrderXMLdocFromClob(clob);
             } else {
-                orderXMLdoc = HeritrixTemplate.read(result.getString(8));
+                orderXMLdoc = HeritrixTemplate.getTemplateFromString(result.getString(8));
             }
             String seedlist = "";
             if (useClobs) {
@@ -487,7 +487,6 @@ public class JobDBDAO extends JobDAO {
             } else {
                 job.setHarvestFilenamePrefix(harvestnamePrefix);
             }
-
             return job;
         } catch (SQLException e) {
             String message = "SQL error reading job " + jobID + " in database" + "\n"
@@ -495,12 +494,6 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
-        /* catch (DocumentException e) {
-            String message = "XML error reading job " + jobID + " in database";
-            log.warn(message, e);
-            throw new IOFailure(message, e);
-        }
-        */
     }
 
     

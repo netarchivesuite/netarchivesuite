@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +37,10 @@ import java.util.regex.Pattern;
 import org.archive.crawler.deciderules.DecidingScope;
 import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -399,14 +403,177 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
     }
     */
 
+    
+    private static void setIfFound(Document doc, String Xpath, String param, String value) {
+        if (doc.selectSingleNode(Xpath) != null) {
+            XmlUtils.setNode(doc, Xpath, value);
+        } else {
+            log.warn("Could not replace setting value of '" + param + "' in template. Xpath not found: " + Xpath);
+        }
+    }
+
     /**
-     * Make sure that Heritrix will archive its data in the chosen archiveFormat.
+     * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of objects to be
+     * retrieved per domain. This method updates 'group-max-fetch-success' element of the QuotaEnforcer pre-fetch
+     * processor node (org.archive.crawler.frontier.BdbFrontier) with the value of the argument forceMaxObjectsPerDomain
      *
-     * @param orderXML the specific heritrix template to modify.
-     * @param archiveFormat the chosen archiveformat ('arc' or 'warc' supported) Throws ArgumentNotValid If the chosen
-     * archiveFormat is not supported.
+     * @param orderXMLdoc
+     * @param forceMaxObjectsPerDomain The maximum number of objects to retrieve per domain, or 0 for no limit.
+     * @throws PermissionDenied If unable to replace the frontier node of the orderXMLdoc Document
+     * @throws IOFailure If the group-max-fetch-success element is not found in the orderXml. TODO The
+     * group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
      */
-    public static void editOrderXML_ArchiveFormat(Document orderXML, String archiveFormat) {
+    public static void editOrderXML_maxObjectsPerDomain(Document orderXMLdoc, long forceMaxObjectsPerDomain,
+            boolean maxObjectsIsSetByQuotaEnforcer) {
+
+        String xpath = (maxObjectsIsSetByQuotaEnforcer ? GROUP_MAX_FETCH_SUCCESS_XPATH : QUEUE_TOTAL_BUDGET_XPATH);
+
+        Node orderXmlNode = orderXMLdoc.selectSingleNode(xpath);
+        if (orderXmlNode != null) {
+            orderXmlNode.setText(String.valueOf(forceMaxObjectsPerDomain));
+        } else {
+            throw new IOFailure("Unable to locate " + xpath + " element in order.xml: " + orderXMLdoc.asXML());
+        }
+    }
+
+    /**
+     * Activates or deactivate the quota-enforcer, depending on budget definition. Object limit can be defined either by
+     * using the queue-total-budget property or the quota enforcer. Which is chosen is set by the argument
+     * maxObjectsIsSetByQuotaEnforcer}'s value. So quota enforcer is set as follows:
+     * <ul>
+     * <li>Object limit is not set by quota enforcer, disabled only if there is no byte limit.</li>
+     * <li>Object limit is set by quota enforcer, so it should be enabled whether a byte or object limit is set.</li>
+     * </ul>
+     *
+     * @param orderXMLdoc the template to modify
+     * @param maxObjectsIsSetByQuotaEnforcer Decides whether the maxObjectsIsSetByQuotaEnforcer or not.
+     * @param forceMaxBytesPerDomain The number of max bytes per domain enforced (can be no limit)
+     * @param forceMaxObjectsPerDomain The number of max objects per domain enforced (can be no limit)
+     */
+    public static void editOrderXML_configureQuotaEnforcer(Document orderXMLdoc,
+            boolean maxObjectsIsSetByQuotaEnforcer, long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain) {
+
+        boolean quotaEnabled = true;
+
+        if (!maxObjectsIsSetByQuotaEnforcer) {
+            // Object limit is not set by quota enforcer, so it should be disabled only
+            // if there is no byte limit.
+            quotaEnabled = forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
+
+        } else {
+            // Object limit is set by quota enforcer, so it should be enabled whether
+            // a byte or object limit is set.
+            quotaEnabled = forceMaxObjectsPerDomain != Constants.HERITRIX_MAXOBJECTS_INFINITY
+                    || forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
+        }
+
+        String xpath = H1HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
+        Node qeNode = orderXMLdoc.selectSingleNode(xpath);
+        if (qeNode != null) {
+            qeNode.setText(Boolean.toString(quotaEnabled));
+        } else {
+            throw new IOFailure("Unable to locate " + xpath + " element in order.xml: " + orderXMLdoc.asXML());
+        }
+    }
+
+    
+    
+	@Override
+	public boolean isValid() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void configureQuotaEnforcer(boolean maxObjectsIsSetByQuotaEnforcer,
+			long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain) {
+		Document orderXMLdoc = this.template;
+		boolean quotaEnabled = true;
+
+		if (!maxObjectsIsSetByQuotaEnforcer) {
+			// Object limit is not set by quota enforcer, so it should be disabled only
+			// if there is no byte limit.
+			quotaEnabled = forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
+
+		} else {
+			// Object limit is set by quota enforcer, so it should be enabled whether
+			// a byte or object limit is set.
+			quotaEnabled = forceMaxObjectsPerDomain != Constants.HERITRIX_MAXOBJECTS_INFINITY
+					|| forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
+		}
+
+		String xpath = H1HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
+		Node qeNode = orderXMLdoc.selectSingleNode(xpath);
+		if (qeNode != null) {
+			qeNode.setText(Boolean.toString(quotaEnabled));
+		} else {
+			throw new IOFailure("Unable to locate " + xpath + " element in order.xml: " + orderXMLdoc.asXML());
+		}
+	}
+
+	/**
+    * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of bytes to
+    * retrieve per domain. This method updates 'group-max-all-kb' element of the 'QuotaEnforcer' node, which again is a
+    * subelement of 'pre-fetch-processors' node. with the value of the argument forceMaxBytesPerDomain
+    *
+    * @param forceMaxBytesPerDomain The maximum number of byte to retrieve per domain, or -1 for no limit. Note that
+    * the number is divided by 1024 before being inserted into the orderXml, as Heritrix expects KB.
+    * @throws PermissionDenied If unable to replace the QuotaEnforcer node of the orderXMLdoc Document
+    * @throws IOFailure If the group-max-all-kb element cannot be found. TODO This group-max-all-kb check also be
+    * performed in TemplateDAO.create, TemplateDAO.update
+    */
+	@Override
+	public void setMaxBytesPerDomain(Long forceMaxBytesPerDomain) {
+		// get and set the group-max-all-kb Node of the orderXMLdoc:
+        String xpath = H1HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
+        Node groupMaxSuccessKbNode = template.selectSingleNode(xpath);
+        if (groupMaxSuccessKbNode != null) {
+            if (forceMaxBytesPerDomain == 0) {
+                groupMaxSuccessKbNode.setText("0");
+            } else if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY) {
+                // Divide by 1024 since Heritrix uses KB rather than bytes,
+                // and add 1 to avoid to low limit due to rounding.
+                groupMaxSuccessKbNode.setText(Long
+                        .toString((forceMaxBytesPerDomain / Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1));
+            } else {
+                groupMaxSuccessKbNode.setText(String.valueOf(Constants.HERITRIX_MAXBYTES_INFINITY));
+            }
+        } else {
+            throw new IOFailure("Unable to locate QuotaEnforcer object in order.xml: " + template.asXML());
+        }	
+	}
+
+	@Override
+	public Long getMaxBytesPerDomain() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setMaxObjectsPerDomain(Long maxobjectsL) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Long getMaxObjectsPerDomain() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+     * Return true if the templatefile has deduplication enabled.
+     * @return True if Deduplicator is enabled.
+     */
+	@Override
+	public boolean IsDeduplicationEnabled() {
+        Node xpathNode = template.selectSingleNode(H1HeritrixTemplate.DEDUPLICATOR_ENABLED);
+        return xpathNode != null && xpathNode.getText().trim().equals("true");
+	}
+
+	@Override
+	public void setArchiveFormat(String archiveFormat) {
+		Document orderXML = this.template;
         boolean arcMode = false;
         boolean warcMode = false;
 
@@ -477,208 +644,27 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
         } else {
             throw new IllegalState("Unknown state: "
                     + "Should have selected either ARC or WARC as heritrix archive format");
-        }
-    }
-
-    private static void setIfFound(Document doc, String Xpath, String param, String value) {
-        if (doc.selectSingleNode(Xpath) != null) {
-            XmlUtils.setNode(doc, Xpath, value);
-        } else {
-            log.warn("Could not replace setting value of '" + param + "' in template. Xpath not found: " + Xpath);
-        }
-    }
-
-    /**
-     * @param maxJobRunningTime Force the harvestjob to end after maxJobRunningTime
-     */
-    public static void editOrderXML_maxJobRunningTime(Document orderXMLdoc, long maxJobRunningTime) {
-        // get and set the "max-time-sec" node of the orderXMLdoc
-        String xpath = H1HeritrixTemplate.MAXTIMESEC_PATH_XPATH;
-        Node groupMaxTimeSecNode = orderXMLdoc.selectSingleNode(xpath);
-        if (groupMaxTimeSecNode != null) {
-            String currentMaxTimeSec = groupMaxTimeSecNode.getText();
-            groupMaxTimeSecNode.setText(Long.toString(maxJobRunningTime));
-            log.trace("Value of groupMaxTimeSecNode changed from " + currentMaxTimeSec + " to " + maxJobRunningTime);
-        } else {
-            throw new IOFailure("Unable to locate xpath '" + xpath + "' in the order.xml: " + orderXMLdoc.asXML());
-        }
-    }
-
-    /**
-     * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of objects to be
-     * retrieved per domain. This method updates 'group-max-fetch-success' element of the QuotaEnforcer pre-fetch
-     * processor node (org.archive.crawler.frontier.BdbFrontier) with the value of the argument forceMaxObjectsPerDomain
-     *
-     * @param orderXMLdoc
-     * @param forceMaxObjectsPerDomain The maximum number of objects to retrieve per domain, or 0 for no limit.
-     * @throws PermissionDenied If unable to replace the frontier node of the orderXMLdoc Document
-     * @throws IOFailure If the group-max-fetch-success element is not found in the orderXml. TODO The
-     * group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
-     */
-    public static void editOrderXML_maxObjectsPerDomain(Document orderXMLdoc, long forceMaxObjectsPerDomain,
-            boolean maxObjectsIsSetByQuotaEnforcer) {
-
-        String xpath = (maxObjectsIsSetByQuotaEnforcer ? GROUP_MAX_FETCH_SUCCESS_XPATH : QUEUE_TOTAL_BUDGET_XPATH);
-
-        Node orderXmlNode = orderXMLdoc.selectSingleNode(xpath);
-        if (orderXmlNode != null) {
-            orderXmlNode.setText(String.valueOf(forceMaxObjectsPerDomain));
-        } else {
-            throw new IOFailure("Unable to locate " + xpath + " element in order.xml: " + orderXMLdoc.asXML());
-        }
-    }
-
-    /**
-     * Activates or deactivate the quota-enforcer, depending on budget definition. Object limit can be defined either by
-     * using the queue-total-budget property or the quota enforcer. Which is chosen is set by the argument
-     * maxObjectsIsSetByQuotaEnforcer}'s value. So quota enforcer is set as follows:
-     * <ul>
-     * <li>Object limit is not set by quota enforcer, disabled only if there is no byte limit.</li>
-     * <li>Object limit is set by quota enforcer, so it should be enabled whether a byte or object limit is set.</li>
-     * </ul>
-     *
-     * @param orderXMLdoc the template to modify
-     * @param maxObjectsIsSetByQuotaEnforcer Decides whether the maxObjectsIsSetByQuotaEnforcer or not.
-     * @param forceMaxBytesPerDomain The number of max bytes per domain enforced (can be no limit)
-     * @param forceMaxObjectsPerDomain The number of max objects per domain enforced (can be no limit)
-     */
-    public static void editOrderXML_configureQuotaEnforcer(Document orderXMLdoc,
-            boolean maxObjectsIsSetByQuotaEnforcer, long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain) {
-
-        boolean quotaEnabled = true;
-
-        if (!maxObjectsIsSetByQuotaEnforcer) {
-            // Object limit is not set by quota enforcer, so it should be disabled only
-            // if there is no byte limit.
-            quotaEnabled = forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
-
-        } else {
-            // Object limit is set by quota enforcer, so it should be enabled whether
-            // a byte or object limit is set.
-            quotaEnabled = forceMaxObjectsPerDomain != Constants.HERITRIX_MAXOBJECTS_INFINITY
-                    || forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
-        }
-
-        String xpath = H1HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
-        Node qeNode = orderXMLdoc.selectSingleNode(xpath);
-        if (qeNode != null) {
-            qeNode.setText(Boolean.toString(quotaEnabled));
-        } else {
-            throw new IOFailure("Unable to locate " + xpath + " element in order.xml: " + orderXMLdoc.asXML());
-        }
-    }
-
-    
-    /**
-     * This method prepares the orderfile used by the Heritrix crawler. </p> 1. alters the orderfile in the
-     * following-way: (overriding whatever is in the orderfile)</br>
-     * <ol>
-     * <li>sets the disk-path to the outputdir specified in HeritrixFiles.</li>
-     * <li>sets the seedsfile to the seedsfile specified in HeritrixFiles.</li>
-     * <li>sets the prefix of the arcfiles to unique prefix defined in HeritrixFiles</li>
-     * <li>checks that the arcs-file dir is 'arcs' - to ensure that we know where the arc-files are when crawl finishes</li>
-     * <p>
-     * <li>if deduplication is enabled, sets the node pointing to index directory for deduplication (see step 3)</li>
-     * </ol>
-     * 2. saves the orderfile back to disk</p>
-     * <p>
-     * 3. if deduplication is enabled in the order.xml, it writes the absolute path of the lucene index used by the
-     * deduplication processor.
-     *
-     * @throws IOFailure - When the orderfile could not be saved to disk When a specific node is not found in the
-     * XML-document When the SAXReader cannot parse the XML
-     */
-    //public void makeOrderfileReadyForHeritrix(HeritrixFiles files) throws IOFailure {
-    
-
-	@Override
-	public boolean isValid() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void configureQuotaEnforcer(boolean maxObjectsIsSetByQuotaEnforcer,
-			long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-    * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of bytes to
-    * retrieve per domain. This method updates 'group-max-all-kb' element of the 'QuotaEnforcer' node, which again is a
-    * subelement of 'pre-fetch-processors' node. with the value of the argument forceMaxBytesPerDomain
-    *
-    * @param forceMaxBytesPerDomain The maximum number of byte to retrieve per domain, or -1 for no limit. Note that
-    * the number is divided by 1024 before being inserted into the orderXml, as Heritrix expects KB.
-    * @throws PermissionDenied If unable to replace the QuotaEnforcer node of the orderXMLdoc Document
-    * @throws IOFailure If the group-max-all-kb element cannot be found. TODO This group-max-all-kb check also be
-    * performed in TemplateDAO.create, TemplateDAO.update
-    */
-	@Override
-	public void setMaxBytesPerDomain(Long forceMaxBytesPerDomain) {
-		// get and set the group-max-all-kb Node of the orderXMLdoc:
-        String xpath = H1HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
-        Node groupMaxSuccessKbNode = template.selectSingleNode(xpath);
-        if (groupMaxSuccessKbNode != null) {
-            if (forceMaxBytesPerDomain == 0) {
-                groupMaxSuccessKbNode.setText("0");
-            } else if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY) {
-                // Divide by 1024 since Heritrix uses KB rather than bytes,
-                // and add 1 to avoid to low limit due to rounding.
-                groupMaxSuccessKbNode.setText(Long
-                        .toString((forceMaxBytesPerDomain / Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1));
-            } else {
-                groupMaxSuccessKbNode.setText(String.valueOf(Constants.HERITRIX_MAXBYTES_INFINITY));
-            }
-        } else {
-            throw new IOFailure("Unable to locate QuotaEnforcer object in order.xml: " + template.asXML());
-        }	
-	}
-
-	@Override
-	public Long getMaxBytesPerDomain() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setMaxObjectsPerDomain(Long maxobjectsL) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Long getMaxObjectsPerDomain() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-     * Return true if the templatefile has deduplication enabled.
-     *
-     * @return True if Deduplicator is enabled.
-     */
-	@Override
-	public boolean IsDeduplicationEnabled() {
-        Node xpathNode = template.selectSingleNode(H1HeritrixTemplate.DEDUPLICATOR_ENABLED);
-        return xpathNode != null && xpathNode.getText().trim().equals("true");
-	}
-
-	@Override
-	public void setArchiveFormat(String archiveFormat) {
-		
-		
+        }		
 	}
 
 	@Override
 	public void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL) {
-		// TODO Auto-generated method stub
-		
+        // get and set the "max-time-sec" node of the orderXMLdoc
+        String xpath = H1HeritrixTemplate.MAXTIMESEC_PATH_XPATH;
+        Node groupMaxTimeSecNode = template.selectSingleNode(xpath);
+        if (groupMaxTimeSecNode != null) {
+            String currentMaxTimeSec = groupMaxTimeSecNode.getText();
+            groupMaxTimeSecNode.setText(Long.toString(maxJobRunningTimeSecondsL));
+            log.trace("Value of groupMaxTimeSecNode changed from " + currentMaxTimeSec + " to " + maxJobRunningTimeSecondsL);
+        } else {
+            throw new IOFailure("Unable to locate xpath '" + xpath + "' in the order.xml: " + template.asXML());
+        }
 	}
+	
+	
+	@Override
 	public void writeTemplate(OutputStream os) throws IOException, ArgumentNotValid{
-		
-		XMLWriter writer;
+     	XMLWriter writer;
 		try {
 			writer = new XMLWriter(os);
 			writer.write(this.template);
@@ -688,7 +674,11 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
 			throw new ArgumentNotValid(errMsg, e);
 		} 
 	}
-	
+
+	/**
+	 * Only available for H1 templates. 	
+	 * @return the template as a String.
+	 */
 	public String getText()  {
 		return this.template.getText();
 	}
@@ -782,7 +772,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
 
 	@Override
 	public void setArchiveFilePrefix(String archiveFilePrefix) {
-		XmlUtils.setNodes(template, H1HeritrixTemplate.ARCHIVEFILE_PREFIX_XPATH, archiveFilePrefix);
+		XmlUtils.setNodes(template, ARCHIVEFILE_PREFIX_XPATH, archiveFilePrefix);
 	}
 
 	@Override
@@ -796,8 +786,20 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
 	    if (xpathNode != null) {
 	        xpathNode.detach();
 	    }
-		
-	}	
+	}
+	public H1HeritrixTemplate(Clob clob) throws SQLException{
+	Document doc;
+    try {
+        SAXReader reader = new SAXReader();
+        
+        doc = reader.read(clob.getCharacterStream());
+    } catch (DocumentException e) {
+    	String errMsg = "Failed to read the contents of the clob as XML:" + clob.getSubString(1, (int) clob.length()); 
+        log.warn(errMsg, e);
+        throw new IOFailure(errMsg, e);
+    }
+    this.template = doc;
+	}
 	
 	
 }

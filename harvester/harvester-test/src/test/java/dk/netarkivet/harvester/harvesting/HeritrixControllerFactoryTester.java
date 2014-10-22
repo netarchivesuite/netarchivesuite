@@ -86,7 +86,9 @@ public class HeritrixControllerFactoryTester {
         File seedsTxt = new File(crawlDir, "seeds.txt");
         FileUtils.copyFile(TestInfo.ORDER_FILE, orderXml);
         FileUtils.copyFile(origSeeds, seedsTxt);
-        HeritrixFiles files = new HeritrixFiles(crawlDir, new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID),
+        // FIXME HeritrixFiles Hardwired
+        HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		crawlDir, new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID),
                 Long.parseLong(TestInfo.ARC_HARVEST_ID)));
         HeritrixController hc = HeritrixControllerFactory.getDefaultHeritrixController(files);
         assertTrue("Should have got a JMXHeritricController, not " + hc, hc instanceof BnfHeritrixController);

@@ -60,9 +60,9 @@ public class HeritrixFiles {
     /** The prefix we put on generated ARC or WARC files. */
     private final String arcFilePrefix;
 
-    /** The JMX password file to be used by Heritrix. */
+    /** The JMX password file to be used by Heritrix 1.X. */
     private final File jmxPasswordFile;
-    /** The JMX access file to be used by Heritrix. */
+    /** The JMX access file to be used by Heritrix 1.X. */
     private final File jmxAccessFile;
 
     /** The name of the order.xml file. */
@@ -76,22 +76,25 @@ public class HeritrixFiles {
 
     /** The name of the index directory. */
     private File indexDir;
-
+    
     /** The name of the progress statistics log. */
     private static final String PROGRESS_STATISTICS_LOG_FILENAME = "progress-statistics.log";
     /** The name of the crawl log. */
     private static final String CRAWL_LOG_FILENAME = "crawl.log";
     /** The name of the stdout/stderr file from Heritrix. */
     private static final String OUTPUT_FILENAME = "heritrix.out";
+    
+    /** The version of Heritrix. */
+    private Version version;
 
     /**
      * Create a new HeritrixFiles object for a job.
      *
      * @param crawlDir The dir, where the crawl-files are placed. Assumes, that crawlDir exists already.
      * @param harvestJob The harvestjob behind this instance of HeritrixFiles
-     * @param jmxPasswordFile The jmx password file to be used by Heritrix. The existence of this file is checked
+     * @param jmxPasswordFile The jmx password file to be used by Heritrix 1. The existence of this file is checked
      * another place.
-     * @param jmxAccessFile The JMX access file to be used by Heritrix. The existence of this file is checked another
+     * @param jmxAccessFile The JMX access file to be used by Heritrix 1. The existence of this file is checked another
      * place.
      * @throws ArgumentNotValid if null crawlDir, or non-positive jobID and harvestID.
      */
@@ -106,19 +109,46 @@ public class HeritrixFiles {
         this.arcFilePrefix = harvestJob.getHarvestFilenamePrefix();
         this.jmxPasswordFile = jmxPasswordFile;
         this.jmxAccessFile = jmxAccessFile;
+        this.version = Version.HERITRIX_1;
     }
 
+    public HeritrixFiles(File crawlDir, JobInfo harvestJob, File jmxPasswordFile, File jmxAccessFile, 
+    		Version version) {
+        ArgumentNotValid.checkNotNull(crawlDir, "crawlDir");
+        ArgumentNotValid.checkNotNull(harvestJob, "harvestJob");
+        this.crawlDir = crawlDir;
+        this.jobID = harvestJob.getJobID();
+        this.harvestID = harvestJob.getOrigHarvestDefinitionID();
+        this.arcFilePrefix = harvestJob.getHarvestFilenamePrefix();
+        this.jmxPasswordFile = jmxPasswordFile;
+        this.jmxAccessFile = jmxAccessFile;
+        this.version = version;
+    }
+        
+    public static HeritrixFiles getH1HeritrixFilesWithDefaultJmxFiles(File crawlDir, JobInfo harvestJob) {
+    	return new HeritrixFiles(crawlDir, harvestJob, 
+    				new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)), 
+    				new File(Settings.get(CommonSettings.JMX_ACCESS_FILE)), Version.HERITRIX_1);
+    }
+    
+    public static HeritrixFiles getH3HeritrixFiles(File crawlDir, JobInfo harvestJob) {
+    	return new HeritrixFiles(crawlDir, harvestJob, null, null, Version.HERITRIX_3);
+    }
+    
+    /*
     /**
      * Alternate constructor that by default reads the jmxPasswordFile, and jmxAccessFile from the current settings.
      *
      * @param crawlDir The dir, where the crawl-files are placed
      * @param harvestJob The harvestjob behind this instance of HeritrixFiles
      */
+    /*
     public HeritrixFiles(File crawlDir, JobInfo harvestJob) {
         this(crawlDir, harvestJob, new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)), new File(
                 Settings.get(CommonSettings.JMX_ACCESS_FILE)));
     }
-
+    */
+    
     /**
      * Returns the directory that crawls are performed inside.
      *
@@ -369,4 +399,8 @@ public class HeritrixFiles {
         return jmxAccessFile;
     }
 
+    public static enum Version {
+    	HERITRIX_1,
+    	HERITRIX_3;
+    }
 }

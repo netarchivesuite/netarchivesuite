@@ -73,10 +73,12 @@ public class IngestableFilesTester {
      */
     @Test
     public void testConstructor() {
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+    	//FIXME HeritrixFiles hardwired to be Version 1
+        HeritrixFiles OkFiles = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles( 
+        		TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         new IngestableFiles(OkFiles);
-        HeritrixFiles NotOkFiles = new HeritrixFiles(nonexistingDir, acceptableJobInfoForJobOne);
-        HeritrixFiles NotOkFilesWithBadJobId = new HeritrixFiles(existingDir, unacceptableJobInfo);
+        HeritrixFiles NotOkFiles = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(nonexistingDir, acceptableJobInfoForJobOne);
+        HeritrixFiles NotOkFilesWithBadJobId = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(existingDir, unacceptableJobInfo);
 
         try {
             new IngestableFiles(NotOkFiles);
@@ -102,7 +104,8 @@ public class IngestableFilesTester {
      */
     @Test
     public void testGetSetMetadataReady() {
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+    	//FIXME heritrixFiles is hardwired to version 1
+        HeritrixFiles OkFiles = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
         assertFalse("isMetadataReady() should return false before metadata has been generated", inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false before metadata has been generated", inf.isMetadataFailed());
@@ -116,7 +119,8 @@ public class IngestableFilesTester {
         inf.setMetadataGenerationSucceeded(true);
         assertTrue("isMetadataReady() should return true after metadata has been generated", inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false after metadata has been generated", inf.isMetadataFailed());
-        HeritrixFiles OkFilesTwo = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobTwo);
+        //FIXME heritrixFiles is hardwired to version 1
+        HeritrixFiles OkFilesTwo = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobTwo);
         inf = new IngestableFiles(OkFilesTwo);
         assertFalse("isMetadataReady() should return false before metadata has been generated", inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false before metadata has been generated", inf.isMetadataFailed());
@@ -138,7 +142,9 @@ public class IngestableFilesTester {
      */
     @Test
     public void testDisallowedActions() {
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+    	//FIXME heritrixFiles is hardwired to version 1
+        HeritrixFiles OkFiles = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
 
         assertCannotGetMetadata(inf);
@@ -160,7 +166,9 @@ public class IngestableFilesTester {
         } catch (Throwable e) {
             // Expected
         }
-        HeritrixFiles OkFilesTwo = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobTwo);
+        //FIXME heritrixFiles is hardwired to version 1
+        HeritrixFiles OkFilesTwo = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobTwo);
+       
         inf = new IngestableFiles(OkFilesTwo);
 
         assertCannotGetMetadata(inf);
@@ -202,7 +210,9 @@ public class IngestableFilesTester {
     @Test
     public void testMetadataRediscovery() throws FileNotFoundException, IOException {
         // Original crawl: write some metadata
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+    	//FIXME heritrixFiles is hardwired to version 1
+        HeritrixFiles OkFiles = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
 
         MetadataFileWriter aw = inf.getMetadataWriter();
@@ -228,7 +238,9 @@ public class IngestableFilesTester {
      */
     @Test
     public void testGetMetadataArcWriter() {
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+    	//FIXME heritrixFiles is hardwired to version 1
+        HeritrixFiles OkFiles = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
         MetadataFileWriter aw = inf.getMetadataWriter();
         writeOneRecord(aw);
@@ -239,7 +251,10 @@ public class IngestableFilesTester {
      */
     @Test
     public void testGetMetadataFiles() throws FileNotFoundException, IOException {
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+    	
+    	//FIXME heritrixFiles is hardwired to version 1
+        HeritrixFiles OkFiles = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
         MetadataFileWriter aw = inf.getMetadataWriter();
         writeOneRecord(aw);
@@ -257,7 +272,8 @@ public class IngestableFilesTester {
 
     @Test
     public void testMetadataFailure() {
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+    	//FIXME heritrixFiles is hardwired to version 1
+        HeritrixFiles OkFiles = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
         inf.setMetadataGenerationSucceeded(false);
         try {
@@ -291,8 +307,9 @@ public class IngestableFilesTester {
             assertTrue("Open file '" + nonOpenFile + "' should exist before calling closeOpenFiles()",
                     nonOpenFile.exists());
         }
-
-        HeritrixFiles OkFiles42 = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJob42);
+        //FIXME heritrixFiles is hardwired to version 1
+        HeritrixFiles OkFiles42 = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		TestInfo.WORKING_DIR, acceptableJobInfoForJob42);
         IngestableFiles inf = new IngestableFiles(OkFiles42);
 
         inf.closeOpenFiles(0);

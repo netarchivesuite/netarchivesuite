@@ -430,7 +430,7 @@ public class HarvestControllerServerTester {
      * @throws InvocationTargetException
      */
     @Test
-    @Ignore("AssertionError: documentHarvest() shouldhave generated final metadata")
+    @Ignore("AssertionError: documentHarvest() should have generated final metadata")
     public void failingTestCopyPreharvestMetadata() throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
         // Set up harvest controller, a job some metadata and a crawlDir
@@ -450,7 +450,9 @@ public class HarvestControllerServerTester {
         writePreharvestMetadata.invoke(hc, job, meta, crawlDir);
         // Write final metadata file - should copy the preharvest metadata
         JobInfo jobInfo = new JobInfoTestImpl(jobId, job.getOrigHarvestDefinitionID());
-        HeritrixFiles files = new HeritrixFiles(crawlDir, jobInfo);
+        // FIXME hardwired to H1 HeritrixFiles
+        HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		crawlDir, jobInfo);
         IngestableFiles inf = new IngestableFiles(files);
         HarvestDocumentation.documentHarvest(inf);
         // Verify that metadata file has been generated

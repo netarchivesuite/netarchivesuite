@@ -17,16 +17,6 @@ public abstract class HeritrixTemplate {
 
 	private static final CharSequence H1_SIGNATURE = "<crawl-order xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance"; 
 	private static final CharSequence H3_SIGNATURE = "xmlns:\"http://www.springframework.org/";
-	
-	public static HeritrixTemplate getTemplate(String templateAsString) {
-		if (templateAsString.contains(H1_SIGNATURE)) {
-			return new H1HeritrixTemplate(templateAsString);
-		} else if (templateAsString.contains(H3_SIGNATURE)) {
-			return new H3HeritrixTemplate(templateAsString);
-		} else {
-			throw new ArgumentNotValid("The given template is neither H1 or H3: " + templateAsString);
-		}
-	}
 	public abstract boolean isValid();
 	public abstract String getXML();
 
@@ -77,7 +67,14 @@ public abstract class HeritrixTemplate {
 
 	public abstract void insertCrawlerTraps(String elementName, List<String> crawlertraps);
 	
+	/**
+     * Make sure that Heritrix will archive its data in the chosen archiveFormat.
+     *
+     * @param archiveFormat the chosen archiveformat ('arc' or 'warc' supported) Throws ArgumentNotValid If the chosen
+     * archiveFormat is not supported.
+     */
 	public abstract void setArchiveFormat(String archiveFormat);
+	
 	
 	public abstract void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL);
 	
@@ -107,6 +104,27 @@ public abstract class HeritrixTemplate {
      * @param files
      * @throws IOFailure
      */
+    /**
+     * This method prepares the orderfile used by the Heritrix crawler. </p> 1. alters the orderfile in the
+     * following-way: (overriding whatever is in the orderfile)</br>
+     * <ol>
+     * <li>sets the disk-path to the outputdir specified in HeritrixFiles.</li>
+     * <li>sets the seedsfile to the seedsfile specified in HeritrixFiles.</li>
+     * <li>sets the prefix of the arcfiles to unique prefix defined in HeritrixFiles</li>
+     * <li>checks that the arcs-file dir is 'arcs' - to ensure that we know where the arc-files are when crawl finishes</li>
+     * <p>
+     * <li>if deduplication is enabled, sets the node pointing to index directory for deduplication (see step 3)</li>
+     * </ol>
+     * 2. saves the orderfile back to disk</p>
+     * <p>
+     * 3. if deduplication is enabled in the order.xml, it writes the absolute path of the lucene index used by the
+     * deduplication processor.
+     *
+     * @throws IOFailure - When the orderfile could not be saved to disk 
+     *                     When a specific element cannot be found in the document. 
+     */
+        
+    
     public static void makeTemplateReadyForHeritrix(HeritrixFiles files) throws IOFailure {
     	HeritrixTemplate templ = HeritrixTemplate.read(files.getOrderXmlFile());
     	templ.setDiskPath(files.getCrawlDir().getAbsolutePath());
@@ -125,24 +143,6 @@ public abstract class HeritrixTemplate {
     public abstract void setArchiveFilePrefix(String archiveFilePrefix);
     public abstract void setDiskPath(String absolutePath);
     
-    /** 
-     * 
-     * @param orderXmlFile
-     * @return
-     */
-	public static HeritrixTemplate read(File orderXmlFile) {
-		return null;
-	}
-	
-	/**
-	 * 
-	 * @param orderTemplateReader
-	 * @return
-	 */
-	public static HeritrixTemplate read(Reader orderTemplateReader) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	public abstract void writeTemplate(OutputStream os) throws IOException, ArgumentNotValid;
 	
@@ -161,34 +161,63 @@ public abstract class HeritrixTemplate {
      * @throws DocumentException If unable to create a Document object based on the data in the Clob
      */
     public static HeritrixTemplate getOrderXMLdocFromClob(Clob clob) throws SQLException {
-        
     	// Taste the first 1000 characters, and look for the signatures of the different types of template.    	
     	String signature = clob.getSubString(0L, 1000);
     	if (signature.contains(HeritrixTemplate.H1_SIGNATURE)) {
-    		
-    	  /*
-    		Document doc;
-            try {
-                SAXReader reader = new SAXReader();
-                
-                doc = reader.read(clob.getCharacterStream());
-            } catch (DocumentException e) {
-                log.warn("Failed to read the contents of the clob as XML:" + clob.getSubString(1, (int) clob.length()));
-                throw e;
-            }
-            return doc;
-    		*/
-    		return null;
+    		return new H1HeritrixTemplate(clob); 
     	} else if (signature.contains(HeritrixTemplate.H3_SIGNATURE)) {
-    		return null;
+    		return new H3HeritrixTemplate(clob);
     	} else {
     		throw new IllegalState("The template starting with '" + signature + "' cannot be recognized as either H1 or H3");
     	}
-    	
     }
+	/*
 	public static HeritrixTemplate read(String string) {
+		String signature = string.substring(0, 1000);
+		if (signature.contains(HeritrixTemplate.H1_SIGNATURE)) {
+    		return new H1HeritrixTemplate(string); 
+    	} else if (signature.contains(HeritrixTemplate.H3_SIGNATURE)) {
+    		return new H3HeritrixTemplate(string);
+    	} else {
+    		throw new IllegalState("The template starting with '" + signature + "' cannot be recognized as either H1 or H3");
+    	}
+	}
+	*/
+	public static HeritrixTemplate getTemplateFromString(String templateAsString) {
+		if (templateAsString.contains(H1_SIGNATURE)) {
+			return new H1HeritrixTemplate(templateAsString);
+		} else if (templateAsString.contains(H3_SIGNATURE)) {
+			return new H3HeritrixTemplate(templateAsString);
+		} else {
+			throw new ArgumentNotValid("The given template is neither H1 or H3: " + templateAsString);
+		}
+	}
+	
+	
+	
+	
+	/** 
+     * Read the
+     * @param orderXmlFile
+     * @return
+     */
+	public static HeritrixTemplate read(File orderXmlFile) {
 		return null;
 	}
+	
+	/**
+	 * 
+	 * @param orderTemplateReader
+	 * @return
+	 */
+	public static HeritrixTemplate read(Reader orderTemplateReader) {
+		return null;
+	}
+	
+	
+	/**
+	 * Try to remove the deduplicator, if present in the template.
+	 */
 	public abstract void removeDeduplicatorIfPresent();
 	
 }

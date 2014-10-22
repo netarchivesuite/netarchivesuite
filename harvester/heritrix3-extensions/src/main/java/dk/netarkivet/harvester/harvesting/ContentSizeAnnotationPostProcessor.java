@@ -32,6 +32,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * A post processor that adds an annotation
  *   content-size:<bytes>
  * for each successfully harvested URI.
+ * 
+ *  The bean for this processor <bean id="ContentSizeAnnotationPostProcessor" class="dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor"/>
+ *  should be added to the list of dispositionProcessors.
  *
  */
 public class ContentSizeAnnotationPostProcessor extends Processor {

@@ -23,14 +23,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
---%><%@ page import="org.dom4j.Document,
-                 org.dom4j.io.XMLWriter,
+--%><%@ page import="
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.datamodel.TemplateDAO, 
                  dk.netarkivet.harvester.datamodel.JobDAO,
                  dk.netarkivet.harvester.datamodel.Job,
+                 dk.netarkivet.harvester.datamodel.HeritrixTemplate,
                  dk.netarkivet.harvester.webinterface.Constants"
           pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
@@ -61,7 +61,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                "errormsg;harvest.template.0.does.not.exist", orderXmlToShow);
         return;
     }
-    Document doc = dao.read(orderXmlToShow).getTemplate();
+    HeritrixTemplate doc = dao.read(orderXmlToShow);
     
     // Write the template to the page.
     	
@@ -71,6 +71,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 + filename + Constants.XML_EXTENSION);
 
     }
-    XMLWriter writer = new XMLWriter(out);
-    writer.write(doc);
+    doc.writeTemplate(out);
+    // Old code:
+    //XMLWriter writer = new XMLWriter(out);
+    //writer.write(doc);
 %>

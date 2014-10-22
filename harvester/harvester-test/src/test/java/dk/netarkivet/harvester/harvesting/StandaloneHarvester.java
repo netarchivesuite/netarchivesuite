@@ -43,7 +43,11 @@ public class StandaloneHarvester {
         FileUtils.copyFile(new File(argv[0]), new File(crawlDir, "order.xml"));
         FileUtils.copyFile(new File(argv[1]), new File(crawlDir, "seeds.txt"));
         System.out.println("Attempting crawl in " + crawlDir);
-        HeritrixFiles files = new HeritrixFiles(crawlDir, new JobInfoTestImpl(1L, 1L));
+        // Hardwired to H1
+        HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		crawlDir, new JobInfoTestImpl(1L, 1L));
+        
+        
         HeritrixLauncher launcher = HeritrixLauncherFactory.getInstance(files);
         launcher.doCrawl();
         System.out.println("Crawl ended, results are in " + crawlDir);

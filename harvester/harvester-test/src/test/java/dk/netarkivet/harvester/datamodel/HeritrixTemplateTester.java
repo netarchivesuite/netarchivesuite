@@ -255,10 +255,10 @@ public class HeritrixTemplateTester {
     @Test
     public void testEditOrderXML_ArchiveFormat() {
         File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
-        Document a = XmlUtils.getXmlDoc(f);
-        H1HeritrixTemplate.editOrderXML_ArchiveFormat(a, "arc");
+        HeritrixTemplate ht = HeritrixTemplate.read(f);
+        ht.setArchiveFormat("arc");
         File fwarc = new File(TestInfo.TOPDATADIR, "default_orderxml_warc.xml");
-        a = XmlUtils.getXmlDoc(fwarc);
-        H1HeritrixTemplate.editOrderXML_ArchiveFormat(a, "warc");
+        ht = HeritrixTemplate.read(fwarc);
+        ht.setArchiveFormat("warc");
     }
 }

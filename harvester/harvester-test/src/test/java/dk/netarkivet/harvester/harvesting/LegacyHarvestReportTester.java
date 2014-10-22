@@ -90,13 +90,14 @@ public class LegacyHarvestReportTester {
 
         // Test parse error
         FileUtils.copyFile(TestInfo.INVALID_REPORT_FILE, new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
+        HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         new LegacyHarvestReport(hf);
         lr.assertLogContains("Should have log about invalid line", "Invalid line in");
 
         // Test success
         FileUtils.copyFile(TestInfo.REPORT_FILE, new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
+        hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         AbstractHarvestReport hostReport = new LegacyHarvestReport(hf);
 
         assertNotNull("A AbstractHarvestReport should have a non-null set of domain names", hostReport.getDomainNames());
@@ -110,7 +111,8 @@ public class LegacyHarvestReportTester {
     @Test
     public void testGetDomainNames() throws IOException, FileNotFoundException {
         FileUtils.copyFile(TestInfo.REPORT_FILE, new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
+        HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         AbstractHarvestReport hostReport = new LegacyHarvestReport(hf);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(TestInfo.REPORT_FILE)));
@@ -167,7 +169,8 @@ public class LegacyHarvestReportTester {
         File testFile = TestInfo.LONG_REPORT_FILE;
 
         FileUtils.copyFile(testFile, new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
+        HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+        		TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
         Long expectedObjectCount = Long.valueOf(2L);
         Long expectedByteCount = new Long(5500000001L);
@@ -184,7 +187,7 @@ public class LegacyHarvestReportTester {
         File testFile = TestInfo.ADD_LONG_REPORT_FILE;
 
         FileUtils.copyFile(testFile, new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
+        HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
 
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
         assertEquals("Counts should equal input data", new Long(2500000000l), hr.getByteCount("nosuchdomain.dk"));
@@ -195,7 +198,7 @@ public class LegacyHarvestReportTester {
     public void testStopReason() {
         File testFile = TestInfo.STOP_REASON_REPORT_FILE;
         FileUtils.copyFile(testFile, new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
+        HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
 
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
         assertEquals("kb.dk is unfinished", StopReason.DOWNLOAD_UNFINISHED, hr.getStopReason("kb.dk"));
@@ -209,7 +212,7 @@ public class LegacyHarvestReportTester {
     public void testIDNA() {
         File testFile = TestInfo.IDNA_CRAW_LOG;
         FileUtils.copyFile(testFile, new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
+        HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
         boolean disregardSeedUrl = Settings.getBoolean(HarvesterSettings.DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG);
         if (disregardSeedUrl) {
@@ -233,7 +236,7 @@ public class LegacyHarvestReportTester {
     public void testSerializability() throws IOException, ClassNotFoundException {
         File testFile = TestInfo.REPORT_FILE;
         FileUtils.copyFile(testFile, new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
+        HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         AbstractHarvestReport hr = new LegacyHarvestReport(hf);
         AbstractHarvestReport hr2 = Serial.serial(hr);
         assertEquals("Relevant state should be preserved", relevantState(hr), relevantState(hr2));
@@ -252,7 +255,7 @@ public class LegacyHarvestReportTester {
     private AbstractHarvestReport createValidHeritrixHostsReport() {
         File testFile = TestInfo.REPORT_FILE;
         FileUtils.copyFile(testFile, new File(TestInfo.WORKING_DIR, "logs/crawl.log"));
-        HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
+        HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(1L, 1L));
         return new LegacyHarvestReport(hf);
     }
 

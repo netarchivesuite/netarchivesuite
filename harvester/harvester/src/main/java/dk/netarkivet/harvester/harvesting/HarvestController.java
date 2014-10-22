@@ -132,7 +132,8 @@ public class HarvestController {
      */
     public HeritrixFiles writeHarvestFiles(File crawldir, Job job, HarvestDefinitionInfo hdi,
             List<MetadataEntry> metadataEntries) {
-        final HeritrixFiles files = new HeritrixFiles(crawldir, job);
+    	// FIXME this hardwires the HeritrixFiles to H1
+        final HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(crawldir, job);
 
         // If this job is a job that tries to continue a previous job
         // using the Heritrix recover.gz log, and this feature is enabled,

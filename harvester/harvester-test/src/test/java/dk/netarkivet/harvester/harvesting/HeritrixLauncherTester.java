@@ -118,7 +118,9 @@ public class HeritrixLauncherTester {
         File seedsTxt = new File(crawlDir, "seeds.txt");
         FileUtils.copyFile(origOrderXml, orderXml);
         FileUtils.copyFile(origSeeds, seedsTxt);
-        HeritrixFiles files = new HeritrixFiles(crawlDir, new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID),
+        //FIXME assumes H1 HeritrixFiles
+        
+        HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(crawlDir, new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID),
                 Long.parseLong(TestInfo.ARC_HARVEST_ID)));
         // If deduplicationMode != NO_DEDUPLICATION
         // write the zipped index to the indexdir inside the crawldir
@@ -179,7 +181,10 @@ public class HeritrixLauncherTester {
     @Test
     public void testStartMissingOrderFile() {
         try {
-            HeritrixLauncherFactory.getInstance(new HeritrixFiles(mtf.newTmpDir(), new JobInfoTestImpl(42L, 42L)));
+        	//FIXME assumes H1 HeritrixFiles
+            HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+            		mtf.newTmpDir(), new JobInfoTestImpl(42L, 42L));
+            HeritrixLauncherFactory.getInstance(hf);
             fail("Expected IOFailure");
         } catch (ArgumentNotValid e) {
             // expected case
@@ -192,7 +197,9 @@ public class HeritrixLauncherTester {
     @Test
     public void testStartMissingSeedsFile() {
         try {
-            HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(42L, 42L));
+        	//FIXME assumes H1 HeritrixFiles
+            HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
+            		TestInfo.WORKING_DIR, new JobInfoTestImpl(42L, 42L));
             hf.getSeedsTxtFile().delete();
             HeritrixLauncherFactory.getInstance(hf);
             fail("Expected FileNotFoundException");
