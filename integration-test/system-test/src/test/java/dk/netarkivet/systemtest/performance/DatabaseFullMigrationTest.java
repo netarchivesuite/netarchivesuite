@@ -43,7 +43,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.environment.ApplicationManager;
-import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
 import dk.netarkivet.systemtest.page.PageHelper;
 
 @SuppressWarnings("unused")
@@ -54,13 +53,13 @@ public class DatabaseFullMigrationTest extends StressTest {
         addDescription("Test complete backup-database ingest from production produces a functional NAS system.");
         //doUpdateFileStatus();
         //doUpdateChecksumAndFileStatus();
-        //doIngestDomains();
+        doIngestDomains();
         doGenerateSnapshot();
     }
 
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
-        if (false) {
+        if (true) {
             shutdownPreviousTest();
             fetchProductionData();
             deployComponents();
@@ -78,51 +77,119 @@ public class DatabaseFullMigrationTest extends StressTest {
         }
     }
 
+    abstract class GenericWebJob extends LongRunningJob {
+
+        WebDriver driver;
+        ApplicationManager applicationManager;
+        private DatabaseFullMigrationTest databaseFullMigrationTest;
+
+        protected GenericWebJob(DatabaseFullMigrationTest databaseFullMigrationTest,
+                ApplicationManager applicationManager, WebDriver driver, Long startUpTime, Long waitingInterval,
+                Long maxTime, String name) {
+            super(startUpTime, waitingInterval, maxTime, name);
+            this.driver = driver;
+            this.applicationManager = applicationManager;
+            driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+            String baseUrl = databaseFullMigrationTest.environmentManager
+                    .getGuiHost() + ":" + databaseFullMigrationTest.environmentManager.getGuiPort();
+            PageHelper.initialize(driver, baseUrl);
+            applicationManager.waitForGUIToStart(60);
+            databaseFullMigrationTest.addFixture("Opening NAS front page.");
+            this.databaseFullMigrationTest = databaseFullMigrationTest;
+        }
+    }
+
+    class GenerateSnapshotJob extends GenericWebJob {
+
+        String harvestName;
+
+        protected GenerateSnapshotJob(ApplicationManager applicationManager, WebDriver driver, Long startUpTime,
+                Long waitingInterval, Long maxTime, String name) {
+            super(DatabaseFullMigrationTest.this, applicationManager, driver, startUpTime, waitingInterval, maxTime, name);
+        }
+
+        @Override void startJob() {
+            harvestName = RandomStringUtils.randomAlphabetic(6);
+            addStep("Creating snapshot harvest '" + harvestName + "'", "Expect to create a snapshot harvest definition.");
+            driver.findElement(By.linkText("Definitions")).click();
+            driver.findElement(By.linkText("Snapshot Harvests")).click();
+            driver.findElement(By.partialLinkText("Create new")).click();
+            List<WebElement> inputs = driver.findElements(By.tagName("input"));
+            WebElement submit = null;
+            for (WebElement input: inputs) {
+                String name = input.getAttribute("name");
+                String type = input.getAttribute("type");
+                if ("submit".equals(type)) {
+                    submit = input;
+                }
+                if ("harvestname".equals(name)) {
+                    input.sendKeys(harvestName);
+                }
+                if ("snapshot_byte_limit".equals(name)) {
+                    input.clear();
+                    input.sendKeys("100000");
+                }
+            }
+            submit.submit();
+            addStep("Activate harvest", "Expect to generate a substantial number of jobs.");
+            List<WebElement> allForms = driver.findElements(By.tagName("form"));
+            WebElement activationForm = null;
+            for (WebElement form: allForms) {
+                if (form.findElement(By.tagName("input")).getAttribute("value").equals(harvestName)){
+                    activationForm = form;
+                }
+            }
+            activationForm.findElement(By.linkText("Activate")).click();
+        }
+
+        @Override boolean isStarted() {
+            gotoHarvestJobManagerLog(driver);
+            final boolean contains = driver.getPageSource().contains(harvestName);
+            assertTrue(contains, "Page should contain harvest name: " + harvestName);
+            int jobsGenerated = extractJobCount(driver, harvestName);
+            final boolean condition = jobsGenerated > 0;
+            assertTrue(condition, "Should have generated at least one job by now for " + harvestName);
+            return contains && condition;
+        }
+
+        @Override boolean isFinished() {
+            Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs.*[(](.{6})[)].*", Pattern.DOTALL);
+            gotoHarvestJobManagerLog(driver);
+            Matcher m = finished.matcher(driver.getPageSource());
+            return m.matches();
+        }
+
+        @Override String getProgress() {
+            return "Generated " + extractJobCount(driver, harvestName) + " jobs.";
+
+        }
+    }
+
     private void doGenerateSnapshot() throws InterruptedException {
         WebDriver driver = new FirefoxDriver();
         ApplicationManager applicationManager = new ApplicationManager(environmentManager);
-        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = environmentManager.getGuiHost() + ":" + environmentManager.getGuiPort();
-        PageHelper.initialize(driver, baseUrl);
-        applicationManager.waitForGUIToStart(60);
-        addFixture("Opening NAS front page.");
-        String harvestName = RandomStringUtils.randomAlphabetic(6);
-        addStep("Creating snapshot harvest '" + harvestName + "'", "Expect to create a snapshot harvest definition.");
-        driver.findElement(By.linkText("Definitions")).click();
-        driver.findElement(By.linkText("Snapshot Harvests")).click();
-        driver.findElement(By.partialLinkText("Create new")).click();
-        List<WebElement> inputs = driver.findElements(By.tagName("input"));
-        WebElement submit = null;
-        for (WebElement input: inputs) {
-            String name = input.getAttribute("name");
-            String type = input.getAttribute("type");
-            if ("submit".equals(type)) {
-                submit = input;
-            }
-            if ("harvestname".equals(name)) {
-                input.sendKeys(harvestName);
-            }
-            if ("snapshot_byte_limit".equals(name)) {
-                input.clear();
-                input.sendKeys("100000");
-            }
-        }
-        submit.submit();
-        addStep("Activate harvest", "Expect to generate a substantial number of jobs.");
-        List<WebElement> allForms = driver.findElements(By.tagName("form"));
-        for (WebElement form: allForms) {
-            if (form.findElement(By.tagName("input")).getAttribute("value").equals(harvestName)){
-                form.findElement(By.linkText("Activate")).click();
-            }
-        }
-        //Wait five minutes and see if job creation has started
-        Thread.sleep(5*60*1000L);
+        LongRunningJob snapshotJob = new GenerateSnapshotJob(applicationManager, driver,
+                60*60*1000L, 30*60*1000L, 20*3600*1000L, "SnapshotGenerationJob"
+                );
+        snapshotJob.run();
+    }
+
+
+
+    private void gotoHarvestJobManagerLog(WebDriver driver) {
         driver.findElement(By.linkText("Systemstate")).click();
         driver.findElement(By.linkText("HarvestJobManagerApplication")).click();
-        driver.findElement(By.partialLinkText("index=*")).click();
-        assertTrue(driver.getPageSource().contains(harvestName), "Page should contain harvest name: " + harvestName);
-        //Wait 30 minutes a see if any jobs have been generated
-        Thread.sleep(5*60*1000L);
+        List<WebElement> showAllLinks = driver.findElements(By.partialLinkText("show all"));
+        WebElement requiredLink = null;
+        for (WebElement element: showAllLinks) {
+            if (element.getAttribute("href").contains("index=*")) {
+                requiredLink = element;
+            }
+        }
+        requiredLink.click();
+    }
+
+    private int extractJobCount(WebDriver driver, String harvestName) {
         driver.findElement(By.linkText("Harvest status")).click();
         WebElement select = driver.findElement(By.name("JOB_STATUS"));
         List<WebElement> options = driver.findElements(By.tagName("option"));
@@ -131,8 +198,12 @@ public class DatabaseFullMigrationTest extends StressTest {
                 option.click();
             }
         }
+        driver.findElement(By.name("HARVEST_NAME")).sendKeys(harvestName);
+        driver.findElement(By.name("PAGE_SIZE")).clear();
+        driver.findElement(By.name("PAGE_SIZE")).sendKeys("1000");
+        driver.findElement(By.name("upload")).click();
+        return driver.findElements(By.linkText(harvestName)).size();
     }
-
 
     private void doIngestDomains() throws Exception {
         WebDriver driver = new FirefoxDriver();
@@ -183,7 +254,7 @@ public class DatabaseFullMigrationTest extends StressTest {
         driver.findElement(By.linkText("Bitpreservation")).click();
         WebElement updateLink = driver.findElement(By.linkText("Update filestatus for KB"));
         String idNumber = "KBN_number";
-        String idMissing = "KBN_missng";
+        String idMissing = "KBN_missing";
         String numberS = driver.findElement(By.id(idNumber)).getText();
         String missingS = driver.findElement(By.id(idMissing)).getText();
         System.out.println("Status files/missing = " + numberS + "/" + missingS);
