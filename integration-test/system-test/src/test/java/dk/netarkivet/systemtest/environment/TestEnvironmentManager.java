@@ -59,13 +59,14 @@ public class TestEnvironmentManager {
      * <li>TESTX = The supplied test name
      * </ul>
      *
-     * @param testX Defines the test name this test should be run under in the test system.
+     * @param testX Defines the test name this test should be run under in the test system, but this
+     * is ignored if systemtest.timestamp is set.
      */
     public TestEnvironmentManager(String testX, String host, int port) {
         TESTX = testX;
         GUI_HOST = System.getProperty("systemtest.host", host);
         GUI_PORT = System.getProperty("systemtest.port", Integer.toString(port));
-        TIMESTAMP = testX;
+        TIMESTAMP = System.getProperty("systemtest.timestamp", testX);
         MAILRECEIVERS = System.getProperty("systemtest.mailrecievers");
     }
 
