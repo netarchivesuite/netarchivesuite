@@ -51,8 +51,8 @@ public class DatabaseFullMigrationTest extends StressTest {
     @Test(groups = {"guitest", "performancetest"})
     public void dbFullMigrationTest() throws Exception {
         addDescription("Test complete backup-database ingest from production produces a functional NAS system.");
-        //doUpdateFileStatus();
-        //doUpdateChecksumAndFileStatus();
+        doUpdateFileStatus();
+        doUpdateChecksumAndFileStatus();
         doIngestDomains();
         doGenerateSnapshot();
     }
@@ -70,7 +70,7 @@ public class DatabaseFullMigrationTest extends StressTest {
         }
     }
 
-    @AfterClass
+    //@AfterClass
     public void teardownTestEnvironment() throws Exception {
         if (false) {
             shutdownTest();
@@ -167,9 +167,14 @@ public class DatabaseFullMigrationTest extends StressTest {
 
     private void doGenerateSnapshot() throws InterruptedException {
         WebDriver driver = new FirefoxDriver();
+        String snapshotTimeDividerString = System.getProperty("stresstest.snapshottimedivider", "1");
+        Integer snapshotTimeDivider = Integer.parseInt(snapshotTimeDividerString);
+        if (snapshotTimeDivider != 1) {
+            System.out.println("Dividing timescale for snapshot test by a factor " + snapshotTimeDivider + " (stresstest.snapshottimedivider).");
+        }
         ApplicationManager applicationManager = new ApplicationManager(environmentManager);
         LongRunningJob snapshotJob = new GenerateSnapshotJob(applicationManager, driver,
-                60*60*1000L, 30*60*1000L, 20*3600*1000L, "SnapshotGenerationJob"
+                60*60*1000L/snapshotTimeDivider, 30*60*1000L/snapshotTimeDivider, 20*3600*1000L/snapshotTimeDivider, "SnapshotGenerationJob"
                 );
         snapshotJob.run();
     }
@@ -207,6 +212,7 @@ public class DatabaseFullMigrationTest extends StressTest {
 
     private void doIngestDomains() throws Exception {
         WebDriver driver = new FirefoxDriver();
+        String backupEnv = System.getProperty("systemtest.backupenv", "prod");
         ApplicationManager applicationManager = new ApplicationManager(environmentManager);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         String baseUrl = environmentManager.getGuiHost() + ":" + environmentManager.getGuiPort();
@@ -215,7 +221,7 @@ public class DatabaseFullMigrationTest extends StressTest {
         addFixture("Opening NAS front page.");
         File domainsFile = File.createTempFile("domains", "txt");
         addStep("Getting domain file", "The file should be downloaded");
-        Process p = Runtime.getRuntime().exec("scp test@kb-prod-udv-001.kb.dk:prod-backup/domain.*.txt " + domainsFile.getAbsolutePath());
+        Process p = Runtime.getRuntime().exec("scp test@kb-prod-udv-001.kb.dk:" + backupEnv +"-backup/domain.*.txt " + domainsFile.getAbsolutePath());
         int returnCode = p.waitFor();
         assertEquals(returnCode, 0, "Return code from scp command is " + returnCode);
         assertTrue(domainsFile.length() > 100000L, "Domain file " + domainsFile.getAbsolutePath() + " is too short");
@@ -279,7 +285,9 @@ public class DatabaseFullMigrationTest extends StressTest {
 
     private void doUpdateChecksumAndFileStatus() throws Exception {
         Long stepTimeout = 24*3600*1000L;
-        Long minStepTime = 1*3600*1000L;
+        String minStepTimeHoursString = System.getProperty("stresstest.minchecksumtime", "1");
+        System.out.println("Checksum checking must take at least " + minStepTimeHoursString + " (stresstest.minchecksumtime) hours to complete.");
+        Long minStepTime = Integer.parseInt(minStepTimeHoursString)*3600*1000L;
         WebDriver driver = new FirefoxDriver();
         ApplicationManager applicationManager = new ApplicationManager(environmentManager);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
@@ -297,7 +305,7 @@ public class DatabaseFullMigrationTest extends StressTest {
         Long startTime = System.currentTimeMillis();
         String progressS = ".*list entry number\\s([0-9]+).*";
         Pattern progress = Pattern.compile(progressS, Pattern.DOTALL);
-        String finishedS = ".*Replying GetAllChecksumsMessage:.*";
+        String finishedS = ".*Replying\\s+GetAllChecksumsMessage:.*";
         Pattern finished = Pattern.compile(finishedS, Pattern.DOTALL);
         boolean isFinished = false;
         while (!isFinished) {

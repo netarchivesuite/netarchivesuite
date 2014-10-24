@@ -35,6 +35,7 @@ import com.jcraft.jsch.Channel;
 
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
+import dk.netarkivet.systemtest.functional.SystemOverviewTest;
 
 /**
  * Test specification: https://sbforge.org/display/NAS/TEST+7.
@@ -73,17 +74,19 @@ public class StressTest extends ExtendedTestCase {
 
     protected void checkUpdateTimes() throws Exception {
         String maximumBackupDaysString = System.getProperty("systemtest.maxbackupage", "7");
+        String backupEnv = System.getProperty("systemtest.backupenv", "prod");
         int maximumBackupsDays = Integer.parseInt(maximumBackupDaysString);
         addStep("Checking that backups are no more than " + maximumBackupsDays + " (systemtest.maxbackupage) days old. ", "");
         Long maximumBackupPeriod = maximumBackupsDays*24*3600*1000L; //ms
-        Long harvestdbAge = System.currentTimeMillis() - getFileTimestamp("/home/test/prod-backup/prod_harvestdb.dump.out");
+        Long harvestdbAge = System.currentTimeMillis() - getFileTimestamp("/home/test/" + backupEnv +"-backup/" + backupEnv +"_harvestdb.dump.out");
         assertTrue(harvestdbAge < maximumBackupPeriod, "harvestdb backup is older than " + maximumBackupsDays + " days");
-        Long admindbAge = System.currentTimeMillis() - getFileTimestamp("/home/test/prod-backup/prod_admindb.out");
+        Long admindbAge = System.currentTimeMillis() - getFileTimestamp("/home/test/" + backupEnv +"-backup/" + backupEnv +"_admindb.out");
         assertTrue(admindbAge < maximumBackupPeriod, "admindb backup is older than " + maximumBackupsDays + " days");
-        Long csAge = System.currentTimeMillis() - getFileTimestamp("/home/test/prod-backup/CS");
+        Long csAge = System.currentTimeMillis() - getFileTimestamp("/home/test/" + backupEnv +"-backup/CS");
         assertTrue(csAge < maximumBackupPeriod, "CS backup is older than " + maximumBackupsDays + " days");
-        Long domainListAge =   System.currentTimeMillis() - getFileTimestamp("/home/test/prod-backup/domain*.txt");
-        assertTrue(domainListAge < maximumBackupPeriod, "Domain list backup is older than " + maximumBackupsDays + " days");
+        Long domainListAge =   System.currentTimeMillis() - getFileTimestamp("/home/test/" + backupEnv +"-backup/domain*.txt");
+        assertTrue(domainListAge < maximumBackupPeriod,
+                "Domain list backup is older than " + maximumBackupsDays + " days");
     }
 
     private Long getFileTimestamp(String filepath) throws Exception {
@@ -95,17 +98,18 @@ public class StressTest extends ExtendedTestCase {
      * Copying production databases to the relevant test servers.
      */
     protected void fetchProductionData() throws Exception {
-        addFixture("Copying production databases to the relevant test servers.");
-        environmentManager.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "rm -rf /tmp/prod_admindb.out");
-        environmentManager.runCommand(TestEnvironment.ARCHIVE_ADMIN_SERVER, "rm -rf /tmp/prod_harvestdb.dump.out");
+        String backupEnv = System.getProperty("systemtest.backupenv", "prod");
+        addFixture("Copying production databases to the relevant test servers from the directory /home/test/" + backupEnv + "-backup");
+        environmentManager.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "rm -rf /tmp/" + backupEnv +"_admindb.out");
+        environmentManager.runCommand(TestEnvironment.ARCHIVE_ADMIN_SERVER, "rm -rf /tmp/" + backupEnv +"_harvestdb.dump.out");
         environmentManager.runCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf /tmp/CS");
         addFixture("Copying admin db.");
-        environmentManager.runCommand("scp -r /home/test/prod-backup/prod_admindb.out test@kb-test-adm-001.kb.dk:/tmp");
+        environmentManager.runCommand("scp -r /home/test/" + backupEnv +"-backup/" + backupEnv +"_admindb.out test@kb-test-adm-001.kb.dk:/tmp");
         addFixture("Copying harvest db");
         environmentManager
-                .runCommand("scp -r /home/test/prod-backup/prod_harvestdb.dump.out test@kb-test-adm-001.kb.dk:/tmp");
+                .runCommand("scp -r /home/test/" + backupEnv +"-backup/" + backupEnv +"_harvestdb.dump.out test@kb-test-adm-001.kb.dk:/tmp");
         addFixture("Copying checksum db");
-        environmentManager.runCommand("scp -r /home/test/prod-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
+        environmentManager.runCommand("scp -r /home/test/" + backupEnv +"-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
     }
 
     protected void deployComponents() throws Exception {
@@ -120,6 +124,7 @@ public class StressTest extends ExtendedTestCase {
      * @throws Exception
      */
     protected void replaceDatabasesWithProd(boolean nodata) throws Exception {
+        String backupEnv = System.getProperty("systemtest.backupenv", "prod");
         String dropAdminDB = "psql -U test -c 'drop database if exists stresstest_admindb'";
         String createAdminDB = "psql -U test -c 'create database stresstest_admindb'";
         String dropHarvestDB = "psql -U test -c 'drop database if exists stresstest_harvestdb'";
@@ -133,15 +138,15 @@ public class StressTest extends ExtendedTestCase {
         addFixture("Populating empty databases.");
         if (nodata) {
             addFixture("Restoring admin data schema");
-            String createRelationsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -s --schema public /tmp/prod_admindb.out";
-            String populateSchemaversionsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -t schemaversions -t --clean --schema public /tmp/prod_admindb.out";
+            String createRelationsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -s --schema public /tmp/" + backupEnv +"_admindb.out";
+            String populateSchemaversionsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -t schemaversions -t --clean --schema public /tmp/" + backupEnv +"_admindb.out";
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createRelationsAdminDB);
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaversionsAdminDB);
             addFixture("Restoring harvestdb schema");
-            String createRelationsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -s --schema public /tmp/prod_harvestdb.dump.out";
-            String populateSchemaVersionsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t schemaversions --clean --schema public /tmp/prod_harvestdb.dump.out";
-            String populateOrdertemplatesHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t ordertemplates --clean --schema public /tmp/prod_harvestdb.dump.out";
-            String populateSchedulesDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t schedules --clean --schema public /tmp/prod_harvestdb.dump.out";
+            String createRelationsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -s --schema public /tmp/" + backupEnv +"_harvestdb.dump.out";
+            String populateSchemaVersionsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t schemaversions --clean --schema public /tmp/" + backupEnv +"_harvestdb.dump.out";
+            String populateOrdertemplatesHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t ordertemplates --clean --schema public /tmp/" + backupEnv +"_harvestdb.dump.out";
+            String populateSchedulesDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t schedules --clean --schema public /tmp/" + backupEnv +"_harvestdb.dump.out";
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createRelationsHarvestDB);
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaVersionsHarvestDB);
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateOrdertemplatesHarvestDB);
@@ -154,11 +159,11 @@ public class StressTest extends ExtendedTestCase {
             addFixture("Ingesting full production admindb backup.");
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                     "pg_restore -U test -d " + TESTNAME.toLowerCase()
-                            + "_admindb  --no-owner --schema public /tmp/prod_admindb.out");
+                            + "_admindb  --no-owner --schema public /tmp/" + backupEnv +"_admindb.out");
             addFixture("Ingesting full production harvestdb backup");
             environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                     "pg_restore -U test -d " + TESTNAME.toLowerCase()
-                            + "_harvestdb  --no-owner --schema public /tmp/prod_harvestdb.dump.out");
+                            + "_harvestdb  --no-owner --schema public /tmp/" + backupEnv +"_harvestdb.dump.out");
 
             addFixture("Replacing checksum database with prod data");
             environmentManager.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf CS");
@@ -183,15 +188,16 @@ public class StressTest extends ExtendedTestCase {
     }
 
     private void generateDatabaseSchemas() throws Exception {
+        String backupEnv = System.getProperty("systemtest.backupenv", "prod");
         environmentManager.runCommandWithoutQuotes("rm -rf /home/test/schemas");
         environmentManager.runCommandWithoutQuotes("mkdir /home/test/schemas");
         String envDef = "cd /home/test/schemas;" + "export LIBDIR=/home/test/release_software_dist/"
                 + environmentManager.getTESTX() + "/lib/db;"
                 + "export CLASSPATH=$LIBDIR/derby.jar:$LIBDIR/derbytools-10.8.2.2.jar;";
-        // Generate schema for production database
+        // Generate schema for " + backupEnv +"uction database
         environmentManager.runCommandWithoutQuotes(envDef + "java org.apache.derby.tools.dblook "
-                + "-d 'jdbc:derby:/home/test/prod-backup/fullhddb;upgrade=true' "
-                + "-o /home/test/schemas/proddbs_schema.txt");
+                + "-d 'jdbc:derby:/home/test/" + backupEnv +"-backup/fullhddb;upgrade=true' "
+                + "-o /home/test/schemas/" + backupEnv +"dbs_schema.txt");
         // Generate schema for test database
         environmentManager.runCommandWithoutQuotes(envDef + "jar xvf /home/test/release_software_dist/"
                 + environmentManager.getTESTX() + "/settings/fullhddb.jar");
@@ -208,10 +214,10 @@ public class StressTest extends ExtendedTestCase {
 
     private void compareDatabaseSchemas() throws Exception {
         String envDef = "cd /home/test/schemas;";
-
+        String backupEnv = System.getProperty("systemtest.backupenv", "prod");
         // Sort the schemas and remove uninteresting lines
         environmentManager.runCommandWithoutQuotes(envDef
-                + "grep -v INDEX proddbs_schema.txt|grep -v CONSTRAINT|grep -v ^-- |sort > proddbs_schema.txt.sort");
+                + "grep -v INDEX " + backupEnv +"dbs_schema.txt|grep -v CONSTRAINT|grep -v ^-- |sort > " + backupEnv +"dbs_schema.txt.sort");
         environmentManager.runCommandWithoutQuotes(envDef
                 + "grep -v INDEX testdbs_schema.txt|grep -v CONSTRAINT|grep -v ^-- |sort > testdbs_schema.txt.sort");
         environmentManager
@@ -219,7 +225,7 @@ public class StressTest extends ExtendedTestCase {
                         + "grep -v INDEX bundleddbs_schema.txt|grep -v CONSTRAINT|grep -v ^-- |sort > bundleddbs_schema.txt.sort");
         // Check for Differences. The only allowed differences are in the order of the table fields.
         environmentManager.runCommandWithoutQuotes(envDef
-                + "diff -b -B testdbs_schema.txt.sort proddbs_schema.txt.sort  > test-prod-diff", new int[] {0, 1});
+                + "diff -b -B testdbs_schema.txt.sort " + backupEnv +"dbs_schema.txt.sort  > test-" + backupEnv +"-diff", new int[] {0, 1});
         environmentManager.runCommandWithoutQuotes(envDef
                 + "diff -b -B bundleddbs_schema.txt.sort testdbs_schema.txt.sort  > test-bundled-diff",
                 new int[] {0, 1});
