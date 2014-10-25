@@ -86,12 +86,14 @@ public class TemplateDBDAO extends TemplateDAO {
             Reader orderTemplateReader = null;
             if (DBSpecifics.getInstance().supportsClob()) {
                 Clob clob = res.getClob(1);
+                
                 orderTemplateReader = clob.getCharacterStream();
             } else {
                 String string = res.getString(1);
                 // log.debug("clob=" + string);
                 orderTemplateReader = new StringReader(string);
-            }            
+            } 
+            System.out.println("Calling HeritrixTemplate.read() w/ arg:" + orderTemplateReader);
             return HeritrixTemplate.read(orderTemplateReader);
         } catch (SQLException e) {
             final String message = "SQL error finding order.xml for " + orderXmlName + "\n"

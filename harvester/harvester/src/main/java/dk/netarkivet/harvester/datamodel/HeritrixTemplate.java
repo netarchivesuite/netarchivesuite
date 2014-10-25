@@ -1,5 +1,6 @@
 package dk.netarkivet.harvester.datamodel;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -7,6 +8,8 @@ import java.io.Reader;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.List;
+
+import org.dom4j.DocumentException;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -19,6 +22,34 @@ public abstract class HeritrixTemplate {
 	private static final CharSequence H3_SIGNATURE = "xmlns:\"http://www.springframework.org/";
 	public abstract boolean isValid();
 	public abstract String getXML();
+
+// Constants for the metadata added to the warcinfo record when using WARC
+
+protected static final String HARVESTINFO_VERSION = "harvestInfo.version";
+    protected static final String HARVESTINFO_JOBID = "harvestInfo.jobId";
+    protected static final String HARVESTINFO_CHANNEL = "harvestInfo.channel";
+	
+    protected static final String HARVESTINFO_HARVESTNUM = "harvestInfo.harvestNum";
+	
+    protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONID = "harvestInfo.origHarvestDefinitionID";
+	
+    protected static final String HARVESTINFO_MAXBYTESPERDOMAIN = "harvestInfo.maxBytesPerDomain";
+	
+    protected static final String HARVESTINFO_MAXOBJECTSPERDOMAIN = "harvestInfo.maxObjectsPerDomain";
+	
+    protected static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.orderXMLName";
+	
+    protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
+	
+    protected static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
+	
+    protected static final String HARVESTINFO_HARVESTFILENAMEPREFIX = "harvestInfo.harvestFilenamePrefix";
+    protected static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";
+
+    protected static final String HARVESTINFO_PERFORMER = "harvestInfo.performer";
+
+    protected static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
+
 
 	/** insertion-methods 
 	 * 
@@ -171,30 +202,21 @@ public abstract class HeritrixTemplate {
     		throw new IllegalState("The template starting with '" + signature + "' cannot be recognized as either H1 or H3");
     	}
     }
-	/*
-	public static HeritrixTemplate read(String string) {
-		String signature = string.substring(0, 1000);
-		if (signature.contains(HeritrixTemplate.H1_SIGNATURE)) {
-    		return new H1HeritrixTemplate(string); 
-    	} else if (signature.contains(HeritrixTemplate.H3_SIGNATURE)) {
-    		return new H3HeritrixTemplate(string);
-    	} else {
-    		throw new IllegalState("The template starting with '" + signature + "' cannot be recognized as either H1 or H3");
-    	}
-	}
-	*/
-	public static HeritrixTemplate getTemplateFromString(String templateAsString) {
+
+    public static HeritrixTemplate getTemplateFromString(String templateAsString){
 		if (templateAsString.contains(H1_SIGNATURE)) {
-			return new H1HeritrixTemplate(templateAsString);
+			try {
+				return new H1HeritrixTemplate(templateAsString);
+			} catch (DocumentException e) {
+				throw new IOFailure("Unable to recognize as a valid dom4j Document the following string: " 
+				 + templateAsString, e);
+			}
 		} else if (templateAsString.contains(H3_SIGNATURE)) {
 			return new H3HeritrixTemplate(templateAsString);
 		} else {
 			throw new ArgumentNotValid("The given template is neither H1 or H3: " + templateAsString);
 		}
 	}
-	
-	
-	
 	
 	/** 
      * Read the
@@ -211,7 +233,20 @@ public abstract class HeritrixTemplate {
 	 * @return
 	 */
 	public static HeritrixTemplate read(Reader orderTemplateReader) {
-		return null;
+		StringBuilder sb = new StringBuilder();
+		BufferedReader in = new BufferedReader(orderTemplateReader);
+		String line;
+		try {
+			while ((line = in.readLine()) != null) {
+				sb.append(line);
+				sb.append('\n');
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return getTemplateFromString((sb.toString()));
 	}
 	
 	

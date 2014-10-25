@@ -62,9 +62,9 @@ import dk.netarkivet.common.utils.AllDocsCollector;
  * @see org.archive.crawler.fetcher.FetchHTTP
  */
 
-public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttributeConstants {
+public class H1DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttributeConstants {
 
-    private static final long serialVersionUID = ArchiveUtils.classnameBasedUID(DeDupFetchHTTP.class, 1);
+    private static final long serialVersionUID = ArchiveUtils.classnameBasedUID(H1DeDupFetchHTTP.class, 1);
 
     private static final Logger log = LoggerFactory.getLogger(FetchHTTP.class.getName());
 
@@ -112,7 +112,7 @@ public class DeDupFetchHTTP extends FetchHTTP implements AdaptiveRevisitAttribut
     public final static String ATTR_USE_SPARSE_RANGE_FILTER = "use-sparse-range-filter";
     public final static Boolean DEFAULT_USE_SPARSE_RANGE_FILTER = new Boolean(false);
 
-    public DeDupFetchHTTP(String name) {
+    public H1DeDupFetchHTTP(String name) {
         super(name);
         setDescription("Fetch HTTP processor that aborts downloading of "
                 + "unchanged documents. This processor extends the standard "

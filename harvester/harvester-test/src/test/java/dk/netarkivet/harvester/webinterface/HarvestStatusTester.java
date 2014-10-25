@@ -47,15 +47,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.SlowTest;
-import dk.netarkivet.harvester.datamodel.DataModelTestCase;
-import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.HarvestChannel;
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobDAOTester;
-import dk.netarkivet.harvester.datamodel.JobDBDAO;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.JobStatusInfo;
+import dk.netarkivet.harvester.datamodel.*;
 
 /**
  * Test of Harvest Status utility method for resubmitting jobs.
@@ -70,6 +62,11 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     public void setUp() throws Exception {
         super.setUp();
         testChan = new HarvestChannel("test", false, true, "");
+        try {
+            DataModelTestCase.addHarvestDefinitionToDatabaseWithId(dk.netarkivet.harvester.datamodel.TestInfo.HARVESTID);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @After
@@ -91,10 +88,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     @Test
     public void testRejectFailedJob() throws SQLException {
         JobDAO jobDAO = JobDBDAO.getInstance();
-        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
-        Job job = Job.createJob(420L, testChan,
-                DomainDAO.getInstance().read("netarkivet.dk").getDefaultConfiguration(), 0);
-        jobDAO.create(job);
+        Job job = JobDAOTester.createDefaultJobInDB(0);
         job.setStatus(JobStatus.FAILED);
         JobDAO.getInstance().update(job);
         HarvestStatus.rejectFailedJob(null, null, job.getJobID());
@@ -112,12 +106,9 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     @Test
     public void testUnrejectRejectedJob() throws SQLException {
         JobDAO jobDAO = JobDBDAO.getInstance();
-        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
-        Job job = Job.createJob(420L, testChan,
-                DomainDAO.getInstance().read("netarkivet.dk").getDefaultConfiguration(), 0);
-        jobDAO.create(job);
+        Job job = JobDAOTester.createDefaultJobInDB(0);
         job.setStatus(JobStatus.FAILED_REJECTED);
-        JobDAO.getInstance().update(job);
+        jobDAO.update(job);
         HarvestStatus.unrejectRejectedJob(null, null, job.getJobID());
         assertEquals("Job should now be in status FAILED", jobDAO.read(job.getJobID()).getStatus(), JobStatus.FAILED);
         try {
@@ -130,12 +121,8 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
     @Test
     public void testProcessRequest() throws Exception {
-
         JobDAO jobDAO = JobDBDAO.getInstance();
-        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(420L);
-        Job job = Job.createJob(420L, testChan,
-                DomainDAO.getInstance().read("netarkivet.dk").getDefaultConfiguration(), 0);
-        jobDAO.create(job);
+        Job job = JobDAOTester.createDefaultJobInDB(0);
 
         int origJobs = jobDAO.getCountJobs();
 
@@ -183,7 +170,7 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         assertEquals("Should not have generated any new jobs", origJobs, jobDAO.getCountJobs());
 
         // correct parameter, check resubmit
-        JobDAOTester.changeStatus(1, JobStatus.FAILED);
+        JobDAOTester.changeStatus(job.getJobID(), JobStatus.FAILED);
         parms.put(Constants.JOB_RESUBMIT_PARAM, new String[] {"1"});
         HarvestStatus.processRequest(new TestPageContext(servletRequest), I18N);
         assertEquals("Should have generated one new job", origJobs + 1, jobDAO.getCountJobs());

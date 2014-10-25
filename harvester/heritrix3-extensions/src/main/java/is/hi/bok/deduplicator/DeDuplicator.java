@@ -78,7 +78,7 @@ import dk.netarkivet.common.utils.AllDocsCollector;
 public class DeDuplicator extends Processor implements InitializingBean {
 
     private static Logger logger =
-        Logger.getLogger(DeDuplicator.class.getName());
+        Logger.getLogger(H1DeDuplicator.class.getName());
 
     // Spring configurable parameters
     

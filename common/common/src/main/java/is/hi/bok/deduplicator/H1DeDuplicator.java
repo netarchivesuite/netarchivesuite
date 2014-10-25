@@ -67,11 +67,11 @@ import dk.netarkivet.common.utils.AllDocsCollector;
  * @author Kristinn Sigur&eth;sson
  * @author Søren Vejrup Carlsen
  */
-public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeConstants {
+public class H1DeDuplicator extends Processor implements AdaptiveRevisitAttributeConstants {
 
-    private static final long serialVersionUID = ArchiveUtils.classnameBasedUID(DeDuplicator.class, 1);
+    private static final long serialVersionUID = ArchiveUtils.classnameBasedUID(H1DeDuplicator.class, 1);
 
-    private static final Logger logger = Logger.getLogger(DeDuplicator.class.getName());
+    private static final Logger logger = Logger.getLogger(H1DeDuplicator.class.getName());
 
     protected IndexSearcher index = null;
     protected IndexReader indexReader = null;
@@ -167,7 +167,7 @@ public class DeDuplicator extends Processor implements AdaptiveRevisitAttributeC
     public final static String ATTR_USE_SPARSE_RANGE_FILTER = "use-sparse-range-filter";
     public final static Boolean DEFAULT_USE_SPARSE_RANGE_FILTER = new Boolean(false);
 
-    public DeDuplicator(String name) {
+    public H1DeDuplicator(String name) {
         super(name, "Aborts the processing of URIs (skips to post processing "
                 + "chain) if a duplicate is found in the specified index. "
                 + "Note that any changes made to this processors configuration "

@@ -31,10 +31,16 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.management.Attribute;
+import javax.management.AttributeNotFoundException;
+import javax.management.MBeanException;
+import javax.management.ReflectionException;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -48,6 +54,7 @@ import org.archive.crawler.deciderules.recrawl.IdenticalDigestDecideRule;
 import org.archive.crawler.event.CrawlStatusListener;
 import org.archive.crawler.extractor.Link;
 import org.archive.crawler.framework.WriterPoolProcessor;
+import org.archive.crawler.settings.MapType;
 import org.archive.crawler.settings.SimpleType;
 import org.archive.crawler.settings.Type;
 import org.archive.io.ReplayInputStream;
@@ -62,7 +69,6 @@ import org.archive.util.XmlUtils;
 import org.archive.util.anvl.ANVLRecord;
 import org.w3c.dom.Document;
 
-import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
 
 /**
  * WARCWriterProcessor. Goes against the 0.18 version of the WARC specification (which is functionally identical to 0.17
@@ -72,7 +78,27 @@ import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData;
  *
  * @author stack
  * @author svc
- */
+ * 
+ * // template for adding this metadata to a H1 template.
+/*
+       <map name="metadata-items">
+            <string name="harvestInfo.version">Vilhelm</string>
+            <string name="harvestInfo.jobId">Caroline</string>
+            <string name="harvestInfo.channel">Login</string>
+			<string name="harvestInfo.harvestNum">ffff</string>                        
+			<string name="harvestInfo.origHarvestDefinitionID">ffff</string>
+			<string name="harvestInfo.maxBytesPerDomain">ffff</string>
+			<string name="harvestInfo.maxObjectsPerDomain">ffff</string>
+			
+			<string name="harvestInfo.orderXMLName">Default Orderxml</string>
+			<string name="harvestInfo.origHarvestDefinitionName">ddddd</string>
+			<string name="harvestInfo.scheduleName">Every Hour</string>
+			<string name="harvestInfo.harvestFilenamePrefix">1-1</string>
+			<string name="harvestInfo.jobSubmitDate">NOW</string>
+			<string name="harvestInfo.performer">performer</string>
+			<string name="harvestInfo.audience">audience</string>
+      </map>
+*/
 public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttributeConstants, CrawlStatusListener,
         WriterPoolSettings, FetchStatusCodes, WARCConstants {
 
@@ -104,6 +130,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
      * Key for whether to write 'revisit' type records for server "304 not modified" responses
      */
     public static final String ATTR_WRITE_REVISIT_FOR_NOT_MODIFIED = "write-revisit-for-not-modified";
+    public static final String ATTR_METADATA_ITEMS = "metadata-items";
 
     /** Default path list. */
     private static final String[] DEFAULT_PATH = {"warcs"};
@@ -111,9 +138,34 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
     protected String[] getDefaultPath() {
         return DEFAULT_PATH;
     }
+    
+    private Map metadataMap;
 
-    private File harvestInfoFile;
-    private PersistentJobData pjd;
+    private static final String HARVESTINFO_VERSION = "harvestInfo.version";
+    private static final String HARVESTINFO_JOBID = "harvestInfo.jobId";
+    private static final String HARVESTINFO_CHANNEL = "harvestInfo.channel";
+
+    private static final String HARVESTINFO_HARVESTNUM = "harvestInfo.harvestNum";
+
+    private static final String HARVESTINFO_ORIGHARVESTDEFINITIONID = "harvestInfo.origHarvestDefinitionID";
+
+    private static final String HARVESTINFO_MAXBYTESPERDOMAIN = "harvestInfo.maxBytesPerDomain";
+
+    private static final String HARVESTINFO_MAXOBJECTSPERDOMAIN = "harvestInfo.maxObjectsPerDomain";
+
+    private static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.orderXMLName";
+
+    private static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
+
+    private static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
+
+    private static final String HARVESTINFO_HARVESTFILENAMEPREFIX = "harvestInfo.harvestFilenamePrefix";
+    private static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";
+
+    private static final String HARVESTINFO_PERFORMER = "harvestInfo.performer";
+
+    private static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
+
 
     /**
      * @param name Name of this writer.
@@ -140,11 +192,11 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         e.setOverrideable(true);
         e.setExpertSetting(true);
 
-        e = addElementToDefinition(new SimpleType(ATTR_HARVESTINFO_PATH,
-                "The full file path to the harvest-info.xml produced by each NetarchiveSuite harvest-job"
-                        + "The default path is the crawldir/harvestInfo.xml", new String("")));
-        e.setOverrideable(true);
-        e.setExpertSetting(false);
+        // Add map setting to add NAS metadata to WarcInfo records. 
+
+	e = addElementToDefinition(new MapType(ATTR_METADATA_ITEMS, "Metadata items.", String.class));
+        e.setOverrideable(false);
+        e.setExpertSetting(true);
     }
 
     protected void setupPool(final AtomicInteger serialNo) {
@@ -158,9 +210,11 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
      *
      * @param doc xmldocument for the order.xml
      */
+/*
     private synchronized void loadPersistentJobData(Document doc) {
+	
         if (pjd != null) {
-            return;
+            return; getAttribute(ATTR_FORM_ITEMS);
         } else {
             String harvestInfoPath = (String) getAttributeUnchecked(ATTR_HARVESTINFO_PATH);
             if (harvestInfoPath.isEmpty()) { // get the path from the order.xml itself
@@ -173,6 +227,29 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
             harvestInfoFile = new File(harvestInfoPath);
             pjd = new PersistentJobData(harvestInfoFile.getParentFile());
         }
+
+    }
+*/
+    /**
+     * @return Metadata inputs as convenient map.  Returns null if no metadata items.
+     * @throws AttributeNotFoundException
+     * @throws ReflectionException 
+     * @throws MBeanException 
+     */
+    public Map<String,Object> getMetadataItems()
+            throws AttributeNotFoundException, MBeanException, ReflectionException {
+        Map<String,Object> result = null;
+        MapType items = (MapType)getAttribute(ATTR_METADATA_ITEMS);
+        if (items != null) {
+            for (Iterator i = items.iterator(null); i.hasNext();) {
+                Attribute a = (Attribute)i.next();
+                if (result == null) {
+                    result = new HashMap<String,Object>();
+                }
+                result.put(a.getName(), a.getValue());
+            }
+        }
+        return result;
     }
 
     /**
@@ -602,12 +679,21 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
                     XmlUtils.xpathOrNull(doc, "//map[@name='http-headers']/string[@name='user-agent']"));
             addIfNotBlank(record, "http-header-from",
                     XmlUtils.xpathOrNull(doc, "//map[@name='http-headers']/string[@name='from']"));
-            if (pjd == null) {
-                loadPersistentJobData(doc);
+            if (metadataMap == null) {
+                metadataMap = getMetadataItems();
             }
         } catch (IOException e) {
             logger.log(Level.WARNING, "obtaining warcinfo", e);
-        }
+        } catch (AttributeNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ReflectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         // add fields from harvesInfo.xml version 0.4
         /*
@@ -623,25 +709,41 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
                 + dk.netarkivet.common.Constants.getVersionString();
         ANVLRecord recordNAS = new ANVLRecord(7);
 
-        recordNAS.addLabelValue("harvestInfo.version", pjd.getVersion());
-        recordNAS.addLabelValue("harvestInfo.jobId", "" + pjd.getJobID());
-        recordNAS.addLabelValue("harvestInfo.channel", pjd.getChannel());
-        recordNAS.addLabelValue("harvestInfo.harvestNum", "" + pjd.getJobHarvestNum());
-        recordNAS.addLabelValue("harvestInfo.origHarvestDefinitionID", "" + pjd.getOrigHarvestDefinitionID());
-        recordNAS.addLabelValue("harvestInfo.maxBytesPerDomain", "" + pjd.getMaxBytesPerDomain());
-        recordNAS.addLabelValue("harvestInfo.maxObjectsPerDomain", "" + pjd.getMaxObjectsPerDomain());
-        recordNAS.addLabelValue("harvestInfo.orderXMLName", pjd.getOrderXMLName());
-        recordNAS.addLabelValue("harvestInfo.origHarvestDefinitionName", pjd.getharvestName());
-        if (pjd.getScheduleName() != null) {
-            recordNAS.addLabelValue("harvestInfo.scheduleName", pjd.getScheduleName());
+	// Add the data from the metadataMap to the WarcInfoRecord.
+        recordNAS.addLabelValue(HARVESTINFO_VERSION, (String) metadataMap.get(HARVESTINFO_VERSION));
+        recordNAS.addLabelValue(HARVESTINFO_JOBID, (String) metadataMap.get(HARVESTINFO_JOBID));
+        recordNAS.addLabelValue(HARVESTINFO_CHANNEL, (String) metadataMap.get(HARVESTINFO_CHANNEL));
+        recordNAS.addLabelValue(HARVESTINFO_HARVESTNUM, (String) metadataMap.get(HARVESTINFO_HARVESTNUM));
+        recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONID, 
+		(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONID));
+        recordNAS.addLabelValue(HARVESTINFO_MAXBYTESPERDOMAIN, 
+		(String) metadataMap.get(HARVESTINFO_MAXBYTESPERDOMAIN));
+
+        recordNAS.addLabelValue(HARVESTINFO_MAXOBJECTSPERDOMAIN, 
+		(String) metadataMap.get(HARVESTINFO_MAXOBJECTSPERDOMAIN));
+        recordNAS.addLabelValue(HARVESTINFO_ORDERXMLNAME, 
+		(String) metadataMap.get(HARVESTINFO_ORDERXMLNAME));
+        recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONNAME,
+		(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONNAME));
+
+        if (metadataMap.containsKey((HARVESTINFO_SCHEDULENAME))) {
+            recordNAS.addLabelValue(HARVESTINFO_SCHEDULENAME, 
+		(String) metadataMap.get(HARVESTINFO_SCHEDULENAME));
         }
-        recordNAS.addLabelValue("harvestInfo.harvestFilenamePrefix", pjd.getHarvestFilenamePrefix());
-        recordNAS.addLabelValue("harvestInfo.jobSubmitDate", pjd.getJobSubmitDate());
-        if (pjd.getPerformer() != null) {
-            recordNAS.addLabelValue("harvestInfo.performer", pjd.getPerformer());
+        recordNAS.addLabelValue(HARVESTINFO_HARVESTFILENAMEPREFIX,
+		(String) metadataMap.get(HARVESTINFO_HARVESTFILENAMEPREFIX));
+ 
+        recordNAS.addLabelValue(HARVESTINFO_JOBSUBMITDATE, 
+		(String) metadataMap.get(HARVESTINFO_JOBSUBMITDATE));
+	
+        if (metadataMap.containsKey(HARVESTINFO_PERFORMER)) {
+		recordNAS.addLabelValue(HARVESTINFO_PERFORMER, 
+		(String) metadataMap.get(HARVESTINFO_PERFORMER));
         }
-        if (pjd.getAudience() != null) {
-            recordNAS.addLabelValue("harvestInfo.audience", pjd.getAudience());
+
+        if (metadataMap.containsKey(HARVESTINFO_AUDIENCE)) { 
+            recordNAS.addLabelValue(HARVESTINFO_AUDIENCE, 
+		(String) metadataMap.get(HARVESTINFO_AUDIENCE));
         }
 
         // really ugly to return as string, when it may just be merged with

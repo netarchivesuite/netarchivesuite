@@ -22,21 +22,30 @@
  */
 package dk.netarkivet.harvester.scheduler.jobgen;
 
+import gnu.inet.encoding.IDNA;
+import gnu.inet.encoding.IDNAException;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.Constants;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.FullHarvest;
+import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
@@ -44,6 +53,8 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
+import dk.netarkivet.harvester.datamodel.SeedList;
+import dk.netarkivet.harvester.datamodel.TemplateDAO;
 
 /**
  * A base class for {@link JobGenerator} implementations. It is recommended to extend this class to implement a new job
@@ -63,7 +74,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
      */
     private final long DOMAIN_CONFIG_SUBSET_SIZE = Settings.getLong(HarvesterSettings.JOBGEN_DOMAIN_CONFIG_SUBSET_SIZE);
 
-    /** Is deduplication enabled or disabled. * */
+    /** Is deduplication enabled or disabled in the settings* */
     private final boolean DEDUPLICATION_ENABLED = Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);
 
     @Override
@@ -125,18 +136,25 @@ abstract class AbstractJobGenerator implements JobGenerator {
      * @param harvest the {@link HarvestDefinition} being processed
      * @return an instance of {@link Job}
      */
-    public static Job getNewJob(HarvestDefinition harvest, DomainConfiguration cfg) {
+    public Job getNewJob(HarvestDefinition harvest, DomainConfiguration cfg) {
         HarvestChannelDAO harvestChannelDao = HarvestChannelDAO.getInstance();
         HarvestChannel channel = harvestChannelDao.getChannelForHarvestDefinition(harvest.getOid());
         if (channel == null) {
             log.info("No channel mapping registered for harvest id {}, will use default.", harvest.getOid());
             channel = harvestChannelDao.getDefaultChannel(harvest.isSnapShot());
         }
+        HeritrixTemplate orderXMLdoc = loadOrderXMLdoc(cfg.getOrderXmlName());
+        Job newJob;
         if (harvest.isSnapShot()) {
-            return Job.createSnapShotJob(harvest.getOid(), channel, cfg, harvest.getMaxCountObjects(),
+            newJob = new Job(harvest.getOid(), cfg, orderXMLdoc, channel, harvest.getMaxCountObjects(),
                     harvest.getMaxBytes(), ((FullHarvest) harvest).getMaxJobRunningTime(), harvest.getNumEvents());
+        } else {
+            newJob = new Job(harvest.getOid(), cfg, orderXMLdoc, channel, Constants.HERITRIX_MAXOBJECTS_INFINITY,
+                    Constants.HERITRIX_MAXBYTES_INFINITY, Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY,
+                    harvest.getNumEvents());
         }
-        return Job.createJob(harvest.getOid(), channel, cfg, harvest.getNumEvents());
+
+        return newJob;
     }
 
     /**
@@ -239,4 +257,9 @@ abstract class AbstractJobGenerator implements JobGenerator {
         return true;
     }
 
+    private HeritrixTemplate loadOrderXMLdoc(String orderXmlName) {
+    	HeritrixTemplate orderXMLdoc = TemplateDAO.getInstance().read(orderXmlName);
+        GlobalCrawlerTrapListDAO.getInstance().addGlobalCrawlerTraps(orderXMLdoc);
+        return orderXMLdoc;
+    }
 }

@@ -37,9 +37,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +50,6 @@ import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.webinterface.HarvestStatus;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery.SORT_ORDER;
@@ -92,8 +88,7 @@ public class JobDBDAO extends JobDAO {
      */
     public synchronized void create(Job job) {
         ArgumentNotValid.checkNotNull(job, "Job job");
-        // Check that job.getOrigHarvestDefinitionID() refers to
-        // existing harvestdefinition
+        // Check that job.getOrigHarvestDefinitionID() refers to existing harvestdefinition.
         Long harvestId = job.getOrigHarvestDefinitionID();
         if (!HarvestDefinitionDAO.getInstance().exists(harvestId)) {
             throw new UnknownID("No harvestdefinition with ID=" + harvestId);
@@ -133,8 +128,8 @@ public class JobDBDAO extends JobDAO {
             statement.setLong(7, job.getMaxJobRunningTime());
             DBUtils.setStringMaxLength(statement, 8, job.getOrderXMLName(), Constants.MAX_NAME_SIZE, job,
                     "order.xml name");
-            final String orderreader = job.getOrderXMLdoc().getXML();
-            DBUtils.setClobMaxLength(statement, 9, orderreader, Constants.MAX_ORDERXML_SIZE, job, "order.xml");
+            final String orderString = job.getOrderXMLdoc().getXML();
+            DBUtils.setClobMaxLength(statement, 9, orderString, Constants.MAX_ORDERXML_SIZE, job, "order.xml");
             DBUtils.setClobMaxLength(statement, 10, job.getSeedListAsString(), Constants.MAX_COMBINED_SEED_LIST_SIZE,
                     job, "seedlist");
             statement.setInt(11, job.getHarvestNum());
@@ -198,8 +193,9 @@ public class JobDBDAO extends JobDAO {
                 statement = dbconnection.prepareStatement("INSERT INTO job_configs " + "( job_id, config_id ) "
                         + "SELECT ?, configurations.config_id " + "  FROM domains, configurations, " + tmpTable
                         + " WHERE domains.name = " + tmpTable + ".domain_name"
-                        + "   AND domains.domain_id = configurations.domain_id" + "   AND configurations.name = "
-                        + tmpTable + ".config_name");
+                        + "   AND domains.domain_id = configurations.domain_id"
+                        //+ "   AND configurations.name = " + tmpTable + ".config_name"
+                );
                 statement.setLong(1, jobID);
                 int rows = statement.executeUpdate();
                 if (rows != domainConfigurationMap.size()) {
@@ -359,8 +355,7 @@ public class JobDBDAO extends JobDAO {
      * @throws IOFailure if there was some problem talking to the database.
      */
     @Override
-    public Job read(Long jobID) {
-        ArgumentNotValid.checkNotNull(jobID, "jobID");
+    public Job read(long jobID) {
         Connection connection = HarvestDBConnection.get();
         try {
             return read(connection, jobID);
@@ -493,6 +488,13 @@ public class JobDBDAO extends JobDAO {
                     + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
+        } finally  {
+        	try {
+				statement.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
     }
 
@@ -595,7 +597,8 @@ public class JobDBDAO extends JobDAO {
 
     /**
      * Get a list of small and immediately usable status information for given status and in given order. Is used by
-     * getStatusInfo functions in order to share code (and SQL) TODO should also include given harvest run
+     * getStatusInfo functions in order to share code (and SQL)
+     *  TODO should also include given harvest run
      *
      * @param connection an open connection to the harvestDatabase
      * @param jobStatusCode code for jobstatus, -1 if all
@@ -1102,4 +1105,17 @@ public class JobDBDAO extends JobDAO {
         }
     }
 
+    /**
+     * Get a list of AliasInfo objects for all the domains included in the job.
+     *
+     * @return a list of AliasInfo objects for all the domains included in the job.
+     */
+    public List<AliasInfo> getJobAliasInfo(Job job) {
+        List<AliasInfo> aliases = new ArrayList<AliasInfo>();
+        DomainDAO dao = DomainDAO.getInstance();
+        for (String domain : job.getDomainConfigurationMap().keySet()) {
+            aliases.addAll(dao.getAliases(domain));
+        }
+        return aliases;
+    }
 }

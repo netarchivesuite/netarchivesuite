@@ -388,7 +388,7 @@ public class DomainDAOTester extends DataModelTestCase {
         // HarvestInfo old_hi1 = new HarvestInfo(hd.getOid(), domain1.getName(), config1.getName(), then);
         // old_hi1.setStopReason(StopReason.SIZE_LIMIT);
         // config1.addHarvestInfo(old_hi1);
-        // dao.update(domain1);
+        // jobDAO.update(domain1);
 
         // Three harvest infos, one for each type
         Date now = new Date(time + 1000);
@@ -774,5 +774,18 @@ public class DomainDAOTester extends DataModelTestCase {
         assertEquals(bytesDownloaded, dhi.getBytesDownloaded());
         assertEquals(docsdownloaded, dhi.getDocsDownloaded());
         assertEquals(theReason, dhi.getStopReason());
+    }
+
+    /** Returns the domain object for the specified name. Creates the domain in the DB if it doesn't exist. */
+    public static Domain getDomain(String domainName) {
+        DomainDAO dao = DomainDAO.getInstance();
+        if (!dao.exists(domainName)) {
+            Domain domain = Domain.getDefaultDomain(domainName);
+            domain.addSeedList(TestInfo.seedlist);
+            DomainConfiguration cfg1 = TestInfo.getDefaultConfig(domain);
+            domain.addConfiguration(cfg1);
+            dao.create(domain);
+        }
+        return dao.read(domainName);
     }
 }

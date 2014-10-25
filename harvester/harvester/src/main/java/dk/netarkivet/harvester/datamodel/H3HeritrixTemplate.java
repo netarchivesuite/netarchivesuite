@@ -572,4 +572,85 @@ public class H3HeritrixTemplate extends HeritrixTemplate {
 		
 	}
 
+
+//<property name="metadataItems">
+//  <map>
+//        <entry key="harvestInfo.version" value="1.03"/> <!-- TODO maybe not add this one -->
+//        <entry key="harvestInfo.jobId" value="1"/>
+//        <entry key="harvestInfo.channel" value="HIGH"/>
+//        <entry key="harvestInfo.harvestNum" value="1"/>
+//        <entry key="harvestInfo.origHarvestDefinitionID" value="1"/>
+//        <entry key="harvestInfo.maxBytesPerDomain" value="100000"/>
+//        <entry key="harvestInfo.maxObjectsPerDomain" value="-1"/>
+//        <entry key="harvestInfo.orderXMLName" value="defaultOrderXml"/>
+//        <entry key="harvestInfo.origHarvestDefinitionName" value="ddddddddd"/>
+//        <entry key="harvestInfo.scheduleName" value="EveryHour"/> <!-- Optional. only relevant for Selective Harvests -->
+//        <entry key="harvestInfo.harvestFilenamePrefix" value="netarkivet-1-1"/>
+//        <entry key="harvestInfo.jobSubmitDate" value="22. 10. 2014"/>
+//        <entry key="harvestInfo.performer" value="performer"/> <!-- Optional. -->
+//        <entry key="harvestInfo.audience" value="audience"/> <!-- Optional. -->
+//  </map>
+//  </property>
+
+public void insertWarcInfoMetadata(Job ajob) {
+	String startMetadataEntry = "<entry key=\"";
+	String endMetadataEntry = "\"</>";
+	StringBuilder sb = new StringBuilder();
+	sb.append("<property name=\"metadata-items\">\n<map>\n");
+
+//<entry key="harvestInfo.version" value="1.03"/>
+
+	sb.append(startMetadataEntry); //<entry key="
+	sb.append(HARVESTINFO_VERSION + "\" value=\"" + "Version-value" + endMetadataEntry); // harvestInfo.version" value="1.03"/>
+	sb.append("</map>\n");	
+	sb.append(startMetadataEntry);
+	sb.append(HARVESTINFO_VERSION + "\">" + "Version-value"  + endMetadataEntry);
+        sb.append(startMetadataEntry);
+	sb.append(HARVESTINFO_JOBID + "\">" + "jobid-value"  + endMetadataEntry);
+
+sb.append(startMetadataEntry);
+	sb.append(HARVESTINFO_CHANNEL + "\">" + "channel-value"  + endMetadataEntry);
+sb.append(startMetadataEntry);
+	sb.append(HARVESTINFO_HARVESTNUM + "\">" + "harvestNum-value"  + endMetadataEntry);
+sb.append(startMetadataEntry);
+	sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONID + "\">" + "ORIGHARVESTDEFINITIONID-value"  + endMetadataEntry);
+sb.append(startMetadataEntry);
+	sb.append(HARVESTINFO_MAXBYTESPERDOMAIN + "\">" + "maxbytes-value"  + endMetadataEntry);
+sb.append(startMetadataEntry);
+	sb.append(HARVESTINFO_MAXOBJECTSPERDOMAIN + "\">" + "maxobjects-value"  + endMetadataEntry);
+sb.append(startMetadataEntry);
+	sb.append(HARVESTINFO_ORDERXMLNAME + "\">" + "HARVESTINFO_ORDERXMLNAME-value"  + endMetadataEntry);
+sb.append(startMetadataEntry);
+	sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + "\">" + "HARVESTINFO_ORIGHARVESTDEFINITIONNAME-value"  
+	+ endMetadataEntry);
+/*/* optional
+sb.add(startMetadataEntry);
+	sb.add(HARVESTINFO_SCHEDULENAME + "\">" + "HARVESTINFO_SCHEDULENAME-value"  + endMetadataEntry);
+*/
+sb.append(startMetadataEntry);
+	sb.append(HARVESTINFO_HARVESTFILENAMEPREFIX + "\">" + "jobid-value"  + endMetadataEntry);
+sb.append(startMetadataEntry);
+	sb.append(HARVESTINFO_JOBSUBMITDATE + "\">" + "jobid-value"  + endMetadataEntry);
+/*/* optional
+sb.add(startMetadataEntry);
+	sb.add(HARVESTINFO_PERFORMER + "\">" + "HARVESTINFO_PERFORMER-value"  + endMetadataEntry);
+*/
+/* optional
+sb.add(startMetadataEntry);
+	sb.add(HARVESTINFO_AUDIENCE + "\">" + "HARVESTINFO_AUDIENCE-value"  + endMetadataEntry);
+*/
+	sb.append("</map>\n");
+	}
+	
+
+
+
+
+
+
+
+
+
+
+
 }

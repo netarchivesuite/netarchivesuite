@@ -73,15 +73,15 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
     }
 
     /**
-     * tests that we can get a singleton instance of the dao class
+     * tests that we can get a singleton instance of the jobDAO class
      */
     @Category(SlowTest.class)
     @Test
     public void testGetInstance() throws SQLException {
         GlobalCrawlerTrapListDAO dao1 = GlobalCrawlerTrapListDAO.getInstance();
         GlobalCrawlerTrapListDAO dao2 = GlobalCrawlerTrapListDAO.getInstance();
-        assertNotNull("Should get a non null dao instance", dao1);
-        assertEquals("Should get a unique instance (object identity) of dao.", dao1, dao2);
+        assertNotNull("Should get a non null jobDAO instance", dao1);
+        assertEquals("Should get a unique instance (object identity) of jobDAO.", dao1, dao2);
         // Check that the tables exist
         Connection con = HarvestDBConnection.get();
         try {
@@ -107,7 +107,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Tests that we can insert an object in the dao and read it back.
+     * Tests that we can insert an object in the jobDAO and read it back.
      */
     @Category(SlowTest.class)
     @Test

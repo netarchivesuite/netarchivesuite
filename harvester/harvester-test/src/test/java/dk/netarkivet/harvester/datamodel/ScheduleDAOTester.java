@@ -59,7 +59,7 @@ public class ScheduleDAOTester extends DataModelTestCase {
      */
     public void doTestNormalUsage(final Schedule schedule) {
         ScheduleDAO scheduledao = ScheduleDAO.getInstance();
-        assertNotNull("Expected valid dao", scheduledao);
+        assertNotNull("Expected valid jobDAO", scheduledao);
         scheduledao.create(schedule);
 
         // now verify that it is possible to retrieve stored information
@@ -193,7 +193,7 @@ public class ScheduleDAOTester extends DataModelTestCase {
         // create the schedule
         Schedule schedule = TestInfo.TESTSCHEDULE_HOURLY;
         ScheduleDAO scheduledao = ScheduleDAO.getInstance();
-        assertNotNull("Expected valid dao", scheduledao);
+        assertNotNull("Expected valid jobDAO", scheduledao);
         scheduledao.create(schedule);
 
         // retrieve two instances of the schedule

@@ -31,6 +31,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -351,4 +352,16 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
         }
     }
 
+    /**
+     * Reads a list of all active global crawler trap expressions from the database and adds them to the crawl template
+     * for this job.
+     * @param orderXmlDoc The template to add crawlertraps to.
+     */
+    public void addGlobalCrawlerTraps(HeritrixTemplate orderXmlDoc) {
+    	System.out.println("Calling addGlobalCrawlerTraps w/arg: " + orderXmlDoc);
+    
+        GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
+        orderXmlDoc.insertCrawlerTraps(Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
+        		               dao.getAllActiveTrapExpressions());
+    } 
 }

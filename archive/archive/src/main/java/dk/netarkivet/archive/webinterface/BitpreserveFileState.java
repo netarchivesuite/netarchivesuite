@@ -334,22 +334,27 @@ public class BitpreserveFileState {
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
         ActiveBitPreservation activeBitPreservation = ActiveBitPreservationFactory.getInstance();
 
-        // Header
+        //element id's
+        final String replicaName = replica.getName();
+        final String numberId = replicaName + "_number";
+        final String missingId = replicaName + "_missing";
+        final String updatedId = replicaName + "_updated";
+        //Header
         out.println(I18N.getString(locale, "filestatus.for") + "&nbsp;<b>"
-                + HTMLUtils.escapeHtmlValues(replica.getName()) + "</b>");
+                + HTMLUtils.escapeHtmlValues(replicaName) + "</b>");
         out.println("<br/>");
 
         // Number of files, and number of files missing
-        out.println(I18N.getString(locale, "number.of.files") + "&nbsp;"
-                + HTMLUtils.localiseLong(activeBitPreservation.getNumberOfFiles(replica), locale));
+        out.println(I18N.getString(locale, "number.of.files") + "&nbsp;<span id=\"" + numberId + "\">"
+                + HTMLUtils.localiseLong(activeBitPreservation.getNumberOfFiles(replica), locale)+ "</span>");
         out.println("<br/>");
         long numberOfMissingFiles = activeBitPreservation.getNumberOfMissingFiles(replica);
-        out.println(I18N.getString(locale, "missing.files") + "&nbsp;"
-                + HTMLUtils.localiseLong(numberOfMissingFiles, locale));
+        out.println(I18N.getString(locale, "missing.files") + "&nbsp;<span id=\"" + missingId + "\">"
+                + HTMLUtils.localiseLong(numberOfMissingFiles, locale) + "</span>");
 
         if (numberOfMissingFiles > 0) {
             out.print("&nbsp;<a href=\"" + Constants.FILESTATUS_MISSING_PAGE + "?"
-                    + (Constants.BITARCHIVE_NAME_PARAM + "=" + HTMLUtils.encodeAndEscapeHTML(replica.getName()))
+                    + (Constants.BITARCHIVE_NAME_PARAM + "=" + HTMLUtils.encodeAndEscapeHTML(replicaName))
                     + " \">");
             out.print(I18N.getString(locale, "show.missing.files"));
             out.print("</a>");
@@ -359,12 +364,12 @@ public class BitpreserveFileState {
         if (lastMissingFilesupdate == null) {
             lastMissingFilesupdate = new Date(0);
         }
-        out.println(I18N.getString(locale, "last.update.at.0", lastMissingFilesupdate));
+        out.println("<span id=\"" + updatedId + "\">" + I18N.getString(locale, "last.update.at.0", lastMissingFilesupdate) + "</span>");
         out.println("<br/>");
 
         out.println("<a href=\"" + Constants.FILESTATUS_UPDATE_PAGE + "?" + Constants.UPDATE_TYPE_PARAM + "="
                 + Constants.FIND_MISSING_FILES_OPTION + "&amp;"
-                + (Constants.BITARCHIVE_NAME_PARAM + "=" + HTMLUtils.encodeAndEscapeHTML(replica.getName())) + "\">"
+                + (Constants.BITARCHIVE_NAME_PARAM + "=" + HTMLUtils.encodeAndEscapeHTML(replicaName)) + "\">"
                 + I18N.getString(locale, "update.filestatus.for.0", replica.getId()) + "</a>");
         out.println("<br/><br/>");
     }

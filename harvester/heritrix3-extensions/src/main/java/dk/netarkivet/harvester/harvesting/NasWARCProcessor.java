@@ -25,6 +25,34 @@ import org.archive.util.anvl.ANVLRecord;
  */
 public class NasWARCProcessor extends WARCWriterProcessor {
 
+
+ private static final String HARVESTINFO_VERSION = "harvestInfo.version";
+    private static final String HARVESTINFO_JOBID = "harvestInfo.jobId";
+    private static final String HARVESTINFO_CHANNEL = "harvestInfo.channel";
+	
+private static final String HARVESTINFO_HARVESTNUM = "harvestInfo.harvestNum";
+	
+private static final String HARVESTINFO_ORIGHARVESTDEFINITIONID = "harvestInfo.origHarvestDefinitionID";
+	
+private static final String HARVESTINFO_MAXBYTESPERDOMAIN = "harvestInfo.maxBytesPerDomain";
+	
+private static final String HARVESTINFO_MAXOBJECTSPERDOMAIN = "harvestInfo.maxObjectsPerDomain";
+	
+private static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.orderXMLName";
+	
+private static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
+	
+private static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
+	
+private static final String HARVESTINFO_HARVESTFILENAMEPREFIX = "harvestInfo.harvestFilenamePrefix";
+private static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";
+
+private static final String HARVESTINFO_PERFORMER = "harvestInfo.performer";
+
+private static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
+
+
+
 	public NasWARCProcessor() {
 		super();
 	}
@@ -42,12 +70,13 @@ public class NasWARCProcessor extends WARCWriterProcessor {
      * </map>
 
      */
-    protected Map<String,String> metadataItems = new HashMap<String,String>();
+    protected Map<String,String> metadataMap = new HashMap<String,String>();
+
     public Map<String,String> getFormItems() {
-        return this.metadataItems;
+        return this.metadataMap;
     }
     public void setMetadataItems(Map<String,String> metadataItems) {
-        this.metadataItems = metadataItems;
+        this.metadataMap = metadataItems;
     }
 
 	
@@ -107,74 +136,41 @@ public class NasWARCProcessor extends WARCWriterProcessor {
                 + dk.netarkivet.common.Constants.getVersionString();
         ANVLRecord recordNAS = new ANVLRecord(); // Previously new ANVLRecord(7); 
 
-        recordNAS.addLabelValue("harvestInfo.version", 
-        		//pjd.getVersion());
-        		metadataItems.get("harvestInfo.version"));
-        
-        recordNAS.addLabelValue("harvestInfo.jobId", 
-        		//"" + pjd.getJobID());
-        		metadataItems.get("harvestInfo.jobId"));
-        
-        recordNAS.addLabelValue("harvestInfo.channel", 
-        		//pjd.getChannel());
-        		metadataItems.get("harvestInfo.channel"));
-        
-        recordNAS.addLabelValue("harvestInfo.harvestNum", 
-        		//"" + pjd.getJobHarvestNum());
-        		metadataItems.get("harvestInfo.harvestNum"));
-        
-        recordNAS.addLabelValue("harvestInfo.origHarvestDefinitionID", 
-        		//"" + pjd.getOrigHarvestDefinitionID());
-        		metadataItems.get("harvestInfo.origHarvestDefinitionID"));
-        
-        recordNAS.addLabelValue("harvestInfo.maxBytesPerDomain", 
-        		//"" + pjd.getMaxBytesPerDomain());
-        		metadataItems.get("harvestInfo.maxBytesPerDomain"));
-        
-        recordNAS.addLabelValue("harvestInfo.maxObjectsPerDomain", 
-        		//"" + pjd.getMaxObjectsPerDomain());
-        		metadataItems.get("harvestInfo.maxObjectsPerDomain"));
-        
-        recordNAS.addLabelValue("harvestInfo.orderXMLName", 
-        		//pjd.getOrderXMLName());
-        		metadataItems.get("harvestInfo.orderXMLName"));
-        
-        recordNAS.addLabelValue("harvestInfo.origHarvestDefinitionName", 
-        		//pjd.getharvestName());
-        		metadataItems.get("harvestInfo.origHarvestDefinitionName"));
-        
-        //if (pjd.getScheduleName() != null) {
-        //    recordNAS.addLabelValue("harvestInfo.scheduleName", pjd.getScheduleName());
-        //}
-        if (metadataItems.containsKey("harvestInfo.scheduleName")) {
-        	recordNAS.addLabelValue("harvestInfo.scheduleName", 
-        			metadataItems.get("harvestInfo.scheduleName"));
+	// Add the data from the metadataMap to the WarcInfoRecord.
+        recordNAS.addLabelValue(HARVESTINFO_VERSION, (String) metadataMap.get(HARVESTINFO_VERSION));
+        recordNAS.addLabelValue(HARVESTINFO_JOBID, (String) metadataMap.get(HARVESTINFO_JOBID));
+        recordNAS.addLabelValue(HARVESTINFO_CHANNEL, (String) metadataMap.get(HARVESTINFO_CHANNEL));
+        recordNAS.addLabelValue(HARVESTINFO_HARVESTNUM, (String) metadataMap.get(HARVESTINFO_HARVESTNUM));
+        recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONID, 
+		(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONID));
+        recordNAS.addLabelValue(HARVESTINFO_MAXBYTESPERDOMAIN, 
+		(String) metadataMap.get(HARVESTINFO_MAXBYTESPERDOMAIN));
+
+        recordNAS.addLabelValue(HARVESTINFO_MAXOBJECTSPERDOMAIN, 
+		(String) metadataMap.get(HARVESTINFO_MAXOBJECTSPERDOMAIN));
+        recordNAS.addLabelValue(HARVESTINFO_ORDERXMLNAME, 
+		(String) metadataMap.get(HARVESTINFO_ORDERXMLNAME));
+        recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONNAME,
+		(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONNAME));
+
+        if (metadataMap.containsKey(HARVESTINFO_SCHEDULENAME)) {
+            recordNAS.addLabelValue(HARVESTINFO_SCHEDULENAME, 
+		(String) metadataMap.get(HARVESTINFO_SCHEDULENAME));
         }
-        
-        recordNAS.addLabelValue("harvestInfo.harvestFilenamePrefix", 
-        		//pjd.getHarvestFilenamePrefix());
-        		metadataItems.get("harvestInfo.harvestFilenamePrefix"));
-        
-        recordNAS.addLabelValue("harvestInfo.jobSubmitDate", 
-        		//pjd.getJobSubmitDate());
-        		metadataItems.get("harvestInfo.jobSubmitDate"));
-        
-        /*if (pjd.getPerformer() != null) {
-            recordNAS.addLabelValue("harvestInfo.performer", pjd.getPerformer());
-        }*/
-        if (metadataItems.containsKey("harvestInfo.performer")) {
-        	recordNAS.addLabelValue("harvestInfo.performer",
-        			metadataItems.get("harvestInfo.performer"));
+        recordNAS.addLabelValue(HARVESTINFO_HARVESTFILENAMEPREFIX,
+		(String) metadataMap.get(HARVESTINFO_HARVESTFILENAMEPREFIX));
+ 
+        recordNAS.addLabelValue(HARVESTINFO_JOBSUBMITDATE, 
+		(String) metadataMap.get(HARVESTINFO_JOBSUBMITDATE));
+	
+        if (metadataMap.containsKey(HARVESTINFO_PERFORMER)) {
+		recordNAS.addLabelValue(HARVESTINFO_PERFORMER, 
+		(String) metadataMap.get(HARVESTINFO_PERFORMER));
         }
-        
-        /*
-        if (pjd.getAudience() != null) {
-            recordNAS.addLabelValue("harvestInfo.audience", pjd.getAudience());
-        }*/
-        
-        if (metadataItems.containsKey("harvestInfo.audience")) {
-        	recordNAS.addLabelValue("harvestInfo.audience",
-        			metadataItems.get("harvestInfo.audience"));
+
+        if (metadataMap.containsKey(HARVESTINFO_AUDIENCE)) { 
+            recordNAS.addLabelValue(HARVESTINFO_AUDIENCE, 
+		(String) metadataMap.get(HARVESTINFO_AUDIENCE));
         }
         
         // really ugly to return as List<String>, but changing would require 

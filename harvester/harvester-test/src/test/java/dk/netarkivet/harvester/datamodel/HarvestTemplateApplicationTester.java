@@ -176,11 +176,12 @@ public class HarvestTemplateApplicationTester {
                 "^$");
         assertTrue("Should have newly created template in DAO", TemplateDAO.getInstance().exists("NewTemplate"));
         Document doc = XmlUtils.getXmlDoc(TestInfo.ORDERXMLFILE);
+
         
         // FIXME this test assumes an equals methods for the HeritrixTemplate class.
         /*
-        assertEquals("Should have same info in doc as in dao", doc.getText(),
-                TemplateDAO.getInstance().read("NewTemplate").getTemplate().getText());
+        assertEquals("Should have same info in doc as in jobDAO", doc.getText(),
+        TemplateDAO.getInstance().read("NewTemplate").getTemplate().getText());
                 */
     }
 

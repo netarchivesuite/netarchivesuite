@@ -22,8 +22,16 @@
  */
 package dk.netarkivet.systemtest.performance;
 
+import static org.testng.Assert.assertTrue;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+
+import org.apache.commons.io.IOUtils;
 import org.jaccept.structure.ExtendedTestCase;
 import org.testng.annotations.BeforeTest;
+
+import com.jcraft.jsch.Channel;
 
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
@@ -61,6 +69,26 @@ public class StressTest extends ExtendedTestCase {
         addFixture("Shutting down the test.");
         environmentManager.runCommand("stop_test.sh");
         environmentManager.runCommand("cleanup_all_test.sh");
+    }
+
+    protected void checkUpdateTimes() throws Exception {
+        String maximumBackupDaysString = System.getProperty("systemtest.maxbackupage", "7");
+        int maximumBackupsDays = Integer.parseInt(maximumBackupDaysString);
+        addStep("Checking that backups are no more than " + maximumBackupsDays + " (systemtest.maxbackupage) days old. ", "");
+        Long maximumBackupPeriod = maximumBackupsDays*24*3600*1000L; //ms
+        Long harvestdbAge = System.currentTimeMillis() - getFileTimestamp("/home/test/prod-backup/prod_harvestdb.dump.out");
+        assertTrue(harvestdbAge < maximumBackupPeriod, "harvestdb backup is older than " + maximumBackupsDays + " days");
+        Long admindbAge = System.currentTimeMillis() - getFileTimestamp("/home/test/prod-backup/prod_admindb.out");
+        assertTrue(admindbAge < maximumBackupPeriod, "admindb backup is older than " + maximumBackupsDays + " days");
+        Long csAge = System.currentTimeMillis() - getFileTimestamp("/home/test/prod-backup/CS");
+        assertTrue(csAge < maximumBackupPeriod, "CS backup is older than " + maximumBackupsDays + " days");
+        Long domainListAge =   System.currentTimeMillis() - getFileTimestamp("/home/test/prod-backup/domain*.txt");
+        assertTrue(domainListAge < maximumBackupPeriod, "Domain list backup is older than " + maximumBackupsDays + " days");
+    }
+
+    private Long getFileTimestamp(String filepath) throws Exception {
+        String result = environmentManager.runCommand("stat -c %Y " + filepath);
+        return  Long.parseLong(result.trim())*1000L;
     }
 
     /**

@@ -93,7 +93,7 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import is.hi.bok.deduplicator.DeDuplicator;
+import is.hi.bok.deduplicator.H1DeDuplicator;
 
 //import dk.netarkivet.harvester.harvesting.JobInfoTestImpl;
 
@@ -763,8 +763,8 @@ public class HeritrixTests {
 
         // Set originHandling. Check that originHandling is one of AVAILABLE_ORIGIN_HANDLING
         // If not, set to default DEFAULT_ORIGIN_HANDLING, and log a warning.
-        checkAndSetOrderXMLNode(d, DEDUPLICATOR_ORIGIN_HANDLING_XPATH, DeDuplicator.ATTR_ORIGIN_HANDLING,
-                "Use index information", DeDuplicator.AVAILABLE_ORIGIN_HANDLING, DeDuplicator.DEFAULT_ORIGIN_HANDLING);
+        checkAndSetOrderXMLNode(d, DEDUPLICATOR_ORIGIN_HANDLING_XPATH, H1DeDuplicator.ATTR_ORIGIN_HANDLING,
+                "Use index information", H1DeDuplicator.AVAILABLE_ORIGIN_HANDLING, H1DeDuplicator.DEFAULT_ORIGIN_HANDLING);
         Node indexLocationNode = d.selectSingleNode(INDEX_LOCATION_PATH);
         if (indexLocationNode != null) {
             // Divide by 1024 since Heritrix uses KB rather than bytes,

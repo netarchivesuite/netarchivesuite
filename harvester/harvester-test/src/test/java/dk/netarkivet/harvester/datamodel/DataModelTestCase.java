@@ -63,7 +63,6 @@ import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
  * A generic superclass for the harvest definition tests. This sets up the various DAOs etc.
  */
 public class DataModelTestCase {
-
     Logger log = LoggerFactory.getLogger(DataModelTestCase.class);
 
     SetSystemProperty derbyLog = new SetSystemProperty("derby.stream.error.file", new File(TestInfo.TEMPDIR,
@@ -155,25 +154,25 @@ public class DataModelTestCase {
         ScheduleDAO.getInstance().create(sched);
         PartialHarvest hd1 = new PartialHarvest(list, sched, "HD#1", "No comments", "Everybody");
         hddao.create(hd1);
-        FullHarvest hd2 = new FullHarvest("HD#2", "No comments", null, Constants.DEFAULT_MAX_OBJECTS,
+        FullHarvest hd2 = new FullHarvest("HD#1", "No comments", null, Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, false,
                 DAOProviderFactory.getHarvestDefinitionDAOProvider(), DAOProviderFactory.getJobDAOProvider(),
                 DAOProviderFactory.getExtendedFieldDAOProvider(), DAOProviderFactory.getDomainDAOProvider());
         hd2.setSubmissionDate(new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime());
         hddao.create(hd2);
-        FullHarvest hd3 = new FullHarvest("HD#3", "No comments", hd2.getOid(), Constants.DEFAULT_MAX_OBJECTS,
+        FullHarvest hd3 = new FullHarvest("HD#2", "No comments", hd2.getOid(), Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, false,
                 DAOProviderFactory.getHarvestDefinitionDAOProvider(), DAOProviderFactory.getJobDAOProvider(),
                 DAOProviderFactory.getExtendedFieldDAOProvider(), DAOProviderFactory.getDomainDAOProvider());
         hd3.setSubmissionDate(new GregorianCalendar(1970, Calendar.FEBRUARY, 1).getTime());
         hddao.create(hd3);
-        FullHarvest hd4 = new FullHarvest("HD#4", "No comments", null, Constants.DEFAULT_MAX_OBJECTS,
+        FullHarvest hd4 = new FullHarvest("HD#3", "No comments", null, Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, false,
                 DAOProviderFactory.getHarvestDefinitionDAOProvider(), DAOProviderFactory.getJobDAOProvider(),
                 DAOProviderFactory.getExtendedFieldDAOProvider(), DAOProviderFactory.getDomainDAOProvider());
         hd4.setSubmissionDate(new GregorianCalendar(1970, Calendar.MARCH, 1).getTime());
         hddao.create(hd4);
-        FullHarvest hd5 = new FullHarvest("HD#5", "No comments", hd4.getOid(), Constants.DEFAULT_MAX_OBJECTS,
+        FullHarvest hd5 = new FullHarvest("HD#4", "No comments", hd4.getOid(), Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, false,
                 DAOProviderFactory.getHarvestDefinitionDAOProvider(), DAOProviderFactory.getJobDAOProvider(),
                 DAOProviderFactory.getExtendedFieldDAOProvider(), DAOProviderFactory.getDomainDAOProvider());
@@ -187,8 +186,8 @@ public class DataModelTestCase {
         Job j2 = getNewNetarkivetJob(hd1, dcmap, false, defaultOrderXmlDocument, 0);
 
         JobDAO.getInstance().create(j2);
-        assertEquals("Job IDs in database have changed." + "Please update unit test to reflect.", startJobId, j2
-                .getJobID().longValue());
+        assertEquals("Job IDs in database have changed." + "Please update unit test to reflect.", startJobId,
+                j2.getJobID().longValue());
 
         Job j3 = getNewNetarkivetJob(hd1, dcmap, false, defaultOrderXmlDocument, 0);
         JobDAO.getInstance().create(j3);

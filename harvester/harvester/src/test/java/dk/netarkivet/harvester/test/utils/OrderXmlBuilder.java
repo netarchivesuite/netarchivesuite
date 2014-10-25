@@ -22,19 +22,32 @@
  */
 package dk.netarkivet.harvester.test.utils;
 
+import java.io.StringWriter;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class OrderXmlBuilder {
+    public static final String DEFAULT_ORDE_XML_NAME = "FullSite-order";
     private final Document orderxmlDoc;
     private static DocumentBuilder builder;
 
     public OrderXmlBuilder() {
         orderxmlDoc = getParser().newDocument();
+    }
+
+    public OrderXmlBuilder(Document orderXmlDoc) {
+        this.orderxmlDoc = orderXmlDoc;
     }
 
     public org.dom4j.Document getOrderXml() {
@@ -57,11 +70,45 @@ public class OrderXmlBuilder {
     private static synchronized DocumentBuilder getParser() {
         if (builder == null) {
             try {
-                builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+                documentBuilderFactory.setNamespaceAware(true);
+                builder = documentBuilderFactory.newDocumentBuilder();
             } catch (ParserConfigurationException e) {
                 throw new RuntimeException(e);
             }
         }
         return builder;
+    }
+
+    /**
+     * Creates a default orderXmlDoc based on the order.xml file on the classpath.
+     */
+    public static synchronized OrderXmlBuilder createDefault() {
+        try {
+            return new OrderXmlBuilder(getParser().parse(
+                    OrderXmlBuilder.class.getClassLoader().getResourceAsStream("order.xml")));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read order.xml from path " +
+                    OrderXmlBuilder.class.getClassLoader().getResource("order.xml"), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        try {
+            DOMSource domSource = new DOMSource(orderxmlDoc);
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = null;
+            transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.transform(domSource, result);
+            writer.flush();
+            return writer.toString();
+        } catch (TransformerException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -122,4 +122,8 @@ public abstract class GlobalCrawlerTrapListDAO implements DAO {
      */
     public abstract boolean exists(String name);
 
+    /**
+     * Reads a list of all active global crawler trap expressions from the database and adds them to the crawl template.
+     */
+    public abstract void addGlobalCrawlerTraps(HeritrixTemplate orderXmlDoc);
 }

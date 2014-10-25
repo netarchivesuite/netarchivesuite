@@ -52,6 +52,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
 
 /**
  * Class encapsulating the Heritrix order.xml. Enables verification that dom4j Document obey the constraints required by
@@ -205,6 +206,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
      */
     public static final String MAXTIMESEC_PATH_XPATH = "/crawl-order/controller/long[@name='max-time-sec']";
 
+
     static {
         requiredXpaths.put(GROUP_MAX_FETCH_SUCCESS_XPATH, Pattern.compile(WHOLE_NUMBER_REGEXP));
         requiredXpaths.put(QUEUE_TOTAL_BUDGET_XPATH, Pattern.compile(WHOLE_NUMBER_REGEXP));
@@ -290,8 +292,8 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
         this(doc, true);
     }
 
-    public H1HeritrixTemplate(String templateAsString) {
-		// TODO Auto-generated constructor stub
+    public H1HeritrixTemplate(String templateAsString) throws DocumentException {
+    	this.template = XmlUtils.documentFromString(templateAsString);
 	}
 
 	/**
@@ -577,6 +579,8 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
         boolean arcMode = false;
         boolean warcMode = false;
 
+        System.out.println("Document: " + template.asXML()); 
+        
         if ("arc".equalsIgnoreCase(archiveFormat)) {
             arcMode = true;
             log.debug("ARC format selected to be used by Heritrix");
@@ -688,7 +692,8 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
 		if (crawlerTraps.size() == 0) {
             return;
         }
-
+        
+		System.out.println("Calling insertCrawlerTraps(String elementName, List<String> crawlerTraps) ");
         // Get the node to update
         // If there is an acceptIfPrerequisite decideRule in the template, crawler traps should be
         // placed before (cf. issue NAS-2205)
@@ -800,6 +805,51 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
     }
     this.template = doc;
 	}
-	
+
+
+
+	public void insertWarcInfoMetadata(Job ajob) {
+		String startMetadataEntry = "<string name=\"";
+		String endMetadataEntry = "</string>";
+		StringBuilder sb = new StringBuilder();
+		sb.append("<map name=\"metadata-items\">\n");
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_VERSION + "\">" + "Version-value"  + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_JOBID + "\">" + "jobid-value"  + endMetadataEntry);
+
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_CHANNEL + "\">" + "channel-value"  + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_HARVESTNUM + "\">" + "harvestNum-value"  + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONID + "\">" + "ORIGHARVESTDEFINITIONID-value"  + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_MAXBYTESPERDOMAIN + "\">" + "maxbytes-value"  + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_MAXOBJECTSPERDOMAIN + "\">" + "maxobjects-value"  + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_ORDERXMLNAME + "\">" + "HARVESTINFO_ORDERXMLNAME-value"  + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + "\">" + "HARVESTINFO_ORIGHARVESTDEFINITIONNAME-value"  
+				+ endMetadataEntry);
+		/*/* optional
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_SCHEDULENAME + "\">" + "HARVESTINFO_SCHEDULENAME-value"  + endMetadataEntry);
+		 */
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_HARVESTFILENAMEPREFIX + "\">" + "jobid-value"  + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_JOBSUBMITDATE + "\">" + "jobid-value"  + endMetadataEntry);
+		/*/* optional
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_PERFORMER + "\">" + "HARVESTINFO_PERFORMER-value"  + endMetadataEntry);
+		 */
+		/* optional
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_AUDIENCE + "\">" + "HARVESTINFO_AUDIENCE-value"  + endMetadataEntry);
+		 */
+		sb.append("</map>\n");
+	}
 	
 }

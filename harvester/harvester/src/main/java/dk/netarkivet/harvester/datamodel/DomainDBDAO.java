@@ -733,7 +733,7 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     protected synchronized Domain read(Connection c, String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
-        if (!exists(domainName)) {
+        if (!exists(c, domainName)) {
             throw new UnknownID("No domain by the name '" + domainName + "'");
         }
         return readKnown(c, domainName);
