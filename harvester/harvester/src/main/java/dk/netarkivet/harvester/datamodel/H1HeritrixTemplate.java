@@ -52,7 +52,6 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
 
 /**
  * Class encapsulating the Heritrix order.xml. Enables verification that dom4j Document obey the constraints required by
