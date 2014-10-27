@@ -163,6 +163,35 @@ public class DatabaseFullMigrationTest extends StressTest {
             return "Generated " + extractJobCount(driver, harvestName) + " jobs.";
 
         }
+
+        private void gotoHarvestJobManagerLog(WebDriver driver) {
+            driver.findElement(By.linkText("Systemstate")).click();
+            driver.findElement(By.linkText("HarvestJobManagerApplication")).click();
+            List<WebElement> showAllLinks = driver.findElements(By.partialLinkText("show all"));
+            WebElement requiredLink = null;
+            for (WebElement element: showAllLinks) {
+                if (element.getAttribute("href").contains("index=*")) {
+                    requiredLink = element;
+                }
+            }
+            requiredLink.click();
+        }
+
+        private int extractJobCount(WebDriver driver, String harvestName) {
+            driver.findElement(By.linkText("Harvest status")).click();
+            WebElement select = driver.findElement(By.name("JOB_STATUS"));
+            List<WebElement> options = driver.findElements(By.tagName("option"));
+            for (WebElement option: options) {
+                if (option.getAttribute("value").equals("ALL")) {
+                    option.click();
+                }
+            }
+            driver.findElement(By.name("HARVEST_NAME")).sendKeys(harvestName);
+            driver.findElement(By.name("PAGE_SIZE")).clear();
+            driver.findElement(By.name("PAGE_SIZE")).sendKeys("1000");
+            driver.findElement(By.name("upload")).click();
+            return driver.findElements(By.linkText(harvestName)).size();
+        }
     }
 
     private void doGenerateSnapshot() throws InterruptedException {
@@ -179,36 +208,6 @@ public class DatabaseFullMigrationTest extends StressTest {
         snapshotJob.run();
     }
 
-
-
-    private void gotoHarvestJobManagerLog(WebDriver driver) {
-        driver.findElement(By.linkText("Systemstate")).click();
-        driver.findElement(By.linkText("HarvestJobManagerApplication")).click();
-        List<WebElement> showAllLinks = driver.findElements(By.partialLinkText("show all"));
-        WebElement requiredLink = null;
-        for (WebElement element: showAllLinks) {
-            if (element.getAttribute("href").contains("index=*")) {
-                requiredLink = element;
-            }
-        }
-        requiredLink.click();
-    }
-
-    private int extractJobCount(WebDriver driver, String harvestName) {
-        driver.findElement(By.linkText("Harvest status")).click();
-        WebElement select = driver.findElement(By.name("JOB_STATUS"));
-        List<WebElement> options = driver.findElements(By.tagName("option"));
-        for (WebElement option: options) {
-            if (option.getAttribute("value").equals("ALL")) {
-                option.click();
-            }
-        }
-        driver.findElement(By.name("HARVEST_NAME")).sendKeys(harvestName);
-        driver.findElement(By.name("PAGE_SIZE")).clear();
-        driver.findElement(By.name("PAGE_SIZE")).sendKeys("1000");
-        driver.findElement(By.name("upload")).click();
-        return driver.findElements(By.linkText(harvestName)).size();
-    }
 
     private void doIngestDomains() throws Exception {
         WebDriver driver = new FirefoxDriver();
@@ -245,10 +244,59 @@ public class DatabaseFullMigrationTest extends StressTest {
         driver.close();
     }
 
+    class UpdateFileStatusJob extends GenericWebJob {
+
+        protected UpdateFileStatusJob(DatabaseFullMigrationTest databaseFullMigrationTest,
+                ApplicationManager applicationManager, WebDriver driver, Long startUpTime, Long waitingInterval,
+                Long maxTime, String name) {
+            super(databaseFullMigrationTest, applicationManager, driver, startUpTime, waitingInterval, maxTime, name);
+        }
+
+        @Override void startJob() {
+            driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+            String baseUrl = environmentManager.getGuiHost() + ":" + environmentManager.getGuiPort();
+            PageHelper.initialize(driver, baseUrl);
+            addStep("Opening bitpreservation section of GUI.",
+                    "The page should open and show the number of files in the archive.");
+            driver.manage().timeouts().pageLoadTimeout(20L, TimeUnit.MINUTES);
+            driver.findElement(By.linkText("Bitpreservation")).click();
+            WebElement updateLink = driver.findElement(By.linkText("Update filestatus for KB"));
+        }
+
+        @Override boolean isStarted() {
+            return true;
+        }
+
+        @Override boolean isFinished() {
+            driver.manage().timeouts().pageLoadTimeout(20L, TimeUnit.MINUTES);
+            driver.findElement(By.linkText("Bitpreservation")).click();
+            WebElement updateLink = driver.findElement(By.linkText("Update filestatus for KB"));
+            String idNumber = "KBN_number";
+            String idMissing = "KBN_missing";
+            String numberS = driver.findElement(By.id(idNumber)).getText();
+            return numberS.equals("0");
+        }
+
+        @Override String getProgress() {
+            String numberS = driver.findElement(By.id(idNumber)).getText();
+            String missingS = driver.findElement(By.id(idMissing)).getText();
+            return "Status files/missing = " + numberS + "/" + missingS;
+        }
+
+        String idNumber = "KBN_number";
+        String idMissing = "KBN_missing";
+    }
+
     private void doUpdateFileStatus() throws Exception {
-        Long stepTimeout = 2*3600*1000L;
+
+
         WebDriver driver = new FirefoxDriver();
         ApplicationManager applicationManager = new ApplicationManager(environmentManager);
+        UpdateFileStatusJob updateFileStatusJob = new UpdateFileStatusJob(this, applicationManager, driver, 0L, 5*60*1000L, 2*3600*1000L, "Update FileStatus Job");
+        updateFileStatusJob.run();
+
+       /* Long stepTimeout = 2*3600*1000L;
+
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         String baseUrl = environmentManager.getGuiHost() + ":" + environmentManager.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
@@ -256,7 +304,7 @@ public class DatabaseFullMigrationTest extends StressTest {
         addFixture("Opening NAS front page.");
         addStep("Opening bitpreservation section of GUI.",
                 "The page should open and show the number of files in the archive.");
-        driver.manage().timeouts().pageLoadTimeout(10L, TimeUnit.MINUTES);
+        driver.manage().timeouts().pageLoadTimeout(20L, TimeUnit.MINUTES);
         driver.findElement(By.linkText("Bitpreservation")).click();
         WebElement updateLink = driver.findElement(By.linkText("Update filestatus for KB"));
         String idNumber = "KBN_number";
@@ -272,15 +320,15 @@ public class DatabaseFullMigrationTest extends StressTest {
             driver.findElement(By.linkText("Bitpreservation")).click();
             numberS = driver.findElement(By.id(idNumber)).getText();
             missingS = driver.findElement(By.id(idMissing)).getText();
-            System.out.println("Status files/missing = " + numberS + "/" + missingS);
             timeRun = System.currentTimeMillis() - startTime;
+            System.out.println("Status files/missing = " + numberS + "/" + missingS);
             System.out.println("Time elapsed " + timeRun /1000 + "s.");
             if (timeRun > stepTimeout) {
                 fail("Failed to update file status for whole archive after " + timeRun/1000 + "s.");
             }
         }
         TestEventManager.getInstance().addResult("File status successfully updated after " + timeRun /1000 + "s.");
-        driver.close();
+        driver.close();*/
     }
 
     private void doUpdateChecksumAndFileStatus() throws Exception {
