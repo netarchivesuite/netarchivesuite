@@ -2,6 +2,8 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -23,31 +25,22 @@ public abstract class HeritrixTemplate {
 	public abstract boolean isValid();
 	public abstract String getXML();
 
-// Constants for the metadata added to the warcinfo record when using WARC
+	// Constants for the metadata added to the warcinfo record when using WARC
 
-protected static final String HARVESTINFO_VERSION = "harvestInfo.version";
+	protected static final String HARVESTINFO_VERSION_NUMBER = "0.5";
+	protected static final String HARVESTINFO_VERSION = "harvestInfo.version";
     protected static final String HARVESTINFO_JOBID = "harvestInfo.jobId";
-    protected static final String HARVESTINFO_CHANNEL = "harvestInfo.channel";
-	
+    protected static final String HARVESTINFO_CHANNEL = "harvestInfo.channel";	
     protected static final String HARVESTINFO_HARVESTNUM = "harvestInfo.harvestNum";
-	
     protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONID = "harvestInfo.origHarvestDefinitionID";
-	
     protected static final String HARVESTINFO_MAXBYTESPERDOMAIN = "harvestInfo.maxBytesPerDomain";
-	
     protected static final String HARVESTINFO_MAXOBJECTSPERDOMAIN = "harvestInfo.maxObjectsPerDomain";
-	
     protected static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.orderXMLName";
-	
     protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
-	
     protected static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
-	
     protected static final String HARVESTINFO_HARVESTFILENAMEPREFIX = "harvestInfo.harvestFilenamePrefix";
     protected static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";
-
     protected static final String HARVESTINFO_PERFORMER = "harvestInfo.performer";
-
     protected static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
 
 
@@ -219,12 +212,16 @@ protected static final String HARVESTINFO_VERSION = "harvestInfo.version";
 	}
 	
 	/** 
-     * Read the
-     * @param orderXmlFile
-     * @return
+     * Read the given template from file.
+     * @param orderXmlFile a given HeritrixTemplate (H1 or H3) as a File
+     * @return the given HeritrixTemplate (H1 or H3) as a HeritrixTemplate object
      */
-	public static HeritrixTemplate read(File orderXmlFile) {
-		return null;
+	public static HeritrixTemplate read(File orderXmlFile){
+		try {
+			return read(new FileReader(orderXmlFile));
+		} catch (FileNotFoundException e) {
+			throw new IOFailure("The file '" + orderXmlFile.getAbsolutePath() + "' was not found", e);
+		}
 	}
 	
 	/**

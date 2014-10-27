@@ -45,16 +45,10 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
 /**
- * Class encapsulating the Heritrix order.xml. Enables verification that dom4j Document obey the constraints required by
- * our software, specifically the Job class.
+ * Class encapsulating the Heritrix crawler-beans.cxml file 
  * <p>
- * The class assumes the type of order.xml used in configuring Heritrix version 1.10+. Information about the Heritrix
- * crawler, and its processes and modules can be found in the Heritrix developer and user manuals found on <a
- * href="http://crawler.archive.org">http://crawler.archive.org<a/>
- * 
  * 
  * Heritrix3 has a new model based on spring.
  * So the XPATH is no good for processing 
@@ -357,20 +351,68 @@ public class H3HeritrixTemplate extends HeritrixTemplate {
      * @throws IOFailure If the group-max-fetch-success element is not found in the orderXml. TODO The
      * group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
      */
-    public static void editOrderXML_maxObjectsPerDomain(Document orderXMLdoc, long forceMaxObjectsPerDomain,
+    public static void editOrderXML_maxObjectsPerDomain(Document orderXMLdoc, 
+    		long forceMaxObjectsPerDomain,
             boolean maxObjectsIsSetByQuotaEnforcer) {
-
+    	Map<String,String> env = new HashMap<String,String>();
+    	
+    	String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE = "QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE"; 
+    	String FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE = "FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE";
+    	Long FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT = -1L;
+    	
+    	if (maxObjectsIsSetByQuotaEnforcer) {
+    		env.put(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE, 
+    				String.valueOf(forceMaxObjectsPerDomain));
+    		env.put(FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE, 
+    				String.valueOf(FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT));
+    	}
+    	
+    	
+    	
+    	/*
+    	
         String xpath = (maxObjectsIsSetByQuotaEnforcer ? H1HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH
                 : H1HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
 
+        
         Node orderXmlNode = orderXMLdoc.selectSingleNode(xpath);
         if (orderXmlNode != null) {
             orderXmlNode.setText(String.valueOf(forceMaxObjectsPerDomain));
         } else {
             throw new IOFailure("Unable to locate " + xpath + " element in order.xml: " + orderXMLdoc.asXML());
         }
+        
+        */
+        
+        
     }
-
+/*
+    Map<String, String> env = new HashMap<String, String>();
+    env.put("machineparameters", app.getMachineParameters().writeJavaOptions());
+    env.put("classpath", osGetClassPath(app));
+    env.put("confdirpath", ScriptConstants.doubleBackslashes(getConfDirPath()));
+    env.put("id", id);
+    env.put("appname", app.getTotalName());
+    env.put("killpsname", killPsName);
+    env.put("tmprunpsname", tmpRunPsName);
+    env.put("startlogname", startLogName);
+    if (inheritedSlf4jConfigFile != null) {
+        env.put("slf4jlogger", Template.untemplate(windowsStartVbsScriptTpl.slf4jLogger, env, true));
+    } else {
+        env.put("slf4jlogger", "");
+    }
+    if (app.getTotalName().contains(ScriptConstants.BITARCHIVE_APPLICATION_NAME)) {
+        env.put("securityManagement",
+                Template.untemplate(windowsStartVbsScriptTpl.securityManagement, env, true));
+    } else {
+        env.put("securityManagement", "");
+    }
+    String str = Template.untemplate(windowsStartVbsScriptTpl.mainScript, env, true, "\r\n");
+    vbsPrint.print(str);
+    
+*/    
+    
+    
     /**
      * Activates or deactivate the quota-enforcer, depending on budget definition. Object limit can be defined either by
      * using the queue-total-budget property or the quota enforcer. Which is chosen is set by the argument
@@ -568,10 +610,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate {
 
 	@Override
 	public void removeDeduplicatorIfPresent() {
-		// TODO Auto-generated method stub
-		
+		//NOP
 	}
-
 
 //<property name="metadataItems">
 //  <map>
@@ -592,65 +632,54 @@ public class H3HeritrixTemplate extends HeritrixTemplate {
 //  </map>
 //  </property>
 
-public void insertWarcInfoMetadata(Job ajob) {
-	String startMetadataEntry = "<entry key=\"";
-	String endMetadataEntry = "\"</>";
-	StringBuilder sb = new StringBuilder();
-	sb.append("<property name=\"metadata-items\">\n<map>\n");
+	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
+			String scheduleName, String performer) {
 
-//<entry key="harvestInfo.version" value="1.03"/>
+		String startMetadataEntry = "<entry key=\"";
+		String endMetadataEntry = "\"</>";
+		String valuePart = "\"> value=\"";
+		StringBuilder sb = new StringBuilder();
+		sb.append("<property name=\"metadata-items\">\n<map>\n");
 
-	sb.append(startMetadataEntry); //<entry key="
-	sb.append(HARVESTINFO_VERSION + "\" value=\"" + "Version-value" + endMetadataEntry); // harvestInfo.version" value="1.03"/>
-	sb.append("</map>\n");	
-	sb.append(startMetadataEntry);
-	sb.append(HARVESTINFO_VERSION + "\">" + "Version-value"  + endMetadataEntry);
-        sb.append(startMetadataEntry);
-	sb.append(HARVESTINFO_JOBID + "\">" + "jobid-value"  + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_VERSION + valuePart + HARVESTINFO_VERSION_NUMBER + endMetadataEntry); 
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_JOBID + valuePart + ajob.getJobID() + endMetadataEntry);
 
-sb.append(startMetadataEntry);
-	sb.append(HARVESTINFO_CHANNEL + "\">" + "channel-value"  + endMetadataEntry);
-sb.append(startMetadataEntry);
-	sb.append(HARVESTINFO_HARVESTNUM + "\">" + "harvestNum-value"  + endMetadataEntry);
-sb.append(startMetadataEntry);
-	sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONID + "\">" + "ORIGHARVESTDEFINITIONID-value"  + endMetadataEntry);
-sb.append(startMetadataEntry);
-	sb.append(HARVESTINFO_MAXBYTESPERDOMAIN + "\">" + "maxbytes-value"  + endMetadataEntry);
-sb.append(startMetadataEntry);
-	sb.append(HARVESTINFO_MAXOBJECTSPERDOMAIN + "\">" + "maxobjects-value"  + endMetadataEntry);
-sb.append(startMetadataEntry);
-	sb.append(HARVESTINFO_ORDERXMLNAME + "\">" + "HARVESTINFO_ORDERXMLNAME-value"  + endMetadataEntry);
-sb.append(startMetadataEntry);
-	sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + "\">" + "HARVESTINFO_ORIGHARVESTDEFINITIONNAME-value"  
-	+ endMetadataEntry);
-/*/* optional
-sb.add(startMetadataEntry);
-	sb.add(HARVESTINFO_SCHEDULENAME + "\">" + "HARVESTINFO_SCHEDULENAME-value"  + endMetadataEntry);
-*/
-sb.append(startMetadataEntry);
-	sb.append(HARVESTINFO_HARVESTFILENAMEPREFIX + "\">" + "jobid-value"  + endMetadataEntry);
-sb.append(startMetadataEntry);
-	sb.append(HARVESTINFO_JOBSUBMITDATE + "\">" + "jobid-value"  + endMetadataEntry);
-/*/* optional
-sb.add(startMetadataEntry);
-	sb.add(HARVESTINFO_PERFORMER + "\">" + "HARVESTINFO_PERFORMER-value"  + endMetadataEntry);
-*/
-/* optional
-sb.add(startMetadataEntry);
-	sb.add(HARVESTINFO_AUDIENCE + "\">" + "HARVESTINFO_AUDIENCE-value"  + endMetadataEntry);
-*/
-	sb.append("</map>\n");
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_CHANNEL + valuePart + ajob.getChannel() + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_HARVESTNUM + valuePart + ajob.getHarvestNum() + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONID + valuePart + ajob.getOrigHarvestDefinitionID() + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_MAXBYTESPERDOMAIN + valuePart + ajob.getMaxBytesPerDomain() + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_MAXOBJECTSPERDOMAIN + valuePart + ajob.getMaxObjectsPerDomain() + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_ORDERXMLNAME + valuePart + ajob.getOrderXMLName() + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + valuePart + 
+				origHarvestdefinitionName + endMetadataEntry);
+		/* optional schedule-name. */
+		if (scheduleName != null) {
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_SCHEDULENAME + valuePart + scheduleName + endMetadataEntry);
+		}
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_HARVESTFILENAMEPREFIX + valuePart + ajob.getHarvestFilenamePrefix() + endMetadataEntry);
+		sb.append(startMetadataEntry);
+		sb.append(HARVESTINFO_JOBSUBMITDATE + valuePart + ajob.getSubmittedDate() + endMetadataEntry);
+		/* optional HARVESTINFO_PERFORMER */
+		if (performer != null){
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_PERFORMER + valuePart + performer  + endMetadataEntry);
+		}
+		/* optional HARVESTINFO_PERFORMER */
+		if (ajob.getHarvestAudience() != null) {
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_AUDIENCE + valuePart + ajob.getHarvestAudience() + endMetadataEntry);
+		}
+		sb.append("</map>\n");
 	}
-	
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -805,50 +805,54 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
     this.template = doc;
 	}
 
-
-
-	public void insertWarcInfoMetadata(Job ajob) {
+	
+	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
+			String scheduleName, String performer) {
 		String startMetadataEntry = "<string name=\"";
 		String endMetadataEntry = "</string>";
 		StringBuilder sb = new StringBuilder();
 		sb.append("<map name=\"metadata-items\">\n");
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_VERSION + "\">" + "Version-value"  + endMetadataEntry);
+		sb.append(HARVESTINFO_VERSION + "\">" + HARVESTINFO_VERSION_NUMBER + endMetadataEntry);
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_JOBID + "\">" + "jobid-value"  + endMetadataEntry);
-
+		sb.append(HARVESTINFO_JOBID + "\">" + ajob.getJobID() + endMetadataEntry);
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_CHANNEL + "\">" + "channel-value"  + endMetadataEntry);
+		sb.append(HARVESTINFO_CHANNEL + "\">" + ajob.getChannel() + endMetadataEntry);
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_HARVESTNUM + "\">" + "harvestNum-value"  + endMetadataEntry);
+		sb.append(HARVESTINFO_HARVESTNUM + "\">" + ajob.getHarvestNum() + endMetadataEntry);
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONID + "\">" + "ORIGHARVESTDEFINITIONID-value"  + endMetadataEntry);
+		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONID + "\">" + ajob.getOrigHarvestDefinitionID() + endMetadataEntry);
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_MAXBYTESPERDOMAIN + "\">" + "maxbytes-value"  + endMetadataEntry);
+		sb.append(HARVESTINFO_MAXBYTESPERDOMAIN + "\">" + ajob.getMaxBytesPerDomain() + endMetadataEntry);
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_MAXOBJECTSPERDOMAIN + "\">" + "maxobjects-value"  + endMetadataEntry);
+		sb.append(HARVESTINFO_MAXOBJECTSPERDOMAIN + "\">" + ajob.getMaxObjectsPerDomain() + endMetadataEntry);
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_ORDERXMLNAME + "\">" + "HARVESTINFO_ORDERXMLNAME-value"  + endMetadataEntry);
+		sb.append(HARVESTINFO_ORDERXMLNAME + "\">" + ajob.getOrderXMLName() + endMetadataEntry);
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + "\">" + "HARVESTINFO_ORIGHARVESTDEFINITIONNAME-value"  
+		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + "\">" + origHarvestdefinitionName   
 				+ endMetadataEntry);
-		/*/* optional
+				
+		/* optional schedule-name, only for selective harvests. */
+		if (scheduleName != null) {
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_SCHEDULENAME + "\">" + scheduleName + endMetadataEntry);
+		}
+		
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_SCHEDULENAME + "\">" + "HARVESTINFO_SCHEDULENAME-value"  + endMetadataEntry);
-		 */
+		sb.append(HARVESTINFO_HARVESTFILENAMEPREFIX + "\">" + ajob.getHarvestFilenamePrefix() + endMetadataEntry);
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_HARVESTFILENAMEPREFIX + "\">" + "jobid-value"  + endMetadataEntry);
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_JOBSUBMITDATE + "\">" + "jobid-value"  + endMetadataEntry);
-		/*/* optional
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_PERFORMER + "\">" + "HARVESTINFO_PERFORMER-value"  + endMetadataEntry);
-		 */
-		/* optional
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_AUDIENCE + "\">" + "HARVESTINFO_AUDIENCE-value"  + endMetadataEntry);
-		 */
+		sb.append(HARVESTINFO_JOBSUBMITDATE + "\">" + ajob.getSubmittedDate()  + endMetadataEntry);
+		
+		/* optional HARVESTINFO_PERFORMER */
+		if (performer != null) {
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_PERFORMER + "\">" + performer  + endMetadataEntry);
+		}
+		/* optional HARVESTINFO_AUDIENCE */
+		if (ajob.getHarvestAudience() != null) {
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_AUDIENCE + "\">" + ajob.getHarvestAudience()  + endMetadataEntry);
+		} 
 		sb.append("</map>\n");
 	}
-	
 }
