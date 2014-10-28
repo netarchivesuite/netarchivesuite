@@ -52,7 +52,6 @@ public class TestEnvironmentManager {
     /**
      * The following environment definitions are used
      * <ul>
-     * <ul>
      * <li>TIMESTAMP = svn revision
      * <li>GUI_PORT = systemtest.port property or 8071 if undefined
      * <li>MAILRECEIVERS = systemtest.mailreceivers property
