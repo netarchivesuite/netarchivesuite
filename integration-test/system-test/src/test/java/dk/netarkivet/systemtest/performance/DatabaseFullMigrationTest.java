@@ -261,6 +261,7 @@ public class DatabaseFullMigrationTest extends StressTest {
             driver.manage().timeouts().pageLoadTimeout(20L, TimeUnit.MINUTES);
             driver.findElement(By.linkText("Bitpreservation")).click();
             WebElement updateLink = driver.findElement(By.linkText("Update filestatus for KB"));
+            updateLink.click();
         }
 
         @Override boolean isStarted() {
