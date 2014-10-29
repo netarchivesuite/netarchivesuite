@@ -165,6 +165,11 @@ public class TestEnvironmentManager {
         return runCommand(server, command, commandTimeout, quotes, new int[] {0});
     }
 
+    public String runCommand(String server, String command, int[] positiveExitCodes)
+               throws Exception {
+        return runCommand(server, command, 1000, "\"", positiveExitCodes);
+    }
+
     /**
      * @param positiveExitCodes The exit codes to consider the command a success. This will normally be only 0, but in
      * case of f.ex. 'diff' 1 is also ok.

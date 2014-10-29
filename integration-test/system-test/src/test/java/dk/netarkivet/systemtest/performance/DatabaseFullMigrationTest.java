@@ -43,6 +43,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.environment.ApplicationManager;
+import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.PageHelper;
 
 @SuppressWarnings("unused")
@@ -289,55 +290,131 @@ public class DatabaseFullMigrationTest extends StressTest {
     }
 
     private void doUpdateFileStatus() throws Exception {
-
-
         WebDriver driver = new FirefoxDriver();
         ApplicationManager applicationManager = new ApplicationManager(environmentManager);
         UpdateFileStatusJob updateFileStatusJob = new UpdateFileStatusJob(this, applicationManager, driver, 0L, 5*60*1000L, 2*3600*1000L, "Update FileStatus Job");
         updateFileStatusJob.run();
-
-       /* Long stepTimeout = 2*3600*1000L;
-
-        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = environmentManager.getGuiHost() + ":" + environmentManager.getGuiPort();
-        PageHelper.initialize(driver, baseUrl);
-        applicationManager.waitForGUIToStart(60);
-        addFixture("Opening NAS front page.");
-        addStep("Opening bitpreservation section of GUI.",
-                "The page should open and show the number of files in the archive.");
-        driver.manage().timeouts().pageLoadTimeout(20L, TimeUnit.MINUTES);
-        driver.findElement(By.linkText("Bitpreservation")).click();
-        WebElement updateLink = driver.findElement(By.linkText("Update filestatus for KB"));
-        String idNumber = "KBN_number";
-        String idMissing = "KBN_missing";
-        String numberS = driver.findElement(By.id(idNumber)).getText();
-        String missingS = driver.findElement(By.id(idMissing)).getText();
-        System.out.println("Status files/missing = " + numberS + "/" + missingS);
-        updateLink.click();
-        Long startTime = System.currentTimeMillis();
-        long timeRun = System.currentTimeMillis() - startTime;
-        while (!numberS.equals("0")) {
-            Thread.sleep(300000L);
-            driver.findElement(By.linkText("Bitpreservation")).click();
-            numberS = driver.findElement(By.id(idNumber)).getText();
-            missingS = driver.findElement(By.id(idMissing)).getText();
-            timeRun = System.currentTimeMillis() - startTime;
-            System.out.println("Status files/missing = " + numberS + "/" + missingS);
-            System.out.println("Time elapsed " + timeRun /1000 + "s.");
-            if (timeRun > stepTimeout) {
-                fail("Failed to update file status for whole archive after " + timeRun/1000 + "s.");
-            }
-        }
-        TestEventManager.getInstance().addResult("File status successfully updated after " + timeRun /1000 + "s.");
-        driver.close();*/
     }
+
+    class UpdateChecksumJob extends GenericWebJob {
+
+        String total = null;
+
+        protected UpdateChecksumJob(DatabaseFullMigrationTest databaseFullMigrationTest,
+                ApplicationManager applicationManager, WebDriver driver, Long startUpTime, Long waitingInterval,
+                Long maxTime, String name) {
+            super(databaseFullMigrationTest, applicationManager, driver, startUpTime, waitingInterval, maxTime, name);
+        }
+
+        @Override void startJob() {
+            driver.manage().timeouts().pageLoadTimeout(10L, TimeUnit.MINUTES);
+            driver.findElement(By.linkText("Bitpreservation")).click();
+            WebElement updateLink = driver.findElement(By.linkText("Update checksum and filestatus for CS"));
+            updateLink.click();
+        }
+
+        @Override boolean isStarted() {
+            try {
+                String output = environmentManager.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "grep 'Starting processing' ${HOME}/" +TESTNAME+ "/log/GUI*", new int[]{0,1});
+                final String startedS = ".*Starting processing of ([0-9]+) checksum entries.*";
+                Pattern startedP = Pattern.compile(startedS, Pattern.DOTALL);
+                final Matcher matcher = startedP.matcher(output);
+                                if (matcher.matches()) {
+                                    total = matcher.group(1);
+                                    return true;
+                                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return false;
+/*            final String startedS = ".*Starting processing of ([0-9]+) checksum entries.*";
+            Pattern startedP = Pattern.compile(startedS, Pattern.DOTALL);
+            gotoGUILog();
+            for (WebElement logEntry: driver.findElements(By.tagName("pre"))) {
+                final Matcher matcher = startedP.matcher(logEntry.getText());
+                if (matcher.matches()) {
+                    total = matcher.group(1);
+                    return true;
+                }
+            }
+            return false;*/
+        }
+
+        @Override boolean isFinished() {
+            try {
+                String output = environmentManager.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "grep 'Finished processing' ${HOME}/" +TESTNAME+ "/log/GUI*", new int[]{0,1});
+                final String finishedS = ".*Finished processing of ([0-9]+) checksum entries.*";
+                Pattern finishedP = Pattern.compile(finishedS, Pattern.DOTALL);
+                final Matcher matcher = finishedP.matcher(output);
+                if (matcher.matches()) {
+                    total = matcher.group(1);
+                    return true;
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return false;
+/*            final String finishedS = ".*Finished processing of [0-9]+ checksum entries.*";
+            Pattern finishedP = Pattern.compile(finishedS, Pattern.DOTALL);
+            gotoGUILog();
+            for (WebElement logEntry: driver.findElements(By.tagName("pre"))) {
+                if (finishedP.matcher(logEntry.getText()).matches()) {
+                    return true;
+                }
+            }
+            return false;*/
+        }
+
+        private void gotoGUILog() {
+            driver.findElement(By.linkText("Systemstate")).click();
+            driver.findElement(By.linkText("GUIApplication")).click();
+            List<WebElement> elements = driver.findElements(By.linkText("show all"));
+            WebElement showElement = null;
+            for (WebElement element: elements) {
+                if (element.getAttribute("href").contains("index=*")) {
+                    showElement = element;
+                }
+            }
+            showElement.click();
+        }
+
+        @Override String getProgress() {
+            driver.findElement(By.linkText("Systemstate")).click();
+            driver.findElement(By.linkText("GUIApplication")).click();
+            final String progressS = ".*Processed checksum list entry number ([0-9]+).*";
+            Pattern progressP = Pattern.compile(progressS, Pattern.DOTALL);
+            WebElement webElement = driver.findElement(By.tagName("pre"));
+            if (webElement != null) {
+                Matcher matcher = progressP.matcher(webElement.getText());
+                if (matcher.matches()) {
+                    return "Processed " + matcher.group(1) + " out of " + total;
+                }
+            }
+            return null;
+        }
+    }
+
 
     private void doUpdateChecksumAndFileStatus() throws Exception {
         Long stepTimeout = 24*3600*1000L;
         String minStepTimeHoursString = System.getProperty("stresstest.minchecksumtime", "1");
         System.out.println("Checksum checking must take at least " + minStepTimeHoursString + " (stresstest.minchecksumtime) hours to complete.");
         Long minStepTime = Integer.parseInt(minStepTimeHoursString)*3600*1000L;
-        WebDriver driver = new FirefoxDriver();
+
+        UpdateChecksumJob updateChecksumJob = new UpdateChecksumJob(
+                this,
+                new ApplicationManager(environmentManager),
+                new FirefoxDriver(),
+                60*1000L,
+                10*1000L,
+                stepTimeout,
+                "Update Checksum Job"
+        );
+
+        updateChecksumJob.run();
+
+
+        /*WebDriver driver = new FirefoxDriver();
         ApplicationManager applicationManager = new ApplicationManager(environmentManager);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         String baseUrl = environmentManager.getGuiHost() + ":" + environmentManager.getGuiPort();
@@ -386,7 +463,7 @@ public class DatabaseFullMigrationTest extends StressTest {
                 Thread.sleep(10 * 1000L);
             }
         }
-        driver.close();
+        driver.close();*/
     }
 
 
