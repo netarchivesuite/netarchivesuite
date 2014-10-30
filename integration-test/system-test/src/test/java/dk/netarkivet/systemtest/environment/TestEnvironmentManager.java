@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 
@@ -58,13 +59,14 @@ public class TestEnvironmentManager {
      * <li>TESTX = The supplied test name
      * </ul>
      *
-     * @param testX Defines the test name this test should be run under in the test system.
+     * @param testX Defines the test name this test should be run under in the test system, but this
+     * is ignored if systemtest.timestamp is set.
      */
     public TestEnvironmentManager(String testX, String host, int port) {
         TESTX = testX;
         GUI_HOST = System.getProperty("systemtest.host", host);
         GUI_PORT = System.getProperty("systemtest.port", Integer.toString(port));
-        TIMESTAMP = testX;
+        TIMESTAMP = System.getProperty("systemtest.timestamp", testX);
         MAILRECEIVERS = System.getProperty("systemtest.mailrecievers");
     }
 
@@ -95,8 +97,8 @@ public class TestEnvironmentManager {
      *
      * @param remoteCommand The command to run on the test server
      */
-    public void runCommand(String remoteCommand) throws Exception {
-        runCommand(remoteCommand, 1000);
+    public String runCommand(String remoteCommand) throws Exception {
+        return runCommand(remoteCommand, 1000);
     }
 
     /**
@@ -105,8 +107,8 @@ public class TestEnvironmentManager {
      * @param remoteCommand The server to run the command on.
      * @param remoteCommand The command to run on the test server.
      */
-    public void runCommand(String server, String remoteCommand) throws Exception {
-        runCommand(server, remoteCommand, 1000);
+    public String runCommand(String server, String remoteCommand) throws Exception {
+        return runCommand(server, remoteCommand, 1000);
     }
 
     /**
@@ -115,8 +117,8 @@ public class TestEnvironmentManager {
      * @param remoteCommand The command to run on the test server.
      * @param commandTimeout The timeout for the command.
      */
-    public void runCommand(String remoteCommand, int commandTimeout) throws Exception {
-        runCommand(null, remoteCommand, commandTimeout);
+    public String runCommand(String remoteCommand, int commandTimeout) throws Exception {
+        return runCommand(null, remoteCommand, commandTimeout);
     }
 
     /**
@@ -125,9 +127,9 @@ public class TestEnvironmentManager {
      * @param server The server to run the command on.
      * @param remoteCommand The command to run on the remote server.
      */
-    public void runTestXCommand(String server, String remoteCommand) throws Exception {
+    public String runTestXCommand(String server, String remoteCommand) throws Exception {
         String testXRemoteCommand = "cd " + getTESTX() + ";" + remoteCommand;
-        runCommand(server, testXRemoteCommand, 1000);
+        return runCommand(server, testXRemoteCommand, 1000);
     }
 
     /**
@@ -141,34 +143,34 @@ public class TestEnvironmentManager {
      * @param command The command to run on the test server.
      * @param commandTimeout The timeout for the command.
      */
-    public void runCommand(String server, String command, int commandTimeout) throws Exception {
+    public String runCommand(String server, String command, int commandTimeout) throws Exception {
         if (server == null) {
-            runCommand(null, command, commandTimeout, "");
+            return runCommand(null, command, commandTimeout, "");
         } else {
-            runCommand(server, command, commandTimeout, "\"");
+            return runCommand(server, command, commandTimeout, "\"");
         }
     }
 
-    public void runCommandWithoutQuotes(String command) throws Exception {
-        runCommand(null, command, 1000, "");
+    public String runCommandWithoutQuotes(String command) throws Exception {
+        return runCommand(null, command, 1000, "");
     }
 
-    public void runCommandWithoutQuotes(String command, int[] positiveExitCodes) throws Exception {
-        runCommand(null, command, 1000, "", positiveExitCodes);
+    public String runCommandWithoutQuotes(String command, int[] positiveExitCodes) throws Exception {
+        return runCommand(null, command, 1000, "", positiveExitCodes);
     }
 
     /**
      * @param quotes the quotes ", ', none or other to use to box the command.
      */
-    public void runCommand(String server, String command, int commandTimeout, String quotes) throws Exception {
-        runCommand(server, command, commandTimeout, quotes, new int[] {0});
+    public String runCommand(String server, String command, int commandTimeout, String quotes) throws Exception {
+        return runCommand(server, command, commandTimeout, quotes, new int[] {0});
     }
 
     /**
      * @param positiveExitCodes The exit codes to consider the command a success. This will normally be only 0, but in
      * case of f.ex. 'diff' 1 is also ok.
      */
-    public void runCommand(String server, String command, int commandTimeout, String quotes, int[] positiveExitCodes)
+    public String runCommand(String server, String command, int commandTimeout, String quotes, int[] positiveExitCodes)
             throws Exception {
         RemoteCommand remoteCommand = new RemoteCommand(server, command, quotes);
 
@@ -199,6 +201,7 @@ public class TestEnvironmentManager {
 
         int numberOfSecondsWaiting = 0;
         int maxNumberOfSecondsToWait = 60 * 10;
+        String result = "";
         while (true) {
             if (channel.isClosed()) {
                 log.info("Command finished in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds. "
@@ -227,6 +230,7 @@ public class TestEnvironmentManager {
                 while ((s = inReader.readLine()) != null) {
                     if (!s.trim().isEmpty()) {
                         log.debug("ssh: " + s);
+                        result += s;
                     }
                 }
                 while ((s = errReader.readLine()) != null) {
@@ -237,6 +241,7 @@ public class TestEnvironmentManager {
             } catch (InterruptedException ie) {
             }
         }
+        return result;
     }
 
     /**

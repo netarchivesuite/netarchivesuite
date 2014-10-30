@@ -50,8 +50,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.JobUtils;
+import dk.netarkivet.harvester.datamodel.JobTest;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
@@ -139,7 +138,7 @@ public class HarvestControllerTester {
         // Check that harvest info file, seed.txt and order.xml are written,
         // and that the returned HeritrixFiles points to the given places.
 
-        Job j = JobUtils.getHighPriorityJob(TestInfo.ONE_LEVEL_ORDER_FILE, JobStatus.STARTED, "default_template");
+        Job j = JobTest.createDefaultJob();
         j.setJobID(1L);
         // Check whether job 1 is valid
         assertFalse("j.getSeedList should be non-empty", j.getSeedListAsString().isEmpty());
@@ -205,8 +204,7 @@ public class HarvestControllerTester {
     public void testWritePreharvestMetadata() throws Exception {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.WORKING_DIR.getAbsolutePath());
         TestInfo.oneMetadata.add(TestInfo.sampleEntry);
-        Job someJob = JobUtils.getSnapshotJobWithSbforgeAsSeed();
-        someJob.setJobID(1L);
+        Job someJob = JobTest.createDefaultJob();
 
         /** Test that empty metadata list does not produce any preharvest metadata objects in crawldir/metadata. */
         File metadataDir = new File(TestInfo.WORKING_DIR, IngestableFiles.METADATA_SUB_DIR);

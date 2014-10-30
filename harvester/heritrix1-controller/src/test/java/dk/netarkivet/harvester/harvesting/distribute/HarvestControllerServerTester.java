@@ -62,6 +62,7 @@ import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.JobTest;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
@@ -210,7 +211,7 @@ public class HarvestControllerServerTester {
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR.getAbsolutePath());
         hcs = HarvestControllerServer.getInstance();
         // make a dummy job
-        Job j = TestInfo.getJob();
+        Job j = JobTest.createDefaultJob();
         j.setJobID(1L);
         //
         // Break the job by setting its status to something other than SUBMITTED
@@ -278,7 +279,7 @@ public class HarvestControllerServerTester {
         JMSConnection con = JMSConnectionFactory.getInstance();
         con.setListener(HarvesterChannels.getTheSched(), listener);
         hcs = HarvestControllerServer.getInstance();
-        theJob = TestInfo.getJob();
+        theJob = JobTest.createDefaultJob();
         theJob.setStatus(JobStatus.DONE);
         theJob.setJobID(Long.valueOf(42L));
         String channel = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
@@ -435,7 +436,7 @@ public class HarvestControllerServerTester {
             InvocationTargetException {
         // Set up harvest controller, a job some metadata and a crawlDir
         hcs = HarvestControllerServer.getInstance();
-        Job job = TestInfo.getJob();
+        Job job = JobTest.createDefaultJob();
         long jobId = 42L;
         job.setJobID(jobId);
         List<MetadataEntry> meta = new ArrayList<MetadataEntry>();

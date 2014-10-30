@@ -27,22 +27,16 @@
       </exclusions>
     </dependency>
 
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>harvester-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>common-test</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>harvester</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>harvester-test</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -147,6 +141,14 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>harvester-core</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
     </dependency>
   </dependencies>
 

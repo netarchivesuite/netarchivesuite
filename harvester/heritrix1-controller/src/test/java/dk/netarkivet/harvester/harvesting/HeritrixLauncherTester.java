@@ -34,7 +34,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CandidateURI;
@@ -833,27 +832,6 @@ public class HeritrixLauncherTester {
                 // TODO Auto-generated method stub
 
             }
-
-			@Override
-			public String shortReportLegend() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public void shortReportLineTo(PrintWriter arg0) throws IOException {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public Map<String, Object> shortReportMap() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
         }
     }
-
-    ;
 }

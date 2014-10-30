@@ -75,7 +75,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /** Unit test for testNetarchiveResourceStore */
 @SuppressWarnings({"unchecked", "rawtypes", "unused"})
 @Category(SlowTest.class)
-public class NetarchiveResourceStoreTester extends IndexerTestCase {
+public class NetarchiveResourceStoreTester {
 
     NetarchiveResourceStore netarchiveResourceStore = null;
     CaptureSearchResult metadataResource = null;
@@ -89,10 +89,8 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
     private final String metadataFile = "2-metadata-1.arc";
     private final String uploadFile = "Upload4.ARC";
 
-    @Override
     @Before
     public void setUp() {
-        super.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
@@ -119,13 +117,11 @@ public class NetarchiveResourceStoreTester extends IndexerTestCase {
         resourceNotAvaliable = new CaptureSearchResult();
     }
 
-    @Override
     @After
     public void tearDown() {
         arc.close();
         ArcRepository.getInstance().close();
         FileUtils.removeRecursively(dk.netarkivet.wayback.TestInfo.WORKING_DIR);
-        super.tearDown();
     }
 
     /**

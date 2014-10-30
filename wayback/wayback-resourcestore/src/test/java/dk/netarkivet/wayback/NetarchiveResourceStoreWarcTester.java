@@ -79,7 +79,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  */
 @SuppressWarnings({"unchecked", "rawtypes", "unused"})
 @Ignore("Not in junit 3 TestSuite")
-public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
+public class NetarchiveResourceStoreWarcTester {
 
     NetarchiveResourceStore netarchiveResourceStore = null;
     CaptureSearchResult metadataResource = null;
@@ -93,10 +93,8 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
     private final String metadataFile = "2-metadata-1.warc";
     private final String uploadFile = "Upload4.WARC";
 
-    @Override
     @Before
     public void setUp() {
-        super.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
@@ -123,13 +121,11 @@ public class NetarchiveResourceStoreWarcTester extends IndexerTestCase {
         resourceNotAvaliable = new CaptureSearchResult();
     }
 
-    @Override
     @After
     public void tearDown() {
         arc.close();
         ArcRepository.getInstance().close();
         FileUtils.removeRecursively(dk.netarkivet.wayback.TestInfo.WORKING_DIR);
-        super.tearDown();
     }
 
     /**

@@ -10,8 +10,6 @@
   </parent>
 
   <artifactId>heritrix1-extensions</artifactId>
-  <packaging>jar</packaging>
-
   <name>Netarchivesuite - Heritrix1 Extensions</name>
 
   <dependencies>
@@ -36,7 +34,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>harvester</artifactId>
+      <artifactId>harvester-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
