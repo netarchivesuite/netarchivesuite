@@ -63,6 +63,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.JobTest;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
@@ -216,7 +217,7 @@ public class IntegrityTests extends DataModelTestCase {
         assertEquals("The HACO should listen before job", 1, listeners.size());
 
         // Prepare job
-        Job j = TestInfo.getJob();
+        Job j = JobTest.createDefaultJob();
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
 
@@ -317,7 +318,7 @@ public class IntegrityTests extends DataModelTestCase {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
 
         // make a dummy job
-        Job j = TestInfo.getJob();
+        Job j = JobTest.createDefaultJob();
         assertTrue("The order.xml for the job must have content!", j.getOrderXMLdoc().hasContent());
 
         JobDAO.getInstance().create(j);

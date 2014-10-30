@@ -16,7 +16,7 @@
   <name>Netarchivesuite - harvester - parent pom</name>
 
   <modules>
-    <module>harvester</module>
+    <module>harvester-core</module>
     <module>heritrix1-extensions</module>
     <module>heritrix1-frontier</module>
     <module>heritrix1-controller</module>

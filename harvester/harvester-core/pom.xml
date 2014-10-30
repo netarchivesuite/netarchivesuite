@@ -9,10 +9,10 @@
     <version>5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>harvester</artifactId>
+  <artifactId>harvester-core</artifactId>
   <packaging>jar</packaging>
 
-  <name>Netarchivesuite - harvester</name>
+  <name>Netarchivesuite - harvester - core</name>
 
   <dependencies>
     <dependency>

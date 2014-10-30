@@ -53,6 +53,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.JobTest;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.scheduler.JobDispatcher;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -123,7 +124,7 @@ public class IntegrityTestsHCSJMSException {
         QueueConnection qc = (QueueConnection) queueConnectionField.get(con);
         ExceptionListener qel = qc.getExceptionListener();
         // Start a harvest
-        Job j = TestInfo.getJob();
+        Job j = JobTest.createDefaultJob();
         DataModelTestCase.addHarvestDefinitionToDatabaseWithId(j.getOrigHarvestDefinitionID());
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);

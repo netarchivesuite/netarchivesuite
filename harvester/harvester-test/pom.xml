@@ -45,23 +45,27 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>common-test</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>harvester</artifactId>
+      <artifactId>harvester-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>harvester-core</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>
 
-    <!--dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>harvest-scheduler</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency-->
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>

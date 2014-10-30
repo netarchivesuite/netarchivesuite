@@ -35,7 +35,7 @@ public class FixedUUURITest {
      * 820 is resolved in the Heritrix class, this test will fail, and FixedUURI can be removed.
      */
     @SuppressWarnings("serial")
-	@Test
+    @Test
     public void testBug820() throws URIException {
         String troublesomeURL = "http/www.test.foo";
         try {
