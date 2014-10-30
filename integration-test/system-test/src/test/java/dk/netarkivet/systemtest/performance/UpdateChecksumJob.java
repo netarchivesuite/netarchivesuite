@@ -1,6 +1,6 @@
 package dk.netarkivet.systemtest.performance;
 
-import java.util.List;
+import static org.testng.Assert.assertEquals;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,25 +9,30 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import dk.netarkivet.systemtest.environment.ApplicationManager;
+import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 
 /**
-* Created by csr on 30/10/14.
+* Job to check checksums for the entire Checksum leg of the bitarchive. Progress is monitored by grepping in
+ * the GUIWebApplication log files and via the web interface.
 */
 class UpdateChecksumJob extends GenericWebJob {
+    protected final TestLogger log = new TestLogger(getClass());
 
     String total = null;
 
-    UpdateChecksumJob(StressTest databaseFullMigrationTest,
-            ApplicationManager applicationManager, WebDriver driver, Long startUpTime, Long waitingInterval,
+    UpdateChecksumJob(StressTest stressTest1,
+            WebDriver driver, Long startUpTime, Long waitingInterval,
             Long maxTime, String name) {
-        super(databaseFullMigrationTest, databaseFullMigrationTest.environmentManager, driver, startUpTime, waitingInterval, maxTime, name);
+        super(stressTest1, stressTest1.environmentManager, driver, startUpTime, waitingInterval, maxTime, name);
     }
 
     @Override void startJob() {
+        stressTest.addFixture("Opening Bitpreservation page.");
         driver.manage().timeouts().pageLoadTimeout(10L, TimeUnit.MINUTES);
         driver.findElement(By.linkText("Bitpreservation")).click();
+        stressTest.addStep("Updating checksum and filestatus for CS.", "Should result in a full checksum" +
+                "job being started and completed.");
         WebElement updateLink = driver.findElement(By.linkText("Update checksum and filestatus for CS"));
         updateLink.click();
     }
@@ -55,26 +60,13 @@ class UpdateChecksumJob extends GenericWebJob {
             Pattern finishedP = Pattern.compile(finishedS, Pattern.DOTALL);
             final Matcher matcher = finishedP.matcher(output);
             if (matcher.matches()) {
-                total = matcher.group(1);
+                assertEquals(total, matcher.group(1), "Expect the number of entries to match before and after.");
                 return true;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return false;
-    }
-
-    private void gotoGUILog() {
-        driver.findElement(By.linkText("Systemstate")).click();
-        driver.findElement(By.linkText("GUIApplication")).click();
-        List<WebElement> elements = driver.findElements(By.linkText("show all"));
-        WebElement showElement = null;
-        for (WebElement element: elements) {
-            if (element.getAttribute("href").contains("index=*")) {
-                showElement = element;
-            }
-        }
-        showElement.click();
     }
 
     @Override String getProgress() {
@@ -89,6 +81,8 @@ class UpdateChecksumJob extends GenericWebJob {
                 return "Processed " + matcher.group(1) + " out of " + total;
             }
         }
-        return null;
+        //Might get here if the top log entry is something else. This doesn't really matter so just return
+        //the empty string.
+        return "";
     }
 }

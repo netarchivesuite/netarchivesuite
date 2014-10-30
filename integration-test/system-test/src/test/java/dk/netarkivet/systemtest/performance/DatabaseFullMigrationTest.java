@@ -22,30 +22,23 @@
  */
 package dk.netarkivet.systemtest.performance;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.jaccept.TestEventManager;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.environment.ApplicationManager;
-import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
-import dk.netarkivet.systemtest.page.PageHelper;
 
 @SuppressWarnings("unused")
 public class DatabaseFullMigrationTest extends StressTest {
+    protected final TestLogger log = new TestLogger(getClass());
 
+    /**
+     * This test reads in backup db and domain data from (e.g.) the production system and runs heavy-duty
+     * functionality (bitpreservation actions and snapshot-job generation) against it.
+     * @throws Exception
+     */
     @Test(groups = {"guitest", "performancetest"})
     public void dbFullMigrationTest() throws Exception {
         addDescription("Test complete backup-database ingest from production produces a functional NAS system.");
@@ -68,6 +61,8 @@ public class DatabaseFullMigrationTest extends StressTest {
         }
     }
 
+    //TODO Currently this test system is left running after it completes so that it can be inspected if there is
+    //a failure. This is no obvious reason to change this.
     //@AfterClass
     public void teardownTestEnvironment() throws Exception {
         if (false) {
@@ -80,7 +75,7 @@ public class DatabaseFullMigrationTest extends StressTest {
         String snapshotTimeDividerString = System.getProperty("stresstest.snapshottimedivider", "1");
         Integer snapshotTimeDivider = Integer.parseInt(snapshotTimeDividerString);
         if (snapshotTimeDivider != 1) {
-            System.out.println("Dividing timescale for snapshot test by a factor " + snapshotTimeDivider + " (stresstest.snapshottimedivider).");
+            log.info("Dividing timescale for snapshot test by a factor {} (stresstest.snapshottimedivider).", snapshotTimeDivider);
         }
         ApplicationManager applicationManager = new ApplicationManager(environmentManager);
         LongRunningJob snapshotJob = new GenerateSnapshotJob(this, environmentManager, driver,
@@ -93,38 +88,6 @@ public class DatabaseFullMigrationTest extends StressTest {
         WebDriver driver = new FirefoxDriver();
         IngestDomainJob ingestDomainJob = new IngestDomainJob(this, driver, 60*3600*1000L);
         ingestDomainJob.run();
-
-       /* String backupEnv = System.getProperty("systemtest.backupenv", "prod");
-        ApplicationManager applicationManager = new ApplicationManager(environmentManager);
-        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = environmentManager.getGuiHost() + ":" + environmentManager.getGuiPort();
-        PageHelper.initialize(driver, baseUrl);
-        applicationManager.waitForGUIToStart(60);
-        addFixture("Opening NAS front page.");
-        File domainsFile = File.createTempFile("domains", "txt");
-        addStep("Getting domain file", "The file should be downloaded");
-        Process p = Runtime.getRuntime().exec("scp test@kb-prod-udv-001.kb.dk:" + backupEnv +"-backup/domain.*.txt " + domainsFile.getAbsolutePath());
-        int returnCode = p.waitFor();
-        assertEquals(returnCode, 0, "Return code from scp command is " + returnCode);
-        assertTrue(domainsFile.length() > 100000L, "Domain file " + domainsFile.getAbsolutePath() + " is too short");
-        addStep("Ingesting domains from " + domainsFile.getAbsolutePath(), "Expect to see domain generation.");
-        driver.findElement(By.linkText("Definitions")).click();
-        driver.findElement(By.linkText("Create Domain")).click();
-        List<WebElement> elements = driver.findElements(By.name("domainlist"));
-        for (WebElement element: elements) {
-            if (element.getAttribute("type").equals("file")) {
-                element.sendKeys(domainsFile.getAbsolutePath());
-            }
-        }
-        elements = driver.findElements(By.tagName("input"));
-        for (WebElement element: elements) {
-            if (element.getAttribute("type").equals("submit") && element.getAttribute("value").equals("Ingest")) {
-                element.submit();
-            }
-        }
-        assertTrue(driver.getPageSource().contains("Ingesting done"), "Page should contain text 'Ingesting done'");
-        TestEventManager.getInstance().addResult("Domains ingested");
-        driver.close();*/
     }
 
     private void doUpdateFileStatus() throws Exception {
@@ -137,12 +100,11 @@ public class DatabaseFullMigrationTest extends StressTest {
     private void doUpdateChecksumAndFileStatus() throws Exception {
         Long stepTimeout = 24*3600*1000L;
         String minStepTimeHoursString = System.getProperty("stresstest.minchecksumtime", "1");
-        System.out.println("Checksum checking must take at least " + minStepTimeHoursString + " (stresstest.minchecksumtime) hours to complete.");
+        log.debug("Checksum checking must take at least {} (stresstest.minchecksumtime) hours to complete.", minStepTimeHoursString);
         Long minStepTime = Integer.parseInt(minStepTimeHoursString)*3600*1000L;
 
         UpdateChecksumJob updateChecksumJob = new UpdateChecksumJob(
                 this,
-                new ApplicationManager(environmentManager),
                 new FirefoxDriver(),
                 60*1000L,
                 300*1000L,
