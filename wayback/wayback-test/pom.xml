@@ -59,17 +59,5 @@
         <directory>tests</directory>
       </testResource>
     </testResources>
-
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <includes>
-            <!-- consider all java files as tests -->
-            <include>**/*Test*</include>
-          </includes>
-        </configuration>
-      </plugin>
-    </plugins>
   </build>
 </project>

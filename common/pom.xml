@@ -16,6 +16,7 @@
   <name>Netarchivesuite - common - parent pom</name>
 
   <modules>
+    <module>test-utils</module>
     <module>common</module>
     <module>common-test</module>
   </modules>

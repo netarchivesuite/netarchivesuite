@@ -52,7 +52,6 @@ public class TestEnvironmentManager {
     /**
      * The following environment definitions are used
      * <ul>
-     * <ul>
      * <li>TIMESTAMP = svn revision
      * <li>GUI_PORT = systemtest.port property or 8071 if undefined
      * <li>MAILRECEIVERS = systemtest.mailreceivers property
@@ -164,6 +163,11 @@ public class TestEnvironmentManager {
      */
     public String runCommand(String server, String command, int commandTimeout, String quotes) throws Exception {
         return runCommand(server, command, commandTimeout, quotes, new int[] {0});
+    }
+
+    public String runCommand(String server, String command, int[] positiveExitCodes)
+               throws Exception {
+        return runCommand(server, command, 1000, "\"", positiveExitCodes);
     }
 
     /**
