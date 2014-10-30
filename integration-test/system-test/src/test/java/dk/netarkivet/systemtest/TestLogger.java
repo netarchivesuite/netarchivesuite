@@ -54,4 +54,12 @@ public class TestLogger {
     public void debug(StringBuffer sb) {
         log.debug(sb + "");
     }
+
+    public void debug(java.lang.String s, java.lang.Object... objects){
+        log.debug(s, objects);
+    }
+
+    public void info(java.lang.String s, java.lang.Object... objects){
+        log.info(s, objects);
+    }
 }
