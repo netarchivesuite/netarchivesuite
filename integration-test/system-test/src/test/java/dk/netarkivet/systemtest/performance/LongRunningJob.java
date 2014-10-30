@@ -24,6 +24,7 @@ public abstract class LongRunningJob {
     Long startUpTime;
     Long maxTime;
     Long waitingInterval;
+    Long minTime;
 
     /**
      *
@@ -38,6 +39,7 @@ public abstract class LongRunningJob {
         this.maxTime = maxTime;
         this.waitingInterval = waitingInterval;
         this.name = name;
+        this.minTime = 0L;
     }
 
     /**
@@ -66,6 +68,10 @@ public abstract class LongRunningJob {
             Thread.sleep(waitingInterval);
         }
         Long runningTime = System.currentTimeMillis() - startTime;
+        if (runningTime < minTime) {
+            fail("Job " + name + " ended after less than the specified minimum time " + timeToString(runningTime) + " (" + timeToString(minTime) + ").");
+            return false;
+        }
         System.out.println("Job " + name + " finished successfully after " + timeToString(runningTime));
         TestEventManager.getInstance().addResult("Job " + name + " finished successfully after " + timeToString(runningTime) + " with result " + getProgress());
         return true;
@@ -92,5 +98,14 @@ public abstract class LongRunningJob {
      */
     public String timeToString(Long time) {
         return time/1000 + "s";
+    }
+
+    /**
+     * Set the minimum time (in milliseconds) that this job must run. This provides a sanity test that the job is
+     * actually functioning as corrected. The default is 0.
+     * @param minTime the minimum time.
+     */
+    public void setMinTime(Long minTime) {
+        this.minTime = minTime;
     }
 }

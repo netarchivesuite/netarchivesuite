@@ -406,7 +406,7 @@ public class DatabaseFullMigrationTest extends StressTest {
                 new ApplicationManager(environmentManager),
                 new FirefoxDriver(),
                 60*1000L,
-                10*1000L,
+                300*1000L,
                 stepTimeout,
                 "Update Checksum Job"
         );
