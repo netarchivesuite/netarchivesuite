@@ -231,4 +231,8 @@ public class StressTest extends ExtendedTestCase {
                 new int[] {0, 1});
     }
 
+    public void addStep(java.lang.String stimuli, java.lang.String expectedResult) { super.addStep(stimuli, expectedResult); }
+
+    public void addFixture(java.lang.String setupDescription) { super.addFixture(setupDescription); }
+
 }
