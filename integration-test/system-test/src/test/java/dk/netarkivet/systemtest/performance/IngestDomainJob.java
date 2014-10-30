@@ -12,14 +12,18 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.environment.ApplicationManager;
 import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
 import dk.netarkivet.systemtest.page.PageHelper;
 
 /**
-* Created by csr on 30/10/14.
+* Job to ingest a domain list from a file on the local machine via the web interface. Although implemented as
+* a LongRunningJob, this actually runs as a single browser operation so the job should already be completed when startJob()
+ * returns.
 */
 class IngestDomainJob extends GenericWebJob {
+    protected final TestLogger log = new TestLogger(getClass());
 
     public IngestDomainJob(StressTest stressTest, WebDriver webDriver, Long maxTime) {
           super(stressTest, stressTest.environmentManager, webDriver, 0L, 60L, maxTime, "Ingest Domain Job");
@@ -33,7 +37,7 @@ class IngestDomainJob extends GenericWebJob {
         String baseUrl = testEnvironmentManager.getGuiHost() + ":" + testEnvironmentManager.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         applicationManager.waitForGUIToStart(60);
-        stressTest.addFixture("Opening NAS front page.");
+        stressTest.addFixture("Opening initial page " + baseUrl);
         File domainsFile = null;
         try {
             domainsFile = File.createTempFile("domains", "txt");

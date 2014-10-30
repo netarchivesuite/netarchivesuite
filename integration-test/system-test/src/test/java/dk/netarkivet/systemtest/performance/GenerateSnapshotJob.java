@@ -11,12 +11,15 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
 
 /**
-* Created by csr on 30/10/14.
+* Job to generate harvest jobs for a snapshot harvest. According to the test description, this should take up to nine
+ * hours for a production load.
 */
 class GenerateSnapshotJob extends GenericWebJob {
+    protected final TestLogger log = new TestLogger(getClass());
 
     String harvestName;
 
@@ -61,29 +64,41 @@ class GenerateSnapshotJob extends GenericWebJob {
         activationForm.findElement(By.linkText("Activate")).click();
     }
 
+    /**
+     * Checks that at least one job has been created for the harvest.
+     * @return true if job creation has started.
+     */
     @Override boolean isStarted() {
-        gotoHarvestJobManagerLog(driver);
+        gotoHarvestJobManagerLog();
         final boolean contains = driver.getPageSource().contains(harvestName);
         assertTrue(contains, "Page should contain harvest name: " + harvestName);
-        int jobsGenerated = extractJobCount(driver, harvestName);
+        int jobsGenerated = extractJobCount();
         final boolean condition = jobsGenerated > 0;
         assertTrue(condition, "Should have generated at least one job by now for " + harvestName);
         return contains && condition;
     }
 
+    /**
+     * Looks for a log statement like "Created 212 jobs for harvest hgj8hy".
+     * @return
+     */
     @Override boolean isFinished() {
-        Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs.*[(](.{6})[)].*", Pattern.DOTALL);
-        gotoHarvestJobManagerLog(driver);
+//        Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs.*[(](.{6})[)].*", Pattern.DOTALL);
+        Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs.*[(]" + harvestName + "[)].*", Pattern.DOTALL);
+        gotoHarvestJobManagerLog();
         Matcher m = finished.matcher(driver.getPageSource());
         return m.matches();
     }
 
     @Override String getProgress() {
-        return "Generated " + extractJobCount(driver, harvestName) + " jobs.";
+        return "Generated " + extractJobCount() + " jobs.";
 
     }
 
-    private void gotoHarvestJobManagerLog(WebDriver driver) {
+    /**
+     * Opens the page Listing  all (ie the last 100) log messages for the HarvestJobManager application.
+     */
+    private void gotoHarvestJobManagerLog() {
         driver.findElement(By.linkText("Systemstate")).click();
         driver.findElement(By.linkText("HarvestJobManagerApplication")).click();
         List<WebElement> showAllLinks = driver.findElements(By.partialLinkText("show all"));
@@ -96,7 +111,11 @@ class GenerateSnapshotJob extends GenericWebJob {
         requiredLink.click();
     }
 
-    private int extractJobCount(WebDriver driver, String harvestName) {
+    /**
+     * Count the number of jobs created for this harvest so far.
+     * @return The number of jobs created so far.
+     */
+    private int extractJobCount() {
         driver.findElement(By.linkText("Harvest status")).click();
         WebElement select = driver.findElement(By.name("JOB_STATUS"));
         List<WebElement> options = driver.findElements(By.tagName("option"));

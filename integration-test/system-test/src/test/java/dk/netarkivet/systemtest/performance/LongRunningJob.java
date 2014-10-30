@@ -4,6 +4,8 @@ import static org.testng.Assert.fail;
 
 import org.jaccept.TestEventManager;
 
+import dk.netarkivet.systemtest.TestLogger;
+
 /**
  * This class represents a generic long-running job with a lifecycle as follows:
  *
@@ -17,8 +19,12 @@ import org.jaccept.TestEventManager;
  *
  * The four numbered steps correspond to the four abstract methods to be implemented.
  * The time intervals a,b,c are the three arguments to the constructor.
+ *
+ * In addition, it is also possible to specify a _minimum_ time for the job to complete as a sanity test.
  */
 public abstract class LongRunningJob {
+
+    protected final TestLogger log = new TestLogger(getClass());
 
     String name;
     Long startUpTime;
@@ -27,7 +33,7 @@ public abstract class LongRunningJob {
     Long minTime;
 
     /**
-     *
+     * Times are in milliseconds:
      * @param startUpTime  The amount of time allowed between the action that starts up the job and the startJob() method
      * being expected to return "true".
      * @param waitingInterval The time to wait between checking for progress.
@@ -45,17 +51,16 @@ public abstract class LongRunningJob {
     /**
      * Run the job.
      * @return True if the job completed successfully.
-     * @throws InterruptedException
      */
-    protected boolean run() throws InterruptedException {
+    protected boolean run() {
         Long startTime = System.currentTimeMillis();
         startJob();
-        Thread.sleep(startUpTime);
+        sleepWait();
         if (!isStarted()) {
             fail("Job " + name + " failed to start.");
             return false;
         } else {
-            System.out.println("Job " + name + " started successfully.");
+            log.debug("Job {} started successfully.", name);
         }
         while (!isFinished()) {
             Long runningTime = System.currentTimeMillis() - startTime;
@@ -63,18 +68,28 @@ public abstract class LongRunningJob {
                 fail("Job " + name + " overran the expected time limit " + timeToString(runningTime) + ".");
                 return false;
             } else {
-                System.out.println("Job progress for " + name + ": " + getProgress() + " after " + timeToString(runningTime) + ".");
+                log.debug("Job progress for {}: {} after {}.", name, getProgress(), timeToString(runningTime));
             }
-            Thread.sleep(waitingInterval);
+            sleepWait();
         }
         Long runningTime = System.currentTimeMillis() - startTime;
         if (runningTime < minTime) {
             fail("Job " + name + " ended after less than the specified minimum time " + timeToString(runningTime) + " (" + timeToString(minTime) + ").");
             return false;
         }
-        System.out.println("Job " + name + " finished successfully after " + timeToString(runningTime));
-        TestEventManager.getInstance().addResult("Job " + name + " finished successfully after " + timeToString(runningTime) + " with result " + getProgress());
+        log.debug("Job {} finished successfully after {}.", name, timeToString(runningTime));
+        TestEventManager.getInstance().addResult(
+                "Job " + name + " finished successfully after " + timeToString(runningTime) + " with result "
+                        + getProgress());
         return true;
+    }
+
+    private void sleepWait() {
+        try {
+            Thread.sleep(waitingInterval);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     abstract void startJob();
@@ -102,7 +117,7 @@ public abstract class LongRunningJob {
 
     /**
      * Set the minimum time (in milliseconds) that this job must run. This provides a sanity test that the job is
-     * actually functioning as corrected. The default is 0.
+     * actually functioning as expected. The default is 0.
      * @param minTime the minimum time.
      */
     public void setMinTime(Long minTime) {
