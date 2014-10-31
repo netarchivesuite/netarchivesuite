@@ -34,11 +34,14 @@ import dk.netarkivet.systemtest.environment.ApplicationManager;
 public class DatabaseFullMigrationTest extends StressTest {
     protected final TestLogger log = new TestLogger(getClass());
 
-    /**
+/*
+    */
+/**
      * This test reads in backup db and domain data from (e.g.) the production system and runs heavy-duty
      * functionality (bitpreservation actions and snapshot-job generation) against it.
      * @throws Exception
-     */
+     *//*
+
     @Test(groups = {"guitest", "performancetest"})
     public void dbFullMigrationTest() throws Exception {
         addDescription("Test complete backup-database ingest from production produces a functional NAS system.");
@@ -47,17 +50,42 @@ public class DatabaseFullMigrationTest extends StressTest {
         doIngestDomains();
         doGenerateSnapshot();
     }
+*/
+
+    @Test
+    public void testUpdateFileStatus() throws Exception {
+        addDescription("Test updating file status.");
+        doUpdateFileStatus();
+    }
+
+    @Test
+    public void testUpdateChecksumStatus() throws Exception {
+        addDescription("Test updating checksum status.");
+        doUpdateChecksumAndFileStatus();
+    }
+
+    @Test
+    public void testIngestDomains() throws Exception {
+        addDescription("Test ingesting domains.");
+        doIngestDomains();
+    }
+
+    @Test
+    public void testGenerateSnapshot() throws Exception {
+        addDescription("Test generating snapshot jobs.");
+        doGenerateSnapshot();
+    }
+
 
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
-        if (true) {
+        if (false) {
             shutdownPreviousTest();
             fetchProductionData();
             deployComponents();
             replaceDatabasesWithProd(false);
             upgradeHarvestDatabase();
             startTestSystem();
-
         }
     }
 

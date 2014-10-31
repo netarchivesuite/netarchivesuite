@@ -22,6 +22,7 @@ class GenerateSnapshotJob extends GenericWebJob {
     protected final TestLogger log = new TestLogger(getClass());
 
     String harvestName;
+    String report;
 
     GenerateSnapshotJob(StressTest stressTest, TestEnvironmentManager testEnvironmentManager, WebDriver driver,
             Long startUpTime,
@@ -84,10 +85,16 @@ class GenerateSnapshotJob extends GenericWebJob {
      */
     @Override boolean isFinished() {
 //        Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs.*[(](.{6})[)].*", Pattern.DOTALL);
-        Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs.*[(]" + harvestName + "[)].*", Pattern.DOTALL);
+        //The [^<>]* in the following regexp ensure that we match within a single html element.
+        Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs([^<>]*)[(]" + harvestName + "[)].*", Pattern.DOTALL);
         gotoHarvestJobManagerLog();
         Matcher m = finished.matcher(driver.getPageSource());
-        return m.matches();
+        if (m.matches()) {
+            report = "Snapshot generation finished with " + m.group(1) + " jobs generated for " + harvestName;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override String getProgress() {
