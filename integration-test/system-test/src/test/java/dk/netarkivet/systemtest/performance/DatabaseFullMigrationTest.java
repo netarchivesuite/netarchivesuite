@@ -79,7 +79,7 @@ public class DatabaseFullMigrationTest extends StressTest {
 
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
-        if (false) {
+        if (true) {
             shutdownPreviousTest();
             fetchProductionData();
             deployComponents();
