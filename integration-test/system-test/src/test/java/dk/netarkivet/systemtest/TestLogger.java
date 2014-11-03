@@ -47,6 +47,10 @@ public class TestLogger {
         log.warn(msg);
     }
 
+    public void warn(java.lang.String s, java.lang.Object... objects){
+        log.warn(s, objects);
+    }
+
     public void info(String msg) {
         log.info(msg);
     }

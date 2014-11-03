@@ -70,13 +70,17 @@ class GenerateSnapshotJob extends GenericWebJob {
      * @return true if job creation has started.
      */
     @Override boolean isStarted() {
-        gotoHarvestJobManagerLog();
+       /* gotoHarvestJobManagerLog();
         final boolean contains = driver.getPageSource().contains(harvestName);
-        assertTrue(contains, "Page should contain harvest name: " + harvestName);
+        if (!contains) {
+            log.warn("Page should contain harvest name {}.", harvestName);
+        }*/
         int jobsGenerated = extractJobCount();
         final boolean condition = jobsGenerated > 0;
-        assertTrue(condition, "Should have generated at least one job by now for " + harvestName);
-        return contains && condition;
+        if (!condition) {
+            log.warn("Should have generated at least one job for {} by now.", harvestName);
+        }
+        return condition;
     }
 
     /**
