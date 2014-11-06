@@ -20,11 +20,9 @@ run. An Aggregation process consists of:
             <li> If the limit isn't reach the intermediate index file is merged into the active index file
                 ('wayback.index')
             </li>
-            <li> Else a new wayback main index file is created, this is set to be the active index file, and the
+            <li> Else the main index file is renamed with a unique name containing the current timestamp and
+                a new wayback main index file is created. This is set to be the active index file, and the
                 intermediate indexes are merged to this file.
-
-                The older main index files are name wayback.index.1, wayback.index.2 ..., where the number indicates
-                sequential older index files.
         </ul>
     </li>
     <li>The original unsorted index files are deleted</li>
