@@ -25,6 +25,8 @@ package dk.netarkivet.wayback.aggregator;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -213,8 +215,7 @@ public class AggregationWorker implements CleanupIF {
     private void handleFinalIndexFileMerge() {
         if (INTERMEDIATE_INDEX_FILE.length() + FINAL_INDEX_FILE.length() > 1024 * Settings
                 .getLong(WaybackSettings.WAYBACK_AGGREGATOR_MAX_MAIN_INDEX_FILE_SIZE)) {
-
-            rolloverFinalIndexFiles();
+             renameFinalIndexFile();
         }
 
         if (!FINAL_INDEX_FILE.exists()) {
@@ -239,7 +240,17 @@ public class AggregationWorker implements CleanupIF {
         } catch (IOException e) {
             log.error("Failed to create new Intermediate Index file", e);
         }
+    }
 
+    /**
+     * Give the FINAL_INDEX_FILE (wayback.index) a unique new name.
+     */
+    private void renameFinalIndexFile() {
+        String timestampString = (new SimpleDateFormat("yyMMdd-HHmm")).format(new Date());
+        String newFileName = "wayback." + timestampString +".cdx";
+        File fileToRename = new File(indexOutputDir, FINAL_INDEX_FILE.getName());
+        File newFile = new File(indexOutputDir, newFileName);
+        fileToRename.renameTo(newFile);
     }
 
     /**
