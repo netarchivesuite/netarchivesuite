@@ -259,35 +259,6 @@ public class AggregationWorker implements CleanupIF {
         fileToRename.renameTo(newFile);
     }
 
-    /**
-     * Copies all the final index files to make room for a new working final index final. This means copying the files
-     * from file_name.N to file_name.N+1
-     */
-    private void rolloverFinalIndexFiles() {
-        if (log.isInfoEnabled()) {
-            log.info("Rolling over the final index files.");
-        }
-
-        // Get a list of all final wayback index files
-        int numberOverFinalIndexFiles = indexOutputDir.list(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.indexOf(FINAL_INDEX_FILE.getName()) != -1;
-            }
-        }).length;
-
-        for (int i = numberOverFinalIndexFiles - 1; i >= 0; i--) {
-            String nameOfFileToRename;
-            if (i == 0) {
-                nameOfFileToRename = FINAL_INDEX_FILE.getName();
-            } else {
-                nameOfFileToRename = FINAL_INDEX_FILE.getName() + "." + i;
-            }
-            File fileToRename = new File(indexOutputDir, nameOfFileToRename);
-            File newName = new File(indexOutputDir, FINAL_INDEX_FILE.getName() + "." + (i + 1));
-            fileToRename.renameTo(newName);
-        }
-    }
-
     @Override
     public void cleanup() {
         FileUtils.removeRecursively(temporaryDir);
