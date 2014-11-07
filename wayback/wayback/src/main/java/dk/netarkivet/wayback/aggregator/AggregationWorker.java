@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -246,10 +247,15 @@ public class AggregationWorker implements CleanupIF {
      * Give the FINAL_INDEX_FILE (wayback.index) a unique new name.
      */
     private void renameFinalIndexFile() {
-        String timestampString = (new SimpleDateFormat("yyMMdd-HHmm")).format(new Date());
+        String timestampString = (new SimpleDateFormat("yyyyMMdd-HHmm")).format(new Date());
         String newFileName = "wayback." + timestampString +".cdx";
         File fileToRename = new File(indexOutputDir, FINAL_INDEX_FILE.getName());
         File newFile = new File(indexOutputDir, newFileName);
+        if (newFile.exists()) {
+            //This should be rare outside tests
+            newFileName = UUID.randomUUID().toString() + "." + newFileName;
+            newFile = new File(indexOutputDir, newFileName);
+        }
         fileToRename.renameTo(newFile);
     }
 
