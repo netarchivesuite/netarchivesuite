@@ -63,6 +63,7 @@ class GenerateSnapshotJob extends GenericWebJob {
             }
         }
         activationForm.findElement(By.linkText("Activate")).click();
+
     }
 
     /**
@@ -70,17 +71,12 @@ class GenerateSnapshotJob extends GenericWebJob {
      * @return true if job creation has started.
      */
     @Override boolean isStarted() {
-       /* gotoHarvestJobManagerLog();
-        final boolean contains = driver.getPageSource().contains(harvestName);
-        if (!contains) {
-            log.warn("Page should contain harvest name {}.", harvestName);
-        }*/
-        int jobsGenerated = extractJobCount();
-        final boolean condition = jobsGenerated > 0;
-        if (!condition) {
+        int numberOfJobsGenerated = extractJobCount();
+        final boolean atLeastOneJobGenerated = numberOfJobsGenerated > 0;
+        if (!atLeastOneJobGenerated) {
             log.warn("Should have generated at least one job for {} by now.", harvestName);
         }
-        return condition;
+        return atLeastOneJobGenerated;
     }
 
     /**
@@ -88,7 +84,6 @@ class GenerateSnapshotJob extends GenericWebJob {
      * @return
      */
     @Override boolean isFinished() {
-//        Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs.*[(](.{6})[)].*", Pattern.DOTALL);
         //The [^<>]* in the following regexp ensure that we match within a single html element.
         Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs([^<>]*)[(]" + harvestName + "[)].*", Pattern.DOTALL);
         gotoHarvestJobManagerLog();

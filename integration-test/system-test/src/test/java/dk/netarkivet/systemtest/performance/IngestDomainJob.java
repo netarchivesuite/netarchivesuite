@@ -1,5 +1,7 @@
 package dk.netarkivet.systemtest.performance;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -8,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.hamcrest.MatcherAssert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -53,7 +56,7 @@ class IngestDomainJob extends GenericWebJob {
             throw new RuntimeException(e);
         }
         assertEquals(returnCode, 0, "Return code from scp command is " + returnCode);
-        assertTrue(domainsFile.length() > 100000L, "Domain file " + domainsFile.getAbsolutePath() + " is too short");
+        assertThat("Domain file " + domainsFile.getAbsolutePath() + " is too short", domainsFile.length(), greaterThan(10000L));
         stressTest.addStep("Ingesting domains from " + domainsFile.getAbsolutePath(),
                 "Expect to see domain generation.");
         driver.findElement(By.linkText("Definitions")).click();

@@ -62,11 +62,12 @@ class UpdateChecksumJob extends GenericWebJob {
             if (matcher.matches()) {
                 assertEquals(total, matcher.group(1), "Expect the number of entries to match before and after.");
                 return true;
+            } else {
+                return false;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return false;
     }
 
     @Override String getProgress() {

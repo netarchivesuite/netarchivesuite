@@ -27,6 +27,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.environment.ApplicationManager;
 
@@ -34,68 +35,49 @@ import dk.netarkivet.systemtest.environment.ApplicationManager;
 public class DatabaseFullMigrationTest extends StressTest {
     protected final TestLogger log = new TestLogger(getClass());
 
-/*
-    */
-/**
-     * This test reads in backup db and domain data from (e.g.) the production system and runs heavy-duty
-     * functionality (bitpreservation actions and snapshot-job generation) against it.
-     * @throws Exception
-     *//*
-
-    @Test(groups = {"guitest", "performancetest"})
-    public void dbFullMigrationTest() throws Exception {
-        addDescription("Test complete backup-database ingest from production produces a functional NAS system.");
-        doUpdateFileStatus();
-        doUpdateChecksumAndFileStatus();
-        doIngestDomains();
-        doGenerateSnapshot();
-    }
-*/
-
+    /**
+     *
+     */
     @Test
     public void testUpdateFileStatus() throws Exception {
-        addDescription("Test updating file status.");
+        addDescription("Test updating the file status for all files in one bitarchive replica. This procedure takes around one hour to run for " +
+                "a full production load. Because there are no actual files present in the test system, the test will eventually show that all files are " +
+                "missing in this replica.");
         doUpdateFileStatus();
     }
 
     @Test
     public void testUpdateChecksumStatus() throws Exception {
-        addDescription("Test updating checksum status.");
+        addDescription("Test updating checksum status for all files in one checksum-replica. This takes about four hours to run in a full production load.");
         doUpdateChecksumAndFileStatus();
     }
 
     @Test
     public void testIngestDomains() throws Exception {
-        addDescription("Test ingesting domains.");
+        addDescription("Test ingesting domains from a textual list of about 2 million domains. This is not a particularly heavy" +
+                " operation but tests some browser functionality which is not easily testable elsewhere - specifically that the 'keep-alive' " +
+                "functionality allows the browser to follow the complete upload/ingest of all the domains without timing out.");
         doIngestDomains();
     }
 
     @Test
     public void testGenerateSnapshot() throws Exception {
-        addDescription("Test generating snapshot jobs.");
+        addDescription("Test generating snapshot jobs with a maximum number of bytes per domain of 100 000. This takes about ten hours to complete. The" +
+                " number of jobs generated is determined roughly by the parameter settings.harvester.scheduler.jobGen.domainConfigSubsetSize which is" +
+                " set to 10000 by default. Ie there is a maximum of 10000 domains per job, although there are also a small number of jobs with much fewer domains" +
+                " where these have specialised configurations.");
         doGenerateSnapshot();
     }
 
 
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
-        if (true) {
             shutdownPreviousTest();
             fetchProductionData();
             deployComponents();
             replaceDatabasesWithProd(false);
             upgradeHarvestDatabase();
             startTestSystem();
-        }
-    }
-
-    //TODO Currently this test system is left running after it completes so that it can be inspected if there is
-    //a failure. This is no obvious reason to change this.
-    //@AfterClass
-    public void teardownTestEnvironment() throws Exception {
-        if (false) {
-            shutdownTest();
-        }
     }
 
     private void doGenerateSnapshot() throws InterruptedException {
