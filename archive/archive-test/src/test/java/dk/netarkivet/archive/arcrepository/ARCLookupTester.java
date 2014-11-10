@@ -67,12 +67,10 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.arc.ARCKey;
 import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-/**
- * Tests of the ARCLookup class.
- */
 @SuppressWarnings({"unchecked"})
 public class ARCLookupTester {
     private ViewerArcRepositoryClient realArcRepos;
@@ -127,43 +125,25 @@ public class ARCLookupTester {
         rs.tearDown();
     }
 
+    @Test(expected = ArgumentNotValid.class)
+    public void testSetNullIndex() throws Exception {
+        ArcRepositoryClient arcrep = new TestArcRepositoryClient();
+        ARCLookup lookup = new ARCLookup(arcrep);
+        lookup.setIndex(null);
+    }
+
+    @Test(expected = ArgumentNotValid.class)
+    public void testSetInvalidIndex() throws Exception {
+        ArcRepositoryClient arcrep = new TestArcRepositoryClient();
+        ARCLookup lookup = new ARCLookup(arcrep);
+        lookup.setIndex(TestInfo.TMP_FILE);
+    }
+
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testSetIndex() throws Exception {
         ArcRepositoryClient arcrep = new TestArcRepositoryClient();
         ARCLookup lookup = new ARCLookup(arcrep);
-
-        try {
-            lookup.setIndex(null);
-            fail("Should die on null index");
-        } catch (ArgumentNotValid e) {
-            // expected
-        }
-
-        // TODO Ok retardos, dont use logging files for testing non logging stuff!!
-        /*
-         * try { lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
-         * fail("Should die on non-dir index"); } catch (ArgumentNotValid e) {
-         * StringAsserts.assertStringContains("Should mention non-directory",
-         * dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage()); }
-         * 
-         * // Test that we don't close the Lucene index twice. // Try with a file that fails. try {
-         * lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
-         * fail("Should die on non-dir index"); } catch (ArgumentNotValid e) {
-         * StringAsserts.assertStringContains("Should mention non-directory",
-         * dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage()); }
-         * 
-         * // No getting a "can't close" error here. try {
-         * lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE);
-         * fail("Should die on non-dir index"); } catch (ArgumentNotValid e) {
-         * StringAsserts.assertStringContains("Should mention non-directory",
-         * dk.netarkivet.archive.distribute.arcrepository.TestInfo.LOG_FILE.getName(), e.getMessage()); }
-         */
-
         lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
-        // This forces us to close the previous index before setting the new
-        // index
         lookup.setIndex(dk.netarkivet.archive.distribute.arcrepository.TestInfo.INDEX_DIR_2_3);
     }
 
@@ -198,8 +178,6 @@ public class ARCLookupTester {
 
     /**
      * Test that when a uri with escaped characters is looked up, the uri is urldecoded first.
-     *
-     * @throws Exception
      */
     @Test
     public void testLookupWithCurlyBrackets() throws Exception {
@@ -321,6 +299,7 @@ public class ARCLookupTester {
                 return null;
             }
         }
+
     }
 
     private byte[] readFully(InputStream is) throws IOException {
