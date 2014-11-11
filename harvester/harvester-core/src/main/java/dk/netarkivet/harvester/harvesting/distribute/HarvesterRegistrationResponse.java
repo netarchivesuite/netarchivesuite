@@ -29,7 +29,7 @@ import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 
 /**
- * Message sent by the {@link HarvesterStatusReceiver} after processing a {@link HarvesterRegistrationRequest} message.
+ * Message sent by the HarvesterStatusReceiver after processing a {@link HarvesterRegistrationRequest} message.
  * It notifies crawlers whether a given harvest channel effectively matches a {@link HarvestChannel} defined in the
  * harvest database.
  */

@@ -30,7 +30,7 @@ import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 
 /**
- * The {@link HarvestControllerServer} periodically sends {@link HarvesterReadyMessage}s to the {@link JobDispatcher} to
+ * The HarvestControllerServer periodically sends {@link HarvesterReadyMessage}s to the obDispatcher to
  * notify it whether it is available for processing a job or already processing one.
  */
 @SuppressWarnings({"serial"})

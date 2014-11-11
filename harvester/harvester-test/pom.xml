@@ -45,11 +45,6 @@
       <version>${project.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>harvest-controller</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 
     <!-- Test dependencies. -->
 

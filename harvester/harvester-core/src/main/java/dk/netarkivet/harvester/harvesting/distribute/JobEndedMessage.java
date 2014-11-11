@@ -32,7 +32,7 @@ import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
- * This message is sent by the {@link HarvestSchedulerMonitorServer} to the {@link HarvestMonitor} to notify it that a
+ * This message is sent by the HarvestSchedulerMonitorServer to the {@link HarvestMonitor} to notify it that a
  * job ended and should not be monitored anymore, and that any resource used to monitor this job should be freed.
  */
 @SuppressWarnings({"serial"})

@@ -35,11 +35,11 @@ import dk.netarkivet.common.utils.I18n;
  * <p>
  * Harvest channels names must only contain alphanumeric characters, the constraint is enforced at creation time.
  * <p>
- * {@link HarvestDefinition}s are mapped to a {@link HarvestChannel}, and {@link HarvestController}s listen to jobs sent
+ * {@link HarvestDefinition}s are mapped to a {@link HarvestChannel}, and HarvestControllers listen to jobs sent
  * on a specific channel.
  * <p>
  * Harvest channels are stored in the harvest database, as well as mappings to {@link HarvestDefinition}s and
- * {@link HarvestController}s through two association tables.
+ * HarvestControllers through two association tables.
  * <p>
  * There must be exactly one channel defined as default for every type of job (snapshot and focused). This constraint
  * will be enforced by the DAO.
@@ -196,7 +196,7 @@ public class HarvestChannel implements Serializable {
     }
 
     /**
-     * Renders a localized description for the {@link #SNAPSHOT} singleton.
+     * Renders a localized description for the singleton.
      *
      * @param context
      * @return a localized description.

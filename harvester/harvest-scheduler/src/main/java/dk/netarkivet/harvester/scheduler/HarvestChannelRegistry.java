@@ -36,7 +36,7 @@ import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationReques
 
 /**
  * Keeps track of the number of {@link HarvesterRegistrationRequest}s that have been received per channel, which allows
- * to know if a {@link HarvestController}s are registered to a given {@link HarvestChannel}.
+ * to know if a HarvestControllers are registered to a given {@link HarvestChannel}.
  */
 public class HarvestChannelRegistry {
 
