@@ -314,29 +314,12 @@ public class Settings {
     }
 
     /**
-     * Reload the settings if they have changed on disk. This behaves exactly as forceReload, except it only reloads if
-     * the data of the file is different than last time it was loaded.
-     *
-     * @throws IOFailure if settings cannot be loaded
-     */
-    public static synchronized void conditionalReload() {
-        List<File> settingsFiles = getSettingsFiles();
-        for (File settingsFile : settingsFiles) {
-            if (settingsFile.lastModified() > lastModified) {
-                reload();
-                return;
-            }
-        }
-    }
-
-    /**
      * Reloads the settings. This will reload the settings from disk, and forget all settings that were set with
      * {@link #set}
      * <p>
      * The field {@link #lastModified} is updated to timestamp of the settings file that has been changed most recently.
      *
      * @throws IOFailure if settings cannot be loaded
-     * @see #conditionalReload()
      */
     public static synchronized void reload() {
         lastModified = 0;
