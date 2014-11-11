@@ -127,7 +127,7 @@ public class JobDispatcherTest {
     @Test
     public void testSubmitNewJobsMakesDuplicateReductionInfo() throws DocumentException {
         prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
-        Document doc = OrderXmlBuilder.create().enableDeduplication().getOrderXml();
+        Document doc = OrderXmlBuilder.create().enableDeduplication().getDoc();
         when(jobMock.getOrderXMLdoc()).thenReturn(doc);
         List<Long> jobIDsForDuplicateReduction = Arrays.asList(new Long[] {1L});
         when(jobDAO.getJobIDsForDuplicateReduction(jobMock.getJobID())).thenReturn(jobIDsForDuplicateReduction);

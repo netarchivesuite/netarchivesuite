@@ -26,7 +26,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>harvester</artifactId>
+      <artifactId>harvester-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

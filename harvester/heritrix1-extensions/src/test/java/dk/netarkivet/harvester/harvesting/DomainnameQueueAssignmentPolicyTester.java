@@ -24,19 +24,13 @@ package dk.netarkivet.harvester.harvesting;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.net.UURI;
 import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-/**
- * Tests of the DomainnameQueueAssignmentPolicy.
- */
 @SuppressWarnings({"serial"})
 public class DomainnameQueueAssignmentPolicyTester {
     /**
@@ -80,13 +74,8 @@ public class DomainnameQueueAssignmentPolicyTester {
 
     @Test
     public void testTopLevelDomains() throws URIException {
-        ReloadSettings rs = new ReloadSettings(new File(TestInfo.ORIGINALS_DIR, "topLevelDomains_settings.xml"));
-        rs.setUp();
-
         assertEquals("free.fr", getDomainName("http://test.free.fr"));
         assertEquals("test.asso.fr", getDomainName("http://test.asso.fr"));
-
-        rs.tearDown();
     }
 
     /**

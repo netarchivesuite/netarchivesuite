@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.test.utils;
+package dk.netarkivet.common.xml;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

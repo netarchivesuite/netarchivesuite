@@ -24,32 +24,16 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
-import java.net.URL;
 
-/**
- * Testdata for this package.
- */
+import dk.netarkivet.testutils.TestResourceUtils;
+
 public class TestInfo {
-
-	protected static ClassLoader clsLdr = TestInfo.class.getClassLoader();
-
-	public static final File getTestResourceFile(String fname) {
-	    URL url = clsLdr.getResource(fname);
-        String path = url.getFile();
-        path = path.replaceAll("%5b", "[");
-        path = path.replaceAll("%5d", "]");
-	    File file = new File(path);
-	    return file;
-	}
-
-    protected static final File BASEDIR = getTestResourceFile("dk/netarkivet/harvester/harvesting/data");
-    protected static final File DATA_DIR = getTestResourceFile("dk/netarkivet/harvester/harvesting/distribute/data/");
+    protected static final String BASEDIR = TestResourceUtils.getFilePath(
+            "dk/netarkivet/harvester/harvesting/data");
+    protected static final String DATA_DIR = TestResourceUtils.getFilePath(
+            "dk/netarkivet/harvester/harvesting/distribute/data/");
 
     protected static final File ORIGINALS_DIR = new File(BASEDIR, "originals");
     protected static final File WARCPROCESSORFILES_DIR = new File(BASEDIR, "warcprocessortestdata");
     protected static final File WORKING_DIR = new File(BASEDIR, "working");
-
-    protected static final String HarvestInfofilename = "harvestInfo.xml";
-    protected static final File TEST_CRAWL_DIR = getTestResourceFile("dk/netarkivet/harvester/harvesting/data/crawldir");
-
 }

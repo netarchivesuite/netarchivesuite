@@ -22,6 +22,7 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -35,7 +36,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -57,7 +57,6 @@ import dk.netarkivet.testutils.TestFileUtils;
 
 public class JobTest {
     private static final HarvestChannel FOCUSED_CHANNEL = new HarvestChannel("FOCUSED", false, true, "");
-    private static final HarvestChannel SNAPSHOT_CHANNEL = new HarvestChannel("SNAPSHOT", true, true, "");
 
     private LogbackRecorder logRecorder;
 
@@ -96,10 +95,10 @@ public class JobTest {
         String seed1 = "http://www.pølse.dk/enfil";
         String seed2 = "http://www.pølse.dk/enpølse";
         String seed3 ="http://www.uden.dk/enpølse";
-        SeedList seedList = new SeedList("pølse.dk", Arrays.asList(new String[] {seed1, seed2, seed3}));
+        SeedList seedList = new SeedList("pølse.dk", asList(new String[] {seed1, seed2, seed3}));
         DomainConfiguration domainConfiguration = new DomainConfiguration(
                 "pølse.dk", "pølse.dk", new DomainHistory(),
-                new ArrayList<String>(), Arrays.asList(new SeedList[] {seedList}), new ArrayList<Password>());
+                new ArrayList<>(), asList(new SeedList[] {seedList}), new ArrayList<>());
         Job job = createDefaultJob(domainConfiguration);
 
         Set<String> internationalizedSeeds = Sets.newSet(
@@ -207,8 +206,7 @@ public class JobTest {
     public void testExceedLimitsInInitialConfiguration() {
         DomainConfiguration domainConfiguration = DomainConfigurationTest.createDefaultDomainConfiguration();
 
-        HarvestInfo hi = new HarvestInfo(Long.valueOf(1L), domainConfiguration.getDomainName(),
-                domainConfiguration.getName(),
+        HarvestInfo hi = new HarvestInfo(1L, domainConfiguration.getDomainName(), domainConfiguration.getName(),
                 new Date(), 10000L, 10000L, StopReason.DOWNLOAD_COMPLETE);
         domainConfiguration.getDomainhistory().addHarvestInfo(hi);
 
@@ -233,10 +231,6 @@ public class JobTest {
      */
     @Test
     public void testStatusFields() {
-        assertTrue("Error implementing status codes", JobStatus.NEW != JobStatus.STARTED);
-        assertTrue("Error implementing status codes", JobStatus.NEW != JobStatus.SUBMITTED);
-        assertTrue("Error implementing status codes", JobStatus.NEW != JobStatus.DONE);
-        assertTrue("Error implementing status codes", JobStatus.NEW != JobStatus.FAILED);
         JobStatus s = JobStatus.NEW;
         assertEquals("Error implementing status code names for NEW", s, JobStatus.valueOf(s.name()));
         assertEquals("Error implementing status ordinal for NEW", s, JobStatus.fromOrdinal(s.ordinal()));
@@ -262,7 +256,7 @@ public class JobTest {
         Long nullHarvestID = null;
         new Job(nullHarvestID,
                 DomainConfigurationTest.createDefaultDomainConfiguration(),
-                OrderXmlBuilder.createDefault().getOrderXml(),
+                OrderXmlBuilder.createDefault().getDoc(),
                 FOCUSED_CHANNEL, -1, -1, -1, 1);
     }
 
@@ -271,7 +265,7 @@ public class JobTest {
         Long negativHarvestID = -1L;
         new Job(negativHarvestID,
                 DomainConfigurationTest.createDefaultDomainConfiguration(),
-                OrderXmlBuilder.createDefault().getOrderXml(),
+                OrderXmlBuilder.createDefault().getDoc(),
                 FOCUSED_CHANNEL, -1, -1, -1, 1);
     }
 
@@ -280,7 +274,7 @@ public class JobTest {
         DomainConfiguration nullDomainConfiguration = null;
         new Job(1L,
                 nullDomainConfiguration,
-                OrderXmlBuilder.createDefault().getOrderXml(),
+                OrderXmlBuilder.createDefault().getDoc(),
                 FOCUSED_CHANNEL, -1, -1, -1, 1);
     }
 
@@ -289,7 +283,7 @@ public class JobTest {
         HarvestChannel nullHarvestChannel = null;
         new Job(1L,
                 DomainConfigurationTest.createDefaultDomainConfiguration(),
-                OrderXmlBuilder.createDefault().getOrderXml(),
+                OrderXmlBuilder.createDefault().getDoc(),
                 nullHarvestChannel, -1, -1, -1, 1);
     }
 
@@ -354,7 +348,7 @@ public class JobTest {
         new Job(
                 harvestId,
                 DomainConfigurationTest.createDefaultDomainConfiguration(),
-                OrderXmlBuilder.createDefault().getOrderXml(),
+                OrderXmlBuilder.createDefault().getDoc(),
                 FOCUSED_CHANNEL,
                 forceMaxObjectsPerDomain,
                 forceMaxBytesPerDomain,
@@ -370,7 +364,7 @@ public class JobTest {
         new Job(
                 harvestId,
                 DomainConfigurationTest.createDefaultDomainConfiguration(),
-                OrderXmlBuilder.createDefault().getOrderXml(),
+                OrderXmlBuilder.createDefault().getDoc(),
                 FOCUSED_CHANNEL,
                 forceMaxObjectsPerDomain,
                 forceMaxBytesPerDomain,
@@ -506,7 +500,7 @@ public class JobTest {
         long forceMaxObjectsPerDomain = -1, forceMaxBytesPerDomain = -1, forceMaxJobRunningTime = -1;
         Job j = new Job(harvestId,
                 domainConfiguration,
-                OrderXmlBuilder.createDefault().getOrderXml(),
+                OrderXmlBuilder.createDefault().getDoc(),
                 FOCUSED_CHANNEL,
                 forceMaxObjectsPerDomain,
                 forceMaxBytesPerDomain,
@@ -567,7 +561,7 @@ public class JobTest {
         return new Job(
                 harvestId,
                 DomainConfigurationTest.createDefaultDomainConfiguration(),
-                OrderXmlBuilder.createDefault().getOrderXml(),
+                OrderXmlBuilder.createDefault().getDoc(),
                 FOCUSED_CHANNEL,
                 forceMaxObjectsPerDomain,
                 forceMaxBytesPerDomain,
@@ -582,7 +576,7 @@ public class JobTest {
         return new Job(
                 harvestId,
                 domainConfiguration,
-                OrderXmlBuilder.createDefault().getOrderXml(),
+                OrderXmlBuilder.createDefault().getDoc(),
                 FOCUSED_CHANNEL,
                 forceMaxObjectsPerDomain,
                 forceMaxBytesPerDomain,

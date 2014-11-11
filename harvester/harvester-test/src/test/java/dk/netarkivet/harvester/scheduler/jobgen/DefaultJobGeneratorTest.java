@@ -46,7 +46,7 @@ public class DefaultJobGeneratorTest extends AbstractJobGeneratorTest {
 
         // Make a job with limit of 2000000 defined by harvest definition
         domainConfiguration.setMaxBytes(5000000);
-        job = new Job(TestInfo.HARVESTID, domainConfiguration, OrderXmlBuilder.createDefault().getOrderXml(),
+        job = new Job(TestInfo.HARVESTID, domainConfiguration, OrderXmlBuilder.createDefault().getDoc(),
                 FOCUSED_CHANNEL, -1L, 2000000, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
 
         anotherConfig.setMaxBytes(2000000);
@@ -60,7 +60,7 @@ public class DefaultJobGeneratorTest extends AbstractJobGeneratorTest {
 
         // Make a job with limit of 2000000 defined by harvest definition
         domainConfiguration.setMaxBytes(2000000);
-        job = new Job(TestInfo.HARVESTID, domainConfiguration, OrderXmlBuilder.createDefault().getOrderXml(),
+        job = new Job(TestInfo.HARVESTID, domainConfiguration, OrderXmlBuilder.createDefault().getDoc(),
                 SNAPSHOT_CHANNEL, -1L, 5000000, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
 
         anotherConfig.setMaxBytes(2000000);

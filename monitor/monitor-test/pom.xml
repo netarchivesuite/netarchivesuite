@@ -23,7 +23,7 @@
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
-      <artifactId>harvester</artifactId>
+      <artifactId>harvester-core</artifactId>
       <version>5.0-SNAPSHOT</version>
     </dependency>
 

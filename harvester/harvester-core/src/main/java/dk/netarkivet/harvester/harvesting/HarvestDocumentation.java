@@ -114,12 +114,12 @@ public class HarvestDocumentation {
         List<File> filesAddedAndNowDeletable = null;
 
         try {
-            MetadataFileWriter mdfw = null;
+            MetadataFileWriter mdfw;
             mdfw = ingestables.getMetadataWriter();
 
             if (mdfw instanceof MetadataFileWriterWarc) {
                 // add warc-info record
-                ANVLRecord infoPayload = new ANVLRecord(3);
+                ANVLRecord infoPayload = new ANVLRecord();
                 infoPayload.addLabelValue("software",
                         "NetarchiveSuite/" + dk.netarkivet.common.Constants.getVersionString() + "/"
                                 + dk.netarkivet.common.Constants.PROJECT_WEBSITE);
@@ -283,8 +283,7 @@ public class HarvestDocumentation {
      *
      * @param harvestID The number of the harvest that generated the ARC file.
      * @param jobID The number of the job that generated the ARC file.
-     * @param timeStamp The timestamp in the name of the ARC file.
-     * @param serialNumber The serial no. in the name of the ARC file.
+     * @param filename The name of the ARC file.
      * @return An appropriate list of assigned parameters, separated by the "&" character.
      */
     private static String getCDXURIQuery(String harvestID, String jobID, String filename) {
@@ -355,7 +354,7 @@ public class HarvestDocumentation {
      * @param jobID the given job Id
      * @param harvestID the id for the harvestdefinition, which created this job
      * @param crawlDir the directory where the crawljob took place
-     * @param writer an MetadaFileWriter used to store the harvest configuration, and harvest logs and reports.
+     * @param mdfw an MetadaFileWriter used to store the harvest configuration, and harvest logs and reports.
      * @param heritrixVersion the heritrix version used by the harvest.
      * @return a list of files added to the archive file.
      * @throws ArgumentNotValid If null arguments occur

@@ -30,23 +30,15 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CandidateURI;
-import org.archive.crawler.datamodel.CrawlURI;
 import org.archive.crawler.event.CrawlStatusListener;
 import org.archive.crawler.framework.CrawlController;
-import org.archive.crawler.framework.Frontier;
-import org.archive.crawler.framework.FrontierMarker;
-import org.archive.crawler.framework.exceptions.EndedException;
-import org.archive.crawler.framework.exceptions.FatalConfigurationException;
 import org.archive.crawler.framework.exceptions.InitializationException;
-import org.archive.crawler.framework.exceptions.InvalidFrontierMarkerException;
-import org.archive.crawler.frontier.FrontierJournal;
 import org.archive.crawler.frontier.HostnameQueueAssignmentPolicy;
 import org.archive.crawler.settings.SettingsHandler;
 import org.archive.net.UURI;
@@ -66,7 +58,6 @@ import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.harvesting.controller.DirectHeritrixController;
-import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
 import dk.netarkivet.testutils.XmlAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
@@ -450,8 +441,7 @@ public class HeritrixLauncherTester {
      * * FIXME Fails in Hudson
      */
     @Test
-    @Ignore("fails in hudson")
-    public void failingTestFailOnCleanup() {
+    public void testFailOnCleanup() {
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailingTestController");
         HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
@@ -470,12 +460,9 @@ public class HeritrixLauncherTester {
      * A failure to communicate with heritrix during the crawl should be logged but not be in any way fatal to the
      * crawl.
      * <p>
-     * <p>
-     * * FIXME Fails in Hudson
      */
     @Test
-    @Ignore("fails in hudson")
-    public void failingTestFailDuringCrawl() {
+    public void testFailDuringCrawl() {
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailDuringCrawlTestController");
         HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
@@ -483,138 +470,6 @@ public class HeritrixLauncherTester {
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
 
-    }
-
-    /**
-     * A test heritrixController which starts and stops a crawl cleanly but fails during the crawl itself.
-     */
-    public static class FailDuringCrawlTestController extends FailingTestController {
-
-        private int isEndedCalls = 0;
-
-        public FailDuringCrawlTestController(HeritrixFiles files) {
-            super(files);
-        }
-
-        public void requestCrawlStop(String reason) {
-
-        }
-
-        public void initialize() {
-
-        }
-
-        public void requestCrawlStart() throws IOFailure {
-
-        }
-
-        public boolean atFinish() {
-            return false;
-        }
-
-        public void beginCrawlStop() {
-        }
-
-        public void cleanup() {
-
-        }
-
-        public boolean crawlIsEnded() {
-            if (isEndedCalls >= 3) {
-                return true;
-            } else {
-                isEndedCalls++;
-                throw new IOFailure("Failure in crawlIsEnded");
-            }
-        }
-    }
-
-    /**
-     * A Heritrix Controller which fails on every call.
-     */
-    public static class FailingTestController implements HeritrixController {
-
-        public FailingTestController(HeritrixFiles files) {
-        }
-
-        ;
-
-        public void initialize() {
-            // TODO: implement method
-            throw new IOFailure("Failed to initialize");
-        }
-
-        public void requestCrawlStart() throws IOFailure {
-            // TODO: implement method
-            throw new IOFailure("Not implemented");
-        }
-
-        public void beginCrawlStop() {
-            // TODO: implement method
-            throw new IOFailure("Not implemented");
-        }
-
-        public void requestCrawlStop(String reason) {
-            // TODO: implement method
-            throw new IOFailure("Not implemented");
-        }
-
-        public boolean atFinish() {
-            // TODO: implement method
-            throw new IOFailure("Not implemented");
-        }
-
-        public boolean crawlIsEnded() {
-            // TODO: implement method
-            throw new IOFailure("Not implemented");
-        }
-
-        public int getActiveToeCount() {
-            // TODO: implement method
-            throw new IOFailure("Not implemented");
-        }
-
-        public long getQueuedUriCount() {
-            // TODO: implement method
-            throw new IOFailure("Not implemented");
-        }
-
-        public int getCurrentProcessedKBPerSec() {
-            // TODO: implement method
-            throw new IOFailure("Not implemented");
-        }
-
-        public String getProgressStats() {
-            // TODO: implement method
-            throw new IOFailure("Not implemented");
-        }
-
-        public boolean isPaused() {
-            // TODO: implement method
-            throw new IOFailure("Not implemented");
-        }
-
-        public void cleanup() {
-            throw new IOFailure("cleanup failure");
-        }
-
-        public String getHarvestInformation() {
-            // TODO: implement method
-            throw new IOFailure("Not implemented");
-        }
-    }
-
-    /**
-     * A heritrix controller which fails on everything except cleanup
-     */
-    public static class SucceedOnCleanupTestController extends FailingTestController {
-        public SucceedOnCleanupTestController(HeritrixFiles files) {
-            super(files);
-        }
-
-        public void cleanup() {
-            return;
-        }
     }
 
     /**
@@ -640,6 +495,7 @@ public class HeritrixLauncherTester {
          * @param cl a class implementing the CrawlStatusListener interface
          * @see CrawlStatusListener
          */
+        @Override
         public void addCrawlStatusListener(CrawlStatusListener cl) {
             synchronized (this.listeners) {
                 this.listeners.add(cl);
@@ -649,6 +505,7 @@ public class HeritrixLauncherTester {
         /**
          * Operator requested crawl begin
          */
+        @Override
         public void requestCrawlStart() {
             new Thread() {
                 public void run() {
@@ -662,176 +519,9 @@ public class HeritrixLauncherTester {
 
         /**
          * Starting from nothing, set up CrawlController and associated classes to be ready for a first crawl.
-         *
-         * @param sH
-         * @throws InitializationException
          */
-        public void initialize(SettingsHandler sH) throws InitializationException {
-
-        }
-
-        public void requestCrawlStop(String test) {
-
-        }
-
-        public Frontier getFrontier() {
-            return new TestFrontier();
-        }
-
-        /**
-         * Dummy frontier used by TestCrawlController
-         */
-        @SuppressWarnings("rawtypes")
-        class TestFrontier implements Frontier {
-
-            public void initialize(CrawlController crawlController) throws FatalConfigurationException, IOException {
-            }
-
-            public CrawlURI next() throws InterruptedException, EndedException {
-                return null;
-            }
-
-            public boolean isEmpty() {
-                return false;
-            }
-
-            public void schedule(CandidateURI candidateURI) {
-            }
-
-            public void finished(CrawlURI crawlURI) {
-            }
-
-            public long discoveredUriCount() {
-                return 0;
-            }
-
-            public long queuedUriCount() {
-                return 0;
-            }
-
-            public long finishedUriCount() {
-                return 0;
-            }
-
-            public long succeededFetchCount() {
-                return 0;
-            }
-
-            public long failedFetchCount() {
-                return 0;
-            }
-
-            public long disregardedUriCount() {
-                return 0;
-            }
-
-            public long totalBytesWritten() {
-                return 0;
-            }
-
-            public String oneLineReport() {
-                return null;
-            }
-
-            public String report() {
-                return null;
-            }
-
-            public void importRecoverLog(String s, boolean b) throws IOException {
-            }
-
-            public FrontierMarker getInitialMarker(String s, boolean b) {
-                return null;
-            }
-
-            public ArrayList getURIsList(FrontierMarker frontierMarker, int i, boolean b)
-                    throws InvalidFrontierMarkerException {
-                return null;
-            }
-
-            public long deleteURIs(String s) {
-                return 0;
-            }
-
-            public void deleted(CrawlURI crawlURI) {
-            }
-
-            public void considerIncluded(UURI uuri) {
-            }
-
-            public void kickUpdate() {
-            }
-
-            public void pause() {
-            }
-
-            public void unpause() {
-            }
-
-            public void terminate() {
-            }
-
-            public FrontierJournal getFrontierJournal() {
-                return null;
-            }
-
-            public String getClassKey(CandidateURI candidateURI) {
-                return null;
-            }
-
-            public void loadSeeds() {
-            }
-
-            public String[] getReports() {
-                return new String[0];
-            }
-
-            // public void reportTo(String s, PrintWriter printWriter) throws IOException {}
-            public void reportTo(String s, PrintWriter printWriter) {
-            }
-
-            public void reportTo(PrintWriter printWriter) throws IOException {
-            }
-
-            public void singleLineReportTo(PrintWriter printWriter) throws IOException {
-            }
-
-            public String singleLineReport() {
-                return null;
-            }
-
-            public String singleLineLegend() {
-                return null;
-            }
-
-            public void start() {
-            }
-
-            public Frontier.FrontierGroup getGroup(CrawlURI crawlURI) {
-                return null;
-            }
-
-            public float congestionRatio() {
-                return 0.0f;
-            }
-
-            public long averageDepth() {
-                return 0L;
-            }
-
-            public long deepestUri() {
-                return 0L;
-            }
-
-            public long deleteURIs(String arg0, String arg1) {
-                return 0L;
-            }
-
-            @Override
-            public void finalTasks() {
-                // TODO Auto-generated method stub
-
-            }
-        }
+        public void initialize(SettingsHandler sH) throws InitializationException {}
+        @Override
+        public void requestCrawlStop(String test) {}
     }
 }

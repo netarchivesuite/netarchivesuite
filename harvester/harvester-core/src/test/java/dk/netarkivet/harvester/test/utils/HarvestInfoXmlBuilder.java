@@ -1,6 +1,6 @@
 /*
  * #%L
- * Netarchivesuite - common - test
+ * Netarchivesuite - harvester
  * %%
  * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
  *             the National Library of France and the Austrian National Library.
@@ -20,28 +20,16 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
+package dk.netarkivet.harvester.test.utils;
 
-package dk.netarkivet.testutils;
+import dk.netarkivet.common.xml.XmlBuilder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+public class HarvestInfoXmlBuilder extends XmlBuilder {
+    private HarvestInfoXmlBuilder() {}
+    private HarvestInfoXmlBuilder(String name) {super(parseFile(name));}
 
-import org.dom4j.Document;
-import org.dom4j.Node;
+    public static HarvestInfoXmlBuilder create() { return new HarvestInfoXmlBuilder(); }
+    public static HarvestInfoXmlBuilder createDefault() { return createDefault("harvestinfo.xml"); }
+    public static HarvestInfoXmlBuilder createDefault(String name) { return new HarvestInfoXmlBuilder(name); }
 
-/**
- * Helper methods for asserts in Xml documents.
- */
-public class XmlAsserts {
-    public static void assertNodeWithXpath(Document doc, String xpath) {
-        Node theNode = doc.selectSingleNode(xpath);
-        if (theNode == null) {
-            fail("the Node with xpath '" + xpath + "' should be present");
-        }
-    }
-
-    public static void assertNodeTextInXpath(String message, Document doc, String xpath, String expected) {
-        Node dedup_index_node = doc.selectSingleNode(xpath);
-        assertEquals(message, expected, dedup_index_node.getText().trim());
-    }
 }
