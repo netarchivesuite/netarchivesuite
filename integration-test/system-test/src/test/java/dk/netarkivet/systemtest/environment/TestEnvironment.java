@@ -23,8 +23,47 @@
 package dk.netarkivet.systemtest.environment;
 
 public interface TestEnvironment {
+    /**
+     * Possibly in a better world these would be values retrieved
+     * by method calls rather than constants.
+     */
     public static String DEPLOYMENT_SERVER = "kb-prod-udv-001.kb.dk";
     public static String JOB_ADMIN_SERVER = "kb-test-adm-001.kb.dk";
     public static String ARCHIVE_ADMIN_SERVER = "kb-test-adm-001.kb.dk";
     public static String CHECKSUM_SERVER = "kb-test-acs-001.kb.dk";
+
+    /**
+     * The NAS environment (settings.common.environmentName) in which
+     * the test is to be run.
+     * @return
+     */
+    public String getTESTX();
+
+    /**
+     * The port on the host where the GUI is to be deployed.
+     * @return
+     */
+    public String getGuiHost();
+
+    /**
+     * The port where the GUI is to be deployed.
+     * @return
+     */
+    public int getGuiPort();
+
+    /**
+     * The timestamp of the NAS software version to be run in the test. This does not
+     * have to be an actual timestamp. The software in unpacked from the file
+     * Netarchivesuite-<timestamp>.zip in the directory release_software_dist/releases
+     * on the deployment server.
+     * @return
+     */
+    public String getTimestamp();
+
+    /**
+     * A comma-separated list of addresses to receive mail from failed tests.
+     * @return
+     */
+    public String getMailreceivers();
+
 }

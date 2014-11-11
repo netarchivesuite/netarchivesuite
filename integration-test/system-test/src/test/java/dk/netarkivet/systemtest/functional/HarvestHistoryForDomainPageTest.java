@@ -34,13 +34,14 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.HarvestUtils;
 import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.HarvestHistoryPageHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 
-public class HarvestHistoryForDomainPageTest extends SeleniumTest {
+public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
     ;
 
     @BeforeMethod(alwaysRun = true)
@@ -290,26 +291,26 @@ public class HarvestHistoryForDomainPageTest extends SeleniumTest {
     }
 
     private void setHarvestStatusPageSize(int size) throws Exception {
-        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+        getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                 "cp conf/settings_GUIApplication.xml conf/settings_GUIApplication.xml.original");
-        environmentManager.replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER, "conf/settings_GUIApplication.xml",
+        getTestController().replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER, "conf/settings_GUIApplication.xml",
                 "</indexClient>", "</indexClient>" + "<webinterface><harvestStatus><defaultPageSize>" + size
                         + "</defaultPageSize></harvestStatus></webinterface>");
 
-        applicationManager.restartGUI();
+        GUIApplicationManager.restartGUI();
     }
 
     @BeforeMethod(alwaysRun = true)
     @AfterMethod(alwaysRun = true)
     private void cleanupGUIConfiguration() {
         try {
-            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+            getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                     "if [ -f conf/settings_GUIApplication.xml.original ]; then "
                             + "echo conf/settings_GUIApplication.xml.original exist, moving back.; "
                             + "conf/kill_GUIApplication.sh; "
                             + "mv conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
                             + " conf/start_GUIApplication.sh; " + "fi");
-            applicationManager.waitForGUIToStart(10);
+            GUIApplicationManager.waitForGUIToStart(10);
         } catch (Exception e) {
             e.printStackTrace();
         }

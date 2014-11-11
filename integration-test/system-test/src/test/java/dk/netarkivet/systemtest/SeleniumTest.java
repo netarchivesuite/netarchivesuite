@@ -38,8 +38,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
-import dk.netarkivet.systemtest.environment.ApplicationManager;
-import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
+import dk.netarkivet.systemtest.environment.GUIApplicationManager;
+import dk.netarkivet.systemtest.environment.TestController;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
@@ -48,17 +48,21 @@ import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
  */
 @SuppressWarnings({"unused"})
 public abstract class SeleniumTest extends ExtendedTestCase {
-    protected static TestEnvironmentManager environmentManager;
-    protected static ApplicationManager applicationManager;
+    protected TestController testController;
+    protected static GUIApplicationManager GUIApplicationManager;
     private static ReportGenerator reportGenerator;
     protected final TestLogger log = new TestLogger(getClass());
     protected static WebDriver driver;
     protected static String baseUrl;
 
+    public SeleniumTest(TestController testController) {
+        this.testController = testController;
+    }
+
     @BeforeSuite(alwaysRun = true)
     public void setupTest() {
-        environmentManager = new TestEnvironmentManager(getTestX(), "http://kb-test-adm-001.kb.dk", 8071);
-        applicationManager = new ApplicationManager(environmentManager);
+        //testController = new TestController(getTestX(), "http://kb-test-adm-001.kb.dk", 8071);
+        GUIApplicationManager = new GUIApplicationManager(testController);
 
         deployTestSystem();
         initialiseSelenium();
@@ -72,13 +76,13 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     private void deployTestSystem() {
         if (System.getProperty("systemtest.deploy", "false").equals("true")) {
             try {
-                environmentManager.runCommandWithoutQuotes(getStartupScript());
+                testController.runCommandWithoutQuotes(getStartupScript());
             } catch (Exception e) {
                 throw new RuntimeException("Failed to start test system", e);
             }
         } else {
             if (System.getProperty("systemtest.redeploy.gui", "false").equals("true")) {
-                applicationManager.redeployGUI();
+                GUIApplicationManager.redeployGUI();
             }
         }
     }
@@ -95,9 +99,9 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     private void initialiseSelenium() {
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        baseUrl = environmentManager.getGuiHost() + ":" + environmentManager.getGuiPort();
+        baseUrl = testController.getGuiHost() + ":" + testController.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        applicationManager.waitForGUIToStart(60);
+        GUIApplicationManager.waitForGUIToStart(60);
 
     }
 
@@ -117,12 +121,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         }
     }
 
-    /**
-     * Identifies the test on the test system. More concrete this value will be used for the test environment variable.
-     */
-    protected String getTestX() {
-        return System.getProperty("deployable.postfix", "SystemTest");
-    }
+
 
     @AfterMethod
     /**
@@ -145,5 +144,9 @@ public abstract class SeleniumTest extends ExtendedTestCase {
                 log.error("Failed to save screendump on error");
             }
         }
+    }
+
+    public TestController getTestController() {
+        return testController;
     }
 }

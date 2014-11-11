@@ -33,7 +33,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.NASAssert;
-import dk.netarkivet.systemtest.environment.ApplicationManager;
+import dk.netarkivet.systemtest.environment.DefaultTestEnvironment;
+import dk.netarkivet.systemtest.environment.GUIApplicationManager;
+import dk.netarkivet.systemtest.environment.TestController;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
@@ -77,11 +79,11 @@ public class DatabaseMigrationSanityTest extends StressTest {
 
     private void doStuff() throws Exception {
         WebDriver driver = new FirefoxDriver();
-        ApplicationManager applicationManager = new ApplicationManager(environmentManager);
+        GUIApplicationManager GUIApplicationManager = new GUIApplicationManager(testController);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = environmentManager.getGuiHost() + ":" + environmentManager.getGuiPort();
+        String baseUrl = testController.getGuiHost() + ":" + testController.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        applicationManager.waitForGUIToStart(60);
+        GUIApplicationManager.waitForGUIToStart(60);
         addFixture("Opening NAS front page.");
         PageHelper.gotoPage(PageHelper.MenuPages.AliasSummary.Frontpage);
         addStep("Ingest some domains", "The domains should be created.");
@@ -109,18 +111,18 @@ public class DatabaseMigrationSanityTest extends StressTest {
 
     private void copyTestfiles() throws Exception {
         addFixture("Copy test arcrepository data over to admin machine.");
-        environmentManager.runCommand("scp -r ${HOME}/bitarchive_testdata kb-test-adm-001:");
+        testController.runCommand("scp -r ${HOME}/bitarchive_testdata kb-test-adm-001:");
     }
 
     private void uploadFiles() throws Exception {
-        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+        testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                 "chmod 755 ${HOME}/bitarchive_testdata/upload.sh");
         addFixture("Upload arcfiles to arcrepository.");
-        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "${HOME}/bitarchive_testdata/upload.sh "
-                + environmentManager.getTESTX() + " arcfiles");
+        testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "${HOME}/bitarchive_testdata/upload.sh "
+                + testController.getTESTX() + " arcfiles");
         addFixture("Upload warcfiles to arcrepository.");
-        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "${HOME}/bitarchive_testdata/upload.sh "
-                + environmentManager.getTESTX() + " warcfiles");
+        testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "${HOME}/bitarchive_testdata/upload.sh "
+                + testController.getTESTX() + " warcfiles");
     }
 
 }

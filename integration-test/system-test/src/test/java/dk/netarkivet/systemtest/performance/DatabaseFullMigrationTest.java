@@ -28,7 +28,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.TestLogger;
-import dk.netarkivet.systemtest.environment.ApplicationManager;
+import dk.netarkivet.systemtest.environment.GUIApplicationManager;
 
 @SuppressWarnings("unused")
 public class DatabaseFullMigrationTest extends StressTest {
@@ -77,8 +77,8 @@ public class DatabaseFullMigrationTest extends StressTest {
         if (snapshotTimeDivider != 1) {
             log.info("Dividing timescale for snapshot test by a factor {} (stresstest.snapshottimedivider).", snapshotTimeDivider);
         }
-        ApplicationManager applicationManager = new ApplicationManager(environmentManager);
-        LongRunningJob snapshotJob = new GenerateSnapshotJob(this, environmentManager, driver,
+        GUIApplicationManager GUIApplicationManager = new GUIApplicationManager(testController);
+        LongRunningJob snapshotJob = new GenerateSnapshotJob(this, testController, driver,
                 60*60*1000L/snapshotTimeDivider, 30*60*1000L/snapshotTimeDivider, 20*3600*1000L/snapshotTimeDivider, "SnapshotGenerationJob"
                 );
         snapshotJob.run();
@@ -92,7 +92,7 @@ public class DatabaseFullMigrationTest extends StressTest {
 
     private void doUpdateFileStatus() throws Exception {
         WebDriver driver = new FirefoxDriver();
-        ApplicationManager applicationManager = new ApplicationManager(environmentManager);
+        GUIApplicationManager GUIApplicationManager = new GUIApplicationManager(testController);
         UpdateFileStatusJob updateFileStatusJob = new UpdateFileStatusJob(this, driver, 0L, 5*60*1000L, 2*3600*1000L, "Update FileStatus Job");
         updateFileStatusJob.run();
     }

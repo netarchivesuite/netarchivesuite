@@ -41,33 +41,22 @@ import dk.netarkivet.systemtest.TestLogger;
 /**
  * Provides utilites for performing deployment related commands in the test environment.
  */
-public class TestEnvironmentManager {
+public class TestController {
     protected final TestLogger log = new TestLogger(getClass());
     private final String TESTX;
     private final String GUI_HOST;
-    private final String GUI_PORT;
+    private final int GUI_PORT;
     private final String TIMESTAMP;
     private final String MAILRECEIVERS;
 
-    /**
-     * The following environment definitions are used
-     * <ul>
-     * <li>TIMESTAMP = svn revision
-     * <li>GUI_PORT = systemtest.port property or 8071 if undefined
-     * <li>MAILRECEIVERS = systemtest.mailreceivers property
-     * <li>TESTX = The supplied test name
-     * </ul>
-     *
-     * @param testX Defines the test name this test should be run under in the test system, but this
-     * is ignored if systemtest.timestamp is set.
-     */
-    public TestEnvironmentManager(String testX, String host, int port) {
-        TESTX = testX;
-        GUI_HOST = System.getProperty("systemtest.host", host);
-        GUI_PORT = System.getProperty("systemtest.port", Integer.toString(port));
-        TIMESTAMP = System.getProperty("systemtest.timestamp", testX);
-        MAILRECEIVERS = System.getProperty("systemtest.mailrecievers");
+    public TestController(TestEnvironment env) {
+        TESTX = env.getTESTX();
+        GUI_HOST = env.getGuiHost();
+        GUI_PORT = env.getGuiPort();
+        TIMESTAMP = env.getTimestamp();
+        MAILRECEIVERS = env.getMailreceivers();
     }
+
 
     /**
      * @return The host the gui is run on.
@@ -80,7 +69,7 @@ public class TestEnvironmentManager {
      * @return The port the web gui is run on.
      */
     public String getGuiPort() {
-        return GUI_PORT;
+        return GUI_PORT + "";
     }
 
     /**

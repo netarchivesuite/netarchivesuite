@@ -33,13 +33,14 @@ import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.HarvestUtils;
 import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 
-public class ExtendedFieldTest extends SeleniumTest {
+public class ExtendedFieldTest extends AbstractSystemTest {
     private String extendedIDForTest;
     private DateFormat dateFomatter = new SimpleDateFormat("HHmmss");
 
