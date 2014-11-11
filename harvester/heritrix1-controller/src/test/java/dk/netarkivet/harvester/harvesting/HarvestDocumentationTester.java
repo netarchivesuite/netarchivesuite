@@ -78,6 +78,7 @@ public class HarvestDocumentationTester {
         WORKING_DIR = new File(TestResourceUtils.OUTPUT_DIR, getClass().getSimpleName() + "/" + test.getMethodName());
         FileUtils.removeRecursively(WORKING_DIR);
         FileUtils.createDir(WORKING_DIR);
+        Settings.set(HarvesterSettings.METADATA_FORMAT, "arc");
     }
 
     /**
@@ -212,7 +213,7 @@ public class HarvestDocumentationTester {
     public void testGetMetadataARCFileName() {
         String job = "7";
         String fn = MetadataFileWriter.getMetadataArchiveFileName(job);
-        assertTrue("File name should end on '-1.arc' - was " + fn, fn.endsWith("-1.warc"));
+        assertTrue("File name should end on '-1.arc' - was " + fn, fn.endsWith("-1.arc"));
         assertTrue("File name should contain jobID - was " + fn, fn.contains(job));
         assertTrue("File name should contain the string 'metadata' - was " + fn, fn.contains("metadata"));
     }
@@ -259,8 +260,6 @@ public class HarvestDocumentationTester {
     /**
      * Unit test method for generating a CDX index of an Arc file. FIXME Broken by
      * http://sbforge.org/jira/browse/NAS-1918
-     *
-     * @throws IOException
      */
     @Test
     @Ignore("Contains dashes instead of actual ip-numbers")
@@ -285,57 +284,30 @@ public class HarvestDocumentationTester {
                 cdxstream.toString());
     }
 
-    /**
-     * Unit test for generating CDX indexes on all arc files.
-     *
-     * @throws IOException
-     */
-    @Test
-    @Ignore("Should throw exception on non-writable")
-    public void testGenerateCDX() throws IOException {
-        try {
-            CDXUtils.generateCDX(null, null, TestInfo.CDX_WORKING_DIR);
-            fail("Should throw exception on null argument");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
-        try {
-            CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, null);
-            fail("Should throw exception on null argument");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
-        try {
-            CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_FILE_1, TestInfo.CDX_WORKING_DIR);
-            fail("Should throw exception on non-directory");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
-        try {
-            CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, TestInfo.ARC_FILE_1);
-            fail("Should throw exception on non-directory");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
-        try {
-            CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, new File("foo"), TestInfo.CDX_WORKING_DIR);
-            fail("Should throw exception on non-existing");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
-        try {
-            CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, new File("foo"));
-            fail("Should throw exception on non-existing");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
-        try {
-            CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, new File("/"));
-            fail("Should throw exception on non-writable");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
 
+    @Test (expected = ArgumentNotValid.class)
+    public void testGenerateCDXNullProfile() {
+        CDXUtils.generateCDX(null, TestInfo.ARC_REAL_DIR, TestInfo.CDX_WORKING_DIR);
+    }
+    @Test (expected = ArgumentNotValid.class)
+    public void testGenerateNullArcDir() {
+        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, null, TestInfo.CDX_WORKING_DIR);
+    }
+    @Test (expected = ArgumentNotValid.class)
+     public void testGenerateNullCDXDir() {
+        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, null);
+    }
+    @Test (expected = ArgumentNotValid.class)
+    public void testGenerateOnvalidArcDir() {
+        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_FILE_1, TestInfo.CDX_WORKING_DIR);
+    }
+    @Test (expected = ArgumentNotValid.class)
+    public void testGenerateOnvalidCDXDir() {
+        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, TestInfo.ARC_FILE_1);
+    }
+
+    @Test
+    public void testGenerateCDX() throws IOException {
         TestInfo.CDX_WORKING_DIR.mkdirs();
         CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, TestInfo.CDX_WORKING_DIR);
         File[] originalFiles = TestInfo.ARC_REAL_DIR.listFiles(FileUtils.ARCS_FILTER);

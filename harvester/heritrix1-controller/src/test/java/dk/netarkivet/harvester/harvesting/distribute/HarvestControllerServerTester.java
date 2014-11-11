@@ -80,9 +80,6 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-/**
- * Test HarvestControllerServer.
- */
 @SuppressWarnings("unused")
 public class HarvestControllerServerTester {
 
@@ -153,8 +150,6 @@ public class HarvestControllerServerTester {
 
     /**
      * Testing that server starts and log-file logs this !
-     *
-     * @throws IOException
      */
     @Test
     public void testServerStarting() throws IOException {
@@ -260,8 +255,6 @@ public class HarvestControllerServerTester {
     /**
      * Tests that sending a doOneCrawlMessage with a value other than submitted results in a job-failed message being
      * sent back.
-     *
-     * @throws JMSException
      */
     @Test
     public void testJobFailedOnBadMessage() throws JMSException {
@@ -417,10 +410,6 @@ public class HarvestControllerServerTester {
      * Verify that preharvest metadata is found in the final metadata file. See also bug #738.
      * <p>
      * FIXME Fails in Hudson
-     *
-     * @throws NoSuchMethodException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
      */
     @Test
     @Ignore("AssertionError: documentHarvest() shouldhave generated final metadata")

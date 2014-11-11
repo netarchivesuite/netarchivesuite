@@ -51,9 +51,9 @@ public abstract class MetadataFileWriter {
     private static final Logger log = LoggerFactory.getLogger(MetadataFileWriter.class);
 
     /** Constant representing the ARC format. */
-    protected static final int MDF_ARC = 1;
+    public static final int MDF_ARC = 1;
     /** Constant representing the WARC format. */
-    protected static final int MDF_WARC = 2;
+    public static final int MDF_WARC = 2;
     /** Constant representing the metadata Format. Recognized formats are either MDF_ARC or MDF_WARC */
     protected static int metadataFormat = 0;
 
