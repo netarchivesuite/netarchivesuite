@@ -33,6 +33,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
+import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.Application;
 import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.NASSystemUtil;
@@ -43,7 +44,7 @@ import dk.netarkivet.systemtest.page.PageHelper;
  * Test specification: http://netarchive.dk/suite/TEST1 .
  */
 @SuppressWarnings({"unused"})
-public class SystemOverviewTest extends SeleniumTest {
+public class SystemOverviewTest extends AbstractSystemTest {
 
     /**
      * Test specification: http://netarchive.dk/suite/It23JMXMailCheck .

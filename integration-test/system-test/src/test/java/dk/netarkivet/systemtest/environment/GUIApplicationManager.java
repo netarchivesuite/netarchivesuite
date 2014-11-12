@@ -27,19 +27,19 @@ import org.jaccept.TestEventManager;
 import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.page.PageHelper;
 
-public class ApplicationManager {
+public class GUIApplicationManager {
     protected final TestLogger log = new TestLogger(getClass());
-    private final TestEnvironmentManager environmentManager;
+    private final TestController testController;
 
-    public ApplicationManager(TestEnvironmentManager environmentManager) {
-        this.environmentManager = environmentManager;
+    public GUIApplicationManager(TestController testController) {
+        this.testController = testController;
     }
 
     public void restartGUI() {
         try {
             log.info("Restarting GUI");
-            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/kill_GUIApplication.sh");
-            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/start_GUIApplication.sh");
+            testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/kill_GUIApplication.sh");
+            testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/start_GUIApplication.sh");
             waitForGUIToStart(10);
         } catch (Exception e) {
             throw new RuntimeException("Failed to redeploy GUI", e);
@@ -49,14 +49,14 @@ public class ApplicationManager {
     public void redeployGUI() {
         try {
             log.info("Redeploying GUI");
-            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "rm -r tmpdircommon/*");
-            environmentManager.runCommandWithoutQuotes("prepare_test_db.sh");
-            environmentManager.runCommandWithoutQuotes("scp -r release_software_dist/$TESTX/lib/* "
+            testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "rm -r tmpdircommon/*");
+            testController.runCommandWithoutQuotes("prepare_test_db.sh");
+            testController.runCommandWithoutQuotes("scp -r release_software_dist/$TESTX/lib/* "
                     + TestEnvironment.JOB_ADMIN_SERVER + ":~/$TESTX/lib");
-            environmentManager.runCommandWithoutQuotes("scp -r release_software_dist/$TESTX/webpages/* "
+            testController.runCommandWithoutQuotes("scp -r release_software_dist/$TESTX/webpages/* "
                     + TestEnvironment.JOB_ADMIN_SERVER + ":~/$TESTX/webpages");
-            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/kill_GUIApplication.sh");
-            environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/start_GUIApplication.sh");
+            testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/kill_GUIApplication.sh");
+            testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/start_GUIApplication.sh");
         } catch (Exception e) {
             throw new RuntimeException("Failed to redeploy GUI", e);
         }

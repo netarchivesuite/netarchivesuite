@@ -12,7 +12,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import dk.netarkivet.systemtest.TestLogger;
-import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
+import dk.netarkivet.systemtest.environment.TestController;
 
 /**
 * Job to generate harvest jobs for a snapshot harvest. According to the test description, this should take up to nine
@@ -24,10 +24,10 @@ class GenerateSnapshotJob extends GenericWebJob {
     String harvestName;
     String report;
 
-    GenerateSnapshotJob(StressTest stressTest, TestEnvironmentManager testEnvironmentManager, WebDriver driver,
+    GenerateSnapshotJob(StressTest stressTest, TestController testController, WebDriver driver,
             Long startUpTime,
             Long waitingInterval, Long maxTime, String name) {
-        super(stressTest, testEnvironmentManager, driver, startUpTime, waitingInterval, maxTime, name);
+        super(stressTest, testController, driver, startUpTime, waitingInterval, maxTime, name);
     }
 
     @Override void startJob() {
