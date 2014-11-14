@@ -100,9 +100,6 @@ public class DataModelTestCase {
         }
 
         assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_BASE_URL), derbyDBUrl);
-        log.trace("setup() DBSpecifics.getInstance().updateTables()");
-        DBSpecifics.getInstance().updateTables();
-        log.trace("setup() done");
     }
 
     @After

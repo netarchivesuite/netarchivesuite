@@ -22,6 +22,7 @@
  */
 package dk.netarkivet.wayback;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /** TODO complete unittests. */
@@ -29,6 +30,7 @@ import org.junit.Test;
 public class LRUCacheTester {
 
     @Test
+    @Ignore
     public void testConstructor() {
         // just to see if the constructor works??
         LRUCache.getInstance();
