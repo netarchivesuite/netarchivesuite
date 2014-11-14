@@ -55,7 +55,7 @@ public class HeritrixControllerFactoryTester {
     private String defaultController;
 
     public HeritrixControllerFactoryTester() {
-        mtf = new MoveTestFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
+        mtf = new MoveTestFiles(Heritrix1ControllerTestInfo.CRAWLDIR_ORIGINALS_DIR, Heritrix1ControllerTestInfo.WORKING_DIR);
     }
 
     @Before
@@ -79,15 +79,15 @@ public class HeritrixControllerFactoryTester {
     @Test
     @Ignore("Heritrix launcher code non functional")
     public void testGetDefaultHeritrixControllerDefaultSettings() {
-        File origSeeds = TestInfo.SEEDS_FILE;
-        File crawlDir = TestInfo.HERITRIX_TEMP_DIR;
+        File origSeeds = Heritrix1ControllerTestInfo.SEEDS_FILE;
+        File crawlDir = Heritrix1ControllerTestInfo.HERITRIX_TEMP_DIR;
         crawlDir.mkdirs();
         File orderXml = new File(crawlDir, "order.xml");
         File seedsTxt = new File(crawlDir, "seeds.txt");
-        FileUtils.copyFile(TestInfo.ORDER_FILE, orderXml);
+        FileUtils.copyFile(Heritrix1ControllerTestInfo.ORDER_FILE, orderXml);
         FileUtils.copyFile(origSeeds, seedsTxt);
-        HeritrixFiles files = new HeritrixFiles(crawlDir, new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID),
-                Long.parseLong(TestInfo.ARC_HARVEST_ID)));
+        HeritrixFiles files = new HeritrixFiles(crawlDir, new JobInfoTestImpl(Long.parseLong(Heritrix1ControllerTestInfo.ARC_JOB_ID),
+                Long.parseLong(Heritrix1ControllerTestInfo.ARC_HARVEST_ID)));
         HeritrixController hc = HeritrixControllerFactory.getDefaultHeritrixController(files);
         assertTrue("Should have got a JMXHeritricController, not " + hc, hc instanceof BnfHeritrixController);
     }

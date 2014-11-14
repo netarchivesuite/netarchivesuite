@@ -177,7 +177,6 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      *
      * @param domainName A domain name (as given by getDomainNames())
      * @return How many objects were collected for that domain
-     * @throws ArgumentNotValid if null or empty domainName
      */
     @Override
     public final Long getObjectCount(String domainName) {
@@ -194,7 +193,6 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      *
      * @param domainName A domain name (as given by getDomainNames())
      * @return How many bytes were collected for that domain or null if information available for this domain.
-     * @throws ArgumentNotValid if null or empty domainName
      */
     @Override
     public final Long getByteCount(String domainName) {
@@ -224,13 +222,6 @@ public abstract class AbstractHarvestReport implements HarvestReport {
     }
 
     /**
-     * @return the heritrixFiles
-     */
-    protected HeritrixFiles getHeritrixFiles() {
-        return heritrixFiles;
-    }
-
-    /**
      * Attempts to get an already existing {@link DomainStats} object for that domain, and if not found creates one with
      * zero values.
      *
@@ -253,9 +244,8 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      * @param logFile A progress-statistics.log file.
      * @return StopReason.DOWNLOAD_COMPLETE for progress statistics ending with CRAWL ENDED,
      * StopReason.DOWNLOAD_UNFINISHED otherwise or if file does not exist.
-     * @throws ArgumentNotValid on null argument.
      */
-    public static StopReason findDefaultStopReason(File logFile) throws ArgumentNotValid {
+    public static StopReason findDefaultStopReason(File logFile) {
         ArgumentNotValid.checkNotNull(logFile, "File logFile");
         if (!logFile.exists()) {
             return StopReason.DOWNLOAD_UNFINISHED;
@@ -321,7 +311,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
      * @param line the line to process.
      * @param disregardSeedUrlInfo Boolean saying whether or not to disregard SeedURL Information
      */
-    private void processHarvestLine(final String line, boolean disregardSeedUrlInfo) throws ArgumentNotValid {
+    private void processHarvestLine(final String line, boolean disregardSeedUrlInfo) {
         // A legal crawl log line has at least 11 parts, + optional annotations
 
         final int MIN_CRAWL_LOG_PARTS = 11;
@@ -405,10 +395,10 @@ public abstract class AbstractHarvestReport implements HarvestReport {
             // test if any annotations exist
             String[] annotations = parts[ANNOTATION_PART_INDEX].split(",");
             for (String annotation : annotations) {
-            	// ContentSizeAnnotationPostProcessor.CONTENT_SIZE_ANNOTATION_PREFIX
+                // ContentSizeAnnotationPostProcessor.CONTENT_SIZE_ANNOTATION_PREFIX
                 if (annotation.trim().startsWith(Heritrix1Constants.CONTENT_SIZE_ANNOTATION_PREFIX)) {
                     try {
-                    	// ContentSizeAnnotationPostProcessor.CONTENT_SIZE_ANNOTATION_PREFIX
+                        // ContentSizeAnnotationPostProcessor.CONTENT_SIZE_ANNOTATION_PREFIX
                         byteCounter = Long.parseLong(annotation
                                 .substring(Heritrix1Constants.CONTENT_SIZE_ANNOTATION_PREFIX.length()));
                     } catch (NumberFormatException e) {
@@ -458,5 +448,4 @@ public abstract class AbstractHarvestReport implements HarvestReport {
         }
         return DomainUtils.domainNameFromHostname(hostName);
     }
-
 }

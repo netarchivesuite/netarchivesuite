@@ -77,7 +77,7 @@ public class HeritrixLauncherTester {
     private File dummyLuceneIndex;
 
     public HeritrixLauncherTester() {
-        mtf = new MoveTestFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
+        mtf = new MoveTestFiles(Heritrix1ControllerTestInfo.CRAWLDIR_ORIGINALS_DIR, Heritrix1ControllerTestInfo.WORKING_DIR);
     }
 
     @Before
@@ -90,7 +90,7 @@ public class HeritrixLauncherTester {
 
     @Before
     public void setUp() throws IOException {
-        mtf = new MoveTestFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR, WORKING_DIR);
+        mtf = new MoveTestFiles(Heritrix1ControllerTestInfo.CRAWLDIR_ORIGINALS_DIR, WORKING_DIR);
         mtf.setUp();
         dummyLuceneIndex = mtf.newTmpDir();
         // Uncommented to avoid reference to archive module from harvester module.
@@ -115,15 +115,15 @@ public class HeritrixLauncherTester {
      * @return a HeritrixLauncher used by (most) tests.
      */
     private HeritrixLauncher getHeritrixLauncher(File origOrderXml, File indexDir) {
-        File origSeeds = TestInfo.SEEDS_FILE;
-        File crawlDir = TestInfo.HERITRIX_TEMP_DIR;
+        File origSeeds = Heritrix1ControllerTestInfo.SEEDS_FILE;
+        File crawlDir = Heritrix1ControllerTestInfo.HERITRIX_TEMP_DIR;
         crawlDir.mkdirs();
         File orderXml = new File(crawlDir, "order.xml");
         File seedsTxt = new File(crawlDir, "seeds.txt");
         FileUtils.copyFile(origOrderXml, orderXml);
         FileUtils.copyFile(origSeeds, seedsTxt);
-        HeritrixFiles files = new HeritrixFiles(crawlDir, new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID),
-                Long.parseLong(TestInfo.ARC_HARVEST_ID)));
+        HeritrixFiles files = new HeritrixFiles(crawlDir, new JobInfoTestImpl(Long.parseLong(Heritrix1ControllerTestInfo.ARC_JOB_ID),
+                Long.parseLong(Heritrix1ControllerTestInfo.ARC_HARVEST_ID)));
         // If deduplicationMode != NO_DEDUPLICATION
         // write the zipped index to the indexdir inside the crawldir
         if (orderXml.exists() && orderXml.length() > 0
@@ -146,7 +146,7 @@ public class HeritrixLauncherTester {
      */
     protected void assertAllUrlsInCrawlLog(String[] urls) throws IOException {
         String crawlLog = "";
-        crawlLog = FileUtils.readFile(TestInfo.HERITRIX_CRAWL_LOG_FILE);
+        crawlLog = FileUtils.readFile(Heritrix1ControllerTestInfo.HERITRIX_CRAWL_LOG_FILE);
 
         for (String s : Arrays.asList(urls)) {
             if (crawlLog.indexOf(s) == -1) {
@@ -166,7 +166,7 @@ public class HeritrixLauncherTester {
      */
     protected void assertNoUrlsInCrawlLog(String[] urls) throws IOException {
         String crawlLog = "";
-        crawlLog = FileUtils.readFile(TestInfo.HERITRIX_CRAWL_LOG_FILE);
+        crawlLog = FileUtils.readFile(Heritrix1ControllerTestInfo.HERITRIX_CRAWL_LOG_FILE);
 
         for (String s : Arrays.asList(urls)) {
             if (crawlLog.indexOf(s) != -1) {
@@ -196,7 +196,7 @@ public class HeritrixLauncherTester {
     @Test
     public void testStartMissingSeedsFile() {
         try {
-            HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, new JobInfoTestImpl(42L, 42L));
+            HeritrixFiles hf = new HeritrixFiles(Heritrix1ControllerTestInfo.WORKING_DIR, new JobInfoTestImpl(42L, 42L));
             hf.getSeedsTxtFile().delete();
             HeritrixLauncherFactory.getInstance(hf);
             fail("Expected FileNotFoundException");
@@ -210,7 +210,7 @@ public class HeritrixLauncherTester {
      */
     @Test
     public void testStartBadOrderFile() {
-        myTesterOfBadOrderfiles(TestInfo.BAD_ORDER_FILE);
+        myTesterOfBadOrderfiles(Heritrix1ControllerTestInfo.BAD_ORDER_FILE);
     }
 
     /**
@@ -218,7 +218,7 @@ public class HeritrixLauncherTester {
      */
     @Test
     public void testStartMissingDiskFieldOrderFile() {
-        myTesterOfBadOrderfiles(TestInfo.MISSING_DISK_FIELD_ORDER_FILE);
+        myTesterOfBadOrderfiles(Heritrix1ControllerTestInfo.MISSING_DISK_FIELD_ORDER_FILE);
     }
 
     /**
@@ -228,7 +228,7 @@ public class HeritrixLauncherTester {
     @Test
     @Ignore("was commented out")
     public void testStartMissingARCsPathOrderFile() {
-        myTesterOfBadOrderfiles(TestInfo.MISSING_ARCS_PATH_ORDER_FILE);
+        myTesterOfBadOrderfiles(Heritrix1ControllerTestInfo.MISSING_ARCS_PATH_ORDER_FILE);
     }
 
     /**
@@ -236,7 +236,7 @@ public class HeritrixLauncherTester {
      */
     @Test
     public void testStartMissingSeedsfileOrderFile() {
-        myTesterOfBadOrderfiles(TestInfo.MISSING_SEEDS_FILE_ORDER_FILE);
+        myTesterOfBadOrderfiles(Heritrix1ControllerTestInfo.MISSING_SEEDS_FILE_ORDER_FILE);
     }
 
     /**
@@ -245,7 +245,7 @@ public class HeritrixLauncherTester {
     @Test
     @Ignore("was commented out")
     public void testStartMissingPrefixOrderFile() {
-        myTesterOfBadOrderfiles(TestInfo.MISSING_PREFIX_FIELD_ORDER_FILE);
+        myTesterOfBadOrderfiles(Heritrix1ControllerTestInfo.MISSING_PREFIX_FIELD_ORDER_FILE);
     }
 
     /**
@@ -274,7 +274,7 @@ public class HeritrixLauncherTester {
      */
     @Test
     public void testStartEmptyFile() {
-        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.EMPTY_ORDER_FILE, null);
+        HeritrixLauncher hl = getHeritrixLauncher(Heritrix1ControllerTestInfo.EMPTY_ORDER_FILE, null);
 
         try {
             hl.doCrawl();
@@ -305,7 +305,7 @@ public class HeritrixLauncherTester {
         // "heritrixController").set(hl, new TestCrawlController(files));
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$TestCrawlController");
-        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
+        HeritrixLauncher hl = getHeritrixLauncher(Heritrix1ControllerTestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         hl.doCrawl();
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
@@ -405,10 +405,10 @@ public class HeritrixLauncherTester {
          * Check the DeduplicationType.NO_DEDUPLICATION type of deduplication is setup correctly
          */
 
-        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
+        HeritrixLauncher hl = getHeritrixLauncher(Heritrix1ControllerTestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         hl.setupOrderfile(hl.getHeritrixFiles());
 
-        File orderFile = new File(TestInfo.HERITRIX_TEMP_DIR, "order.xml");
+        File orderFile = new File(Heritrix1ControllerTestInfo.HERITRIX_TEMP_DIR, "order.xml");
         Document doc = XmlUtils.getXmlDoc(orderFile);
         /* check, that deduplicator is not enabled in the order */
         assertFalse("Should not have deduplication enabled", HeritrixTemplate.isDeduplicationEnabledInTemplate(doc));
@@ -417,7 +417,7 @@ public class HeritrixLauncherTester {
          * Check the DeduplicationType.DEDUPLICATION_USING_THE_DEDUPLICATOR type of deduplication is setup correctly
          */
 
-        hl = getHeritrixLauncher(TestInfo.DEDUP_ORDER_FILE, dummyLuceneIndex);
+        hl = getHeritrixLauncher(Heritrix1ControllerTestInfo.DEDUP_ORDER_FILE, dummyLuceneIndex);
         hl.setupOrderfile(hl.getHeritrixFiles());
 
         // check, that the deduplicator is present in the order
@@ -439,7 +439,7 @@ public class HeritrixLauncherTester {
     public void failingTestFailOnInitialize() throws NoSuchFieldException, IllegalAccessException {
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$SucceedOnCleanupTestController");
-        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
+        HeritrixLauncher hl = getHeritrixLauncher(Heritrix1ControllerTestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         try {
             hl.doCrawl();
             fail("HeritrixLanucher should throw an exception when it fails to initialize");
@@ -456,7 +456,7 @@ public class HeritrixLauncherTester {
      */
     @Test (expected = Exception.class)
     public void testFailOnCleanup() {
-        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
+        HeritrixLauncher hl = getHeritrixLauncher(Heritrix1ControllerTestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         hl.doCrawl();
     }
 
@@ -470,7 +470,7 @@ public class HeritrixLauncherTester {
     public void testFailDuringCrawl() {
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailDuringCrawlTestController");
-        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
+        HeritrixLauncher hl = getHeritrixLauncher(Heritrix1ControllerTestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         hl.doCrawl();
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.JMXHeritrixController");

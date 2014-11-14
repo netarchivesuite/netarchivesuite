@@ -48,7 +48,7 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 public class LegacyHarvestReport extends AbstractHarvestReport {
 
     /** The logger for this class. */
-    private static final Logger LOG = LoggerFactory.getLogger(LegacyHarvestReport.class);
+    private static final Logger log = LoggerFactory.getLogger(LegacyHarvestReport.class);
 
     /**
      * The constructor gets the data in a crawl.log file, and parses the file. The crawl.log is described in the
@@ -78,7 +78,7 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
      */
     @Override
     public void postProcess(Job job) {
-        LOG.info("Starting post-processing of harvest report for job {}", job.getJobID());
+        log.info("Starting post-processing of harvest report for job {}", job.getJobID());
         long startTime = System.currentTimeMillis();
 
         // Get the map from domain names to domain configurations
@@ -102,16 +102,16 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
             // Retrieve crawl data from log and add it to HarvestInfo
             StopReason stopReason = getStopReason(domainName);
             if (stopReason == null) {
-                LOG.warn("No stopreason found for domain '{}'", domainName);
+                log.warn("No stopreason found for domain '{}'", domainName);
             }
             Long countObjectRetrieved = getObjectCount(domainName);
             if (countObjectRetrieved == null) {
-                LOG.warn("No count for objects retrieved found for domain '{}'", domainName);
+                log.warn("No count for objects retrieved found for domain '{}'", domainName);
                 countObjectRetrieved = -1L;
             }
             Long bytesReceived = getByteCount(domainName);
             if (bytesReceived == null) {
-                LOG.warn("No count for bytes received found for domain '{}'", domainName);
+                log.warn("No count for bytes received found for domain '{}'", domainName);
                 bytesReceived = -1L;
             }
             // If StopReason is SIZE_LIMIT, we check if it's the harvests' size
@@ -149,9 +149,9 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
             dao.update(domain);
         }
 
-        if (LOG.isInfoEnabled()) {
+        if (log.isInfoEnabled()) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.info("Finished post-processing of harvest report for job {}, operation took {}", job.getJobID(),
+            log.info("Finished post-processing of harvest report for job {}, operation took {}", job.getJobID(),
                     StringUtils.formatDuration(time / TimeUtils.SECOND_IN_MILLIS));
         }
 

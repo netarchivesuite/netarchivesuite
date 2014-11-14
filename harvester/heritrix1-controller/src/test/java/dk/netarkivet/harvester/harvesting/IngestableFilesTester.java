@@ -31,14 +31,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
+import dk.netarkivet.testutils.TestResourceUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 public class IngestableFilesTester {
@@ -48,48 +52,45 @@ public class IngestableFilesTester {
     private Long testJobId = 1L;
     private Long testHarvestId = 2L;
     private Long badJobId = -33L;
-    private JobInfo acceptableJobInfoForJobOne = new JobInfoTestImpl(testJobId, testHarvestId);
     private JobInfo acceptableJobInfoForJobTwo = new JobInfoTestImpl(2L, testHarvestId);
-    private JobInfo acceptableJobInfoForJob42 = new JobInfoTestImpl(TestInfo.JOB_ID, testHarvestId);
-    private JobInfo unacceptableJobInfo = new JobInfoTestImpl(badJobId, testHarvestId);
-    private File existingDir = TestInfo.WORKING_DIR;
-    private File nonexistingDir = new File(TestInfo.WORKING_DIR, "doesnotexist");
+    private JobInfo acceptableJobInfoForJob42 = new JobInfoTestImpl(Heritrix1ControllerTestInfo.JOB_ID, testHarvestId);
 
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
+    @Rule public TestName test = new TestName();
+    private File WORKING_DIR;
 
     @Before
-    public void setUp() {
+    public void initialize() {
+        WORKING_DIR = new File(TestResourceUtils.OUTPUT_DIR, getClass().getSimpleName() + "/" + test.getMethodName());
+        FileUtils.removeRecursively(WORKING_DIR);
+        FileUtils.createDir(WORKING_DIR);
+        Settings.set(HarvesterSettings.METADATA_FORMAT, "arc");
+        MoveTestFiles mtf = new MoveTestFiles(Heritrix1ControllerTestInfo.CRAWLDIR_ORIGINALS_DIR, WORKING_DIR);
         mtf.setUp();
     }
 
-    @After
-    public void tearDown() {
-        mtf.tearDown();
-    }
-
     /**
-     * Verify that ordinary construction does not throw Exception. Verify that constructing with nonexisting crawldir or
-     * negative jobID fails.
+     * Verify that ordinary construction does not throw Exception.
      */
     @Test
     public void testConstructor() {
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        JobInfo acceptableJobInfoForJobOne = new JobInfoTestImpl(testJobId, testHarvestId);
+        HeritrixFiles OkFiles = new HeritrixFiles(WORKING_DIR, acceptableJobInfoForJobOne);
         new IngestableFiles(OkFiles);
-        HeritrixFiles NotOkFiles = new HeritrixFiles(nonexistingDir, acceptableJobInfoForJobOne);
-        HeritrixFiles NotOkFilesWithBadJobId = new HeritrixFiles(existingDir, unacceptableJobInfo);
+    }
 
-        try {
-            new IngestableFiles(NotOkFiles);
-            fail("IngestableFiles should reject a nonexisting crawldir");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
-        try {
-            new IngestableFiles(NotOkFilesWithBadJobId);
-            fail("IngestableFiles should reject a negativ jobID");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
+    @Test (expected = ArgumentNotValid.class)
+    public void testConstructorWithNonExistingCrawlDir() {
+        JobInfo acceptableJobInfoForJobOne = new JobInfoTestImpl(testJobId, testHarvestId);
+        HeritrixFiles heritrixFilesNonExistingCrawlDir =
+                new HeritrixFiles(new File(WORKING_DIR, "doesnotexist"), acceptableJobInfoForJobOne);
+        new IngestableFiles(heritrixFilesNonExistingCrawlDir);
+    }
+
+    @Test (expected = ArgumentNotValid.class)
+    public void testConstructorWithBadJobInfo() {
+        JobInfo unacceptableJobInfo = new JobInfoTestImpl(badJobId, testHarvestId);
+        HeritrixFiles heritrixFilesWithBadJobInfo = new HeritrixFiles(WORKING_DIR, unacceptableJobInfo);
+        new IngestableFiles(heritrixFilesWithBadJobInfo);
     }
 
     /**
@@ -102,7 +103,8 @@ public class IngestableFilesTester {
      */
     @Test
     public void testGetSetMetadataReady() {
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        JobInfo acceptableJobInfoForJobOne = new JobInfoTestImpl(testJobId, testHarvestId);
+        HeritrixFiles OkFiles = new HeritrixFiles(WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
         assertFalse("isMetadataReady() should return false before metadata has been generated", inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false before metadata has been generated", inf.isMetadataFailed());
@@ -116,7 +118,7 @@ public class IngestableFilesTester {
         inf.setMetadataGenerationSucceeded(true);
         assertTrue("isMetadataReady() should return true after metadata has been generated", inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false after metadata has been generated", inf.isMetadataFailed());
-        HeritrixFiles OkFilesTwo = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobTwo);
+        HeritrixFiles OkFilesTwo = new HeritrixFiles(WORKING_DIR, acceptableJobInfoForJobTwo);
         inf = new IngestableFiles(OkFilesTwo);
         assertFalse("isMetadataReady() should return false before metadata has been generated", inf.isMetadataReady());
         assertFalse("isMetadataFailed() should return false before metadata has been generated", inf.isMetadataFailed());
@@ -138,7 +140,8 @@ public class IngestableFilesTester {
      */
     @Test
     public void testDisallowedActions() {
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        JobInfo acceptableJobInfoForJobOne = new JobInfoTestImpl(testJobId, testHarvestId);
+        HeritrixFiles OkFiles = new HeritrixFiles(WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
 
         assertCannotGetMetadata(inf);
@@ -160,7 +163,7 @@ public class IngestableFilesTester {
         } catch (Throwable e) {
             // Expected
         }
-        HeritrixFiles OkFilesTwo = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobTwo);
+        HeritrixFiles OkFilesTwo = new HeritrixFiles(WORKING_DIR, acceptableJobInfoForJobTwo);
         inf = new IngestableFiles(OkFilesTwo);
 
         assertCannotGetMetadata(inf);
@@ -202,7 +205,8 @@ public class IngestableFilesTester {
     @Test
     public void testMetadataRediscovery() throws FileNotFoundException, IOException {
         // Original crawl: write some metadata
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        JobInfo acceptableJobInfoForJobOne = new JobInfoTestImpl(testJobId, testHarvestId);
+        HeritrixFiles OkFiles = new HeritrixFiles(WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
 
         MetadataFileWriter aw = inf.getMetadataWriter();
@@ -228,7 +232,8 @@ public class IngestableFilesTester {
      */
     @Test
     public void testGetMetadataArcWriter() {
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        JobInfo acceptableJobInfoForJobOne = new JobInfoTestImpl(testJobId, testHarvestId);
+        HeritrixFiles OkFiles = new HeritrixFiles(WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
         MetadataFileWriter aw = inf.getMetadataWriter();
         writeOneRecord(aw);
@@ -238,8 +243,9 @@ public class IngestableFilesTester {
      * Verify that a file containing data written to the metadata ARCWriter is contained in one the returned files.
      */
     @Test
-    public void testGetMetadataFiles() throws FileNotFoundException, IOException {
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+    public void testGetMetadataFiles() throws IOException {
+        JobInfo acceptableJobInfoForJobOne = new JobInfoTestImpl(testJobId, testHarvestId);
+        HeritrixFiles OkFiles = new HeritrixFiles(WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
         MetadataFileWriter aw = inf.getMetadataWriter();
         writeOneRecord(aw);
@@ -257,7 +263,8 @@ public class IngestableFilesTester {
 
     @Test
     public void testMetadataFailure() {
-        HeritrixFiles OkFiles = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJobOne);
+        JobInfo acceptableJobInfoForJobOne = new JobInfoTestImpl(testJobId, testHarvestId);
+        HeritrixFiles OkFiles = new HeritrixFiles(WORKING_DIR, acceptableJobInfoForJobOne);
         IngestableFiles inf = new IngestableFiles(OkFiles);
         inf.setMetadataGenerationSucceeded(false);
         try {
@@ -277,7 +284,7 @@ public class IngestableFilesTester {
     @Test
     public void testCloseOpenFiles() throws Exception {
         // These files should end up closed
-        File arcsDir = new File(TestInfo.WORKING_DIR, "arcs");
+        File arcsDir = new File(WORKING_DIR, "arcs");
         File[] openFiles = new File[] {new File(arcsDir, "test1.arc.open"), new File(arcsDir, "test2.arc.gz.open")};
         // These files should be untouched
         File[] nonOpenFiles = new File[] {new File(arcsDir, "test3.arcygz.open"), new File(arcsDir, "test4.arc"),
@@ -292,7 +299,7 @@ public class IngestableFilesTester {
                     nonOpenFile.exists());
         }
 
-        HeritrixFiles OkFiles42 = new HeritrixFiles(TestInfo.WORKING_DIR, acceptableJobInfoForJob42);
+        HeritrixFiles OkFiles42 = new HeritrixFiles(WORKING_DIR, acceptableJobInfoForJob42);
         IngestableFiles inf = new IngestableFiles(OkFiles42);
 
         inf.closeOpenFiles(0);

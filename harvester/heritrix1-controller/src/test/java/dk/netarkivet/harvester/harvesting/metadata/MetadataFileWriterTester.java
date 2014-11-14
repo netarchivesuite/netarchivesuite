@@ -20,9 +20,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.harvesting;
-
-import static org.junit.Assert.fail;
+package dk.netarkivet.harvester.harvesting.metadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,25 +33,27 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.archive.util.anvl.ANVLRecord;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.TestName;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SlowTest;
-import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
-import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterArc;
-import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
+import dk.netarkivet.harvester.harvesting.Heritrix1ControllerTestInfo;
 import dk.netarkivet.testutils.TestResourceUtils;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class MetadataFileWriterTester {
-    private static File logsDir = new File(TestInfo.CRAWLDIR_ORIGINALS_DIR, "logs");
+    @Rule public TestName test = new TestName();
+    private File WORKING_DIR;
+    private static File logsDir = new File(Heritrix1ControllerTestInfo.CRAWLDIR_ORIGINALS_DIR, "logs");
 
     @Before
     public void initialize() {
-        File outputdir = new File(TestResourceUtils.OUTPUT_DIR);
-        FileUtils.removeRecursively(outputdir);
-        FileUtils.createDir(outputdir);
+        WORKING_DIR = new File(TestResourceUtils.OUTPUT_DIR, getClass().getSimpleName() + "/" + test.getMethodName());
+        FileUtils.removeRecursively(WORKING_DIR);
+        FileUtils.createDir(WORKING_DIR);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class MetadataFileWriterTester {
     }
 
     @Test
-    public void testMetadataFileWriterWarc() {
+    public void testMetadataFileWriterWarc() throws IOException {
         File metafile = getOutputArcFile("metadata.warc");
         MetadataFileWriter mdfw = MetadataFileWriterWarc.createWriter(metafile);
 
@@ -91,13 +91,8 @@ public class MetadataFileWriterTester {
         byte[] payload = new byte[8192];
         random.nextBytes(payload);
 
-        try {
-            mdfw.write(uri, "application/binary", "127.0.0.1", ctm, payload);
-            mdfw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail("Unexpected exception!");
-        }
+        mdfw.write(uri, "application/binary", "127.0.0.1", ctm, payload);
+        mdfw.close();
 
         metafile.deleteOnExit();
 
@@ -105,7 +100,6 @@ public class MetadataFileWriterTester {
         MetadataFileWriter mfwa = MetadataFileWriterWarc.createWriter(metadataArcFile);
         ((MetadataFileWriterWarc) mfwa).insertInfoRecord(new ANVLRecord());
 
-        File logsDir = null;
         for (File f : logsDir.listFiles()) {
             mfwa.writeFileTo(f, "metadata://netarkivet.dk/crawl/logs/" + f.getName(), "text/plain");
         }
@@ -141,7 +135,7 @@ public class MetadataFileWriterTester {
     }
 
     private File getOutputArcFile(String name) {
-        File arcfile = new File(TestResourceUtils.OUTPUT_DIR, name);
+        File arcfile = new File(WORKING_DIR, name);
         try {
             arcfile.createNewFile();
         } catch (IOException e) {

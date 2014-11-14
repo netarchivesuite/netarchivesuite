@@ -24,77 +24,59 @@ package dk.netarkivet.harvester.harvesting;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.ParseException;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
+
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.testutils.TestResourceUtils;
 
 public class ArchiveFilesReportGeneratorTest {
+    @Rule public TestName test = new TestName();
+    private File WORKING_DIR;
+
+    @Before
+    public void setUp() throws Exception {
+        WORKING_DIR = new File(TestResourceUtils.OUTPUT_DIR, getClass().getSimpleName() + "/" + test.getMethodName());
+        FileUtils.removeRecursively(WORKING_DIR);
+        FileUtils.createDir(WORKING_DIR);
+
+        File ARC_FILES_REPORT_DIR = new File("src/test/resources/arcFilesReport");
+        FileUtils.copyDirectory(ARC_FILES_REPORT_DIR, WORKING_DIR);
+    }
 
     @Test
     public final void testPatterns() throws ParseException {
 
         Object[] params = ArchiveFilesReportGenerator.FILE_OPEN_FORMAT
                 .parse("2010-07-20 16:12:53.698 INFO thread-14 org.archive.io.WriterPoolMember.createFile() Opened /somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000.arc.gz.open");
-        assertEquals("2010-07-20 16:12:53.698", (String) params[0]);
-        assertEquals("14", (String) params[1]);
+        assertEquals("2010-07-20 16:12:53.698", params[0]);
+        assertEquals("14", params[1]);
         assertEquals("/somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000.arc.gz",
-                (String) params[2]);
+                params[2]);
 
         params = ArchiveFilesReportGenerator.FILE_CLOSE_FORMAT
                 .parse("2010-07-20 16:14:31.792 INFO thread-29 org.archive.io.WriterPoolMember.close() Closed /somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000-bnf_test.arc.gz, size 162928");
-        assertEquals("2010-07-20 16:14:31.792", (String) params[0]);
-        assertEquals("29", (String) params[1]);
+        assertEquals("2010-07-20 16:14:31.792", params[0]);
+        assertEquals("29", params[1]);
         assertEquals("/somepath/jobs/current/high/5_1279642368951/arcs/5-1-20100720161253-00000-bnf_test.arc.gz",
-                (String) params[2]);
+                params[2]);
         assertEquals(162928L, Long.parseLong((String) params[3]));
     }
 
     @Test
     public final void testReportGeneration() throws IOException {
+        File crawlDir = new File(WORKING_DIR, "crawldir");
+        ArchiveFilesReportGenerator gen = new ArchiveFilesReportGenerator(crawlDir);
+        File expectedReport = new File(WORKING_DIR, "expected.arcfiles-report.txt");
 
-        File actualReport = null;
-        try {
-            File crawlDir = new File(TestInfo.BASEDIR, "arcFilesReport" + File.separator + "crawldir");
-            ArchiveFilesReportGenerator gen = new ArchiveFilesReportGenerator(crawlDir);
+        File actualReport = gen.generateReport();
 
-            File expectedReport = new File(TestInfo.BASEDIR, "arcFilesReport" + File.separator
-                    + "expected.arcfiles-report.txt");
-
-            actualReport = gen.generateReport();
-
-            assertEquals(toString(expectedReport), toString(actualReport));
-
-        } finally {
-            if ((actualReport != null) && actualReport.exists()) {
-                if (!actualReport.delete()) {
-                    actualReport.deleteOnExit();
-                }
-            }
-        }
+        assertEquals(FileUtils.readFile(expectedReport), FileUtils.readFile(actualReport));
     }
-
-    private static String toString(File f) throws IOException {
-
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        BufferedReader br = new BufferedReader(new FileReader(f));
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            pw.println(line);
-        }
-
-        String fileContents = sw.toString();
-
-        pw.close();
-        br.close();
-
-        return fileContents;
-    }
-
 }

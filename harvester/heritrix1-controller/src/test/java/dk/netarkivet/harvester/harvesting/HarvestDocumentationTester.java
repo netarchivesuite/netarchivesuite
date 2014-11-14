@@ -70,7 +70,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class HarvestDocumentationTester {
     @Rule public TestName test = new TestName();
-    private JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID), TestInfo.HARVEST_ID);
+    private JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(Heritrix1ControllerTestInfo.ARC_JOB_ID), Heritrix1ControllerTestInfo.HARVEST_ID);
     private File WORKING_DIR;
     
     @Before
@@ -96,7 +96,7 @@ public class HarvestDocumentationTester {
          * Run the method on a working-dir that mirrors TestInfo.METADATA_TEST_DIR.
          */
         WORKING_DIR.mkdirs();
-        FileUtils.copyDirectory(TestInfo.METADATA_TEST_DIR, WORKING_DIR);
+        FileUtils.copyDirectory(Heritrix1ControllerTestInfo.METADATA_TEST_DIR, WORKING_DIR);
 
         // Add preharvest metadata to "metadata" subdirectory of the crawldir
         MetadataEntry me = new MetadataEntry(
@@ -108,7 +108,7 @@ public class HarvestDocumentationTester {
         metadatadir.mkdir();
         MetadataEntry.storeMetadataToDisk(l, metadatadir);
 
-        JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID), 117L);
+        JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(Heritrix1ControllerTestInfo.ARC_JOB_ID), 117L);
 
         HeritrixFiles files = new HeritrixFiles(WORKING_DIR, harvestJob);
         IngestableFiles inf = new IngestableFiles(files);
@@ -116,7 +116,7 @@ public class HarvestDocumentationTester {
         HarvestDocumentation.documentHarvest(inf);
 
         // Verify that the new file exists.
-        MetadataFileWriter.getMetadataArchiveFileName(TestInfo.ARC_JOB_ID);
+        MetadataFileWriter.getMetadataArchiveFileName(Heritrix1ControllerTestInfo.ARC_JOB_ID);
 
         List<File> fs = inf.getMetadataArcFiles();
         assertEquals("Should have created exactly one file ", 1, fs.size());
@@ -128,10 +128,10 @@ public class HarvestDocumentationTester {
         Iterator<ArchiveRecord> it = r.iterator();
         // Read each record, checking content-type and URI.
         Set<String> cdxURISet = new HashSet<String>();
-        cdxURISet.add(HarvestDocumentation.getCDXURI(TestInfo.ARC_HARVEST_ID, TestInfo.ARC_JOB_ID,
-                TestInfo.FST_FILENAME).toASCIIString());
-        cdxURISet.add(HarvestDocumentation.getCDXURI(TestInfo.ARC_HARVEST_ID, TestInfo.ARC_JOB_ID,
-                TestInfo.SND_FILENAME).toASCIIString());
+        cdxURISet.add(HarvestDocumentation.getCDXURI(Heritrix1ControllerTestInfo.ARC_HARVEST_ID, Heritrix1ControllerTestInfo.ARC_JOB_ID,
+                Heritrix1ControllerTestInfo.FST_FILENAME).toASCIIString());
+        cdxURISet.add(HarvestDocumentation.getCDXURI(Heritrix1ControllerTestInfo.ARC_HARVEST_ID, Heritrix1ControllerTestInfo.ARC_JOB_ID,
+                Heritrix1ControllerTestInfo.SND_FILENAME).toASCIIString());
 
         String aliasFound = null;
         while (it.hasNext()) {
@@ -163,7 +163,7 @@ public class HarvestDocumentationTester {
 
     @Test(expected = PermissionDenied.class)
     public void testDocumentHarvestNonDir() {
-        HeritrixFiles filesWithExistingFileInsteadOfDir = new HeritrixFiles(TestInfo.ORDER_FILE, harvestJob);
+        HeritrixFiles filesWithExistingFileInsteadOfDir = new HeritrixFiles(Heritrix1ControllerTestInfo.ORDER_FILE, harvestJob);
         IngestableFiles ingestablesWithFileAsCrawlDir = new IngestableFiles(filesWithExistingFileInsteadOfDir);
         HarvestDocumentation.documentHarvest(ingestablesWithFileAsCrawlDir);
     }
@@ -178,9 +178,9 @@ public class HarvestDocumentationTester {
         // the ARC files in dir do not share harvestID and jobID
         WORKING_DIR.mkdirs();
         File arcsDir = new File(WORKING_DIR, Constants.ARCDIRECTORY_NAME);
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.METADATA_TEST_DIR_INCONSISTENT, arcsDir);
+        TestFileUtils.copyDirectoryNonCVS(Heritrix1ControllerTestInfo.METADATA_TEST_DIR_INCONSISTENT, arcsDir);
         // JobInfo for harvestId 117
-        JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(TestInfo.ARC_JOB_ID), 117L);
+        JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(Heritrix1ControllerTestInfo.ARC_JOB_ID), 117L);
         HeritrixFiles files117 = new HeritrixFiles(WORKING_DIR, harvestJob);
         IngestableFiles OkIngestables = new IngestableFiles(files117);
 
@@ -188,13 +188,13 @@ public class HarvestDocumentationTester {
         List<File> arcFiles = Arrays.asList(arcsDir.listFiles(FileUtils.ARCS_FILTER));
         assertEquals("Should have exactly 1 ARC file (no metadata here)", 1, arcFiles.size());
         // System.out.println(Okfiles.getArchiveFilePrefix());
-        assertEquals("Should only have consistently named arc file left. Expected " + TestInfo.ARC_FILE_0.getName()
-                + " but got " + arcFiles.get(0).getName(), TestInfo.ARC_FILE_0.getName(), arcFiles.get(0).getName());
+        assertEquals("Should only have consistently named arc file left. Expected " + Heritrix1ControllerTestInfo.ARC_FILE_0.getName()
+                + " but got " + arcFiles.get(0).getName(), Heritrix1ControllerTestInfo.ARC_FILE_0.getName(), arcFiles.get(0).getName());
 
         List<File> metadataFiles = OkIngestables.getMetadataArcFiles();
         File metadataDir = new File(WORKING_DIR, "metadata");
         File target1 = new File(metadataDir, MetadataFileWriter.getMetadataArchiveFileName(Long
-                .toString(TestInfo.JOB_ID)));
+                .toString(Heritrix1ControllerTestInfo.JOB_ID)));
         assertEquals("Should generate exactly one metadata file", 1, metadataFiles.size());
         assertTrue("Should generate file " + target1 + " but found only " + metadataFiles.toString(),
                 metadataFiles.contains(target1));
@@ -266,57 +266,58 @@ public class HarvestDocumentationTester {
     public void failingtestCreateCDXFile() throws IOException {
         OutputStream cdxstream = new ByteArrayOutputStream();
         cdxstream.write("BEFORE\n".getBytes());
-        CDXUtils.writeCDXInfo(TestInfo.ARC_FILE_1, cdxstream);
-        assertEquals("Stream should have expected content", "BEFORE\n" + FileUtils.readFile(TestInfo.CDX_FILE),
+        CDXUtils.writeCDXInfo(Heritrix1ControllerTestInfo.ARC_FILE_1, cdxstream);
+        assertEquals("Stream should have expected content", "BEFORE\n" + FileUtils.readFile(Heritrix1ControllerTestInfo.CDX_FILE),
                 cdxstream.toString());
 
         // Testing on a non-arc file to see results
         cdxstream = new ByteArrayOutputStream();
         cdxstream.write("Start\n".getBytes());
-        CDXUtils.writeCDXInfo(TestInfo.SEEDS_FILE, cdxstream);
+        CDXUtils.writeCDXInfo(Heritrix1ControllerTestInfo.SEEDS_FILE, cdxstream);
         assertEquals("Stream should have no new content", "Start\n", cdxstream.toString());
 
         // Testing on a gzipped file to see results
         cdxstream = new ByteArrayOutputStream();
         cdxstream.write("Begin\n".getBytes());
-        CDXUtils.writeCDXInfo(TestInfo.ARC_FILE2, cdxstream);
-        assertEquals("Stream should have expected new content", "Begin\n" + FileUtils.readFile(TestInfo.CDX_FILE2),
+        CDXUtils.writeCDXInfo(Heritrix1ControllerTestInfo.ARC_FILE2, cdxstream);
+        assertEquals("Stream should have expected new content", "Begin\n" + FileUtils.readFile(
+                Heritrix1ControllerTestInfo.CDX_FILE2),
                 cdxstream.toString());
     }
 
 
     @Test (expected = ArgumentNotValid.class)
     public void testGenerateCDXNullProfile() {
-        CDXUtils.generateCDX(null, TestInfo.ARC_REAL_DIR, TestInfo.CDX_WORKING_DIR);
+        CDXUtils.generateCDX(null, Heritrix1ControllerTestInfo.ARC_REAL_DIR, Heritrix1ControllerTestInfo.CDX_WORKING_DIR);
     }
     @Test (expected = ArgumentNotValid.class)
     public void testGenerateNullArcDir() {
-        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, null, TestInfo.CDX_WORKING_DIR);
+        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, null, Heritrix1ControllerTestInfo.CDX_WORKING_DIR);
     }
     @Test (expected = ArgumentNotValid.class)
      public void testGenerateNullCDXDir() {
-        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, null);
+        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, Heritrix1ControllerTestInfo.ARC_REAL_DIR, null);
     }
     @Test (expected = ArgumentNotValid.class)
     public void testGenerateOnvalidArcDir() {
-        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_FILE_1, TestInfo.CDX_WORKING_DIR);
+        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, Heritrix1ControllerTestInfo.ARC_FILE_1, Heritrix1ControllerTestInfo.CDX_WORKING_DIR);
     }
     @Test (expected = ArgumentNotValid.class)
     public void testGenerateOnvalidCDXDir() {
-        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, TestInfo.ARC_FILE_1);
+        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, Heritrix1ControllerTestInfo.ARC_REAL_DIR, Heritrix1ControllerTestInfo.ARC_FILE_1);
     }
 
     @Test
     public void testGenerateCDX() throws IOException {
-        TestInfo.CDX_WORKING_DIR.mkdirs();
-        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, TestInfo.ARC_REAL_DIR, TestInfo.CDX_WORKING_DIR);
-        File[] originalFiles = TestInfo.ARC_REAL_DIR.listFiles(FileUtils.ARCS_FILTER);
-        File[] generatedFiles = TestInfo.CDX_WORKING_DIR.listFiles();
+        Heritrix1ControllerTestInfo.CDX_WORKING_DIR.mkdirs();
+        CDXUtils.generateCDX(ArchiveProfile.ARC_PROFILE, Heritrix1ControllerTestInfo.ARC_REAL_DIR, Heritrix1ControllerTestInfo.CDX_WORKING_DIR);
+        File[] originalFiles = Heritrix1ControllerTestInfo.ARC_REAL_DIR.listFiles(FileUtils.ARCS_FILTER);
+        File[] generatedFiles = Heritrix1ControllerTestInfo.CDX_WORKING_DIR.listFiles();
         assertEquals(
                 "Should have generated the right number of files, but " + "found " + Arrays.asList(generatedFiles),
                 originalFiles.length, generatedFiles.length);
         for (File original : originalFiles) {
-            File cdxfile = new File(TestInfo.CDX_WORKING_DIR, original.getName() + FileUtils.CDX_EXTENSION);
+            File cdxfile = new File(Heritrix1ControllerTestInfo.CDX_WORKING_DIR, original.getName() + FileUtils.CDX_EXTENSION);
             assertTrue("Should be a cdx file with correct name for '" + original + "'", cdxfile.isFile());
             OutputStream content = new ByteArrayOutputStream();
             CDXUtils.writeCDXInfo(original, content);
@@ -343,8 +344,8 @@ public class HarvestDocumentationTester {
                 new File(WORKING_DIR, "oddjobs").getAbsolutePath());
         WORKING_DIR.mkdirs();
         File arcsDir = new File(WORKING_DIR, Constants.ARCDIRECTORY_NAME);
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.METADATA_TEST_DIR_INCONSISTENT, arcsDir);
-        FileUtils.copyFile(new File(TestInfo.METADATA_TEST_DIR, "arcs/not-an-arc-file.txt"), new File(arcsDir,
+        TestFileUtils.copyDirectoryNonCVS(Heritrix1ControllerTestInfo.METADATA_TEST_DIR_INCONSISTENT, arcsDir);
+        FileUtils.copyFile(new File(Heritrix1ControllerTestInfo.METADATA_TEST_DIR, "arcs/not-an-arc-file.txt"), new File(arcsDir,
                 "43-metadata-1.arc"));
 
         // JobInfo for harvestId 117
@@ -395,7 +396,7 @@ public class HarvestDocumentationTester {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         WORKING_DIR.mkdirs();
         File arcsDir = new File(WORKING_DIR, Constants.ARCDIRECTORY_NAME);
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.METADATA_TEST_DIR, WORKING_DIR);
+        TestFileUtils.copyDirectoryNonCVS(Heritrix1ControllerTestInfo.METADATA_TEST_DIR, WORKING_DIR);
         // IngestableFiles ingestableFiles = new IngestableFiles(
         // WORKING_DIR,
         // TestInfo.JOB_ID);
@@ -418,7 +419,7 @@ public class HarvestDocumentationTester {
         FileUtils.remove(new File(arcsDir, "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc"));
 
         String metadataDirPath = new File(WORKING_DIR, IngestableFiles.METADATA_SUB_DIR).getAbsolutePath();
-        String filename = MetadataFileWriter.getMetadataArchiveFileName("" + TestInfo.JOB_ID);
+        String filename = MetadataFileWriter.getMetadataArchiveFileName("" + Heritrix1ControllerTestInfo.JOB_ID);
 
         lr.assertLogContains("Should have issued warning about existing metadata-arcfile", "The metadata-file '"
                 + metadataDirPath + "/" + filename + "' already exists, so we don't make another one!");
@@ -433,11 +434,11 @@ public class HarvestDocumentationTester {
      */
     @Test
     public void testWriteHarvestDetails() throws IOException {
-        ReloadSettings rs = new ReloadSettings(new File(TestInfo.ORIGINALS_DIR, "metadata_settings.xml"));
+        ReloadSettings rs = new ReloadSettings(new File(Heritrix1ControllerTestInfo.ORIGINALS_DIR, "metadata_settings.xml"));
         rs.setUp();
 
         WORKING_DIR.mkdirs();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.CRAWLDIR_ORIGINALS_DIR, WORKING_DIR);
+        TestFileUtils.copyDirectoryNonCVS(Heritrix1ControllerTestInfo.CRAWLDIR_ORIGINALS_DIR, WORKING_DIR);
 
         IngestableFiles OkIngestables = new IngestableFiles(new HeritrixFiles(WORKING_DIR, harvestJob));
         HarvestDocumentation.documentHarvest(OkIngestables);
@@ -453,39 +454,39 @@ public class HarvestDocumentationTester {
         // File ORIGINAL_CRAWLDIR = TestInfo.CRAWLDIR_ORIGINALS_DIR;
         File metadataArcFile = iF.getMetadataArcFiles().get(0);
         String URL = "metadata://netarkivet.dk/crawl/setup/order.xml?heritrixVersion="
-                + Constants.getHeritrixVersionString() + "&harvestid=" + TestInfo.HARVEST_ID + "&jobid="
-                + TestInfo.JOB_ID;
+                + Constants.getHeritrixVersionString() + "&harvestid=" + Heritrix1ControllerTestInfo.HARVEST_ID + "&jobid="
+                + Heritrix1ControllerTestInfo.JOB_ID;
         findAndVerifyMetadata(metadataArcFile, URL);
         checkThatNoLongerExist(new File(WORKING_DIR, "order.xml"));
 
         URL = "metadata://netarkivet.dk/crawl/setup/seeds.txt?heritrixVersion=" + Constants.getHeritrixVersionString()
-                + "&harvestid=" + TestInfo.HARVEST_ID + "&jobid=" + TestInfo.JOB_ID;
+                + "&harvestid=" + Heritrix1ControllerTestInfo.HARVEST_ID + "&jobid=" + Heritrix1ControllerTestInfo.JOB_ID;
         findAndVerifyMetadata(metadataArcFile, URL);
         checkThatNoLongerExist(new File(WORKING_DIR, "seeds.txt"));
 
         URL = "metadata://netarkivet.dk/crawl/reports/hosts-report.txt?heritrixVersion="
-                + Constants.getHeritrixVersionString() + "&harvestid=" + TestInfo.HARVEST_ID + "&jobid="
-                + TestInfo.JOB_ID;
+                + Constants.getHeritrixVersionString() + "&harvestid=" + Heritrix1ControllerTestInfo.HARVEST_ID + "&jobid="
+                + Heritrix1ControllerTestInfo.JOB_ID;
         findAndVerifyMetadata(metadataArcFile, URL);
         checkThatNoLongerExist(new File(WORKING_DIR, "hosts-report.txt"));
 
         // This section necessitated by bug 778
         URL = "metadata://netarkivet.dk/crawl/setup/harvestInfo.xml?heritrixVersion="
-                + Constants.getHeritrixVersionString() + "&harvestid=" + TestInfo.HARVEST_ID + "&jobid="
-                + TestInfo.JOB_ID;
+                + Constants.getHeritrixVersionString() + "&harvestid=" + Heritrix1ControllerTestInfo.HARVEST_ID + "&jobid="
+                + Heritrix1ControllerTestInfo.JOB_ID;
         findAndVerifyMetadata(metadataArcFile, URL);
         // We need to force the filename to be non-interned, to check that
         // .equals() is called.
         checkThatStillExist(new File(WORKING_DIR, new String("harvestInfo.xml".toCharArray())));
 
         URL = "metadata://netarkivet.dk/crawl/reports/seeds-report.txt?heritrixVersion="
-                + Constants.getHeritrixVersionString() + "&harvestid=" + TestInfo.HARVEST_ID + "&jobid="
-                + TestInfo.JOB_ID;
+                + Constants.getHeritrixVersionString() + "&harvestid=" + Heritrix1ControllerTestInfo.HARVEST_ID + "&jobid="
+                + Heritrix1ControllerTestInfo.JOB_ID;
         findAndVerifyMetadata(metadataArcFile, URL);
         checkThatNoLongerExist(new File(WORKING_DIR, "seeds-report.txt"));
 
         URL = "metadata://netarkivet.dk/crawl/logs/crawl.log?heritrixVersion=" + Constants.getHeritrixVersionString()
-                + "&harvestid=" + TestInfo.HARVEST_ID + "&jobid=" + TestInfo.JOB_ID;
+                + "&harvestid=" + Heritrix1ControllerTestInfo.HARVEST_ID + "&jobid=" + Heritrix1ControllerTestInfo.JOB_ID;
         // File logDir = new File(ORIGINAL_CRAWLDIR, "logs");
         findAndVerifyMetadata(metadataArcFile, URL);
         File logDir = new File(WORKING_DIR, "logs");
@@ -496,8 +497,8 @@ public class HarvestDocumentationTester {
         // Test that domain-specific settings (a.k.a overrides) are
         // stored in the proper way.
         URL = "metadata://netarkivet.dk/crawl/setup/settings.xml?" + "heritrixVersion="
-                + Constants.getHeritrixVersionString() + "&harvestid=" + TestInfo.HARVEST_ID + "&jobid="
-                + TestInfo.JOB_ID + "&domain=kb.dk";
+                + Constants.getHeritrixVersionString() + "&harvestid=" + Heritrix1ControllerTestInfo.HARVEST_ID + "&jobid="
+                + Heritrix1ControllerTestInfo.JOB_ID + "&domain=kb.dk";
         findAndVerifyMetadata(metadataArcFile, URL);
 
     }

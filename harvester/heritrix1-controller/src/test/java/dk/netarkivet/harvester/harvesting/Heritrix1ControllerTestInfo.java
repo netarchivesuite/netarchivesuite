@@ -32,14 +32,14 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 /**
  * Testdata for this package.
  */
-public class TestInfo {
+public class Heritrix1ControllerTestInfo {
     // General dirs:
     protected static final File RESOURCE_DIR = new File("src/test/resources");
     protected static final File WORKING_DIR = new File("target/test-output");
 
     static final File ORIGINALS_DIR = new File(RESOURCE_DIR, "originals");
 
-    static final File CRAWLDIR_ORIGINALS_DIR = new File(RESOURCE_DIR, "crawldir");
+    public static final File CRAWLDIR_ORIGINALS_DIR = new File(RESOURCE_DIR, "crawldir");
     static final File UNFINISHED_CRAWLDIR = new File(RESOURCE_DIR, "unfinished_crawl_dir");
     static final File ORDER_AND_SEEDS_ORIGINALS_DIR = new File(RESOURCE_DIR, "originals");
 

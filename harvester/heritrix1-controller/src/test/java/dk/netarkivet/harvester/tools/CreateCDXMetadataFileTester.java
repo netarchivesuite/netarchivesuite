@@ -34,11 +34,16 @@ import java.io.PrintStream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.StringAsserts;
+import dk.netarkivet.testutils.TestResourceUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
@@ -52,7 +57,7 @@ public class CreateCDXMetadataFileTester {
     // private static String CONTENT = "This is a test message";
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams();
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR, TestInfo.WORKING_DIR);
+    private MoveTestFiles mtf;
     private MockupJMS mjms = new MockupJMS();
     // TestMessageListener listener;
 
@@ -61,8 +66,17 @@ public class CreateCDXMetadataFileTester {
     File job70MetadataFile = new File("70-metadata-1.arc");
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
+    @Rule public TestName test = new TestName();
+    private File WORKING_DIR;
+
     @Before
     public void setUp() {
+        WORKING_DIR = new File(TestResourceUtils.OUTPUT_DIR, getClass().getSimpleName() + "/" + test.getMethodName());
+        FileUtils.removeRecursively(WORKING_DIR);
+        FileUtils.createDir(WORKING_DIR);
+        Settings.set(HarvesterSettings.METADATA_FORMAT, "arc");
+        //mtf = new MoveTestFiles(TestInfo.DATA_DIR, WORKING_DIR);
+
         utrf.setUp();
         mjms.setUp();
         // listener = new BatchListener();
@@ -193,11 +207,9 @@ public class CreateCDXMetadataFileTester {
                 "http://netarkivet.dk/fase2index-da.php 130.225.27.144 20060329091238 ", job4MetadataFile);
         FileAsserts.assertFileContains("Should have some intermediate line", "dns:netarkivet.dk 130.225.24.33",
                 job4MetadataFile);
-        FileAsserts
-                .assertFileContains(
-                        "Should have last line",
-                        "http://netarkivet.dk/netarchive_alm/billeder/netarkivet_guidelines_13.gif 130.225.27.144 20060329091256",
-                        job4MetadataFile);
+        FileAsserts.assertFileContains("Should have last line",
+                "http://netarkivet.dk/netarchive_alm/billeder/netarkivet_guidelines_13.gif 130.225.27.144 20060329091256",
+                job4MetadataFile);
     }
 
     @Test

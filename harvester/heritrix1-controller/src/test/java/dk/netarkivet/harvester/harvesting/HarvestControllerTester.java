@@ -24,7 +24,6 @@ package dk.netarkivet.harvester.harvesting;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -54,8 +53,6 @@ import dk.netarkivet.harvester.datamodel.JobTest;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
-import dk.netarkivet.harvester.harvesting.report.HarvestReport;
-import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
@@ -79,13 +76,14 @@ public class HarvestControllerTester {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
+        TestFileUtils.copyDirectoryNonCVS(
+                Heritrix1ControllerTestInfo.CRAWLDIR_ORIGINALS_DIR, Heritrix1ControllerTestInfo.WORKING_DIR);
         rf.setUp();
         // Out commented to avoid reference to archive module from harvester module.
         // Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES, "1");
-        Settings.set(CommonSettings.CACHE_DIR, new File(TestInfo.WORKING_DIR, "cacheDir").getAbsolutePath());
+        Settings.set(CommonSettings.CACHE_DIR, new File(Heritrix1ControllerTestInfo.WORKING_DIR, "cacheDir").getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
-                new File(TestInfo.WORKING_DIR, "commontempdir").getAbsolutePath());
+                new File(Heritrix1ControllerTestInfo.WORKING_DIR, "commontempdir").getAbsolutePath());
 
         // Out commented to avoid reference to archive module from harvester module.
         // mis.setUp();
@@ -96,7 +94,7 @@ public class HarvestControllerTester {
         // Uncommented to avoid reference to archive module from harvester module.
         // mis.tearDown();
         JMSConnectionMockupMQ.clearTestQueues();
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
+        FileUtils.removeRecursively(Heritrix1ControllerTestInfo.WORKING_DIR);
         rf.tearDown();
         if (hc != null) {
             hc.cleanup();
@@ -144,9 +142,9 @@ public class HarvestControllerTester {
         assertFalse("j.getSeedList should be non-empty", j.getSeedListAsString().isEmpty());
         assertTrue("j.getOrderXMLdoc() must have a content", j.getOrderXMLdoc().hasContent());
 
-        File crawlDir = new File(TestInfo.WORKING_DIR, "testcrawldir");
+        File crawlDir = new File(Heritrix1ControllerTestInfo.WORKING_DIR, "testcrawldir");
         FileUtils.createDir(crawlDir);
-        List<MetadataEntry> metadata = Arrays.asList(new MetadataEntry[] {TestInfo.sampleEntry});
+        List<MetadataEntry> metadata = Arrays.asList(new MetadataEntry[] {Heritrix1ControllerTestInfo.sampleEntry});
 
         File harvestInfo = new File(crawlDir, "harvestInfo.xml");
         File seedsTxt = new File(crawlDir, "seeds.txt");
@@ -202,12 +200,12 @@ public class HarvestControllerTester {
      */
     @Test
     public void testWritePreharvestMetadata() throws Exception {
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.WORKING_DIR.getAbsolutePath());
-        TestInfo.oneMetadata.add(TestInfo.sampleEntry);
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, Heritrix1ControllerTestInfo.WORKING_DIR.getAbsolutePath());
+        Heritrix1ControllerTestInfo.oneMetadata.add(Heritrix1ControllerTestInfo.sampleEntry);
         Job someJob = JobTest.createDefaultJob();
 
         /** Test that empty metadata list does not produce any preharvest metadata objects in crawldir/metadata. */
-        File metadataDir = new File(TestInfo.WORKING_DIR, IngestableFiles.METADATA_SUB_DIR);
+        File metadataDir = new File(Heritrix1ControllerTestInfo.WORKING_DIR, IngestableFiles.METADATA_SUB_DIR);
         if (metadataDir.exists()) {
             FileUtils.removeRecursively(metadataDir);
         }
@@ -217,12 +215,12 @@ public class HarvestControllerTester {
         Method writePreharvestMetadata = ReflectUtils.getPrivateMethod(hc.getClass(), "writePreharvestMetadata",
                 Job.class, List.class, File.class);
 
-        writePreharvestMetadata.invoke(hc, someJob, TestInfo.emptyMetadata, TestInfo.WORKING_DIR);
+        writePreharvestMetadata.invoke(hc, someJob, Heritrix1ControllerTestInfo.emptyMetadata, Heritrix1ControllerTestInfo.WORKING_DIR);
 
         assertFalse("metadata files should not be created with empty metadata list", metadataDir.isDirectory());
 
         /** Test that non-empty metadata list produces serialized metadata. */
-        writePreharvestMetadata.invoke(hc, someJob, TestInfo.oneMetadata, TestInfo.WORKING_DIR);
+        writePreharvestMetadata.invoke(hc, someJob, Heritrix1ControllerTestInfo.oneMetadata, Heritrix1ControllerTestInfo.WORKING_DIR);
 
         List<MetadataEntry> metadata = MetadataEntry.getMetadataFromDisk(metadataDir);
 
@@ -232,11 +230,11 @@ public class HarvestControllerTester {
 
         MetadataEntry meta = metadata.get(0);
 
-        assertEquals("Should record the object under the given URI", TestInfo.sampleEntry.getURL(), meta.getURL());
-        assertEquals("Should indicate the intended MIME type", TestInfo.sampleEntry.getMimeType(), meta.getMimeType());
+        assertEquals("Should record the object under the given URI", Heritrix1ControllerTestInfo.sampleEntry.getURL(), meta.getURL());
+        assertEquals("Should indicate the intended MIME type", Heritrix1ControllerTestInfo.sampleEntry.getMimeType(), meta.getMimeType());
         ;
         String foundContent = new String(meta.getData());
-        assertEquals("Should store content unchanged", new String(TestInfo.sampleEntry.getData()), foundContent);
+        assertEquals("Should store content unchanged", new String(Heritrix1ControllerTestInfo.sampleEntry.getData()), foundContent);
     }
 
     /**
@@ -246,7 +244,7 @@ public class HarvestControllerTester {
      */
     @Test
     public void testRunHarvest() throws Exception {
-        HeritrixFiles files = new HeritrixFiles(new File(TestInfo.WORKING_DIR, "bogus"), new JobInfoTestImpl(42L, 23L));
+        HeritrixFiles files = new HeritrixFiles(new File(Heritrix1ControllerTestInfo.WORKING_DIR, "bogus"), new JobInfoTestImpl(42L, 23L));
         hc = HarvestController.getInstance();
         String cause = "Error creating singleton of class '"
                 + "dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher':";
@@ -262,36 +260,6 @@ public class HarvestControllerTester {
             StringAsserts.assertStringMatches("Should have the right error message", cause, e.getMessage());
 
         }
-    }
-
-    @Test
-    public void testGenerateHeritrixDomainHarvestReport() throws Exception {
-        // Test that an existing crawl.log is used, or null is returned
-        // if no hosts report is found.
-
-        hc = HarvestController.getInstance();
-        HeritrixFiles files = new HeritrixFiles(TestInfo.CRAWLDIR_ORIGINALS_DIR, new JobInfoTestImpl(1L, 1L));
-        StringBuilder errs = new StringBuilder();
-        HarvestReport dhr = HarvestReportFactory.generateHarvestReport(files);
-        assertEquals("Error accumulator should be empty", 0, errs.length());
-
-        assertEquals("Returned report should have right contents", 1162154L, dhr.getByteCount("netarkivet.dk")
-                .longValue());
-
-        File crawlDir2 = new File(TestInfo.CRAWLDIR_ORIGINALS_DIR, "bogus");
-        HeritrixFiles files2 = new HeritrixFiles(crawlDir2, new JobInfoTestImpl(1L, 1L));
-
-        dhr = null;
-        try {
-            dhr = HarvestReportFactory.generateHarvestReport(files2);
-            fail("Should have expected error message in errs" + "No crawl.log found in '" + crawlDir2.getAbsolutePath()
-                    + "/logs/crawl.log'\n" + errs.toString());
-        } catch (ArgumentNotValid anv) {
-            assertTrue(anv.getCause() instanceof IOFailure);
-            assertEquals("Not a file or not readable: " + crawlDir2.getAbsolutePath() + "/logs/crawl.log",
-                    ((IOFailure) anv.getCause()).getMessage());
-        }
-        assertNull("Generated harvestReport should be null", dhr);
     }
 
     // Uncommented to avoid reference to archive module from harvester module.
@@ -375,12 +343,12 @@ public class HarvestControllerTester {
             assertTrue("Should contain varable name in exception", e.getMessage().contains("logFile"));
         }
         assertEquals("Download should be completed", StopReason.DOWNLOAD_COMPLETE,
-                AbstractHarvestReport.findDefaultStopReason(new File(TestInfo.CRAWLDIR_ORIGINALS_DIR,
+                AbstractHarvestReport.findDefaultStopReason(new File(Heritrix1ControllerTestInfo.CRAWLDIR_ORIGINALS_DIR,
                         "logs/progress-statistics.log")));
         assertEquals("Download should be unfinished", StopReason.DOWNLOAD_UNFINISHED,
-                AbstractHarvestReport.findDefaultStopReason(TestInfo.NON_EXISTING_FILE));
+                AbstractHarvestReport.findDefaultStopReason(Heritrix1ControllerTestInfo.NON_EXISTING_FILE));
         assertEquals("Download should be unfinished", StopReason.DOWNLOAD_UNFINISHED,
-                AbstractHarvestReport.findDefaultStopReason(new File(TestInfo.UNFINISHED_CRAWLDIR,
+                AbstractHarvestReport.findDefaultStopReason(new File(Heritrix1ControllerTestInfo.UNFINISHED_CRAWLDIR,
                         "logs/progress-statistics.log")));
     }
 }

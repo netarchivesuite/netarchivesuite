@@ -148,7 +148,7 @@ public class TestInfo {
     static final int NO_OF_OBJECTS_TEST = 37;
     static final int NO_OF_BYTES_TEST = 1162154;
 
-    public static final File IDNA_CRAW_LOG = new File(BASEDIR, "idna/idna-crawllog.txt");
+    public static final File IDNA_CRAW_LOG = new File(BASEDIR, "harvesting.report.LegacyHarvestReport.idna/harvesting.report.LegacyHarvestReport.idna-crawl.log");
 
     public static final File ORDER_FOR_TESTING_WARCINFO = new File(WORKING_DIR, "order_for_testing_warcinfo.xml");
     public static final File WARCPROCESSORFILES_DIR = new File(BASEDIR, "warcprocessortestdata");
