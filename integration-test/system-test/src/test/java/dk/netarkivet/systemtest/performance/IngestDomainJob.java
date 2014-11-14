@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.hamcrest.MatcherAssert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -28,7 +27,7 @@ import dk.netarkivet.systemtest.page.PageHelper;
 class IngestDomainJob extends GenericWebJob {
     protected final TestLogger log = new TestLogger(getClass());
 
-    public IngestDomainJob(StressTest stressTest, WebDriver webDriver, Long maxTime) {
+    public IngestDomainJob(AbstractStressTest stressTest, WebDriver webDriver, Long maxTime) {
           super(stressTest, stressTest.testController, webDriver, 0L, 60L, maxTime, "Ingest Domain Job");
     }
 

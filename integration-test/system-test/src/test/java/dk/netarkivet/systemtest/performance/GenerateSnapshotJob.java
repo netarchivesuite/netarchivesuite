@@ -16,7 +16,7 @@ import dk.netarkivet.systemtest.environment.TestController;
 
 /**
 * Job to generate harvest jobs for a snapshot harvest. According to the test description, this should take up to nine
- * hours for a production load.
+* hours for a production load.
 */
 class GenerateSnapshotJob extends GenericWebJob {
     protected final TestLogger log = new TestLogger(getClass());
@@ -24,7 +24,7 @@ class GenerateSnapshotJob extends GenericWebJob {
     String harvestName;
     String report;
 
-    GenerateSnapshotJob(StressTest stressTest, TestController testController, WebDriver driver,
+    GenerateSnapshotJob(AbstractStressTest stressTest, TestController testController, WebDriver driver,
             Long startUpTime,
             Long waitingInterval, Long maxTime, String name) {
         super(stressTest, testController, driver, startUpTime, waitingInterval, maxTime, name);
@@ -63,7 +63,6 @@ class GenerateSnapshotJob extends GenericWebJob {
             }
         }
         activationForm.findElement(By.linkText("Activate")).click();
-
     }
 
     /**
@@ -98,7 +97,6 @@ class GenerateSnapshotJob extends GenericWebJob {
 
     @Override String getProgress() {
         return "Generated " + extractJobCount() + " jobs.";
-
     }
 
     /**

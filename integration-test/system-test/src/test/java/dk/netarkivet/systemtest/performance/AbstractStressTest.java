@@ -33,10 +33,10 @@ import dk.netarkivet.systemtest.environment.TestController;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 
 /**
- * Test specification: https://sbforge.org/display/NAS/TEST+7.
+ * Abstract superclass for the stress tests.
  */
 @SuppressWarnings("unused")
-public abstract class StressTest extends SeleniumTest {
+public abstract class AbstractStressTest extends SeleniumTest {
 
     static TestEnvironment testEnvironment = new DefaultTestEnvironment(
             "Stresstest",
@@ -47,14 +47,16 @@ public abstract class StressTest extends SeleniumTest {
     );
     static TestController testController = new TestController(testEnvironment);
 
-    public StressTest() {
+    public AbstractStressTest() {
         super(testController);
     }
 
+    /**
+     * Don't call the superclass method as the startup procedure for stresstests is complex
+     * with multiple steps.
+     */
     @BeforeTest(alwaysRun = true)
     public void setupTest() {
-        //super.setupTest();
-        //testController = new TestController(TESTNAME, "kb-test-adm-001.kb.dk", 8073);
     }
 
     protected void shutdownPreviousTest() throws Exception {

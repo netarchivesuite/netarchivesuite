@@ -33,16 +33,14 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.NASAssert;
-import dk.netarkivet.systemtest.environment.DefaultTestEnvironment;
 import dk.netarkivet.systemtest.environment.GUIApplicationManager;
-import dk.netarkivet.systemtest.environment.TestController;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
 @SuppressWarnings("static-access")
-public class DatabaseMigrationSanityTest extends StressTest {
+public class DatabaseMigrationSanityTest extends AbstractStressTest {
 
     /**
      * Basic sanity test that the current production database can be consistently upgraded with the latest NAS software.
@@ -56,7 +54,6 @@ public class DatabaseMigrationSanityTest extends StressTest {
 
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
-        if (true) {
             shutdownPreviousTest();
             checkUpdateTimes();
             fetchProductionData();
@@ -66,15 +63,6 @@ public class DatabaseMigrationSanityTest extends StressTest {
             startTestSystem();
             copyTestfiles();
             uploadFiles();
-        }
-    }
-
-    //Do we want to shut down the test after it has run, or leave it available for manual inspection after failure?
-    //It will be torn down, in any case, the next time it is run.
-    public void teardownTestEnvironment() throws Exception {
-        if (true) {
-            shutdownTest();
-        }
     }
 
     private void doStuff() throws Exception {

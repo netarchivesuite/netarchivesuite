@@ -15,7 +15,7 @@ import dk.netarkivet.systemtest.page.PageHelper;
 class UpdateFileStatusJob extends GenericWebJob {
     protected final TestLogger log = new TestLogger(getClass());
 
-    UpdateFileStatusJob(StressTest stressTest,
+    UpdateFileStatusJob(AbstractStressTest stressTest,
             WebDriver driver, Long startUpTime, Long waitingInterval,
             Long maxTime, String name) {
         super(stressTest, stressTest.testController, driver, startUpTime, waitingInterval, maxTime, name);

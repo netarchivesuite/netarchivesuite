@@ -61,9 +61,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
 
     @BeforeSuite(alwaysRun = true)
     public void setupTest() {
-        //testController = new TestController(getTestX(), "http://kb-test-adm-001.kb.dk", 8071);
         GUIApplicationManager = new GUIApplicationManager(testController);
-
         deployTestSystem();
         initialiseSelenium();
         setupFixture();

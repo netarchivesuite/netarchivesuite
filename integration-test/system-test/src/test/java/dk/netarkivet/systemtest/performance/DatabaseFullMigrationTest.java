@@ -27,17 +27,16 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.environment.GUIApplicationManager;
 
+/**
+ * Tests to be run against the full production-load database.
+ */
 @SuppressWarnings("unused")
-public class DatabaseFullMigrationTest extends StressTest {
+public class DatabaseFullMigrationTest extends AbstractStressTest {
     protected final TestLogger log = new TestLogger(getClass());
 
-    /**
-     *
-     */
     @Test
     public void testUpdateFileStatus() throws Exception {
         addDescription("Test updating the file status for all files in one bitarchive replica. This procedure takes around one hour to run for " +
@@ -72,12 +71,12 @@ public class DatabaseFullMigrationTest extends StressTest {
 
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
-            shutdownPreviousTest();
-            fetchProductionData();
-            deployComponents();
-            replaceDatabasesWithProd(false);
-            upgradeHarvestDatabase();
-            startTestSystem();
+        shutdownPreviousTest();
+        fetchProductionData();
+        deployComponents();
+        replaceDatabasesWithProd(false);
+        upgradeHarvestDatabase();
+        startTestSystem();
     }
 
     private void doGenerateSnapshot() throws InterruptedException {
@@ -112,7 +111,6 @@ public class DatabaseFullMigrationTest extends StressTest {
         String minStepTimeHoursString = System.getProperty("stresstest.minchecksumtime", "1");
         log.debug("Checksum checking must take at least {} (stresstest.minchecksumtime) hours to complete.", minStepTimeHoursString);
         Long minStepTime = Integer.parseInt(minStepTimeHoursString)*3600*1000L;
-
         UpdateChecksumJob updateChecksumJob = new UpdateChecksumJob(
                 this,
                 new FirefoxDriver(),
@@ -121,11 +119,6 @@ public class DatabaseFullMigrationTest extends StressTest {
                 stepTimeout,
                 "Update Checksum Job"
         );
-
         updateChecksumJob.run();
     }
-
-
-
-
 }

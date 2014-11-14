@@ -17,9 +17,9 @@ abstract class GenericWebJob extends LongRunningJob {
 
     WebDriver driver;
     GUIApplicationManager GUIApplicationManager;
-    protected StressTest stressTest;
+    protected AbstractStressTest stressTest;
 
-    GenericWebJob(StressTest stressTest,
+    GenericWebJob(AbstractStressTest stressTest,
             TestController testController, WebDriver driver, Long startUpTime, Long waitingInterval,
             Long maxTime, String name) {
         super(startUpTime, waitingInterval, maxTime, name);
