@@ -29,7 +29,7 @@ public class HarvestInfoXmlBuilder extends XmlBuilder {
     private HarvestInfoXmlBuilder(String name) {super(parseFile(name));}
 
     public static HarvestInfoXmlBuilder create() { return new HarvestInfoXmlBuilder(); }
-    public static HarvestInfoXmlBuilder createDefault() { return createDefault("harvestinfo.xml"); }
+    public static HarvestInfoXmlBuilder createDefault() { return createDefault("harvestInfo.xml"); }
     public static HarvestInfoXmlBuilder createDefault(String name) { return new HarvestInfoXmlBuilder(name); }
 
 }
