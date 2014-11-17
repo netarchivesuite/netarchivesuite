@@ -5,19 +5,18 @@
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
-    <artifactId>harvester-pom</artifactId>
+    <artifactId>harvester</artifactId>
     <version>5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>heritrix1-frontier</artifactId>
-  <packaging>jar</packaging>
 
   <name>Netarchivesuite - Heritrix1 Frontier</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>common-core</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>

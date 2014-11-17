@@ -5,19 +5,18 @@
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
-    <artifactId>common-pom</artifactId>
+    <artifactId>common</artifactId>
     <version>5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>common-test</artifactId>
-  <packaging>jar</packaging>
 
   <name>Netarchivesuite - common - test</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>common-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 

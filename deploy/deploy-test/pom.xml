@@ -5,43 +5,42 @@
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
-    <artifactId>deploy-pom</artifactId>
+    <artifactId>deploy</artifactId>
     <version>5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>deploy-test</artifactId>
-  <packaging>jar</packaging>
 
   <name>Netarchivesuite - deploy - test</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>deploy</artifactId>
+      <artifactId>deploy-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>common-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>archive</artifactId>
+      <artifactId>archive-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>harvester</artifactId>
+      <artifactId>harvester-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>monitor</artifactId>
+      <artifactId>monitor-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 

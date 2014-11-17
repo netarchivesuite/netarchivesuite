@@ -5,25 +5,24 @@
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
-    <artifactId>wayback-pom</artifactId>
+    <artifactId>wayback</artifactId>
     <version>5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>wayback-resourcestore</artifactId>
-  <packaging>jar</packaging>
 
   <name>Netarchivesuite - Wayback ResourceStore</name>
 
   <dependencies>
     <dependency>
       <groupId>org.netarchivesuite</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>common-core</artifactId>
       <version>5.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
-      <artifactId>archive</artifactId>
+      <artifactId>archive-core</artifactId>
       <version>5.0-SNAPSHOT</version>
     </dependency>
 

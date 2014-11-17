@@ -5,19 +5,18 @@
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
-    <artifactId>harvester-pom</artifactId>
+    <artifactId>harvester</artifactId>
     <version>5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>heritrix1-controller</artifactId>
-  <packaging>jar</packaging>
 
   <name>Netarchivesuite - Heritrix1 Controller</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>common-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -48,7 +47,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>archive</artifactId>
+      <artifactId>archive-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
