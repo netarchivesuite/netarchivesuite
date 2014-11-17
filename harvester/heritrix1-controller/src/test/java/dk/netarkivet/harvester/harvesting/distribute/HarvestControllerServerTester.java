@@ -404,7 +404,7 @@ public class HarvestControllerServerTester {
      * FIXME Fails in Hudson
      */
     @Test
-    @Ignore("AssertionError: documentHarvest() shouldhave generated final metadata")
+    @Ignore("AssertionError: documentHarvest() should have generated final metadata")
     public void failingTestCopyPreharvestMetadata() throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
         // Set up harvest controller, a job some metadata and a crawlDir

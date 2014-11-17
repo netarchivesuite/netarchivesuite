@@ -41,7 +41,7 @@ public class WARCWriterProcessorTester {
         File orderWithOut = new File("target/order_for_testing_warcinfo.xml");
         XmlUtils.setNode(orderXML, DISK_PATH_XPATH, orderWithOut.getParentFile().getAbsolutePath());
         XmlUtils.writeXmlToFile(orderXML, orderWithOut);
-        XmlUtils.writeXmlToFile(HarvestInfoXmlBuilder.createDefault().getDoc(), new File("target/harvestinfo.xml"));
+        XmlUtils.writeXmlToFile(HarvestInfoXmlBuilder.createDefault().getDoc(), new File("target/harvestInfo.xml"));
 
         WARCWriterProcessor p = new WARCWriterProcessor("testing");
         p.getFirstrecordBody(orderWithOut);
@@ -54,7 +54,7 @@ public class WARCWriterProcessorTester {
         File orderWithOut = new File("target/order_for_testing_warcinfo.xml");
         XmlUtils.setNode(orderXML, DISK_PATH_XPATH, orderWithOut.getParentFile().getAbsolutePath());
         XmlUtils.writeXmlToFile(orderXML, orderWithOut);
-        XmlUtils.writeXmlToFile(HarvestInfoXmlBuilder.createDefault("harvestinfo-snapshot.xml").getDoc(), new File("target/harvestinfo.xml"));
+        XmlUtils.writeXmlToFile(HarvestInfoXmlBuilder.createDefault("harvestInfo-snapshot.xml").getDoc(), new File("target/harvestInfo.xml"));
 
         WARCWriterProcessor p = new WARCWriterProcessor("testing");
         p.getFirstrecordBody(orderWithOut);
