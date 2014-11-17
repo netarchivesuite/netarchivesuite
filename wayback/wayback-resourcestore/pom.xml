@@ -51,35 +51,29 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
     </dependency>
-<!--
-    <dependency>
-      <groupId>org.archive.wayback</groupId>
-      <artifactId>wayback-core</artifactId>
-    </dependency>
--->
+
     <dependency>
       <groupId>org.netpreserve.openwayback</groupId>
       <artifactId>openwayback-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.netpreserve.openwayback</groupId>
+          <artifactId>openwayback-cdx-server</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.netpreserve.openwayback</groupId>
+          <artifactId>openwayback-access-control-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.netpreserve.openwayback</groupId>
+          <artifactId>openwayback-access-control-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sleepycat</groupId>
+          <artifactId>je</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
-<!--
-    <dependency>
-      <groupId>org.archive</groupId>
-      <artifactId>ia-web-commons</artifactId>
-      <version>1.0-20130411</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.gnu.inet</groupId>
-      <artifactId>libidn</artifactId>
-      <version>0.6.5</version>
-    </dependency>
-
-    <dependency>
-      <groupId>it.unimi.dsi</groupId>
-      <artifactId>mg4j</artifactId>
-      <version>1.0.1</version>
-    </dependency>
--->
   </dependencies>
 
   <build>

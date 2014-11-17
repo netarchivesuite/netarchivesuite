@@ -53,7 +53,7 @@ import dk.netarkivet.common.utils.InputStreamUtils;
 public class NetarchiveResourceStore implements ResourceStore {
 
     /** JMS ArcRepositoryClient. */
-    private ViewerArcRepositoryClient client;
+    protected ViewerArcRepositoryClient client;
 
     /** Pattern for matching http version header. */
     private static final Pattern HTTP_HEADER_PATTERN = Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
