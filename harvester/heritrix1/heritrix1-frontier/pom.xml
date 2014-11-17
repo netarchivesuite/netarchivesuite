@@ -11,7 +11,7 @@
 
   <artifactId>heritrix1-frontier</artifactId>
 
-  <name>Netarchivesuite - Heritrix1 Frontier</name>
+  <name>Netarchivesuite - heritrix1 frontier</name>
 
   <dependencies>
     <dependency>

@@ -13,7 +13,7 @@
   <artifactId>history-gui</artifactId>
   <packaging>war</packaging>
 
-  <name>Netarchivesuite - History - Webapp</name>
+  <name>Netarchivesuite - history - webapp</name>
 
   <dependencies>
     <dependency>

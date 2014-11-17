@@ -379,7 +379,8 @@ public final class Constants {
 
     // evaluate specific constants
     /** Complete list of settings files to combine to complete settings file. */
-    static final String[] BUILD_SETTING_FILES = {"dk/netarkivet/archive/settings.xml",
+    static final String[] BUILD_SETTING_FILES = {
+            "dk/netarkivet/archive/settings.xml",
             "dk/netarkivet/common/settings.xml",
             "dk/netarkivet/common/distribute/arcrepository/LocalArcRepositoryClientSettings.xml",
             "dk/netarkivet/harvester/settings.xml", "dk/netarkivet/monitor/settings.xml",

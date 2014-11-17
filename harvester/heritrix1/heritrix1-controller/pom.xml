@@ -11,7 +11,7 @@
 
   <artifactId>heritrix1-controller</artifactId>
 
-  <name>Netarchivesuite - Heritrix1 Controller</name>
+  <name>Netarchivesuite - heritrix1 controller</name>
 
   <dependencies>
     <dependency>

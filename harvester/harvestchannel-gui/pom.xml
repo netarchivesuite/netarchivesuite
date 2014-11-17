@@ -13,7 +13,7 @@
   <artifactId>harvestchannel-gui</artifactId>
   <packaging>war</packaging>
 
-  <name>Netarchivesuite - HarvestChannel - Webapp</name>
+  <name>Netarchivesuite - harvestChannel - webapp</name>
 
   <dependencies>
     <dependency>

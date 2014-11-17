@@ -11,19 +11,19 @@
 
   <artifactId>wayback-resourcestore</artifactId>
 
-  <name>Netarchivesuite - Wayback ResourceStore</name>
+  <name>Netarchivesuite - wayback resourceStore</name>
 
   <dependencies>
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>common-core</artifactId>
-      <version>5.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>archive-core</artifactId>
-      <version>5.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>

@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>heritrix1-extensions</artifactId>
-  <name>Netarchivesuite - Heritrix1 Extensions</name>
+  <name>Netarchivesuite - heritrix1 extensions</name>
 
   <dependencies>
     <dependency>

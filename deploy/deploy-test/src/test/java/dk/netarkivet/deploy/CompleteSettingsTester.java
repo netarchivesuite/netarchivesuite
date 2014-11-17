@@ -23,40 +23,28 @@
 package dk.netarkivet.deploy;
 
 import java.io.File;
-import java.net.URL;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.TestResourceUtils;
 
 public class CompleteSettingsTester {
+    @Rule public TestName test = new TestName();
+    private File WORKING_DIR;
+
     @Before
-    public void setUp() {
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        FileUtils.removeRecursively(TestInfo.TMPDIR);
-
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
+    public void initialize() {
+        WORKING_DIR = new File(TestResourceUtils.OUTPUT_DIR, getClass().getSimpleName() + "/" + test.getMethodName());
+        FileUtils.removeRecursively(WORKING_DIR);
+        FileUtils.createDir(WORKING_DIR);
     }
 
-    @After
-    public void tearDown() {
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        FileUtils.removeRecursively(TestInfo.TMPDIR);
-    }
-
-    /**
-     * Rebuilds the file src/dk/netarkivet/deploy/default_settings.xml. Eg. this is not a real test.
-     */
     @Test
-    public void testCompleteSettings() throws Exception {
-        URL url = this.getClass().getClassLoader().getResource("");
-        File file = new File(url.toURI());
-        // ToDo The generation of the complete settings file should be moved
-        // to the build functionality directly.
-        File settingsFile = new File(file, "dk/netarkivet/deploy/complete_settings.xml");
-        BuildCompleteSettings.buildCompleteSettings(settingsFile.getPath());
+    public void testCompleteSettings() {
+        BuildCompleteSettings.buildCompleteSettings(WORKING_DIR.getPath() + "/complete_settings.xml");
     }
 }

@@ -35,6 +35,30 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>harvest-scheduler</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>heritrix1-controller</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>heritrix1-extensions</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>heritrix1-frontier</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>monitor-core</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -47,7 +71,13 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wayback</artifactId>
+      <artifactId>wayback-indexer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>wayback-resourcestore</artifactId>
       <version>${project.version}</version>
     </dependency>
 

@@ -12,7 +12,7 @@
   <artifactId>wayback</artifactId>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - wayback - parent pom</name>
+  <name>Netarchivesuite - wayback</name>
 
   <modules>
     <module>wayback-indexer</module>

@@ -13,12 +13,12 @@
   <artifactId>harvestdefinition-gui</artifactId>
   <packaging>war</packaging>
 
-  <name>Netarchivesuite - HarvestDefinition - Webapp</name>
+  <name>Netarchivesuite - harvestDefinition - webapp</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>archive</artifactId>
+      <artifactId>archive-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
