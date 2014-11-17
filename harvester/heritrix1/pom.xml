@@ -14,4 +14,10 @@
   <packaging>pom</packaging>
 
   <name>Netarchivesuite - harvester - heritrix1 </name>
+
+  <modules>
+    <module>heritrix1-extensions</module>
+    <module>heritrix1-frontier</module>
+    <module>heritrix1-controller</module>
+  </modules>
 </project>

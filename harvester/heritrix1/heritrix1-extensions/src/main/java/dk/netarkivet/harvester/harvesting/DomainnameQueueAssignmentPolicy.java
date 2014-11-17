@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import java.util.logging.Level;
-
 import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.crawler.framework.CrawlController;
 import org.archive.crawler.frontier.HostnameQueueAssignmentPolicy;

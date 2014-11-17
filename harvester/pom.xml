@@ -17,9 +17,7 @@
 
   <modules>
     <module>harvester-core</module>
-    <module>heritrix1-extensions</module>
-    <module>heritrix1-frontier</module>
-    <module>heritrix1-controller</module>
+    <module>heritrix1</module>
     <module>harvest-scheduler</module>
     <module>harvestchannel-gui</module>
     <module>harvestdefinition-gui</module>
