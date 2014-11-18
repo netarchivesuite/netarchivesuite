@@ -17,19 +17,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>common-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>archive-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>harvester-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -42,18 +30,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>heritrix1-controller</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>heritrix1-extensions</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>heritrix1-frontier</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -72,12 +48,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>wayback-indexer</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>wayback-resourcestore</artifactId>
       <version>${project.version}</version>
     </dependency>
 
