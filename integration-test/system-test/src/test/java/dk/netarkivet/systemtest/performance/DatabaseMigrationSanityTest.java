@@ -33,14 +33,14 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.NASAssert;
-import dk.netarkivet.systemtest.environment.ApplicationManager;
+import dk.netarkivet.systemtest.environment.GUIApplicationManager;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
 @SuppressWarnings("static-access")
-public class DatabaseMigrationSanityTest extends StressTest {
+public class DatabaseMigrationSanityTest extends AbstractStressTest {
 
     /**
      * Basic sanity test that the current production database can be consistently upgraded with the latest NAS software.
@@ -54,7 +54,6 @@ public class DatabaseMigrationSanityTest extends StressTest {
 
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
-        if (true) {
             shutdownPreviousTest();
             checkUpdateTimes();
             fetchProductionData();
@@ -64,24 +63,15 @@ public class DatabaseMigrationSanityTest extends StressTest {
             startTestSystem();
             copyTestfiles();
             uploadFiles();
-        }
-    }
-
-    //Do we want to whut down the test after it has run, or leave it available for manual inspection after failure?
-    //It will be torn down, in any case, the next time it is run.
-    public void teardownTestEnvironment() throws Exception {
-        if (true) {
-            shutdownTest();
-        }
     }
 
     private void doStuff() throws Exception {
         WebDriver driver = new FirefoxDriver();
-        ApplicationManager applicationManager = new ApplicationManager(environmentManager);
+        GUIApplicationManager GUIApplicationManager = new GUIApplicationManager(testController);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = environmentManager.getGuiHost() + ":" + environmentManager.getGuiPort();
+        String baseUrl = testController.getGuiHost() + ":" + testController.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        applicationManager.waitForGUIToStart(60);
+        GUIApplicationManager.waitForGUIToStart(60);
         addFixture("Opening NAS front page.");
         PageHelper.gotoPage(PageHelper.MenuPages.AliasSummary.Frontpage);
         addStep("Ingest some domains", "The domains should be created.");
@@ -109,18 +99,18 @@ public class DatabaseMigrationSanityTest extends StressTest {
 
     private void copyTestfiles() throws Exception {
         addFixture("Copy test arcrepository data over to admin machine.");
-        environmentManager.runCommand("scp -r ${HOME}/bitarchive_testdata kb-test-adm-001:");
+        testController.runCommand("scp -r ${HOME}/bitarchive_testdata kb-test-adm-001:");
     }
 
     private void uploadFiles() throws Exception {
-        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+        testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                 "chmod 755 ${HOME}/bitarchive_testdata/upload.sh");
         addFixture("Upload arcfiles to arcrepository.");
-        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "${HOME}/bitarchive_testdata/upload.sh "
-                + environmentManager.getTESTX() + " arcfiles");
+        testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "${HOME}/bitarchive_testdata/upload.sh "
+                + testController.getTESTX() + " arcfiles");
         addFixture("Upload warcfiles to arcrepository.");
-        environmentManager.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "${HOME}/bitarchive_testdata/upload.sh "
-                + environmentManager.getTESTX() + " warcfiles");
+        testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "${HOME}/bitarchive_testdata/upload.sh "
+                + testController.getTESTX() + " warcfiles");
     }
 
 }

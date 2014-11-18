@@ -12,21 +12,22 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import dk.netarkivet.systemtest.TestLogger;
-import dk.netarkivet.systemtest.environment.TestEnvironmentManager;
+import dk.netarkivet.systemtest.environment.TestController;
 
 /**
 * Job to generate harvest jobs for a snapshot harvest. According to the test description, this should take up to nine
- * hours for a production load.
+* hours for a production load.
 */
 class GenerateSnapshotJob extends GenericWebJob {
     protected final TestLogger log = new TestLogger(getClass());
 
     String harvestName;
+    String report;
 
-    GenerateSnapshotJob(StressTest stressTest, TestEnvironmentManager testEnvironmentManager, WebDriver driver,
+    GenerateSnapshotJob(AbstractStressTest stressTest, TestController testController, WebDriver driver,
             Long startUpTime,
             Long waitingInterval, Long maxTime, String name) {
-        super(stressTest, testEnvironmentManager, driver, startUpTime, waitingInterval, maxTime, name);
+        super(stressTest, testController, driver, startUpTime, waitingInterval, maxTime, name);
     }
 
     @Override void startJob() {
@@ -69,13 +70,12 @@ class GenerateSnapshotJob extends GenericWebJob {
      * @return true if job creation has started.
      */
     @Override boolean isStarted() {
-        gotoHarvestJobManagerLog();
-        final boolean contains = driver.getPageSource().contains(harvestName);
-        assertTrue(contains, "Page should contain harvest name: " + harvestName);
-        int jobsGenerated = extractJobCount();
-        final boolean condition = jobsGenerated > 0;
-        assertTrue(condition, "Should have generated at least one job by now for " + harvestName);
-        return contains && condition;
+        int numberOfJobsGenerated = extractJobCount();
+        final boolean atLeastOneJobGenerated = numberOfJobsGenerated > 0;
+        if (!atLeastOneJobGenerated) {
+            log.warn("Should have generated at least one job for {} by now.", harvestName);
+        }
+        return atLeastOneJobGenerated;
     }
 
     /**
@@ -83,16 +83,20 @@ class GenerateSnapshotJob extends GenericWebJob {
      * @return
      */
     @Override boolean isFinished() {
-//        Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs.*[(](.{6})[)].*", Pattern.DOTALL);
-        Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs.*[(]" + harvestName + "[)].*", Pattern.DOTALL);
+        //The [^<>]* in the following regexp ensure that we match within a single html element.
+        Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs([^<>]*)[(]" + harvestName + "[)].*", Pattern.DOTALL);
         gotoHarvestJobManagerLog();
         Matcher m = finished.matcher(driver.getPageSource());
-        return m.matches();
+        if (m.matches()) {
+            report = "Snapshot generation finished with " + m.group(1) + " jobs generated for " + harvestName;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override String getProgress() {
         return "Generated " + extractJobCount() + " jobs.";
-
     }
 
     /**

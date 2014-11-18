@@ -21,10 +21,10 @@ class UpdateChecksumJob extends GenericWebJob {
 
     String total = null;
 
-    UpdateChecksumJob(StressTest stressTest1,
+    UpdateChecksumJob(AbstractStressTest stressTest1,
             WebDriver driver, Long startUpTime, Long waitingInterval,
             Long maxTime, String name) {
-        super(stressTest1, stressTest1.environmentManager, driver, startUpTime, waitingInterval, maxTime, name);
+        super(stressTest1, stressTest1.testController, driver, startUpTime, waitingInterval, maxTime, name);
     }
 
     @Override void startJob() {
@@ -39,7 +39,7 @@ class UpdateChecksumJob extends GenericWebJob {
 
     @Override boolean isStarted() {
         try {
-            String output = stressTest.environmentManager.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "grep 'Starting processing' ${HOME}/" + StressTest.TESTNAME+ "/log/GUI*", new int[]{0,1});
+            String output = stressTest.testController.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "grep 'Starting processing' ${HOME}/" + AbstractStressTest.testEnvironment.getTESTX() + "/log/GUI*", new int[]{0,1});
             final String startedS = ".*Starting processing of ([0-9]+) checksum entries.*";
             Pattern startedP = Pattern.compile(startedS, Pattern.DOTALL);
             final Matcher matcher = startedP.matcher(output);
@@ -55,18 +55,19 @@ class UpdateChecksumJob extends GenericWebJob {
 
     @Override boolean isFinished() {
         try {
-            String output = stressTest.environmentManager.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "grep 'Finished processing' ${HOME}/" + StressTest.TESTNAME+ "/log/GUI*", new int[]{0,1});
+            String output = stressTest.testController.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "grep 'Finished processing' ${HOME}/" + AbstractStressTest.testEnvironment.getTESTX() + "/log/GUI*", new int[]{0,1});
             final String finishedS = ".*Finished processing of ([0-9]+) checksum entries.*";
             Pattern finishedP = Pattern.compile(finishedS, Pattern.DOTALL);
             final Matcher matcher = finishedP.matcher(output);
             if (matcher.matches()) {
                 assertEquals(total, matcher.group(1), "Expect the number of entries to match before and after.");
                 return true;
+            } else {
+                return false;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return false;
     }
 
     @Override String getProgress() {

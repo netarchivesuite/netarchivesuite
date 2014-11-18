@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FilenameFilter;
 
 import org.junit.After;
 import org.junit.Before;
@@ -59,7 +60,7 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * Disabled, see https://sbforge.org/jira/browse/NAS-2326.
      */
     @Test
-    public void disabledTestFirstAggregationRun() {
+    public void testFirstAggregationRun() {
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name, inputFile2Name});
 
         TestIndex testIndex = new TestIndex();
@@ -80,7 +81,7 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      */
     @Test
     public void testSecondAggregationRun() {
-        disabledTestFirstAggregationRun();
+        testFirstAggregationRun();
 
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile3Name});
 
@@ -104,8 +105,8 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * removed in this process
      */
     @Test
-    public void disabledTestMaxIntermediateIndexFileLimit() {
-        disabledTestFirstAggregationRun();
+    public void testMaxIntermediateIndexFileLimit() {
+        testFirstAggregationRun();
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile109KName});
 
         TestIndex testIndex = new TestIndex();
@@ -146,11 +147,11 @@ public class AggregationWorkerTest extends AggregatorTestCase {
     /**
      * Verifies that the aggregator switches to a new main wayback index file when the
      * WaybackSettings#FINAL_INDEX_FILE_LIMIT is going to be exceed, an starts to use this file as the main index file.
-     * The old final index file will be renamed to ${finalIndexFileName}.1
+     * The old final index file will be renamed to a file containing a timestamp in the filename.
      */
     @Test
-    public void disabledTestMaxFinalIndexFileLimit() {
-        disabledTestMaxIntermediateIndexFileLimit();
+    public void testMaxFinalIndexFileLimit() {
+        testMaxIntermediateIndexFileLimit();
 
         File[] inputFiles = prepareSourceIndex(new String[] {inputFile155KName});
 
@@ -161,9 +162,32 @@ public class AggregationWorkerTest extends AggregatorTestCase {
 
         assertNull("Unexpected content of aggregated index after roll-over",
                 testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
-        File oldIndexFile = new File(AggregationWorker.indexOutputDir, "wayback.index.1");
-        ;
-        assertTrue("No wayback.index.1 present", oldIndexFile.exists());
+
+        FilenameFilter renamedFileFilter = (dir, name) -> name.matches("wayback.*[0-9]+.*cdx");
+        File[] renamedFiles = AggregationWorker.indexOutputDir.listFiles(renamedFileFilter);
+        assertTrue("Should exist a renamed file.", renamedFiles.length > 0);
 
     }
+
+    /**
+     * Tests that the renaming strategy really does create new files each time. By setting the
+     * maximum sizes to 0, we force the creation of a new final file with each aggregation.
+     */
+    @Test
+    public void testRunMultipleRenames() {
+        System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE, "0");
+        System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_MAX_MAIN_INDEX_FILE_SIZE, "0");
+        prepareSourceIndex(new String[] {inputFile1Name, inputFile2Name});
+        worker.runAggregation();   //creates first wayback.index
+        prepareSourceIndex(new String[] {inputFile3Name});
+        worker.runAggregation();   //creates first renamed index
+        prepareSourceIndex(new String[] {inputFile109KName});
+        worker.runAggregation();
+        prepareSourceIndex(new String[] {inputFile155KName});
+        worker.runAggregation();
+        FilenameFilter renamedFileFilter = (dir, name) -> name.matches(".*wayback.*[0-9]+.*cdx");
+        File[] renamedFiles = AggregationWorker.indexOutputDir.listFiles(renamedFileFilter);
+        assertTrue("Should exist more than one renamed file.", renamedFiles.length == 3 );
+    }
+
 }

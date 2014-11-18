@@ -15,15 +15,15 @@ import dk.netarkivet.systemtest.page.PageHelper;
 class UpdateFileStatusJob extends GenericWebJob {
     protected final TestLogger log = new TestLogger(getClass());
 
-    UpdateFileStatusJob(StressTest stressTest,
+    UpdateFileStatusJob(AbstractStressTest stressTest,
             WebDriver driver, Long startUpTime, Long waitingInterval,
             Long maxTime, String name) {
-        super(stressTest, stressTest.environmentManager, driver, startUpTime, waitingInterval, maxTime, name);
+        super(stressTest, stressTest.testController, driver, startUpTime, waitingInterval, maxTime, name);
     }
 
     @Override void startJob() {
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = stressTest.environmentManager.getGuiHost() + ":" + stressTest.environmentManager.getGuiPort();
+        String baseUrl = stressTest.testController.getGuiHost() + ":" + stressTest.testController.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         stressTest.addStep("Opening bitpreservation section of GUI.",
                 "The page should open and show the number of files in the archive.");
