@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.utils.IteratorUtils;
@@ -65,11 +66,8 @@ import dk.netarkivet.testutils.ThreadUtils;
 
 @SuppressWarnings("unused")
 public class HarvestJobGeneratorTest extends DataModelTestCase {
-
-    /**
-     * Test that we can get jobs created from HDs.
-     */
     @Test
+    @Ignore
     public void testGenerateJobs() throws Exception {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         TemplateDAO.getInstance();

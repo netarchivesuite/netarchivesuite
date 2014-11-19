@@ -10,6 +10,6 @@
   </parent>
 
   <artifactId>build-tools</artifactId>
-  <name>Netarchivesuite - build-tools</name>
+  <name>NetarchiveSuite - build-tools</name>
 
 </project>

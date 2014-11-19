@@ -9,15 +9,23 @@
   <version>5.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite</name>
+  <name>NetarchiveSuite</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <slf4j.version>1.7.7</slf4j.version>
-    <jwat.version>1.0.1</jwat.version>
     <!-- maven-java-formatter-plugin -->
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <slf4j.version>1.7.7</slf4j.version>
+    <logback.version>1.0.13</logback.version>
+    <!-- Change to 1.1.5 when released, includes WARC writer fix. -->
+    <webarchive-commons.version>1.1.5-SNAPSHOT</webarchive-commons.version>
+
+
+    <wayback.version>1.8.0-20130411</wayback.version>
+    <openwayback.version>2.0.0</openwayback.version>
+
+    <jwat.version>1.0.1</jwat.version>
   </properties>
 
   <modules>
@@ -88,6 +96,15 @@
     </snapshotRepository>
   </distributionManagement>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <repositories>
     <repository>
       <id>sbforge-nexus</id>
@@ -134,7 +151,79 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.0.13</version>
+        <version>${logback.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.netpreserve.commons</groupId>
+        <artifactId>webarchive-commons</artifactId>
+        <version>${webarchive-commons.version}</version>
+        <exclusions>
+          <!--exclusion>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+          </exclusion-->
+          <exclusion>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.htmlparser</groupId>
+            <artifactId>htmlparser</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.googlecode.juniversalchardet</groupId>
+            <artifactId>juniversalchardet</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.pig</groupId>
+            <artifactId>pig</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.gnu.inet</groupId>
+            <artifactId>libidn</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>dsiutils</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+          </exclusion>
+        </exclusions> 
+      </dependency>
+
+      <dependency>
+        <groupId>org.archive.wayback</groupId>
+        <artifactId>wayback-core</artifactId>
+        <version>${wayback.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.netpreserve.openwayback</groupId>
+        <artifactId>openwayback-core</artifactId>
+        <version>${openwayback.version}</version>
       </dependency>
 
       <dependency>

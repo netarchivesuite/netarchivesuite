@@ -38,6 +38,7 @@ import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -88,13 +89,16 @@ public class ArcWrapTester {
         // Put an ARCReader on top of the file.
         ARCReader r = ARCReaderFactory.get(arcFile);
         Iterator<ArchiveRecord> it = r.iterator();
-        it.next(); // Skip ARC file header
+        Assert.assertTrue(it.hasNext());
+        Assert.assertNotNull(it.next()); // Skip ARC file header
         // Read the record, checking mime-type, uri and content.
+        Assert.assertTrue(it.hasNext());
         ARCRecord record = (ARCRecord) it.next();
         ARCRecordMetaData meta = record.getMetaData();
         assertEquals("Should record the object under the given URI", arcUri, meta.getUrl());
         assertEquals("Should indicate the intended MIME type", mime, meta.getMimetype());
         String foundContent = ARCTestUtils.readARCRecord(record);
         assertEquals("Should store content unchanged", FileUtils.readFile(storeFile), foundContent);
+        Assert.assertFalse(it.hasNext());
     }
 }

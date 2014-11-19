@@ -137,7 +137,7 @@ public class JobDAOTester extends DataModelTestCase {
 
         final Long UNKNOWN_HARVESTID = new Long(5679);
         Job job = new Job(UNKNOWN_HARVESTID, DomainConfigurationTest.createDefaultDomainConfiguration(),
-                OrderXmlBuilder.createDefault().getOrderXml(),
+                OrderXmlBuilder.createDefault().getDoc(),
                 FOCUSED_CHANNEL, Constants.HERITRIX_MAXOBJECTS_INFINITY,
                 Constants.HERITRIX_MAXBYTES_INFINITY, Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, 0);
         jobDAO.create(job);
@@ -199,7 +199,7 @@ public class JobDAOTester extends DataModelTestCase {
     public void testJobUpdateForceMaxObjectsPerDomain() throws Exception {
         DomainConfiguration domainConfiguration =
                 TestInfo.getDefaultConfig(DomainDAOTester.getDomain(TestInfo.DEFAULTDOMAINNAME));
-        Job job = new Job(TestInfo.HARVESTID, domainConfiguration, OrderXmlBuilder.createDefault().getOrderXml(),
+        Job job = new Job(TestInfo.HARVESTID, domainConfiguration, OrderXmlBuilder.createDefault().getDoc(),
                 FOCUSED_CHANNEL, TestInfo.MAX_OBJECTS_PER_DOMAIN,
                 Constants.HERITRIX_MAXBYTES_INFINITY, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
         createJobInDB(job);
@@ -626,7 +626,7 @@ public class JobDAOTester extends DataModelTestCase {
         DomainConfiguration defaultConfig = DomainConfigurationTest.createDefaultDomainConfiguration();
         defaultConfig.setMaxBytes(-1);
 
-        Job job =  new Job(TestInfo.HARVESTID, defaultConfig, OrderXmlBuilder.createDefault().getOrderXml(),
+        Job job =  new Job(TestInfo.HARVESTID, defaultConfig, OrderXmlBuilder.createDefault().getDoc(),
                 FOCUSED_CHANNEL, Constants.HERITRIX_MAXOBJECTS_INFINITY,
                 Constants.HERITRIX_MAXBYTES_INFINITY, Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, 0);;
         // test default value of forceMaxObjectsPerDomain:
@@ -645,7 +645,7 @@ public class JobDAOTester extends DataModelTestCase {
     private static Job createDefaultJob(int harvestNum) {
         return new Job(
                 TestInfo.HARVESTID, TestInfo.getDefaultConfig(DomainDAOTester.getDomain(TestInfo.DEFAULTDOMAINNAME)),
-                OrderXmlBuilder.createDefault().getOrderXml(), FOCUSED_CHANNEL, Constants.HERITRIX_MAXOBJECTS_INFINITY,
+                OrderXmlBuilder.createDefault().getDoc(), FOCUSED_CHANNEL, Constants.HERITRIX_MAXOBJECTS_INFINITY,
                 Constants.HERITRIX_MAXBYTES_INFINITY, Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, harvestNum);
     }
 

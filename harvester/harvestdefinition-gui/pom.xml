@@ -6,27 +6,26 @@
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
-    <artifactId>netarchivesuite</artifactId>
+    <artifactId>harvester</artifactId>
     <version>5.0-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <artifactId>harvestdefinition-gui</artifactId>
   <packaging>war</packaging>
 
-  <name>Netarchivesuite - HarvestDefinition - Webapp</name>
+  <name>NetarchiveSuite - harvestDefinition - webapp</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>archive</artifactId>
+      <artifactId>archive-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>harvester</artifactId>
+      <artifactId>harvester-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

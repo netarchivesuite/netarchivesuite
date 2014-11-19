@@ -27,7 +27,6 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
-import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -37,7 +36,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 
 /**
@@ -62,21 +61,18 @@ public class HeritrixFilesTester {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
 
+    @Test(expected = ArgumentNotValid.class)
+    public void testConstructorWithNull() {
+        new HeritrixFiles(null, null, null, null);
+    }
+
     /**
      * Test correct behaviour of the HeritrixFiles constructor.
      */
     @Test
     public void testConstructor() {
-        try {
-            new HeritrixFiles(null, null, null, null);
-            fail("Invalid arguments should throw ArgumentNotValid");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
-
-        HeritrixFiles hf = null;
         TestInfo.HERITRIX_TEMP_DIR.mkdir();
-        hf = getStandardHeritrixFiles();
+        HeritrixFiles hf = getStandardHeritrixFiles();
 
         // check, that crawlDir is correctly set
         assertEquals("crawlDir should be set up correctly.", TestInfo.HERITRIX_TEMP_DIR.getAbsolutePath(), hf
@@ -138,14 +134,8 @@ public class HeritrixFilesTester {
             // Expected
         }
 
-        // test, that order xml is written, if argument is valid
-
-        Document doc = XmlUtils.getXmlDoc(TestInfo.ORDER_FILE);
-        try {
-            hf.writeOrderXml(doc);
-        } catch (Exception e) {
-            fail("Exception not expected: " + e);
-        }
+        OrderXmlBuilder.createDefault();
+        hf.writeOrderXml(OrderXmlBuilder.createDefault().getDoc());
     }
 
     /**

@@ -1,0 +1,12 @@
+queue currentSize totalEnqueues sessionBalance lastCost(averageCost) lastDequeueTime wakeTime totalSpend/totalBudget errorCount lastPeekUri lastQueuedUri
+000webhost.com 0 1 399 1(101) 2010-08-04T12:44:46.360Z - 101/-1 1 http://err.000webhost.com/ http://err.000webhost.com/
+blogblog.com 0 7 499 1(1) 2010-08-04T12:45:03.053Z - 7/-1 0 http://img1.blogblog.com/img/navbar/icons_orange.png http://img1.blogblog.com/img/navbar/icons_orange.png
+blogger.com 10 22 488 1(1) 2010-08-04T12:45:07.096Z - 12/-1 0 http://www.blogger.com/img/icon18_edit_allbkg.gif http://www.blogger.com/img/icon_delete13.gif
+blogspot.com 32 45 487 1(1) 2010-08-04T12:45:05.761Z - 13/-1 0 http://nicoslittleworld.blogspot.com/ http://nicoslittleworld.blogspot.com/
+ffxi-atlas.com 0 6 494 1(1) 2010-08-04T12:44:55.925Z - 6/-1 0 http://www.ffxi-atlas.com/banner/ffxiclopedia_banner.png http://www.ffxi-atlas.com/banner/va_banner.png
+flickr.com 55 64 491 1(1) 2010-08-04T12:45:06.024Z - 9/-1 0 http://static.flickr.com/99/274901506_4323b25dc4.jpg http://farm1.static.flickr.com/99/274901506_4323b25dc4.jpg
+killingifrit.com 0 3 497 1(1) 2010-08-04T12:44:48.597Z - 3/-1 0 http://www.killingifrit.com/images/logo88x31.gif http://www.killingifrit.com/images/logo88x31.gif
+net23.net 18 28 490 1(1) 2010-08-04T12:45:06.566Z - 10/-1 0 http://www.nikojiro.net23.net/magicpaper/Nyss_small.jpg http://www.nikojiro.net23.net/magicpaper/top_column.gif
+tinycounter.com 0 3 497 1(1) 2010-08-04T12:44:48.782Z - 3/-1 0 http://mycounter.tinycounter.com/index.php?user=NicoSensei http://mycounter.tinycounter.com/index.php?user=NicoSensei
+youtube.com 0 4 496 1(1) 2010-08-04T12:44:57.187Z - 4/-1 0 http://www.youtube.com/v/Y3ExnwvX62s&hl=en_US&fs=1& http://www.youtube.com/v/7o-W9PChBOc&hl=en_US&fs=1&
+ytimg.com 1 8 493 1(1) 2010-08-04T12:45:07.423Z - 7/-1 0 dns:i2.ytimg.com http://i2.ytimg.com/vi/Y3ExnwvX62s/hqdefault.jpg

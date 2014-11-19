@@ -9,13 +9,14 @@
     <version>5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>wayback-pom</artifactId>
+  <artifactId>wayback</artifactId>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - wayback - parent pom</name>
+  <name>NetarchiveSuite - wayback</name>
 
   <modules>
-    <module>wayback</module>
+    <module>wayback-indexer</module>
+    <module>wayback-resourcestore</module>
     <module>wayback-test</module>
   </modules>
 

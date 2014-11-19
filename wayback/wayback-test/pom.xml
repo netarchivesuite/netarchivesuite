@@ -5,25 +5,24 @@
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
-    <artifactId>wayback-pom</artifactId>
+    <artifactId>wayback</artifactId>
     <version>5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>wayback-test</artifactId>
-  <packaging>jar</packaging>
 
-  <name>Netarchivesuite - wayback - test</name>
+  <name>NetarchiveSuite - wayback - test</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>common-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wayback</artifactId>
+      <artifactId>wayback-indexer</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -44,7 +43,7 @@
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
-      <artifactId>archive</artifactId>
+      <artifactId>archive-core</artifactId>
       <version>5.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>

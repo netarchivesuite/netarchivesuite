@@ -5,48 +5,21 @@
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
-    <artifactId>deploy-pom</artifactId>
+    <artifactId>deploy</artifactId>
     <version>5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>deploy-test</artifactId>
-  <packaging>jar</packaging>
 
-  <name>Netarchivesuite - deploy - test</name>
+  <name>NetarchiveSuite - deploy - test</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>deploy</artifactId>
+      <artifactId>deploy-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>archive</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>harvester</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>monitor</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <!-- Optional -->
-
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
@@ -59,13 +32,6 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>common-test</artifactId>
-      <version>5.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.netarchivesuite</groupId>
-      <artifactId>wayback</artifactId>
       <version>5.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
