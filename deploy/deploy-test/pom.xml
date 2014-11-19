@@ -11,7 +11,7 @@
 
   <artifactId>deploy-test</artifactId>
 
-  <name>Netarchivesuite - deploy - test</name>
+  <name>NetarchiveSuite - deploy - test</name>
 
   <dependencies>
     <dependency>

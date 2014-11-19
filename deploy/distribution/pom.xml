@@ -12,7 +12,7 @@
   <artifactId>distribution</artifactId>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - deploy - distribution</name>
+  <name>NetarchiveSuite - deploy - distribution</name>
 
   <dependencies>
     <dependency>

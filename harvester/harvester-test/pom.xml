@@ -12,7 +12,7 @@
   <artifactId>harvester-test</artifactId>
   <packaging>jar</packaging>
 
-  <name>Netarchivesuite - harvester - test</name>
+  <name>NetarchiveSuite - harvester - test</name>
 
   <dependencies>
     <dependency>

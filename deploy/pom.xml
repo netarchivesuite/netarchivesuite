@@ -12,7 +12,7 @@
   <artifactId>deploy</artifactId>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - deploy</name>
+  <name>NetarchiveSuite - deploy</name>
 
   <modules>
     <module>deploy-core</module>

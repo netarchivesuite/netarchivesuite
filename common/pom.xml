@@ -13,7 +13,7 @@
   <artifactId>common</artifactId>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - common</name>
+  <name>NetarchiveSuite - common</name>
 
   <modules>
     <module>netarchivesuite-test-utils</module>

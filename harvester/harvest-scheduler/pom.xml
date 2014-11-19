@@ -11,7 +11,7 @@
 
   <artifactId>harvest-scheduler</artifactId>
 
-  <name>Netarchivesuite - Harvest Scheduler</name>
+  <name>NetarchiveSuite - Harvest Scheduler</name>
 
   <dependencies>
     <dependency>

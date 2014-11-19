@@ -11,7 +11,7 @@
 
   <artifactId>netarchivesuite-test-utils</artifactId>
 
-  <name>Netarchivesuite - test utils</name>
+  <name>NetarchiveSuite - test utils</name>
 
   <dependencies>
     <dependency>

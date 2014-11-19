@@ -11,7 +11,7 @@
 
   <artifactId>deploy-core</artifactId>
 
-  <name>Netarchivesuite - deploy - core</name>
+  <name>NetarchiveSuite - deploy - core</name>
 
   <dependencies>
     <dependency>

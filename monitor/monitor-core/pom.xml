@@ -13,7 +13,7 @@
   <artifactId>monitor-core</artifactId>
   <packaging>jar</packaging>
 
-  <name>Netarchivesuite - monitor - core</name>
+  <name>NetarchiveSuite - monitor - core</name>
 
   <dependencies>
     <dependency>

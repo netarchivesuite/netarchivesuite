@@ -13,7 +13,7 @@
   <artifactId>harvester</artifactId>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - harvester</name>
+  <name>NetarchiveSuite - harvester</name>
 
   <modules>
     <module>harvester-core</module>

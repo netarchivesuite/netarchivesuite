@@ -11,7 +11,7 @@
 
   <artifactId>archive-test</artifactId>
 
-  <name>Netarchivesuite - archive - test</name>
+  <name>NetarchiveSuite - archive - test</name>
 
   <dependencies>
     <dependency>

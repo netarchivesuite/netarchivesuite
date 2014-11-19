@@ -11,7 +11,7 @@
 
   <artifactId>wayback-test</artifactId>
 
-  <name>Netarchivesuite - wayback - test</name>
+  <name>NetarchiveSuite - wayback - test</name>
 
   <dependencies>
     <dependency>

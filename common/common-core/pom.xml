@@ -11,7 +11,7 @@
 
   <artifactId>common-core</artifactId>
 
-  <name>Netarchivesuite - common - core</name>
+  <name>NetarchiveSuite - common - core</name>
 
   <dependencies>
     <dependency>

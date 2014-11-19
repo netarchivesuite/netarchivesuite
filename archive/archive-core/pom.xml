@@ -11,7 +11,7 @@
 
   <artifactId>archive-core</artifactId>
 
-  <name>Netarchivesuite - archive - core</name>
+  <name>NetarchiveSuite - archive - core</name>
 
   <dependencies>
     <dependency>

@@ -13,7 +13,7 @@
   <artifactId>archive</artifactId>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - archive</name>
+  <name>NetarchiveSuite - archive</name>
 
   <modules>
     <module>archive-core</module>

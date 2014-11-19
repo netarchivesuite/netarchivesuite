@@ -12,7 +12,7 @@
   <artifactId>status-gui</artifactId>
   <packaging>war</packaging>
 
-  <name>Netarchivesuite - Status - Webapp</name>
+  <name>NetarchiveSuite - Status - Webapp</name>
 
   <dependencies>
 

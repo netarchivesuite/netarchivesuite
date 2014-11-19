@@ -13,7 +13,7 @@
 
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - harvester - heritrix1 </name>
+  <name>NetarchiveSuite - harvester - heritrix1 </name>
 
   <modules>
     <module>heritrix1-extensions</module>

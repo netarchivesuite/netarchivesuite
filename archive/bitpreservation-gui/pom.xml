@@ -12,7 +12,7 @@
   <artifactId>bitpreservation-gui</artifactId>
   <packaging>war</packaging>
 
-  <name>Netarchivesuite - bitpreservation - webapp</name>
+  <name>NetarchiveSuite - bitpreservation - webapp</name>
 
   <dependencies>
     <dependency>

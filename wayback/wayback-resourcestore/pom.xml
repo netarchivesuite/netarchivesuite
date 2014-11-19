@@ -11,7 +11,7 @@
 
   <artifactId>wayback-resourcestore</artifactId>
 
-  <name>Netarchivesuite - wayback resourceStore</name>
+  <name>NetarchiveSuite - wayback resourceStore</name>
 
   <dependencies>
     <dependency>

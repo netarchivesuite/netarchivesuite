@@ -13,7 +13,7 @@
   <artifactId>monitor</artifactId>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - monitor</name>
+  <name>NetarchiveSuite - monitor</name>
 
   <modules>
     <module>monitor-core</module>

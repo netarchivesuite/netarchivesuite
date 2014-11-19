@@ -12,7 +12,7 @@
   <artifactId>wayback</artifactId>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - wayback</name>
+  <name>NetarchiveSuite - wayback</name>
 
   <modules>
     <module>wayback-indexer</module>

@@ -11,7 +11,7 @@
 
   <artifactId>wayback-indexer</artifactId>
 
-  <name>Netarchivesuite - wayback - indexer</name>
+  <name>NetarchiveSuite - wayback - indexer</name>
 
   <dependencies>
     <dependency>
