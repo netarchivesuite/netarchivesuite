@@ -28,7 +28,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.TestLogger;
-import dk.netarkivet.systemtest.environment.GUIApplicationManager;
+import dk.netarkivet.systemtest.environment.TestGUIController;
 
 /**
  * Tests to be run against the full production-load database.
@@ -86,36 +86,36 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
         if (snapshotTimeDivider != 1) {
             log.info("Dividing timescale for snapshot test by a factor {} (stresstest.snapshottimedivider).", snapshotTimeDivider);
         }
-        GUIApplicationManager GUIApplicationManager = new GUIApplicationManager(testController);
+        TestGUIController TestGUIController = new TestGUIController(testController);
         LongRunningJob snapshotJob = new GenerateSnapshotJob(this, testController, driver,
-                60*60*1000L/snapshotTimeDivider, 30*60*1000L/snapshotTimeDivider, 20*3600*1000L/snapshotTimeDivider, "SnapshotGenerationJob"
+                HOUR/snapshotTimeDivider, 30*MINUTE/snapshotTimeDivider, 20*HOUR/snapshotTimeDivider, "SnapshotGenerationJob"
                 );
         snapshotJob.run();
     }
 
     private void doIngestDomains() throws Exception {
         WebDriver driver = new FirefoxDriver();
-        IngestDomainJob ingestDomainJob = new IngestDomainJob(this, driver, 60*3600*1000L);
+        IngestDomainJob ingestDomainJob = new IngestDomainJob(this, driver, 60*HOUR);
         ingestDomainJob.run();
     }
 
     private void doUpdateFileStatus() throws Exception {
         WebDriver driver = new FirefoxDriver();
-        GUIApplicationManager GUIApplicationManager = new GUIApplicationManager(testController);
-        UpdateFileStatusJob updateFileStatusJob = new UpdateFileStatusJob(this, driver, 0L, 5*60*1000L, 2*3600*1000L, "Update FileStatus Job");
+        TestGUIController TestGUIController = new TestGUIController(testController);
+        UpdateFileStatusJob updateFileStatusJob = new UpdateFileStatusJob(this, driver, 0L, 5*MINUTE, 2*HOUR, "Update FileStatus Job");
         updateFileStatusJob.run();
     }
 
     private void doUpdateChecksumAndFileStatus() throws Exception {
-        Long stepTimeout = 24*3600*1000L;
+        Long stepTimeout = DAY;
         String minStepTimeHoursString = System.getProperty("stresstest.minchecksumtime", "1");
         log.debug("Checksum checking must take at least {} (stresstest.minchecksumtime) hours to complete.", minStepTimeHoursString);
-        Long minStepTime = Integer.parseInt(minStepTimeHoursString)*3600*1000L;
+        Long minStepTime = Integer.parseInt(minStepTimeHoursString)*HOUR;
         UpdateChecksumJob updateChecksumJob = new UpdateChecksumJob(
                 this,
                 new FirefoxDriver(),
-                60*1000L,
-                300*1000L,
+                MINUTE,
+                5*MINUTE,
                 stepTimeout,
                 "Update Checksum Job"
         );

@@ -36,7 +36,6 @@ import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.HarvestUtils;
-import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.HarvestHistoryPageHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
@@ -297,7 +296,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
                 "</indexClient>", "</indexClient>" + "<webinterface><harvestStatus><defaultPageSize>" + size
                         + "</defaultPageSize></harvestStatus></webinterface>");
 
-        GUIApplicationManager.restartGUI();
+        TestGUIController.restartGUI();
     }
 
     @BeforeMethod(alwaysRun = true)
@@ -310,7 +309,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
                             + "conf/kill_GUIApplication.sh; "
                             + "mv conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
                             + " conf/start_GUIApplication.sh; " + "fi");
-            GUIApplicationManager.waitForGUIToStart(10);
+            TestGUIController.waitForGUIToStart(10);
         } catch (Exception e) {
             e.printStackTrace();
         }

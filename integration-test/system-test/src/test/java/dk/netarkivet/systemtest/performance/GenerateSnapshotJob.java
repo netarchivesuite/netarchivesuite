@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import dk.netarkivet.systemtest.TestLogger;
-import dk.netarkivet.systemtest.environment.TestController;
 
 /**
 * Job to generate harvest jobs for a snapshot harvest. According to the test description, this should take up to nine
@@ -24,7 +24,7 @@ class GenerateSnapshotJob extends GenericWebJob {
     String harvestName;
     String report;
 
-    GenerateSnapshotJob(AbstractStressTest stressTest, TestController testController, WebDriver driver,
+    GenerateSnapshotJob(AbstractStressTest stressTest, TestEnvironmentController testController, WebDriver driver,
             Long startUpTime,
             Long waitingInterval, Long maxTime, String name) {
         super(stressTest, testController, driver, startUpTime, waitingInterval, maxTime, name);
