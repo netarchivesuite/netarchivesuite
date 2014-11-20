@@ -1,7 +1,7 @@
 package dk.netarkivet.systemtest;
 
 import dk.netarkivet.systemtest.environment.DefaultTestEnvironment;
-import dk.netarkivet.systemtest.environment.TestController;
+import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 
 /**
@@ -16,7 +16,7 @@ public abstract class AbstractSystemTest extends SeleniumTest {
             8071,
             TestEnvironment.JOB_ADMIN_SERVER
     );
-    static TestController testController = new TestController(testEnvironment);
+    static TestEnvironmentController testController = new TestEnvironmentController(testEnvironment);
 
     public AbstractSystemTest() {
         super(testController);

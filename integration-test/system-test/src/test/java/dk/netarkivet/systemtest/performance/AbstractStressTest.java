@@ -24,12 +24,11 @@ package dk.netarkivet.systemtest.performance;
 
 import static org.testng.Assert.assertTrue;
 
-import org.jaccept.structure.ExtendedTestCase;
+import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import org.testng.annotations.BeforeTest;
 
 import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.environment.DefaultTestEnvironment;
-import dk.netarkivet.systemtest.environment.TestController;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 
 /**
@@ -38,6 +37,11 @@ import dk.netarkivet.systemtest.environment.TestEnvironment;
 @SuppressWarnings("unused")
 public abstract class AbstractStressTest extends SeleniumTest {
 
+    final Long SECOND = 1000L;
+    final Long MINUTE = 60*SECOND;
+    final Long HOUR = 60*MINUTE;
+    final Long DAY = 24*HOUR;
+
     static TestEnvironment testEnvironment = new DefaultTestEnvironment(
             "Stresstest",
             "foo@bar.dk",
@@ -45,7 +49,7 @@ public abstract class AbstractStressTest extends SeleniumTest {
             8073,
             TestEnvironment.JOB_ADMIN_SERVER
     );
-    static TestController testController = new TestController(testEnvironment);
+    static TestEnvironmentController testController = new TestEnvironmentController(testEnvironment);
 
     public AbstractStressTest() {
         super(testController);
@@ -84,7 +88,7 @@ public abstract class AbstractStressTest extends SeleniumTest {
         String backupEnv = System.getProperty("systemtest.backupenv", "prod");
         int maximumBackupsDays = Integer.parseInt(maximumBackupDaysString);
         addStep("Checking that backups are no more than " + maximumBackupsDays + " (systemtest.maxbackupage) days old. ", "");
-        Long maximumBackupPeriod = maximumBackupsDays*24*3600*1000L; //ms
+        Long maximumBackupPeriod = maximumBackupsDays*DAY; //ms
         Long harvestdbAge = System.currentTimeMillis() - getFileTimestamp("/home/test/" + backupEnv +"-backup/" + backupEnv +"_harvestdb.dump.out");
         assertTrue(harvestdbAge < maximumBackupPeriod, "harvestdb backup is older than " + maximumBackupsDays + " days");
         Long admindbAge = System.currentTimeMillis() - getFileTimestamp("/home/test/" + backupEnv +"-backup/" + backupEnv +"_admindb.out");
@@ -130,8 +134,6 @@ public abstract class AbstractStressTest extends SeleniumTest {
     /**
      * When nodata is true, restore schema only PLUS the ordertemplates table in the harvestdb.
      *
-     * @param nodata
-     * @throws Exception
      */
     protected void replaceDatabasesWithProd(boolean nodata) throws Exception {
         String backupEnv = System.getProperty("systemtest.backupenv", "prod");

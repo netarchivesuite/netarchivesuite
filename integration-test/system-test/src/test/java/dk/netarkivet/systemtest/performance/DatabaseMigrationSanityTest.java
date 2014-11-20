@@ -33,7 +33,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.NASAssert;
-import dk.netarkivet.systemtest.environment.GUIApplicationManager;
+import dk.netarkivet.systemtest.environment.TestGUIController;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
@@ -67,11 +67,11 @@ public class DatabaseMigrationSanityTest extends AbstractStressTest {
 
     private void doStuff() throws Exception {
         WebDriver driver = new FirefoxDriver();
-        GUIApplicationManager GUIApplicationManager = new GUIApplicationManager(testController);
+        TestGUIController TestGUIController = new TestGUIController(testController);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         String baseUrl = testController.getGuiHost() + ":" + testController.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        GUIApplicationManager.waitForGUIToStart(60);
+        TestGUIController.waitForGUIToStart(60);
         addFixture("Opening NAS front page.");
         PageHelper.gotoPage(PageHelper.MenuPages.AliasSummary.Frontpage);
         addStep("Ingest some domains", "The domains should be created.");

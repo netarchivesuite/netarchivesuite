@@ -41,7 +41,7 @@ import dk.netarkivet.systemtest.TestLogger;
 /**
  * Provides utilites for performing deployment related commands in the test environment.
  */
-public class TestController {
+public class TestEnvironmentController {
     protected final TestLogger log = new TestLogger(getClass());
     private final String TESTX;
     private final String GUI_HOST;
@@ -49,7 +49,7 @@ public class TestController {
     private final String TIMESTAMP;
     private final String MAILRECEIVERS;
 
-    public TestController(TestEnvironment env) {
+    public TestEnvironmentController(TestEnvironment env) {
         TESTX = env.getTESTX();
         GUI_HOST = env.getGuiHost();
         GUI_PORT = env.getGuiPort();

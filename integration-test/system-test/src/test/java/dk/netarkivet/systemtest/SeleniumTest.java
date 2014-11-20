@@ -38,8 +38,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
-import dk.netarkivet.systemtest.environment.GUIApplicationManager;
-import dk.netarkivet.systemtest.environment.TestController;
+import dk.netarkivet.systemtest.environment.TestGUIController;
+import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
@@ -48,20 +48,20 @@ import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
  */
 @SuppressWarnings({"unused"})
 public abstract class SeleniumTest extends ExtendedTestCase {
-    protected TestController testController;
-    protected static GUIApplicationManager GUIApplicationManager;
+    protected TestEnvironmentController testController;
+    protected static TestGUIController TestGUIController;
     private static ReportGenerator reportGenerator;
     protected final TestLogger log = new TestLogger(getClass());
     protected static WebDriver driver;
     protected static String baseUrl;
 
-    public SeleniumTest(TestController testController) {
+    public SeleniumTest(TestEnvironmentController testController) {
         this.testController = testController;
     }
 
     @BeforeSuite(alwaysRun = true)
     public void setupTest() {
-        GUIApplicationManager = new GUIApplicationManager(testController);
+        TestGUIController = new TestGUIController(testController);
         deployTestSystem();
         initialiseSelenium();
         setupFixture();
@@ -80,7 +80,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
             }
         } else {
             if (System.getProperty("systemtest.redeploy.gui", "false").equals("true")) {
-                GUIApplicationManager.redeployGUI();
+                TestGUIController.redeployGUI();
             }
         }
     }
@@ -99,7 +99,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         baseUrl = testController.getGuiHost() + ":" + testController.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        GUIApplicationManager.waitForGUIToStart(60);
+        TestGUIController.waitForGUIToStart(60);
 
     }
 
@@ -144,7 +144,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         }
     }
 
-    public TestController getTestController() {
+    public TestEnvironmentController getTestController() {
         return testController;
     }
 }
