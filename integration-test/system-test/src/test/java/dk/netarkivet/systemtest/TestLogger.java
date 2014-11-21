@@ -47,11 +47,23 @@ public class TestLogger {
         log.warn(msg);
     }
 
+    public void warn(java.lang.String s, java.lang.Object... objects){
+        log.warn(s, objects);
+    }
+
     public void info(String msg) {
         log.info(msg);
     }
 
     public void debug(StringBuffer sb) {
         log.debug(sb + "");
+    }
+
+    public void debug(java.lang.String s, java.lang.Object... objects){
+        log.debug(s, objects);
+    }
+
+    public void info(java.lang.String s, java.lang.Object... objects){
+        log.info(s, objects);
     }
 }

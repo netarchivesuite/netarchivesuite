@@ -5,25 +5,18 @@
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
-    <artifactId>archive-pom</artifactId>
+    <artifactId>archive</artifactId>
     <version>5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>archive-test</artifactId>
-  <packaging>jar</packaging>
 
-  <name>Netarchivesuite - archive - test</name>
+  <name>NetarchiveSuite - archive - test</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>archive</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>archive-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -31,7 +24,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>harvester</artifactId>
+      <artifactId>harvester-core</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -108,9 +101,6 @@
             -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
             -Duser.language=en -Duser.country=US -Duser.variant=US -Duser.timezone=Europe/Copenhagen
           </argLine>
-          <includes>
-            <include>**/*Test*.java</include>
-          </includes>
         </configuration>
       </plugin>
     </plugins>

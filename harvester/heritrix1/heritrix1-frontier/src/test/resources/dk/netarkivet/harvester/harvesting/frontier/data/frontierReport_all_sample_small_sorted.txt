@@ -1,0 +1,6 @@
+queue currentSize totalEnqueues sessionBalance lastCost(averageCost) lastDequeueTime wakeTime totalSpend/totalBudget errorCount lastPeekUri lastQueuedUri
+flickr.com 55 64 491 1(1) 2010-08-04T12:45:06.024Z - 9/-1 0 http://static.flickr.com/99/274901506_4323b25dc4.jpg http://farm1.static.flickr.com/99/274901506_4323b25dc4.jpg
+blogspot.com 32 45 487 1(1) 2010-08-04T12:45:05.761Z - 13/-1 0 http://nicoslittleworld.blogspot.com/ http://nicoslittleworld.blogspot.com/
+net23.net 18 28 490 1(1) 2010-08-04T12:45:06.566Z - 10/-1 0 http://www.nikojiro.net23.net/magicpaper/Nyss_small.jpg http://www.nikojiro.net23.net/magicpaper/top_column.gif
+blogger.com 10 22 488 1(1) 2010-08-04T12:45:07.096Z - 12/-1 0 http://www.blogger.com/img/icon18_edit_allbkg.gif http://www.blogger.com/img/icon_delete13.gif
+ytimg.com 1 8 493 1(1) 2010-08-04T12:45:07.423Z - 7/-1 0 dns:i2.ytimg.com http://i2.ytimg.com/vi/Y3ExnwvX62s/hqdefault.jpg

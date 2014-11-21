@@ -114,7 +114,9 @@ public class BitarchiveRecordTester {
         BitarchiveRecord br = new BitarchiveRecord(record, f.getName());
         byte[] contents = StreamUtils.inputStreamToBytes(br.getData(), (int) br.getLength());
         assertEquals("Should have same length", contents.length, br.getLength());
+
         // getData(outputStream)
+        ar = ARCReaderFactory.get(f);
         record = (ARCRecord) ar.get(2001); // record representing record of size 9471 bytes
         br = new BitarchiveRecord(record, f.getName());
         // Store locally as tmp file
@@ -140,8 +142,9 @@ public class BitarchiveRecordTester {
 
         byte[] contents = StreamUtils.inputStreamToBytes(br.getData(), (int) br.getLength());
         assertEquals("Should have same length", contents.length, br.getLength());
-        // getData(outputStream)
 
+        // getData(outputStream)
+        ar = WARCReaderFactory.get(f);
         record = (WARCRecord) ar.get(smallWarcRecordOffset);
         br = new BitarchiveRecord(record, f.getName());
         // Store locally as tmp file
@@ -169,6 +172,7 @@ public class BitarchiveRecordTester {
         assertEquals("Should have same length: ", contents.length, br.getLength());
 
         // getData(outputStream)
+        ar = ARCReaderFactory.get(f);
         record = (ARCRecord) ar.get(11563); // record representing record of size 395390 bytes
         br = new BitarchiveRecord(record, f.getName());
         // Store locally as tmp file
@@ -194,6 +198,7 @@ public class BitarchiveRecordTester {
         assertEquals("Should have same length: ", contents.length, br.getLength());
 
         // getData(outputStream)
+        ar = WARCReaderFactory.get(f);
         record = (WARCRecord) ar.get(bigWarcRecordOffset);
         br = new BitarchiveRecord(record, f.getName());
         // Store locally as tmp file

@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.utils.Settings;
@@ -31,6 +32,7 @@ public abstract class AbstractJobGeneratorTest extends DataModelTestCase {
      * Tests that global crawler traps defined in the jobDAO are added to new jobs.
      */
     @Test
+    @Ignore
     public void testCreateJobWithGlobalCrawlerTraps() throws FileNotFoundException {
         GlobalCrawlerTrapList list1 = new GlobalCrawlerTrapList(new FileInputStream(new File(TestInfo.TOPDATADIR,
                 TestInfo.CRAWLER_TRAPS_01)), "list1", "A Description of list1", true);

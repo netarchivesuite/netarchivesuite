@@ -5,20 +5,20 @@
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
-    <artifactId>monitor-pom</artifactId>
+    <artifactId>monitor</artifactId>
     <version>5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>status-gui</artifactId>
   <packaging>war</packaging>
 
-  <name>Netarchivesuite - Status - Webapp</name>
+  <name>NetarchiveSuite - Status - Webapp</name>
 
   <dependencies>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>common-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -32,7 +32,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>monitor</artifactId>
+      <artifactId>monitor-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

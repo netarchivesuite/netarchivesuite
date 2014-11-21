@@ -37,8 +37,6 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -54,19 +52,6 @@ import dk.netarkivet.testutils.LogbackRecorder;
  * Unit tests for the class HarvestDefinitionDAO class.
  */
 public class HarvestDefinitionDAOTester extends DataModelTestCase {
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    /**
-     * Check that creation of a new HarvestDefinition instance succeeds.
-     */
     @Category(SlowTest.class)
     @Test
     public void testCreateAndRead() {
@@ -74,8 +59,8 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
         /* Test with PartialHarvest */
         PartialHarvest harvestDef = makePartialHarvestInstance();
-        harvestDef.setSubmissionDate(getSystemDate());
-        harvestDef.setNextDate(getSystemDate());
+        harvestDef.setSubmissionDate(new Date());
+        harvestDef.setNextDate(new Date());
         harvestDef.setNumEvents(7);
         hdDAO.create(harvestDef);
 
@@ -97,13 +82,13 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         /* Test with FullHarvest */
         FullHarvest fHD1 = HarvestDefinition.createFullHarvest("Full Harvest 1", "Test of full harvest", null, 2000,
                 Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
-        fHD1.setSubmissionDate(getSystemDate());
+        fHD1.setSubmissionDate(new Date());
         fHD1.setNumEvents(7);
         hdDAO.create(fHD1);
 
         FullHarvest fHD2 = HarvestDefinition.createFullHarvest("Full Harvest 2", "Test of full harvest", fHD1.getOid(),
                 2000, Constants.DEFAULT_MAX_BYTES, Constants.DEFAULT_MAX_JOB_RUNNING_TIME);
-        fHD2.setSubmissionDate(getSystemDate());
+        fHD2.setSubmissionDate(new Date());
         fHD2.setNumEvents(7);
         hdDAO.create(fHD2);
 
@@ -130,7 +115,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
         // create the definition
         HarvestDefinition harvestDef = makePartialHarvestInstance();
-        harvestDef.setSubmissionDate(getSystemDate());
+        harvestDef.setSubmissionDate(new Date());
         hdDAO.create(harvestDef);
 
         // load 2 instances of the definition
@@ -208,7 +193,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
 
         HarvestDefinition harvestDef = makePartialHarvestInstance();
-        harvestDef.setSubmissionDate(getSystemDate());
+        harvestDef.setSubmissionDate(new Date());
         hdDAO.create(harvestDef);
 
         Iterator<HarvestDefinition> i = hdDAO.getAllHarvestDefinitions();
@@ -317,13 +302,9 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
 
         PartialHarvest hd1 = (PartialHarvest) dao.read(42L);
-
         hd1.setNextDate(null);
-
         dao.update(hd1);
-
         PartialHarvest hd2 = (PartialHarvest) dao.read(42L);
-
         assertEquals("Should be the same HD before and after saving", hd1, hd2);
     }
 
@@ -415,14 +396,6 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
     /**
      * Add some hokey harvest info for a new job.
-     *
-     * @param hd
-     * @param run
-     * @param domain
-     * @param docs
-     * @param bytes Number of bytes collected.
-     * @param status What status the job should have
-     * @return the newly created job
      */
     private Job addRunInfo(HarvestDefinition hd, int run, String domain, int docs, int bytes, JobStatus status) {
         final DomainDAO ddao = DomainDAO.getInstance();
@@ -563,43 +536,39 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         assertEquals("Should find Tværhøstning for ID 42", hddao.read(42L).getName(), hddao.getHarvestName(42L));
         assertEquals("Should find Tværhøstning for ID 43", hddao.read(43L).getName(), hddao.getHarvestName(43L));
-        try {
-            hddao.getHarvestName(44L);
-            fail("Should have thrown UnknownID on missing HD");
-        } catch (UnknownID e) {
-            // Expected
-        }
-        try {
-            hddao.getHarvestName(null);
-            fail("Should have thrown ArgumentNotValid on null id");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
+    }
+    @Category(SlowTest.class)
+    @Test (expected = ArgumentNotValid.class)
+    public void testGetHarvestNameNullHD() {
+        HarvestDefinitionDAO.getInstance().getHarvestName(null);
+    }
+    @Category(SlowTest.class)
+    @Test (expected = UnknownID.class)
+    public void testGetHarvestNameUnknownHD() {
+        HarvestDefinitionDAO.getInstance().getHarvestName(44L);
     }
 
     @Category(SlowTest.class)
     @Test
-    public void testIsSnapshot() throws Exception {
+    public void testIsSnapshot() {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         assertFalse("Should find selective harvest for ID 42", hddao.isSnapshot(42L));
         assertTrue("Should find snapshot harvest for ID 43", hddao.isSnapshot(43L));
-        try {
-            hddao.isSnapshot(44L);
-            fail("Should have thrown UnknownID on missing HD");
-        } catch (UnknownID e) {
-            // Expected
-        }
-        try {
-            hddao.isSnapshot(null);
-            fail("Should have thrown ArgumentNotValid on null id");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
+    }
+    @Category(SlowTest.class)
+    @Test (expected = ArgumentNotValid.class)
+    public void testIsSnapshotNullHD() {
+        HarvestDefinitionDAO.getInstance().isSnapshot(null);
+    }
+    @Category(SlowTest.class)
+    @Test (expected = UnknownID.class)
+    public void testIsSnapshotUnknownHD() {
+        HarvestDefinitionDAO.getInstance().isSnapshot(44L);
     }
 
     @Category(SlowTest.class)
     @Test
-    public void testGetDomains() throws Exception {
+    public void testGetDomains() {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         List<String> domains = hddao.getListOfDomainsOfHarvestDefinition(TestInfo.DEFAULT_HARVEST_NAME);
         assertTrue("List of domains in harvestdefinition '" + TestInfo.DEFAULT_HARVEST_NAME + "' shouldn't be null",
@@ -608,48 +577,31 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                 + domains.size(), domains.size() == 0);
     }
 
-    /**
-     * Test both implementations of the exist function.
-     *
-     * @throws Exception
-     */
     @Category(SlowTest.class)
     @Test
-    public void testExists() throws Exception {
+    public void testExists() {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         long harvestexistsid = 43L;
         long harvestexistsnotid = 44L;
         String nameShouldExist = hddao.getHarvestName(harvestexistsid);
         String nameShouldNotExist = "Ciceros collected works";
-        String nullName = null;
-        String emptyName = "";
         assertTrue("Should exist harvest w/ name " + nameShouldExist, hddao.exists(nameShouldExist));
-
         assertFalse("Should not exist harvest w/ name " + nameShouldNotExist, hddao.exists(nameShouldNotExist));
-
         assertTrue("Should exist harvest w/ id " + harvestexistsid, hddao.exists(harvestexistsid));
-
         assertFalse("Should not exist harvest w/ id " + harvestexistsnotid, hddao.exists(harvestexistsnotid));
 
-        try {
-            hddao.exists(nullName);
-            fail("Should throw ArgumentNotvalid when given null arg");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
-
-        try {
-            hddao.exists(emptyName);
-
-            fail("Should throw ArgumentNotvalid when given empty arg");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
+    }
+    @Category(SlowTest.class)
+    @Test (expected = ArgumentNotValid.class)
+    public void testExistsWithNullName() {
+        HarvestDefinitionDAO.getInstance().exists((String)null);
+    }
+    @Category(SlowTest.class)
+    @Test (expected = ArgumentNotValid.class)
+    public void testExistsWithEmptyName() {
+        HarvestDefinitionDAO.getInstance().exists("");
     }
 
-    /**
-     * Test the {@link HarvestDefinitionDAO#removeDomainConfiguration(Long, SparseDomainConfiguration)} method.
-     */
     @Category(SlowTest.class)
     @Test
     public void testRemoveDomainConfiguration() {
@@ -670,9 +622,6 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertTrue("DC should have been removed", configList.size() == configsize - 1);
     }
 
-    /**
-     * Test the {@link HarvestDefinitionDAO#updateNextdate(long, java.util.Date)} method.
-     */
     @Category(SlowTest.class)
     @Test
     public void testUpdateNextDate() {
@@ -688,16 +637,6 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         PartialHarvest ph1 = (PartialHarvest) hddao.read(partialharvestId);
         assertTrue("The date should have been updated in the database", ph1.getNextDate().equals(now));
     }
-
-    /**
-     * Helper method to simplify the setting of a date from System time.
-     *
-     * @return
-     */
-    public static Date getSystemDate() {
-        return new Date(1000 * (System.currentTimeMillis() / 1000));
-    }
-
     public static void ensureHarvestDefinitionExists(long id) {
         if (!HarvestDefinitionDAO.getInstance().exists(id)) {
             try {

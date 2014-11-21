@@ -5,31 +5,31 @@
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
-    <artifactId>monitor-pom</artifactId>
+    <artifactId>monitor</artifactId>
     <version>5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>monitor-test</artifactId>
   <packaging>jar</packaging>
 
-  <name>Netarchivesuite - monitor - test</name>
+  <name>NetarchiveSuite - monitor - test</name>
 
   <dependencies>
     <dependency>
       <groupId>org.netarchivesuite</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>common-core</artifactId>
       <version>5.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
-      <artifactId>harvester</artifactId>
+      <artifactId>harvester-core</artifactId>
       <version>5.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
-      <artifactId>monitor</artifactId>
+      <artifactId>monitor-core</artifactId>
       <version>5.0-SNAPSHOT</version>
     </dependency>
 
@@ -72,10 +72,6 @@
           <argLine>
             -Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml
           </argLine>
-          <includes>
-            <!-- consider all java files as tests -->
-            <include>**/*Test*</include>
-          </includes>
         </configuration>
       </plugin>
     </plugins>

@@ -70,12 +70,8 @@ public class DataModelTestCase {
     ReloadSettings rs = new ReloadSettings();
     File commonTempdir = new File(TestInfo.TEMPDIR, "commontempdir");
 
-    // TODO this method is highly derby-specific. Implement a mechanism, e.g. a
-    // command-line system parameter, to switch between derby and MySQL for
-    // unit tests.
     @Before
     public void setUp() throws Exception {
-        // log.info("setup() 1");
         rs.setUp();
 
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
@@ -104,9 +100,6 @@ public class DataModelTestCase {
         }
 
         assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_BASE_URL), derbyDBUrl);
-        log.trace("setup() DBSpecifics.getInstance().updateTables()");
-        DBSpecifics.getInstance().updateTables();
-        log.trace("setup() done");
     }
 
     @After

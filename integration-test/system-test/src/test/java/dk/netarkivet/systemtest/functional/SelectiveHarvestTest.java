@@ -31,6 +31,7 @@ import org.openqa.selenium.By;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
@@ -38,7 +39,7 @@ import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 /**
  * Test specification: http://netarchive.dk/suite/TEST1 .
  */
-public class SelectiveHarvestTest extends SeleniumTest {
+public class SelectiveHarvestTest extends AbstractSystemTest {
     private String harvestIDForTest;
     private int harvestCounter = 0;
     private DateFormat dateFomatter = new SimpleDateFormat("HHmmss");

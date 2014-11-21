@@ -42,8 +42,9 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.harvesting.metadata.PersistentJobData.HarvestDefinitionInfo;
+import dk.netarkivet.harvester.datamodel.JobTest;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -90,7 +91,7 @@ public class DoOneCrawlMessageTester {
     @Test
     public void testCTOR2() {
         try {
-            new DoOneCrawlMessage(TestInfo.getJob(), null, new HarvestDefinitionInfo("test", "test", "test"),
+            new DoOneCrawlMessage(JobTest.createDefaultJob(), null, new HarvestDefinitionInfo("test", "test", "test"),
                     TestInfo.emptyMetadata);
             fail("Calling CTOR with null value for to-queue should throw exception !");
         } catch (ArgumentNotValid e) {
@@ -102,7 +103,7 @@ public class DoOneCrawlMessageTester {
     @Test
     public void testCTOR3() {
         try {
-            new DoOneCrawlMessage(TestInfo.getJob(), CHAN1, new HarvestDefinitionInfo("test", "test", "test"), null);
+            new DoOneCrawlMessage(JobTest.createDefaultJob(), CHAN1, new HarvestDefinitionInfo("test", "test", "test"), null);
             fail("Calling CTOR with null value for metadata should throw exception !");
         } catch (ArgumentNotValid e) {
             // expected case
@@ -113,7 +114,7 @@ public class DoOneCrawlMessageTester {
     @Test
     public void testCTOR4() {
         try {
-            new DoOneCrawlMessage(TestInfo.getJob(), CHAN1, new HarvestDefinitionInfo("test", "test", "test"),
+            new DoOneCrawlMessage(JobTest.createDefaultJob(), CHAN1, new HarvestDefinitionInfo("test", "test", "test"),
                     TestInfo.emptyMetadata);
         } catch (ArgumentNotValid e) {
             fail("Calling CTOR with valid arguments should not throw exception !");
@@ -123,7 +124,7 @@ public class DoOneCrawlMessageTester {
     /** Test the getJob() method. */
     @Test
     public void testGetJob() {
-        Job j = TestInfo.getJob();
+        Job j = JobTest.createDefaultJob();
         DoOneCrawlMessage docm = new DoOneCrawlMessage(j, CHAN1, new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.emptyMetadata);
         assertSame("Job is not the same object", j, docm.getJob());
@@ -132,7 +133,7 @@ public class DoOneCrawlMessageTester {
     /** Test the getMetadata() method. */
     @Test
     public void testGetMetadata() {
-        Job j = TestInfo.getJob();
+        Job j = JobTest.createDefaultJob();
         DoOneCrawlMessage docm = new DoOneCrawlMessage(j, CHAN1, new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.emptyMetadata);
         assertEquals("metadata is not the same object", TestInfo.emptyMetadata, docm.getMetadata());
@@ -145,7 +146,7 @@ public class DoOneCrawlMessageTester {
      */
     @Test
     public void testSerialization() {
-        Job j = TestInfo.getJob();
+        Job j = JobTest.createDefaultJob();
         TestInfo.oneMetadata.add(TestInfo.sampleEntry);
         DoOneCrawlMessage docm1 = new DoOneCrawlMessage(j, CHAN1, new HarvestDefinitionInfo("test", "test", "test"),
                 TestInfo.oneMetadata);

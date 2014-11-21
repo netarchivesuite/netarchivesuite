@@ -40,6 +40,7 @@ import dk.netarkivet.wayback.TestInfo;
 import dk.netarkivet.wayback.WaybackSettings;
 
 public class IndexerTestCase {
+
     private String oldClient = System.getProperty(CommonSettings.ARC_REPOSITORY_CLIENT);
     private String oldFileDir = System.getProperty("settings.common.arcrepositoryClient.fileDir");
     protected static File tempdir = new File(Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR));
@@ -76,4 +77,5 @@ public class IndexerTestCase {
         }
         rs.tearDown();
     }
+
 }

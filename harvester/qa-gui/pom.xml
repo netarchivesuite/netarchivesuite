@@ -13,7 +13,7 @@
   <artifactId>qa-gui</artifactId>
   <packaging>war</packaging>
 
-  <name>Netarchivesuite - QA - Webapp</name>
+  <name>NetarchiveSuite - qa - webapp</name>
 
   <dependencies>
     <dependency>

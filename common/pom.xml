@@ -10,13 +10,14 @@
     <version>5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>common-pom</artifactId>
+  <artifactId>common</artifactId>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - common - parent pom</name>
+  <name>NetarchiveSuite - common</name>
 
   <modules>
-    <module>common</module>
+    <module>netarchivesuite-test-utils</module>
+    <module>common-core</module>
     <module>common-test</module>
   </modules>
 

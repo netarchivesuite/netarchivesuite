@@ -13,7 +13,7 @@
   <artifactId>integration-test</artifactId>
   <packaging>pom</packaging>
 
-  <name>Netarchivesuite - integration tests</name>
+  <name>NetarchiveSuite - integration tests</name>
 
   <modules>
     <module>system-test</module>

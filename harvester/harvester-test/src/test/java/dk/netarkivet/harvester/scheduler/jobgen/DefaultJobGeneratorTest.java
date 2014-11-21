@@ -48,7 +48,7 @@ public class DefaultJobGeneratorTest extends AbstractJobGeneratorTest {
 
         // Make a job with limit of 2000000 defined by harvest definition
         domainConfiguration.setMaxBytes(5000000);
-        HeritrixTemplate ht = new H1HeritrixTemplate(OrderXmlBuilder.createDefault().getOrderXml());
+        HeritrixTemplate ht = new H1HeritrixTemplate(OrderXmlBuilder.createDefault().getDoc());
         
         job = new Job(TestInfo.HARVESTID, domainConfiguration, ht, FOCUSED_CHANNEL, -1L, 2000000, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
 

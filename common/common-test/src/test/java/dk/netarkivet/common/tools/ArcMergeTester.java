@@ -37,6 +37,7 @@ import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -83,10 +84,14 @@ public class ArcMergeTester {
         // Put an ARCReader on top of the file.
         ARCReader r = ARCReaderFactory.get(arcFile);
         Iterator<ArchiveRecord> it = r.iterator();
-        it.next(); // Skip ARC file header
+        Assert.assertTrue(it.hasNext());
+        Assert.assertNotNull(it.next()); // Skip ARC file header
         // Read the three records, checking mime-type, uri and content.
+        Assert.assertTrue(it.hasNext());
         assertMatches(it.next(), TestInfo.ARC1_URI, TestInfo.ARC1_MIME, TestInfo.ARC1_CONTENT);
+        Assert.assertTrue(it.hasNext());
         assertMatches(it.next(), TestInfo.ARC2_URI, TestInfo.ARC2_MIME, TestInfo.ARC2_CONTENT);
+        Assert.assertTrue(it.hasNext());
         assertMatches(it.next(), TestInfo.ARC3_URI, TestInfo.ARC3_MIME, TestInfo.ARC3_CONTENT);
         // No more records, please.
         assertFalse("Should only have the file header + given records", it.hasNext());
@@ -95,7 +100,6 @@ public class ArcMergeTester {
     /**
      * Asserts that the given ARCRecord has the specified uri, mimetype and content.
      */
-
     private static void assertMatches(ArchiveRecord record, String uri, String mime, String content) {
         ARCRecord arcRecord = (ARCRecord) record;
         ARCRecordMetaData meta = arcRecord.getMetaData();
@@ -104,4 +108,5 @@ public class ArcMergeTester {
         String foundContent = ARCTestUtils.readARCRecord(arcRecord);
         assertEquals("Should copy content unchanged", content, foundContent);
     }
+
 }

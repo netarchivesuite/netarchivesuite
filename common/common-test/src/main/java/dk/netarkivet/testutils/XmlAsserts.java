@@ -26,27 +26,13 @@ package dk.netarkivet.testutils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import org.dom4j.Attribute;
 import org.dom4j.Document;
-import org.dom4j.Element;
 import org.dom4j.Node;
 
 /**
  * Helper methods for asserts in Xml documents.
  */
 public class XmlAsserts {
-    public static void assertElementHasAttribute(Element theElement, String attributeName, String attributeText) {
-        Attribute theAttribute = theElement.attribute(attributeName);
-        if (theAttribute == null) {
-            fail("theElement '" + theElement.getName() + "' does not have a '" + attributeName + "' attribute");
-        }
-        if (!theAttribute.getText().equals(attributeText)) {
-            fail("The attribute (" + attributeName + ")' has wrong value: " + theAttribute.getText()
-                    + "'. Expected value: " + attributeText + "'.");
-        }
-
-    }
-
     public static void assertNodeWithXpath(Document doc, String xpath) {
         Node theNode = doc.selectSingleNode(xpath);
         if (theNode == null) {

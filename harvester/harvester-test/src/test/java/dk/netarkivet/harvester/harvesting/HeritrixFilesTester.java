@@ -60,21 +60,18 @@ public class HeritrixFilesTester {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
 
+    @Test(expected = ArgumentNotValid.class)
+    public void testConstructorWithNull() {
+        new HeritrixFiles(null, null, null, null);
+    }
+
     /**
      * Test correct behaviour of the HeritrixFiles constructor.
      */
     @Test
     public void testConstructor() {
-        try {
-            new HeritrixFiles(null, null, null, null);
-            fail("Invalid arguments should throw ArgumentNotValid");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
-
-        HeritrixFiles hf = null;
         TestInfo.HERITRIX_TEMP_DIR.mkdir();
-        hf = getStandardHeritrixFiles();
+        HeritrixFiles hf = getStandardHeritrixFiles();
 
         // check, that crawlDir is correctly set
         assertEquals("crawlDir should be set up correctly.", TestInfo.HERITRIX_TEMP_DIR.getAbsolutePath(), hf

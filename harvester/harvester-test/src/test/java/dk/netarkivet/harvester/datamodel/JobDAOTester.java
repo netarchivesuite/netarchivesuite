@@ -138,7 +138,7 @@ public class JobDAOTester extends DataModelTestCase {
     public void testCreateJobWithUnknownHarvestId() {
 
         final Long UNKNOWN_HARVESTID = new Long(5679);
-        HeritrixTemplate ht = new H1HeritrixTemplate(OrderXmlBuilder.createDefault().getOrderXml());
+        HeritrixTemplate ht = new H1HeritrixTemplate(OrderXmlBuilder.createDefault().getDoc());
         Job job = new Job(UNKNOWN_HARVESTID, DomainConfigurationTest.createDefaultDomainConfiguration(),
                 ht,
                 FOCUSED_CHANNEL, Constants.HERITRIX_MAXOBJECTS_INFINITY,
@@ -202,7 +202,7 @@ public class JobDAOTester extends DataModelTestCase {
     public void testJobUpdateForceMaxObjectsPerDomain() throws Exception {
         DomainConfiguration domainConfiguration =
                 TestInfo.getDefaultConfig(DomainDAOTester.getDomain(TestInfo.DEFAULTDOMAINNAME));
-        HeritrixTemplate ht = new H1HeritrixTemplate(OrderXmlBuilder.createDefault().getOrderXml());
+        HeritrixTemplate ht = new H1HeritrixTemplate(OrderXmlBuilder.createDefault().getDoc());
         Job job = new Job(TestInfo.HARVESTID, domainConfiguration, ht,
                 FOCUSED_CHANNEL, TestInfo.MAX_OBJECTS_PER_DOMAIN,
                 Constants.HERITRIX_MAXBYTES_INFINITY, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
@@ -653,7 +653,7 @@ public class JobDAOTester extends DataModelTestCase {
     public void testMaxBytesBug652() throws Exception {
         DomainConfiguration defaultConfig = DomainConfigurationTest.createDefaultDomainConfiguration();
         defaultConfig.setMaxBytes(-1);
-        HeritrixTemplate ht = new H1HeritrixTemplate(OrderXmlBuilder.createDefault().getOrderXml());
+        HeritrixTemplate ht = new H1HeritrixTemplate(OrderXmlBuilder.createDefault().getDoc());
         Job job =  new Job(TestInfo.HARVESTID, defaultConfig, ht,
                 FOCUSED_CHANNEL, Constants.HERITRIX_MAXOBJECTS_INFINITY,
                 Constants.HERITRIX_MAXBYTES_INFINITY, Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY, 0);;
@@ -671,7 +671,7 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     private static Job createDefaultJob(int harvestNum) {
-    	HeritrixTemplate ht = new H1HeritrixTemplate(OrderXmlBuilder.createDefault().getOrderXml());
+    	HeritrixTemplate ht = new H1HeritrixTemplate(OrderXmlBuilder.createDefault().getDoc());
         return new Job(
                 TestInfo.HARVESTID, TestInfo.getDefaultConfig(DomainDAOTester.getDomain(TestInfo.DEFAULTDOMAINNAME)),
                 ht, FOCUSED_CHANNEL, Constants.HERITRIX_MAXOBJECTS_INFINITY,
@@ -692,5 +692,5 @@ public class JobDAOTester extends DataModelTestCase {
         JobDAO.getInstance().create(job);
         return job;
     }
-}
 
+}
