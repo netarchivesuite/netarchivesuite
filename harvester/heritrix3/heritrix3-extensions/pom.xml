@@ -5,28 +5,16 @@
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
-    <artifactId>harvester</artifactId>
+    <artifactId>heritrix3</artifactId>
     <version>5.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.netarchivesuite</groupId>
   <artifactId>heritrix3-extensions</artifactId>
-  <version>5.0-SNAPSHOT</version>
 
   <packaging>jar</packaging>
 
   <name>Netarchivesuite - Heritrix3 Extensions</name>
   <url>http://maven.apache.org</url>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
-  <repositories>
-    <repository>
-      <id>builds.archive.org,maven2</id>
-      <url>http://builds.archive.org/maven2</url>
-    </repository>
-  </repositories>
 
   <dependencies>
     <dependency>
@@ -84,7 +72,6 @@
     <dependency>
       <groupId>org.archive.heritrix</groupId>
       <artifactId>heritrix-engine</artifactId>
-      <version>3.2.0</version>
     </dependency>
 
     <dependency>    
