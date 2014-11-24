@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.httpclient.URIException;
-import org.archive.crawler.datamodel.CrawlURI;
 import org.archive.url.UsableURI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -406,7 +405,7 @@ public abstract class AbstractHarvestReport implements HarvestReport {
                                 + parts[ANNOTATION_PART_INDEX] + "'.", e);
                     }
                 }
-                if (response == CrawlURI.S_BLOCKED_BY_QUOTA) {
+                if (response == Heritrix1Constants.CRAWLURI_S_BLOCKED_BY_QUOTA) {
                     if (annotation.trim().equals("Q:group-max-all-kb")) {
                         stopReason = StopReason.SIZE_LIMIT;
                     } else if (annotation.trim().equals("Q:group-max-fetch-successes")) {

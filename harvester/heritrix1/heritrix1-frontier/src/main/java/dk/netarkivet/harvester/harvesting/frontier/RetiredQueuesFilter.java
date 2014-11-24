@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
-import org.archive.crawler.frontier.WorkQueue;
-
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport.ReportIterator;
 
 public class RetiredQueuesFilter extends MaxSizeFrontierReportExtract {

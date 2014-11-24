@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
@@ -45,6 +44,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
 
 /**
  * Class encapsulating the Heritrix crawler-beans.cxml file 
@@ -198,7 +198,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate {
 
         // Add all regexps in the list to a single MatchesListRegExpDecideRule
         decideRule.addAttribute("name", elementName);
-        decideRule.addAttribute("class", MatchesListRegExpDecideRule.class.getName());
+        // FIXME Heritrix1 constant in Heritrix3 support file.
+        decideRule.addAttribute("class", Heritrix1Constants.MATCHESLISTREGEXPDECIDERULE_CLASSNAME);
 
         Element decision = decideRule.addElement("string");
         decision.addAttribute("name", "decision");

@@ -40,14 +40,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.archive.crawler.deciderules.DecideRuleSequence;
-import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
 import ch.qos.logback.classic.Level;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
 import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
 import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -437,14 +436,14 @@ public class JobTest {
         // Check that there are no crawlertraps for the first domain and exactly
         // the right two in the second domain
         String domain1CrawlerTrapsXpath = "/crawl-order/controller/newObject[@name='scope']/newObject[@class='"
-                + DecideRuleSequence.class.getName() + "']/map[@name='rules']/"
+                + Heritrix1Constants.DECIDERULESEQUENCE_CLASSNAME + "']/map[@name='rules']/"
                 + "/newObject[@name='" + dc1.getDomainName()
-                + "'][@class='" + MatchesListRegExpDecideRule.class.getName() + "']";
+                + "'][@class='" + Heritrix1Constants.MATCHESLISTREGEXPDECIDERULE_CLASSNAME + "']";
 
         String domain2CrawlerTrapsXpath = "/crawl-order/controller/newObject[@name='scope']/newObject[@class='"
-                + DecideRuleSequence.class.getName() + "']/map[@name='rules']/"
+                + Heritrix1Constants.DECIDERULESEQUENCE_CLASSNAME + "']/map[@name='rules']/"
                 + "/newObject[@name='" + dc2.getDomainName()
-                + "'][@class='" + MatchesListRegExpDecideRule.class.getName() + "']";
+                + "'][@class='" + Heritrix1Constants.MATCHESLISTREGEXPDECIDERULE_CLASSNAME + "']";
         //FIXME test only appropriate for H1 templates 
         /*
         job.getOrderXMLdoc().normalize();

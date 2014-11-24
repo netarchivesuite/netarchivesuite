@@ -53,13 +53,6 @@
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
 
-    <!-- not in Maven Central -->
-    <dependency>
-      <groupId>org.archive</groupId>
-      <artifactId>heritrix</artifactId>
-      <version>1.14.4</version>
-    </dependency>
-
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>

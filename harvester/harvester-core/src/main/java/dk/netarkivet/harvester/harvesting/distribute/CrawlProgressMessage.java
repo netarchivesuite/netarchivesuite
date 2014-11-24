@@ -24,12 +24,11 @@ package dk.netarkivet.harvester.harvesting.distribute;
 
 import java.io.Serializable;
 
-import org.archive.crawler.framework.CrawlController;
-
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
+import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
 
 /**
  * This class wraps information stored in the Heritrix MBeans, CrawlService and CrawlService.Job, and represents the
@@ -359,7 +358,7 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
 
         String statusAsString = getJobStatus().getStatus();
         if (statusAsString != null) {
-            return statusAsString.equals(CrawlController.FINISHED);
+            return statusAsString.equals(Heritrix1Constants.CRAWLCONTROLLER_FINISHED);
         }
         return false;
     }

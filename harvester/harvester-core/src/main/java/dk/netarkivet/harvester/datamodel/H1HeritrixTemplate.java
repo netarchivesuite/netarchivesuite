@@ -34,8 +34,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.archive.crawler.deciderules.DecidingScope;
-import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -52,6 +50,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
 
 /**
  * Class encapsulating the Heritrix order.xml. Enables verification that dom4j Document obey the constraints required by
@@ -101,7 +100,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
             + "string[@name='from']";
     /** Xpath to check, that all templates use the DecidingScope. */
     public static final String DECIDINGSCOPE_XPATH = "/crawl-order/controller/newObject[@name='scope']" + "[@class='"
-            + DecidingScope.class.getName() + "']";
+            + Heritrix1Constants.DECIDINGSCOPE_CLASSNAME + "']";
     /**
      * Xpath for the deduplicator node in order.xml documents.
      */
@@ -365,7 +364,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
 
         // Add all regexps in the list to a single MatchesListRegExpDecideRule
         decideRule.addAttribute("name", elementName);
-        decideRule.addAttribute("class", MatchesListRegExpDecideRule.class.getName());
+        decideRule.addAttribute("class", Heritrix1Constants.MATCHESLISTREGEXPDECIDERULE_CLASSNAME);
 
         Element decision = decideRule.addElement("string");
         decision.addAttribute("name", "decision");
@@ -723,7 +722,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate {
 
         // Add all regexps in the list to a single MatchesListRegExpDecideRule
         decideRule.addAttribute("name", elementName);
-        decideRule.addAttribute("class", MatchesListRegExpDecideRule.class.getName());
+        decideRule.addAttribute("class", Heritrix1Constants.MATCHESLISTREGEXPDECIDERULE_CLASSNAME);
 
         Element decision = decideRule.addElement("string");
         decision.addAttribute("name", "decision");

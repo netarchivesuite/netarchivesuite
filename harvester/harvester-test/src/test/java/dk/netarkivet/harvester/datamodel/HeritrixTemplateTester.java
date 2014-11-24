@@ -30,7 +30,6 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.util.List;
 
-import org.archive.crawler.deciderules.DecidingScope;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Node;
@@ -38,6 +37,7 @@ import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
 
 /** Testclass for class HeritrixTemplate. */
 @SuppressWarnings({"unchecked"})
@@ -244,8 +244,8 @@ public class HeritrixTemplateTester {
     public void testForDecidingScope() {
         File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
         Document doc = XmlUtils.getXmlDoc(f);
-        String xpath = "/crawl-order/controller/newObject[@name='scope']" + "[@class='" + DecidingScope.class.getName()
-                + "']";
+        String xpath = "/crawl-order/controller/newObject[@name='scope']"
+        		+ "[@class='" + Heritrix1Constants.DECIDINGSCOPE_CLASSNAME + "']";
         Node node = doc.selectSingleNode(xpath);
         assertTrue("DecidingScope not found in order.xml", node != null);
         H1HeritrixTemplate ht = new H1HeritrixTemplate(doc);
