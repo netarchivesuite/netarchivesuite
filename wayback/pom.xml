@@ -36,5 +36,17 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.netpreserve.openwayback</groupId>
+      <artifactId>openwayback-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>it.unimi.dsi</groupId>
+      <artifactId>mg4j-big</artifactId>
+      <version>4.0.4</version>
+    </dependency>
+
+
   </dependencies>
 </project>

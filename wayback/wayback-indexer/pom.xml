@@ -45,7 +45,7 @@
       <artifactId>logback-classic</artifactId>
     </dependency>
 
-    <dependency>
+   <!-- <dependency>
       <groupId>org.archive.wayback</groupId>
       <artifactId>wayback-core</artifactId>
       <version>1.8.0-20130411</version>
@@ -55,7 +55,7 @@
       <groupId>org.archive</groupId>
       <artifactId>ia-web-commons</artifactId>
       <version>1.0-20130411</version>
-    </dependency>
+    </dependency> -->
 
     <dependency>
       <groupId>org.gnu.inet</groupId>
@@ -64,9 +64,23 @@
     </dependency>
 
     <dependency>
+      <groupId>com.martiansoftware</groupId>
+      <artifactId>jsap</artifactId>
+      <version>2.1</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>it.unimi.dsi</groupId>
+      <artifactId>webgraph</artifactId>
+      <version>3.4.2</version>
+    </dependency>
+
+
+    <dependency>
       <groupId>it.unimi.dsi</groupId>
       <artifactId>mg4j</artifactId>
-      <version>1.0.1</version>
+      <version>4.0.3</version>
     </dependency>
 
     <!-- Hibernate -->

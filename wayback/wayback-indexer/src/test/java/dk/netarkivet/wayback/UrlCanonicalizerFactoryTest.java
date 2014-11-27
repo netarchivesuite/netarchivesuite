@@ -25,12 +25,12 @@ package dk.netarkivet.wayback;
 import static org.junit.Assert.assertEquals;
 
 import org.archive.wayback.UrlCanonicalizer;
+import org.archive.wayback.util.url.AggressiveUrlCanonicalizer;
 import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
 import org.junit.Test;
 
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.batch.UrlCanonicalizerFactory;
-import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer;
 
 @SuppressWarnings({"deprecation"})
 public class UrlCanonicalizerFactoryTest {
@@ -40,7 +40,7 @@ public class UrlCanonicalizerFactoryTest {
         UrlCanonicalizer uc1 = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
         assertEquals(
                 "Expect default to return and instance of " + "NetarchiveSuiteAggressiveUrlCanonicalizer class",
-                NetarchiveSuiteAggressiveUrlCanonicalizer.class, uc1.getClass());
+                AggressiveUrlCanonicalizer.class, uc1.getClass());
         Settings.set(WaybackSettings.URL_CANONICALIZER_CLASSNAME,
                 "org.archive.wayback.util.url.IdentityUrlCanonicalizer");
         uc1 = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();

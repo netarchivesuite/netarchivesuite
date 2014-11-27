@@ -187,14 +187,14 @@
             <groupId>org.apache.pig</groupId>
             <artifactId>pig</artifactId>
           </exclusion>
-          <exclusion>
+          <!--<exclusion>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
           </exclusion>
           <exclusion>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-          </exclusion>
+          </exclusion>-->
           <exclusion>
             <groupId>org.gnu.inet</groupId>
             <artifactId>libidn</artifactId>
@@ -214,11 +214,6 @@
         </exclusions> 
       </dependency>
 
-      <dependency>
-        <groupId>org.archive.wayback</groupId>
-        <artifactId>wayback-core</artifactId>
-        <version>${wayback.version}</version>
-      </dependency>
 
       <dependency>
         <groupId>org.netpreserve.openwayback</groupId>
@@ -230,6 +225,18 @@
         <groupId>org.jwat</groupId>
         <artifactId>jwat-common</artifactId>
         <version>${jwat.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>it.unimi.dsi</groupId>
+        <artifactId>mg4j-big</artifactId>
+        <version>4.0.4</version>
+      </dependency>
+
+      <dependency>
+        <groupId>it.unimi.dsi</groupId>
+        <artifactId>webgraph</artifactId>
+        <version>3.0.3</version>
       </dependency>
 
     </dependencies>

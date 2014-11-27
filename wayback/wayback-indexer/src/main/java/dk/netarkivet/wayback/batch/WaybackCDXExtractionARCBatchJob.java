@@ -29,13 +29,13 @@ import org.archive.io.arc.ARCRecord;
 import org.archive.wayback.UrlCanonicalizer;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
+import org.archive.wayback.resourcestore.indexer.ARCRecordToSearchResultAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.batch.ARCBatchFilter;
-import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteARCRecordToSearchResultAdapter;
 
 /**
  * Returns a cdx file using the appropriate format for wayback, including canonicalisation of urls. The returned files
@@ -48,7 +48,7 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
     private static final Logger log = LoggerFactory.getLogger(WaybackCDXExtractionARCBatchJob.class);
 
     /** Utility for converting an ArcRecord to a CaptureSearchResult (wayback's representation of a CDX record). */
-    private NetarchiveSuiteARCRecordToSearchResultAdapter aToSAdapter;
+    private ARCRecordToSearchResultAdapter aToSAdapter;
 
     /** Utility for converting a wayback CaptureSearchResult to a String representing a line in a CDX file. */
     private SearchResultToCDXLineAdapter srToCDXAdapter;
@@ -78,7 +78,7 @@ public class WaybackCDXExtractionARCBatchJob extends ARCBatchJob {
     @Override
     public void initialize(OutputStream os) {
         log.info("Starting a {}", this.getClass().getName());
-        aToSAdapter = new NetarchiveSuiteARCRecordToSearchResultAdapter();
+        aToSAdapter = new ARCRecordToSearchResultAdapter();
         UrlCanonicalizer uc = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
         aToSAdapter.setCanonicalizer(uc);
         srToCDXAdapter = new SearchResultToCDXLineAdapter();
