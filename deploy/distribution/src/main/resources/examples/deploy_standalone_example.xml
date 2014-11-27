@@ -47,20 +47,15 @@ National Library.
 
 <deployGlobal>
   <deployClassPath>lib/netarchivesuite-monitor-core.jar</deployClassPath>
-  <deployJavaOpt>-Xmx1536m</deployJavaOpt>
   <settings>
     <common>
       <environmentName>QUICKSTART</environmentName>
       <applicationInstanceId></applicationInstanceId>
       <remoteFile>
-        <class>
-          dk.netarkivet.common.distribute.HTTPRemoteFile
-        </class>
+        <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
       </remoteFile>
       <jms>
-        <class>
-          dk.netarkivet.common.distribute.JMSConnectionSunMQ
-        </class>
+        <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
         <broker>localhost</broker>
         <port>7676</port>
       </jms>
@@ -144,8 +139,9 @@ National Library.
           </database>
         </common>
       </settings>
-      <applicationName name="dk.netarkivet.common.webinterface.,">
+      <applicationName name="dk.netarkivet.common.webinterface.GUIApplication">
         <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
+        <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
         <settings>
           <common>
             <http>
@@ -270,6 +266,7 @@ National Library.
       </applicationName>
       <applicationName name="dk.netarkivet.harvester.indexserver.IndexServerApplication">
         <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
+        <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
         <settings>
           <common>
             <jmx>
@@ -285,6 +282,7 @@ National Library.
       </applicationName>
       <applicationName name="dk.netarkivet.viewerproxy.ViewerProxyApplication">
         <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
+        <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
         <settings>
           <common>
             <http>
@@ -292,7 +290,7 @@ National Library.
             </http>
             <remoteFile>
               <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-              <port>8047</port>
+              <port>8047</port  >
             </remoteFile>
             <jmx>
               <port>8117</port>
