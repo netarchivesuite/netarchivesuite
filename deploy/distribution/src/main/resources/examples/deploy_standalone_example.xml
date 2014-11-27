@@ -46,10 +46,6 @@ National Library.
 -->
 
 <deployGlobal>
-    <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-    <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-    <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
-    <deployClassPath>lib/dk.netarkivet.wayback.jar</deployClassPath>
     <deployJavaOpt>-Xmx1536m</deployJavaOpt>
     <settings>
         <common>
@@ -73,7 +69,7 @@ National Library.
             </jmx>
 
             <indexClient>
-                <indexRequestTimeout>43200000</indexRequestTimeout> 
+                <indexRequestTimeout>43200000</indexRequestTimeout>
             </indexClient>
             <replicas>
                 <replica>
@@ -85,7 +81,7 @@ National Library.
             <database>
                 <url></url>
             </database>
-            <tempDir>tmpdircommon</tempDir> 
+            <tempDir>tmpdircommon</tempDir>
         </common>
         <monitor>
             <jmxUsername>monitorRole</jmxUsername>
@@ -104,16 +100,16 @@ National Library.
 
     <thisPhysicalLocation name="NATIONAL_LIBRARY">
         <deployInstallDir>/home/test</deployInstallDir>
-        <deployMachineUserName>test</deployMachineUserName>            
+        <deployMachineUserName>test</deployMachineUserName>
         <settings>
             <common>
-                <useReplicaId>A</useReplicaId> 
+                <useReplicaId>A</useReplicaId>
                 <mail>
                     <server>post.kb.dk</server>
                 </mail>
                 <notifications>
                     <class>dk.netarkivet.common.utils.EMailNotifications</class>
-                    <receiver>example@netarkivet.dk</receiver> 
+                    <receiver>example@netarkivet.dk</receiver>
                     <sender>example@netarkivet.dk</sender>
                 </notifications>
             </common>
@@ -148,13 +144,14 @@ National Library.
                 </common>
             </settings>
             <applicationName name="dk.netarkivet.common.webinterface.GUIApplication">
+                <deployClassPath>netarchivesuite-harvester-scheduler.jar</deployClassPath>
                 <settings>
                     <common>
                         <http>
                             <port>8074</port>
                         </http>
                         <jmx>
-                            <port>8110</port> 
+                            <port>8110</port>
                             <rmiPort>8210</rmiPort>
                         </jmx>
                         <remoteFile>
@@ -165,44 +162,47 @@ National Library.
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication">
+                <deployClassPath>netarchivesuite-archive-core.jar</deployClassPath>
                 <settings>
                     <common>
                         <jmx>
-                            <port>8111</port> 
+                            <port>8111</port>
                             <rmiPort>8211</rmiPort>
                         </jmx>
                          <remoteFile>
                         <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-                        <port>8041</port> 
-                        </remoteFile>     
+                        <port>8041</port>
+                        </remoteFile>
                     </common>
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
+                <deployClassPath>netarchivesuite-archive-core.jar</deployClassPath>
                 <settings>
                     <common>
                         <jmx>
-                            <port>8112</port>  
+                            <port>8112</port>
                             <rmiPort>8212</rmiPort>
                         </jmx>
                          <remoteFile>
                         <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-                        <port>8042</port> 
-                        </remoteFile>  
+                        <port>8042</port>
+                        </remoteFile>
                     </common>
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
+                <deployClassPath>netarchivesuite-archive-core.jar</deployClassPath>
                 <settings>
                     <common>
                         <jmx>
-                            <port>8113</port>  
+                            <port>8113</port>
                             <rmiPort>8213</rmiPort>
                         </jmx>
                         <remoteFile>
                             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
                             <port>8043</port>
-                        </remoteFile>  
+                        </remoteFile>
                     </common>
                     <archive>
                         <bitarchive>
@@ -212,23 +212,24 @@ National Library.
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
+                <deployClassPath>netarchivesuite-heritrix1-controller.jar</deployClassPath>
                 <settings>
                     <common>
-                        <applicationInstanceId>low</applicationInstanceId>            
+                        <applicationInstanceId>low</applicationInstanceId>
                         <jmx>
                             <port>8114</port>
                             <rmiPort>8214</rmiPort>
                         </jmx>
                         <remoteFile>
                             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-                            <port>8044</port> 
-                        </remoteFile>  
+                            <port>8044</port>
+                        </remoteFile>
                     </common>
                     <harvester>
                         <harvesting>
                             <channel>SNAPSHOT</channel>
                             <heritrix>
-                                <guiPort>8190</guiPort> 
+                                <guiPort>8190</guiPort>
                                 <jmxPort>8191</jmxPort>
                                  <jmxUsername>controlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
@@ -239,6 +240,7 @@ National Library.
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
+                <deployClassPath>netarchivesuite-heritrix1-controller.jar</deployClassPath>
                 <settings>
                     <common>
                         <applicationInstanceId>high</applicationInstanceId>
@@ -248,14 +250,14 @@ National Library.
                         </jmx>
                         <remoteFile>
                             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-                            <port>8045</port> 
-                        </remoteFile>  
+                            <port>8045</port>
+                        </remoteFile>
                     </common>
                     <harvester>
                         <harvesting>
                             <channel>FOCUSED</channel>
                             <heritrix>
-                                <guiPort>8192</guiPort> 
+                                <guiPort>8192</guiPort>
                                 <jmxPort>8193</jmxPort>
                                  <jmxUsername>controlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
@@ -266,6 +268,7 @@ National Library.
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.harvester.indexserver.IndexServerApplication">
+                <deployClassPath>netarchivesuite-harvester-scheduler.jar</deployClassPath>
                 <settings>
                     <common>
                         <jmx>
@@ -274,15 +277,13 @@ National Library.
                         </jmx>
                         <remoteFile>
                             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-                            <port>8046</port> 
-                        </remoteFile>  
+                            <port>8046</port>
+                        </remoteFile>
                     </common>
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.viewerproxy.ViewerProxyApplication">
-                <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
+                <deployClassPath>netarchivesuite-harvester-scheduler.jar</deployClassPath>
                 <settings>
                     <common>
                         <http>
@@ -291,28 +292,29 @@ National Library.
                         <remoteFile>
                             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
                             <port>8047</port>
-                        </remoteFile>  
+                        </remoteFile>
                         <jmx>
                             <port>8117</port>
                             <rmiPort>8217</rmiPort>
                         </jmx>
                     </common>
                 </settings>
-            </applicationName>            
+            </applicationName>
             <applicationName name="dk.netarkivet.harvester.scheduler.HarvestJobManagerApplication">
+                <deployClassPath>netarchivesuite-harvester-scheduler.jar</deployClassPath>
                 <settings>
                     <common>
                         <jmx>
-                            <port>8118</port> 
+                            <port>8118</port>
                             <rmiPort>8218</rmiPort>
                         </jmx>
                         <remoteFile>
                             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
                             <port>8048</port>
-                        </remoteFile>  
+                        </remoteFile>
                     </common>
-                </settings> 
-             </applicationName>      
+                </settings>
+             </applicationName>
         </deployMachine>
     </thisPhysicalLocation>
 </deployGlobal>
