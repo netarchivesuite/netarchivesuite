@@ -1546,8 +1546,7 @@ public class LinuxMachine extends Machine {
 
     @Override
     protected void createHarvestDatabaseUpdateScript(File dir) {
-        // Ignore if no harvest database directory has been defined.
-        // Only update database on machine, where harvestdatabase is running
+        // Ignore if no harvest database directory has been defined or this isn't a harvest server app.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
         if (dbDir.isEmpty()) {
             return;

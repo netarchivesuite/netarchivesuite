@@ -111,11 +111,9 @@ public class Parameters {
     public void newParameters(Element root) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(root, "Element root");
         List<Element> tmp;
-        // check if root contains any class paths to overwrite inherited ones.
-        tmp = root.elements(Constants.DEPLOY_CLASS_PATH);
-        if (tmp.size() > 0) {
-            classPaths = tmp;
-        }
+        // Add application classpath to inherited ones.
+        classPaths.addAll(root.elements(Constants.DEPLOY_CLASS_PATH));
+
         // check if root contains any java options to overwrite inherited ones.
         tmp = root.elements(Constants.DEPLOY_JAVA_OPTIONS);
         if (tmp.size() > 0) {
