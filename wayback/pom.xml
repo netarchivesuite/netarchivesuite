@@ -54,12 +54,5 @@
       <version>${webarchive-commons.version}</version>
     </dependency>
 
-    <!--<dependency>
-      <groupId>it.unimi.dsi</groupId>
-      <artifactId>mg4j-big</artifactId>
-      <version>4.0.4</version>
-    </dependency>-->
-
-
   </dependencies>
 </project>

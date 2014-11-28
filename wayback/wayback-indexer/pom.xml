@@ -45,43 +45,11 @@
       <artifactId>logback-classic</artifactId>
     </dependency>
 
-   <!-- <dependency>
-      <groupId>org.archive.wayback</groupId>
-      <artifactId>wayback-core</artifactId>
-      <version>1.8.0-20130411</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.archive</groupId>
-      <artifactId>ia-web-commons</artifactId>
-      <version>1.0-20130411</version>
-    </dependency> -->
-
     <dependency>
       <groupId>org.gnu.inet</groupId>
       <artifactId>libidn</artifactId>
       <version>0.6.5</version>
     </dependency>
-
-   <!-- <dependency>
-      <groupId>com.martiansoftware</groupId>
-      <artifactId>jsap</artifactId>
-      <version>2.1</version>
-    </dependency>
-
-
-    <dependency>
-      <groupId>it.unimi.dsi</groupId>
-      <artifactId>webgraph</artifactId>
-      <version>3.4.2</version>
-    </dependency>
-
-
-    <dependency>
-      <groupId>it.unimi.dsi</groupId>
-      <artifactId>mg4j</artifactId>
-      <version>4.0.3</version>
-    </dependency> -->
 
     <!-- Hibernate -->
 
