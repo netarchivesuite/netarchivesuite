@@ -211,7 +211,11 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
           </exclusion>
-        </exclusions> 
+          <exclusion>
+            <groupId>com.sleepycat</groupId>
+            <artifactId>je</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
 
@@ -221,7 +225,7 @@
         <version>${openwayback.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>com.sleepycat.je</groupId>
+            <groupId>com.sleepycat</groupId>
             <artifactId>je</artifactId>
           </exclusion>
         </exclusions>

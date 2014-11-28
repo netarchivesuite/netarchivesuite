@@ -42,7 +42,7 @@
       <version>${openwayback.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>com.sleepycat.je</groupId>
+          <groupId>com.sleepycat</groupId>
           <artifactId>je</artifactId>
         </exclusion>
       </exclusions>
