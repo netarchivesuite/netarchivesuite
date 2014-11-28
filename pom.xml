@@ -219,6 +219,12 @@
         <groupId>org.netpreserve.openwayback</groupId>
         <artifactId>openwayback-core</artifactId>
         <version>${openwayback.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.sleepycat.je</groupId>
+            <artifactId>je</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
