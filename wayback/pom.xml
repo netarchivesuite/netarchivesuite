@@ -39,13 +39,20 @@
     <dependency>
       <groupId>org.netpreserve.openwayback</groupId>
       <artifactId>openwayback-core</artifactId>
+      <version>${openwayback.version}</version>
     </dependency>
 
     <dependency>
+           <groupId>org.netpreserve.commons</groupId>
+           <artifactId>webarchive-commons</artifactId>
+           <version>${webarchive-commons.version}</version>
+    </dependency>
+
+    <!--<dependency>
       <groupId>it.unimi.dsi</groupId>
       <artifactId>mg4j-big</artifactId>
       <version>4.0.4</version>
-    </dependency>
+    </dependency>-->
 
 
   </dependencies>
