@@ -1,6 +1,6 @@
 #!/bin/sh
 
-INSTALLDIR=${installdir:-openmq4.5}
+INSTALLDIR=${installdir:-MessageQueue5.1}
 echo "Using installdir=$INSTALLDIR"
 
 installMQ()
@@ -8,11 +8,8 @@ installMQ()
     if [ ! -d "$INSTALLDIR"/var ]
     then
       echo "Installing openmq."
-      mkdir $INSTALLDIR
-      cd $INSTALLDIR
-      wget -N http://download.java.net/mq/open-mq/4.5.2/latest/openmq4_5_2-binary-Linux_X86.zip
-      unzip openmq4*.zip
-      cd -
+      wget -N http://download.java.net/mq/open-mq/5.1/latest/openmq5_1-binary-linux.zip
+      unzip openmq*.zip
 
       echo "Initial start of broker to create configurations."
       startBroker
@@ -30,7 +27,7 @@ updateConfig()
 {
     line="imq.autocreate.queue.maxNumActiveConsumers"
     configfile="$INSTALLDIR/var/mq/instances/imqbroker/props/config.properties"
-
+                                              Mes
     # Uncomment line
     sed -i "/${line}/ s/# *//" $configfile
     echo "Set maxNumActiveConsumers to 20."
@@ -44,7 +41,7 @@ startBroker()
             echo "Broker is already running."
         else
             echo "Starting broker"
-            $INSTALLDIR/mq/bin/imqbrokerd -vmargs -d64 &
+            $INSTALLDIR/mq/bin/imqbrokerd -vmargs &
             sleep 3
             echo "Broker started"
         fi

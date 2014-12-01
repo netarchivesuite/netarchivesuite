@@ -39,7 +39,7 @@ public class CachingSLF4JLogRecord implements SingleLogRecord {
      * Make a caching log record, that exposes a log record at a given index as an MBean.
      *
      * @param index The index of this log record, counted from the top of the list.
-     * @param cachingLogHandler The caching log handler this is an exposing view on.
+     * @param cachingSLF4JAppender The caching log handler this is an exposing view on.
      * @throws IOFailure on any trouble registering.
      */
     public CachingSLF4JLogRecord(int index, CachingSLF4JAppender cachingSLF4JAppender) {
@@ -64,7 +64,7 @@ public class CachingSLF4JLogRecord implements SingleLogRecord {
      * Registers this object as an mbean.
      */
     private void register() {
-        singleMBeanObject = new SingleMBeanObject<SingleLogRecord>("dk.netarkivet.common.logging", this,
+        singleMBeanObject = new SingleMBeanObject<>("dk.netarkivet.common.logging", this,
                 SingleLogRecord.class, ManagementFactory.getPlatformMBeanServer());
         singleMBeanObject.getNameProperties().put("index", Integer.toString(this.index));
         singleMBeanObject.register();

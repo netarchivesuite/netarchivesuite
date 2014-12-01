@@ -1373,7 +1373,7 @@ public class LinuxMachine extends Machine {
         // Constructing filename
         String appScript = Constants.DOT + Constants.SLASH + Constants.SCRIPT_NAME_HARVEST_DB_START + scriptExtension;
 
-        String app2Script = Constants.DOT + Constants.SLASH + Constants.SCRIPT_NAME_HARVEST_DB_UPDATE + scriptExtension;
+        //String app2Script = Constants.DOT + Constants.SLASH + Constants.SCRIPT_NAME_HARVEST_DB_UPDATE + scriptExtension;
         ;
 
         StringBuilder res = new StringBuilder();
@@ -1393,16 +1393,16 @@ public class LinuxMachine extends Machine {
         res.append(Constants.NEWLINE + ScriptConstants.FI);
         res.append(Constants.NEWLINE);
         // echo Updating external harvest database
-        res.append(ScriptConstants.ECHO_UPDATE_EXTERNAL_HARVEST_DATABASE);
-        res.append(Constants.NEWLINE);
+        //res.append(ScriptConstants.ECHO_UPDATE_EXTERNAL_HARVEST_DATABASE);
+        //res.append(Constants.NEWLINE);
         // if [ -e ./start_external_harvest_database.sh ]; then
-        res.append(ScriptConstants.LINUX_IF_EXIST + Constants.SPACE);
-        res.append(app2Script + Constants.SPACE + ScriptConstants.LINUX_THEN);
-        res.append(Constants.NEWLINE);
-        res.append(ScriptConstants.MULTI_SPACE_6 + app2Script);
-        res.append(Constants.NEWLINE);
-        // fi
-        res.append(ScriptConstants.FI + Constants.NEWLINE);
+        //res.append(ScriptConstants.LINUX_IF_EXIST + Constants.SPACE);
+        //res.append(app2Script + Constants.SPACE + ScriptConstants.LINUX_THEN);
+        //res.append(Constants.NEWLINE);
+        //res.append(ScriptConstants.MULTI_SPACE_6 + app2Script);
+        //res.append(Constants.NEWLINE);
+        //fi
+        //res.append(ScriptConstants.FI + Constants.NEWLINE);
 
         return res.toString();
     }
@@ -1546,8 +1546,7 @@ public class LinuxMachine extends Machine {
 
     @Override
     protected void createHarvestDatabaseUpdateScript(File dir) {
-        // Ignore if no harvest database directory has been defined.
-        // Only update database on machine, where harvestdatabase is running
+        // Ignore if no harvest database directory has been defined or this isn't a harvest server app.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
         if (dbDir.isEmpty()) {
             return;
@@ -1578,7 +1577,7 @@ public class LinuxMachine extends Machine {
                 // < /dev/null >> start_external_harvest_database.log 2>&1 &
 
                 updateDBPrint.print(ScriptConstants.EXPORT_CLASSPATH);
-                updateDBPrint.print(getDefaultMachineClasspath() + ScriptConstants.NEWLINE);
+                updateDBPrint.print(getHarvestServerClasspath() + ScriptConstants.NEWLINE);
 
                 updateDBPrint.print(ScriptConstants.JAVA + Constants.SPACE + "-" + ScriptConstants.OPTION_SETTINGS
                         + getConfDirPath() + updateHarvestDBSettingsFile.getName() + Constants.SPACE);
@@ -1610,6 +1609,11 @@ public class LinuxMachine extends Machine {
             res.append(getInstallDirPath() + Constants.SLASH + cp.getText().trim() + Constants.COLON);
         }
         return res.toString();
+    }
+
+    private String getHarvestServerClasspath() {
+        return getDefaultMachineClasspath() +
+                getInstallDirPath() + Constants.SLASH + "netarchivesuite-harvest-scheduler.jar" + Constants.COLON;
     }
 
     @Override

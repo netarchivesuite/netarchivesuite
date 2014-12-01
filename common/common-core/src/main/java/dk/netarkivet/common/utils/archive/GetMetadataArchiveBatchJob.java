@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.indexserver;
+package dk.netarkivet.common.utils.archive;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,9 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
-import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
-import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
 /** A batch job that extracts metadata. */
 @SuppressWarnings({"serial"})

@@ -108,6 +108,12 @@
       <version>1</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbyclient</artifactId>
+      <version>10.10.1.1</version>
+    </dependency>
+
     <!-- HarvestJobManager -->
 
     <dependency>
