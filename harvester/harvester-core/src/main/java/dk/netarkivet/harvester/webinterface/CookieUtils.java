@@ -56,7 +56,7 @@ public class CookieUtils {
      */
     public static final String getParameterValue(HttpServletRequest request, String name) {
         String value = request.getParameter(name);
-        if (value == null || value.isEmpty()) {
+        if (value == null || value.isEmpty() && request.getCookies() != null) {
             for (Cookie c : request.getCookies()) {
                 if (name.equals(c.getName())) {
                     value = c.getValue();
