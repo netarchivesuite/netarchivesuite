@@ -11,7 +11,6 @@ import org.archive.net.UURI;
 import org.archive.net.UURIFactory;
 
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteUURIFactory;
 
 /**
  * This class illustrates Bug 1719.

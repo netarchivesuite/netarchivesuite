@@ -47,7 +47,7 @@
         </fileSet>
 
         <fileSet>
-            <directory>${project.basedir}/../deploy/</directory>
+            <directory>${project.basedir}/../deploy-core/</directory>
             <includes>
                 <include>scripts/**</include>
             </includes>

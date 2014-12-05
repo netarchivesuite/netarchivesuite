@@ -172,10 +172,6 @@
         <artifactId>webarchive-commons</artifactId>
         <version>${webarchive-commons.version}</version>
         <exclusions>
-          <!--exclusion>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-          </exclusion-->
           <exclusion>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -201,20 +197,8 @@
             <artifactId>pig</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-          </exclusion>
-          <exclusion>
             <groupId>org.gnu.inet</groupId>
             <artifactId>libidn</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>it.unimi.dsi</groupId>
-            <artifactId>dsiutils</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.httpcomponents</groupId>
@@ -224,7 +208,11 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
           </exclusion>
-        </exclusions> 
+          <exclusion>
+            <groupId>com.sleepycat</groupId>
+            <artifactId>je</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -242,15 +230,15 @@
       </dependency>
 
       <dependency>
-        <groupId>org.archive.wayback</groupId>
-        <artifactId>wayback-core</artifactId>
-        <version>${wayback.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.netpreserve.openwayback</groupId>
         <artifactId>openwayback-core</artifactId>
         <version>${openwayback.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.sleepycat</groupId>
+            <artifactId>je</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>

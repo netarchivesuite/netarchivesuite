@@ -65,11 +65,9 @@
           <option name="FIELD_ANNOTATION_WRAP" value="0" />
         </codeStyleSettings>
         <codeStyleSettings language="JavaScript">
-          <option name="WRAP_COMMENTS" value="true" />
           <option name="PARENT_SETTINGS_INSTALLED" value="true" />
         </codeStyleSettings>
         <codeStyleSettings language="TypeScript">
-          <option name="WRAP_COMMENTS" value="true" />
           <option name="PARENT_SETTINGS_INSTALLED" value="true" />
         </codeStyleSettings>
         <codeStyleSettings language="XML">
@@ -85,3 +83,4 @@
     <option name="PREFERRED_PROJECT_CODE_STYLE" value="NetarchiveSuite" />
   </component>
 </project>
+

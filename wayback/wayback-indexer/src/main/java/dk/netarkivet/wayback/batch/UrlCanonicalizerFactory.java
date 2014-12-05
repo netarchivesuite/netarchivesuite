@@ -23,12 +23,12 @@
 package dk.netarkivet.wayback.batch;
 
 import org.archive.wayback.UrlCanonicalizer;
+import org.archive.wayback.util.url.AggressiveUrlCanonicalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.wayback.WaybackSettings;
-import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer;
 
 /**
  * A factory for returning a UrlCanonicalizer.
@@ -52,8 +52,8 @@ public class UrlCanonicalizerFactory extends SettingsFactory<UrlCanonicalizer> {
             return SettingsFactory.getInstance(WaybackSettings.URL_CANONICALIZER_CLASSNAME);
         } catch (SecurityException e) {
             logger.debug("The requested canoncializer could not be loaded. Falling back to {}",
-                    NetarchiveSuiteAggressiveUrlCanonicalizer.class.toString(), e);
-            return new NetarchiveSuiteAggressiveUrlCanonicalizer();
+                    AggressiveUrlCanonicalizer.class.toString(), e);
+            return new AggressiveUrlCanonicalizer();
         }
     }
 

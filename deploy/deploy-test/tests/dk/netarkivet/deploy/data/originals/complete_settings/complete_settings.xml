@@ -682,7 +682,7 @@
     </viewerproxy><wayback>
          <urlcanonicalizer>
              <classname>
-                 dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer
+               org.archive.wayback.util.url.AggressiveUrlCanonicalizer
              </classname>
          </urlcanonicalizer>
         <hibernate>

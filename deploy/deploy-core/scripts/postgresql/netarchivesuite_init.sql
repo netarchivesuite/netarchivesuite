@@ -1,3 +1,8 @@
+--
+--This is, or will be, the definitive master-schema for the harvest database which should be kept consistent with the current
+--codebase.
+--
+
 -- $Id: netarchivesuite_init.sql 1414 2010-05-31 15:52:06Z ngiraud $
 -- $Revision: 1414 $
 -- $Date: 2010-05-31 17:52:06 +0200 (Mon, 31 May 2010) $
@@ -25,16 +30,16 @@
 -- How to use:
 -- psql -U <user name> -W [DB name] < netarchivesuite_init.sql
 
-CREATE SCHEMA netarchivesuite;
+--CREATE SCHEMA netarchivesuite;
 
-SET search_path TO netarchivesuite;
+--SET search_path TO netarchivesuite;
 
 --------------------------------------------------------------------------------
 -- Create user for application and add privileges
 --------------------------------------------------------------------------------
 
-CREATE ROLE netarchivesuite PASSWORD '' LOGIN;
-GRANT USAGE ON SCHEMA netarchivesuite TO netarchivesuite;
+--CREATE ROLE netarchivesuite PASSWORD '' LOGIN;
+--GRANT USAGE ON SCHEMA netarchivesuite TO netarchivesuite;
 
 -- *****************************************************************************
 -- Area: Basics
@@ -74,7 +79,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'ordertemplates', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'jobs', 9);
+    VALUES ( 'jobs', 10);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'job_configs', 1);
 INSERT INTO schemaversions (tablename, version )
@@ -354,7 +359,7 @@ CREATE TABLE jobs (
     job_id bigint NOT NULL PRIMARY KEY,
     harvest_id bigint NOT NULL,
     status int NOT NULL,
-    channel varchar(300),
+    channel varchar(300) NOT NULL,
     snapshot bool NOT NULL,
     forcemaxbytes bigint NOT NULL default -1,
     forcemaxcount bigint,
@@ -589,6 +594,7 @@ INSERT INTO extendedfieldtype (extendedfieldtype_id, name)
 CREATE TABLE harvestchannel (
     id bigint NOT NULL PRIMARY KEY,
     name varchar(300) NOT NULL UNIQUE,
+    issnapshot boolean NOT NULL,
     isdefault bool NOT NULL,
     comments varchar(30000)
 );
@@ -602,6 +608,8 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE harvestchannel TO netarchivesuite;
 GRANT USAGE ON SEQUENCE harvestchannel_id_seq TO netarchivesuite;
 
 ALTER TABLE extendedfield ADD COLUMN maxlen INT;
-ALTER TABLE extendedfield ALTER options VARCHAR(1000);
 
-ALTER TABLE extendedfieldvalue ALTER content VARCHAR(30000) NOT NULL;
+ALTER TABLE extendedfield ALTER COLUMN options TYPE VARCHAR(1000);
+
+ALTER TABLE extendedfieldvalue ALTER COLUMN content TYPE VARCHAR(30000);
+ALTER TABLE extendedfieldvalue ALTER COLUMN content SET NOT NULL;
