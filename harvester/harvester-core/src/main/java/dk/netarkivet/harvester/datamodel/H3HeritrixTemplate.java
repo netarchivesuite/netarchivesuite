@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.sql.Clob;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +63,7 @@ import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
  * xsi:noNamespaceSchemaLocation="heritrix_settings.xsd">
  * 
  */
-public class H3HeritrixTemplate extends HeritrixTemplate {
+public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(H3HeritrixTemplate.class);
 

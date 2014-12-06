@@ -25,6 +25,7 @@ package dk.netarkivet.harvester.datamodel;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.sql.Clob;
 import java.sql.SQLException;
@@ -62,7 +63,7 @@ import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
  * 
  * 
  */
-public class H1HeritrixTemplate extends HeritrixTemplate {
+public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(H1HeritrixTemplate.class);
 
