@@ -65,6 +65,14 @@
       <type>test-jar</type>
     </dependency>
 
+    <!-- not in Maven Central -->
+    <dependency>
+      <groupId>org.archive</groupId>
+      <artifactId>heritrix</artifactId>
+      <version>1.14.4</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
