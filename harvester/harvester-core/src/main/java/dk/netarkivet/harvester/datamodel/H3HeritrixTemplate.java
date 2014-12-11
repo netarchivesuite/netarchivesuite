@@ -22,18 +22,23 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.sql.Clob;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.Node;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,9 +48,8 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.common.utils.Template;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
 
 /**
  * Class encapsulating the Heritrix crawler-beans.cxml file 
@@ -70,48 +74,30 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     private String template;  
     
     
-    /** has this HeritrixTemplate been verified. */
+    /** Has this HeritrixTemplate been verified. */
     private boolean verified;
 
-    /**
-     * 
-     * TODO howto use the quota-enforcer in H3
-     * 
-     * 
-     */
+    private final String METADATA_ITEMS_PLACEHOLDER = "METADATA_ITEMS_PLACEHOLDER";
+    
+    private List<String> crawlertraps = new ArrayList<String>();
 
-    /**
-     * Map from required xpaths to a regular expression describing legal content for the path text.
-     */
-    private static final Map<String, Pattern> requiredXpaths = new HashMap<String, Pattern>();
-
-    /**
-     * A regular expression that matches a whole number, possibly negative, and with optional whitespace around it.
-     */
-    private static final String WHOLE_NUMBER_REGEXP = "\\s*-?[0-9]+\\s*";
-    /**
-     * A regular expression that matches everything. Except newlines, unless DOTALL is given to Pattern.compile().
-     */
-    private static final String EVERYTHING_REGEXP = ".*";
-
-    // These two regexps are copied from
-    // org.archive.crawler.datamodel.CrawlOrder because they're private there.
-
-    /**
-     * A regular expression that matches Heritrix' specs for the user-agent field in order.xml. It should be used with
-     * DOTALL. An example match is "Org (ourCrawler, see +http://org.org/aPage for details) harvest".
-     */
-    private static final String USER_AGENT_REGEXP = "\\S+.*\\(.*\\+http(s)?://\\S+\\.\\S+.*\\).*";
-    /**
-     * A regular expression that matches Heritrix' specs for the from field. This should be a valid email address.
-     */
-    private static final String FROM_REGEXP = "\\S+@\\S+\\.\\S+";
-
-    /**
-     * Xpath to check, that all templates have the max-time-sec attribute.
-     */
-    public static final String MAXTIMESEC_PATH_XPATH = "/crawl-order/controller/long[@name='max-time-sec']";
-
+    public static final String MAX_TIME_SECONDS_PLACEHOLDER = "MAX_TIME_SECONDS_PLACEHOLDER";
+    public static final String CRAWLERTRAPS_PLACEHOLDER = "CRAWLERTRAPS_PLACEHOLDER";
+    public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER = "DEDUPLICATION_INDEX_LOCATION"; 
+    public static final String SEEDS_FILE_PATH_PLACEHOLDER = "SEEDS_FILE_PATH";
+    public static final String ARCHIVE_FILE_PREFIX_PLACEHOLDER = "ARCHIVE_FILE_PREFIX";
+	
+    // PLACEHOLDERS for archiver beans
+    
+    final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "ARCHIVER_BEAN_REFERENCE_PLACEHOLDER";	
+	final String ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER = "ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER";
+	final String WARC_Write_Requests_PLACEHOLDER = "WARC_Write_Requests_PLACEHOLDER";
+	final String WARC_Write_Metadata_PLACEHOLDER = "WARC_Write_Metadata_PLACEHOLDER";
+	final String WARC_Write_RevisitForIdenticalDigests_PLACEHOLDER = "WARC_Write_RevisitForIdenticalDigests_PLACEHOLDER";
+	final String WARC_Write_RevisitForNotModified_PLACEHOLDER = "WARC_Write_RevisitForNotModified_PLACEHOLDER";
+	final String WARC_StartNewFilesOnCheckpoint_PLACEHOLDER = "WARC_StartNewFilesOnCheckpoint_PLACEHOLDER";
+	final String WARC_SkipIdenticalDigests_PLACEHOLDER = "WARC_skipIdenticalDigests_PLACEHOLDER";    
+    
     /**
      * Constructor for HeritrixTemplate class.
      *
@@ -124,10 +110,30 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
         ArgumentNotValid.checkNotNull(template, "String template");
         this.template = template;
     }
-
+    
+    /**
+     * Alternate constructor, taking a clob as an argument.
+     * @param clob The template as SQL CLOB
+     */
     public H3HeritrixTemplate(Clob clob) {
-		// TODO Auto-generated constructor stub
-	}
+
+    	StringBuilder sb = new StringBuilder();
+    	try {
+    		Reader reader = clob.getCharacterStream();
+    		BufferedReader br = new BufferedReader(reader);
+
+    		String line;
+    		while(null != (line = br.readLine())) {
+    			sb.append(line);sb.append("\n");
+    		}
+    		br.close();
+    	} catch (SQLException e) {
+    		throw new IOFailure("SQLException occurred during the construction", e);
+    	} catch (IOException e) {
+    		throw new IOFailure("IOException occurred during the construction", e);
+    	}
+    	this.template = sb.toString();
+    }
 
 	/**
      * return the template.
@@ -149,198 +155,70 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
     /**
      * Return HeritrixTemplate as XML.
-     *
+     * Note that we insert the crawlertraps before resturning the xml.
      * @return HeritrixTemplate as XML
      */
+    @Override
     public String getXML() {
-        return template;
+        return writeCrawlerTrapsToTemplate();
     }
 
     /**
      * Method to add a list of crawler traps with a given element name. It is used both to add per-domain traps and
      * global traps.
      *
-     * @param elementName The name of the added element.
+     * @param elementName The name of the added element. (not used by the H3 - template.
      * @param crawlerTraps A list of crawler trap regular expressions to add to this job.
      */
-    @SuppressWarnings("unchecked")
-    public static void editOrderXMLAddCrawlerTraps(Document orderXMLdoc, String elementName, List<String> crawlerTraps) {
-        if (crawlerTraps.size() == 0) {
-            return;
-        }
-
-        // Get the node to update
-        // If there is an acceptIfPrerequisite decideRule in the template, crawler traps should be
-        // placed before (cf. issue NAS-2205)
-        // If no such rule exists then we append the crawler traps as to the existing decideRuleds.
-
-        Node rulesMapNode = orderXMLdoc.selectSingleNode(H1HeritrixTemplate.DECIDERULES_MAP_XPATH);
-        if (rulesMapNode == null || !(rulesMapNode instanceof Element)) {
-            throw new IllegalState("Unable to update order.xml document. It does not have the right form to add"
-                    + "crawler trap deciderules.");
-        }
-
-        Element rulesMap = (Element) rulesMapNode;
-
-        // Create the root node and append it top existing rules
-        Element decideRule = rulesMap.addElement("newObject");
-
-        // If an acceptiIfPrerequisite node exists, detach and insert before it
-        Node acceptIfPrerequisiteNode = orderXMLdoc
-                .selectSingleNode(H1HeritrixTemplate.DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH);
-        if (acceptIfPrerequisiteNode != null) {
-            List<Node> elements = rulesMap.elements();
-            int insertPosition = elements.indexOf(acceptIfPrerequisiteNode);
-            decideRule.detach();
-            elements.add(insertPosition, decideRule);
-        } else {
-            rulesMap.elements().size();
-        }
-
-        // Add all regexps in the list to a single MatchesListRegExpDecideRule
-        decideRule.addAttribute("name", elementName);
-        // FIXME Heritrix1 constant in Heritrix3 support file.
-        decideRule.addAttribute("class", Heritrix1Constants.MATCHESLISTREGEXPDECIDERULE_CLASSNAME);
-
-        Element decision = decideRule.addElement("string");
-        decision.addAttribute("name", "decision");
-        decision.addText("REJECT");
-
-        Element listlogic = decideRule.addElement("string");
-        listlogic.addAttribute("name", "list-logic");
-        listlogic.addText("OR");
-
-        Element regexpList = decideRule.addElement("stringList");
-        regexpList.addAttribute("name", "regexp-list");
-        for (String trap : crawlerTraps) {
-            regexpList.addElement("string").addText(trap);
-        }
+    public void editOrderXMLAddCrawlerTraps(String elementName, List<String> crawlerTraps) {        
+    	// For now only add the crawlertraps to the list;
+        this.crawlertraps.addAll(crawlerTraps);	
+        System.out.println("Now the list of crawlertraps contain " +  this.crawlertraps.size() + " traps");
+    }
+        
+    private String writeCrawlerTrapsToTemplate() {
+    	//
+//      <bean class="org.archive.modules.deciderules.MatchesListRegexDecideRule">
+//      <!-- <property name="listLogicalOr" value="true" /> -->
+//      <!-- <property name="regexList">
+//            <list>
+//            CRAWLERTRAPS_PLACEHOLDER 
+//            </list>
+//           </property> -->
+//     </bean>
+    	if (!template.contains(CRAWLERTRAPS_PLACEHOLDER)) {
+    		// TODO Log and return from method instead of throwing an exception????
+    		throw new IllegalState("Crawlertraps has already been inserted");
+    	}
+    	StringBuilder sb = new StringBuilder();
+    	for (String trap: crawlertraps) {
+    		sb.append("<value>" + trap + "</value>\n");
+    	}
+    	Map<String,String> env = new HashMap<String,String>();
+        env.put(CRAWLERTRAPS_PLACEHOLDER, sb.toString());
+    	boolean bFailOnMissing = true;
+    	return Template.untemplate(template, env, bFailOnMissing);
     }
 
     /**
-     * Updates the order.xml to include a MatchesListRegExpDecideRule for each crawlertrap associated with for the given
-     * DomainConfiguration.
-     * <p>
-     * The added nodes have the form
-     * <p>
-     * <newObject name="domain.dk" class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule"> <string
-     * name="decision">REJECT</string> <string name="list-logic">OR</string> <stringList name="regexp-list">
-     * <string>theFirstRegexp</string> <string>theSecondRegexp</string> </stringList> </newObject>
-     *
-     * @param cfg The DomainConfiguration for which to generate crawler trap deciderules
-     * @throws IllegalState If unable to update order.xml due to wrong order.xml format
+     * Update the maxTimeSeconds property in the heritrix3 template, if possible.
+     * @param maxJobRunningTimeSecondsL Force the harvestjob to end after this number of seconds 
+     * Property of the org.archive.crawler.framework.CrawlLimitEnforcer
+     * <!-- <property name="maxTimeSeconds" value="0" /> -->
      */
-    public static void editOrderXMLAddPerDomainCrawlerTraps(Document orderXmlDoc, DomainConfiguration cfg) {
-        // Get the regexps to exclude
-        List<String> crawlerTraps = cfg.getCrawlertraps();
-        String elementName = cfg.getDomainName();
-        H1HeritrixTemplate.editOrderXMLAddCrawlerTraps(orderXmlDoc, elementName, crawlerTraps);
-    }
-
-    /**
-     * Make sure that Heritrix will archive its data in the chosen archiveFormat.
-     *
-     * @param orderXML the specific heritrix template to modify.
-     * @param archiveFormat the chosen archiveformat ('arc' or 'warc' supported) Throws ArgumentNotValid If the chosen
-     * archiveFormat is not supported.
-     */
-    public static void editOrderXML_ArchiveFormat(Document orderXML, String archiveFormat) {
-        boolean arcMode = false;
-        boolean warcMode = false;
-
-        if ("arc".equalsIgnoreCase(archiveFormat)) {
-            arcMode = true;
-            log.debug("ARC format selected to be used by Heritrix");
-        } else if ("warc".equalsIgnoreCase(archiveFormat)) {
-            warcMode = true;
-            log.debug("WARC format selected to be used by Heritrix");
-        } else {
-            throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.HERITRIX_ARCHIVE_FORMAT
-                    + "' is invalid! Unrecognized format '" + archiveFormat + "'.");
-        }
-
-        if (arcMode) {
-            // enable ARC writing in Heritrix and disable WARC writing if needed.
-            if (orderXML.selectSingleNode(H1HeritrixTemplate.ARCSDIR_XPATH) != null
-                    && orderXML.selectSingleNode(H1HeritrixTemplate.ARCS_ENABLED_XPATH) != null) {
-                XmlUtils.setNode(orderXML, H1HeritrixTemplate.ARCSDIR_XPATH,
-                        dk.netarkivet.common.Constants.ARCDIRECTORY_NAME);
-                XmlUtils.setNode(orderXML, H1HeritrixTemplate.ARCS_ENABLED_XPATH, "true");
-                if (orderXML.selectSingleNode(H1HeritrixTemplate.WARCS_ENABLED_XPATH) != null) {
-                    XmlUtils.setNode(orderXML, H1HeritrixTemplate.WARCS_ENABLED_XPATH, "false");
-                }
-            } else {
-                throw new IllegalState("Unable to choose ARC as Heritrix archive format because "
-                        + " one of the following xpaths are invalid in the given order.xml: "
-                        + H1HeritrixTemplate.ARCSDIR_XPATH + "," + H1HeritrixTemplate.ARCS_ENABLED_XPATH);
-            }
-        } else if (warcMode) { // WARCmode
-            // enable ARC writing in Heritrix and disable WARC writing if needed.
-            if (orderXML.selectSingleNode(H1HeritrixTemplate.WARCSDIR_XPATH) != null
-                    && orderXML.selectSingleNode(H1HeritrixTemplate.WARCS_ENABLED_XPATH) != null) {
-                XmlUtils.setNode(orderXML, H1HeritrixTemplate.WARCSDIR_XPATH,
-                        dk.netarkivet.common.Constants.WARCDIRECTORY_NAME);
-                XmlUtils.setNode(orderXML, H1HeritrixTemplate.WARCS_ENABLED_XPATH, "true");
-                if (orderXML.selectSingleNode(H1HeritrixTemplate.ARCS_ENABLED_XPATH) != null) {
-                    XmlUtils.setNode(orderXML, H1HeritrixTemplate.ARCS_ENABLED_XPATH, "false");
-                }
-
-                // Update the WARCWriterProcessorSettings with settings values
-                setIfFound(orderXML, H1HeritrixTemplate.WARCS_SKIP_IDENTICAL_DIGESTS_XPATH,
-                        HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS,
-                        Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS));
-
-                setIfFound(orderXML, H1HeritrixTemplate.WARCS_WRITE_METADATA_XPATH,
-                        HarvesterSettings.HERITRIX_WARC_WRITE_METADATA,
-                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA));
-
-                setIfFound(orderXML, H1HeritrixTemplate.WARCS_WRITE_REQUESTS_XPATH,
-                        HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS,
-                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS));
-
-                setIfFound(orderXML, H1HeritrixTemplate.WARCS_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS_XPATH,
-                        HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS,
-                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS));
-                setIfFound(orderXML, H1HeritrixTemplate.WARCS_WRITE_REVISIT_FOR_NOT_MODIFIED_XPATH,
-                        HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED,
-                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED));
-
-            } else {
-                throw new IllegalState("Unable to choose WARC as Heritrix archive format because "
-                        + " one of the following xpaths are invalid in the given order.xml: "
-                        + H1HeritrixTemplate.WARCSDIR_XPATH + "," + H1HeritrixTemplate.WARCS_ENABLED_XPATH
-                        + ". order.xml: " + orderXML.asXML());
-            }
-
-        } else {
-            throw new IllegalState("Unknown state: "
-                    + "Should have selected either ARC or WARC as heritrix archive format");
-        }
-    }
-
-    private static void setIfFound(Document doc, String Xpath, String param, String value) {
-        if (doc.selectSingleNode(Xpath) != null) {
-            XmlUtils.setNode(doc, Xpath, value);
-        } else {
-            log.warn("Could not replace setting value of '" + param + "' in template. Xpath not found: " + Xpath);
-        }
-    }
-
-    /**
-     * @param maxJobRunningTime Force the harvestjob to end after maxJobRunningTime
-     */
-    public static void editOrderXML_maxJobRunningTime(Document orderXMLdoc, long maxJobRunningTime) {
-        // get and set the "max-time-sec" node of the orderXMLdoc
-        String xpath = H1HeritrixTemplate.MAXTIMESEC_PATH_XPATH;
-        Node groupMaxTimeSecNode = orderXMLdoc.selectSingleNode(xpath);
-        if (groupMaxTimeSecNode != null) {
-            String currentMaxTimeSec = groupMaxTimeSecNode.getText();
-            groupMaxTimeSecNode.setText(Long.toString(maxJobRunningTime));
-            log.trace("Value of groupMaxTimeSecNode changed from " + currentMaxTimeSec + " to " + maxJobRunningTime);
-        } else {
-            throw new IOFailure("Unable to locate xpath '" + xpath + "' in the order.xml: " + orderXMLdoc.asXML());
-        }
-    }
+    @Override
+	public void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL) {
+		if (template.contains(MAX_TIME_SECONDS_PLACEHOLDER)) {
+			Map<String,String> env = new HashMap<String,String>();
+	        env.put(MAX_TIME_SECONDS_PLACEHOLDER, Long.toString(maxJobRunningTimeSecondsL));
+	    	boolean bFailOnMissing = true;
+	    	this.template = Template.untemplate(template, env, bFailOnMissing);
+		} else {
+		   // LOG WARNING
+		}
+	}
+    
+    final String QUOTA_ENFORCER_MAX_BYTES_TEMPLATE = "QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE";
 
     /**
      * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of objects to be
@@ -353,108 +231,34 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
      * @throws IOFailure If the group-max-fetch-success element is not found in the orderXml. TODO The
      * group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
      */
-    public static void editOrderXML_maxObjectsPerDomain(Document orderXMLdoc, 
+    public void editOrderXML_maxObjectsPerDomain( 
     		long forceMaxObjectsPerDomain,
             boolean maxObjectsIsSetByQuotaEnforcer) {
     	Map<String,String> env = new HashMap<String,String>();
     	
     	String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE = "QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE"; 
     	String FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE = "FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE";
+    		
+    	
     	Long FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT = -1L;
+    	Long QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_DEFAULT = -1L;
     	
     	if (maxObjectsIsSetByQuotaEnforcer) {
     		env.put(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE, 
     				String.valueOf(forceMaxObjectsPerDomain));
     		env.put(FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE, 
     				String.valueOf(FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT));
+    	} else {
+    		env.put(FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE, 
+    				String.valueOf(forceMaxObjectsPerDomain));
+    		env.put(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE,
+    				String.valueOf(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_DEFAULT));
     	}
     	
-    	
-    	
-    	/*
-    	
-        String xpath = (maxObjectsIsSetByQuotaEnforcer ? H1HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH
-                : H1HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
-
-        
-        Node orderXmlNode = orderXMLdoc.selectSingleNode(xpath);
-        if (orderXmlNode != null) {
-            orderXmlNode.setText(String.valueOf(forceMaxObjectsPerDomain));
-        } else {
-            throw new IOFailure("Unable to locate " + xpath + " element in order.xml: " + orderXMLdoc.asXML());
-        }
-        
-        */
-        
-        
+    	boolean bFailOnMissing = false;
+    	template = Template.untemplate(template, env, bFailOnMissing);
     }
-/*
-    Map<String, String> env = new HashMap<String, String>();
-    env.put("machineparameters", app.getMachineParameters().writeJavaOptions());
-    env.put("classpath", osGetClassPath(app));
-    env.put("confdirpath", ScriptConstants.doubleBackslashes(getConfDirPath()));
-    env.put("id", id);
-    env.put("appname", app.getTotalName());
-    env.put("killpsname", killPsName);
-    env.put("tmprunpsname", tmpRunPsName);
-    env.put("startlogname", startLogName);
-    if (inheritedSlf4jConfigFile != null) {
-        env.put("slf4jlogger", Template.untemplate(windowsStartVbsScriptTpl.slf4jLogger, env, true));
-    } else {
-        env.put("slf4jlogger", "");
-    }
-    if (app.getTotalName().contains(ScriptConstants.BITARCHIVE_APPLICATION_NAME)) {
-        env.put("securityManagement",
-                Template.untemplate(windowsStartVbsScriptTpl.securityManagement, env, true));
-    } else {
-        env.put("securityManagement", "");
-    }
-    String str = Template.untemplate(windowsStartVbsScriptTpl.mainScript, env, true, "\r\n");
-    vbsPrint.print(str);
     
-*/    
-    
-    
-    /**
-     * Activates or deactivate the quota-enforcer, depending on budget definition. Object limit can be defined either by
-     * using the queue-total-budget property or the quota enforcer. Which is chosen is set by the argument
-     * maxObjectsIsSetByQuotaEnforcer}'s value. So quota enforcer is set as follows:
-     * <ul>
-     * <li>Object limit is not set by quota enforcer, disabled only if there is no byte limit.</li>
-     * <li>Object limit is set by quota enforcer, so it should be enabled whether a byte or object limit is set.</li>
-     * </ul>
-     *
-     * @param orderXMLdoc the template to modify
-     * @param maxObjectsIsSetByQuotaEnforcer Decides whether the maxObjectsIsSetByQuotaEnforcer or not.
-     * @param forceMaxBytesPerDomain The number of max bytes per domain enforced (can be no limit)
-     * @param forceMaxObjectsPerDomain The number of max objects per domain enforced (can be no limit)
-     */
-    public static void editOrderXML_configureQuotaEnforcer(Document orderXMLdoc,
-            boolean maxObjectsIsSetByQuotaEnforcer, long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain) {
-
-        boolean quotaEnabled = true;
-
-        if (!maxObjectsIsSetByQuotaEnforcer) {
-            // Object limit is not set by quota enforcer, so it should be disabled only
-            // if there is no byte limit.
-            quotaEnabled = forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
-
-        } else {
-            // Object limit is set by quota enforcer, so it should be enabled whether
-            // a byte or object limit is set.
-            quotaEnabled = forceMaxObjectsPerDomain != Constants.HERITRIX_MAXOBJECTS_INFINITY
-                    || forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
-        }
-
-        String xpath = H1HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
-        Node qeNode = orderXMLdoc.selectSingleNode(xpath);
-        if (qeNode != null) {
-            qeNode.setText(Boolean.toString(quotaEnabled));
-        } else {
-            throw new IOFailure("Unable to locate " + xpath + " element in order.xml: " + orderXMLdoc.asXML());
-        }
-    }
-
     /**
      * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of bytes to
      * retrieve per domain. This method updates 'group-max-all-kb' element of the 'QuotaEnforcer' node, which again is a
@@ -466,106 +270,249 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
      * @throws IOFailure If the group-max-all-kb element cannot be found. TODO This group-max-all-kb check also be
      * performed in TemplateDAO.create, TemplateDAO.update
      */
-    public static void editOrderXML_maxBytesPerDomain(Document orderXMLdoc, long forceMaxBytesPerDomain) {
-        // get and set the group-max-all-kb Node of the orderXMLdoc:
-        String xpath = H1HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
-        Node groupMaxSuccessKbNode = orderXMLdoc.selectSingleNode(xpath);
-        if (groupMaxSuccessKbNode != null) {
-            if (forceMaxBytesPerDomain == 0) {
-                groupMaxSuccessKbNode.setText("0");
-            } else if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY) {
-                // Divide by 1024 since Heritrix uses KB rather than bytes,
-                // and add 1 to avoid to low limit due to rounding.
-                groupMaxSuccessKbNode.setText(Long
-                        .toString((forceMaxBytesPerDomain / Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1));
-            } else {
-                groupMaxSuccessKbNode.setText(String.valueOf(Constants.HERITRIX_MAXBYTES_INFINITY));
-            }
-        } else {
-            throw new IOFailure("Unable to locate QuotaEnforcer object in order.xml: " + orderXMLdoc.asXML());
-        }
-    }
-
-    /**
-     * Return true if the given order.xml file has deduplication enabled.
-     *
-     * @param doc An order.xml document
-     * @return True if Deduplicator is enabled.
-     */
-    public static boolean isDeduplicationEnabledInTemplate(Document doc) {
-        ArgumentNotValid.checkNotNull(doc, "Document doc");
-        Node xpathNode = doc.selectSingleNode(H1HeritrixTemplate.DEDUPLICATOR_ENABLED);
-        return xpathNode != null && xpathNode.getText().trim().equals("true");
-    }
-
-    
-	@Override
-	public boolean isValid() {
-		// TODO Auto-generated method stub
-		//FIXME always returns true, currently
-		return true;
-	}
-
+//  
 	@Override
 	public void setMaxBytesPerDomain(Long maxbytesL) {
-		// TODO Auto-generated method stub
-		
-	}
+		String maxBytesStringValue = "";
+
+		if (maxbytesL == 0) {
+			maxBytesStringValue = "0";
+		} else if (maxbytesL != Constants.HERITRIX_MAXBYTES_INFINITY) {
+          // Divide by 1024 since Heritrix uses KB rather than bytes,
+          // and add 1 to avoid to low limit due to rounding.
+    	  maxBytesStringValue = Long.toString((maxbytesL / Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1);
+		} else {
+    	  maxBytesStringValue = String.valueOf(Constants.HERITRIX_MAXBYTES_INFINITY);
+		}
+
+		if (template.contains(QUOTA_ENFORCER_MAX_BYTES_TEMPLATE)) {
+			// Insert value
+			
+		} else {
+	      throw new IOFailure("Unable to locate QuotaEnforcer template to set maxBytesPerDomain in template: " + template);
+	  }
+	}	
+  
 
 	@Override
 	public Long getMaxBytesPerDomain() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("This method has not yet been implemented");
 	}
 
 	@Override
 	public void setMaxObjectsPerDomain(Long maxobjectsL) {
-		// TODO Auto-generated method stub
+		Map<String,String> env = new HashMap<String,String>();
+    	
+    	String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE = "QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE"; 
+    	String FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE = "FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE";
+    		
+    	Long FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT = -1L;
+    	//Long QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_DEFAULT = -1L;
+        env.put(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE, 
+    				String.valueOf(maxobjectsL));
+    	env.put(FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE, 
+    				String.valueOf(FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT));
+    	
+    	
+    	boolean bFailOnMissing = false;
+    	template = Template.untemplate(template, env, bFailOnMissing);
 		
 	}
 
 	@Override
 	public Long getMaxObjectsPerDomain() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("This method has not yet been implemented");
+		//return null;
+	}
+    
+	@Override
+	public boolean isValid() {
+		//always returns true, currently
+		return true;
 	}
 
 	@Override
+	// This method is used to decide, whether to request a deduplication index or not.
 	public boolean IsDeduplicationEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		// LOOK for the string DEDUPLICATION_INDEX_LOCATION or the pattern '<bean id="DeDuplicator"'
+		String deduplicationBeanPattern =  "<bean id=\"DeDuplicator\"";
+		if (template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER) || template.contains(deduplicationBeanPattern)) { 
+			return true;
+		} else {
+			return false;
+		}
 	}	
-	
-	
 
+	/**
+     * Activates or deactivate the quota-enforcer, depending on budget definition. Object limit can be defined either by
+     * using the queue-total-budget property or the quota enforcer. Which is chosen is set by the argument
+     * maxObjectsIsSetByQuotaEnforcer}'s value. So quota enforcer is set as follows:
+     * <ul>
+     * <li>Object limit is not set by quota enforcer, disabled only if there is no byte limit.</li>
+     * <li>Object limit is set by quota enforcer, so it should be enabled if a byte or object limit is set.</li>
+     * </ul>
+     *
+     * @param maxObjectsIsSetByQuotaEnforcer Decides whether the maxObjectsIsSetByQuotaEnforcer or not.
+     * @param forceMaxBytesPerDomain The number of max bytes per domain enforced (can be no limit)
+     * @param forceMaxObjectsPerDomain The number of max objects per domain enforced (can be no limit)
+     */
 	@Override
 	public void configureQuotaEnforcer(boolean maxObjectsIsSetByQuotaEnforcer,
 			long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain) {
 		// TODO Auto-generated method stub
+		// FIXME see code elsewhere
+		boolean quotaEnabled = true;
+
+    	if (!maxObjectsIsSetByQuotaEnforcer) { // We use the frontier globalBudget instead
+            // If the Object limit is not set by quota enforcer, it should be disabled 
+            // 	iff there is no byte limit (i.e. the maxBytes is infinite)
+            quotaEnabled = forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
+
+        } else {
+            // Object limit is set by quota enforcer, so it should be enabled whether
+            // a byte or object limit is set.
+            quotaEnabled = forceMaxObjectsPerDomain != Constants.HERITRIX_MAXOBJECTS_INFINITY
+                    || forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
+        }
+
+    	//FIXME this method only decides when to disable the QuotaEnforcer, not 
+    	// what is should contain. 
+    	// Add a Quota class 
+
+    	if (quotaEnabled) {
+    	 	// FIXME insert quota-enforcer beans into the cxml-file or not depending on the Jobs values
+        	// or whether or not the there are quota-enforcer templates in the cxml-file.    		
+    	}
 		
 	}
 
+	 /**
+     * Make sure that Heritrix will archive its data in the chosen archiveFormat.
+     *
+     * @param archiveFormat the chosen archiveformat ('arc' or 'warc' supported)
+     * @throw ArgumentNotValid If the chosen archiveFormat is not supported.
+     */
 	@Override
-	public void setArchiveFormat(String archiveFormat) {
-		// TODO Auto-generated method stub
-		
+	public void setArchiveFormat(String archiveFormat) {		
+
+		if ("arc".equalsIgnoreCase(archiveFormat)) {
+			log.debug("ARC format selected to be used by Heritrix");
+			setArcArchiveformat();
+		} else if ("warc".equalsIgnoreCase(archiveFormat)) {
+			log.debug("WARC format selected to be used by Heritrix");
+			setWarcArchiveformat();
+		} else {
+			throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.HERITRIX_ARCHIVE_FORMAT
+					+ "' is invalid! Unrecognized format '" + archiveFormat + "'.");
+		}
 	}
 
-	@Override
-	public void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL) {
-		// TODO Auto-generated method stub
+	/**
+	 * Set the archiveformat as ARC. This means enabling the ARCWriterProcessor in the template
+	 */
+	private void setArcArchiveformat(){
+    	boolean bFailOnMissing = true;
+    	Map<String,String> env = new HashMap<String,String>();
+    	
+    	String arcWriterbeanReference = "<ref bean=\"arcWriter\"/>";
+    	env.put(ARCHIVER_BEAN_REFERENCE_PLACEHOLDER, arcWriterbeanReference);
+    	env.put(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER, getArcWriterProcessor()); 
+    	
+    	this.template = Template.untemplate(template, env, bFailOnMissing);
+    }
+    		
+  	private String getArcWriterProcessor() {
 		
-	}
+//      <bean id="arcWriter" class="org.archive.modules.writer.ARCWriterProcessor">
+//  	  <!-- <property name="compress" value="true" /> -->
+//  	  <!-- <property name="prefix" value="IAH" /> -->
+//  	  <!-- <property name="suffix" value="${HOSTNAME}" /> -->
+//  	  <!-- <property name="maxFileSizeBytes" value="100000000" /> -->
+//  	  <!-- <property name="poolMaxActive" value="1" /> -->
+//  	  <!-- <property name="poolMaxWaitMs" value="300000" /> -->
+//  	  <!-- <property name="skipIdenticalDigests" value="false" /> -->
+//  	  <!-- <property name="maxTotalBytesToWrite" value="0" /> -->
+//  	  <!-- <property name="directory" value="." /> -->
+//  	  <!-- <property name="storePaths">
+//  	        <list>
+//  	         <value>arcs</value>
+//  	        </list>
+//  	       </property> -->
+//  	 </bean>
+  	   //TODO add some properties as properties defined at the front of the arcwriter
+  	   // 
+  	   String arcWriterBean 
+  	   	= "<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">";
+  	   arcWriterBean += "</bean>"; 
+  	   return arcWriterBean;  			      
+  	}
+
+		
+  	/** 
+  	 * Insert WARC-archiver beans and remove placeholder for ARC-Archiver-beans
+  	 * It is an error, if the WARC place-holders doesnt't exist.
+  	 * It is not an error, if the property placeholder does not exist.
+  	 */
+  	private void setWarcArchiveformat() {
+  		String warcWriterbeanReference = "<ref bean=\"warcWriter\"/>";
+  		String warcWriterProcessorBean = "<bean id=\"warcWriter\" class=\"dk.netarkivet.harvester.harvesting.NasWARCProcessor\">";
+  		warcWriterProcessorBean += "METADATA_ITEMS\n</bean>"; 
+  		String propertyPrefix = "warcWriter.";
+  		Map<String,String> envMandatory = new HashMap<String,String>();
+  		envMandatory.put(ARCHIVER_BEAN_REFERENCE_PLACEHOLDER, warcWriterbeanReference);
+  		envMandatory.put(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER, warcWriterProcessorBean);
+  		Map<String,String> envOptional = new HashMap<String,String>();
+  		envOptional.put(WARC_Write_Requests_PLACEHOLDER, 
+  				propertyPrefix + "writeRequests=" + 
+  						Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS));
+  		envOptional.put(WARC_Write_Metadata_PLACEHOLDER,
+  				propertyPrefix + "writeMetadata=" +
+  						Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA));
+  		envOptional.put(WARC_Write_RevisitForIdenticalDigests_PLACEHOLDER,
+  				propertyPrefix + "writeRevisitForIdenticalDigests=" +
+  						Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS));
+  		envOptional.put(WARC_Write_RevisitForNotModified_PLACEHOLDER,
+  				propertyPrefix + "writeRevisitForNotModified=" +
+  						Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED));
+
+  		envOptional.put(WARC_SkipIdenticalDigests_PLACEHOLDER,
+  				propertyPrefix + "skipIdenticalDigests=" +
+  						Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS));
+
+  		/* TODO
+	    	envOptional.put(WARC_StartNewFilesOnCheckpoint_PLACEHOLDER,
+	    			Settings.get(HarvesterSettings.HE)); 
+	    			// Add a new setting to HarvesterSettings
+  		 */
+  		String templateClone = template;
+
+  		templateClone = Template.untemplate(templateClone, envMandatory, true);
+  		templateClone = Template.untemplate(templateClone, envOptional, false);
+  		this.template = templateClone;
+  	}	
+
+	
 
 	@Override
+	/**
+	 * DUPLICATE method
+	 * With H3 template, we has to accumulate the crawlertraps, and then push them to the template when
+	 * asked to write it to a file.
+	 * The elementName is currently not used.
+	 */
 	public void insertCrawlerTraps(String elementName, List<String> crawlertraps) {
-		// TODO Auto-generated method stub
-		
+		editOrderXMLAddCrawlerTraps(elementName, crawlertraps);
 	}
 
 	@Override
-	public void writeTemplate(OutputStream os) {
-		// TODO Auto-generated method stub
+	public void writeTemplate(OutputStream os) throws IOFailure {
+		String templateWithTraps = writeCrawlerTrapsToTemplate();
+		try {
+			os.write(templateWithTraps.getBytes(Charset.forName("UTF-8")));
+		} catch (IOException e) {
+			throw new IOFailure("Unable to write template to outputstream", e);
+		}
 		
 	}
 
@@ -576,43 +523,74 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
 	@Override
 	public void writeToFile(File orderXmlFile) {
-		// TODO Auto-generated method stub
-		
+		String templateWithTraps = writeCrawlerTrapsToTemplate();
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter( new FileWriter(orderXmlFile));
+			writer.write(templateWithTraps);
+		} catch(IOException e) {
+			throw new IOFailure("Unable to write template to file '" + orderXmlFile.getAbsolutePath() + "'.", e);
+		} finally {
+			IOUtils.closeQuietly(writer);
+		}
 	}
 
 	@Override
 	public void setRecoverlogNode(File recoverlogGzFile) {
-		// TODO Auto-generated method stub
+		throw new NotImplementedException("This method has not yet been implemented");
 		
 	}
 
 	@Override
 	public void setDeduplicationIndexLocation(String absolutePath) {
-		// TODO Auto-generated method stub
-		
+		if (!template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER)) {
+			throw new IllegalState("The placeholder for the deduplication index location property '" +  DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER 
+					+ "' was not found. Maybe the placeholder has already been replaced with the correct value.");
+		}
+		boolean bFailOnMissing = true;
+    	Map<String,String> env = new HashMap<String,String>();
+    	
+    	env.put(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER, absolutePath);
+    	this.template = Template.untemplate(template, env, bFailOnMissing);
 	}
 
 	@Override
 	public void setSeedsFilePath(String absolutePath) {
-		// TODO Auto-generated method stub
-		
+		if (!template.contains(SEEDS_FILE_PATH_PLACEHOLDER)) {
+			throw new IllegalState("The placeholder for the seeds file path property '" +  SEEDS_FILE_PATH_PLACEHOLDER 
+					+ "' was not found. Maybe the placeholder has already been replaced with the correct value.");
+		}
+		boolean bFailOnMissing = true;
+    	Map<String,String> env = new HashMap<String,String>();
+    	
+    	env.put(SEEDS_FILE_PATH_PLACEHOLDER, absolutePath);
+    	this.template = Template.untemplate(template, env, bFailOnMissing);
 	}
 
 	@Override
 	public void setArchiveFilePrefix(String archiveFilePrefix) {
-		// TODO Auto-generated method stub
+		if (!template.contains(ARCHIVE_FILE_PREFIX_PLACEHOLDER)) {
+			throw new IllegalState("The placeholder for the archive file prefix property '" + ARCHIVE_FILE_PREFIX_PLACEHOLDER 
+					+ "' was not found. Maybe the placeholder has already been replaced with the correct value.");
+		}
+		boolean bFailOnMissing = true;
+    	Map<String,String> env = new HashMap<String,String>();
+    	
+    	env.put(ARCHIVE_FILE_PREFIX_PLACEHOLDER, archiveFilePrefix);
+    	this.template = Template.untemplate(template, env, bFailOnMissing);
 		
 	}
 
 	@Override
 	public void setDiskPath(String absolutePath) {
-		// TODO Auto-generated method stub
-		
+		// NOP
+		log.warn("The DiskPath is not settable in the H3 template");
 	}
 
 	@Override
 	public void removeDeduplicatorIfPresent() {
 		//NOP
+		log.warn("Removing the Deduplicator is not possible with the H3 templates and should not needed either there.");
 	}
 
 //<property name="metadataItems">
@@ -636,7 +614,6 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
 	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
 			String scheduleName, String performer) {
-
 		String startMetadataEntry = "<entry key=\"";
 		String endMetadataEntry = "\"</>";
 		String valuePart = "\"> value=\"";
@@ -683,5 +660,10 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 			sb.append(HARVESTINFO_AUDIENCE + valuePart + ajob.getHarvestAudience() + endMetadataEntry);
 		}
 		sb.append("</map>\n");
+		
+		Map<String,String> envMandatory = new HashMap<String,String>();
+		String templateClone = template;
+		envMandatory.put(METADATA_ITEMS_PLACEHOLDER, sb.toString());
+  		templateClone = Template.untemplate(templateClone, envMandatory, true);
 	}
 }

@@ -10,7 +10,7 @@ import java.io.Reader;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.List;
-
+import java.io.Serializable;
 import org.dom4j.DocumentException;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -18,12 +18,14 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
-public abstract class HeritrixTemplate {
+/**
+ * Abstract class for manipulating Heritrix Templates.
+ *
+ */
+public abstract class HeritrixTemplate implements Serializable {
 
 	private static final CharSequence H1_SIGNATURE = "<crawl-order xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance"; 
 	private static final CharSequence H3_SIGNATURE = "xmlns:\"http://www.springframework.org/";
-	public abstract boolean isValid();
-	public abstract String getXML();
 
 	// Constants for the metadata added to the warcinfo record when using WARC
 
@@ -71,16 +73,31 @@ public abstract class HeritrixTemplate {
 	public abstract void configureQuotaEnforcer(
 			boolean maxObjectsIsSetByQuotaEnforcer, long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain);
 	
+	
+	// Getter/Setter for MaxBytesPerDomain value
 	public abstract void setMaxBytesPerDomain(Long maxbytesL);
 	public abstract Long getMaxBytesPerDomain(); // TODO Is necessary? 
 	
+	// Getter/Setter for MaxObjectsPerDomain value
 	public abstract void setMaxObjectsPerDomain(Long maxobjectsL);
 	public abstract Long getMaxObjectsPerDomain(); // TODO Is necessary? 
 	
+	/**
+	 * 
+	 * @return true, if deduplication is enabled in the template (used for determine whether or not to request a deduplication index from the indexserver)
+	 */
 	public abstract boolean IsDeduplicationEnabled();
 	
+	/**
+	 * @return true, if the template is valid, otherwise false
+	 */
+	public abstract boolean isValid();
 	
-	
+	/**
+	 * @return the XML behind this template
+	 */
+	public abstract String getXML();
+
 	/**
      * Method to add a list of crawler traps with a given element name. It is used both to add per-domain traps and
      * global traps.
@@ -100,10 +117,14 @@ public abstract class HeritrixTemplate {
 	public abstract void setArchiveFormat(String archiveFormat);
 	
 	
+	/**
+	 * Set the maxRunning time for the harvest
+	 * @param maxJobRunningTimeSecondsL Limit the harvest to this number of seconds 
+	 */
 	public abstract void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL);
 	
 	/**
-     * Updates the order.xml to include a MatchesListRegExpDecideRule for each crawlertrap associated with for the given
+     * Updates the order.xml to include a MatchesListRegExpDecideRule for each crawler-trap associated with for the given
      * DomainConfiguration.
      * <p>
      * The added nodes have the form
@@ -147,8 +168,6 @@ public abstract class HeritrixTemplate {
      * @throws IOFailure - When the orderfile could not be saved to disk 
      *                     When a specific element cannot be found in the document. 
      */
-        
-    
     public static void makeTemplateReadyForHeritrix(HeritrixFiles files) throws IOFailure {
     	HeritrixTemplate templ = HeritrixTemplate.read(files.getOrderXmlFile());
     	templ.setDiskPath(files.getCrawlDir().getAbsolutePath());
@@ -239,10 +258,8 @@ public abstract class HeritrixTemplate {
 				sb.append('\n');
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOFailure("IOException thrown", e);
 		}
-		
 		return getTemplateFromString((sb.toString()));
 	}
 	
@@ -251,5 +268,16 @@ public abstract class HeritrixTemplate {
 	 * Try to remove the deduplicator, if present in the template.
 	 */
 	public abstract void removeDeduplicatorIfPresent();
+	
+	/**
+	 * Method to add settings to the WARCWriterProcesser, so that it can generate a proper WARCINFO record. 
+	 * @param ajob a HarvestJob
+	 * @param origHarvestdefinitionName The name of the harvestdefinition behind this job
+	 * @param scheduleName The name of the schedule used. (Will be null?, if the job ia not a selectiveHarvest).
+	 * @param performer The name of organisation/person doing this harvest 
+	 */
+	public abstract void insertWarcInfoMetadata(Job ajob,
+			String origHarvestdefinitionName, String scheduleName,
+			String performer);
 	
 }

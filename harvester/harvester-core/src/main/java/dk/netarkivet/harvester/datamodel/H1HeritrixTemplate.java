@@ -127,13 +127,13 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
     /**
      * Xpath for the deduplicator index directory node in order.xml documents.
      */
-    public static final String DEDUPLICATOR_INDEX_LOCATION_XPATH = H1HeritrixTemplate.DEDUPLICATOR_XPATH
+    public static final String DEDUPLICATOR_INDEX_LOCATION_XPATH = DEDUPLICATOR_XPATH
             + "/string[@name='index-location']";
 
     /**
      * Xpath for the boolean telling if the deduplicator is enabled in order.xml documents.
      */
-    public static final String DEDUPLICATOR_ENABLED = H1HeritrixTemplate.DEDUPLICATOR_XPATH + "/boolean[@name='enabled']";
+    public static final String DEDUPLICATOR_ENABLED = DEDUPLICATOR_XPATH + "/boolean[@name='enabled']";
 
     /** Xpath for the 'disk-path' in the order.xml . */
     public static final String DISK_PATH_XPATH = "//crawl-order/controller" + "/string[@name='disk-path']";
@@ -480,9 +480,9 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
     
     
 	@Override
+	// Always return true
 	public boolean isValid() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -805,7 +805,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
     this.template = doc;
 	}
 
-	
+	@Override
 	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
 			String scheduleName, String performer) {
 		String startMetadataEntry = "<string name=\"";
