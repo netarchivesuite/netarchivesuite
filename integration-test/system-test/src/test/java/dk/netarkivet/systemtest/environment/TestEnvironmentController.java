@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 
@@ -172,7 +171,7 @@ public class TestEnvironmentController {
         BufferedReader inReader = null;
         BufferedReader errReader = null;
         JSch jsch = new JSch();
-        Session session = jsch.getSession("test", TestEnvironment.DEPLOYMENT_SERVER);
+        Session session = jsch.getSession(TestEnvironment.DEPLOYMENT_USER, TestEnvironment.DEPLOYMENT_SERVER);
         setupJSchIdentity(jsch);
         session.setConfig("StrictHostKeyChecking", "no");
 

@@ -91,7 +91,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
      * @return The startup script to run.
      */
     protected String getStartupScript() {
-        return "all_test_db.sh";
+        return "all_test.sh";
     }
 
     private void initialiseSelenium() {
