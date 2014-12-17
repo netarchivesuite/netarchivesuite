@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -49,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -1125,4 +1128,58 @@ public class Job implements Serializable, JobInfo {
         this.harvestAudience = theAudience;
     }
 
+    ///////////// The following two methods are needed by harvestStatus-jobdetails.jsp ////////////////////////////////////
+    /**
+     * Returns a list of sorted seeds for this job.
+     * The sorting is by domain, and inside each domain,
+     * the list is sorted by url
+     * @return a list of sorted seeds for this job.
+     */
+    public List<String> getSortedSeedList() {
+        Map<String, Set<String>> urlMap = new HashMap<String, Set<String>>();
+        for (String seed : seedListSet) {
+            String url;
+            // Assume the protocol is http://, if it is missing
+            if (!seed.matches(Constants.PROTOCOL_REGEXP)) {
+                url = "http://" + seed;
+            } else {
+                url = seed;
+            }
+            String domain = getDomain(url);
+            if (domain == null) {
+                // stop processing this url, and continue to the next seed
+                continue; 
+            }
+            Set<String> set;
+            if (urlMap.containsKey(domain)) {
+                set = urlMap.get(domain);
+            } else {
+                set = new TreeSet<String>();
+                urlMap.put(domain, set);
+            }
+            set.add(seed);
+
+        }
+       List<String> result = new ArrayList<String>();
+       for (Set<String> set: urlMap.values()) {
+           result.addAll(set);
+       }
+       return result;
+    }
+    /**
+     * Get the domain, that the given URL belongs to.
+     * @param url an URL
+     * @return the domain, that the given URL belongs to, or 
+     * null if unable to do so.
+     */
+    private String getDomain(String url) {
+        try {
+            URL uri = new URL(url);
+            return DomainUtils.domainNameFromHostname(uri.getHost());
+        } catch (MalformedURLException e) {
+            throw new ArgumentNotValid("The string '" + url
+                    + "' is not a valid URL");
+        }
+    }
+    
 }

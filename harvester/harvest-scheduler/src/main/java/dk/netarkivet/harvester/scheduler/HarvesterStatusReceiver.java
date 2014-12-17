@@ -118,7 +118,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
 
         // Send the reply
         jmsConnection.send(new HarvesterRegistrationResponse(channelName, isValid, isSnapshot));
-        log.info("Sent a message to notify that harvest channel '{}' is {}", channelName, (isValid ? "valid."
+        log.info("Sent a message to host {} to notify that harvest channel '{}' is {}", msg.getHostname(), channelName, (isValid ? "valid."
                 : "invalid."));
     }
 

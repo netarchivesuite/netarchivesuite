@@ -109,11 +109,6 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         return 1000000000L; // 1 SI giga-byte (109 bytes), per WARC appendix A
     }
 
-    /**
-     * Key to the full path to the harvestInfo.xml If not set, look for the file in the same directory as the order.xml
-     */
-    public static final String ATTR_HARVESTINFO_PATH = "harvestinfo-path";
-
     /** Key for whether to write 'request' type records where possible */
     public static final String ATTR_WRITE_REQUESTS = "write-requests";
 
@@ -129,6 +124,9 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
      * Key for whether to write 'revisit' type records for server "304 not modified" responses
      */
     public static final String ATTR_WRITE_REVISIT_FOR_NOT_MODIFIED = "write-revisit-for-not-modified";
+    /**
+     * Key for metadata-items to include in the warcinfo.
+     */
     public static final String ATTR_METADATA_ITEMS = "metadata-items";
 
     /** Default path list. */
@@ -202,33 +200,6 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         setPool(new WARCWriterPool(serialNo, this, getPoolMaximumActive(), getPoolMaximumWait()));
     }
 
-    /**
-     * Load data from harvestinfo.xml into a PersistentJobData object. If the attribute ATTR_HARVESTINFO_PATH is not
-     * set, assume that harvestInfo.xml is in the same directory as the order.xml (divined indirectly from the disk-path
-     * attribute
-     *
-     * @param doc xmldocument for the order.xml
-     */
-/*
-    private synchronized void loadPersistentJobData(Document doc) {
-	
-        if (pjd != null) {
-            return; getAttribute(ATTR_FORM_ITEMS);
-        } else {
-            String harvestInfoPath = (String) getAttributeUnchecked(ATTR_HARVESTINFO_PATH);
-            if (harvestInfoPath.isEmpty()) { // get the path from the order.xml itself
-                String crawlDirPath = XmlUtils.xpathOrNull(doc, "//controller/string[@name='disk-path']");
-                if (crawlDirPath == null) {
-                    throw new Error("crawlDirPath should not be null");
-                }
-                harvestInfoPath = crawlDirPath + "/harvestInfo.xml";
-            }
-            harvestInfoFile = new File(harvestInfoPath);
-            pjd = new PersistentJobData(harvestInfoFile.getParentFile());
-        }
-
-    }
-*/
     /**
      * @return Metadata inputs as convenient map.  Returns null if no metadata items.
      * @throws AttributeNotFoundException
@@ -682,16 +653,13 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
                 metadataMap = getMetadataItems();
             }
         } catch (IOException e) {
-            logger.log(Level.WARNING, "obtaining warcinfo", e);
+            logger.log(Level.WARNING, "Error obtaining warcinfo", e);
         } catch (AttributeNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+        	logger.log(Level.WARNING, "Error obtaining warcinfo", e);
 		} catch (MBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.log(Level.WARNING, "Error obtaining warcinfo", e);
 		} catch (ReflectionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.log(Level.WARNING, "Error obtaining warcinfo", e);
 		}
 
         // add fields from harvesInfo.xml version 0.4
