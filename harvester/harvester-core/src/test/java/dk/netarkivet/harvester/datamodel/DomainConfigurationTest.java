@@ -287,7 +287,7 @@ public class DomainConfigurationTest {
         DomainConfiguration domainConfiguration = new DomainConfiguration(
                 name, name, new DomainHistory(),
                 new ArrayList<>(), Arrays.asList(new SeedList[] {seedList}), new ArrayList<>());
-        domainConfiguration.setOrderXmlName(OrderXmlBuilder.DEFAULT_ORDE_XML_NAME);
+        domainConfiguration.setOrderXmlName(OrderXmlBuilder.DEFAULT_ORDER_XML_NAME);
         return domainConfiguration;
     }
 }

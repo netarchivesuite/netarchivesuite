@@ -27,7 +27,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
 
 import org.junit.After;
 import org.junit.Before;
@@ -59,11 +58,7 @@ public class TemplateDAOTesterAlternate {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         HarvestDAOUtils.resetDAOs();
 
-        Connection c = DatabaseTestUtils.getHDDB(TestInfo.EMPTYDBFILE, "emptyhddb", TestInfo.TEMPDIR);
-
-        if (c == null) {
-            fail("No connection to Database: " + TestInfo.EMPTYDBFILE);
-        }
+        DatabaseTestUtils.createHDDB(TestInfo.EMPTYDBFILE, "emptyhddb", TestInfo.TEMPDIR);
 
         assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_BASE_URL),
                 "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");

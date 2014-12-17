@@ -529,7 +529,7 @@ public class Job implements Serializable, JobInfo {
     public void setActualStop(Date actualStop) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(actualStop, "actualStop");
         if (actualStart == null) {
-            log.warn("Job(" + getJobID()+ "): actualStart must be defined before setting actualStop");
+            log.warn("Job(" + getJobID()+ "): actualStart should be defined before setting actualStop");
         } else if (actualStop.before(actualStart)) {
             log.warn("Job(" + getJobID()+ "): actualStop (" + actualStop + ") is before actualStart: " + actualStart);
         }

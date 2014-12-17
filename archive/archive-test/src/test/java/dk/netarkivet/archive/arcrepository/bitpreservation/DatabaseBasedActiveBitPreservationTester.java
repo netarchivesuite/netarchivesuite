@@ -102,7 +102,7 @@ public class DatabaseBasedActiveBitPreservationTester {
         jmsConnection.setUp();
         rf.setUp();
 
-        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(), TestInfo.DATABASE_DIR);
+        DatabaseTestUtils.createDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(), TestInfo.DATABASE_DIR);
 
         Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE, TestInfo.DATABASE_URL);
         Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE, "");
