@@ -11,6 +11,9 @@ import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.List;
 import java.io.Serializable;
+
+import javax.servlet.jsp.JspWriter;
+
 import org.dom4j.DocumentException;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -188,7 +191,7 @@ public abstract class HeritrixTemplate implements Serializable {
     
 	
 	public abstract void writeTemplate(OutputStream os) throws IOException, ArgumentNotValid;
-	
+	public abstract void writeTemplate(JspWriter out);
 	public abstract boolean hasContent();
 	
 	public abstract void writeToFile(File orderXmlFile);

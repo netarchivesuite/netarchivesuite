@@ -23,6 +23,7 @@
 package dk.netarkivet.harvester.harvesting.distribute;
 
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
@@ -46,11 +47,14 @@ public class HarvesterRegistrationRequest extends HarvesterMessage {
     private final String harvestChannelName;
 
     private final String instanceId;
+    
+    private final String hostname;
 
     public HarvesterRegistrationRequest(final String harvestChannelName, final String instanceId) {
         super(HarvesterChannels.getHarvesterRegistrationRequestChannel(), Channels.getError());
         this.harvestChannelName = harvestChannelName;
         this.instanceId = instanceId;
+        this.hostname = SystemUtils.getLocalHostName();
     }
 
     @Override
@@ -72,4 +76,11 @@ public class HarvesterRegistrationRequest extends HarvesterMessage {
         return instanceId;
     }
 
+    /**
+     * @return the hostname of the sender
+     */
+    public final String getHostname() {
+        return hostname;
+    }
+    
 }

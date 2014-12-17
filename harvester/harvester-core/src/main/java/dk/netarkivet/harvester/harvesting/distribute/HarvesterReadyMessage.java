@@ -25,12 +25,13 @@ package dk.netarkivet.harvester.harvesting.distribute;
 import java.io.Serializable;
 
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 
 /**
- * The HarvestControllerServer periodically sends {@link HarvesterReadyMessage}s to the obDispatcher to
+ * The HarvestControllerServer periodically sends {@link HarvesterReadyMessage}s to the JobDispatcher to
  * notify it whether it is available for processing a job or already processing one.
  */
 @SuppressWarnings({"serial"})
@@ -42,6 +43,9 @@ public class HarvesterReadyMessage extends HarvesterMessage implements Serializa
     /** The sender's application instance ID. */
     private final String applicationInstanceId;
 
+    /** The host of the sender. */
+    private final String hostName;
+    
     /**
      * Builds a new message.
      *
@@ -52,6 +56,7 @@ public class HarvesterReadyMessage extends HarvesterMessage implements Serializa
         super(HarvesterChannels.getHarvesterStatusChannel(), Channels.getError());
         this.applicationInstanceId = applicationInstanceId;
         this.harvestChannelName = harvestChannelName;
+        this.hostName = SystemUtils.getLocalHostName();
     }
 
     @Override
@@ -73,4 +78,13 @@ public class HarvesterReadyMessage extends HarvesterMessage implements Serializa
         return applicationInstanceId;
     }
 
+    /**
+     * @return the hostname of the sender. 
+     */
+    public String getHostName() {
+    	return hostName;
+    }
+    
+    
+    
 }

@@ -38,6 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.jsp.JspWriter;
+
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -665,5 +667,15 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		String templateClone = template;
 		envMandatory.put(METADATA_ITEMS_PLACEHOLDER, sb.toString());
   		templateClone = Template.untemplate(templateClone, envMandatory, true);
+	}
+	
+	@Override
+	public void writeTemplate(JspWriter out) throws IOFailure {
+		try {
+			out.write(template);
+		} catch (IOException e) {
+			throw new IOFailure("Unable to write to JspWriter", e);
+		}
+		
 	}
 }

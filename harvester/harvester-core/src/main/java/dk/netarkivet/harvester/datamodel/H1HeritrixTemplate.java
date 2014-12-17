@@ -35,6 +35,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.jsp.JspWriter;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -854,5 +856,15 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 			sb.append(HARVESTINFO_AUDIENCE + "\">" + ajob.getHarvestAudience()  + endMetadataEntry);
 		} 
 		sb.append("</map>\n");
+	}
+
+	@Override
+	public void writeTemplate(JspWriter out) throws IOFailure {
+		try {
+			out.write(template.asXML());
+		} catch (IOException e) {
+			throw new IOFailure("Unable to write to JspWriter", e);
+		}
+		
 	}
 }

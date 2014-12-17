@@ -91,7 +91,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
     @Override
     public void visit(HarvesterReadyMessage message) {
         ArgumentNotValid.checkNotNull(message, "message");
-        log.trace("Received ready message from {}", message.getApplicationInstanceId());
+        log.trace("Received ready message from {} on host {}", message.getApplicationInstanceId(), message.getHostName() );
         HarvestChannel channel = harvestChannelDao.getByName(message.getHarvestChannelName());
         jobDispatcher.submitNextNewJob(channel);
     }
