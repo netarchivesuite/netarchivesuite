@@ -63,7 +63,6 @@ import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
  * crawler, and its processes and modules can be found in the Heritrix developer and user manuals found on <a
  * href="http://crawler.archive.org">http://crawler.archive.org<a/>
  * 
- * 
  */
 public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable {
 
@@ -146,10 +145,10 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
     public static final String ARCSDIR_XPATH = "//crawl-order/controller" + "/map[@name='write-processors']"
             + "/newObject[@name='Archiver']/stringList[@name='path']/string";
 
-    private static final String WARCWRITERPROCESSOR_XPATH = "//crawl-order/controller"
+    public static final String WARCWRITERPROCESSOR_XPATH = "//crawl-order/controller"
             + "/map[@name='write-processors']" + "/newObject[@name='WARCArchiver']";
 
-    private static final String ARCWRITERPROCESSOR_XPATH = "//crawl-order/controller"
+    public static final String ARCWRITERPROCESSOR_XPATH = "//crawl-order/controller"
             + "/map[@name='write-processors']" + "/newObject[@name='Archiver']";
 
     /** Xpath for the WARCs dir in the order.xml. */
@@ -810,53 +809,82 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 	@Override
 	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
 			String scheduleName, String performer) {
-		String startMetadataEntry = "<string name=\"";
-		String endMetadataEntry = "</string>";
-		StringBuilder sb = new StringBuilder();
-		sb.append("<map name=\"metadata-items\">\n");
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_VERSION + "\">" + HARVESTINFO_VERSION_NUMBER + endMetadataEntry);
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_JOBID + "\">" + ajob.getJobID() + endMetadataEntry);
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_CHANNEL + "\">" + ajob.getChannel() + endMetadataEntry);
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_HARVESTNUM + "\">" + ajob.getHarvestNum() + endMetadataEntry);
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONID + "\">" + ajob.getOrigHarvestDefinitionID() + endMetadataEntry);
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_MAXBYTESPERDOMAIN + "\">" + ajob.getMaxBytesPerDomain() + endMetadataEntry);
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_MAXOBJECTSPERDOMAIN + "\">" + ajob.getMaxObjectsPerDomain() + endMetadataEntry);
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_ORDERXMLNAME + "\">" + ajob.getOrderXMLName() + endMetadataEntry);
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + "\">" + origHarvestdefinitionName   
-				+ endMetadataEntry);
-				
-		/* optional schedule-name, only for selective harvests. */
+		
+		Node WARCWRITERNODE = template.selectSingleNode(H1HeritrixTemplate.WARCWRITERPROCESSOR_XPATH);
+		Element warcwriterElement = (Element) WARCWRITERNODE;
+        
+		Element metadataMap = warcwriterElement.addElement("map");
+        metadataMap.addAttribute("name", "metadata-items");
+        
+        Element metadataItem = null;
+        
+        metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_VERSION);
+        metadataItem.addText(HARVESTINFO_VERSION_NUMBER);
+        
+        metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_JOBID);
+        metadataItem.addText("" + ajob.getJobID());
+        
+        metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_CHANNEL);
+        metadataItem.addText(ajob.getChannel());
+        
+        metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_HARVESTNUM);
+        metadataItem.addText("" + ajob.getHarvestNum());
+        
+        metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_ORIGHARVESTDEFINITIONID);
+        metadataItem.addText("" + ajob.getOrigHarvestDefinitionID());
+        
+        metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_MAXBYTESPERDOMAIN);
+        metadataItem.addText("" + ajob.getMaxBytesPerDomain());
+        
+        metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_MAXOBJECTSPERDOMAIN);
+        metadataItem.addText("" + ajob.getMaxObjectsPerDomain());
+        
+        metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_ORDERXMLNAME);
+        metadataItem.addText(ajob.getOrderXMLName());
+        
+        metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_ORIGHARVESTDEFINITIONNAME);
+        metadataItem.addText(origHarvestdefinitionName);
+        
+        /* optional schedule-name, only for selective harvests. */
 		if (scheduleName != null) {
-			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_SCHEDULENAME + "\">" + scheduleName + endMetadataEntry);
+			metadataItem = metadataMap.addElement("string");
+	        metadataItem.addAttribute("name", HARVESTINFO_SCHEDULENAME);
+	        metadataItem.addText(scheduleName);
 		}
-		
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_HARVESTFILENAMEPREFIX + "\">" + ajob.getHarvestFilenamePrefix() + endMetadataEntry);
-		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_JOBSUBMITDATE + "\">" + ajob.getSubmittedDate()  + endMetadataEntry);
-		
+
+		metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_HARVESTFILENAMEPREFIX);
+        metadataItem.addText(ajob.getHarvestFilenamePrefix());
+        
+        metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_JOBSUBMITDATE);
+        metadataItem.addText("" + ajob.getSubmittedDate());
+        
 		/* optional HARVESTINFO_PERFORMER */
 		if (performer != null) {
-			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_PERFORMER + "\">" + performer  + endMetadataEntry);
+			metadataItem = metadataMap.addElement("string");
+	        metadataItem.addAttribute("name", HARVESTINFO_PERFORMER);
+	        metadataItem.addText(performer);
 		}
+
 		/* optional HARVESTINFO_AUDIENCE */
 		if (ajob.getHarvestAudience() != null) {
-			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_AUDIENCE + "\">" + ajob.getHarvestAudience()  + endMetadataEntry);
+			metadataItem = metadataMap.addElement("string");
+	        metadataItem.addAttribute("name", HARVESTINFO_AUDIENCE);
+	        metadataItem.addText(ajob.getHarvestAudience());
 		} 
-		sb.append("</map>\n");
 	}
+	
+	
 
 	@Override
 	public void writeTemplate(JspWriter out) throws IOFailure {

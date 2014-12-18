@@ -211,9 +211,12 @@ public class JobDispatcher {
             job.setHarvestAudience(origHarvestAudience);
         }
         if (usingWarcAsArchiveFormat()) {
+        	log.info("As we're using WARC as archiveFormat WarcInfoMetadata is now added to the template");
         	HeritrixTemplate ht = job.getOrderXMLdoc();
         	ht.insertWarcInfoMetadata(job, origHarvestName, origHarvestSchedule, Settings.get(HarvesterSettings.PERFORMER));
         	job.setOrderXMLDoc(ht);
+        } else {
+        	log.info("As we're using ARC as archiveFormat no WarcInfoMetadata was added to the template");
         }
         
         DoOneCrawlMessage nMsg = new DoOneCrawlMessage(job, HarvesterChannels.getHarvestJobChannelId(channel),
