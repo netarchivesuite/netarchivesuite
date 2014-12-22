@@ -453,7 +453,7 @@ National Library.
             <validityCheckTimeout>0</validityCheckTimeout>
             <pool>
                 <minSize>5</minSize>
-                <maxSize>10</maxSize>
+                <maxSize>20</maxSize>
                 <acquireInc>5</acquireInc>
                 <maxStm>0</maxStm>
                 <maxStmPerConn>0</maxStmPerConn>
