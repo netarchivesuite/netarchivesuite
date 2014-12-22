@@ -3,19 +3,18 @@ package dk.netarkivet.systemtest.performance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import dk.netarkivet.systemtest.TestLogger;
+import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import dk.netarkivet.systemtest.environment.TestGUIController;
 import dk.netarkivet.systemtest.page.PageHelper;
 
@@ -36,7 +35,7 @@ class IngestDomainJob extends GenericWebJob {
         TestEnvironmentController testController = stressTest.testController;
         TestGUIController TestGUIController = new TestGUIController(testController);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = testController.getGuiHost() + ":" + testController.getGuiPort();
+        String baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         TestGUIController.waitForGUIToStart(60);
         stressTest.addFixture("Opening initial page " + baseUrl);

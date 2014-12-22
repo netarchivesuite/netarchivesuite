@@ -42,40 +42,10 @@ import dk.netarkivet.systemtest.TestLogger;
  */
 public class TestEnvironmentController {
     protected final TestLogger log = new TestLogger(getClass());
-    private final String TESTX;
-    private final String GUI_HOST;
-    private final int GUI_PORT;
-    private final String TIMESTAMP;
-    private final String MAILRECEIVERS;
+    public final TestEnvironment ENV;
 
     public TestEnvironmentController(TestEnvironment env) {
-        TESTX = env.getTESTX();
-        GUI_HOST = env.getGuiHost();
-        GUI_PORT = env.getGuiPort();
-        TIMESTAMP = env.getTimestamp();
-        MAILRECEIVERS = env.getMailreceivers();
-    }
-
-
-    /**
-     * @return The host the gui is run on.
-     */
-    public String getGuiHost() {
-        return GUI_HOST;
-    }
-
-    /**
-     * @return The port the web gui is run on.
-     */
-    public String getGuiPort() {
-        return GUI_PORT + "";
-    }
-
-    /**
-     * @return The test name.
-     */
-    public String getTESTX() {
-        return TESTX;
+        this.ENV = env;
     }
 
     /**
@@ -115,7 +85,7 @@ public class TestEnvironmentController {
      * @param remoteCommand The command to run on the remote server.
      */
     public String runTestXCommand(String server, String remoteCommand) throws Exception {
-        String testXRemoteCommand = "cd " + getTESTX() + ";" + remoteCommand;
+        String testXRemoteCommand = "cd " + ENV.getTESTX() + ";" + remoteCommand;
         return runCommand(server, testXRemoteCommand, 1000);
     }
 
@@ -258,12 +228,15 @@ public class TestEnvironmentController {
             }
 
             String setTimestampCommand = "true";
-            if (TIMESTAMP != null) {
-                setTimestampCommand = "export TIMESTAMP=" + TIMESTAMP;
+            if (ENV.getTimestamp() != null) {
+                setTimestampCommand = "export TIMESTAMP=" + ENV.getTimestamp();
             }
-            String setPortCommand = "export PORT=" + GUI_PORT;
-            String setMailReceiversCommand = "export MAILRECEIVERS=" + MAILRECEIVERS;
-            String setTestCommand = "export TESTX=" + TESTX;
+            if (ENV.getDeployConfig() != null) {
+                setTimestampCommand = "export DEPLOYCONF=" + ENV.getDeployConfig();
+            }
+            String setPortCommand = "export PORT=" + ENV.getGuiPort();
+            String setMailReceiversCommand = "export MAILRECEIVERS=" + ENV.getMailreceivers();
+            String setTestCommand = "export TESTX=" + ENV.getTESTX();
             String setPathCommand = "source /etc/bashrc;source /etc/profile;source ~/.bash_profile";
 
             environmentSetup = setPathCommand + ";" + setTimestampCommand + ";" + setPortCommand + ";"

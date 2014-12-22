@@ -36,19 +36,16 @@ public interface TestEnvironment {
     /**
      * The NAS environment (settings.common.environmentName) in which
      * the test is to be run.
-     * @return
      */
     public String getTESTX();
 
     /**
      * The port on the host where the GUI is to be deployed.
-     * @return
      */
     public String getGuiHost();
 
     /**
      * The port where the GUI is to be deployed.
-     * @return
      */
     public int getGuiPort();
 
@@ -57,14 +54,17 @@ public interface TestEnvironment {
      * have to be an actual timestamp. The software in unpacked from the file
      * Netarchivesuite-<timestamp>.zip in the directory release_software_dist/releases
      * on the deployment server.
-     * @return
      */
     public String getTimestamp();
 
     /**
      * A comma-separated list of addresses to receive mail from failed tests.
-     * @return
      */
     public String getMailreceivers();
+
+    /**
+     * The deployment configuration to use.
+     */
+    public String getDeployConfig();
 
 }

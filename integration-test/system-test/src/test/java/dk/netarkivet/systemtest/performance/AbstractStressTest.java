@@ -24,12 +24,12 @@ package dk.netarkivet.systemtest.performance;
 
 import static org.testng.Assert.assertTrue;
 
-import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import org.testng.annotations.BeforeTest;
 
 import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.environment.DefaultTestEnvironment;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
+import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 
 /**
  * Abstract superclass for the stress tests.
@@ -42,14 +42,15 @@ public abstract class AbstractStressTest extends SeleniumTest {
     final Long HOUR = 60*MINUTE;
     final Long DAY = 24*HOUR;
 
-    static TestEnvironment testEnvironment = new DefaultTestEnvironment(
+    final static TestEnvironment ENV = new DefaultTestEnvironment(
             "Stresstest",
             "foo@bar.dk",
             "SystemTest",
             8073,
-            TestEnvironment.JOB_ADMIN_SERVER
+            TestEnvironment.JOB_ADMIN_SERVER,
+            "deploy_conf_stress_test.xml"
     );
-    static TestEnvironmentController testController = new TestEnvironmentController(testEnvironment);
+    static TestEnvironmentController testController = new TestEnvironmentController(ENV);
 
     public AbstractStressTest() {
         super(testController);
@@ -170,11 +171,11 @@ public abstract class AbstractStressTest extends SeleniumTest {
         } else {
             addFixture("Ingesting full production admindb backup.");
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                    "pg_restore -U test -d " + testEnvironment.getTESTX().toLowerCase()
+                    "pg_restore -U test -d " + ENV.getTESTX().toLowerCase()
                             + "_admindb  --no-owner --schema public /tmp/" + backupEnv + "_admindb.out");
             addFixture("Ingesting full production harvestdb backup");
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                    "pg_restore -U test -d " + testEnvironment.getTESTX().toLowerCase()
+                    "pg_restore -U test -d " + ENV.getTESTX().toLowerCase()
                             + "_harvestdb  --no-owner --schema public /tmp/" + backupEnv + "_harvestdb.dump.out");
 
             addFixture("Replacing checksum database with prod data");
@@ -204,7 +205,7 @@ public abstract class AbstractStressTest extends SeleniumTest {
         testController.runCommandWithoutQuotes("rm -rf /home/test/schemas");
         testController.runCommandWithoutQuotes("mkdir /home/test/schemas");
         String envDef = "cd /home/test/schemas;" + "export LIBDIR=/home/test/release_software_dist/"
-                + testController.getTESTX() + "/lib/db;"
+                + ENV.getTESTX() + "/lib/db;"
                 + "export CLASSPATH=$LIBDIR/derby.jar:$LIBDIR/derbytools-10.8.2.2.jar;";
         // Generate schema for " + backupEnv +"uction database
         testController.runCommandWithoutQuotes(envDef + "java org.apache.derby.tools.dblook "
@@ -212,13 +213,13 @@ public abstract class AbstractStressTest extends SeleniumTest {
                 + "-o /home/test/schemas/" + backupEnv +"dbs_schema.txt");
         // Generate schema for test database
         testController.runCommandWithoutQuotes(envDef + "jar xvf /home/test/release_software_dist/"
-                + testController.getTESTX() + "/settings/fullhddb.jar");
+                + ENV.getTESTX() + "/settings/fullhddb.jar");
         testController.runCommandWithoutQuotes(envDef
                 + "java org.apache.derby.tools.dblook -d 'jdbc:derby:fullhddb;upgrade=true' -o testdbs_schema.txt");
         testController.runCommandWithoutQuotes(envDef + "rm -rf fullhddb; rm -rf META-INF");
         // Generate schema for bundled database
         testController.runCommandWithoutQuotes(envDef + "jar xvf /home/test/release_software_dist/"
-                + testController.getTESTX() + "/harvestdefinitionbasedir/fullhddb.jar");
+                + ENV.getTESTX() + "/harvestdefinitionbasedir/fullhddb.jar");
         testController.runCommandWithoutQuotes(envDef
                 + "java org.apache.derby.tools.dblook -d 'jdbc:derby:fullhddb;upgrade=true' -o bundleddbs_schema.txt");
         testController.runCommandWithoutQuotes(envDef + "rm -rf fullhddb; rm -rf META-INF");

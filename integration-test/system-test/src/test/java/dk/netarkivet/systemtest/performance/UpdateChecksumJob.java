@@ -1,6 +1,7 @@
 package dk.netarkivet.systemtest.performance;
 
 import static org.testng.Assert.assertEquals;
+
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,9 +14,9 @@ import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 
 /**
-* Job to check checksums for the entire Checksum leg of the bitarchive. Progress is monitored by grepping in
+ * Job to check checksums for the entire Checksum leg of the bitarchive. Progress is monitored by grepping in
  * the GUIWebApplication log files and via the web interface.
-*/
+ */
 class UpdateChecksumJob extends GenericWebJob {
     protected final TestLogger log = new TestLogger(getClass());
 
@@ -39,14 +40,16 @@ class UpdateChecksumJob extends GenericWebJob {
 
     @Override boolean isStarted() {
         try {
-            String output = stressTest.testController.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "grep 'Starting processing' ${HOME}/" + AbstractStressTest.testEnvironment.getTESTX() + "/log/GUI*", new int[]{0,1});
+            String output = stressTest.testController.runCommand(TestEnvironment.JOB_ADMIN_SERVER,
+                    "grep 'Starting processing' ${HOME}/" + AbstractStressTest.ENV.getTESTX() + "/log/GUI*",
+                    new int[] {0, 1});
             final String startedS = ".*Starting processing of ([0-9]+) checksum entries.*";
             Pattern startedP = Pattern.compile(startedS, Pattern.DOTALL);
             final Matcher matcher = startedP.matcher(output);
-                            if (matcher.matches()) {
-                                total = matcher.group(1);
-                                return true;
-                            }
+            if (matcher.matches()) {
+                total = matcher.group(1);
+                return true;
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -55,7 +58,9 @@ class UpdateChecksumJob extends GenericWebJob {
 
     @Override boolean isFinished() {
         try {
-            String output = stressTest.testController.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "grep 'Finished processing' ${HOME}/" + AbstractStressTest.testEnvironment.getTESTX() + "/log/GUI*", new int[]{0,1});
+            String output = stressTest.testController.runCommand(TestEnvironment.JOB_ADMIN_SERVER,
+                    "grep 'Finished processing' ${HOME}/" + AbstractStressTest.ENV.getTESTX() + "/log/GUI*",
+                    new int[] {0, 1});
             final String finishedS = ".*Finished processing of ([0-9]+) checksum entries.*";
             Pattern finishedP = Pattern.compile(finishedS, Pattern.DOTALL);
             final Matcher matcher = finishedP.matcher(output);

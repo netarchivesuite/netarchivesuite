@@ -97,7 +97,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     private void initialiseSelenium() {
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        baseUrl = testController.getGuiHost() + ":" + testController.getGuiPort();
+        baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         TestGUIController.waitForGUIToStart(60);
 

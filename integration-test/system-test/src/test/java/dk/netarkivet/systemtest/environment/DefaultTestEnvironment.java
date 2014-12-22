@@ -11,14 +11,16 @@ public class DefaultTestEnvironment implements TestEnvironment {
     private int guiPort;
     private String timestamp;
     private String mailreceivers;
+    private String deployconf;
 
     public DefaultTestEnvironment(String testX, String mailreceivers, String timestamp, int guiPort,
-            String guiHost) {
+            String guiHost, String deployconf) {
         this.testX = testX;
         this.mailreceivers = mailreceivers;
         this.timestamp = timestamp;
         this.guiPort = guiPort;
         this.guiHost = guiHost;
+        this.deployconf = deployconf;
     }
 
     @Override public String getTESTX() {
@@ -39,5 +41,9 @@ public class DefaultTestEnvironment implements TestEnvironment {
 
     @Override public String getMailreceivers() {
         return System.getProperty("systemtest.mailreceivers", mailreceivers);
+    }
+
+    @Override public String getDeployConfig() {
+        return System.getProperty("systemtest.deployconf", deployconf);
     }
 }
