@@ -386,7 +386,8 @@ public final class DBUtils {
         ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
-        try (PreparedStatement s = prepareStatement(connection, 8192, query, args);) {
+        try {
+            PreparedStatement s = prepareStatement(connection, 8192, query, args);
             ResultSet result = s.executeQuery();
             Iterator<Long> results = new ResultSetIterator<Long>(s, result) {
                 @Override
