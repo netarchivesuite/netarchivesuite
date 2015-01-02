@@ -38,9 +38,9 @@ import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 public abstract class AbstractStressTest extends SeleniumTest {
 
     final Long SECOND = 1000L;
-    final Long MINUTE = 60*SECOND;
-    final Long HOUR = 60*MINUTE;
-    final Long DAY = 24*HOUR;
+    final Long MINUTE = 60 * SECOND;
+    final Long HOUR = 60 * MINUTE;
+    final Long DAY = 24 * HOUR;
 
     final static TestEnvironment ENV = new DefaultTestEnvironment(
             "Stresstest",
@@ -85,25 +85,31 @@ public abstract class AbstractStressTest extends SeleniumTest {
     }
 
     protected void checkUpdateTimes() throws Exception {
+
         String maximumBackupDaysString = System.getProperty("systemtest.maxbackupage", "7");
         String backupEnv = System.getProperty("systemtest.backupenv", "prod");
         int maximumBackupsDays = Integer.parseInt(maximumBackupDaysString);
-        addStep("Checking that backups are no more than " + maximumBackupsDays + " (systemtest.maxbackupage) days old. ", "");
-        Long maximumBackupPeriod = maximumBackupsDays*DAY; //ms
-        Long harvestdbAge = System.currentTimeMillis() - getFileTimestamp("/home/test/" + backupEnv +"-backup/" + backupEnv +"_harvestdb.dump.out");
+        addStep("Checking that backups are no more than " + maximumBackupsDays + " (systemtest.maxbackupage) days old. ",
+                "");
+        Long maximumBackupPeriod = maximumBackupsDays * DAY; //ms
+        Long harvestdbAge = System.currentTimeMillis() - getFileTimestamp(
+                TestEnvironment.DEPLOYMENT_HOME + backupEnv + "-backup/" + backupEnv + "_harvestdb.dump.out");
         assertTrue(harvestdbAge < maximumBackupPeriod, "harvestdb backup is older than " + maximumBackupsDays + " days");
-        Long admindbAge = System.currentTimeMillis() - getFileTimestamp("/home/test/" + backupEnv +"-backup/" + backupEnv +"_admindb.out");
+        Long admindbAge = System.currentTimeMillis() - getFileTimestamp(
+                TestEnvironment.DEPLOYMENT_HOME + backupEnv + "-backup/" + backupEnv + "_admindb.out");
         assertTrue(admindbAge < maximumBackupPeriod, "admindb backup is older than " + maximumBackupsDays + " days");
-        Long csAge = System.currentTimeMillis() - getFileTimestamp("/home/test/" + backupEnv +"-backup/CS");
+        Long csAge = System.currentTimeMillis() - getFileTimestamp(
+                TestEnvironment.DEPLOYMENT_HOME + backupEnv + "-backup/CS");
         assertTrue(csAge < maximumBackupPeriod, "CS backup is older than " + maximumBackupsDays + " days");
-        Long domainListAge =   System.currentTimeMillis() - getFileTimestamp("/home/test/" + backupEnv +"-backup/domain*.txt");
+        Long domainListAge = System.currentTimeMillis() - getFileTimestamp(
+                TestEnvironment.DEPLOYMENT_HOME + backupEnv + "-backup/domain*.txt");
         assertTrue(domainListAge < maximumBackupPeriod,
                 "Domain list backup is older than " + maximumBackupsDays + " days");
     }
 
     private Long getFileTimestamp(String filepath) throws Exception {
         String result = testController.runCommand("stat -c %Y " + filepath);
-        return  Long.parseLong(result.trim())*1000L;
+        return Long.parseLong(result.trim()) * 1000L;
     }
 
     /**
@@ -111,20 +117,22 @@ public abstract class AbstractStressTest extends SeleniumTest {
      */
     protected void fetchProductionData() throws Exception {
         String backupEnv = System.getProperty("systemtest.backupenv", "prod");
-        addFixture("Copying production databases to the relevant test servers from the directory /home/test/" + backupEnv + "-backup");
+        addFixture("Copying production databases to the relevant test servers from the directory "
+                + TestEnvironment.DEPLOYMENT_HOME + "/" + backupEnv + "-backup");
         testController.runCommand(TestEnvironment.JOB_ADMIN_SERVER, "rm -rf /tmp/" + backupEnv + "_admindb.out");
         testController.runCommand(TestEnvironment.ARCHIVE_ADMIN_SERVER,
                 "rm -rf /tmp/" + backupEnv + "_harvestdb.dump.out");
         testController.runCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf /tmp/CS");
         addFixture("Copying admin db.");
-        testController.runCommand("scp -r /home/test/" + backupEnv + "-backup/" + backupEnv
+        testController.runCommand("scp -r " + TestEnvironment.DEPLOYMENT_HOME + "/" + backupEnv + "-backup/" + backupEnv
                 + "_admindb.out test@kb-test-adm-001.kb.dk:/tmp");
         addFixture("Copying harvest db");
         testController
-                .runCommand("scp -r /home/test/" + backupEnv + "-backup/" + backupEnv
+                .runCommand("scp -r " + TestEnvironment.DEPLOYMENT_HOME + "/" + backupEnv + "-backup/" + backupEnv
                         + "_harvestdb.dump.out test@kb-test-adm-001.kb.dk:/tmp");
         addFixture("Copying checksum db");
-        testController.runCommand("scp -r /home/test/" + backupEnv + "-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
+        testController.runCommand("scp -r " + TestEnvironment.DEPLOYMENT_HOME + "/" + backupEnv
+                + "-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
     }
 
     protected void deployComponents() throws Exception {
@@ -134,14 +142,16 @@ public abstract class AbstractStressTest extends SeleniumTest {
 
     /**
      * When nodata is true, restore schema only PLUS the ordertemplates table in the harvestdb.
-     *
      */
     protected void replaceDatabasesWithProd(boolean nodata) throws Exception {
         String backupEnv = System.getProperty("systemtest.backupenv", "prod");
-        String dropAdminDB = "psql -U test -c 'drop database if exists stresstest_admindb'";
-        String createAdminDB = "psql -U test -c 'create database stresstest_admindb'";
-        String dropHarvestDB = "psql -U test -c 'drop database if exists stresstest_harvestdb'";
-        String createHarvestDB = "psql -U test -c 'create database stresstest_harvestdb'";
+        String dropAdminDB =
+                "psql -U " + TestEnvironment.DEPLOYMENT_USER + " -c 'drop database if exists stresstest_admindb'";
+        String createAdminDB = "psql -U " + TestEnvironment.DEPLOYMENT_USER + " -c 'create database stresstest_admindb'";
+        String dropHarvestDB =
+                "psql -U " + TestEnvironment.DEPLOYMENT_USER + " -c 'drop database if exists stresstest_harvestdb'";
+        String createHarvestDB =
+                "psql -U " + TestEnvironment.DEPLOYMENT_USER + " -c 'create database stresstest_harvestdb'";
         addFixture("Cleaning out harvest database");
         testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, dropHarvestDB);
         testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createHarvestDB);
@@ -151,15 +161,33 @@ public abstract class AbstractStressTest extends SeleniumTest {
         addFixture("Populating empty databases.");
         if (nodata) {
             addFixture("Restoring admin data schema");
-            String createRelationsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -s --schema public /tmp/" + backupEnv +"_admindb.out";
-            String populateSchemaversionsAdminDB = "pg_restore -U test -d stresstest_admindb  --no-owner -t schemaversions -t --clean --schema public /tmp/" + backupEnv +"_admindb.out";
+            String createRelationsAdminDB =
+                    "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
+                            + " -d stresstest_admindb  --no-owner -s --schema public /tmp/" + backupEnv
+                            + "_admindb.out";
+            String populateSchemaversionsAdminDB =
+                    "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
+                            + " -d stresstest_admindb  --no-owner -t schemaversions -t --clean --schema public /tmp/"
+                            + backupEnv + "_admindb.out";
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createRelationsAdminDB);
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaversionsAdminDB);
             addFixture("Restoring harvestdb schema");
-            String createRelationsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -s --schema public /tmp/" + backupEnv +"_harvestdb.dump.out";
-            String populateSchemaVersionsHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t schemaversions --clean --schema public /tmp/" + backupEnv +"_harvestdb.dump.out";
-            String populateOrdertemplatesHarvestDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t ordertemplates --clean --schema public /tmp/" + backupEnv +"_harvestdb.dump.out";
-            String populateSchedulesDB = "pg_restore -U test -d stresstest_harvestdb  --no-owner -t schedules --clean --schema public /tmp/" + backupEnv +"_harvestdb.dump.out";
+            String createRelationsHarvestDB =
+                    "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
+                            + " -d stresstest_harvestdb  --no-owner -s --schema public /tmp/" + backupEnv
+                            + "_harvestdb.dump.out";
+            String populateSchemaVersionsHarvestDB =
+                    "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
+                            + " -d stresstest_harvestdb  --no-owner -t schemaversions --clean --schema public /tmp/"
+                            + backupEnv + "_harvestdb.dump.out";
+            String populateOrdertemplatesHarvestDB =
+                    "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
+                            + " -d stresstest_harvestdb  --no-owner -t ordertemplates --clean --schema public /tmp/"
+                            + backupEnv + "_harvestdb.dump.out";
+            String populateSchedulesDB =
+                    "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
+                            + " -d stresstest_harvestdb  --no-owner -t schedules --clean --schema public /tmp/"
+                            + backupEnv + "_harvestdb.dump.out";
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createRelationsHarvestDB);
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaVersionsHarvestDB);
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateOrdertemplatesHarvestDB);
@@ -171,11 +199,11 @@ public abstract class AbstractStressTest extends SeleniumTest {
         } else {
             addFixture("Ingesting full production admindb backup.");
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                    "pg_restore -U test -d " + ENV.getTESTX().toLowerCase()
+                    "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER + " -d " + ENV.getTESTX().toLowerCase()
                             + "_admindb  --no-owner --schema public /tmp/" + backupEnv + "_admindb.out");
             addFixture("Ingesting full production harvestdb backup");
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                    "pg_restore -U test -d " + ENV.getTESTX().toLowerCase()
+                    "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER + " -d " + ENV.getTESTX().toLowerCase()
                             + "_harvestdb  --no-owner --schema public /tmp/" + backupEnv + "_harvestdb.dump.out");
 
             addFixture("Replacing checksum database with prod data");
@@ -202,31 +230,35 @@ public abstract class AbstractStressTest extends SeleniumTest {
 
     private void generateDatabaseSchemas() throws Exception {
         String backupEnv = System.getProperty("systemtest.backupenv", "prod");
-        testController.runCommandWithoutQuotes("rm -rf /home/test/schemas");
-        testController.runCommandWithoutQuotes("mkdir /home/test/schemas");
-        String envDef = "cd /home/test/schemas;" + "export LIBDIR=/home/test/release_software_dist/"
+        testController.runCommandWithoutQuotes("rm -rf " + TestEnvironment.DEPLOYMENT_HOME + "/schemas");
+        testController.runCommandWithoutQuotes("mkdir " + TestEnvironment.DEPLOYMENT_HOME + "/schemas");
+        String envDef = "cd " + TestEnvironment.DEPLOYMENT_HOME + "/schemas;" + "export LIBDIR="
+                + TestEnvironment.DEPLOYMENT_HOME + "/release_software_dist/"
                 + ENV.getTESTX() + "/lib/db;"
                 + "export CLASSPATH=$LIBDIR/derby.jar:$LIBDIR/derbytools-10.8.2.2.jar;";
         // Generate schema for " + backupEnv +"uction database
         testController.runCommandWithoutQuotes(envDef + "java org.apache.derby.tools.dblook "
-                + "-d 'jdbc:derby:/home/test/" + backupEnv +"-backup/fullhddb;upgrade=true' "
-                + "-o /home/test/schemas/" + backupEnv +"dbs_schema.txt");
+                + "-d 'jdbc:derby:" + TestEnvironment.DEPLOYMENT_HOME + "/" + backupEnv
+                + "-backup/fullhddb;upgrade=true' "
+                + "-o " + TestEnvironment.DEPLOYMENT_HOME + "/schemas/" + backupEnv + "dbs_schema.txt");
         // Generate schema for test database
-        testController.runCommandWithoutQuotes(envDef + "jar xvf /home/test/release_software_dist/"
-                + ENV.getTESTX() + "/settings/fullhddb.jar");
+        testController.runCommandWithoutQuotes(
+                envDef + "jar xvf " + TestEnvironment.DEPLOYMENT_HOME + "/release_software_dist/"
+                        + ENV.getTESTX() + "/settings/fullhddb.jar");
         testController.runCommandWithoutQuotes(envDef
                 + "java org.apache.derby.tools.dblook -d 'jdbc:derby:fullhddb;upgrade=true' -o testdbs_schema.txt");
         testController.runCommandWithoutQuotes(envDef + "rm -rf fullhddb; rm -rf META-INF");
         // Generate schema for bundled database
-        testController.runCommandWithoutQuotes(envDef + "jar xvf /home/test/release_software_dist/"
-                + ENV.getTESTX() + "/harvestdefinitionbasedir/fullhddb.jar");
+        testController.runCommandWithoutQuotes(
+                envDef + "jar xvf " + TestEnvironment.DEPLOYMENT_HOME + "/release_software_dist/"
+                        + ENV.getTESTX() + "/harvestdefinitionbasedir/fullhddb.jar");
         testController.runCommandWithoutQuotes(envDef
                 + "java org.apache.derby.tools.dblook -d 'jdbc:derby:fullhddb;upgrade=true' -o bundleddbs_schema.txt");
         testController.runCommandWithoutQuotes(envDef + "rm -rf fullhddb; rm -rf META-INF");
     }
 
     private void compareDatabaseSchemas() throws Exception {
-        String envDef = "cd /home/test/schemas;";
+        String envDef = "cd " + TestEnvironment.DEPLOYMENT_HOME + "/schemas;";
         String backupEnv = System.getProperty("systemtest.backupenv", "prod");
         // Sort the schemas and remove uninteresting lines
         testController.runCommandWithoutQuotes(envDef
@@ -242,12 +274,16 @@ public abstract class AbstractStressTest extends SeleniumTest {
                 + "diff -b -B testdbs_schema.txt.sort " + backupEnv + "dbs_schema.txt.sort  > test-" + backupEnv
                 + "-diff", new int[] {0, 1});
         testController.runCommandWithoutQuotes(envDef
-                + "diff -b -B bundleddbs_schema.txt.sort testdbs_schema.txt.sort  > test-bundled-diff",
+                        + "diff -b -B bundleddbs_schema.txt.sort testdbs_schema.txt.sort  > test-bundled-diff",
                 new int[] {0, 1});
     }
 
-    public void addStep(java.lang.String stimuli, java.lang.String expectedResult) { super.addStep(stimuli, expectedResult); }
+    public void addStep(java.lang.String stimuli, java.lang.String expectedResult) {
+        super.addStep(stimuli, expectedResult);
+    }
 
-    public void addFixture(java.lang.String setupDescription) { super.addFixture(setupDescription); }
+    public void addFixture(java.lang.String setupDescription) {
+        super.addFixture(setupDescription);
+    }
 
 }
