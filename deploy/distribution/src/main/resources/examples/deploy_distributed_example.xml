@@ -28,14 +28,14 @@
                 <timeout>120</timeout>
             </jmx>
             <indexClient>
-                <indexRequestTimeout>43200000</indexRequestTimeout> 
+                <indexRequestTimeout>43200000</indexRequestTimeout>
             </indexClient>
             <replicas>
                 <!-- The names of all bit archive replicas in the
                  environment, e.g., "nameOfBitachiveOne" and "nameOfBitachiveTwo". -->
                 <replica>
-                    <replicaId>A</replicaId>  
-                    <replicaName>ReplicaA</replicaName>  
+                    <replicaId>A</replicaId>
+                    <replicaName>ReplicaA</replicaName>
                     <replicaType>bitarchive</replicaType>
                 </replica>
                 <replica>
@@ -50,14 +50,14 @@
                 </replica>
             </replicas>
             <!-- tempDir corrected from ./tests/commontempdir -->
-            <tempDir>tmpdircommon</tempDir> 
+            <tempDir>tmpdircommon</tempDir>
         </common>
 
         <monitor>
             <jmxUsername>monitorRole</jmxUsername>
             <jmxPassword>test</jmxPassword>
         </monitor>
-        
+
         <!-- directory for install -->
         <archive>
             <bitpreservation>
@@ -65,11 +65,11 @@
                 <class>dk.netarkivet.archive.arcrepository.bitpreservation.DatabaseBasedActiveBitPreservation</class>
             </bitpreservation>
             <arcrepository>
-                <baseDir>.</baseDir>            
+                <baseDir>.</baseDir>
             </arcrepository>
         </archive>
-        <!-- viewerproxy.baseDir is set below -->            
-        <!-- harvester.harvesting.serverDir is set below -->            
+        <!-- viewerproxy.baseDir is set below -->
+        <!-- harvester.harvesting.serverDir is set below -->
         <harvester>
             <harvesting>
                 <deduplication>
@@ -83,7 +83,7 @@
         <!-- installation directories only used by deploy -->
         <deployInstallDir>/home/test</deployInstallDir>
         <deployMachineUserName>test</deployMachineUserName>
-    
+
         <settings>
             <common>
                 <remoteFile>
@@ -97,10 +97,10 @@
                 <notifications>
                     <class>dk.netarkivet.common.utils.EMailNotifications</class>
                     <!-- T: receiver to be modified by test -->
-                    <receiver>example@netarkivet.dk</receiver> 
+                    <receiver>example@netarkivet.dk</receiver>
                     <sender>example@netarkivet.dk</sender>
                 </notifications>
-                <useReplicaId>A</useReplicaId> 
+                <useReplicaId>A</useReplicaId>
             </common>
         </settings>
 
@@ -141,7 +141,7 @@
                             <port>8076</port>
                         </http>
                         <jmx>
-                            <port>8110</port> 
+                            <port>8110</port>
                             <rmiPort>8210</rmiPort>
                         </jmx>
                     </common>
@@ -154,7 +154,7 @@
                 <settings>
                     <common>
                         <jmx>
-                            <port>8111</port> 
+                            <port>8111</port>
                             <rmiPort>8211</rmiPort>
                         </jmx>
                     </common>
@@ -163,9 +163,9 @@
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
                 <settings>
                     <common>
-                        <applicationInstanceId>ABM</applicationInstanceId>            
+                        <applicationInstanceId>ABM</applicationInstanceId>
                         <jmx>
-                            <port>8112</port>  
+                            <port>8112</port>
                             <rmiPort>8212</rmiPort>
                         </jmx>
                     </common>
@@ -174,9 +174,9 @@
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
                 <settings>
                     <common>
-                        <applicationInstanceId>BBM</applicationInstanceId>            
+                        <applicationInstanceId>BBM</applicationInstanceId>
                         <jmx>
-                            <port>8113</port>  
+                            <port>8113</port>
                             <rmiPort>8213</rmiPort>
                         </jmx>
                         <useReplicaId>B</useReplicaId>
@@ -185,11 +185,11 @@
             </applicationName>
             <applicationName name="dk.netarkivet.harvester.scheduler.HarvestJobManagerApplication">
                 <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>    
+                <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
                 <settings>
                     <common>
                         <jmx>
-                            <port>8114</port> 
+                            <port>8114</port>
                             <rmiPort>8214</rmiPort>
                         </jmx>
                     </common>
@@ -219,7 +219,7 @@
                 </settings>
             </applicationName>
         </deployMachine>
-        
+
         <deployMachine os="windows" name="east-bar-014.bitarkiv.kb.dk">
             <deployMachineUserName>ba-test</deployMachineUserName>
             <deployInstallDir>c:\Users\Ba-test</deployInstallDir>
@@ -233,7 +233,7 @@
                             <port>8110</port>
                             <rmiPort>8210</rmiPort>
                         </jmx>
-                        <tempDir>tempDir_1</tempDir> 
+                        <tempDir>tempDir_1</tempDir>
                     </common>
                     <archive>
                         <!-- T: fileDir to be extended with $TESTX by test -->
@@ -251,7 +251,7 @@
                             <port>8111</port>
                             <rmiPort>8211</rmiPort>
                         </jmx>
-                        <tempDir>tempDir_2</tempDir> 
+                        <tempDir>tempDir_2</tempDir>
                     </common>
                     <archive>
                         <!-- T: fileDir to be extended with $TESTX by test -->
@@ -269,7 +269,7 @@
                             <port>8112</port>
                             <rmiPort>8212</rmiPort>
                         </jmx>
-                        <tempDir>tempDir_3</tempDir> 
+                        <tempDir>tempDir_3</tempDir>
                     </common>
                     <archive>
                         <!-- T: fileDir to be extended with $TESTX by test -->
@@ -281,7 +281,7 @@
             </applicationName>
 
         </deployMachine>
- 
+
         <deployMachine name="east-har-001.kb.dk">
             <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
@@ -289,6 +289,7 @@
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
                 <settings>
                     <common>
+                        <applicationInstanceId>snapshot</applicationInstanceId>
                         <jmx>
                             <port>8110</port>
                             <rmiPort>8210</rmiPort>
@@ -296,31 +297,31 @@
                     </common>
                     <harvester>
                         <harvesting>
-                            <channel>LOWPRIORITY</channel> <!-- on http port-->
+                            <channel>SNAPSHOT</channel> <!-- on http port-->
                             <heritrix>
-                                <guiPort>8111</guiPort> 
+                                <guiPort>8111</guiPort>
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
                                 <jmxPort>8211</jmxPort>
                                 <jmxUsername>controlRole</jmxUsername>
                                 <jmxPassword>R_D</jmxPassword>
                             </heritrix>
-                            <serverDir>harvester_low</serverDir>
+                            <serverDir>harvester_snapshot</serverDir>
                         </harvesting>
                     </harvester>
                 </settings>
             </applicationName>
         </deployMachine>
-         
+
 
         <deployMachine name="east-har-002.kb.dk">
             <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
- 
+
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
                 <settings>
                     <common>
-                        <applicationInstanceId>low</applicationInstanceId>            
+                        <applicationInstanceId>snapshot</applicationInstanceId>
                         <jmx>
                             <port>8110</port>
                             <rmiPort>8210</rmiPort>
@@ -328,24 +329,24 @@
                     </common>
                     <harvester>
                         <harvesting>
-                            <channel>LOWPRIORITY</channel>
+                            <channel>SNAPSHOT</channel>
                             <heritrix>
-                                <guiPort>8111</guiPort> 
+                                <guiPort>8111</guiPort>
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
                                 <jmxPort>8211</jmxPort>
                                  <jmxUsername>controlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
- 			    <serverDir>harvester_low</serverDir>
+                            <serverDir>harvester_snapshot</serverDir>
                         </harvesting>
                     </harvester>
                 </settings>
             </applicationName>
- 
+
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
                 <settings>
                     <common>
-                        <applicationInstanceId>high</applicationInstanceId>
+                        <applicationInstanceId>focused</applicationInstanceId>
                         <jmx>
                             <port>8112</port>
                             <rmiPort>8212</rmiPort>
@@ -353,15 +354,15 @@
                     </common>
                     <harvester>
                         <harvesting>
-                            <channel>HIGHPRIORITY</channel> 
+                            <channel>FOCUSED</channel>
                             <heritrix>
-                                <guiPort>8113</guiPort> 
+                                <guiPort>8113</guiPort>
                                 <!-- T: jmxPort to be modified by test (was 8093) -->
-                                <jmxPort>8213</jmxPort> 
+                                <jmxPort>8213</jmxPort>
                                  <jmxUsername>controlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
- 			    <serverDir>harvester_high</serverDir>
+                            <serverDir>harvester_focused</serverDir>
                         </harvesting>
                     </harvester>
                 </settings>
@@ -385,7 +386,7 @@
                     </common>
                 </settings>
             </applicationName>
-        
+
             <applicationName name="dk.netarkivet.viewerproxy.ViewerProxyApplication">
                 <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
                 <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
@@ -415,7 +416,7 @@
                             <port>8112</port>
                             <rmiPort>8212</rmiPort>
                         </jmx>
-                        <useReplicaId>C</useReplicaId> 
+                        <useReplicaId>C</useReplicaId>
                     </common>
                 </settings>
             </applicationName>
@@ -430,12 +431,12 @@
         <settings>
             <common>
                 <remoteFile>
-                    <serverName>west-har-001.statsbiblioteket.dk</serverName> 
-                    <userName>ftptestuser</userName> 
+                    <serverName>west-har-001.statsbiblioteket.dk</serverName>
+                    <userName>ftptestuser</userName>
                     <userPassword>ftptestpassword</userPassword>
                 </remoteFile>
                 <mail>
-                    <server>examplefptserver.netarkivet.dk</server> 
+                    <server>examplefptserver.netarkivet.dk</server>
                 </mail>
                 <notifications>
                     <class>dk.netarkivet.common.utils.EMailNotifications</class>
@@ -443,7 +444,7 @@
                     <receiver>example@netarkivet.dk</receiver>
                     <sender>example@netarkivet.dk</sender>
                 </notifications>
-                <useReplicaId>B</useReplicaId> 
+                <useReplicaId>B</useReplicaId>
             </common>
         </settings>
 
@@ -455,6 +456,7 @@
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
                 <settings>
                     <common>
+                        <applicationInstanceId>focused</applicationInstanceId>
                         <jmx>
                             <port>8110</port>
                             <rmiPort>8210</rmiPort>
@@ -462,9 +464,9 @@
                     </common>
                     <harvester>
                         <harvesting>
-                            <channel>HIGHPRIORITY</channel>
+                            <channel>FOCUSED</channel>
                             <heritrix>
-                                <guiPort>8111</guiPort> 
+                                <guiPort>8111</guiPort>
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
                                 <jmxPort>8211</jmxPort>
                                  <jmxUsername>controlRole</jmxUsername>
@@ -475,7 +477,7 @@
                             	<reportFilePattern>.*-report.txt</reportFilePattern>
                             	<logFilePattern>.*(\.log|\.out)</logFilePattern>
                             </metadata>
-			    <serverDir>harvester_high</serverDir>
+                            <serverDir>harvester_focused</serverDir>
                         </harvesting>
                     </harvester>
                 </settings>
@@ -501,7 +503,7 @@
                 </settings>
             </applicationName>
         </deployMachine>
-    
+
         <deployMachine name="west-acs-001.statsbiblioteket.dk">
             <applicationName name="dk.netarkivet.viewerproxy.ViewerProxyApplication">
                 <settings>

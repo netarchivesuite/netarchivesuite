@@ -212,7 +212,7 @@ National Library.
         <deployClassPath>lib/netarchivesuite-heritrix1-controller.jar</deployClassPath>
         <settings>
           <common>
-            <applicationInstanceId>low</applicationInstanceId>
+            <applicationInstanceId>snapshot</applicationInstanceId>
             <jmx>
               <port>8114</port>
               <rmiPort>8214</rmiPort>
@@ -231,7 +231,7 @@ National Library.
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>R_D</jmxPassword>
               </heritrix>
-              <serverDir>harvester_low</serverDir>
+              <serverDir>harvester_snapshot</serverDir>
             </harvesting>
           </harvester>
         </settings>
@@ -240,7 +240,7 @@ National Library.
         <deployClassPath>lib/netarchivesuite-heritrix1-controller.jar</deployClassPath>
         <settings>
           <common>
-            <applicationInstanceId>high</applicationInstanceId>
+            <applicationInstanceId>focused</applicationInstanceId>
             <jmx>
               <port>8115</port>
               <rmiPort>8215</rmiPort>
@@ -259,7 +259,7 @@ National Library.
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>R_D</jmxPassword>
               </heritrix>
-              <serverDir>harvester_high</serverDir>
+              <serverDir>harvester_focused</serverDir>
             </harvesting>
           </harvester>
         </settings>

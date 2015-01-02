@@ -218,7 +218,7 @@ National Library.
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
                 <settings>
                     <common>
-                        <applicationInstanceId>low</applicationInstanceId>            
+                        <applicationInstanceId>snapshot</applicationInstanceId>
                         <jmx>
                             <port>8114</port>
                             <rmiPort>8214</rmiPort>
@@ -230,14 +230,14 @@ National Library.
                     </common>
                     <harvester>
                         <harvesting>
-                            <channel>LOWPRIORITY</channel>
+                            <channel>SNAPSHOT</channel>
                             <heritrix>
                                 <guiPort>8190</guiPort> 
                                 <jmxPort>8191</jmxPort>
                                  <jmxUsername>controlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
-               		    <serverDir>harvester_low</serverDir>
+                            <serverDir>harvester_snapshot</serverDir>
                         </harvesting>
                     </harvester>
                 </settings>
@@ -245,7 +245,7 @@ National Library.
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
                 <settings>
                     <common>
-                        <applicationInstanceId>high</applicationInstanceId>
+                        <applicationInstanceId>focused</applicationInstanceId>
                         <jmx>
                             <port>8115</port>
                             <rmiPort>8215</rmiPort>
@@ -257,14 +257,14 @@ National Library.
                     </common>
                     <harvester>
                         <harvesting>
-                            <channel>HIGHPRIORITY</channel>
+                            <channel>FOCUSED</channel>
                             <heritrix>
                                 <guiPort>8192</guiPort> 
                                 <jmxPort>8193</jmxPort>
                                  <jmxUsername>controlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
-                        <serverDir>harvester_high</serverDir>
+                        <serverDir>harvester_focused</serverDir>
                         </harvesting>
                     </harvester>
                 </settings>
@@ -323,7 +323,7 @@ National Library.
             <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.wayback.jar</deployClassPath>
             <settings>
-		<common>
+                <common>
                         <jmx>
                             <port>8120</port>
                             <rmiPort>8220</rmiPort>
