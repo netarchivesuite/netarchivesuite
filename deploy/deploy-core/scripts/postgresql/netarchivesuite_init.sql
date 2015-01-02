@@ -269,7 +269,6 @@ CREATE TABLE harvestdefinitions (
 );
 
 CREATE INDEX harvestdefinitionssubmitdate on harvestdefinitions (submitted) TABLESPACE tsindex;
-CREATE INDEX harvestdefinitionscategoryid on harvestdefinitions (category_id) TABLESPACE tsindex;
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE harvestdefinitions TO netarchivesuite;
 
