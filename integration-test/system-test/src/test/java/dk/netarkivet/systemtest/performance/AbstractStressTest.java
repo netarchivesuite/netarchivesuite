@@ -93,18 +93,17 @@ public abstract class AbstractStressTest extends SeleniumTest {
                 "");
         Long maximumBackupPeriod = maximumBackupsDays * DAY; //ms
         Long harvestdbAge = System.currentTimeMillis() - getFileTimestamp(
-                TestEnvironment.DEPLOYMENT_HOME + backupEnv + "-backup/" + backupEnv + "_harvestdb.dump.out");
+                "${HOME}/" + backupEnv + "-backup/" + backupEnv + "_harvestdb.dump.out");
         assertTrue(harvestdbAge < maximumBackupPeriod, "harvestdb backup is older than " + maximumBackupsDays + " days");
         Long admindbAge = System.currentTimeMillis() - getFileTimestamp(
-                TestEnvironment.DEPLOYMENT_HOME + backupEnv + "-backup/" + backupEnv + "_admindb.out");
+                "${HOME}/" + backupEnv + "-backup/" + backupEnv + "_admindb.out");
         assertTrue(admindbAge < maximumBackupPeriod, "admindb backup is older than " + maximumBackupsDays + " days");
         Long csAge = System.currentTimeMillis() - getFileTimestamp(
-                TestEnvironment.DEPLOYMENT_HOME + backupEnv + "-backup/CS");
+                "${HOME}/" + backupEnv + "-backup/CS");
         assertTrue(csAge < maximumBackupPeriod, "CS backup is older than " + maximumBackupsDays + " days");
         Long domainListAge = System.currentTimeMillis() - getFileTimestamp(
-                TestEnvironment.DEPLOYMENT_HOME + backupEnv + "-backup/domain*.txt");
-        assertTrue(domainListAge < maximumBackupPeriod,
-                "Domain list backup is older than " + maximumBackupsDays + " days");
+                "${HOME}/" + backupEnv + "-backup/domain*.txt");
+        assertTrue(domainListAge < maximumBackupPeriod, "Domain list backup is older than " + maximumBackupsDays + " days");
     }
 
     private Long getFileTimestamp(String filepath) throws Exception {
@@ -124,15 +123,13 @@ public abstract class AbstractStressTest extends SeleniumTest {
                 "rm -rf /tmp/" + backupEnv + "_harvestdb.dump.out");
         testController.runCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf /tmp/CS");
         addFixture("Copying admin db.");
-        testController.runCommand("scp -r " + TestEnvironment.DEPLOYMENT_HOME + "/" + backupEnv + "-backup/" + backupEnv
+        testController.runCommand("scp -r " + "${HOME}/" + backupEnv + "-backup/" + backupEnv
                 + "_admindb.out test@kb-test-adm-001.kb.dk:/tmp");
         addFixture("Copying harvest db");
-        testController
-                .runCommand("scp -r " + TestEnvironment.DEPLOYMENT_HOME + "/" + backupEnv + "-backup/" + backupEnv
+        testController.runCommand("scp -r ${HOME}/" + backupEnv + "-backup/" + backupEnv
                         + "_harvestdb.dump.out test@kb-test-adm-001.kb.dk:/tmp");
         addFixture("Copying checksum db");
-        testController.runCommand("scp -r " + TestEnvironment.DEPLOYMENT_HOME + "/" + backupEnv
-                + "-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
+        testController.runCommand("scp -r ${HOME}/" + backupEnv + "-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
     }
 
     protected void deployComponents() throws Exception {
