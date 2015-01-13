@@ -182,8 +182,8 @@ public class DomainDefinition {
         // more.
         // If alias is not-empty, update only if alias is different from
         // oldAlias or
-        // This only updates alias if it is required: See javadoc for
-        // needToUpdateAlias()
+        // This only updates alias if it is required: See javadoc below for
+        // needToUpdateAlias() 
         String oldAlias = null;
         if (domain.getAliasInfo() != null) {
             oldAlias = domain.getAliasInfo().getAliasOf();
@@ -317,12 +317,14 @@ public class DomainDefinition {
     }
 
     /**
-     * Search for domains matching the following criteria. Should we allow more than one criteria?
+     * Search for domains matching the following criteria. 
+     * TODO Should we allow more than one criteria?
+     * TODO use Enum instead for searchType
      *
      * @param context the context of the JSP page calling
      * @param i18n The translation properties file used
      * @param searchQuery The given searchQuery for searching for among the domains.
-     * @param searchType The given searchCriteria (TODO use Enum instead)
+     * @param searchType The given searchCriteria 
      * @return the set of domain-names matching the given criteria.
      */
     public static List<String> getDomains(PageContext context, I18n i18n, String searchQuery, String searchType) {
@@ -368,7 +370,7 @@ public class DomainDefinition {
     }
 
     /**
-     * Returnes the seed lists associated with the supplied configurations.
+     * Returns the seed lists associated with the supplied configurations.
      *
      * @param configurations The configurations to find seed lists for
      * @return The seed lists used in the supplied configurations.

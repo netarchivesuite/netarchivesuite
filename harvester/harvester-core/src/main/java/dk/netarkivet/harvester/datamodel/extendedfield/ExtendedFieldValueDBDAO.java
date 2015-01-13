@@ -117,7 +117,7 @@ public class ExtendedFieldValueDBDAO extends ExtendedFieldValueDAO {
      * @return the ID for next extendedvFieldValue inserted.
      */
     private Long generateNextID(Connection c) {
-        // FIXME synchonize or use identity row or generator.
+        // FIXME synchronize or use identity row or generator.
         Long maxVal = DBUtils.selectLongValue(c, "SELECT max(extendedfieldvalue_id) FROM extendedfieldvalue");
 
         if (maxVal == null) {

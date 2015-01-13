@@ -57,25 +57,27 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * Class encapsulating the Heritrix crawler-beans.cxml file 
  * <p>
  * 
- * Heritrix3 has a new model based on spring.
- * So the XPATH is no good for processing 
+ * Heritrix3 has a new model based on spring, So the XPATH is no good for processing.
+ * Instead we use placeholders instead.
  * 
- * template is a H3 template if it contains the string
+ * The template is a H3 template if it contains the string: 
  * 
- * xmlns:"http://www.springframework.org/...."
- * 
- * template is a H1 template if it contains the string
- * <crawl-order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
- * xsi:noNamespaceSchemaLocation="heritrix_settings.xsd">
+ * "xmlns:"http://www.springframework.org/...."
  * 
  */
 public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(H3HeritrixTemplate.class);
 
-    private String template;  
+    private String template;
     
-    
+    /** QuotaEnforcer states for this template. */
+    private Long forceMaxbytesPerDomain;
+    private Long forceMaxobjectsPerDomain;
+    // This value is coming from the property: 
+    // settings.harvester.scheduler.jobGen.objectLimitIsSetByQuotaEnforcer
+    private boolean maxobjectsSetByQuotaEnforcer;
+
     /** Has this HeritrixTemplate been verified. */
     private boolean verified;
 
@@ -157,7 +159,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
     /**
      * Return HeritrixTemplate as XML.
-     * Note that we insert the crawlertraps before resturning the xml.
+     * Note that we insert the crawlertraps before returning the xml.
      * @return HeritrixTemplate as XML
      */
     @Override
@@ -175,7 +177,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     public void editOrderXMLAddCrawlerTraps(String elementName, List<String> crawlerTraps) {        
     	// For now only add the crawlertraps to the list;
         this.crawlertraps.addAll(crawlerTraps);	
-        System.out.println("Now the list of crawlertraps contain " +  this.crawlertraps.size() + " traps");
+        log.debug("Now the list of crawlertraps contain " +  this.crawlertraps.size() + " traps");
     }
         
     private String writeCrawlerTrapsToTemplate() {
@@ -216,7 +218,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	    	boolean bFailOnMissing = true;
 	    	this.template = Template.untemplate(template, env, bFailOnMissing);
 		} else {
-		   // LOG WARNING
+			log.warn("The placeholder '" + MAX_TIME_SECONDS_PLACEHOLDER 
+					+ "' was not found in the template. Therefore maxRunningTime not set");
 		}
 	}
     
@@ -233,6 +236,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
      * @throws IOFailure If the group-max-fetch-success element is not found in the orderXml. TODO The
      * group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
      */
+    //@Override NOT PART OF INTERFACE
     public void editOrderXML_maxObjectsPerDomain( 
     		long forceMaxObjectsPerDomain,
             boolean maxObjectsIsSetByQuotaEnforcer) {
@@ -259,73 +263,68 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     	
     	boolean bFailOnMissing = false;
     	template = Template.untemplate(template, env, bFailOnMissing);
+    	
+    	
+    	
+//    	Map<String,String> env = new HashMap<String,String>();
+//    	
+//    	String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE = "QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE"; 
+//    	String FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE = "FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE";
+//    		
+//    	Long FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT = -1L;
+//    	//Long QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_DEFAULT = -1L;
+//        env.put(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE, 
+//    				String.valueOf(maxobjectsL));
+//    	env.put(FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE, 
+//    				String.valueOf(FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT));
+//    	
+//    	
+//    	boolean bFailOnMissing = false;
+//    	template = Template.untemplate(template, env, bFailOnMissing);
+//    	
+    	    	
     }
+
     
-    /**
-     * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of bytes to
-     * retrieve per domain. This method updates 'group-max-all-kb' element of the 'QuotaEnforcer' node, which again is a
-     * subelement of 'pre-fetch-processors' node. with the value of the argument forceMaxBytesPerDomain
-     *
-     * @param forceMaxBytesPerDomain The maximum number of byte to retrieve per domain, or -1 for no limit. Note that
-     * the number is divided by 1024 before being inserted into the orderXml, as Heritrix expects KB.
-     * @throws PermissionDenied If unable to replace the QuotaEnforcer node of the orderXMLdoc Document
-     * @throws IOFailure If the group-max-all-kb element cannot be found. TODO This group-max-all-kb check also be
-     * performed in TemplateDAO.create, TemplateDAO.update
-     */
-//  
 	@Override
 	public void setMaxBytesPerDomain(Long maxbytesL) {
-		String maxBytesStringValue = "";
-
-		if (maxbytesL == 0) {
-			maxBytesStringValue = "0";
-		} else if (maxbytesL != Constants.HERITRIX_MAXBYTES_INFINITY) {
-          // Divide by 1024 since Heritrix uses KB rather than bytes,
-          // and add 1 to avoid to low limit due to rounding.
-    	  maxBytesStringValue = Long.toString((maxbytesL / Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1);
-		} else {
-    	  maxBytesStringValue = String.valueOf(Constants.HERITRIX_MAXBYTES_INFINITY);
-		}
-
-		if (template.contains(QUOTA_ENFORCER_MAX_BYTES_TEMPLATE)) {
-			// Insert value
-			
-		} else {
-	      throw new IOFailure("Unable to locate QuotaEnforcer template to set maxBytesPerDomain in template: " + template);
-	  }
+		this.forceMaxbytesPerDomain = maxbytesL;
+		
+//		String maxBytesStringValue = "";
+//
+//		if (maxbytesL == 0) {
+//			maxBytesStringValue = "0";
+//		} else if (maxbytesL != Constants.HERITRIX_MAXBYTES_INFINITY) {
+//          // Divide by 1024 since Heritrix uses KB rather than bytes,
+//          // and add 1 to avoid to low limit due to rounding.
+//    	  maxBytesStringValue = Long.toString((maxbytesL / Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1);
+//		} else {
+//    	  maxBytesStringValue = String.valueOf(Constants.HERITRIX_MAXBYTES_INFINITY);
+//		}
+//
+//		if (template.contains(QUOTA_ENFORCER_MAX_BYTES_TEMPLATE)) {
+//			// Insert value
+//			
+//		} else {
+//	      throw new IOFailure("Unable to locate QuotaEnforcer template to set maxBytesPerDomain in template: " + template);
+//	  }
 	}	
   
 
 	@Override
 	public Long getMaxBytesPerDomain() {
-		throw new NotImplementedException("This method has not yet been implemented");
+		return this.forceMaxbytesPerDomain;
 	}
 
 	@Override
+	//TODO 
 	public void setMaxObjectsPerDomain(Long maxobjectsL) {
-		Map<String,String> env = new HashMap<String,String>();
-    	
-    	String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE = "QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE"; 
-    	String FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE = "FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE";
-    		
-    	Long FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT = -1L;
-    	//Long QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_DEFAULT = -1L;
-        env.put(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE, 
-    				String.valueOf(maxobjectsL));
-    	env.put(FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE, 
-    				String.valueOf(FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT));
-    	
-    	
-    	boolean bFailOnMissing = false;
-    	template = Template.untemplate(template, env, bFailOnMissing);
-		
+		this.forceMaxobjectsPerDomain = maxobjectsL;
 	}
 
 	@Override
 	public Long getMaxObjectsPerDomain() {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException("This method has not yet been implemented");
-		//return null;
+		return this.forceMaxobjectsPerDomain;
 	}
     
 	@Override
@@ -362,14 +361,16 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	@Override
 	public void configureQuotaEnforcer(boolean maxObjectsIsSetByQuotaEnforcer,
 			long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain) {
-		// TODO Auto-generated method stub
-		// FIXME see code elsewhere
 		boolean quotaEnabled = true;
 
+		this.forceMaxobjectsPerDomain = forceMaxObjectsPerDomain;
+		this.forceMaxbytesPerDomain = forceMaxBytesPerDomain;
+		
     	if (!maxObjectsIsSetByQuotaEnforcer) { // We use the frontier globalBudget instead
             // If the Object limit is not set by quota enforcer, it should be disabled 
             // 	iff there is no byte limit (i.e. the maxBytes is infinite)
             quotaEnabled = forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
+            
 
         } else {
             // Object limit is set by quota enforcer, so it should be enabled whether
@@ -378,13 +379,13 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
                     || forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
         }
 
-    	//FIXME this method only decides when to disable the QuotaEnforcer, not 
-    	// what is should contain. 
-    	// Add a Quota class 
-
     	if (quotaEnabled) {
     	 	// FIXME insert quota-enforcer beans into the cxml-file or not depending on the Jobs values
-        	// or whether or not the there are quota-enforcer templates in the cxml-file.    		
+        	// or whether or not the there are quota-enforcer templates in the cxml-file.
+    		
+    	} else {
+    		// set forceMaxObjectsPerDomain == Constants.HERITRIX_MAXOBJECTS_INFINITY
+    		// set forceMaxBytesPerDomain == Constants.HERITRIX_MAXBYTES_INFINITY;
     	}
 		
 	}
@@ -499,7 +500,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	@Override
 	/**
 	 * DUPLICATE method
-	 * With H3 template, we has to accumulate the crawlertraps, and then push them to the template when
+	 * With H3 template, we accumulate the crawlertraps, and then push them to the template when
 	 * asked to write it to a file.
 	 * The elementName is currently not used.
 	 */

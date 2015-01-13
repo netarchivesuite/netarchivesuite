@@ -98,7 +98,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             statement.setInt(8, aExtendedField.isMandatory() ? 1 : 0);
             statement.setInt(9, aExtendedField.getSequencenr());
             statement.setInt(10, aExtendedField.getMaxlen());
-            // TODO
+            // TODO replace this toString by something better
             log.debug(statement.toString());
 
             statement.executeUpdate();
@@ -122,7 +122,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
      * @return The next available ID
      */
     private Long generateNextID(Connection c) {
-        // FIXME Synchroniazation problem, this is why one should always use identity rows or generators.
+        // FIXME Synchronization problem, this is why one should always use identity rows or generators.
         Long maxVal = DBUtils.selectLongValue(c, "SELECT max(extendedfield_id) FROM extendedfield");
         if (maxVal == null) {
             maxVal = 0L;
@@ -195,7 +195,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             statement.setInt(10, aExtendedField.getMaxlen());
             statement.setLong(11, aExtendedField.getExtendedFieldID());
 
-            // TODO
+            // TODO replace this toString by something better
             log.debug(statement.toString());
 
             statement.executeUpdate();

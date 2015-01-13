@@ -62,7 +62,7 @@ import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
  * The class assumes the type of order.xml used in configuring Heritrix version 1.10+. Information about the Heritrix
  * crawler, and its processes and modules can be found in the Heritrix developer and user manuals found on <a
  * href="http://crawler.archive.org">http://crawler.archive.org<a/>
- * 
+ *  
  */
 public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable {
 
@@ -341,7 +341,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
         // placed before (cf. issue NAS-2205)
         // If no such rule exists then we append the crawler traps as to the existing decideRuleds.
 
-        Node rulesMapNode = orderXMLdoc.selectSingleNode(H1HeritrixTemplate.DECIDERULES_MAP_XPATH);
+        Node rulesMapNode = orderXMLdoc.selectSingleNode(DECIDERULES_MAP_XPATH);
         if (rulesMapNode == null || !(rulesMapNode instanceof Element)) {
             throw new IllegalState("Unable to update order.xml document. It does not have the right form to add"
                     + "crawler trap deciderules.");
@@ -353,8 +353,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
         Element decideRule = rulesMap.addElement("newObject");
 
         // If an acceptiIfPrerequisite node exists, detach and insert before it
-        Node acceptIfPrerequisiteNode = orderXMLdoc
-                .selectSingleNode(H1HeritrixTemplate.DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH);
+        Node acceptIfPrerequisiteNode = orderXMLdoc.selectSingleNode(DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH);
         if (acceptIfPrerequisiteNode != null) {
             List<Node> elements = rulesMap.elements();
             int insertPosition = elements.indexOf(acceptIfPrerequisiteNode);
@@ -396,6 +395,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
      * @param cfg The DomainConfiguration for which to generate crawler trap deciderules
      * @throws IllegalState If unable to update order.xml due to wrong order.xml format
      */
+    // FIXME REMOVE IF NOT USED
     /*
     public static void editOrderXMLAddPerDomainCrawlerTraps(Document orderXmlDoc, DomainConfiguration cfg) {
         // Get the regexps to exclude
@@ -469,7 +469,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
                     || forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
         }
 
-        String xpath = H1HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
+        String xpath = QUOTA_ENFORCER_ENABLED_XPATH;
         Node qeNode = orderXMLdoc.selectSingleNode(xpath);
         if (qeNode != null) {
             qeNode.setText(Boolean.toString(quotaEnabled));
@@ -504,7 +504,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 					|| forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
 		}
 
-		String xpath = H1HeritrixTemplate.QUOTA_ENFORCER_ENABLED_XPATH;
+		String xpath = QUOTA_ENFORCER_ENABLED_XPATH;
 		Node qeNode = orderXMLdoc.selectSingleNode(xpath);
 		if (qeNode != null) {
 			qeNode.setText(Boolean.toString(quotaEnabled));
@@ -527,7 +527,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 	@Override
 	public void setMaxBytesPerDomain(Long forceMaxBytesPerDomain) {
 		// get and set the group-max-all-kb Node of the orderXMLdoc:
-        String xpath = H1HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
+        String xpath = GROUP_MAX_ALL_KB_XPATH;
         Node groupMaxSuccessKbNode = template.selectSingleNode(xpath);
         if (groupMaxSuccessKbNode != null) {
             if (forceMaxBytesPerDomain == 0) {
@@ -547,19 +547,19 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 
 	@Override
 	public Long getMaxBytesPerDomain() {
-		// TODO Auto-generated method stub
+		// FIXME IMPLEMENT ME
 		return null;
 	}
 
 	@Override
 	public void setMaxObjectsPerDomain(Long maxobjectsL) {
-		// TODO Auto-generated method stub
+		// FIXME IMPLEMENT ME
 		
 	}
 
 	@Override
 	public Long getMaxObjectsPerDomain() {
-		// TODO Auto-generated method stub
+		// FIXME IMPLEMENT ME OR DELETE
 		return null;
 	}
 
@@ -569,7 +569,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
      */
 	@Override
 	public boolean IsDeduplicationEnabled() {
-        Node xpathNode = template.selectSingleNode(H1HeritrixTemplate.DEDUPLICATOR_ENABLED);
+        Node xpathNode = template.selectSingleNode(DEDUPLICATOR_ENABLED);
         return xpathNode != null && xpathNode.getText().trim().equals("true");
 	}
 
@@ -579,7 +579,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
         boolean arcMode = false;
         boolean warcMode = false;
 
-        System.out.println("Document: " + template.asXML()); 
+        //System.out.println("Document: " + template.asXML()); 
         
         if ("arc".equalsIgnoreCase(archiveFormat)) {
             arcMode = true;
@@ -594,54 +594,54 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 
         if (arcMode) {
             // enable ARC writing in Heritrix and disable WARC writing if needed.
-            if (orderXML.selectSingleNode(H1HeritrixTemplate.ARCSDIR_XPATH) != null
-                    && orderXML.selectSingleNode(H1HeritrixTemplate.ARCS_ENABLED_XPATH) != null) {
-                XmlUtils.setNode(orderXML, H1HeritrixTemplate.ARCSDIR_XPATH,
+            if (orderXML.selectSingleNode(ARCSDIR_XPATH) != null
+                    && orderXML.selectSingleNode(ARCS_ENABLED_XPATH) != null) {
+                XmlUtils.setNode(orderXML, ARCSDIR_XPATH,
                         dk.netarkivet.common.Constants.ARCDIRECTORY_NAME);
-                XmlUtils.setNode(orderXML, H1HeritrixTemplate.ARCS_ENABLED_XPATH, "true");
-                if (orderXML.selectSingleNode(H1HeritrixTemplate.WARCS_ENABLED_XPATH) != null) {
-                    XmlUtils.setNode(orderXML, H1HeritrixTemplate.WARCS_ENABLED_XPATH, "false");
+                XmlUtils.setNode(orderXML, ARCS_ENABLED_XPATH, "true");
+                if (orderXML.selectSingleNode(WARCS_ENABLED_XPATH) != null) {
+                    XmlUtils.setNode(orderXML, WARCS_ENABLED_XPATH, "false");
                 }
             } else {
                 throw new IllegalState("Unable to choose ARC as Heritrix archive format because "
                         + " one of the following xpaths are invalid in the given order.xml: "
-                        + H1HeritrixTemplate.ARCSDIR_XPATH + "," + H1HeritrixTemplate.ARCS_ENABLED_XPATH);
+                        + ARCSDIR_XPATH + "," + ARCS_ENABLED_XPATH);
             }
         } else if (warcMode) { // WARCmode
             // enable ARC writing in Heritrix and disable WARC writing if needed.
-            if (orderXML.selectSingleNode(H1HeritrixTemplate.WARCSDIR_XPATH) != null
-                    && orderXML.selectSingleNode(H1HeritrixTemplate.WARCS_ENABLED_XPATH) != null) {
-                XmlUtils.setNode(orderXML, H1HeritrixTemplate.WARCSDIR_XPATH,
+            if (orderXML.selectSingleNode(WARCSDIR_XPATH) != null
+                    && orderXML.selectSingleNode(WARCS_ENABLED_XPATH) != null) {
+                XmlUtils.setNode(orderXML, WARCSDIR_XPATH,
                         dk.netarkivet.common.Constants.WARCDIRECTORY_NAME);
-                XmlUtils.setNode(orderXML, H1HeritrixTemplate.WARCS_ENABLED_XPATH, "true");
-                if (orderXML.selectSingleNode(H1HeritrixTemplate.ARCS_ENABLED_XPATH) != null) {
-                    XmlUtils.setNode(orderXML, H1HeritrixTemplate.ARCS_ENABLED_XPATH, "false");
+                XmlUtils.setNode(orderXML, WARCS_ENABLED_XPATH, "true");
+                if (orderXML.selectSingleNode(ARCS_ENABLED_XPATH) != null) {
+                    XmlUtils.setNode(orderXML, ARCS_ENABLED_XPATH, "false");
                 }
 
                 // Update the WARCWriterProcessorSettings with settings values
-                setIfFound(orderXML, H1HeritrixTemplate.WARCS_SKIP_IDENTICAL_DIGESTS_XPATH,
+                setIfFound(orderXML, WARCS_SKIP_IDENTICAL_DIGESTS_XPATH,
                         HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS,
                         Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS));
 
-                setIfFound(orderXML, H1HeritrixTemplate.WARCS_WRITE_METADATA_XPATH,
+                setIfFound(orderXML, WARCS_WRITE_METADATA_XPATH,
                         HarvesterSettings.HERITRIX_WARC_WRITE_METADATA,
                         Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA));
 
-                setIfFound(orderXML, H1HeritrixTemplate.WARCS_WRITE_REQUESTS_XPATH,
+                setIfFound(orderXML, WARCS_WRITE_REQUESTS_XPATH,
                         HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS,
                         Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS));
 
-                setIfFound(orderXML, H1HeritrixTemplate.WARCS_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS_XPATH,
+                setIfFound(orderXML, WARCS_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS_XPATH,
                         HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS,
                         Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS));
-                setIfFound(orderXML, H1HeritrixTemplate.WARCS_WRITE_REVISIT_FOR_NOT_MODIFIED_XPATH,
+                setIfFound(orderXML, WARCS_WRITE_REVISIT_FOR_NOT_MODIFIED_XPATH,
                         HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED,
                         Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED));
 
             } else {
                 throw new IllegalState("Unable to choose WARC as Heritrix archive format because "
                         + " one of the following xpaths are invalid in the given order.xml: "
-                        + H1HeritrixTemplate.WARCSDIR_XPATH + "," + H1HeritrixTemplate.WARCS_ENABLED_XPATH
+                        + WARCSDIR_XPATH + "," + WARCS_ENABLED_XPATH
                         + ". order.xml: " + orderXML.asXML());
             }
 
@@ -654,7 +654,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 	@Override
 	public void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL) {
         // get and set the "max-time-sec" node of the orderXMLdoc
-        String xpath = H1HeritrixTemplate.MAXTIMESEC_PATH_XPATH;
+        String xpath = MAXTIMESEC_PATH_XPATH;
         Node groupMaxTimeSecNode = template.selectSingleNode(xpath);
         if (groupMaxTimeSecNode != null) {
             String currentMaxTimeSec = groupMaxTimeSecNode.getText();
@@ -810,7 +810,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
 			String scheduleName, String performer) {
 		
-		Node WARCWRITERNODE = template.selectSingleNode(H1HeritrixTemplate.WARCWRITERPROCESSOR_XPATH);
+		Node WARCWRITERNODE = template.selectSingleNode(WARCWRITERPROCESSOR_XPATH);
 		Element warcwriterElement = (Element) WARCWRITERNODE;
         
 		Element metadataMap = warcwriterElement.addElement("map");
