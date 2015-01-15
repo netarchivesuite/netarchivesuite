@@ -61,14 +61,13 @@ public abstract class AbstractStressTest extends SeleniumTest {
      * with multiple steps.
      */
     @BeforeTest(alwaysRun = true)
-    public void setupTest() {
-    }
+    @Override
+    public void setupTest() {}
 
     protected void shutdownPreviousTest() throws Exception {
-        addFixture("Shutting down any previously running test.");
-        testController.runCommand("stop_test.sh");
         addFixture("Cleaning up old test.");
-        testController.runCommand("cleanup_all_test.sh");
+        int[] positiveExitCodes = new int[] { 0, 2 };
+        testController.runCommand(null, "cleanup_all_test.sh", 1000, "", positiveExitCodes);
         addFixture("Preparing deploy");
         testController.runCommand("prepare_test.sh deploy_config_stresstest.xml");
     }
@@ -80,7 +79,6 @@ public abstract class AbstractStressTest extends SeleniumTest {
 
     protected void shutdownTest() throws Exception {
         addFixture("Shutting down the test.");
-        testController.runCommand("stop_test.sh");
         testController.runCommand("cleanup_all_test.sh");
     }
 
@@ -124,12 +122,12 @@ public abstract class AbstractStressTest extends SeleniumTest {
         testController.runCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf /tmp/CS");
         addFixture("Copying admin db.");
         testController.runCommand("scp -r " + "${HOME}/" + backupEnv + "-backup/" + backupEnv
-                + "_admindb.out test@kb-test-adm-001.kb.dk:/tmp");
+                + "_admindb.out " + TestEnvironment.DEPLOYMENT_USER + "@kb-test-adm-001.kb.dk:/tmp");
         addFixture("Copying harvest db");
         testController.runCommand("scp -r ${HOME}/" + backupEnv + "-backup/" + backupEnv
-                        + "_harvestdb.dump.out test@kb-test-adm-001.kb.dk:/tmp");
+                        + "_harvestdb.dump.out " + TestEnvironment.DEPLOYMENT_USER + "@kb-test-adm-001.kb.dk:/tmp");
         addFixture("Copying checksum db");
-        testController.runCommand("scp -r ${HOME}/" + backupEnv + "-backup/CS test@kb-test-acs-001.kb.dk:/tmp");
+        testController.runCommand("scp -r ${HOME}/" + backupEnv + "-backup/CS " + TestEnvironment.DEPLOYMENT_USER + "@kb-test-acs-001.kb.dk:/tmp");
     }
 
     protected void deployComponents() throws Exception {
@@ -217,8 +215,7 @@ public abstract class AbstractStressTest extends SeleniumTest {
 
     protected void upgradeHarvestDatabase() throws Exception {
         testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "export CLASSPATH="
-                + "./lib/dk.netarkivet.harvester.jar:" + "./lib/dk.netarkivet.archive.jar:"
-                + "./lib/dk.netarkivet.monitor.jar:$CLASSPATH;java "
+                + "./lib/netarchivesuite-harvest-scheduler.jar:$CLASSPATH;java "
                 + "-Xmx1536m  -Ddk.netarkivet.settings.file=./conf/settings_GUIApplication.xml "
                 + "-Dlogback.configurationFile=./conf/logback_GUIApplication.xml "
                 + "dk.netarkivet.harvester.tools.HarvestdatabaseUpdateApplication "

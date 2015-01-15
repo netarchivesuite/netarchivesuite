@@ -23,7 +23,6 @@
 package dk.netarkivet.systemtest.environment;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -123,8 +122,7 @@ public class TestEnvironmentController {
         return runCommand(server, command, commandTimeout, quotes, new int[] {0});
     }
 
-    public String runCommand(String server, String command, int[] positiveExitCodes)
-               throws Exception {
+    public String runCommand(String server, String command, int[] positiveExitCodes) throws Exception {
         return runCommand(server, command, 1000, "\"", positiveExitCodes);
     }
 
@@ -136,7 +134,7 @@ public class TestEnvironmentController {
             throws Exception {
         RemoteCommand remoteCommand = new RemoteCommand(server, command, quotes);
 
-        log.info("Running JSch command: " + remoteCommand);
+        log.info("Running JSch command (on " + server + "): " + remoteCommand);
 
         BufferedReader inReader = null;
         BufferedReader errReader = null;
@@ -262,34 +260,6 @@ public class TestEnvironmentController {
             return sb.toString();
         }
 
-    }
-
-    /**
-     * The deployment script on the test server expects the 'TIMESTAMP' variable to be set to the value between the
-     * 'NetarchiveSuite-' and '.zip' part of the NetarchiveSuite zip file in the 'target/deploy' directory.
-     *
-     * @return
-     */
-    private String lookupRevisionValue() {
-        String revisionValue = null;
-        if (System.getProperty("systemtest.version") != null) {
-            revisionValue = System.getProperty("systemtest.version");
-        } else {
-            File dir = new File("deploy");
-            String[] children = dir.list();
-            int testXValueStart = "NetarchiveSuite-".length();
-            if (children != null) {
-                for (String fileName : children) {
-                    int zipPrefixPos = fileName.indexOf(".zip");
-                    if (fileName.contains("NetarchiveSuite-") && zipPrefixPos > testXValueStart) {
-                        revisionValue = fileName.substring(testXValueStart, zipPrefixPos);
-                    }
-                }
-            } else {
-                log.warn("No revision number found, null timestamp will be used");
-            }
-        }
-        return revisionValue;
     }
 
     /**

@@ -45,7 +45,8 @@ public class DatabaseMigrationSanityTest extends AbstractStressTest {
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
             shutdownPreviousTest();
-            checkUpdateTimes();
+// Disabled, export of production data isn't currently done on a regular basis.
+//            checkUpdateTimes();
             fetchProductionData();
             deployComponents();
             replaceDatabasesWithProd(true);
