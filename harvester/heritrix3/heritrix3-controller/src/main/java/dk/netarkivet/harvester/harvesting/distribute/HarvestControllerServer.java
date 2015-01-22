@@ -57,6 +57,7 @@ import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy;
 import dk.netarkivet.harvester.harvesting.HarvestController;
+import dk.netarkivet.harvester.harvesting.Heritrix3Files;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.PersistentJobData;
 import dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy;
@@ -640,7 +641,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
                 File crawlDir = createCrawlDir();
 
-                final HeritrixFiles files = controller.writeHarvestFiles(crawlDir, job, origHarvestInfo,
+                final Heritrix3Files files = controller.writeHarvestFiles(crawlDir, job, origHarvestInfo,
                         metadataEntries);
 
                 log.info(STARTCRAWL_MESSAGE + " {}", job.getJobID());

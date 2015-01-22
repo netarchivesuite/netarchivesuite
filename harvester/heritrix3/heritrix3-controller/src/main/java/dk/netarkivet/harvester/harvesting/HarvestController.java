@@ -120,19 +120,19 @@ public class HarvestController {
     }
 
     /**
-     * Writes the files involved with a harvests. Creates the Heritrix arcs directory to ensure that this directory
-     * exists in advance.
-     *
+     * Writes the files involved with a harvests. 
+     * 
      * @param crawldir The directory that the crawl should take place in.
      * @param job The Job object containing various harvest setup data.
      * @param hdi The object encapsulating documentary information about the harvest.
      * @param metadataEntries Any metadata entries sent along with the job that should be stored for later use.
      * @return An object encapsulating where these files have been written.
      */
-    public HeritrixFiles writeHarvestFiles(File crawldir, Job job, HarvestDefinitionInfo hdi,
+    public Heritrix3Files writeHarvestFiles(File crawldir, Job job, HarvestDefinitionInfo hdi,
             List<MetadataEntry> metadataEntries) {
     	// FIXME this hardwires the HeritrixFiles to H1
-        final HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(crawldir, job);
+    	
+        final Heritrix3Files files = Heritrix3Files.getH3HeritrixFiles(crawldir, job);
 
         // If this job is a job that tries to continue a previous job
         // using the Heritrix recover.gz log, and this feature is enabled,
@@ -161,9 +161,10 @@ public class HarvestController {
         } else {
             log.debug("Deduplication disabled.");
         }
-
+        /*
         // Create Heritrix arcs directory before starting Heritrix to ensure
         // the arcs directory exists in advance.
+        
         boolean created = files.getArcsDir().mkdir();
         if (!created) {
             log.warn("Unable to create arcsdir: {}", files.getArcsDir());
@@ -174,6 +175,7 @@ public class HarvestController {
         if (!created) {
             log.warn("Unable to create warcsdir: {}", files.getWarcsDir());
         }
+        */
 
         return files;
     }
@@ -185,7 +187,7 @@ public class HarvestController {
      * @param job The harvest Job object containing various harvest setup data.
      * @param files Heritrix files related to this harvestjob.
      */
-    private void tryToRetrieveRecoverLog(Job job, HeritrixFiles files) {
+    private void tryToRetrieveRecoverLog(Job job, Heritrix3Files files) {
         Long previousJob = job.getContinuationOf();
         List<CDXRecord> metaCDXes = null;
         try {
@@ -234,7 +236,7 @@ public class HarvestController {
      * @param job A harvestjob
      * @param files Heritrix files related to this harvestjob.
      */
-    private void insertHeritrixRecoverPathInOrderXML(Job job, HeritrixFiles files) {
+    private void insertHeritrixRecoverPathInOrderXML(Job job, Heritrix3Files files) {
     	
         HeritrixTemplate temp = job.getOrderXMLdoc(); 
     	temp.setRecoverlogNode(files.getRecoverBackupGzFile());
@@ -273,7 +275,7 @@ public class HarvestController {
      * @param files Description of files involved in running Heritrix. Not Null.
      * @throws ArgumentNotValid if an argument isn't valid.
      */
-    public void runHarvest(HeritrixFiles files) throws ArgumentNotValid {
+    public void runHarvest(Heritrix3Files files) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
         HeritrixLauncher hl = HeritrixLauncherFactory.getInstance(files);
         hl.doCrawl();
