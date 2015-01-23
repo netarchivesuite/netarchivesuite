@@ -278,5 +278,4 @@ public final class HarvestDBConnection {
                     dataSource.getPreferredTestQuery(), dataSource.isTestConnectionOnCheckin());
         }
     }
-
 }

@@ -91,13 +91,13 @@ public abstract class SeleniumTest extends ExtendedTestCase {
      * @return The startup script to run.
      */
     protected String getStartupScript() {
-        return "all_test_db.sh";
+        return "all_test.sh";
     }
 
     private void initialiseSelenium() {
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        baseUrl = testController.getGuiHost() + ":" + testController.getGuiPort();
+        baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         TestGUIController.waitForGUIToStart(60);
 

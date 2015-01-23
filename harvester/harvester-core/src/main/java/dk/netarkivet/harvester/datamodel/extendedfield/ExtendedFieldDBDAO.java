@@ -98,6 +98,7 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             statement.setInt(8, aExtendedField.isMandatory() ? 1 : 0);
             statement.setInt(9, aExtendedField.getSequencenr());
             statement.setInt(10, aExtendedField.getMaxlen());
+
             // TODO replace this toString by something better
             log.debug(statement.toString());
 
@@ -253,7 +254,6 @@ public class ExtendedFieldDBDAO extends ExtendedFieldDAO {
             String defaultvalue = result.getString(4);
             String options = result.getString(5);
             int datatype = result.getInt(6);
-            // TODO maybe this cast is not necessary
             boolean mandatory = result.getInt(7) != 0;
             int sequencenr = result.getInt(8);
             int maxlen = result.getInt(9);

@@ -117,17 +117,17 @@ public class FindDomainsForCrawllogExtraction {
 
     private static void findDataForHarvestId(long harvestId, long minObjectCount, Map<Long, ConfigEntry> map) 
             throws SQLException {
-        Connection conn =  HarvestDBConnection.get();
-        PreparedStatement s = DBUtils.prepareStatement(conn, 
-                "SELECT config_id, job_id, bytecount, objectcount from historyinfo " +
-                "where stopreason=0 and harvest_id=? and objectcount > ?", harvestId, minObjectCount );
-        ResultSet res = s.executeQuery();
-        while (res.next()) {
-            ConfigEntry entry = new ConfigEntry(
-                    res.getLong(1),res.getLong(2), res.getLong(3), res.getLong(4));
-            map.put(entry.getcId(), entry); 
+        try (Connection conn =  HarvestDBConnection.get(); ) {
+            PreparedStatement s = DBUtils.prepareStatement(conn,
+                    "SELECT config_id, job_id, bytecount, objectcount from historyinfo " +
+                            "where stopreason=0 and harvest_id=? and objectcount > ?", harvestId, minObjectCount);
+            ResultSet res = s.executeQuery();
+            while (res.next()) {
+                ConfigEntry entry = new ConfigEntry(
+                        res.getLong(1), res.getLong(2), res.getLong(3), res.getLong(4));
+                map.put(entry.getcId(), entry);
+            }
         }
-        HarvestDBConnection.release(conn);
     }
     
     

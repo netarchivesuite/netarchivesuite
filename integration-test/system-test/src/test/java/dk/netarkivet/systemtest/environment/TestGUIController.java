@@ -50,7 +50,7 @@ public class TestGUIController {
         try {
             log.info("Redeploying GUI");
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "rm -r tmpdircommon/*");
-            testController.runCommandWithoutQuotes("prepare_test_db.sh");
+            testController.runCommandWithoutQuotes("prepare_test.sh");
             testController.runCommandWithoutQuotes("scp -r release_software_dist/$TESTX/lib/* "
                     + TestEnvironment.JOB_ADMIN_SERVER + ":~/$TESTX/lib");
             testController.runCommandWithoutQuotes("scp -r release_software_dist/$TESTX/webpages/* "

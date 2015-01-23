@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.systemtest.functional;
 
-import static org.testng.Assert.fail;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +35,6 @@ import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.Application;
 import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.NASSystemUtil;
-import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.page.PageHelper;
 
 /**
@@ -66,10 +63,6 @@ public class SystemOverviewTest extends AbstractSystemTest {
                     + waitedSeconds + " seconds");
             if (numberOfAppsInOverview >= numberOfApps) {
                 break;
-            }
-            if (waitedSeconds == MAX_SECONDS_TO_WAIT) {
-                fail("Only " + numberOfAppsInOverview + " appeared in " + waitedSeconds + " seconds, expected "
-                        + numberOfApps);
             }
             Thread.sleep(WAIT_INTERVAL * 1000);
         }

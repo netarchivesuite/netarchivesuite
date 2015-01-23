@@ -73,7 +73,7 @@ public class SchedulerDatabaseBuilder {
 
         Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:" + TestInfo.WORKING_DIR.getCanonicalPath() + "/fullhddb");
 
-        DatabaseTestUtils.getHDDB("/" + TestInfo.BASEDIR + "/emptyhddb.jar", "fullhddb", TestInfo.WORKING_DIR);
+        DatabaseTestUtils.createHDDB("/" + TestInfo.BASEDIR + "/emptyhddb.jar", "fullhddb", TestInfo.WORKING_DIR);
         HarvestDAOUtils.resetDAOs();
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }

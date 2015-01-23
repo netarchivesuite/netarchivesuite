@@ -14,7 +14,8 @@ public abstract class AbstractSystemTest extends SeleniumTest {
             null,
             null,
             8071,
-            TestEnvironment.JOB_ADMIN_SERVER
+            TestEnvironment.JOB_ADMIN_SERVER,
+            null
     );
     static TestEnvironmentController testController = new TestEnvironmentController(testEnvironment);
 

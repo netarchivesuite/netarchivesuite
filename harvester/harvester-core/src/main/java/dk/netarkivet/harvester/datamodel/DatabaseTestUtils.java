@@ -61,13 +61,8 @@ public class DatabaseTestUtils {
      * @param resourcePath A file that contains a test database.
      * @param dbCreationDir
      * @return a connection to the database stored in the given file
-     * @throws SQLException
-     * @throws IOException
-     * @throws IllegalAccessException
      */
-    public static Connection takeDatabase(String resourcePath, String dbname, File dbCreationDir) throws SQLException,
-            IOException, IllegalAccessException {
-
+    public static void createDatabase(String resourcePath, String dbname, File dbCreationDir) throws Exception {
         Settings.set(CommonSettings.DB_MACHINE, "");
         Settings.set(CommonSettings.DB_PORT, "");
         Settings.set(CommonSettings.DB_DIR, "");
@@ -81,25 +76,20 @@ public class DatabaseTestUtils {
 
         long startTime = System.currentTimeMillis();
 
-        Connection c = DriverManager.getConnection(dburi + ";create=true");
-        c.setAutoCommit(false); // load faster.
+        try (Connection c = DriverManager.getConnection(dburi + ";create=true");){
+            c.setAutoCommit(false); // Do not commit individual .
+            // locate create script first, next to resource
+            File createFile = new File(new File(resourcePath).getParentFile(), "create.sql");
+            applyStatementsInInputStream(c, checkNotNull(new FileInputStream(createFile), "create.sql"));
 
-        // locate create script first, next to resource
-        File createFile = new File(new File(resourcePath).getParentFile(), "create.sql");
+            // then populate it.
+            FileInputStream is = checkNotNull(new FileInputStream(resourcePath), resourcePath);
+            applyStatementsInInputStream(c, is);
 
-        applyStatementsInInputStream(c, checkNotNull(new FileInputStream(createFile), "create.sql"));
-
-        // then populate it.
-        FileInputStream is = checkNotNull(new FileInputStream(resourcePath), resourcePath);
-        applyStatementsInInputStream(c, is);
-
-        c.commit();
+            c.commit();
+        }
 
         log.debug("Populated {} in {}(ms)", dbfile, (System.currentTimeMillis() - startTime));
-
-        c.close();
-
-        return DriverManager.getConnection(dburi);
     }
 
     private static void applyStatementsInInputStream(Connection connection, InputStream is) throws SQLException,
@@ -142,13 +132,9 @@ public class DatabaseTestUtils {
      * @param resourcePath A file that contains a test database.
      * @param dbCreationDir
      * @return a connection to the database stored in the given file
-     * @throws SQLException
-     * @throws IOException
-     * @throws IllegalAccessException
      */
-    public static Connection takeDatabase(String resourcePath, File dbCreationDir) throws SQLException, IOException,
-            IllegalAccessException {
-        return takeDatabase(resourcePath, "derivenamefromresource", dbCreationDir);
+    public static void createDatabase(String resourcePath, File dbCreationDir) throws Exception {
+        createDatabase(resourcePath, "derivenamefromresource", dbCreationDir);
     }
 
     /**
@@ -158,21 +144,15 @@ public class DatabaseTestUtils {
      * @param resourcePath Location of the sql files to create and populate the test DB.
      * @param dbCreationDir
      * @return a connection to the given sample harvest definition database
-     * @throws SQLException
-     * @throws IOException
-     * @throws IllegalAccessException
      */
-    public static Connection getHDDB(String resourcePath, String dbname, File dbCreationDir) throws SQLException,
-            IOException, IllegalAccessException {
-        return takeDatabase(resourcePath, dbname, dbCreationDir);
+    public static void createHDDB(String resourcePath, String dbname, File dbCreationDir) throws Exception {
+        createDatabase(resourcePath, dbname, dbCreationDir);
     }
 
     /**
      * Drop access to the database that's currently taken.
-     *
-     * @throws SQLException
      */
-    public static void dropDatabase() throws SQLException, NoSuchFieldException, IllegalAccessException {
+    public static void dropDatabase() throws Exception {
         try {
             final String shutdownUri = dburi + ";shutdown=true";
             DriverManager.getConnection(shutdownUri);
@@ -201,12 +181,8 @@ public class DatabaseTestUtils {
 
     /**
      * Drop the connection to the harvest definition database.
-     *
-     * @throws IllegalAccessException
-     * @throws NoSuchFieldException
-     * @throws Exception
      */
-    public static void dropHDDB() throws SQLException, NoSuchFieldException, IllegalAccessException {
+    public static void dropHDDB() throws Exception {
         dropDatabase();
         log.debug("dropHDDB() 1");
         HarvestDBConnection.cleanup();

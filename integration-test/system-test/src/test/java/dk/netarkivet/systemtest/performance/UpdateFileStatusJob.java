@@ -23,7 +23,7 @@ class UpdateFileStatusJob extends GenericWebJob {
 
     @Override void startJob() {
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = stressTest.testController.getGuiHost() + ":" + stressTest.testController.getGuiPort();
+        String baseUrl = stressTest.testController.ENV.getGuiHost() + ":" + stressTest.testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         stressTest.addStep("Opening bitpreservation section of GUI.",
                 "The page should open and show the number of files in the archive.");

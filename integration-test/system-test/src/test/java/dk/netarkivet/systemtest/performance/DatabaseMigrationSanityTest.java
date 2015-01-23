@@ -42,20 +42,11 @@ import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 @SuppressWarnings("static-access")
 public class DatabaseMigrationSanityTest extends AbstractStressTest {
 
-    /**
-     * Basic sanity test that the current production database can be consistently upgraded with the latest NAS software.
-     * This test is designed to be cheap to run so it can easily be tested on any snapshot.
-     */
-    @Test(groups = {"performancetest"})
-    public void dbMigrationSanityTest() throws Exception {
-        addDescription("Test that database schema ingest from production produces a functional NAS system.");
-        doStuff();
-    }
-
     @BeforeClass
     public void setupTestEnvironment() throws Exception {
             shutdownPreviousTest();
-            checkUpdateTimes();
+// Disabled, export of production data isn't currently done on a regular basis.
+//            checkUpdateTimes();
             fetchProductionData();
             deployComponents();
             replaceDatabasesWithProd(true);
@@ -65,11 +56,16 @@ public class DatabaseMigrationSanityTest extends AbstractStressTest {
             uploadFiles();
     }
 
-    private void doStuff() throws Exception {
+    /**
+     * Basic sanity test that the current production database can be consistently upgraded with the latest NAS software.
+     * This test is designed to be cheap to run so it can easily be tested on any snapshot.
+     */
+    @Test(groups = {"performancetest"})
+    public void dbMigrationSanityTest() throws Exception {
         WebDriver driver = new FirefoxDriver();
         TestGUIController TestGUIController = new TestGUIController(testController);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = testController.getGuiHost() + ":" + testController.getGuiPort();
+        String baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         TestGUIController.waitForGUIToStart(60);
         addFixture("Opening NAS front page.");
@@ -107,10 +103,10 @@ public class DatabaseMigrationSanityTest extends AbstractStressTest {
                 "chmod 755 ${HOME}/bitarchive_testdata/upload.sh");
         addFixture("Upload arcfiles to arcrepository.");
         testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "${HOME}/bitarchive_testdata/upload.sh "
-                + testController.getTESTX() + " arcfiles");
+                + testController.ENV.getTESTX() + " arcfiles");
         addFixture("Upload warcfiles to arcrepository.");
         testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "${HOME}/bitarchive_testdata/upload.sh "
-                + testController.getTESTX() + " warcfiles");
+                + testController.ENV.getTESTX() + " warcfiles");
     }
 
 }

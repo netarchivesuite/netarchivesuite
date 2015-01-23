@@ -2,10 +2,10 @@ package dk.netarkivet.systemtest.performance;
 
 import java.util.concurrent.TimeUnit;
 
-import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import org.openqa.selenium.WebDriver;
 
 import dk.netarkivet.systemtest.TestLogger;
+import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import dk.netarkivet.systemtest.environment.TestGUIController;
 import dk.netarkivet.systemtest.page.PageHelper;
 
@@ -26,8 +26,8 @@ abstract class GenericWebJob extends LongRunningJob {
         this.driver = driver;
         this.TestGUIController = new TestGUIController(testController);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = testController
-                .getGuiHost() + ":" + testController.getGuiPort();
+        String baseUrl = testController.ENV
+                .getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         TestGUIController.waitForGUIToStart(60);
         stressTest.addFixture("Opening front page " + baseUrl);

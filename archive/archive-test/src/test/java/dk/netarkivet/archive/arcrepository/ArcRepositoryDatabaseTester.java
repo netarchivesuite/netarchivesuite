@@ -167,7 +167,7 @@ public class ArcRepositoryDatabaseTester {
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         // Database admin test.
-        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(), TestInfo.WORKING_DIR);
+        DatabaseTestUtils.createDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(), TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, PrintNotifications.class.getName());

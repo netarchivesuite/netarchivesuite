@@ -28,10 +28,8 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.sql.SQLException;
 import java.util.regex.Pattern;
 
 import org.dom4j.Document;
@@ -69,13 +67,13 @@ public class HarvestTemplateApplicationTester {
     PrintStream errPrintStream = new PrintStream(newErr);
 
     @Before
-    public void setUp() throws SQLException, IllegalAccessException, IOException {
+    public void setUp() throws Exception {
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
         HarvestDAOUtils.resetDAOs();
         Settings.set(CommonSettings.DB_BASE_URL, "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
-        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb", TestInfo.TEMPDIR);
+        DatabaseTestUtils.createHDDB(TestInfo.DBFILE, "fullhddb", TestInfo.TEMPDIR);
         TemplateDAO.getInstance();
 
         origIn = System.in;

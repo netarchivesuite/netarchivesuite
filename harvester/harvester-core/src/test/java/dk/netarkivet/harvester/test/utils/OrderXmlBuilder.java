@@ -28,7 +28,8 @@ import dk.netarkivet.common.xml.NodeTraverser;
 import dk.netarkivet.common.xml.XmlBuilder;
 
 public class OrderXmlBuilder extends XmlBuilder {
-    public static final String DEFAULT_ORDE_XML_NAME = "FullSite-order";
+    public static final String DEFAULT_ORDER_XML_NAME = "FullSite-order";
+    public static final String ORDER_XML_NAME = "order.xml";
 
     private OrderXmlBuilder() {}
     private OrderXmlBuilder(String name) { super(parseFile(name)); }
@@ -36,7 +37,7 @@ public class OrderXmlBuilder extends XmlBuilder {
     public static OrderXmlBuilder create() {
         return new OrderXmlBuilder();
     }
-    public static OrderXmlBuilder createDefault() { return createDefault("order.xml"); }
+    public static OrderXmlBuilder createDefault() { return createDefault(ORDER_XML_NAME); }
     public static OrderXmlBuilder createDefault(String name) { return new OrderXmlBuilder(name);}
 
     public OrderXmlBuilder enableDeduplication() {

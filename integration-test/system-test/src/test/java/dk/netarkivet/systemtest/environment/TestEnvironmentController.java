@@ -23,11 +23,9 @@
 package dk.netarkivet.systemtest.environment;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 
@@ -43,40 +41,10 @@ import dk.netarkivet.systemtest.TestLogger;
  */
 public class TestEnvironmentController {
     protected final TestLogger log = new TestLogger(getClass());
-    private final String TESTX;
-    private final String GUI_HOST;
-    private final int GUI_PORT;
-    private final String TIMESTAMP;
-    private final String MAILRECEIVERS;
+    public final TestEnvironment ENV;
 
     public TestEnvironmentController(TestEnvironment env) {
-        TESTX = env.getTESTX();
-        GUI_HOST = env.getGuiHost();
-        GUI_PORT = env.getGuiPort();
-        TIMESTAMP = env.getTimestamp();
-        MAILRECEIVERS = env.getMailreceivers();
-    }
-
-
-    /**
-     * @return The host the gui is run on.
-     */
-    public String getGuiHost() {
-        return GUI_HOST;
-    }
-
-    /**
-     * @return The port the web gui is run on.
-     */
-    public String getGuiPort() {
-        return GUI_PORT + "";
-    }
-
-    /**
-     * @return The test name.
-     */
-    public String getTESTX() {
-        return TESTX;
+        this.ENV = env;
     }
 
     /**
@@ -116,7 +84,7 @@ public class TestEnvironmentController {
      * @param remoteCommand The command to run on the remote server.
      */
     public String runTestXCommand(String server, String remoteCommand) throws Exception {
-        String testXRemoteCommand = "cd " + getTESTX() + ";" + remoteCommand;
+        String testXRemoteCommand = "cd " + ENV.getTESTX() + ";" + remoteCommand;
         return runCommand(server, testXRemoteCommand, 1000);
     }
 
@@ -154,8 +122,7 @@ public class TestEnvironmentController {
         return runCommand(server, command, commandTimeout, quotes, new int[] {0});
     }
 
-    public String runCommand(String server, String command, int[] positiveExitCodes)
-               throws Exception {
+    public String runCommand(String server, String command, int[] positiveExitCodes) throws Exception {
         return runCommand(server, command, 1000, "\"", positiveExitCodes);
     }
 
@@ -167,12 +134,12 @@ public class TestEnvironmentController {
             throws Exception {
         RemoteCommand remoteCommand = new RemoteCommand(server, command, quotes);
 
-        log.info("Running JSch command: " + remoteCommand);
+        log.info("Running JSch command (on " + server + "): " + remoteCommand);
 
         BufferedReader inReader = null;
         BufferedReader errReader = null;
         JSch jsch = new JSch();
-        Session session = jsch.getSession("test", TestEnvironment.DEPLOYMENT_SERVER);
+        Session session = jsch.getSession(TestEnvironment.DEPLOYMENT_USER, TestEnvironment.DEPLOYMENT_SERVER);
         setupJSchIdentity(jsch);
         session.setConfig("StrictHostKeyChecking", "no");
 
@@ -259,12 +226,15 @@ public class TestEnvironmentController {
             }
 
             String setTimestampCommand = "true";
-            if (TIMESTAMP != null) {
-                setTimestampCommand = "export TIMESTAMP=" + TIMESTAMP;
+            if (ENV.getTimestamp() != null) {
+                setTimestampCommand = "export TIMESTAMP=" + ENV.getTimestamp();
             }
-            String setPortCommand = "export PORT=" + GUI_PORT;
-            String setMailReceiversCommand = "export MAILRECEIVERS=" + MAILRECEIVERS;
-            String setTestCommand = "export TESTX=" + TESTX;
+            if (ENV.getDeployConfig() != null) {
+                setTimestampCommand = "export DEPLOYCONF=" + ENV.getDeployConfig();
+            }
+            String setPortCommand = "export PORT=" + ENV.getGuiPort();
+            String setMailReceiversCommand = "export MAILRECEIVERS=" + ENV.getMailreceivers();
+            String setTestCommand = "export TESTX=" + ENV.getTESTX();
             String setPathCommand = "source /etc/bashrc;source /etc/profile;source ~/.bash_profile";
 
             environmentSetup = setPathCommand + ";" + setTimestampCommand + ";" + setPortCommand + ";"
@@ -290,34 +260,6 @@ public class TestEnvironmentController {
             return sb.toString();
         }
 
-    }
-
-    /**
-     * The deployment script on the test server expects the 'TIMESTAMP' variable to be set to the value between the
-     * 'NetarchiveSuite-' and '.zip' part of the NetarchiveSuite zip file in the 'target/deploy' directory.
-     *
-     * @return
-     */
-    private String lookupRevisionValue() {
-        String revisionValue = null;
-        if (System.getProperty("systemtest.version") != null) {
-            revisionValue = System.getProperty("systemtest.version");
-        } else {
-            File dir = new File("deploy");
-            String[] children = dir.list();
-            int testXValueStart = "NetarchiveSuite-".length();
-            if (children != null) {
-                for (String fileName : children) {
-                    int zipPrefixPos = fileName.indexOf(".zip");
-                    if (fileName.contains("NetarchiveSuite-") && zipPrefixPos > testXValueStart) {
-                        revisionValue = fileName.substring(testXValueStart, zipPrefixPos);
-                    }
-                }
-            } else {
-                log.warn("No revision number found, null timestamp will be used");
-            }
-        }
-        return revisionValue;
     }
 
     /**

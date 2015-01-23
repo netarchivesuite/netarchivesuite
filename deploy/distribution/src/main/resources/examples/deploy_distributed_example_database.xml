@@ -304,7 +304,7 @@
                                 <jmxUsername>controlRole</jmxUsername>
                                 <jmxPassword>R_D</jmxPassword>
                             </heritrix>
-                            <serverDir>harvester_low</serverDir>
+                            <serverDir>harvester_focused</serverDir>
                         </harvesting>
                     </harvester>
                 </settings>
@@ -320,7 +320,7 @@
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
                 <settings>
                     <common>
-                        <applicationInstanceId>low</applicationInstanceId>            
+                        <applicationInstanceId>snapshot</applicationInstanceId>
                         <jmx>
                             <port>8110</port>
                             <rmiPort>8210</rmiPort>
@@ -328,7 +328,7 @@
                     </common>
                     <harvester>
                         <harvesting>
-                            <channel>LOWPRIORITY</channel>
+                            <channel>SNAPSHOT</channel>
                             <heritrix>
                                 <guiPort>8111</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
@@ -336,7 +336,7 @@
                                  <jmxUsername>controlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
- 			    <serverDir>harvester_low</serverDir>
+                            <serverDir>harvester_snapshot</serverDir>
                         </harvesting>
                     </harvester>
                 </settings>
@@ -345,7 +345,7 @@
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
                 <settings>
                     <common>
-                        <applicationInstanceId>high</applicationInstanceId>
+                        <applicationInstanceId>focused</applicationInstanceId>
                         <jmx>
                             <port>8112</port>
                             <rmiPort>8212</rmiPort>
@@ -353,7 +353,7 @@
                     </common>
                     <harvester>
                         <harvesting>
-                            <channel>HIGHPRIORITY</channel> 
+                            <channel>FOCUSED</channel>
                             <heritrix>
                                 <guiPort>8113</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8093) -->
@@ -361,7 +361,7 @@
                                  <jmxUsername>controlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
- 			    <serverDir>harvester_high</serverDir>
+                            <serverDir>harvester_focused</serverDir>
                         </harvesting>
                     </harvester>
                 </settings>
@@ -455,6 +455,7 @@
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
                 <settings>
                     <common>
+                        <applicationInstanceId>focused</applicationInstanceId>
                         <jmx>
                             <port>8110</port>
                             <rmiPort>8210</rmiPort>
@@ -462,7 +463,7 @@
                     </common>
                     <harvester>
                         <harvesting>
-                            <channel>HIGHPRIORITY</channel>
+                            <channel>FOCUSED</channel>
                             <heritrix>
                                 <guiPort>8111</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
@@ -475,7 +476,7 @@
                             	<reportFilePattern>.*-report.txt</reportFilePattern>
                             	<logFilePattern>.*(\.log|\.out)</logFilePattern>
                             </metadata>
-			    <serverDir>harvester_high</serverDir>
+                            <serverDir>harvester_focused</serverDir>
                         </harvesting>
                     </harvester>
                 </settings>

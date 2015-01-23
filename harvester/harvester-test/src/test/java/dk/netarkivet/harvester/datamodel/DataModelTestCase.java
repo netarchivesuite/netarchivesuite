@@ -25,7 +25,6 @@ package dk.netarkivet.harvester.datamodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -94,11 +93,7 @@ public class DataModelTestCase {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         HarvestDAOUtils.resetDAOs();
         log.trace("setup() DatabaseTestUtils.getHDDB " + TestInfo.DBFILE + "  fullhddb " + TestInfo.TEMPDIR);
-        Connection c = DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb", TestInfo.TEMPDIR);
-        if (c == null) {
-            fail("No connection to Database: " + TestInfo.DBFILE);
-        }
-
+        DatabaseTestUtils.createHDDB(TestInfo.DBFILE, "fullhddb", TestInfo.TEMPDIR);
         assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_BASE_URL), derbyDBUrl);
     }
 

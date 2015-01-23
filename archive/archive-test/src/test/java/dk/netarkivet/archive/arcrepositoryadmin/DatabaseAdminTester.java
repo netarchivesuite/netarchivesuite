@@ -70,7 +70,7 @@ public class DatabaseAdminTester {
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
 
-        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(), TestInfo.DATABASE_DIR);
+        DatabaseTestUtils.createDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(), TestInfo.DATABASE_DIR);
 
         // define the settings for accessing the database
         Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE, TestInfo.DATABASE_URL);
