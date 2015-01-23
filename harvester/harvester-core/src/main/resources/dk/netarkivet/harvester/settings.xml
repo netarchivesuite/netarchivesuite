@@ -141,7 +141,7 @@ National Library.
                 <class>dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController</class>
             </heritrixController>
             <harvestReport>
-                <class>dk.netarkivet.harvester.harvesting.report.LegacyHarvestReportTester</class>
+                <class>dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport</class>
                 <disregardSeedURLInfo>false</disregardSeedURLInfo>
             </harvestReport>
             <deduplication>
