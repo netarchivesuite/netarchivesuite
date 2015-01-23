@@ -36,7 +36,7 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 public abstract class HeritrixLauncher {
 
     /** Class encapsulating placement of various files. */
-    private HeritrixFiles files;
+    private Heritrix3Files files;
 
     /** the arguments passed to the HeritricController constructor. */
     private Object[] args;
@@ -50,7 +50,7 @@ public abstract class HeritrixLauncher {
      * @param files Object encapsulating location of Heritrix crawldir and configuration files.
      * @throws ArgumentNotValid If either seedsfile or orderfile does not exist.
      */
-    protected HeritrixLauncher(HeritrixFiles files) throws ArgumentNotValid {
+    protected HeritrixLauncher(Heritrix3Files files) throws ArgumentNotValid {
         if (!files.getOrderXmlFile().isFile()) {
             throw new ArgumentNotValid("File '" + files.getOrderXmlFile().getName() + "' must exist in order for "
                     + "Heritrix to run. This filepath does not refer to existing file: "
@@ -85,7 +85,7 @@ public abstract class HeritrixLauncher {
     /**
      * @return an instance of the wrapper class for Heritrix files.
      */
-    protected HeritrixFiles getHeritrixFiles() {
+    protected Heritrix3Files getHeritrixFiles() {
         return files;
     }
 

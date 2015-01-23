@@ -8,11 +8,18 @@ import dk.netarkivet.harvester.datamodel.Job;
 
 public class Heritrix3Files {
 
-	public static Heritrix3Files getH3HeritrixFiles(File crawldir, Job job) {
+	public static Heritrix3Files getH3HeritrixFiles(File crawldir, PersistentJobData harvestInfo) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	public static Heritrix3Files getH3HeritrixFiles(File crawldir, Job job) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	
 	public File getCrawlDir() {
 		// TODO Auto-generated method stub
 		return null;
@@ -48,9 +55,40 @@ public class Heritrix3Files {
 		return null;
 	}
 
-	public Object getJobID() {
+	public Long getJobID() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public File getOrderXmlFile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public File getSeedsTxtFile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Long getHarvestID() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getArchiveFilePrefix() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public void deleteFinalLogs() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void cleanUpAfterHarvest(File file) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

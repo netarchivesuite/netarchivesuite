@@ -294,9 +294,9 @@ public class HarvestController {
      * @return An object containing info about the domains harvested.
      * @throws ArgumentNotValid if an argument isn't valid.
      */
-    public HarvestReport storeFiles(HeritrixFiles files, StringBuilder errorMessage, List<File> failedFiles)
+    public HarvestReport storeFiles(Heritrix3Files files, StringBuilder errorMessage, List<File> failedFiles)
             throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
+        ArgumentNotValid.checkNotNull(files, "Heritrix3Files files");
         ArgumentNotValid.checkNotNull(errorMessage, "StringBuilder errorMessage");
         ArgumentNotValid.checkNotNull(failedFiles, "List<File> failedFiles");
         long jobID = files.getJobID();
