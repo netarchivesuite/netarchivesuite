@@ -537,6 +537,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
      */
     private void processHarvestInfoFile(File crawlDir, Throwable crawlException) throws IOFailure {
         log.debug("Post-processing files in '{}'", crawlDir.getAbsolutePath());
+        //FIXME: 
         if (!PersistentJobData.existsIn(crawlDir)) {
             throw new IOFailure("No harvestInfo found in directory: " + crawlDir.getAbsolutePath());
         }
@@ -551,7 +552,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         // FIXME
         // FIXME
         //HeritrixFiles files = new HeritrixFiles(crawlDir, harvestInfo);
-        HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(crawlDir, harvestInfo);
+        Heritrix3Files files = Heritrix3Files.getH3HeritrixFiles(crawlDir, harvestInfo);
         //HeritrixFiles files = HeritrixFiles.getH3HeritrixFiles(crawlDir, harvestJob)(crawlDir, harvestInfo);
         
         try {
@@ -640,7 +641,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
                 removeListener();
 
                 File crawlDir = createCrawlDir();
-
+                // New 
                 final Heritrix3Files files = controller.writeHarvestFiles(crawlDir, job, origHarvestInfo,
                         metadataEntries);
 

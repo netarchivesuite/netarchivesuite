@@ -77,7 +77,7 @@ public class IngestableFiles {
      * @param files An instance of HeritrixFiles
      * @throws ArgumentNotValid if null-arguments are given; if jobID < 1; if crawlDir does not exist
      */
-    public IngestableFiles(HeritrixFiles files) {
+    public IngestableFiles(Heritrix3Files files) {
         ArgumentNotValid.checkNotNull(files, "files");
         ArgumentNotValid.checkNotNull(files.getCrawlDir(), "crawlDir");
         ArgumentNotValid.checkPositive(files.getJobID(), "jobID");

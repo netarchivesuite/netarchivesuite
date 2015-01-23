@@ -60,7 +60,7 @@ public abstract class AbstractHarvestReport implements HarvestReport{
     /**
      * Constructor from DomainStatsReports.
      *
-     * @param files the set of Heritrix reports.
+     * @param files the result of parsing the crawl.log for domain statistics
      */
     public AbstractHarvestReport(DomainStatsReport dsr) {
         ArgumentNotValid.checkNotNull("DomainStatsReport dsr", "dsr");

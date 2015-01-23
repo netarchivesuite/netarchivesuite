@@ -170,6 +170,7 @@ public abstract class MetadataFileWriter {
     public void insertFiles(File parentDir, FilenameFilter filter, String mimetype, IngestableFiles files) {
         // For each metadata source file in the parentDir that matches the filter ..
         File[] metadataSourceFiles = parentDir.listFiles(filter);
+        log.debug("Now inserting " + metadataSourceFiles.length + " files from " + parentDir.getAbsolutePath() + "'.");
         for (File metadataSourceFile : metadataSourceFiles) {
             // ...write its content to the MetadataFileWriter
             log.debug("Inserting the file '{}'", metadataSourceFile.getAbsolutePath());
@@ -188,7 +189,8 @@ public abstract class MetadataFileWriter {
      * Parses the name of the given file and generates a URI representation of it.
      *
      * @param cdx A CDX file.
-     * @return A URI appropriate for identifying the file's content in Netarkivet.
+     * @param files A list of IngestableFiles (Only used for getting the harvestID)
+     * @return A URI appropriate for identifying the file's content in Netarkivet
      * @throws UnknownID if something goes terribly wrong in the CDX URI construction
      */
     private static URI getURIforFileName(File cdx, IngestableFiles files) throws UnknownID {
