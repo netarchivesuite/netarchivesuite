@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.sql.Clob;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +39,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -293,6 +290,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
     }
 
     public H1HeritrixTemplate(String templateAsString) throws DocumentException {
+        ArgumentNotValid.checkNotNull(templateAsString, "String template");
     	this.template = XmlUtils.documentFromString(templateAsString);
 	}
 
@@ -405,7 +403,6 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
     }
     */
 
-    
     private static void setIfFound(Document doc, String Xpath, String param, String value) {
         if (doc.selectSingleNode(Xpath) != null) {
             XmlUtils.setNode(doc, Xpath, value);
@@ -792,19 +789,6 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 	        xpathNode.detach();
 	    }
 	}
-	public H1HeritrixTemplate(Clob clob) throws SQLException{
-	Document doc;
-    try {
-        SAXReader reader = new SAXReader();
-        
-        doc = reader.read(clob.getCharacterStream());
-    } catch (DocumentException e) {
-    	String errMsg = "Failed to read the contents of the clob as XML:" + clob.getSubString(1, (int) clob.length()); 
-        log.warn(errMsg, e);
-        throw new IOFailure(errMsg, e);
-    }
-    this.template = doc;
-	}
 
 	@Override
 	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
@@ -883,8 +867,6 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 	        metadataItem.addText(ajob.getHarvestAudience());
 		} 
 	}
-	
-	
 
 	@Override
 	public void writeTemplate(JspWriter out) throws IOFailure {
@@ -895,4 +877,5 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 		}
 		
 	}
+
 }

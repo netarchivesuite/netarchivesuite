@@ -399,12 +399,14 @@ public class JobDBDAO extends JobDAO {
             HeritrixTemplate orderXMLdoc = null;
 
             boolean useClobs = DBSpecifics.getInstance().supportsClob();
+            String tmpStr;
             if (useClobs) {
                 Clob clob = result.getClob(8);
-                orderXMLdoc = HeritrixTemplate.getOrderXMLdocFromClob(clob);
+                tmpStr = clob.getSubString(1L, (int)clob.length());
             } else {
-                orderXMLdoc = HeritrixTemplate.getTemplateFromString(result.getString(8));
+                tmpStr = result.getString(8);
             }
+            orderXMLdoc = HeritrixTemplate.getTemplateFromString(tmpStr);
             String seedlist = "";
             if (useClobs) {
                 Clob clob = result.getClob(9);

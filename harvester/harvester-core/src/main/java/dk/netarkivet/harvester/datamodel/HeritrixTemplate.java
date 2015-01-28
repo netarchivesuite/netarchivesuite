@@ -7,10 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.sql.Clob;
-import java.sql.SQLException;
-import java.util.List;
 import java.io.Serializable;
+import java.util.List;
 
 import javax.servlet.jsp.JspWriter;
 
@@ -177,8 +175,7 @@ public abstract class HeritrixTemplate implements Serializable {
     	templ.setArchiveFilePrefix(files.getArchiveFilePrefix());
     	templ.setSeedsFilePath(files.getSeedsTxtFile().getAbsolutePath());
         if (templ.IsDeduplicationEnabled()) {
-        	templ.setDeduplicationIndexLocation(files.getIndexDir()
-                    .getAbsolutePath());
+        	templ.setDeduplicationIndexLocation(files.getIndexDir().getAbsolutePath());
         }
         files.writeOrderXml(templ);
     }
@@ -197,27 +194,6 @@ public abstract class HeritrixTemplate implements Serializable {
 	public abstract void writeToFile(File orderXmlFile);
 	public abstract void setRecoverlogNode(File recoverlogGzFile);
 	
-	/**
-     * Try to extract an orderxmldoc from a given Clob. This method is used by the read() method, which catches the
-     * thrown DocumentException.
-     *
-     * @param clob a given Clob returned from the database
-     * @return a Document object based on the data in the Clob
-     * @throws SQLException If data from the clob cannot be fetched.
-     * @throws DocumentException If unable to create a Document object based on the data in the Clob
-     */
-    public static HeritrixTemplate getOrderXMLdocFromClob(Clob clob) throws SQLException {
-    	// Taste the first 1000 characters, and look for the signatures of the different types of template.    	
-    	String signature = clob.getSubString(0L, 1000);
-    	if (signature.contains(HeritrixTemplate.H1_SIGNATURE)) {
-    		return new H1HeritrixTemplate(clob); 
-    	} else if (signature.contains(HeritrixTemplate.H3_SIGNATURE)) {
-    		return new H3HeritrixTemplate(clob);
-    	} else {
-    		throw new IllegalState("The template starting with '" + signature + "' cannot be recognized as either H1 or H3");
-    	}
-    }
-
     public static HeritrixTemplate getTemplateFromString(String templateAsString){
 		if (templateAsString.contains(H1_SIGNATURE)) {
 			try {

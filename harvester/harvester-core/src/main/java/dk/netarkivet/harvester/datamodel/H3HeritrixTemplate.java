@@ -115,30 +115,6 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
         this.template = template;
     }
     
-    /**
-     * Alternate constructor, taking a clob as an argument.
-     * @param clob The template as SQL CLOB
-     */
-    public H3HeritrixTemplate(Clob clob) {
-
-    	StringBuilder sb = new StringBuilder();
-    	try {
-    		Reader reader = clob.getCharacterStream();
-    		BufferedReader br = new BufferedReader(reader);
-
-    		String line;
-    		while(null != (line = br.readLine())) {
-    			sb.append(line);sb.append("\n");
-    		}
-    		br.close();
-    	} catch (SQLException e) {
-    		throw new IOFailure("SQLException occurred during the construction", e);
-    	} catch (IOException e) {
-    		throw new IOFailure("IOException occurred during the construction", e);
-    	}
-    	this.template = sb.toString();
-    }
-
 	/**
      * return the template.
      *
