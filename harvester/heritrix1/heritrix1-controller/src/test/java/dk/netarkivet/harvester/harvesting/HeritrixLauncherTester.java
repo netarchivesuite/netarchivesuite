@@ -204,8 +204,7 @@ public class HeritrixLauncherTester {
     public void testStartMissingSeedsFile() {
         try {
         	//FIXME assumes H1 HeritrixFiles
-            HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
-            		TestInfo.WORKING_DIR, new JobInfoTestImpl(42L, 42L));
+            HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, new JobInfoTestImpl(42L, 42L));
             hf.getSeedsTxtFile().delete();
             HeritrixLauncherFactory.getInstance(hf);
             fail("Expected FileNotFoundException");

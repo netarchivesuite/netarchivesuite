@@ -35,7 +35,8 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
  * Contains test information about all harvestdefinition test data.
  */
 public class TestInfo {
-    public static final File DATA_DIR = new File("tests/dk/netarkivet/harvester/harvesting/distribute/data/");
+
+	public static final File DATA_DIR = new File("tests/dk/netarkivet/harvester/harvesting/distribute/data/");
     public static ChannelID SERVER_ID = Channels.getThisReposClient();
     public static final File SERVER_DIR = new File(TestInfo.DATA_DIR, "server");
     public static final String DUMMY_SERVER_ID = "hc_test_dummy_server";
@@ -69,4 +70,5 @@ public class TestInfo {
     static final File LEFTOVER_CRAWLDIR_3 = new File(TestInfo.LEFTOVER_JOB_DIR_3, "crawldir");
     static final File TEST_CRAWL_DIR = new File("tests/dk/netarkivet/harvester/harvesting/data/crawldir");
     static final File CRAWL_DIR_COPY = new File("tests/dk/netarkivet/harvester/harvesting/data/copyOfCrawldir");
+
 }
