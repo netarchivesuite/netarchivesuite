@@ -28,12 +28,12 @@ import java.io.File;
 import dk.netarkivet.testutils.TestResourceUtils;
 
 public class TestInfo {
-    protected static final String BASEDIR = TestResourceUtils.getFilePath(
-            "dk/netarkivet/harvester/harvesting/data");
-    protected static final String DATA_DIR = TestResourceUtils.getFilePath(
-            "dk/netarkivet/harvester/harvesting/distribute/data/");
+
+	protected static final String BASEDIR = TestResourceUtils.getFilePath("dk/netarkivet/harvester/harvesting/data");
+    protected static final String DATA_DIR = TestResourceUtils.getFilePath("dk/netarkivet/harvester/harvesting/distribute/data/");
 
     protected static final File ORIGINALS_DIR = new File(BASEDIR, "originals");
     protected static final File WARCPROCESSORFILES_DIR = new File(BASEDIR, "warcprocessortestdata");
     protected static final File WORKING_DIR = new File(BASEDIR, "working");
+
 }

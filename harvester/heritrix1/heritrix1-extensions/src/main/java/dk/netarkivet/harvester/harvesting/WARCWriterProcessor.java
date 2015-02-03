@@ -31,16 +31,19 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.management.Attribute;
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanException;
 import javax.management.ReflectionException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -68,6 +71,10 @@ import org.archive.util.ArchiveUtils;
 import org.archive.util.XmlUtils;
 import org.archive.util.anvl.ANVLRecord;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
 
 /**
  * WARCWriterProcessor. Goes against the 0.18 version of the WARC specification (which is functionally identical to 0.17
@@ -163,7 +170,6 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
 
     private static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
 
-
     /**
      * @param name Name of this writer.
      */
@@ -191,8 +197,9 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
 
         // Add map setting to add NAS metadata to WarcInfo records. 
 
-	e = addElementToDefinition(new MapType(ATTR_METADATA_ITEMS, "Metadata items.", String.class));
-        e.setOverrideable(false);
+        e = addElementToDefinition(new MapType(ATTR_METADATA_ITEMS, "Metadata items.", String.class));
+        //e = addElementToDefinition(new StringList(ATTR_METADATA_ITEMS, "Metadata items."));
+        e.setOverrideable(true);
         e.setExpertSetting(true);
     }
 
@@ -206,8 +213,8 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
      * @throws ReflectionException 
      * @throws MBeanException 
      */
-    public Map<String,Object> getMetadataItems()
-            throws AttributeNotFoundException, MBeanException, ReflectionException {
+    /*
+    public Map<String,Object> getMetadataItems() throws AttributeNotFoundException, MBeanException, ReflectionException {
         Map<String,Object> result = null;
         MapType items = (MapType)getAttribute(ATTR_METADATA_ITEMS);
         if (items != null) {
@@ -221,6 +228,23 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         }
         return result;
     }
+    */
+
+    @SuppressWarnings("unchecked")
+    /*
+    public List<String> getMetadataItems() {
+        ArrayList<String> results = new ArrayList<String>();
+        Object obj = getAttributeUnchecked(ATTR_METADATA_ITEMS);
+        if (obj != null) {
+            List list = (StringList)obj;
+            for (Iterator i = list.iterator(); i.hasNext();) {
+                String str = (String)i.next();
+                results.add(str);
+            }
+        }
+        return results;
+    }
+    */
 
     /**
      * Writes a CrawlURI and its associated data to store file.
@@ -650,17 +674,51 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
             addIfNotBlank(record, "http-header-from",
                     XmlUtils.xpathOrNull(doc, "//map[@name='http-headers']/string[@name='from']"));
             if (metadataMap == null) {
-                metadataMap = getMetadataItems();
+                //metadataMap = getMetadataItems();
+                XPathFactory factory = XPathFactory.newInstance();
+                XPath xpath = factory.newXPath();
+                XPathExpression expr = xpath.compile(H1HeritrixTemplate.METADATA_ITEMS_XPATH);
+                Node node = (Node) expr.evaluate(doc, XPathConstants.NODE);
+                //NodeList nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+                //Node node = nodeList.item(0);
+                if (node != null) {
+                    NodeList nodeList = node.getChildNodes();
+                    if (nodeList != null) {
+                        metadataMap = new HashMap();
+                    	for (int i=0; i<nodeList.getLength(); ++i) {
+                    		node = nodeList.item(i);
+                    		if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    			String typeName = node.getNodeName();
+                    			if ("string".equals(typeName)) {
+                        			Node attribute = node.getAttributes().getNamedItem("name");
+                        			if (attribute != null && attribute.getNodeType() == Node.ATTRIBUTE_NODE) {
+                        				String key = attribute.getNodeValue();
+                        				if (key != null && key.length() > 0) {
+                        					String value = node.getTextContent();
+                        					metadataMap.put(key, value);
+                        					// debug
+                        					//System.out.println(key + "=" + value);
+                        				}
+                        			}
+                    			}
+                    		}
+                    	}
+                    }
+                }
             }
         } catch (IOException e) {
             logger.log(Level.WARNING, "Error obtaining warcinfo", e);
-        } catch (AttributeNotFoundException e) {
+        } catch (XPathExpressionException e) {
+            logger.log(Level.WARNING, "Error obtaining metadata items", e);
+        }
+        /* catch (AttributeNotFoundException e) {
         	logger.log(Level.WARNING, "Error obtaining warcinfo", e);
 		} catch (MBeanException e) {
 			logger.log(Level.WARNING, "Error obtaining warcinfo", e);
 		} catch (ReflectionException e) {
 			logger.log(Level.WARNING, "Error obtaining warcinfo", e);
 		}
+		*/
 
         // add fields from harvesInfo.xml version 0.4
         /*
@@ -676,41 +734,35 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
                 + dk.netarkivet.common.Constants.getVersionString();
         ANVLRecord recordNAS = new ANVLRecord(7);
 
-	// Add the data from the metadataMap to the WarcInfoRecord.
-        recordNAS.addLabelValue(HARVESTINFO_VERSION, (String) metadataMap.get(HARVESTINFO_VERSION));
-        recordNAS.addLabelValue(HARVESTINFO_JOBID, (String) metadataMap.get(HARVESTINFO_JOBID));
-        recordNAS.addLabelValue(HARVESTINFO_CHANNEL, (String) metadataMap.get(HARVESTINFO_CHANNEL));
-        recordNAS.addLabelValue(HARVESTINFO_HARVESTNUM, (String) metadataMap.get(HARVESTINFO_HARVESTNUM));
-        recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONID, 
-		(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONID));
-        recordNAS.addLabelValue(HARVESTINFO_MAXBYTESPERDOMAIN, 
-		(String) metadataMap.get(HARVESTINFO_MAXBYTESPERDOMAIN));
+        if (metadataMap != null) {
+            // Add the data from the metadataMap to the WarcInfoRecord.
+            recordNAS.addLabelValue(HARVESTINFO_VERSION, (String) metadataMap.get(HARVESTINFO_VERSION));
+            recordNAS.addLabelValue(HARVESTINFO_JOBID, (String) metadataMap.get(HARVESTINFO_JOBID));
+            recordNAS.addLabelValue(HARVESTINFO_CHANNEL, (String) metadataMap.get(HARVESTINFO_CHANNEL));
+            recordNAS.addLabelValue(HARVESTINFO_HARVESTNUM, (String) metadataMap.get(HARVESTINFO_HARVESTNUM));
+            recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONID,  (String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONID));
+            recordNAS.addLabelValue(HARVESTINFO_MAXBYTESPERDOMAIN, (String) metadataMap.get(HARVESTINFO_MAXBYTESPERDOMAIN));
 
-        recordNAS.addLabelValue(HARVESTINFO_MAXOBJECTSPERDOMAIN, 
-		(String) metadataMap.get(HARVESTINFO_MAXOBJECTSPERDOMAIN));
-        recordNAS.addLabelValue(HARVESTINFO_ORDERXMLNAME, 
-		(String) metadataMap.get(HARVESTINFO_ORDERXMLNAME));
-        recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONNAME,
-		(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONNAME));
+            recordNAS.addLabelValue(HARVESTINFO_MAXOBJECTSPERDOMAIN, (String) metadataMap.get(HARVESTINFO_MAXOBJECTSPERDOMAIN));
+            recordNAS.addLabelValue(HARVESTINFO_ORDERXMLNAME, (String) metadataMap.get(HARVESTINFO_ORDERXMLNAME));
+            recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONNAME, (String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONNAME));
 
-        if (metadataMap.containsKey((HARVESTINFO_SCHEDULENAME))) {
-            recordNAS.addLabelValue(HARVESTINFO_SCHEDULENAME, 
-		(String) metadataMap.get(HARVESTINFO_SCHEDULENAME));
-        }
-        recordNAS.addLabelValue(HARVESTINFO_HARVESTFILENAMEPREFIX,
-		(String) metadataMap.get(HARVESTINFO_HARVESTFILENAMEPREFIX));
- 
-        recordNAS.addLabelValue(HARVESTINFO_JOBSUBMITDATE, 
-		(String) metadataMap.get(HARVESTINFO_JOBSUBMITDATE));
-	
-        if (metadataMap.containsKey(HARVESTINFO_PERFORMER)) {
-		recordNAS.addLabelValue(HARVESTINFO_PERFORMER, 
-		(String) metadataMap.get(HARVESTINFO_PERFORMER));
-        }
+            if (metadataMap.containsKey((HARVESTINFO_SCHEDULENAME))) {
+                recordNAS.addLabelValue(HARVESTINFO_SCHEDULENAME, (String) metadataMap.get(HARVESTINFO_SCHEDULENAME));
+            }
+            recordNAS.addLabelValue(HARVESTINFO_HARVESTFILENAMEPREFIX, (String) metadataMap.get(HARVESTINFO_HARVESTFILENAMEPREFIX));
+     
+            recordNAS.addLabelValue(HARVESTINFO_JOBSUBMITDATE, (String) metadataMap.get(HARVESTINFO_JOBSUBMITDATE));
+    	
+            if (metadataMap.containsKey(HARVESTINFO_PERFORMER)) {
+    		    recordNAS.addLabelValue(HARVESTINFO_PERFORMER, (String) metadataMap.get(HARVESTINFO_PERFORMER));
+            }
 
-        if (metadataMap.containsKey(HARVESTINFO_AUDIENCE)) { 
-            recordNAS.addLabelValue(HARVESTINFO_AUDIENCE, 
-		(String) metadataMap.get(HARVESTINFO_AUDIENCE));
+            if (metadataMap.containsKey(HARVESTINFO_AUDIENCE)) { 
+                recordNAS.addLabelValue(HARVESTINFO_AUDIENCE, (String) metadataMap.get(HARVESTINFO_AUDIENCE));
+            }
+        } else {
+			logger.log(Level.SEVERE, "Error missing metadata");
         }
 
         // really ugly to return as string, when it may just be merged with

@@ -25,38 +25,114 @@ package dk.netarkivet.harvester.harvesting;
 import java.io.File;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.junit.Assert;
 import org.junit.Test;
 
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
 import dk.netarkivet.harvester.test.utils.HarvestInfoXmlBuilder;
 import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
 
+// TODO Possibly check for "Error missing metadata" in log output when no metadata is present in order xml.
 public class WARCWriterProcessorTester {
+
     private static final String DISK_PATH_XPATH = "//crawl-order/controller" + "/string[@name='disk-path']";
+
+    private String metadataItemsStr = ""
+    		/*
+    		+ "<stringList name=\"metadata-items\">\n"
+    		+ "  <string>Vilhelm</string>\n"
+    		//+ "  <string>harvestInfo.version=Vilhelm</string>\n"
+            + "</stringList>\n";
+            */
+            + "<map name=\"metadata-items\">\n"
+            + "  <string name=\"harvestInfo.version\">Vilhelm</string>\n"
+            + "  <string name=\"harvestInfo.jobId\">Caroline</string>\n"
+            + "  <string name=\"harvestInfo.channel\">Login</string>\n"
+            + "  <string name=\"harvestInfo.harvestNum\">ffff</string>\n"
+            + "  <string name=\"harvestInfo.origHarvestDefinitionID\">ffff</string>\n"
+            + "  <string name=\"harvestInfo.maxBytesPerDomain\">ffff</string>\n"
+            + "  <string name=\"harvestInfo.maxObjectsPerDomain\">ffff</string>\n"
+            + "  <string name=\"harvestInfo.orderXMLName\">Default Orderxml</string>\n"
+            + "  <string name=\"harvestInfo.origHarvestDefinitionName\">ddddd</string>\n"
+            + "  <string name=\"harvestInfo.scheduleName\">Every Hour</string>\n"
+            + "  <string name=\"harvestInfo.harvestFilenamePrefix\">1-1</string>\n"
+            + "  <string name=\"harvestInfo.jobSubmitDate\">NOW</string>\n"
+            + "  <string name=\"harvestInfo.performer\">performer</string>\n"
+            + "  <string name=\"harvestInfo.audience\">audience</string>\n"
+            + "</map>\n";
 
     @Test
     public void testWriteWarcInfoWithScheduleName() {
-        Document orderXML = OrderXmlBuilder.createDefault().getDoc();
-
+    	Document orderXML;
+        WARCWriterProcessor p;
+    	/*
+    	 * WithOut.
+    	 */
+    	orderXML = OrderXmlBuilder.createDefault().getDoc();
+        Assert.assertNotNull(orderXML);
+        try {
+            Node controllerNode = orderXML.selectSingleNode(H1HeritrixTemplate.WARCWRITERPROCESSOR_XPATH);
+			Node metadataItemsXml = XmlUtils.documentFromString(metadataItemsStr);
+			Element controllerElement = (Element) controllerNode;
+			controllerElement.add(metadataItemsXml.getDocument().getRootElement().detach());
+        } catch (DocumentException e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception!");
+		}
         File orderWithOut = new File("target/order_for_testing_warcinfo.xml");
         XmlUtils.setNode(orderXML, DISK_PATH_XPATH, orderWithOut.getParentFile().getAbsolutePath());
         XmlUtils.writeXmlToFile(orderXML, orderWithOut);
-        XmlUtils.writeXmlToFile(HarvestInfoXmlBuilder.createDefault().getDoc(), new File("target/harvestInfo.xml"));
 
-        WARCWriterProcessor p = new WARCWriterProcessor("testing");
+        p = new WARCWriterProcessor("testing");
         p.getFirstrecordBody(orderWithOut);
+        /*
+         * Default.
+         */
+        orderXML = HarvestInfoXmlBuilder.createDefault().getDoc();
+        File orderWith = new File("target/harvestInfo.xml");
+        XmlUtils.writeXmlToFile( orderXML, orderWith);
+
+        p = new WARCWriterProcessor("testing");
+        p.getFirstrecordBody(orderWith);
     }
 
     @Test
     public void testWriteWarcInfoWithoutScheduleName() {
-        Document orderXML = OrderXmlBuilder.createDefault().getDoc();
-
+    	Document orderXML;
+        WARCWriterProcessor p;
+    	/*
+    	 * WithOut.
+    	 */
+        orderXML = OrderXmlBuilder.createDefault().getDoc();
+        Assert.assertNotNull(orderXML);
+        try {
+            Node controllerNode = orderXML.selectSingleNode(H1HeritrixTemplate.WARCWRITERPROCESSOR_XPATH);
+			Node metadataItemsXml = XmlUtils.documentFromString(metadataItemsStr);
+			Element controllerElement = (Element) controllerNode;
+			controllerElement.add(metadataItemsXml.getDocument().getRootElement().detach());
+        } catch (DocumentException e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception!");
+		}
         File orderWithOut = new File("target/order_for_testing_warcinfo.xml");
         XmlUtils.setNode(orderXML, DISK_PATH_XPATH, orderWithOut.getParentFile().getAbsolutePath());
         XmlUtils.writeXmlToFile(orderXML, orderWithOut);
-        XmlUtils.writeXmlToFile(HarvestInfoXmlBuilder.createDefault("harvestInfo-snapshot.xml").getDoc(), new File("target/harvestInfo.xml"));
 
-        WARCWriterProcessor p = new WARCWriterProcessor("testing");
+        p = new WARCWriterProcessor("testing");
         p.getFirstrecordBody(orderWithOut);
+        /*
+         * Default.
+         */
+        orderXML = HarvestInfoXmlBuilder.createDefault("harvestInfo-snapshot.xml").getDoc();
+        File orderWith = new File("target/harvestInfo.xml");
+        XmlUtils.writeXmlToFile(orderXML, orderWith);
+
+        p = new WARCWriterProcessor("testing");
+        p.getFirstrecordBody(orderWith);
     }
+
 }

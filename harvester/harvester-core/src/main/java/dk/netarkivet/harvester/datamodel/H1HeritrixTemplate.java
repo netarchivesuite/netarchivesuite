@@ -171,6 +171,9 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
     public static final String WARCS_WRITE_REVISIT_FOR_NOT_MODIFIED_XPATH = WARCWRITERPROCESSOR_XPATH
             + "/boolean[@name='write-revisit-for-not-modified']";
 
+    /** Xpath for the WARC metadata in the order.xml. */
+    public static final String METADATA_ITEMS_XPATH = WARCWRITERPROCESSOR_XPATH + "/map[@name='metadata-items']";
+
     /**
      * Map from required xpaths to a regular expression describing legal content for the path text.
      */
