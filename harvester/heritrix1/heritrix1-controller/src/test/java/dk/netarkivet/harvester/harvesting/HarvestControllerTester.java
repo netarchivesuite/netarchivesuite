@@ -48,7 +48,6 @@ import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
-import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobTest;
 import dk.netarkivet.harvester.datamodel.StopReason;
@@ -247,7 +246,7 @@ public class HarvestControllerTester {
     public void testRunHarvest() throws Exception {
     	//FIXME hardwired to H1 HeritrixFiles
         HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles( 
-        		new File(TestInfo.WORKING_DIR, "bogus"), new JobInfoTestImpl(42L, 23L));
+        		new File(Heritrix1ControllerTestInfo.WORKING_DIR, "bogus"), new JobInfoTestImpl(42L, 23L));
         hc = HarvestController.getInstance();
         String cause = "Error creating singleton of class '"
                 + "dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher':";

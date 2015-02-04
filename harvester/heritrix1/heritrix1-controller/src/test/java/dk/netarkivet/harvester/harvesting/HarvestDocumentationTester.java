@@ -123,7 +123,7 @@ public class HarvestDocumentationTester {
 
         JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(Heritrix1ControllerTestInfo.ARC_JOB_ID), 117L);
         //FIXME hardwired to a H1 HeritrixFiles
-        HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, harvestJob);
+        HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, harvestJob);
 
         IngestableFiles inf = new IngestableFiles(files);
 
@@ -196,7 +196,7 @@ public class HarvestDocumentationTester {
         // JobInfo for harvestId 117
         JobInfo harvestJob = new JobInfoTestImpl(Long.parseLong(Heritrix1ControllerTestInfo.ARC_JOB_ID), 117L);
         //FIXME hardwired to a H1 heritrixFiles
-        HeritrixFiles files117 = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, harvestJob);
+        HeritrixFiles files117 = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, harvestJob);
         IngestableFiles OkIngestables = new IngestableFiles(files117);
 
         HarvestDocumentation.documentHarvest(OkIngestables);
@@ -355,8 +355,7 @@ public class HarvestDocumentationTester {
         Method m = ReflectUtils.getPrivateMethod(HarvestDocumentation.class, "moveAwayForeignFiles",
                 ArchiveProfile.class, File.class, IngestableFiles.class);
         // Set oldjobs place to a different name to check use of setting.
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR,
-                new File(WORKING_DIR, "oddjobs").getAbsolutePath());
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR, new File(WORKING_DIR, "oddjobs").getAbsolutePath());
         WORKING_DIR.mkdirs();
         File arcsDir = new File(WORKING_DIR, Constants.ARCDIRECTORY_NAME);
         TestFileUtils.copyDirectoryNonCVS(Heritrix1ControllerTestInfo.METADATA_TEST_DIR_INCONSISTENT, arcsDir);
@@ -366,7 +365,7 @@ public class HarvestDocumentationTester {
         // JobInfo for harvestId 117
         JobInfo harvestJob = new JobInfoTestImpl(42L, 117L);
         
-        HeritrixFiles files117 = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(TestInfo.WORKING_DIR, harvestJob);
+        HeritrixFiles files117 = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, harvestJob);
         IngestableFiles OkIngestables = new IngestableFiles(files117);
 
         m.invoke(null, ArchiveProfile.ARC_PROFILE, arcsDir, OkIngestables);
