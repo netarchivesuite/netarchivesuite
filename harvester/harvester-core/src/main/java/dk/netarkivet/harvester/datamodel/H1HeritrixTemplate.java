@@ -245,13 +245,15 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
             for (Map.Entry<String, Pattern> required : requiredXpaths.entrySet()) {
                 xpath = required.getKey();
                 node = doc.selectSingleNode(xpath);
-                ArgumentNotValid.checkTrue(node != null, "Template error: Missing node: " + xpath);
+                ArgumentNotValid.checkTrue(node != null, "Template error: Missing node: " + xpath 
+                		+ ". The template looks like this: " + doc.asXML());
 
                 pattern = required.getValue();
                 matcher = pattern.matcher(node.getText().trim());
 
                 ArgumentNotValid.checkTrue(matcher.matches(), "Template error: Value '" + node.getText()
-                        + "' of node '" + xpath + "' does not match required regexp '" + pattern + "'");
+                        + "' of node '" + xpath + "' does not match required regexp '" + pattern 
+                        + "'. The template looks like this: " + doc.asXML());
             }
             verified = true;
             // Required that Heritrix write its ARC/WARC files to the correct dir
