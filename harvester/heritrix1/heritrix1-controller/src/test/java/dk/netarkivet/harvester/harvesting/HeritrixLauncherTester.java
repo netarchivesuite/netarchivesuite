@@ -263,9 +263,8 @@ public class HeritrixLauncherTester {
      */
 
     private void myTesterOfBadOrderfiles(File orderfile) {
-        HeritrixLauncher hl = getHeritrixLauncher(orderfile, null);
-
         try {
+            HeritrixLauncher hl = getHeritrixLauncher(orderfile, null);
             hl.doCrawl();
             fail("An exception should have been caught when launching with a bad order.xml file !");
         } catch (IOFailure e) {
@@ -274,6 +273,8 @@ public class HeritrixLauncherTester {
         } catch (IllegalState e) {
             // expected case since a searched node could not be found in the bad
             // XML-order-file!
+        } catch (ArgumentNotValid e) {
+            // Expected case since a templatethat is not H1 or H3 throws an exception!
         }
     }
 
@@ -287,7 +288,7 @@ public class HeritrixLauncherTester {
         try {
             hl.doCrawl();
             fail("An exception should have been caught when launching with an empty order.xml file !");
-        } catch (IOFailure e) {
+        } catch (ArgumentNotValid e) {
             // Expected case
         }
     }
