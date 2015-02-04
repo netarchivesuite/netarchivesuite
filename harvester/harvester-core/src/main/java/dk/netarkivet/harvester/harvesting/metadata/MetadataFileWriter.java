@@ -26,10 +26,12 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -37,8 +39,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
-import dk.netarkivet.harvester.harvesting.IngestableFiles;
 
 /**
  * Abstract base class for Metadata file writer. Implementations must extend this class.
@@ -56,6 +56,17 @@ public abstract class MetadataFileWriter {
     public static final int MDF_WARC = 2;
     /** Constant representing the metadata Format. Recognized formats are either MDF_ARC or MDF_WARC */
     protected static int metadataFormat = 0;
+
+    /** Constants used in constructing URI for CDX content. */
+    protected static final String CDX_URI_SCHEME = "metadata";
+    private static final String CDX_URI_AUTHORITY_HOST = Settings.get(CommonSettings.ORGANIZATION);
+    private static final String CDX_URI_PATH = "/crawl/index/cdx";
+    private static final String CDX_URI_VERSION_PARAMETERS = "majorversion=2&minorversion=0";
+    private static final String ALTERNATE_CDX_URI_VERSION_PARAMETERS = "majorversion=3&minorversion=0";
+
+    private static final String CDX_URI_HARVEST_ID_PARAMETER_NAME = "harvestid";
+    private static final String CDX_URI_JOB_ID_PARAMETER_NAME = "jobid";
+    private static final String CDX_URI_FILENAME_PARAMETER_NAME = "filename";
 
     /**
      * Initialize the used metadata format from settings.
@@ -166,14 +177,17 @@ public abstract class MetadataFileWriter {
      * @param parentDir directory containing the files to append to metadata
      * @param filter filter describing which files to accept and which to ignore
      * @param mimetype The content-type to write along with the files in the metadata output
+     * @param harvestId The harvestId of the harvest
+     * @param jobId The jobId of the harvest 
      */
-    public void insertFiles(File parentDir, FilenameFilter filter, String mimetype, IngestableFiles files) {
+    public void insertFiles(File parentDir, FilenameFilter filter, String mimetype, long harvestId, long jobId) {
         // For each metadata source file in the parentDir that matches the filter ..
         File[] metadataSourceFiles = parentDir.listFiles(filter);
+        log.debug("Now inserting " + metadataSourceFiles.length + " files from " + parentDir.getAbsolutePath() + "'.");
         for (File metadataSourceFile : metadataSourceFiles) {
             // ...write its content to the MetadataFileWriter
             log.debug("Inserting the file '{}'", metadataSourceFile.getAbsolutePath());
-            writeFileTo(metadataSourceFile, getURIforFileName(metadataSourceFile, files).toASCIIString(), mimetype);
+            writeFileTo(metadataSourceFile, getURIforFileName(metadataSourceFile, harvestId, jobId).toASCIIString(), mimetype);
             // ...and delete it afterwards
             try {
                 FileUtils.remove(metadataSourceFile);
@@ -188,10 +202,12 @@ public abstract class MetadataFileWriter {
      * Parses the name of the given file and generates a URI representation of it.
      *
      * @param cdx A CDX file.
-     * @return A URI appropriate for identifying the file's content in Netarkivet.
+     * @param harvestID The harvestId of the harvest
+     * @param jobId	The jobId of the harvest
+     * @return A URI appropriate for identifying the file's content in Netarkivet
      * @throws UnknownID if something goes terribly wrong in the CDX URI construction
      */
-    private static URI getURIforFileName(File cdx, IngestableFiles files) throws UnknownID {
+    private static URI getURIforFileName(File cdx, long harvestId, long jobId) throws UnknownID {
         String extensionToRemove = FileUtils.CDX_EXTENSION;
         String filename = cdx.getName();
         if (!filename.endsWith(extensionToRemove)) {
@@ -199,7 +215,7 @@ public abstract class MetadataFileWriter {
         }
         int suffix_index = cdx.getName().indexOf(extensionToRemove);
         filename = filename.substring(0, suffix_index);
-        return HarvestDocumentation.getCDXURI("" + files.getHarvestID(), "" + files.getJobId(), filename);
+        return getCDXURI("" + harvestId, "" + jobId, filename);
     }
 
     /**
@@ -208,5 +224,88 @@ public abstract class MetadataFileWriter {
     public static void resetMetadataFormat() {
         metadataFormat = 0;
     }
+    
+    
+    /**
+     * Generates a URI identifying CDX info for one harvested (W)ARC file. In Netarkivet, all of the parameters below
+     * are in the (W)ARC file's name.
+     *
+     * @param harvestID The number of the harvest that generated the (W)ARC file.
+     * @param jobID The number of the job that generated the (W)ARC file.
+     * @param filename The name of the ARC or WARC file behind the cdx-data
+     * @return A URI in the proprietary schema "metadata".
+     * @throws ArgumentNotValid if any parameter is null.
+     * @throws UnknownID if something goes terribly wrong in our URI construction.
+     */
+    public static URI getCDXURI(String harvestID, String jobID, String filename) throws ArgumentNotValid, UnknownID {
+        ArgumentNotValid.checkNotNull(harvestID, "harvestID");
+        ArgumentNotValid.checkNotNull(jobID, "jobID");
+        ArgumentNotValid.checkNotNull(filename, "filename");
+        URI result;
+        try {
+            result = new URI(CDX_URI_SCHEME, null, // Don't include user info (e.g. "foo@")
+                    CDX_URI_AUTHORITY_HOST, -1, // Don't include port no. (e.g. ":8080")
+                    CDX_URI_PATH, getCDXURIQuery(harvestID, jobID, filename), null); // Don't include fragment (e.g.
+            // "#foo")
+        } catch (URISyntaxException e) {
+            throw new UnknownID("Failed to generate URI for " + harvestID + "," + jobID + "," + filename + ",", e);
+        }
+        return result;
+    }
+    
+    /**
+     * Generates a URI identifying CDX info for one harvested ARC file.
+     *
+     * @param jobID The number of the job that generated the ARC file.
+     * @param filename the filename.
+     * @return A URI in the proprietary schema "metadata".
+     * @throws ArgumentNotValid if any parameter is null.
+     * @throws UnknownID if something goes terribly wrong in our URI construction.
+     */
+    public static URI getAlternateCDXURI(long jobID, String filename) throws ArgumentNotValid, UnknownID {
+        ArgumentNotValid.checkNotNull(jobID, "jobID");
+        ArgumentNotValid.checkNotNull(filename, "filename");
+        URI result;
+        try {
+            result = new URI(CDX_URI_SCHEME, null, // Don't include user info (e.g. "foo@")
+                    CDX_URI_AUTHORITY_HOST, -1, // Don't include port no. (e.g. ":8080")
+                    CDX_URI_PATH, getAlternateCDXURIQuery(jobID, filename), null); // Don't include fragment (e.g.
+            // "#foo")
+        } catch (URISyntaxException e) {
+            throw new UnknownID("Failed to generate URI for " + jobID + "," + filename + ",", e);
+        }
+        return result;
+    }
 
+    /**
+     * Generate the query part of a CDX URI.
+     *
+     * @param harvestID The number of the harvest that generated the ARC file.
+     * @param jobID The number of the job that generated the ARC file.
+     * @param filename The name of the ARC file.
+     * @return An appropriate list of assigned parameters, separated by the "&" character.
+     */
+    private static String getCDXURIQuery(String harvestID, String jobID, String filename) {
+        String result = CDX_URI_VERSION_PARAMETERS;
+        result += "&" + CDX_URI_HARVEST_ID_PARAMETER_NAME + "=" + harvestID;
+        result += "&" + CDX_URI_JOB_ID_PARAMETER_NAME + "=" + jobID;
+        result += "&" + CDX_URI_FILENAME_PARAMETER_NAME + "=" + filename;
+
+        return result;
+    }
+
+    /**
+     * Generate the query part of a CDX URI. Alternate version
+     *
+     * @param jobID The number of the job that generated the (W)ARC file.
+     * @param filename the filename of the archive file
+     * @return An appropriate list of assigned parameters, separated by the "&" character.
+     */
+    private static String getAlternateCDXURIQuery(long jobID, String filename) {
+        String result = ALTERNATE_CDX_URI_VERSION_PARAMETERS;
+        result += "&" + CDX_URI_JOB_ID_PARAMETER_NAME + "=" + jobID;
+        result += "&" + CDX_URI_FILENAME_PARAMETER_NAME + "=" + filename;
+        return result;
+    }
+    
 }

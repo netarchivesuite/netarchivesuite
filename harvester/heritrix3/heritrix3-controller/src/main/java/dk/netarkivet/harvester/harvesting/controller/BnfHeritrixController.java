@@ -39,6 +39,7 @@ import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.Heritrix3Files;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
@@ -50,7 +51,7 @@ import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport;
  * This implementation of the HeritrixController interface starts Heritrix as a separate process and uses JMX to
  * communicate with it. Each instance executes exactly one process that runs exactly one crawl job.
  */
-public class BnfHeritrixController extends AbstractJMXHeritrixController {
+public class BnfHeritrixController extends AbstractRestHeritrixController {
 
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(BnfHeritrixController.class);
@@ -198,7 +199,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      *
      * @param files Files that are used to set up Heritrix.
      */
-    public BnfHeritrixController(HeritrixFiles files) {
+    public BnfHeritrixController(Heritrix3Files files) {
         super(files);
     }
 
@@ -313,7 +314,7 @@ public class BnfHeritrixController extends AbstractJMXHeritrixController {
      * @return a message that stores the information summarizing the crawl progress.
      */
     public CrawlProgressMessage getCrawlProgress() {
-        HeritrixFiles files = getHeritrixFiles();
+        Heritrix3Files files = getHeritrixFiles();
         CrawlProgressMessage cpm = new CrawlProgressMessage(files.getHarvestID(), files.getJobID(),
                 progressStatisticsLegend);
 

@@ -30,10 +30,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeSet;
 
 import org.archive.util.anvl.ANVLRecord;
@@ -58,7 +56,7 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
 
 /**
- * This class contains code for documenting a harvest. Metadata is read from the directories associated with a given
+ * This class contains code for documenting a H3 harvest. Metadata is read from the directories associated with a given
  * harvest-job-attempt (i.e. one DoCrawlMessage sent to a harvest server). The collected metadata are written to a new
  * metadata file that is managed by IngestableFiles. Temporary metadata files will be deleted after this metadata file
  * has been written.
@@ -67,17 +65,7 @@ public class HarvestDocumentation {
 
     private static final Logger log = LoggerFactory.getLogger(HarvestDocumentation.class);
 
-    /** Constants used in constructing URI for CDX content. */
-    private static final String CDX_URI_SCHEME = "metadata";
-    private static final String CDX_URI_AUTHORITY_HOST = Settings.get(CommonSettings.ORGANIZATION);
-    private static final String CDX_URI_PATH = "/crawl/index/cdx";
-    private static final String CDX_URI_VERSION_PARAMETERS = "majorversion=2&minorversion=0";
-    private static final String ALTERNATE_CDX_URI_VERSION_PARAMETERS = "majorversion=3&minorversion=0";
-
-    private static final String CDX_URI_HARVEST_ID_PARAMETER_NAME = "harvestid";
-    private static final String CDX_URI_JOB_ID_PARAMETER_NAME = "jobid";
-    private static final String CDX_URI_FILENAME_PARAMETER_NAME = "filename";
-
+   
     /**
      * Documents the harvest under the given dir in a packaged metadata arc file in a directory 'metadata' under the
      * current dir. Only documents the files belonging to the given jobID, the rest are moved to oldjobs.
@@ -87,8 +75,8 @@ public class HarvestDocumentation {
      * <p>
      * If this method finishes without an exception, it is guaranteed that metadata is ready for upload.
      * <p>
-     * TODO Place preharvestmetadata in IngestableFiles-defined area TODO This method may be a good place to copy
-     * deduplicate information from the crawl log to the cdx file.
+     * TODO Place preharvestmetadata in IngestableFiles-defined area 
+     * TODO This method may be a good place to copy deduplicate information from the crawl log to the cdx file.
      *
      * @param ingestables Information about the finished crawl (crawldir, jobId, harvestID).
      * @throws ArgumentNotValid if crawlDir is null or does not exist, or if jobID or harvestID is negative.
@@ -208,7 +196,8 @@ public class HarvestDocumentation {
         moveAwayForeignFiles(profile, archiveDir, files);
         File cdxFilesDir = FileUtils.createUniqueTempDir(files.getTmpMetadataDir(), "cdx");
         CDXUtils.generateCDX(profile, archiveDir, cdxFilesDir);
-        writer.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE, files);
+        writer.insertFiles(cdxFilesDir, FileUtils.CDX_FILE_FILTER, Constants.CDX_MIME_TYPE, 
+        		files.getHarvestID(), files.getJobId());
     }
 
     /**
@@ -227,88 +216,7 @@ public class HarvestDocumentation {
         }
     }
 
-    /**
-     * Generates a URI identifying CDX info for one harvested (W)ARC file. In Netarkivet, all of the parameters below
-     * are in the (W)ARC file's name.
-     *
-     * @param harvestID The number of the harvest that generated the (W)ARC file.
-     * @param jobID The number of the job that generated the (W)ARC file.
-     * @param filename The name of the ARC or WARC file behind the cdx-data
-     * @return A URI in the proprietary schema "metadata".
-     * @throws ArgumentNotValid if any parameter is null.
-     * @throws UnknownID if something goes terribly wrong in our URI construction.
-     */
-    public static URI getCDXURI(String harvestID, String jobID, String filename) throws ArgumentNotValid, UnknownID {
-        ArgumentNotValid.checkNotNull(harvestID, "harvestID");
-        ArgumentNotValid.checkNotNull(jobID, "jobID");
-        ArgumentNotValid.checkNotNull(filename, "filename");
-        URI result;
-        try {
-            result = new URI(CDX_URI_SCHEME, null, // Don't include user info (e.g. "foo@")
-                    CDX_URI_AUTHORITY_HOST, -1, // Don't include port no. (e.g. ":8080")
-                    CDX_URI_PATH, getCDXURIQuery(harvestID, jobID, filename), null); // Don't include fragment (e.g.
-            // "#foo")
-        } catch (URISyntaxException e) {
-            throw new UnknownID("Failed to generate URI for " + harvestID + "," + jobID + "," + filename + ",", e);
-        }
-        return result;
-    }
-
-    /**
-     * Generates a URI identifying CDX info for one harvested ARC file.
-     *
-     * @param jobID The number of the job that generated the ARC file.
-     * @param filename the filename.
-     * @return A URI in the proprietary schema "metadata".
-     * @throws ArgumentNotValid if any parameter is null.
-     * @throws UnknownID if something goes terribly wrong in our URI construction.
-     */
-    public static URI getAlternateCDXURI(long jobID, String filename) throws ArgumentNotValid, UnknownID {
-        ArgumentNotValid.checkNotNull(jobID, "jobID");
-        ArgumentNotValid.checkNotNull(filename, "filename");
-        URI result;
-        try {
-            result = new URI(CDX_URI_SCHEME, null, // Don't include user info (e.g. "foo@")
-                    CDX_URI_AUTHORITY_HOST, -1, // Don't include port no. (e.g. ":8080")
-                    CDX_URI_PATH, getAlternateCDXURIQuery(jobID, filename), null); // Don't include fragment (e.g.
-            // "#foo")
-        } catch (URISyntaxException e) {
-            throw new UnknownID("Failed to generate URI for " + jobID + "," + filename + ",", e);
-        }
-        return result;
-    }
-
-    /**
-     * Generate the query part of a CDX URI.
-     *
-     * @param harvestID The number of the harvest that generated the ARC file.
-     * @param jobID The number of the job that generated the ARC file.
-     * @param filename The name of the ARC file.
-     * @return An appropriate list of assigned parameters, separated by the "&" character.
-     */
-    private static String getCDXURIQuery(String harvestID, String jobID, String filename) {
-        String result = CDX_URI_VERSION_PARAMETERS;
-        result += "&" + CDX_URI_HARVEST_ID_PARAMETER_NAME + "=" + harvestID;
-        result += "&" + CDX_URI_JOB_ID_PARAMETER_NAME + "=" + jobID;
-        result += "&" + CDX_URI_FILENAME_PARAMETER_NAME + "=" + filename;
-
-        return result;
-    }
-
-    /**
-     * Generate the query part of a CDX URI. Alternate version
-     *
-     * @param jobID The number of the job that generated the ARC file.
-     * @param filename the filename of the arcfile
-     * @return An appropriate list of assigned parameters, separated by the "&" character.
-     */
-    private static String getAlternateCDXURIQuery(long jobID, String filename) {
-        String result = ALTERNATE_CDX_URI_VERSION_PARAMETERS;
-        result += "&" + CDX_URI_JOB_ID_PARAMETER_NAME + "=" + jobID;
-        result += "&" + CDX_URI_FILENAME_PARAMETER_NAME + "=" + filename;
-        return result;
-    }
-
+    
     /**
      * Iterates over the (W)ARC files in the given dir and moves away files that do not belong to the given job into a
      * "lost-files" directory under oldjobs named with a timestamp.
@@ -379,6 +287,8 @@ public class HarvestDocumentation {
             files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
         }
         // Generate an arcfiles-report.txt if configured to do so.
+        // FIXME This is not possible to extract from the crawl.log (Is this list available in any other way
+        /*
         boolean genArcFilesReport = Settings.getBoolean(HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         if (genArcFilesReport) {
             log.debug("Creating an arcfiles-report.txt");
@@ -388,6 +298,8 @@ public class HarvestDocumentation {
             log.debug("Creation of the arcfiles-report.txt has been disabled by the setting '{}'!",
                     HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         }
+
+         */
 
         // Add log files
         File logDir = new File(crawlDir, "logs");
@@ -405,23 +317,7 @@ public class HarvestDocumentation {
         } else {
             log.debug("No logs dir found in crawldir: {}", crawlDir.getAbsolutePath());
         }
-
-        // Check if exists any settings directory (domain-specific settings)
-        // if yes, add any settings.xml hiding in this directory.
-        // TODO Delete any settings-files found in the settings directory */
-        File settingsDir = new File(crawlDir, "settings");
-        if (settingsDir.isDirectory()) {
-            Map<File, String> domainSettingsFiles = findDomainSpecificSettings(settingsDir);
-            for (Map.Entry<File, String> entry : domainSettingsFiles.entrySet()) {
-
-                File dsf = entry.getKey();
-                String domain = entry.getValue();
-                files.add(new MetadataFile(dsf, harvestID, jobID, heritrixVersion, domain));
-            }
-        } else {
-            log.debug("No settings directory found in crawldir: {}", crawlDir.getAbsolutePath());
-        }
-
+        
         // Write files in order to metadata archive file.
         for (MetadataFile mdf : files) {
             File heritrixFile = mdf.getHeritrixFile();
@@ -437,84 +333,5 @@ public class HarvestDocumentation {
 
         return filesAdded;
     }
-
-    /**
-     * Finds domain-specific configurations in the settings subdirectory of the crawl directory.
-     *
-     * @param settingsDir the given settings directory
-     * @return the settings file paired with their domain..
-     */
-    private static Map<File, String> findDomainSpecificSettings(File settingsDir) {
-        // find any domain specific configurations (settings.xml)
-        List<String> reversedDomainsWithSettings = findAllDomainsWithSettings(settingsDir, "");
-
-        Map<File, String> settingsFileToDomain = new HashMap<File, String>();
-        if (reversedDomainsWithSettings.isEmpty()) {
-            log.debug("No settings/<domain> directories exists: no domain-specific configurations available");
-        } else {
-            for (String reversedDomain : reversedDomainsWithSettings) {
-                String domain = reverseDomainString(reversedDomain);
-                File settingsXmlFile = new File(settingsDir + reversedDomain.replaceAll("\\.", File.separator),
-                        MetadataFile.DOMAIN_SETTINGS_FILE);
-                if (!settingsXmlFile.isFile()) {
-                    log.debug("Directory settings/{}/{} does not exist.", domain, MetadataFile.DOMAIN_SETTINGS_FILE);
-                } else {
-                    settingsFileToDomain.put(settingsXmlFile, domain);
-                }
-            }
-        }
-        return settingsFileToDomain;
-    }
-
-    /**
-     * Find all domains which have a settings.xml file in the given directory.
-     *
-     * @param directory a given directory
-     * @param domainReversed the domain reversed
-     * @return a list of domains (in reverse), which contained a file with given filename
-     */
-    private static List<String> findAllDomainsWithSettings(File directory, String domainReversed) {
-        if (!directory.isDirectory()) {
-            return new ArrayList<String>(0);
-        }
-        // List to hold the files temporarily
-        List<String> filesToReturn = new ArrayList<String>();
-
-        for (File fileInDir : directory.listFiles()) {
-            // if the given file is a dir, then call
-            // the method recursively.
-            if (fileInDir.isDirectory()) {
-                List<String> resultList = findAllDomainsWithSettings(fileInDir,
-                        domainReversed + "." + fileInDir.getName());
-                if (!resultList.isEmpty()) {
-                    filesToReturn.addAll(resultList);
-                }
-            } else {
-                if (fileInDir.getName().equals(MetadataFile.DOMAIN_SETTINGS_FILE)) {
-                    // Store the domain, so that we can find the file later
-                    filesToReturn.add(domainReversed);
-                }
-            }
-        }
-        return filesToReturn;
-    }
-
-    /**
-     * Reverses a domain string, e.g. reverses "com.amazon" to "amazon.com"
-     *
-     * @param reversedDomain the domain name to reverse
-     * @return the reversed domain string
-     */
-    private static String reverseDomainString(String reversedDomain) {
-        String domain = "";
-        String remaining = reversedDomain;
-        int lastDotIndex = remaining.lastIndexOf(".");
-        while (lastDotIndex != -1) {
-            domain += remaining.substring(lastDotIndex + 1) + ".";
-            remaining = remaining.substring(0, lastDotIndex);
-            lastDotIndex = remaining.lastIndexOf(".");
-        }
-        return domain.substring(0, domain.length() - 1);
-    }
-
+  
 }

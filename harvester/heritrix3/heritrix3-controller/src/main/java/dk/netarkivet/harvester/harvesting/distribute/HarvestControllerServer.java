@@ -58,7 +58,6 @@ import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.Heritrix3Files;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.PersistentJobData;
 import dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
@@ -121,10 +120,13 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     private static final String STARTCRAWL_MESSAGE = "Starting crawl of job :";
     /** The message to write to log after ending a crawl. */
     private static final String ENDCRAWL_MESSAGE = "Ending crawl of job :";
+    
     /** The max time to wait for the hosts-report.txt to be available (in secs). */
     static final int WAIT_FOR_HOSTS_REPORT_TIMEOUT_SECS = 30;
+    
     /** Heritrix version property. */
     private static final String HERITRIX_VERSION_PROPERTY = "heritrix.version";
+    
     /** queue-assignment-policy property. */
     private static final String HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY = "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy";
 
@@ -268,7 +270,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     }
 
     /**
-     * Looks for old job directories that await uploading.
+     * Looks for old job directories that await uploading of data.
+     * The existence of the harvestInfo.xml in the 
      */
     private void processOldJobs() {
         // Search through all crawldirs and process PersistentJobData
@@ -537,7 +540,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
      */
     private void processHarvestInfoFile(File crawlDir, Throwable crawlException) throws IOFailure {
         log.debug("Post-processing files in '{}'", crawlDir.getAbsolutePath());
-        //FIXME: 
+        //FIXME: Is it necessary to change this????
         if (!PersistentJobData.existsIn(crawlDir)) {
             throw new IOFailure("No harvestInfo found in directory: " + crawlDir.getAbsolutePath());
         }
@@ -628,7 +631,6 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
          * The thread body for the harvester thread. Removes the JMS listener, sets up the files for Heritrix, then
          * passes control to the HarvestController to perform the actual harvest.
          * <p>
-         * TODO Get file writing into HarvestController as well (requires some rearrangement of the message sending)
          *
          * @throws PermissionDenied if we cannot create the crawl directory.
          * @throws IOFailure if there are problems preparing or running the crawl.
@@ -641,9 +643,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
                 removeListener();
 
                 File crawlDir = createCrawlDir();
-                // New 
-                final Heritrix3Files files = controller.writeHarvestFiles(crawlDir, job, origHarvestInfo,
-                        metadataEntries);
+                // FIXME implement the method controller.writeHarvestFiles
+                final Heritrix3Files files = controller.writeHarvestFiles(crawlDir, job, origHarvestInfo, metadataEntries);
 
                 log.info(STARTCRAWL_MESSAGE + " {}", job.getJobID());
 

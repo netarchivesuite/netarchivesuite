@@ -96,8 +96,14 @@ public abstract class HeritrixLauncher {
         return args;
     }
 
-    public void setupOrderfile(HeritrixFiles files) {
-        HeritrixTemplate.makeTemplateReadyForHeritrix(files);
+    public void setupOrderfile(Heritrix3Files files) {
+    	// Here the last changes of the templare is performed
+        makeTemplateReadyForHeritrix3(files);
     }
+
+	private void makeTemplateReadyForHeritrix3(Heritrix3Files files2) {
+		//FIXME look at the HeritrixTemplate.makeTemplateReadyForHeritrix1 for inspiration
+		
+	}
 
 }

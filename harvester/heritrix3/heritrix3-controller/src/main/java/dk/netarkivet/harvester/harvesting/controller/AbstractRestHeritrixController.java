@@ -55,16 +55,16 @@ import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
+import dk.netarkivet.harvester.harvesting.Heritrix3Files;
 
 /**
- * Abstract base class for JMX-based Heritrix controllers.
+ * Abstract base class for REST-based Heritrix controllers.
  */
 @SuppressWarnings({"rawtypes"})
-public abstract class AbstractJMXHeritrixController implements HeritrixController {
+public abstract class AbstractRestHeritrixController implements HeritrixController {
 
     /** The logger for this class. */
-    private static final Logger log = LoggerFactory.getLogger(AbstractJMXHeritrixController.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractRestHeritrixController.class);
 
     /** File path Separator. Used to separate the jar-files in the classpath. */
     private static final String FILE_PATH_SEPARATOR = ":";
@@ -73,7 +73,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     private static final long SHUTDOWN_HOOK_MAX_WAIT = 1000L;
 
     /** The various files used by Heritrix. */
-    private final HeritrixFiles files;
+    private final Heritrix3Files files;
 
     /** The threads used to collect process output. Only one thread used presently. */
     private Set<Thread> collectionThreads = new HashSet<Thread>(1);
@@ -104,7 +104,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
      *
      * @param files Files that are used to set up Heritrix.
      */
-    public AbstractJMXHeritrixController(HeritrixFiles files) {
+    public AbstractRestHeritrixController(Heritrix3Files files) {
         ArgumentNotValid.checkNotNull(files, "HeritrixFile files");
         this.files = files;
 
@@ -157,7 +157,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
                 String[] add = jvmOptsStr.split(" ");
                 allOpts.addAll(Arrays.asList(add));
             }
-
+/*
             allOpts.add("-Dcom.sun.management.jmxremote.port=" + jmxPort);
             allOpts.add("-Dcom.sun.management.jmxremote.ssl=false");
             // check that JMX password and access files are readable.
@@ -178,8 +178,11 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
                 log.warn(errMsg);
                 throw new IOFailure(errMsg);
             }
-            allOpts.add("-Dcom.sun.management.jmxremote.password.file=" + new File(pwAbsolutePath));
-            allOpts.add("-Dcom.sun.management.jmxremote.access.file=" + new File(acAbsolutePath));
+            
+            */
+            
+            //allOpts.add("-Dcom.sun.management.jmxremote.password.file=" + new File(pwAbsolutePath));
+            //allOpts.add("-Dcom.sun.management.jmxremote.access.file=" + new File(acAbsolutePath));
             allOpts.add("-Dheritrix.out=" + heritrixOutputFile.getAbsolutePath());
             allOpts.add("-Djava.protocol.handler.pkgs=org.archive.net");
             allOpts.add("-Ddk.netarkivet.settings.file=" + settingProperty);
@@ -191,7 +194,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
 
             String[] args = allOpts.toArray(new String[allOpts.size()]);
             log.info("Starting Heritrix process with args" + Arrays.toString(args));
-            log.debug("The JMX timeout is set to " + TimeUtils.readableTimeInterval(JMXUtils.getJmxTimeout()));
+            //log.debug("The JMX timeout is set to " + TimeUtils.readableTimeInterval(JMXUtils.getJmxTimeout()));
 
             ProcessBuilder builder = new ProcessBuilder(args);
 
@@ -226,7 +229,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
     /**
      * @return the Heritrix files wrapper.
      */
-    protected HeritrixFiles getHeritrixFiles() {
+    protected Heritrix3Files getHeritrixFiles() {
         return files;
     }
 
@@ -463,7 +466,7 @@ public abstract class AbstractJMXHeritrixController implements HeritrixControlle
                 + files.getCrawlDir() + dedupPart + " and " + FileUtils.countLines(files.getSeedsTxtFile()) + " seeds";
     }
 
-    public HeritrixFiles getFiles() {
+    public Heritrix3Files getFiles() {
         return this.files;
     }
 

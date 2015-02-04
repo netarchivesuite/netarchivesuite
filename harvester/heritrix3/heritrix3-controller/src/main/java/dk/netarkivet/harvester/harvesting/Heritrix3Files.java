@@ -91,4 +91,14 @@ public class Heritrix3Files {
 		
 	}
 
+	public File getHeritrixOutput() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public File getIndexDir() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

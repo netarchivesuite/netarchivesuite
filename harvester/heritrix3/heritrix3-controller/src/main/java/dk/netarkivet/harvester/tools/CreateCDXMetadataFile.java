@@ -56,7 +56,6 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.HarvestDocumentation;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
 
@@ -349,7 +348,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          */
         private void writeCDXEntry(MetadataFileWriter writer, String filename, byte[] bytes) throws IOFailure {
             try {
-                writer.write(HarvestDocumentation.getAlternateCDXURI(this.jobId, filename).toString(),
+                writer.write(MetadataFileWriter.getAlternateCDXURI(this.jobId, filename).toString(),
                         Constants.CDX_MIME_TYPE, SystemUtils.getLocalIP(), System.currentTimeMillis(), bytes);
             } catch (IOException e) {
                 throw new IOFailure("Failed to write ARC/WARC entry with CDX lines " + "for " + filename, e);

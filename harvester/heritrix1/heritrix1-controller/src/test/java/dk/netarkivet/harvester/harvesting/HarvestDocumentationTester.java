@@ -142,9 +142,9 @@ public class HarvestDocumentationTester {
         Iterator<ArchiveRecord> it = r.iterator();
         // Read each record, checking content-type and URI.
         Set<String> cdxURISet = new HashSet<String>();
-        cdxURISet.add(HarvestDocumentation.getCDXURI(Heritrix1ControllerTestInfo.ARC_HARVEST_ID, Heritrix1ControllerTestInfo.ARC_JOB_ID,
+        cdxURISet.add(MetadataFileWriter.getCDXURI(Heritrix1ControllerTestInfo.ARC_HARVEST_ID, Heritrix1ControllerTestInfo.ARC_JOB_ID,
                 Heritrix1ControllerTestInfo.FST_FILENAME).toASCIIString());
-        cdxURISet.add(HarvestDocumentation.getCDXURI(Heritrix1ControllerTestInfo.ARC_HARVEST_ID, Heritrix1ControllerTestInfo.ARC_JOB_ID,
+        cdxURISet.add(MetadataFileWriter.getCDXURI(Heritrix1ControllerTestInfo.ARC_HARVEST_ID, Heritrix1ControllerTestInfo.ARC_JOB_ID,
                 Heritrix1ControllerTestInfo.SND_FILENAME).toASCIIString());
 
         String aliasFound = null;
@@ -246,25 +246,25 @@ public class HarvestDocumentationTester {
         // String serial = "000000001";
         String filename = "7-42-mymachine.mydomain-001.arc";
         try {
-            HarvestDocumentation.getCDXURI(null, job, filename);
+        	MetadataFileWriter.getCDXURI(null, job, filename);
             fail("Should have thrown ArgumentNotValid");
         } catch (ArgumentNotValid e) {
             // Expected
         }
         try {
-            HarvestDocumentation.getCDXURI(harv, null, filename);
+        	MetadataFileWriter.getCDXURI(harv, null, filename);
             fail("Should have thrown ArgumentNotValid");
         } catch (ArgumentNotValid e) {
             // Expected
         }
         try {
-            HarvestDocumentation.getCDXURI(harv, job, null);
+        	MetadataFileWriter.getCDXURI(harv, job, null);
             fail("Should have thrown ArgumentNotValid");
         } catch (ArgumentNotValid e) {
             // Expected
         }
 
-        String uri = HarvestDocumentation.getCDXURI(harv, job, filename).toString();
+        String uri = MetadataFileWriter.getCDXURI(harv, job, filename).toString();
         String prefix = "metadata://netarkivet.dk/crawl/index/cdx?";
         assertTrue("Should name the CDX URI following the official pattern - was " + uri, uri.startsWith(prefix));
         assertTrue("CDX URI should contain harvestID - was " + uri, uri.contains(harv));
