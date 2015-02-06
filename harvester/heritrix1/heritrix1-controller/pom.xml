@@ -189,10 +189,12 @@
           <groupId>fastutil</groupId>
           <artifactId>fastutil</artifactId>
         </exclusion>
+<!-- needed after moving the testing of the HarvestReports to heritrix1-controller.
         <exclusion>
           <groupId>org.gnu.inet</groupId>
           <artifactId>libidn</artifactId>
         </exclusion>
+-->
         <exclusion>
           <groupId>com.google.guava</groupId>
           <artifactId>guava</artifactId>
