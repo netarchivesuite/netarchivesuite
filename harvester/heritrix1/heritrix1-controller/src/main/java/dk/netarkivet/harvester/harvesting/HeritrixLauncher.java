@@ -90,14 +90,14 @@ public abstract class HeritrixLauncher {
     }
 
     /**
-     * @return the optional arguments used to initialize the chosen Heritrix controller implementation.
+     * @return the optional arguments used to initialize the chosen Heritrix1 controller implementation.
      */
     protected Object[] getControllerArguments() {
         return args;
     }
 
     public void setupOrderfile(HeritrixFiles files) {
-        HeritrixTemplate.makeTemplateReadyForHeritrix(files);
+        HeritrixTemplate.makeTemplateReadyForHeritrix1(files);
     }
 
 }

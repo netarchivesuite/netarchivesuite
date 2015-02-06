@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -55,11 +54,9 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
-import dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy;
 import dk.netarkivet.harvester.harvesting.HarvestController;
 import dk.netarkivet.harvester.harvesting.Heritrix3Files;
 import dk.netarkivet.harvester.harvesting.PersistentJobData;
-import dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
@@ -78,7 +75,7 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReport;
  * <p>
  * Initially, all directories under serverdir are scanned for harvestinfo files. If any are found, they are parsed for
  * information, and all remaining files are attempted uploaded to the bitarchive. It will then send back a
- * crawlstatusmessage with status failed.
+ * CrawlStatusMessage with status failed.
  * <p>
  * A new thread is started for each actual crawl, in which the JMS listener is removed. Threading is required since JMS
  * will not let the called thread remove the listener that's being handled.
@@ -124,12 +121,6 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     /** The max time to wait for the hosts-report.txt to be available (in secs). */
     static final int WAIT_FOR_HOSTS_REPORT_TIMEOUT_SECS = 30;
     
-    /** Heritrix version property. */
-    private static final String HERITRIX_VERSION_PROPERTY = "heritrix.version";
-    
-    /** queue-assignment-policy property. */
-    private static final String HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY = "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy";
-
     /** The CHANNEL of jobs processed by this instance. */
     private static final String CHANNEL = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
 
@@ -184,21 +175,6 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         log.info("Harvesting requires at least {} bytes free.", minSpaceRequired);
 
         controller = HarvestController.getInstance();
-
-        //FIXME
-        //FIXME this code is only relevant for Heritrix 1
-        //FIXME
-        
-        // Set properties "heritrix.version" and
-        // "org.archive.crawler.frontier.AbstractFrontier
-        // .queue-assignment-policy"
-        System.setProperty(HERITRIX_VERSION_PROPERTY, Constants.getHeritrixVersionString());
-        System.setProperty(HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY,
-                "org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,"
-                        + "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
-                        + "org.archive.crawler.frontier.BucketQueueAssignmentPolicy," + "org.archive.crawler.frontier"
-                        + ".SurtAuthorityQueueAssignmentPolicy," + DomainnameQueueAssignmentPolicy.class.getName()
-                        + "," + SeedUriDomainnameQueueAssignmentPolicy.class.getName());
 
         // Get JMS-connection
         // Channel THIS_CLIENT is only used for replies to store messages so
@@ -277,6 +253,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         // Search through all crawldirs and process PersistentJobData
         // files in them
         File crawlDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
+        log.info("Looking for unprocessed crawldata in '{}'",crawlDir );
         File[] subdirs = crawlDir.listFiles();
         for (File oldCrawlDir : subdirs) {
             if (PersistentJobData.existsIn(oldCrawlDir)) {
@@ -286,7 +263,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
                         + "'. Crawl probably interrupted by " + "shutdown of HarvestController. " + "Processing data.";
                 log.warn(msg);
                 NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
-                processHarvestInfoFile(oldCrawlDir, new IOFailure("Crawl probably interrupted by "
+                doPostProcessing(oldCrawlDir, new IOFailure("Crawl probably interrupted by "
                         + "shutdown of HarvestController"));
             }
         }
@@ -423,7 +400,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
      * stop resending messages we get.
      */
     private synchronized void startAcceptingJobs() {
-        // allow this haco to receive messages
+        // allow this harvestControllerServer to receive messages again
         status.setRunning(false);
     }
 
@@ -528,17 +505,18 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     }
 
     /**
-     * Processes an existing harvestInfoFile:</br>
+     * Do postprocessing of data in a crawldir.</br>
      * 1. Retrieve jobID, and crawlDir from the harvestInfoFile using class PersistentJobData</br>
-     * 2. finds JobId and arcsdir</br> 3. calls storeArcFiles</br> 4. moves harvestdir to oldjobs
-     *    and deletes crawl.log and other superfluous files.
+     * 2. finds JobId and arcsdir</br> 
+     * 3. calls storeArcFiles</br> 
+     * 4. moves harvestdir to oldjobs and deletes crawl.log and other superfluous files.
      *
      * @param crawlDir The location of harvest-info to be processed
      * @param crawlException any exceptions thrown by the crawl which need to be reported back to the scheduler (may be
      * null for success)
      * @throws IOFailure if the file cannot be read
      */
-    private void processHarvestInfoFile(File crawlDir, Throwable crawlException) throws IOFailure {
+    private void doPostProcessing(File crawlDir, Throwable crawlException) throws IOFailure {
         log.debug("Post-processing files in '{}'", crawlDir.getAbsolutePath());
         //FIXME: Is it necessary to change this????
         if (!PersistentJobData.existsIn(crawlDir)) {
@@ -552,9 +530,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         HarvestReport dhr = null;
         List<File> failedFiles = new ArrayList<File>();
         // FIXME
+        // FIXME H3 specific code needed 
         // FIXME
-        // FIXME
-        //HeritrixFiles files = new HeritrixFiles(crawlDir, harvestInfo);
+        
+        // originally HeritrixFiles files = new HeritrixFiles(crawlDir, harvestInfo);
         Heritrix3Files files = Heritrix3Files.getH3HeritrixFiles(crawlDir, harvestInfo);
         //HeritrixFiles files = HeritrixFiles.getH3HeritrixFiles(crawlDir, harvestJob)(crawlDir, harvestInfo);
         
@@ -589,9 +568,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
                     files.deleteFinalLogs();
                 }
             } finally {
-                // Delete superfluous files and move the rest to oldjobs
-                // Cleanup is in an extra finally, because it is large amounts
+                // Delete superfluous files and move the rest to oldjobs.
+                // Cleanup is in an extra finally, because it consists of large amounts
                 // of data we need to remove, even on send trouble.
+            	
                 log.info("Cleanup after harvesting job with id: {}.", jobID);
                 files.cleanUpAfterHarvest(new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR)));
             }
@@ -657,13 +637,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
                     crawlException = e;
                     throw new IOFailure(msg, e);
                 } finally {
-                    // This handles some message sending, so it must live
-                    // in HCS for now, but the meat of it should be in
-                    // HarvestController
-                    // TODO Refactor to be able to move this out.
-                    // TODO This may overwrite another exception, since this
-                    // may throw exceptions.
-                    processHarvestInfoFile(files.getCrawlDir(), crawlException);
+                    doPostProcessing(files.getCrawlDir(), crawlException);
                 }
             } catch (Throwable t) {
                 String msg = "Fatal error while operating job '" + job + "'";

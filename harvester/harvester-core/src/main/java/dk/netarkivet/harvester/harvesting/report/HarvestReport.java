@@ -28,7 +28,6 @@ import java.util.Set;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
 /**
  * Base interface for a post-crawl harvest report.
@@ -74,10 +73,6 @@ public interface HarvestReport extends Serializable {
      */
     StopReason getStopReason(String domainName) throws ArgumentNotValid;
 
-    /**
-     * Pre-processing happens when the report is built just at the end of the crawl, before the ARC files upload.
-     */
-    void preProcess(HeritrixFiles files);
 
     /**
      * Post-processing happens on the scheduler side when ARC files have been uploaded.

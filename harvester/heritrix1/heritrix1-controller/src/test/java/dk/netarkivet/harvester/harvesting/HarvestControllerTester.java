@@ -53,6 +53,7 @@ import dk.netarkivet.harvester.datamodel.JobTest;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
+import dk.netarkivet.harvester.harvesting.report.HarvestReportGenerator;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
@@ -376,18 +377,18 @@ public class HarvestControllerTester {
     @Test
     public void testFindDefaultStopReason() throws Exception {
         try {
-            AbstractHarvestReport.findDefaultStopReason(null);
+        	HarvestReportGenerator.findDefaultStopReason(null);
             fail("Should throw argument not valid on null argument");
         } catch (ArgumentNotValid e) {
             assertTrue("Should contain varable name in exception", e.getMessage().contains("logFile"));
         }
         assertEquals("Download should be completed", StopReason.DOWNLOAD_COMPLETE,
-                AbstractHarvestReport.findDefaultStopReason(new File(Heritrix1ControllerTestInfo.CRAWLDIR_ORIGINALS_DIR,
+        		HarvestReportGenerator.findDefaultStopReason(new File(Heritrix1ControllerTestInfo.CRAWLDIR_ORIGINALS_DIR,
                         "logs/progress-statistics.log")));
         assertEquals("Download should be unfinished", StopReason.DOWNLOAD_UNFINISHED,
-                AbstractHarvestReport.findDefaultStopReason(Heritrix1ControllerTestInfo.NON_EXISTING_FILE));
+        		HarvestReportGenerator.findDefaultStopReason(Heritrix1ControllerTestInfo.NON_EXISTING_FILE));
         assertEquals("Download should be unfinished", StopReason.DOWNLOAD_UNFINISHED,
-                AbstractHarvestReport.findDefaultStopReason(new File(Heritrix1ControllerTestInfo.UNFINISHED_CRAWLDIR,
+        		HarvestReportGenerator.findDefaultStopReason(new File(Heritrix1ControllerTestInfo.UNFINISHED_CRAWLDIR,
                         "logs/progress-statistics.log")));
     }
 }

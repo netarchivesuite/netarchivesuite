@@ -32,6 +32,7 @@ public class TestInfo {
     /**
      * The properties-file containing properties for logging in unit-tests.
      */
+/*
     static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
 
     static final File BASEDIR = new File("tests/dk/netarkivet/harvester/scheduler/data");
@@ -42,7 +43,7 @@ public class TestInfo {
 
     static final File orderTemplatesOriginalsDir = new File("tests/dk/netarkivet/"
             + "/harvester/data/originals/order_templates/");
-
+*/
     public TestInfo() {
     }
 }

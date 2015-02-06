@@ -43,7 +43,6 @@ import dk.netarkivet.harvester.datamodel.HarvestInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.SparseFullHarvest;
 import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
 
 /**
@@ -54,7 +53,7 @@ import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
  * budgets.
  */
 @SuppressWarnings({"serial"})
-public class BnfHarvestReport extends AbstractHarvestReport {
+public class BnfHarvestReport extends AbstractHarvestReport{
 
     /** The logger for this class. */
     private static final Logger LOG = LoggerFactory.getLogger(BnfHarvestReport.class);
@@ -65,8 +64,8 @@ public class BnfHarvestReport extends AbstractHarvestReport {
      * @param files A HeritrixFiles object.
      * @throws IOFailure If the processing of the files goes wrong
      */
-    public BnfHarvestReport(HeritrixFiles files) throws IOFailure {
-        super(files);
+    public BnfHarvestReport(DomainStatsReport dsr) throws IOFailure {
+    	super(dsr);
     }
 
     /**

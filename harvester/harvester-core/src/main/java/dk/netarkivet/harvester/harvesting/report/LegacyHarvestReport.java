@@ -38,7 +38,6 @@ import dk.netarkivet.harvester.datamodel.HarvestInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.NumberUtils;
 import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
 /**
  * Class responsible for generating a domain harvest report from crawl logs created by Heritrix and presenting the
@@ -62,8 +61,8 @@ public class LegacyHarvestReport extends AbstractHarvestReport {
      *
      * @param hFiles the Heritrix reports and logs.
      */
-    public LegacyHarvestReport(HeritrixFiles hFiles) {
-        super(hFiles);
+    public LegacyHarvestReport(DomainStatsReport dsr) {
+        super(dsr);
     }
 
     /** Default constructor. */

@@ -29,7 +29,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 
 /**
- * A HeritrixLauncher object wraps around an instance of the web crawler Heritrix. The object is constructed with the
+ * A HeritrixLauncher object wraps around an instance of the web crawler Heritrix3. The object is constructed with the
  * necessary information to do a crawl. The crawl is performed when doOneCrawl() is called. doOneCrawl() monitors
  * progress and returns when the crawl is finished or must be stopped because it has stalled.
  */
@@ -38,16 +38,16 @@ public abstract class HeritrixLauncher {
     /** Class encapsulating placement of various files. */
     private Heritrix3Files files;
 
-    /** the arguments passed to the HeritricController constructor. */
+    /** the arguments passed to the HeritrixController constructor. */
     private Object[] args;
 
-    /** The period to wait in seconds before checking if Heritrix has done anything. */
+    /** The period to wait in seconds before checking if Heritrix3 has done anything. */
     protected static final int CRAWL_CONTROL_WAIT_PERIOD = Settings.getInt(HarvesterSettings.CRAWL_LOOP_WAIT_TIME);
 
     /**
      * Private HeritrixLauncher constructor. Sets up the HeritrixLauncher from the given order file and seedsfile.
      *
-     * @param files Object encapsulating location of Heritrix crawldir and configuration files.
+     * @param files Object encapsulating location of Heritrix3 crawldir and configuration files.
      * @throws ArgumentNotValid If either seedsfile or orderfile does not exist.
      */
     protected HeritrixLauncher(Heritrix3Files files) throws ArgumentNotValid {
@@ -97,13 +97,47 @@ public abstract class HeritrixLauncher {
     }
 
     public void setupOrderfile(Heritrix3Files files) {
-    	// Here the last changes of the templare is performed
+    	// Here the last changes of the template is performed
         makeTemplateReadyForHeritrix3(files);
     }
 
-	private void makeTemplateReadyForHeritrix3(Heritrix3Files files2) {
-		//FIXME look at the HeritrixTemplate.makeTemplateReadyForHeritrix1 for inspiration
-		
-	}
-
+    /**
+     * FIXME METHOD NOT FULLY IMPLEMENTED YET
+     * Updates the diskpath value, archivefile_prefix, seedsfile, and deduplication -information.
+     * @param files
+     * @throws IOFailure
+     */
+    /**
+     * This method prepares the crawler-beans.cxml file used by the Heritrix3 crawler. </p> 1. alters the crawler-beans.cxml in the
+     * following-way: (overriding whatever is in the crawler-beans.cxml)</br>
+     * <ol>
+     * <li>sets the disk-path to the outputdir specified in Heritrix3Files.</li>
+     * <li>sets the seedsfile to the seedsfile specified in Heritrix3Files.</li>
+     * <li>sets the prefix of the arcfiles to unique prefix defined in Heritrix3Files</li>
+     * <li>checks that the arcs-file dir is 'arcs' - to ensure that we know where the arc-files are when crawl finishes</li>
+     * <p>
+     * <li>if deduplication is enabled, sets the node pointing to index directory for deduplication (see step 3)</li>
+     * </ol>
+     * 2. saves the orderfile back to disk</p>
+     * <p>
+     * 3. if deduplication is enabled in the order.xml, it writes the absolute path of the lucene index used by the
+     * deduplication processor.
+     *
+     * @throws IOFailure - When the orderfile could not be saved to disk 
+     *                     When a specific element cannot be found in the document. 
+     */
+    public static void makeTemplateReadyForHeritrix3(Heritrix3Files files) throws IOFailure {
+    	
+    	HeritrixTemplate templ = HeritrixTemplate.read(files.getOrderXmlFile());
+    	
+    	//templ.setDiskPath(files.getCrawlDir().getAbsolutePath()); //TODO is relevant for H3??
+    	//templ.setArchiveFilePrefix(files.getArchiveFilePrefix()); //TODO
+    	templ.setSeedsFilePath(files.getSeedsTxtFile().getAbsolutePath()); //TODO
+    	
+        if (templ.IsDeduplicationEnabled()) {
+        	templ.setDeduplicationIndexLocation(files.getIndexDir().getAbsolutePath());
+        }
+        files.writeOrderXml(templ);
+        
+    }
 }

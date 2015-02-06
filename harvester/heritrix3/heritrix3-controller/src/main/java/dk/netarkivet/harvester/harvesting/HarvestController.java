@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -58,14 +59,17 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
+import dk.netarkivet.harvester.harvesting.report.DomainStatsReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
+import dk.netarkivet.harvester.harvesting.report.HarvestReportGenerator;
 
 /**
  * This class handles all the things in a single harvest that are not related directly related either to launching
- * Heritrix or to handling JMS messages.
+ * Heritrix3 or to handling JMS messages.
  */
 public class HarvestController {
 
@@ -120,7 +124,7 @@ public class HarvestController {
     }
 
     /**
-     * Writes the files involved with a harvests. 
+     * Writes the files needed to start a harvest.. 
      * 
      * @param crawldir The directory that the crawl should take place in.
      * @param job The Job object containing various harvest setup data.
@@ -130,7 +134,6 @@ public class HarvestController {
      */
     public Heritrix3Files writeHarvestFiles(File crawldir, Job job, HarvestDefinitionInfo hdi,
             List<MetadataEntry> metadataEntries) {
-    	// FIXME this hardwires the HeritrixFiles to H1
     	
         final Heritrix3Files files = Heritrix3Files.getH3HeritrixFiles(crawldir, job);
 
@@ -138,16 +141,18 @@ public class HarvestController {
         // using the Heritrix recover.gz log, and this feature is enabled,
         // then try to fetch the recover.log from the metadata-arc-file.
         if (job.getContinuationOf() != null && Settings.getBoolean(HarvesterSettings.RECOVERlOG_CONTINUATION_ENABLED)) {
-            tryToRetrieveRecoverLog(job, files);
+            //tryToRetrieveRecoverLog(job, files);
+        	log.warn("Continuation of from a RecoverLog is disabled for now!");
         }
-
+        
         // Create harvestInfo file in crawldir
         // & create preharvest-metadata-1.arc
-        log.debug("Writing persistent job data for job {}", job.getJobID());
-        // Check that harvestInfo does not yet exist
-
+        log.debug("Writing persistent job data for job {} to crawldir '{}'", job.getJobID(), crawldir);
+        // TODO Check that harvestInfo does not yet exist
+        
         // Write job data to persistent storage (harvestinfo file)
         new PersistentJobData(files.getCrawlDir()).write(job, hdi);
+        
         // Create jobId-preharvest-metadata-1.arc for this job
         writePreharvestMetadata(job, metadataEntries, crawldir);
 
@@ -161,21 +166,6 @@ public class HarvestController {
         } else {
             log.debug("Deduplication disabled.");
         }
-        /*
-        // Create Heritrix arcs directory before starting Heritrix to ensure
-        // the arcs directory exists in advance.
-        
-        boolean created = files.getArcsDir().mkdir();
-        if (!created) {
-            log.warn("Unable to create arcsdir: {}", files.getArcsDir());
-        }
-        // Create Heritrix warcs directory before starting Heritrix to ensure
-        // the warcs directory exists in advance.
-        created = files.getWarcsDir().mkdir();
-        if (!created) {
-            log.warn("Unable to create warcsdir: {}", files.getWarcsDir());
-        }
-        */
 
         return files;
     }
@@ -272,7 +262,7 @@ public class HarvestController {
     /**
      * Creates the actual HeritrixLauncher instance and runs it, after the various setup files have been written.
      *
-     * @param files Description of files involved in running Heritrix. Not Null.
+     * @param files Description of files involved in running Heritrix3. Not Null.
      * @throws ArgumentNotValid if an argument isn't valid.
      */
     public void runHarvest(Heritrix3Files files) throws ArgumentNotValid {
@@ -300,6 +290,7 @@ public class HarvestController {
         ArgumentNotValid.checkNotNull(errorMessage, "StringBuilder errorMessage");
         ArgumentNotValid.checkNotNull(failedFiles, "List<File> failedFiles");
         long jobID = files.getJobID();
+        log.info("Store the files from harvest in '{}'", files.getCrawlDir());
         try {
             IngestableFiles inf = new IngestableFiles(files);
 
@@ -327,9 +318,14 @@ public class HarvestController {
             // Now the ARC/WARC files have been uploaded,
             // we finally upload the metadata archive file.
             uploadFiles(inf.getMetadataArcFiles(), errorMessage, failedFiles);
-
+            
             // Make the harvestReport ready for uploading
-            return HarvestReportFactory.generateHarvestReport(files);
+            
+            // TODO maybe the DomainStatsReport should be moved to harvester-core 
+            HarvestReportGenerator hrg = new HarvestReportGenerator(files);
+            
+            DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), hrg.getDefaultStopReason()); 
+            return HarvestReportFactory.generateHarvestReport(dsr);
 
         } catch (IOFailure e) {
             String errMsg = "IOFailure occurred, while trying to upload files";

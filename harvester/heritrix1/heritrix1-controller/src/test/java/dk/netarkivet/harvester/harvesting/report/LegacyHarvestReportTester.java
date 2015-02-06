@@ -85,7 +85,7 @@ public class LegacyHarvestReportTester {
     @Test
     public void testConstructorInvalidReportFile() {
         prepareCrawlLog("invalid-crawl.log");
-        new LegacyHarvestReport(heritrixFiles);
+        new HarvestReportGenerator(heritrixFiles);
         logbackRecorder.assertLogContains("Should have log about invalid line", "Invalid line in");
     }
 
@@ -94,10 +94,14 @@ public class LegacyHarvestReportTester {
         // Test parse error
         prepareCrawlLog("invalid-crawl.log");
         HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, new JobInfoTestImpl(1L, 1L));
-        new LegacyHarvestReport(hf);
+        
+        HarvestReportGenerator hrg = new HarvestReportGenerator(hf);
         logbackRecorder.assertLogContains("Should have log about invalid line", "Invalid line in");
-
-        AbstractHarvestReport hostReport = new LegacyHarvestReport(hf);
+        
+		DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), 
+				hrg.getDefaultStopReason()); 
+        
+        AbstractHarvestReport hostReport = new LegacyHarvestReport(dsr);
 
         assertNotNull("A AbstractHarvestReport should have a non-null set of domain names", hostReport.getDomainNames());
         assertNotNull("A AbstractHarvestReport should have a non-null number of object counts",
@@ -110,7 +114,11 @@ public class LegacyHarvestReportTester {
     public void testGetDomainNames() throws IOException {
     	prepareCrawlLog("logs/crawl.log");
         HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, new JobInfoTestImpl(1L, 1L));
-        AbstractHarvestReport hostReport = new LegacyHarvestReport(hf);
+        
+        HarvestReportGenerator hrg = new HarvestReportGenerator(hf);
+		DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), 
+				hrg.getDefaultStopReason()); 
+        AbstractHarvestReport hostReport = new LegacyHarvestReport(dsr);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(WORKING_DIR, "logs/crawl.log"))));
         int lineCnt = 0;
@@ -142,7 +150,10 @@ public class LegacyHarvestReportTester {
     public void testGetObjectCount() {
         String TEST_DOMAIN = "netarkivet.dk";
         int NO_OF_OBJECTS_TEST = 37;
-        AbstractHarvestReport hostReport = new LegacyHarvestReport(heritrixFiles);
+        HarvestReportGenerator hrg = new HarvestReportGenerator(heritrixFiles);
+		DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), 
+				hrg.getDefaultStopReason()); 
+        AbstractHarvestReport hostReport = new LegacyHarvestReport(dsr);
 
         assertEquals("getObjectCount(TEST_DOMAIN)) should expected to return " + NO_OF_OBJECTS_TEST,
                 NO_OF_OBJECTS_TEST,  (long) hostReport.getObjectCount(TEST_DOMAIN));
@@ -155,7 +166,11 @@ public class LegacyHarvestReportTester {
     public void testGetByteCount() {
         String TEST_DOMAIN = "netarkivet.dk";
         int NO_OF_BYTES_TEST = 1162154;
-        AbstractHarvestReport hostReport = new LegacyHarvestReport(heritrixFiles);
+        HarvestReportGenerator hrg = new HarvestReportGenerator(heritrixFiles);
+		DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), 
+				hrg.getDefaultStopReason()); 
+        
+        AbstractHarvestReport hostReport = new LegacyHarvestReport(dsr);
 
         assertEquals("getByteCount(TEST_DOMAIN)) expected to return " + NO_OF_BYTES_TEST, NO_OF_BYTES_TEST,
                 (long) hostReport.getByteCount(TEST_DOMAIN));
@@ -169,7 +184,12 @@ public class LegacyHarvestReportTester {
         String TEST_DOMAIN = "dom.dk";
         prepareCrawlLog("crawl-long.log");
         HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, new JobInfoTestImpl(1L, 1L));
-        AbstractHarvestReport hr = new LegacyHarvestReport(hf);
+        
+        HarvestReportGenerator hrg = new HarvestReportGenerator(hf);
+		DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), 
+				hrg.getDefaultStopReason()); 
+        
+        AbstractHarvestReport hr = new LegacyHarvestReport(dsr);
         Long expectedObjectCount = Long.valueOf(2L);
         assertEquals("Counts should equal input data", expectedObjectCount, hr.getObjectCount(TEST_DOMAIN));
         Long expectedByteCount = new Long(5500000001L);
@@ -183,16 +203,29 @@ public class LegacyHarvestReportTester {
     @Test
     public void testAddLongValues() {
     	prepareCrawlLog("crawl-addslong.log");
-        HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, new JobInfoTestImpl(1L, 1L));
-        AbstractHarvestReport hr = new LegacyHarvestReport(heritrixFiles);
+    	// NOt used ?
+        //HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, new JobInfoTestImpl(1L, 1L));
+    	
+    	HarvestReportGenerator hrg = new HarvestReportGenerator(heritrixFiles);
+		DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), 
+				hrg.getDefaultStopReason()); 
+        
+        AbstractHarvestReport hr = new LegacyHarvestReport(dsr);
+      
         assertEquals("Counts should equal input data", new Long(2500000000l), hr.getByteCount("nosuchdomain.dk"));
     }
 
     @Test
     public void testStopReason() {
     	prepareCrawlLog("stop-reason-crawl.log");
-        HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, new JobInfoTestImpl(1L, 1L));
-        AbstractHarvestReport hr = new LegacyHarvestReport(heritrixFiles);
+    	// NOt used ?
+        //HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, new JobInfoTestImpl(1L, 1L));
+    	HarvestReportGenerator hrg = new HarvestReportGenerator(heritrixFiles);
+		DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), 
+				hrg.getDefaultStopReason()); 
+        
+        AbstractHarvestReport hr = new LegacyHarvestReport(dsr);
+        
         assertEquals("kb.dk is unfinished", StopReason.DOWNLOAD_UNFINISHED, hr.getStopReason("kb.dk"));
         assertEquals("netarkivet.dk reached byte limit", StopReason.SIZE_LIMIT, hr.getStopReason("netarkivet.dk"));
         assertEquals("statsbiblioteket.dk reached object limit", StopReason.OBJECT_LIMIT,
@@ -204,7 +237,12 @@ public class LegacyHarvestReportTester {
     public void testIDNA() {
         prepareCrawlLog("idna-crawl.log");
         HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, new JobInfoTestImpl(1L, 1L));
-        AbstractHarvestReport hr = new LegacyHarvestReport(hf);
+        HarvestReportGenerator hrg = new HarvestReportGenerator(hf);
+		DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), 
+				hrg.getDefaultStopReason()); 
+        
+        AbstractHarvestReport hr = new LegacyHarvestReport(dsr);
+       
         boolean disregardSeedUrl = Settings.getBoolean(HarvesterSettings.DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG);
         if (disregardSeedUrl) {
             assertTrue(hr.getByteCount("oelejr.dk") != null);
@@ -224,7 +262,12 @@ public class LegacyHarvestReportTester {
     public void testSerializability() throws IOException, ClassNotFoundException {
         prepareCrawlLog("logs/crawl.log");
         HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, new JobInfoTestImpl(1L, 1L));
-        AbstractHarvestReport hr = new LegacyHarvestReport(hf);
+        HarvestReportGenerator hrg = new HarvestReportGenerator(hf);
+		DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), 
+				hrg.getDefaultStopReason()); 
+        
+        AbstractHarvestReport hr = new LegacyHarvestReport(dsr);
+ 
         AbstractHarvestReport hr2 = Serial.serial(hr);
         assertEquals("Relevant state should be preserved", relevantState(hr), relevantState(hr2));
     }

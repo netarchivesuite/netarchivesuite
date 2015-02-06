@@ -83,7 +83,9 @@ import dk.netarkivet.harvester.harvesting.HeritrixLauncherFactory;
 import dk.netarkivet.harvester.harvesting.JobInfo;
 import dk.netarkivet.harvester.harvesting.controller.AbstractJMXHeritrixController;
 import dk.netarkivet.harvester.harvesting.report.AbstractHarvestReport;
+import dk.netarkivet.harvester.harvesting.report.DomainStatsReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
+import dk.netarkivet.harvester.harvesting.report.HarvestReportGenerator;
 import dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport;
 import dk.netarkivet.harvester.indexserver.LuceneUtils;
 import dk.netarkivet.testutils.FileAsserts;
@@ -400,7 +402,12 @@ public class HeritrixTests {
         
         
         File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
-        HarvestReport hhr = new LegacyHarvestReport(hFiles);
+        
+        HarvestReportGenerator hrg = new HarvestReportGenerator(hFiles);
+		DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), 
+				hrg.getDefaultStopReason());
+        HarvestReport hhr = new LegacyHarvestReport(dsr);
+        
         Long tv2_objects = hhr.getObjectCount("tv2.dk");
         Long netarkivet_objects = hhr.getObjectCount("netarkivet.dk");
         // int netarkivetHosts = GetHostsForDomain(hostReportFile, "netarkivet.dk");
@@ -628,7 +635,12 @@ public class HeritrixTests {
         // File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
         HeritrixFiles hFiles = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles( 
         		TestInfo.HERITRIX_TEMP_DIR, new JobInfoTestImpl(0L, 0L));
-        AbstractHarvestReport hhr = new LegacyHarvestReport(hFiles);
+        
+        HarvestReportGenerator hrg = new HarvestReportGenerator(hFiles);
+		DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), 
+				hrg.getDefaultStopReason());
+        
+        AbstractHarvestReport hhr = new LegacyHarvestReport(dsr);
         Long netarkivet_bytes = hhr.getByteCount("netarkivet.dk");
         long lastNetarkivetBytes = getLastFetchedBytesForDomain("netarkivet.dk");
         // System.out.println("last netarkivet bytes: " + lastNetarkivetBytes);

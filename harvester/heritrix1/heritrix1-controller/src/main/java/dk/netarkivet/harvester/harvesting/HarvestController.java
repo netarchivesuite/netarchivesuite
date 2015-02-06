@@ -60,8 +60,10 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
+import dk.netarkivet.harvester.harvesting.report.DomainStatsReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.harvester.harvesting.report.HarvestReportFactory;
+import dk.netarkivet.harvester.harvesting.report.HarvestReportGenerator;
 
 /**
  * This class handles all the things in a single harvest that are not related directly related either to launching
@@ -327,7 +329,9 @@ public class HarvestController {
             uploadFiles(inf.getMetadataArcFiles(), errorMessage, failedFiles);
 
             // Make the harvestReport ready for uploading
-            return HarvestReportFactory.generateHarvestReport(files);
+            HarvestReportGenerator hrg = new HarvestReportGenerator(files);
+            DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), hrg.getDefaultStopReason());
+            return HarvestReportFactory.generateHarvestReport(dsr);
 
         } catch (IOFailure e) {
             String errMsg = "IOFailure occurred, while trying to upload files";

@@ -52,7 +52,7 @@ import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
  * Base implementation for a harvest report.
  */
 @SuppressWarnings({"serial"})
-public abstract class HarvestReportGenerator {
+public class HarvestReportGenerator {
 
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(HarvestReportGenerator.class);
@@ -95,8 +95,7 @@ public abstract class HarvestReportGenerator {
     /** Datastructure holding the domain-information contained in one harvest. */
     private final Map<String, DomainStats> domainstats = new HashMap<String, DomainStats>();
 
-    // Used at construction tile only, does not need to be serialized.
-    private transient Heritrix3Files heritrixFiles;
+    private Heritrix3Files heritrixFiles;
 
     /**
      * The default reason why we stopped harvesting this domain. This value is set by looking for a CRAWL ENDED in the
@@ -132,12 +131,12 @@ public abstract class HarvestReportGenerator {
         }
         long startTime = System.currentTimeMillis();
 
-        File crawlLog = files.getCrawlDir();
+        File crawlLog = files.getCrawlLog();
         if (!crawlLog.isFile() || !crawlLog.canRead()) {
             String errorMsg = "Not a file or not readable: " + crawlLog.getAbsolutePath();
             throw new IOFailure(errorMsg);
         }
-        parseCrawlLog(files.getCrawlDir());
+        parseCrawlLog(files.getCrawlLog());
 
         if (log.isInfoEnabled()) {
             long time = System.currentTimeMillis() - startTime;
@@ -381,4 +380,9 @@ public abstract class HarvestReportGenerator {
     public StopReason getDefaultStopReason() {
         return defaultStopReason;
     }
+    
+    public Map<String, DomainStats> getDomainStatsMap() {
+    	return this.domainstats;
+    }
+    
 }

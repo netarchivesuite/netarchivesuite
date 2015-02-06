@@ -169,7 +169,7 @@ public abstract class HeritrixTemplate implements Serializable {
      * @throws IOFailure - When the orderfile could not be saved to disk 
      *                     When a specific element cannot be found in the document. 
      */
-    public static void makeTemplateReadyForHeritrix(HeritrixFiles files) throws IOFailure {
+    public static void makeTemplateReadyForHeritrix1(HeritrixFiles files) throws IOFailure {
     	HeritrixTemplate templ = HeritrixTemplate.read(files.getOrderXmlFile());
     	templ.setDiskPath(files.getCrawlDir().getAbsolutePath());
     	templ.setArchiveFilePrefix(files.getArchiveFilePrefix());

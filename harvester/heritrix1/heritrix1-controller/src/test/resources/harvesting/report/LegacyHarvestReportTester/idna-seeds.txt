@@ -1,0 +1,10 @@
+http://www.xn--lejr-fra.dk
+http://www.ølejr.dk
+http://www.østerbrogades-dyrlæger.dk
+http://www.xn--sterbrogades-dyrlger-y0b29a.dk
+# Heritrix added seed redirect from http://www.xn--sterbrogades-dyrlger-y0b29a.dk/ 20120523150629434.
+http://xn--sterbrogades-dyrlger-y0b29a.dk/
+# Heritrix added seed redirect from http://www.xn--lejr-fra.dk/ 20120523150629634.
+http://www.oelejr.dk/index.html
+# Heritrix added seed redirect from http://www.oelejr.dk/index.html 20120523150630510.
+http://www.oelejr.dk/2012/index.php
