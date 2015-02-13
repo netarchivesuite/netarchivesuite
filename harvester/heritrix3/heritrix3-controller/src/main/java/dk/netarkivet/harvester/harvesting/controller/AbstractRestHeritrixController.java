@@ -23,22 +23,16 @@
 package dk.netarkivet.harvester.harvesting.controller;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.archive.crawler.Heritrix;
+import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
+import org.netarchivesuite.heritrix3wrapper.unzip.UnzipUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,9 +45,9 @@ import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.ProcessUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
+import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.Heritrix3Files;
 
@@ -66,8 +60,6 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(AbstractRestHeritrixController.class);
 
-    /** File path Separator. Used to separate the jar-files in the classpath. */
-    private static final String FILE_PATH_SEPARATOR = ":";
 
     /** How long we're willing to wait for Heritrix to shutdown in a shutdown hook. */
     private static final long SHUTDOWN_HOOK_MAX_WAIT = 1000L;
@@ -75,14 +67,13 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
     /** The various files used by Heritrix. */
     private final Heritrix3Files files;
 
+    protected Heritrix3Wrapper h3wrapper;
+    
     /** The threads used to collect process output. Only one thread used presently. */
     private Set<Thread> collectionThreads = new HashSet<Thread>(1);
 
     /** The host name for this machine that matches what Heritrix uses in its MBean names. */
     private final String hostName;
-
-    /** The port to use for Heritrix JMX, as set in settings.xml. */
-    private final int jmxPort = Settings.getInt(HarvesterSettings.HERITRIX_JMX_PORT);
 
     /** The port to use for Heritrix GUI, as set in settings.xml. */
     private final int guiPort = Settings.getInt(HarvesterSettings.HERITRIX_GUI_PORT);
@@ -107,17 +98,29 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
     public AbstractRestHeritrixController(Heritrix3Files files) {
         ArgumentNotValid.checkNotNull(files, "HeritrixFile files");
         this.files = files;
-
+        
+        
         SystemUtils.checkPortNotUsed(guiPort);
-        SystemUtils.checkPortNotUsed(jmxPort);
 
         hostName = SystemUtils.getLocalHostName();
 
         try {
-            log.info("Starting Heritrix for {}", this);
+            log.info("Starting Heritrix for {} in crawldir {}", this, files.getCrawlDir());
+            
+            log.debug("Unzipping heriix into the crawldir ");
+            ZipUtils.unzip(files.getHeritrixZip(), files.getCrawlDir());
+        
+            
             /*
-             * To start Heritrix, we need to do the following (taken from the Heritrix startup shell script): - set
-             * heritrix.home to base dir of Heritrix stuff - set com.sun.management.jmxremote.port to JMX port - set
+            h3wrapper = Heritrix3Wrapper.getInstance(hostName, guiPort, 
+    				null, null, getHeritrixAdminName(), getHeritrixAdminPassword()); 
+    		*/
+            
+            
+            
+            /*
+             * To start Heritrix, we need to do the following (taken from the Heritrix startup shell script): 
+             * - set heritrix.home to base dir of Heritrix stuff - set com.sun.management.jmxremote.port to JMX port - set
              * com.sun.management.jmxremote.ssl to false - set com.sun.management.jmxremote.password.file to JMX
              * password file - set heritrix.out to heritrix_out.log - set java.protocol.handler.pkgs=org.archive.net -
              * send processOutput & stderr into heritrix.out - let the Heritrix GUI-webserver listen on all available
@@ -127,6 +130,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
              * We also need to output something like the following to heritrix.out: `date Starting heritrix uname -a
              * java -version JAVA_OPTS ulimit -a
              */
+
             File heritrixOutputFile = files.getHeritrixOutput();
             StringBuilder settingProperty = new StringBuilder();
             for (File file : Settings.getSettingsFiles()) {
@@ -149,6 +153,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
 
             List<String> allOpts = new LinkedList<String>();
             allOpts.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getAbsolutePath());
+
             allOpts.add("-Xmx" + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE));
             allOpts.add("-Dheritrix.home=" + files.getCrawlDir().getAbsolutePath());
 
@@ -157,29 +162,9 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
                 String[] add = jvmOptsStr.split(" ");
                 allOpts.addAll(Arrays.asList(add));
             }
-/*
-            allOpts.add("-Dcom.sun.management.jmxremote.port=" + jmxPort);
-            allOpts.add("-Dcom.sun.management.jmxremote.ssl=false");
-            // check that JMX password and access files are readable.
-            // TODO This should probably be extracted to a method?
-            File passwordFile = files.getJmxPasswordFile();
-            String pwAbsolutePath = passwordFile.getAbsolutePath();
-            if (!passwordFile.canRead()) {
-                final String errMsg = "Failed to read the password file '" + pwAbsolutePath + "'. "
-                        + "It is possibly missing.";
-                log.warn(errMsg);
-                throw new IOFailure(errMsg);
-            }
-            File accessFile = files.getJmxAccessFile();
-            String acAbsolutePath = accessFile.getAbsolutePath();
-            if (!accessFile.canRead()) {
-                final String errMsg = "Failed to read the access file '" + acAbsolutePath + "'. "
-                        + "It is possibly missing.";
-                log.warn(errMsg);
-                throw new IOFailure(errMsg);
-            }
             
-            */
+            //TODO er JMX_OPTS stadig nødvendig til at skelne mellem forskellige heritrix-instanser på maskinen????
+            // Tilsyneladende ikke: Only the port must be unique
             
             //allOpts.add("-Dcom.sun.management.jmxremote.password.file=" + new File(pwAbsolutePath));
             //allOpts.add("-Dcom.sun.management.jmxremote.access.file=" + new File(acAbsolutePath));
@@ -187,8 +172,6 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
             allOpts.add("-Djava.protocol.handler.pkgs=org.archive.net");
             allOpts.add("-Ddk.netarkivet.settings.file=" + settingProperty);
             allOpts.add(Heritrix.class.getName());
-            allOpts.add("--bind");
-            allOpts.add("/");
             allOpts.add("--port=" + guiPort);
             allOpts.add("--admin=" + getHeritrixAdminName() + ":" + getHeritrixAdminPassword());
 
@@ -198,25 +181,20 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
 
             ProcessBuilder builder = new ProcessBuilder(args);
 
-            updateEnvironment(builder.environment());
+            //updateEnvironment(builder.environment());
+            
             FileUtils.copyDirectory(new File("lib/heritrix"), files.getCrawlDir());
             builder.directory(files.getCrawlDir());
             builder.redirectErrorStream(true);
-            writeSystemInfo(heritrixOutputFile, builder);
+            //writeSystemInfo(heritrixOutputFile, builder);
             FileUtils.appendToFile(heritrixOutputFile, "Working directory: " + files.getCrawlDir());
             addProcessKillerHook();
             heritrixProcess = builder.start();
             ProcessUtils.writeProcessOutput(heritrixProcess.getInputStream(), heritrixOutputFile, collectionThreads);
+            
         } catch (IOException e) {
             throw new IOFailure("Error starting Heritrix process", e);
         }
-    }
-
-    /**
-     * @return the JMX port for communicating with Heritrix.
-     */
-    protected int getJmxPort() {
-        return jmxPort;
     }
 
     /**
@@ -258,57 +236,6 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
         return Settings.get(HarvesterSettings.HERITRIX_ADMIN_PASSWORD);
     }
 
-    /**
-     * Change an environment to be suitable for running Heritrix.
-     * <p>
-     * At the moment, this involves the following:
-     * <p>
-     * Prepend the Jar files from the lib/heritrix/lib dir to the classpath. Make sure the Heritrix jar file is at the
-     * front.
-     *
-     * @param environment The environment from a process builder
-     * @throws IOFailure If a Heritrix jarfile is not found.
-     */
-    private static void updateEnvironment(Map<String, String> environment) {
-        List<String> classPathParts = SystemUtils.getCurrentClasspath();
-        File heritrixLibDir = new File("lib/heritrix/lib");
-        File[] jars = heritrixLibDir.listFiles(new FilenameFilter() {
-            public boolean accept(File file, String string) {
-                return string.endsWith(".jar");
-            }
-        });
-
-        // FIXME: Dirty hack around heretrix jars being elsewhere /tra
-        if (jars == null) {
-            jars = new File[0];
-        }
-
-        // Reverse sort the file list in order to add in alphabetical order
-        // before the basic jars.
-        Arrays.sort(jars, new Comparator<File>() {
-            public int compare(File file, File file1) {
-                return file1.compareTo(file);
-            }
-        });
-        String heritixJar = null;
-        for (File lib : jars) {
-            final String jarPath = new File(heritrixLibDir, lib.getName()).getAbsolutePath();
-            if (lib.getName().startsWith("heritrix-")) {
-                // Heritrix should be at the very head, as it redefines some
-                // of the functions in its dependencies (!). Thus, we have to
-                // save it for later insertion at the head.
-                heritixJar = jarPath;
-            } else {
-                classPathParts.add(0, jarPath);
-            }
-        }
-        if (heritixJar != null) {
-            classPathParts.add(0, heritixJar);
-        } else {
-            throw new IOFailure("Heritrix jar file not found");
-        }
-        environment.put("CLASSPATH", StringUtils.conjoin(FILE_PATH_SEPARATOR, classPathParts));
-    }
 
     /**
      * Write various info on the system we're using into the given file. This info will later get put into metadata for
@@ -317,6 +244,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
      * @param outputFile A file to write to.
      * @param builder The ProcessBuilder being used to start the Heritrix process
      */
+    /*
     @SuppressWarnings("unchecked")
     private void writeSystemInfo(File outputFile, ProcessBuilder builder) {
         PrintWriter writer = null;
@@ -344,7 +272,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
                 writer.close();
             }
         }
-    }
+    }*/
 
     /**
      * Add a shutdown hook that kills the process we've created. Since this hook will be run only in case of JVM

@@ -41,7 +41,7 @@ import dk.netarkivet.harvester.harvesting.frontier.InMemoryFrontierReport;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 /**
- * Implements the analysis of a full frontier report obtained from Heritrix, as the execution of a sequence of
+ * Implements the analysis of a full frontier report obtained from Heritrix3, as the execution of a sequence of
  * user-defined filters, that each generate a smaller, in-memory frontier report that are sent in a JMS message to the
  * {@link HarvestMonitor}.
  */
@@ -49,15 +49,16 @@ public class FrontierReportAnalyzer implements Runnable {
 
     /** The logger to use. */
     static final Log LOG = LogFactory.getLog(FrontierReportAnalyzer.class);
-    /** The controller used to communicate with the Heritrix instance. */
+    /** The controller used to communicate with the Heritrix3 instance. */
     private final BnfHeritrixController heritrixController;
     /** The last time this Analyzer was executed. */
     private long lastExecTime = System.currentTimeMillis();
 
     /**
-     * Builds an analyzer, given an Heritrix controller instance.
+     * Builds an analyzer, given an Heritrix3 controller instance.
+     * calls heritrixController.getFullFrontierReport().
      *
-     * @param heritrixController the controller allowing communication with the Heritrix crawler instance.
+     * @param heritrixController the controller allowing communication with the Heritrix3 crawler instance.
      */
     public FrontierReportAnalyzer(BnfHeritrixController heritrixController) {
         super();
@@ -102,10 +103,11 @@ public class FrontierReportAnalyzer implements Runnable {
                 + StringUtils.formatDuration(elapsed / TimeUtils.SECOND_IN_MILLIS)
                 + " elapsed since last generation started.");
         FullFrontierReport ffr = null;
+        LOG.debug("Trying to retrieve full frontier-reports from Heritrix3");
         try {
             ffr = heritrixController.getFullFrontierReport();
         } catch (HarvestingAbort e) {
-            LOG.debug("Unable to retrieve full frontier-reports from Heritrix", e);
+            LOG.debug("Unable to retrieve full frontier-reports from Heritrix3", e);
             return;
         }
         long endTime = System.currentTimeMillis();

@@ -319,12 +319,10 @@ public class HarvestController {
             // we finally upload the metadata archive file.
             uploadFiles(inf.getMetadataArcFiles(), errorMessage, failedFiles);
             
-            // Make the harvestReport ready for uploading
-            
-            // TODO maybe the DomainStatsReport should be moved to harvester-core 
-            HarvestReportGenerator hrg = new HarvestReportGenerator(files);
-            
-            DomainStatsReport dsr = new DomainStatsReport(hrg.getDomainStatsMap(), hrg.getDefaultStopReason()); 
+            // Make the harvestReport ready for uploading 
+            DomainStatsReport dsr =  HarvestReportGenerator.getDomainStatsReport(files);
+            		
+            //new DomainStatsReport(hrg.getDomainStatsMap(), hrg.getDefaultStopReason()); 
             return HarvestReportFactory.generateHarvestReport(dsr);
 
         } catch (IOFailure e) {

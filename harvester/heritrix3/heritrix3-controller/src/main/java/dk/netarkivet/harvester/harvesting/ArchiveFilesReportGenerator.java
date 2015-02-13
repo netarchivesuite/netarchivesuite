@@ -44,6 +44,10 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
+ * FIXME this class does not work for Heritrix3!
+ * FIXME this class does not work for Heritrix3!
+ * FIXME this class does not work for Heritrix3!
+ * 
  * This class generate a report that lists ARC/WARC files (depending on the configured archive format) along with the
  * opening date, closing date (if file was properly closed), and size in bytes.
  * <p>

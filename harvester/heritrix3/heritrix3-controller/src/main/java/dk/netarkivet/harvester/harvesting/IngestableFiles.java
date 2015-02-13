@@ -292,6 +292,7 @@ public class IngestableFiles {
      */
     protected void closeOpenFiles(String archiveDirName, FilenameFilter filter) {
         File arcsdir = new File(crawlDir, archiveDirName);
+        log.debug("Trying to close open archive files in directory {}", arcsdir);
         File[] files = arcsdir.listFiles(filter);
         if (files != null) {
             for (File file : files) {

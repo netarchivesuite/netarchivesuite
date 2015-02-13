@@ -34,7 +34,6 @@ import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor.PeriodicTask;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.Heritrix3Files;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
@@ -83,10 +82,11 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
                 crawlIsOver = true;
                 return;
             }
-
+            /*
             log.info("Job ID: " + files.getJobID() + ", Harvest ID: " + files.getHarvestID() + ", " + cpm.getHostUrl()
                     + "\n" + cpm.getProgressStatisticsLegend() + "\n" + cpm.getJobStatus().getStatus() + " "
                     + cpm.getJobStatus().getProgressStatistics());
+                    */
         }
     }
 
@@ -110,7 +110,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
      * @param files the files needed by Heritrix to launch a job.
      * @throws ArgumentNotValid
      */
-    private BnfHeritrixLauncher(HeritrixFiles files) throws ArgumentNotValid {
+    private BnfHeritrixLauncher(Heritrix3Files files) throws ArgumentNotValid {
         super(files);
     }
 
@@ -121,38 +121,44 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
      * @return {@link BnfHeritrixLauncher} object
      * @throws ArgumentNotValid If either order.xml or seeds.txt does not exist, or argument files is null.
      */
-    public static BnfHeritrixLauncher getInstance(HeritrixFiles files) throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
-        return new BnfHeritrixLauncher(files);
-    }
+    public static BnfHeritrixLauncher getInstance(Heritrix3Files files) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(files, "Heritrix3Files files");
+        return new BnfHeritrixLauncher(files); // The launching takes place here
+    } 
 
     /**
-     * Initializes an Heritrix controller, then launches the Heritrix instance. Then starts the crawl control loop:
+     * Initializes an Heritrix3controller, then launches the Heritrix3 instance. Then starts the crawl control loop:
      * <ol>
      * <li>Waits the amount of time configured in {@link HarvesterSettings#CRAWL_LOOP_WAIT_TIME}.</li>
      * <li>Obtains crawl progress information as a {@link CrawlProgressMessage} from the Heritrix controller</li>
-     * <li>Sends the progress message via JMS</li>
-     * <li>If the crawl if reported as finished, end loop.</li>
+     * <li>Sends a progress message via JMS</li>
+     * <li>If the crawl is reported as finished, end loop.</li>
      * </ol>
      */
     public void doCrawl() throws IOFailure {
-    	//FIXME
-        //setupOrderfile(getHeritrixFiles());
-        //heritrixController = new BnfHeritrixController(getHeritrixFiles());
+    	
+        setupOrderfile(getHeritrixFiles());
+        heritrixController = new BnfHeritrixController(getHeritrixFiles());
 
         PeriodicTaskExecutor exec = null;
         try {
-            // Initialize Heritrix settings according to the order.xml
+            // Initialize Heritrix settings according to the crawler-beans.cxml file.
             heritrixController.initialize();
             log.debug("Starting crawl..");
             heritrixController.requestCrawlStart();
 
             // Schedule full frontier report generation
+            
+            log.info("Starting CrawlControl PeriodicTaskExecutor that repeatedly fetches a fullfrontierreport");
             exec = new PeriodicTaskExecutor(new PeriodicTask("CrawlControl", new CrawlControl(),
-                    CRAWL_CONTROL_WAIT_PERIOD, CRAWL_CONTROL_WAIT_PERIOD), new PeriodicTask("FrontierReportAnalyzer",
+                    CRAWL_CONTROL_WAIT_PERIOD, CRAWL_CONTROL_WAIT_PERIOD) 
+            		//FIXME disabled until further notice
+                    /*						,new PeriodicTask("FrontierReportAnalyzer",
                     new FrontierReportAnalyzer(heritrixController), FRONTIER_REPORT_GEN_FREQUENCY,
-                    FRONTIER_REPORT_GEN_FREQUENCY));
-
+                    FRONTIER_REPORT_GEN_FREQUENCY)
+                    */
+                    );
+			
             while (!crawlIsOver) {
                 // Wait a bit
                 try {

@@ -227,9 +227,7 @@ public class HarvesterSettings {
      * <b>settings.harvester.harvesting.serverDir</b>: <br>
      * Each job gets a subdir of this dir. Job data is written and Heritrix writes to that subdir.
      * TODO verify, if this is OK for Heritrix3 as well as Heritrix1
-     * NOTE THAT the jobsdir in Heritrix3 consists of 
-     * 
-     * TODO Remember to update HeritrixFiles or make H1HeritrixFiles and H3HeritrixFiles.
+     * NOTE THAT the jobsdir in Heritrix3 consists of ???????? 
      * 
      */
     public static String HARVEST_CONTROLLER_SERVERDIR = "settings.harvester.harvesting.serverDir";
@@ -298,7 +296,7 @@ public class HarvesterSettings {
      * <b>settings.harvester.harvesting.heritrix.crawlLoopWaitTime</b>:<br>
      * Time interval in seconds to wait during a crawl loop in the harvest controller. Default value is 20 seconds.
      * 
-     * FIXME Maybe move this from the heritrix settings (settings.harvester.harvesting.heritrix) to 
+     * TODO Maybe move this from the heritrix settings (settings.harvester.harvesting.heritrix) to 
      * settings.harvester.harvesting.controller.  
      * 
      */
@@ -384,7 +382,7 @@ public class HarvesterSettings {
      * The port that Heritrix 1.14.4 uses to expose its JMX interface. This port must not be used by anything else on the
      * machine, but does not need to be accessible from other machines unless you want to be able to use jconsole to
      * access Heritrix directly. Note that apart from pausing a job, modifications done directly on Heritrix may cause
-     * unexpected breakage. Irrelevant for Heritrix 3.2
+     * unexpected breakage. Irrelevant for Heritrix 3+
      */
     public static String HERITRIX_JMX_PORT = "settings.harvester.harvesting.heritrix.jmxPort";
 
@@ -392,7 +390,7 @@ public class HarvesterSettings {
      * <b>settings.harvester.harvesting.heritrix.jmxUsername</b>: <br>
      * The username used to connect to Heritrix 1.14.4 JMX interface The username must correspond to the value stored in the
      * jmxremote.password file (name defined in setting settings.common.jmx.passwordFile).
-     * Irrelevant for Heritrix 3.2
+     * Irrelevant for Heritrix 3+
      */
     public static String HERITRIX_JMX_USERNAME = "settings.harvester.harvesting.heritrix.jmxUsername";
 
@@ -400,7 +398,7 @@ public class HarvesterSettings {
      * <b>settings.harvester.harvesting.heritrix.jmxPassword</b>: <br>
      * The password used to connect to Heritrix JMX interface The password must correspond to the value stored in the
      * jmxremote.password file (name defined in setting settings.common.jmx.passwordFile).
-     * Irrelevant for Heritrix 3.2
+     * Irrelevant for Heritrix 3+
      */
     public static String HERITRIX_JMX_PASSWORD = "settings.harvester.harvesting.heritrix.jmxPassword";
 
@@ -485,7 +483,7 @@ public class HarvesterSettings {
      * {@link #METADATA_GENERATE_ARCHIVE_FILES_REPORT} is set to true, sets the name of the generated report file.
      * Default value is 'archivefiles-report.txt'.
      * 
-     * FIXME: not easily portable to H3, as the 
+     * FIXME: not easily portable to H3, as it depends on information in heritrix_out.log no longer available.
      *
      * @see HarvestDocumentation#documentHarvest(dk.netarkivet.harvester.harvesting.IngestableFiles)
      */
@@ -567,7 +565,13 @@ public class HarvesterSettings {
      * There is no attempt at migration from one to the other. This must be done by an commandline-tool.
      */
     public static String HERITRIX_VERSION = "settings.harvester.harvesting.heritrix.version";
-    
+    /**
+     * <b>settings.harvester.harvesting.heritrix.bundle</b>Points to the Heritrix3 zipfile bundled with 
+     * netarchiveSuite classes. Currently no default value
+     *
+     */   	
+    public static String HERITRIX3_BUNDLE = "settings.harvester.harvesting.heritrix.bundle";
+
     /**
      * <b>settings.harvester.performer</b>: <br>
      * The agent performing these harvests. The default is: ""

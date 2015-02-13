@@ -26,8 +26,6 @@ package dk.netarkivet.harvester.harvesting;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -38,12 +36,10 @@ import org.archive.util.anvl.ANVLRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
@@ -288,18 +284,21 @@ public class HarvestDocumentation {
         }
         // Generate an arcfiles-report.txt if configured to do so.
         // FIXME This is not possible to extract from the crawl.log (Is this list available in any other way
-        /*
+        
         boolean genArcFilesReport = Settings.getBoolean(HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         if (genArcFilesReport) {
+        	log.warn("Creating the arcfiles-report.txt is not yet implemented for Heritrix3");
+        	/*
             log.debug("Creating an arcfiles-report.txt");
             files.add(new MetadataFile(new ArchiveFilesReportGenerator(crawlDir).generateReport(), harvestID, jobID,
                     heritrixVersion));
+                    */
         } else {
             log.debug("Creation of the arcfiles-report.txt has been disabled by the setting '{}'!",
                     HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         }
 
-         */
+         
 
         // Add log files
         File logDir = new File(crawlDir, "logs");

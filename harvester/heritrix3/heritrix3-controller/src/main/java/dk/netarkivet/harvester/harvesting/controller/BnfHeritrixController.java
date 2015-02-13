@@ -23,24 +23,22 @@
 package dk.netarkivet.harvester.harvesting.controller;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
-import javax.management.remote.JMXConnector;
-
+import org.apache.http.client.methods.HttpRequestBase;
+import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.JMXUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.Heritrix3Files;
-import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
@@ -166,13 +164,7 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      */
     private static final boolean ABORT_IF_CONN_LOST = Settings.getBoolean(HarvesterSettings.ABORT_IF_CONNECTION_LOST);
 
-    /**
-     * The part of the Job MBean name that designates the unique id. For some reason, this is not included in the normal
-     * Heritrix definitions in JmxUtils, otherwise we wouldn't have to define it. I have committed a feature request:
-     * http://webteam.archive.org/jira/browse/HER-1618
-     */
-    private static final String UID_PROPERTY = "uid";
-
+   
     /**
      * The name that Heritrix gives to the job we ask it to create. This is part of the name of the MBean for that job,
      * but we can only retrieve the name after the MBean has been created.
@@ -181,18 +173,6 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
 
     /** The header line (legend) for the statistics report. */
     private String progressStatisticsLegend;
-
-    /** The connector to the Heritrix MBeanServer. */
-    private JMXConnector jmxConnector;
-
-    /** Max tries for a JMX operation. */
-    private final int jmxMaxTries = JMXUtils.getMaxTries();
-
-    /** The name of the MBean for the submitted job. */
-    private String crawlServiceJobBeanName;
-
-    /** The name of the main Heritrix MBean. */
-    private String crawlServiceBeanName;
 
     /**
      * Create a BnfHeritrixController object.
@@ -211,15 +191,38 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      */
     @Override
     public void initialize() {
+    	/*
         if (processHasExited()) {
             String errMsg = "Heritrix process of " + this + " died before initialization";
             log.warn(errMsg);
             throw new IOFailure(errMsg);
-        }
+        } 
+        */
 
         //FIXME establish initial connection to H3 using REST
         
         log.info("Abort, if we lose the connection to Heritrix, is {}", ABORT_IF_CONN_LOST);
+        
+        // TODO define a new H3 job with the given CXML file and seeds.txt
+        // After this, H3 process knows about a job called 'jobName' 
+        String jobname = "job-" + Long.toString(System.currentTimeMillis());
+        try {
+			h3wrapper.createNewJob(jobname);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+ 
         //initJMXConnection();
 
         //log.info("JMX connection initialized successfully");
@@ -238,13 +241,13 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
                     + "This instance has either old done jobs (" + doneJobs + "), or old pending jobs (" + pendingJobs
                     + ").");
         }
+        
         // From here on, we can assume there's only the one job we make.
         // We'll use the arc file prefix to name the job, since the prefix
         // already contains the harvest id and job id.
         HeritrixFiles files = getHeritrixFiles();
         executeMBeanOperation(CrawlServiceOperation.addJob, files.getOrderXmlFile().getAbsolutePath(),
                 files.getArchiveFilePrefix(), getJobDescription(), files.getSeedsTxtFile().getAbsolutePath());
-
         jobName = getJobName();
 
         crawlServiceJobBeanName = "org.archive.crawler:" + JmxUtils.NAME + "=" + jobName + "," + JmxUtils.TYPE
@@ -256,8 +259,17 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
 
     @Override
     public void requestCrawlStart() {
+    	
+    	
+    	
+    	
+    	
+    	
+    	
     	//FIXME implement me
-        //executeMBeanOperation(CrawlServiceOperation.startCrawling);
+    	// Build, launch, and start the job
+    	
+    	//executeMBeanOperation(CrawlServiceOperation.startCrawling);
     }
 
     @Override
@@ -272,7 +284,7 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      * @return the URL for monitoring this instance.
      */
     public String getHeritrixConsoleURL() {
-        return "http://" + SystemUtils.getLocalHostName() + ":" + getGuiPort();
+        return "https://" + SystemUtils.getLocalHostName() + ":" + getGuiPort() + "/engine";
     }
 
     /**
@@ -287,6 +299,8 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
         // Before cleaning up, we need to wait for the reports to be generated
         waitForReportGeneration(crawlDir);
 
+        // FIXME shutdown down the heritrix process.
+        //Object engineResult = h3wrapper.exitJavaProcess(null);
         /*
         try {
             executeMBeanOperation(CrawlServiceOperation.shutdown);
@@ -305,7 +319,7 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      * @return the URL for monitoring this instance.
      */
     public String getAdminInterfaceUrl() {
-        return "http://" + SystemUtils.getLocalHostName() + ":" + getGuiPort();
+        return "https://" + SystemUtils.getLocalHostName() + ":" + getGuiPort() + "/engine";
     }
 
     /**
@@ -521,7 +535,10 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      * @return a Full frontier report.
      */
     public FullFrontierReport getFullFrontierReport() {
-    	//FIXME get frontier report from H3 
+    	//FIXME get frontier report from H3 using an appropriate REST call.
+    	// Is the following OK: No!!!
+    	//https://localhost:8444/engine/job/testjob/jobdir/20150210135411/reports/frontier-summary-report.txt
+    	
     	return null;
     	/*		
         return FullFrontierReport.parseContentsAsString(
@@ -609,30 +626,6 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
         }
         log.info("Waited {} for report generation. Will proceed with cleanup.", StringUtils.formatDuration(waitSeconds));
     }
-
-
-    /**
-     * Initializes the JMX connection.
-     */
-    private void initJMXConnection() {
-        // Initialize the connection to Heritrix' MBeanServer
-        this.jmxConnector = JMXUtils.getJMXConnector(SystemUtils.LOCALHOST, getJmxPort(),
-                Settings.get(HarvesterSettings.HERITRIX_JMX_USERNAME),
-                Settings.get(HarvesterSettings.HERITRIX_JMX_PASSWORD));
-    }
-
-    /**
-     * Closes the JMX connection.
-     */
-    private void closeJMXConnection() {
-        // Close the connection to the MBean Server
-        try {
-            jmxConnector.close();
-        } catch (IOException e) {
-            log.error("JMX error while closing connection to Heritrix", e);
-        }
-    }
-
     
     @Override
     public boolean atFinish() {

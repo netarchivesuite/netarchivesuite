@@ -26,7 +26,7 @@ import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerServer;
 
 /**
- * This application controls the Heritrix harvester which does the actual harvesting, and is also responsible for
+ * This application controls the Heritrix3 harvester which does the actual harvesting, and is also responsible for
  * uploading the harvested data to the ArcRepository.
  *
  * @see HarvestControllerServer

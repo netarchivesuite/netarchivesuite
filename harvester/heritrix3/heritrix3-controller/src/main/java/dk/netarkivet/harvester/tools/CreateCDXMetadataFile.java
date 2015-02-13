@@ -341,7 +341,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * Writes a full entry of CDX files to the ARCWriter.
          *
          * @param writer The writer we're currently writing to.
-         * @param filename The filename of all the entries stored in baos. This is used to generate the URI for the
+         * @param filename The filename of all the entries stored. This is used to generate the URI for the
          * entry.
          * @param bytes The bytes of the CDX records to be written under this entry.
          * @throws IOFailure if the write fails for any reason

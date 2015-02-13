@@ -384,5 +384,10 @@ public class HarvestReportGenerator {
     public Map<String, DomainStats> getDomainStatsMap() {
     	return this.domainstats;
     }
+
+	public static DomainStatsReport getDomainStatsReport(Heritrix3Files files) {
+		HarvestReportGenerator hrg = new HarvestReportGenerator(files);
+		return new DomainStatsReport(hrg.getDomainStatsMap(), hrg.getDefaultStopReason());
+	}
     
 }

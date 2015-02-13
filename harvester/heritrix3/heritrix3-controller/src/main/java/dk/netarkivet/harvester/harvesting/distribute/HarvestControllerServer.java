@@ -529,13 +529,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         StringBuilder errorMessage = new StringBuilder();
         HarvestReport dhr = null;
         List<File> failedFiles = new ArrayList<File>();
-        // FIXME
-        // FIXME H3 specific code needed 
-        // FIXME
-        
-        // originally HeritrixFiles files = new HeritrixFiles(crawlDir, harvestInfo);
+        // FIXME this is not yet implemented
         Heritrix3Files files = Heritrix3Files.getH3HeritrixFiles(crawlDir, harvestInfo);
-        //HeritrixFiles files = HeritrixFiles.getH3HeritrixFiles(crawlDir, harvestJob)(crawlDir, harvestInfo);
         
         try {
             log.info("Store files in directory '{}' " + "from jobID: {}.", crawlDir, jobID);

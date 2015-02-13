@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.InputStream;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 
@@ -22,14 +25,23 @@ public class Heritrix3Files {
 	private File orderXML;
 	private File indexDir;
 	private String archiveFilePrefix;
-	
+	private File h3ZipBall;
 	
 	public static Heritrix3Files getH3HeritrixFiles(File crawldir, PersistentJobData harvestInfo) {
 		Heritrix3Files files = new Heritrix3Files();
 		files.setCrawldir(crawldir);
 		files.setJobId(harvestInfo.getJobID());
 		files.setArchivePrefix(harvestInfo.getHarvestFilenamePrefix());
+		files.setHeritrixZip();
 		return files;
+	}
+
+	private void setHeritrixZip() {
+		h3ZipBall = Settings.getFile(HarvesterSettings.HERITRIX3_BUNDLE);
+		if (!h3ZipBall.isFile()) {
+			throw new IOFailure("The path to the heritrix3 zipfile '" 
+					+  h3ZipBall.getAbsolutePath() + "' does not represent a proper file");
+		}
 	}
 
 	private void setArchivePrefix(String harvestFilenamePrefix) {
@@ -46,6 +58,7 @@ public class Heritrix3Files {
 		files.setCrawldir(crawldir);
 		files.setJobId(job.getJobID());
 		files.setArchivePrefix(job.getHarvestFilenamePrefix());
+		files.setHeritrixZip();
 		return files;
 	}
 	
@@ -73,8 +86,7 @@ public class Heritrix3Files {
 		// FIXME change destination file to something meaningful 
 		File destination = new File(crawlDir, "crawler-beans.cxml");
 		orderXMLdoc.writeToFile(destination);
-		this.orderXML = destination;
-		
+		this.orderXML = destination;	
 	}
 
 	public File getProgressStatisticsLog() {
@@ -108,6 +120,10 @@ public class Heritrix3Files {
 
 	public File getCrawlLog() {
 		return new File(crawlDir, "crawl.log");
+	}
+	
+	public File getHeritrixZip() {
+		return this.h3ZipBall;
 	}
 	
 	////////////////////// UNIMPLEMENTED METHODS ///////////////////////////////
