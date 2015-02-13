@@ -24,30 +24,24 @@ package dk.netarkivet.harvester.harvesting.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.io.PrintWriter;
 
-import org.archive.crawler.Heritrix;
+import org.netarchivesuite.heritrix3wrapper.CommandLauncher;
+import org.netarchivesuite.heritrix3wrapper.EngineResult;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
+import org.netarchivesuite.heritrix3wrapper.JobResult;
+import org.netarchivesuite.heritrix3wrapper.LaunchResultHandlerAbstract;
+import org.netarchivesuite.heritrix3wrapper.ResultStatus;
+import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper.CrawlControllerState;
 import org.netarchivesuite.heritrix3wrapper.unzip.UnzipUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.JMXUtils;
-import dk.netarkivet.common.utils.NotificationType;
-import dk.netarkivet.common.utils.NotificationsFactory;
-import dk.netarkivet.common.utils.ProcessUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.TimeUtils;
-import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.Heritrix3Files;
 
@@ -60,37 +54,22 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(AbstractRestHeritrixController.class);
 
-
-    /** How long we're willing to wait for Heritrix to shutdown in a shutdown hook. */
-    private static final long SHUTDOWN_HOOK_MAX_WAIT = 1000L;
-
     /** The various files used by Heritrix. */
     private final Heritrix3Files files;
 
     protected Heritrix3Wrapper h3wrapper;
+    protected CommandLauncher h3launcher;
+    protected PrintWriter outputPrinter;
+    protected PrintWriter errorPrinter; 
     
-    /** The threads used to collect process output. Only one thread used presently. */
-    private Set<Thread> collectionThreads = new HashSet<Thread>(1);
-
+    
     /** The host name for this machine that matches what Heritrix uses in its MBean names. */
     private final String hostName;
 
     /** The port to use for Heritrix GUI, as set in settings.xml. */
     private final int guiPort = Settings.getInt(HarvesterSettings.HERITRIX_GUI_PORT);
-
-    /**
-     * The shutdownHook that takes care of killing our process. This is removed in cleanup() when the process is shut
-     * down.
-     */
-    private Thread processKillerHook;
-
-    /**
-     * The one-shot Heritrix process created in the constructor. It will only perform a single crawl before being shut
-     * down.
-     */
-    private final Process heritrixProcess;
-
-    /**
+ 
+   /**
      * Create a BnfHeritrixController object.
      *
      * @param files Files that are used to set up Heritrix.
@@ -98,104 +77,189 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
     public AbstractRestHeritrixController(Heritrix3Files files) {
         ArgumentNotValid.checkNotNull(files, "HeritrixFile files");
         this.files = files;
-        
-        
         SystemUtils.checkPortNotUsed(guiPort);
-
+        
         hostName = SystemUtils.getLocalHostName();
-
         try {
             log.info("Starting Heritrix for {} in crawldir {}", this, files.getCrawlDir());
+            String zipFileStr = files.getHeritrixZip().getAbsolutePath();
+            //public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix.certificate";
+            String cerficatePath = files.getCertificateFile().getAbsolutePath();
             
-            log.debug("Unzipping heriix into the crawldir ");
-            ZipUtils.unzip(files.getHeritrixZip(), files.getCrawlDir());
-        
+            String unpackDirStr = files.getCrawlDir().getAbsolutePath();
+            String basedirStr = unpackDirStr + "heritrix-3.2.0/";
+            String[] cmd = {
+            "./bin/heritrix",
+            //  "-b 192.168.1.101",
+            "-p " + guiPort,
+            "-a " + getHeritrixAdminName() + ":" + getHeritrixAdminPassword(),
             
-            /*
-            h3wrapper = Heritrix3Wrapper.getInstance(hostName, guiPort, 
-    				null, null, getHeritrixAdminName(), getHeritrixAdminPassword()); 
-    		*/
+            //String cerficatePath = files.getCertificateFile().getAbsolutePath();
+            //  "-s h3server.jks,h3server,h3server"
+            };
+
+            log.debug("Unzipping heritrix into the crawldir");
+         
+            UnzipUtils.unzip(zipFileStr, unpackDirStr);
+            File basedir = new File(basedirStr);
             
+            h3launcher = CommandLauncher.getInstance();
+        	
+            outputPrinter = new PrintWriter(files.getHeritrixStdoutLog(), "UTF-8");
+            errorPrinter = new PrintWriter(files.getHeritrixStderrLog(), "UTF-8");
+            h3launcher.init(basedir, cmd);
             
-            
-            /*
-             * To start Heritrix, we need to do the following (taken from the Heritrix startup shell script): 
-             * - set heritrix.home to base dir of Heritrix stuff - set com.sun.management.jmxremote.port to JMX port - set
-             * com.sun.management.jmxremote.ssl to false - set com.sun.management.jmxremote.password.file to JMX
-             * password file - set heritrix.out to heritrix_out.log - set java.protocol.handler.pkgs=org.archive.net -
-             * send processOutput & stderr into heritrix.out - let the Heritrix GUI-webserver listen on all available
-             * network interfaces: This is done with argument "--bind /" (default is 127.0.0.1) - listen on a specific
-             * port using the port argument: --port <GUI port>
+            /** The bin/heritrix script should read the following environment-variables:
              * 
-             * We also need to output something like the following to heritrix.out: `date Starting heritrix uname -a
-             * java -version JAVA_OPTS ulimit -a
+             * JAVA_HOME Point at a JDK install to use  
+             * 
+             * HERITRIX_HOME    Pointer to your heritrix install.  If not present, we 
+             *                  make an educated guess based of position relative to this
+             *                  script.
+             *
+             * HERITRIX_OUT     Pathname to the Heritrix log file written when run in
+             *                  daemon mode.
+             *                  Default setting is $HERITRIX_HOME/heritrix_out.log
+             *
+             * JAVA_OPTS        Java runtime options.  Default setting is '-Xmx256m'.
+             *
+             * FOREGROUND      
              */
-
-            File heritrixOutputFile = files.getHeritrixOutput();
-            StringBuilder settingProperty = new StringBuilder();
-            for (File file : Settings.getSettingsFiles()) {
-                settingProperty.append(File.pathSeparator);
-
-                String absolutePath = file.getAbsolutePath();
-                // check that the settings files not only exist but
-                // are readable
-                boolean readable = new File(absolutePath).canRead();
-                if (!readable) {
-                    log.warn("The file '{}' is missing.", absolutePath);
-                    throw new IOFailure("Failed to read file '" + absolutePath + "'");
-                }
-                settingProperty.append(absolutePath);
-            }
-            if (settingProperty.length() > 0) {
-                // delete last path-separator
-                settingProperty.deleteCharAt(0);
-            }
-
-            List<String> allOpts = new LinkedList<String>();
-            allOpts.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getAbsolutePath());
-
-            allOpts.add("-Xmx" + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE));
-            allOpts.add("-Dheritrix.home=" + files.getCrawlDir().getAbsolutePath());
-
+            h3launcher.env.put("FOREGROUND", "true");
+            String javaOpts = "";
             String jvmOptsStr = Settings.get(HarvesterSettings.HERITRIX_JVM_OPTS);
             if ((jvmOptsStr != null) && (!jvmOptsStr.isEmpty())) {
-                String[] add = jvmOptsStr.split(" ");
-                allOpts.addAll(Arrays.asList(add));
+            	javaOpts = " " + jvmOptsStr;
             }
+            h3launcher.env.put("JAVA_OPTS", 
+            		"-Xmx" + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE)
+            		+ javaOpts);
+            h3launcher.env.put("HERITRIX_OUT", files.getHeritrixOutput().getAbsolutePath());
+            // TODO NEED THIS?
+            //h3launcher.env.put("HERITRIX_HOME", files.getCrawlDir().getAbsolutePath());
+            // TODO NEED THIS?
+            //h3launcher.env.put("JAVA_HOME", ....)	
+            	
             
-            //TODO er JMX_OPTS stadig nødvendig til at skelne mellem forskellige heritrix-instanser på maskinen????
-            // Tilsyneladende ikke: Only the port must be unique
-            
-            //allOpts.add("-Dcom.sun.management.jmxremote.password.file=" + new File(pwAbsolutePath));
-            //allOpts.add("-Dcom.sun.management.jmxremote.access.file=" + new File(acAbsolutePath));
-            allOpts.add("-Dheritrix.out=" + heritrixOutputFile.getAbsolutePath());
-            allOpts.add("-Djava.protocol.handler.pkgs=org.archive.net");
-            allOpts.add("-Ddk.netarkivet.settings.file=" + settingProperty);
-            allOpts.add(Heritrix.class.getName());
-            allOpts.add("--port=" + guiPort);
-            allOpts.add("--admin=" + getHeritrixAdminName() + ":" + getHeritrixAdminPassword());
-
-            String[] args = allOpts.toArray(new String[allOpts.size()]);
-            log.info("Starting Heritrix process with args" + Arrays.toString(args));
-            //log.debug("The JMX timeout is set to " + TimeUtils.readableTimeInterval(JMXUtils.getJmxTimeout()));
-
-            ProcessBuilder builder = new ProcessBuilder(args);
-
-            //updateEnvironment(builder.environment());
-            
-            FileUtils.copyDirectory(new File("lib/heritrix"), files.getCrawlDir());
-            builder.directory(files.getCrawlDir());
-            builder.redirectErrorStream(true);
-            //writeSystemInfo(heritrixOutputFile, builder);
-            FileUtils.appendToFile(heritrixOutputFile, "Working directory: " + files.getCrawlDir());
-            addProcessKillerHook();
-            heritrixProcess = builder.start();
-            ProcessUtils.writeProcessOutput(heritrixProcess.getInputStream(), heritrixOutputFile, collectionThreads);
-            
-        } catch (IOException e) {
-            throw new IOFailure("Error starting Heritrix process", e);
+            h3launcher.start(new LaunchResultHandlerAbstract() {
+            	@Override
+            	public void exitValue(int exitValue) {
+            		// debug
+            		System.out.println("exitValue=" + exitValue);
+           	}
+            	@Override
+            	public void output(String line) {
+            		outputPrinter.println(line);
+            	}
+            	@Override
+            	public void closeOutput() {
+            		outputPrinter.close();
+            	}
+            	@Override
+            	public void error(String line) {
+            		errorPrinter.println(line);
+            	}
+            	@Override
+            	public void closeError() {
+            		errorPrinter.close();
+            	}
+            });
+        } catch( Throwable e) {
+        	e.printStackTrace();
         }
-    }
+
+        	// Initialize H3 wrapper 
+      		//File keystoreFile= null;
+      		//String keyStorePassword = null;
+      		
+      		
+      		File cxmlFile = getHeritrixFiles().getOrderXmlFile();
+      		File seedsFile = getHeritrixFiles().getSeedsTxtFile();
+      		JobResult jobResult;
+      		
+      		
+      		
+      		// Assumes H3 is now up and running (HOW TO VERIFY THAT??)
+      		// These two null represent 
+      		h3wrapper = Heritrix3Wrapper.getInstance(hostName, guiPort, 
+      				null, null, getHeritrixAdminName(), getHeritrixAdminPassword());
+      		
+      		EngineResult engineResult;
+      		try {
+      			//TODO these numbers should be settings
+      			int tries = 60;
+      			int secondsBetweenTries = 1000; // TODO or ms?
+      			engineResult = h3wrapper.waitForEngineReady(tries, secondsBetweenTries);
+      		} catch (Throwable e){
+      			e.printStackTrace();
+      			throw new IOFailure("Heritrix not started: " + e);
+      		}
+      		
+      		if (engineResult != null && engineResult.status != ResultStatus.OK) {
+      			
+      			
+      		}
+      		/*
+      		// debug
+      		System.out.println(engineResult.status + " - " + ResultStatus.OK);
+      		File basedirStr=null;
+      		File jobsFile = new File(basedirStr, "jobs/");
+      		if (!jobsFile.exists()) {
+      			jobsFile.mkdirs();
+      		 }
+      		String jobname = Long.toString(System.currentTimeMillis());
+      		File jobFile = new File(jobsFile, jobname);
+      		jobFile.mkdirs();
+      		try {
+      			Heritrix3Wrapper.copyFile( cxmlFile, jobFile );
+      			Heritrix3Wrapper.copyFileAs( seedsFile, jobFile, "seeds.txt" ); 
+      		} catch (IOException e) {
+      			throw new IOFailure("Problem occurred during the copying of files to heritrix job", e);
+      		}
+      		try {
+      		engineResult = h3w.rescanJobDirectory();
+      		//System.out.println(new String(engineResult.response, "UTF-8"));
+      		jobResult = h3w.buildJobConfiguration(jobname);
+      		//System.out.println(new String(jobResult.response, "UTF-8"));
+      		jobResult = h3w.waitForJobState(jobname, CrawlControllerState.NASCENT, 60, 1000);
+      		jobResult = h3w.launchJob(jobname);
+      		//System.out.println(new String(jobResult.response, "UTF-8"));
+      		jobResult = h3w.waitForJobState(jobname, CrawlControllerState.PAUSED, 60, 1000);
+      		jobResult = h3w.unpauseJob(jobname);
+      		} catch (UnsupportedEncodingException e) {
+      			//TODO Add logging
+      			e.printStackTrace();
+      		}
+      		*/
+      		
+      		//System.out.println(new String(jobResult.response, "UTF-8"));
+      		
+      		// Job 'jobname' is now running
+      		
+      		/*
+      		boolean bFinished = false;
+      		while (!bFinished) {
+      			try {
+      				Thread.sleep(60 * 1000);
+      			} catch (InterruptedException e) {
+      			}
+      			jobResult = h3w.job(jobname);
+      			System.out.println(jobResult.job.isRunning);
+      			if (!jobResult.job.isRunning) {
+      				System.out.println(new String(jobResult.response, "UTF-8"));
+      				bFinished = true;
+      			}
+      		}
+      		
+      		jobResult = h3w.teardownJob(jobname);
+      		//System.out.println(new String(jobResult.response, "UTF-8"));
+      		engineResult = h3w.exitJavaProcess(null);
+      		h3launcher.process.destroy();
+      		*/
+      	//} catch (IOException e) {
+      	//	e.printStackTrace();
+      	//}
+      	}
 
     /**
      * @return the HTTP port used by the Heritrix GUI.
@@ -274,34 +338,6 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
         }
     }*/
 
-    /**
-     * Add a shutdown hook that kills the process we've created. Since this hook will be run only in case of JVM
-     * shutdown, it cannot expect that the standard logging framework is still usable, and therefore writes to stdout
-     * instead.
-     */
-    private void addProcessKillerHook() {
-        // Make sure that the process gets killed at the very end, at least
-        processKillerHook = new Thread() {
-            public void run() {
-                try {
-                    // Only non-blocking way to check for process liveness
-                    int exitValue = heritrixProcess.exitValue();
-                    System.out.println("Heritrix process of " + this + " exited with exit code " + exitValue);
-                } catch (IllegalThreadStateException e) {
-                    // Process is still alive, kill it.
-                    System.out.println("Killing process of " + this);
-                    heritrixProcess.destroy();
-                    final Integer exitValue = ProcessUtils.waitFor(heritrixProcess, SHUTDOWN_HOOK_MAX_WAIT);
-                    if (exitValue != null) {
-                        System.out.println("Process of " + this + " returned exit code " + exitValue);
-                    } else {
-                        System.out.println("Process of " + this + " never exited!");
-                    }
-                }
-            }
-        };
-        Runtime.getRuntime().addShutdownHook(processKillerHook);
-    }
 
     /**
      * Get a string that describes the current controller in terms of job ID, harvest ID, and crawldir.
@@ -310,12 +346,13 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
      */
     @Override
     public String toString() {
-        if (heritrixProcess != null) {
-            return "job " + files.getJobID() + " of harvest " + files.getHarvestID() + " in " + files.getCrawlDir()
-                    + " running process " + heritrixProcess;
-        } else {
-            return "job " + files.getJobID() + " of harvest " + files.getHarvestID() + " in " + files.getCrawlDir();
-        }
+        //if (heritrixProcess != null) {
+        //    return "job " + files.getJobID() + " of harvest " + files.getHarvestID() + " in " + files.getCrawlDir()
+        //            + " running process " + heritrixProcess;
+        //} else {
+            return "job " + files.getJobID() + " of harvest " + files.getHarvestID() 
+            		+ " in " + files.getCrawlDir();
+        //}
     }
 
     /**
@@ -323,6 +360,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
      *
      * @return True if the process has exited.
      */
+    /*
     protected boolean processHasExited() {
         // First check if the process has exited already
         try {
@@ -334,10 +372,12 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
         }
         return false;
     }
+    */
 
     /**
      * Waits for the Heritrix process to exit.
      */
+    /*
     protected void waitForHeritrixProcessExit() {
         final long maxWait = Settings.getLong(CommonSettings.PROCESS_TIMEOUT);
         final int maxJmxRetries = JMXUtils.getMaxTries();
@@ -381,6 +421,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
             TimeUtils.exponentialBackoffSleep(attempt);
         } while (attempt++ < maxJmxRetries);
     }
+    */
 
     /**
      * Return a human-readable description of the job. This will only be visible in the Heritrix GUI.

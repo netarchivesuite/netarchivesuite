@@ -568,10 +568,11 @@ public class HarvesterSettings {
     /**
      * <b>settings.harvester.harvesting.heritrix.bundle</b>Points to the Heritrix3 zipfile bundled with 
      * netarchiveSuite classes. Currently no default value
-     *
      */   	
     public static String HERITRIX3_BUNDLE = "settings.harvester.harvesting.heritrix.bundle";
 
+    public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix.certificate";
+    
     /**
      * <b>settings.harvester.performer</b>: <br>
      * The agent performing these harvests. The default is: ""

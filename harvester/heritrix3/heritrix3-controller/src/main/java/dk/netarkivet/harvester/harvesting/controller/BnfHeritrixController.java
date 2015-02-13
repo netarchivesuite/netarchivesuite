@@ -26,7 +26,9 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.http.client.methods.HttpRequestBase;
+import org.netarchivesuite.heritrix3wrapper.EngineResult;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
+import org.netarchivesuite.heritrix3wrapper.JobResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,34 +200,54 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
             throw new IOFailure(errMsg);
         } 
         */
-
         //FIXME establish initial connection to H3 using REST
-        
-        log.info("Abort, if we lose the connection to Heritrix, is {}", ABORT_IF_CONN_LOST);
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+
+    	
+    	
+    	
+        //log.info("Abort, if we lose the connection to Heritrix, is {}", ABORT_IF_CONN_LOST);
         
         // TODO define a new H3 job with the given CXML file and seeds.txt
-        // After this, H3 process knows about a job called 'jobName' 
-        String jobname = "job-" + Long.toString(System.currentTimeMillis());
-        try {
-			h3wrapper.createNewJob(jobname);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-      
+        // After this, H3 process knows about a job called 'jobName'
         
+        jobName = "job-" + Long.toString(System.currentTimeMillis());
+        h3wrapper.createNewJob(jobName);
         
-        
-        
-        
-        
-        
-        
-        
- 
-        //initJMXConnection();
-
-        //log.info("JMX connection initialized successfully");
+        //JobResult jobResult = h3wrapper.job(jobName);
 
         /*
         crawlServiceBeanName = "org.archive.crawler:" + JmxUtils.NAME + "=Heritrix," + JmxUtils.TYPE + "=CrawlService,"
@@ -298,19 +320,8 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
     public void cleanup(File crawlDir) {
         // Before cleaning up, we need to wait for the reports to be generated
         waitForReportGeneration(crawlDir);
-
-        // FIXME shutdown down the heritrix process.
-        //Object engineResult = h3wrapper.exitJavaProcess(null);
-        /*
-        try {
-            executeMBeanOperation(CrawlServiceOperation.shutdown);
-        } catch (IOFailure e) {
-            log.error("JMX error while cleaning up Heritrix controller", e);
-        }*/
-
-        //closeJMXConnection();
-
-        waitForHeritrixProcessExit();
+        EngineResult result = h3wrapper.exitJavaProcess(null);
+        h3launcher.process.destroy();
     }
 
     /**
