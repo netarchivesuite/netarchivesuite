@@ -23,12 +23,13 @@
 package dk.netarkivet.harvester.harvesting.controller;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 
-import org.apache.http.client.methods.HttpRequestBase;
 import org.netarchivesuite.heritrix3wrapper.EngineResult;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
 import org.netarchivesuite.heritrix3wrapper.JobResult;
+import org.netarchivesuite.heritrix3wrapper.ResultStatus;
+import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper.CrawlControllerState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.Heritrix3Files;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
-import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
+//import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport;
 
@@ -90,6 +91,7 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
     /**
      * Enum listing the different job attributes available.
      */
+    
     private static enum CrawlServiceJobAttribute {
         /** The time in seconds elapsed since the crawl began. */
         CrawlTime,
@@ -200,104 +202,136 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
             throw new IOFailure(errMsg);
         } 
         */
-        //FIXME establish initial connection to H3 using REST
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-
-    	
-    	
-    	
+        // establish initial connection to H3 using REST
+    	// Already done that in the AbstractRestHeritrixController constructor
         //log.info("Abort, if we lose the connection to Heritrix, is {}", ABORT_IF_CONN_LOST);
         
-        // TODO define a new H3 job with the given CXML file and seeds.txt
-        // After this, H3 process knows about a job called 'jobName'
+    	/////////////////////////////////////////////////////
+        // Initialize H3 wrapper 
+    	/////////////////////////////////////////////////////
         
-        jobName = "job-" + Long.toString(System.currentTimeMillis());
-        h3wrapper.createNewJob(jobName);
-        
-        //JobResult jobResult = h3wrapper.job(jobName);
+    	//File keystoreFile= null;
+        //String keyStorePassword = null;
 
-        /*
-        crawlServiceBeanName = "org.archive.crawler:" + JmxUtils.NAME + "=Heritrix," + JmxUtils.TYPE + "=CrawlService,"
-                + JmxUtils.JMX_PORT + "=" + getJmxPort() + "," + JmxUtils.GUI_PORT + "=" + getGuiPort() + ","
-                + JmxUtils.HOST + "=" + getHostName();
+       
+        h3wrapper = Heritrix3Wrapper.getInstance(getHostName(), getGuiPort(), 
+        		null, null, getHeritrixAdminName(), getHeritrixAdminPassword());
 
-        // We want to be sure there are no jobs when starting, in case we got
-        // an old Heritrix or somebody added jobs behind our back.
-        TabularData doneJobs = (TabularData) executeMBeanOperation(CrawlServiceOperation.completedJobs);
-        TabularData pendingJobs = (TabularData) executeMBeanOperation(CrawlServiceOperation.pendingJobs);
-        if (doneJobs != null && doneJobs.size() > 0 || pendingJobs != null && pendingJobs.size() > 0) {
-            throw new IllegalState("This Heritrix instance is in a illegalState! "
-                    + "This instance has either old done jobs (" + doneJobs + "), or old pending jobs (" + pendingJobs
-                    + ").");
+        EngineResult engineResult;
+        try {
+        	//TODO these numbers should be settings
+        	int tries = 60;
+        	int millisecondsBetweenTries = 1000;
+        	engineResult = h3wrapper.waitForEngineReady(tries, millisecondsBetweenTries);
+        } catch (Throwable e){
+        	e.printStackTrace();
+        	throw new IOFailure("Heritrix not started: " + e);
+        }
+
+        if (engineResult != null && engineResult.status != ResultStatus.OK) {
+        	throw new IOFailure("Heritrix not started. Resultstate = " + engineResult.status);
         }
         
-        // From here on, we can assume there's only the one job we make.
-        // We'll use the arc file prefix to name the job, since the prefix
-        // already contains the harvest id and job id.
-        HeritrixFiles files = getHeritrixFiles();
-        executeMBeanOperation(CrawlServiceOperation.addJob, files.getOrderXmlFile().getAbsolutePath(),
-                files.getArchiveFilePrefix(), getJobDescription(), files.getSeedsTxtFile().getAbsolutePath());
-        jobName = getJobName();
+        // POST: Heritrix3 is up and running and responds nicely
+        
+        // Create a new job 
 
-        crawlServiceJobBeanName = "org.archive.crawler:" + JmxUtils.NAME + "=" + jobName + "," + JmxUtils.TYPE
-                + "=CrawlService.Job," + JmxUtils.JMX_PORT + "=" + getJmxPort() + "," + JmxUtils.MOTHER + "=Heritrix,"
-                + JmxUtils.HOST + "=" + getHostName();
-                
-        */
+        File cxmlFile = getHeritrixFiles().getOrderXmlFile();
+        File seedsFile = getHeritrixFiles().getSeedsTxtFile();
+        JobResult jobResult;
+
+        
+        File basedirStr = null;
+  		File jobsFile = new File(basedirStr, "jobs/");
+  		if (!jobsFile.exists()) {
+  			jobsFile.mkdirs();
+  		 }
+  		jobName = "job-" + Long.toString(System.currentTimeMillis());
+  		File jobFile = new File(jobsFile, jobName);
+  		jobFile.mkdirs();
+  		try {
+  			Heritrix3Wrapper.copyFile( cxmlFile, jobFile );
+  			Heritrix3Wrapper.copyFileAs( seedsFile, jobFile, "seeds.txt" ); 
+  		} catch (IOException e) {
+  			throw new IOFailure("Problem occurred during the copying of files to our heritrix job", e);
+  		}
+  		
+  		// PRE: h3 is running, and the job files copied to their final location? 
+  		
+  		try {
+      		engineResult = h3wrapper.rescanJobDirectory();
+      		log.debug("Result of rescanJobDirectory() operation: " 
+      				+ new String(engineResult.response, "UTF-8"));
+      		jobResult = h3wrapper.buildJobConfiguration(jobName);
+      		log.debug("Result of buildJobConfiguration() operation: "
+      				+ new String(jobResult.response, "UTF-8"));
+      		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.NASCENT, 60, 1000);
+      		jobResult = h3wrapper.launchJob(jobName);
+      		log.debug("Result of launchJob() operation: "
+      				+ new String(jobResult.response, "UTF-8"));
+      		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.PAUSED, 60, 1000);
+      		jobResult = h3wrapper.unpauseJob(jobName);
+      		} catch (Throwable e) {
+      			throw new IOFailure("Unknown error during communication with heritrix3", e);
+      		}
+  		
+  		// POST: h3 is running, and the job with name 'jobName' is running
+  		log.debug("h3-State after unpausing job '{}': {}", jobName, jobResult.response);
     }
 
     @Override
     public void requestCrawlStart() {
     	
-    	
-    	
-    	
-    	
-    	
-    	
-    	//FIXME implement me
-    	// Build, launch, and start the job
-    	
-    	//executeMBeanOperation(CrawlServiceOperation.startCrawling);
+        // Create a new job 
+
+        File cxmlFile = getHeritrixFiles().getOrderXmlFile();
+        File seedsFile = getHeritrixFiles().getSeedsTxtFile();
+        JobResult jobResult;
+
+        
+        File basedirStr = null;
+  		File jobsFile = new File(basedirStr, "jobs/");
+  		if (!jobsFile.exists()) {
+  			jobsFile.mkdirs();
+  		 }
+  		jobName = "job-" + Long.toString(System.currentTimeMillis());
+  		File jobFile = new File(jobsFile, jobName);
+  		jobFile.mkdirs();
+  		try {
+  			Heritrix3Wrapper.copyFile( cxmlFile, jobFile );
+  			Heritrix3Wrapper.copyFileAs( seedsFile, jobFile, "seeds.txt" ); 
+  		} catch (IOException e) {
+  			throw new IOFailure("Problem occurred during the copying of files to our heritrix job", e);
+  		}
+  		
+  		// PRE: h3 is running, and the job files copied to their final location? 
+  		EngineResult engineResult = null;
+  		try {
+      		engineResult = h3wrapper.rescanJobDirectory();
+      		log.debug("Result of rescanJobDirectory() operation: " 
+      				+ new String(engineResult.response, "UTF-8"));
+      		jobResult = h3wrapper.buildJobConfiguration(jobName);
+      		log.debug("Result of buildJobConfiguration() operation: "
+      				+ new String(jobResult.response, "UTF-8"));
+      		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.NASCENT, 60, 1000);
+      		jobResult = h3wrapper.launchJob(jobName);
+      		log.debug("Result of launchJob() operation: "
+      				+ new String(jobResult.response, "UTF-8"));
+      		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.PAUSED, 60, 1000);
+      		jobResult = h3wrapper.unpauseJob(jobName);
+      		
+      		} catch (Throwable e) {
+      			throw new IOFailure("Unknown error during communication with heritrix3", e);
+      		}
+  		
+  		// POST: h3 is running, and the job with name 'jobName' is running
+  		log.debug("h3-State after unpausing job '{}': {}", jobName, jobResult.response);
     }
 
     @Override
     public void requestCrawlStop(String reason) {
-    	//FIXME implement me
-        //executeMBeanOperation(CrawlServiceOperation.terminateCurrentJob);
+    	log.info("Terminating job {}. Reason: {}", this.jobName,  reason);
+        h3wrapper.terminateJob(this.jobName);
     }
 
     /**
@@ -320,8 +354,10 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
     public void cleanup(File crawlDir) {
         // Before cleaning up, we need to wait for the reports to be generated
         waitForReportGeneration(crawlDir);
+        // TODO Should we teardown job as well????
         EngineResult result = h3wrapper.exitJavaProcess(null);
-        h3launcher.process.destroy();
+        // TODO examine the result of exitJavaProcess
+        h3launcher.process.destroy(); // TODO Should we catch something here
     }
 
     /**
@@ -342,18 +378,17 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
         Heritrix3Files files = getHeritrixFiles();
         CrawlProgressMessage cpm = new CrawlProgressMessage(files.getHarvestID(), files.getJobID(),
                 progressStatisticsLegend);
-
         cpm.setHostUrl(getHeritrixConsoleURL());
-
-        getCrawlServiceAttributes(cpm);
-
+        JobResult jobResult = h3wrapper.job(jobName);
+        getCrawlServiceAttributes(cpm, jobResult);
+        
         if (cpm.crawlIsFinished()) {
             cpm.setStatus(CrawlStatus.CRAWLING_FINISHED);
             // No need to go further, CrawlService.Job bean does not exist
             return cpm;
         }
 
-        fetchCrawlServiceJobAttributes(cpm);
+        fetchCrawlServiceJobAttributes(cpm, jobResult);
 
         return cpm;
     }
@@ -363,49 +398,12 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      *
      * @param cpm the crawlProgress message being prepared
      */
-    private void getCrawlServiceAttributes(CrawlProgressMessage cpm) {
-
-    	/* List<Attribute> heritrixAtts = getMBeanAttributes(new CrawlServiceAttribute[] {
-                CrawlServiceAttribute.AlertCount, CrawlServiceAttribute.IsCrawling, CrawlServiceAttribute.CurrentJob});
-		*/
-    	
+    private void getCrawlServiceAttributes(CrawlProgressMessage cpm, JobResult job) {
+    	// TODO check job state??
         CrawlServiceInfo hStatus = cpm.getHeritrixStatus();
-        // FIXME from h3 find out the currentJob, AlertCount, IsCrawling attribute
-        // and update hStatus.setAlertCount(alertCount);
-        // and update hStatus.setCurrentJob(newCurrentJob);
-        // and update hStatus.setCrawling(newCrawling);
-        
-        /*
-        for (Attribute att : heritrixAtts) {
-            Object value = att.getValue();
-            CrawlServiceAttribute crawlServiceAttribute = CrawlServiceAttribute.fromString(att.getName());
-            switch (crawlServiceAttribute) {
-            case AlertCount:
-                Integer alertCount = -1;
-                if (value != null) {
-                    alertCount = (Integer) value;
-                }
-                hStatus.setAlertCount(alertCount);
-                break;
-            case CurrentJob:
-                String newCurrentJob = "";
-                if (value != null) {
-                    newCurrentJob = (String) value;
-                }
-                hStatus.setCurrentJob(newCurrentJob);
-                break;
-            case IsCrawling:
-                Boolean newCrawling = false;
-                if (value != null) {
-                    newCrawling = (Boolean) value;
-                }
-                hStatus.setCrawling(newCrawling);
-                break;
-            default:
-                log.debug("Unhandled attribute: {}", crawlServiceAttribute);
-            }
-        }
-        */
+        hStatus.setAlertCount(job.job.alertCount); // info taken from job information
+        hStatus.setCurrentJob(this.jobName); // Note:Information not taken from H3
+    	hStatus.setCrawling(job.job.isRunning);// info taken from job information
     }
 
     /**
@@ -414,11 +412,18 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      *
      * @param cpm the crawlProgress message being prepared
      */
-    private void fetchCrawlServiceJobAttributes(CrawlProgressMessage cpm) {
+    private void fetchCrawlServiceJobAttributes(CrawlProgressMessage cpm, JobResult job) {
     	//FIXME add Heritrix3 information to the CrawlProgressMessage
         // H1 attribute CrawlTime =>    elapsedSeconds
         // H1 attribute CurrentDocRate => processedDocsPerSec
         // H1 CurrentKbRate => processedKBPerSec 	
+    	
+    	Long elapsedSeconds = job.job.elapsedReport.elapsedMilliseconds / 1000L; // CrawlTime
+    	//job.job.rateReport.averageDocsPerSecond (DocRate)
+    	//job.job.rateReport.averageKiBPerSec(KbRate)
+    	//job.job.rateReport.currentDocsPerSecond (CurrentDocRate)
+    	//job.job.rateReport.currentKiBPerSec (CurrentKbRate)
+    	
    /*     
     H1 DiscoveredCount => DiscoveredFilesCount
     H1 DocRate => ProcessedDocsPerSec

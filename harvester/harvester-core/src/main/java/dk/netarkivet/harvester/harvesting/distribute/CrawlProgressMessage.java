@@ -353,11 +353,14 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
         boolean jobInProgress = heritrixStatus.isCrawling() && !heritrixStatus.getCurrentJob().isEmpty();
 
         if (!jobInProgress) {
+        	// TODO does this work for H3 as well
             return true;
         }
-
+        
         String statusAsString = getJobStatus().getStatus();
+        
         if (statusAsString != null) {
+        	// FIXME probably only works for H1 equals to the String "FINISHED"
             return statusAsString.equals(Heritrix1Constants.CRAWLCONTROLLER_FINISHED);
         }
         return false;

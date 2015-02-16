@@ -165,101 +165,11 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
             	}
             });
         } catch( Throwable e) {
-        	e.printStackTrace();
+        	log.debug("Unexpected error while launching H3: ", e);
+        	throw new IOFailure("Unexpected error while launching H3: ", e);
         }
 
-        	// Initialize H3 wrapper 
-      		//File keystoreFile= null;
-      		//String keyStorePassword = null;
-      		
-      		
-      		File cxmlFile = getHeritrixFiles().getOrderXmlFile();
-      		File seedsFile = getHeritrixFiles().getSeedsTxtFile();
-      		JobResult jobResult;
-      		
-      		
-      		
-      		// Assumes H3 is now up and running (HOW TO VERIFY THAT??)
-      		// These two null represent 
-      		h3wrapper = Heritrix3Wrapper.getInstance(hostName, guiPort, 
-      				null, null, getHeritrixAdminName(), getHeritrixAdminPassword());
-      		
-      		EngineResult engineResult;
-      		try {
-      			//TODO these numbers should be settings
-      			int tries = 60;
-      			int secondsBetweenTries = 1000; // TODO or ms?
-      			engineResult = h3wrapper.waitForEngineReady(tries, secondsBetweenTries);
-      		} catch (Throwable e){
-      			e.printStackTrace();
-      			throw new IOFailure("Heritrix not started: " + e);
-      		}
-      		
-      		if (engineResult != null && engineResult.status != ResultStatus.OK) {
-      			
-      			
-      		}
-      		/*
-      		// debug
-      		System.out.println(engineResult.status + " - " + ResultStatus.OK);
-      		File basedirStr=null;
-      		File jobsFile = new File(basedirStr, "jobs/");
-      		if (!jobsFile.exists()) {
-      			jobsFile.mkdirs();
-      		 }
-      		String jobname = Long.toString(System.currentTimeMillis());
-      		File jobFile = new File(jobsFile, jobname);
-      		jobFile.mkdirs();
-      		try {
-      			Heritrix3Wrapper.copyFile( cxmlFile, jobFile );
-      			Heritrix3Wrapper.copyFileAs( seedsFile, jobFile, "seeds.txt" ); 
-      		} catch (IOException e) {
-      			throw new IOFailure("Problem occurred during the copying of files to heritrix job", e);
-      		}
-      		try {
-      		engineResult = h3w.rescanJobDirectory();
-      		//System.out.println(new String(engineResult.response, "UTF-8"));
-      		jobResult = h3w.buildJobConfiguration(jobname);
-      		//System.out.println(new String(jobResult.response, "UTF-8"));
-      		jobResult = h3w.waitForJobState(jobname, CrawlControllerState.NASCENT, 60, 1000);
-      		jobResult = h3w.launchJob(jobname);
-      		//System.out.println(new String(jobResult.response, "UTF-8"));
-      		jobResult = h3w.waitForJobState(jobname, CrawlControllerState.PAUSED, 60, 1000);
-      		jobResult = h3w.unpauseJob(jobname);
-      		} catch (UnsupportedEncodingException e) {
-      			//TODO Add logging
-      			e.printStackTrace();
-      		}
-      		*/
-      		
-      		//System.out.println(new String(jobResult.response, "UTF-8"));
-      		
-      		// Job 'jobname' is now running
-      		
-      		/*
-      		boolean bFinished = false;
-      		while (!bFinished) {
-      			try {
-      				Thread.sleep(60 * 1000);
-      			} catch (InterruptedException e) {
-      			}
-      			jobResult = h3w.job(jobname);
-      			System.out.println(jobResult.job.isRunning);
-      			if (!jobResult.job.isRunning) {
-      				System.out.println(new String(jobResult.response, "UTF-8"));
-      				bFinished = true;
-      			}
-      		}
-      		
-      		jobResult = h3w.teardownJob(jobname);
-      		//System.out.println(new String(jobResult.response, "UTF-8"));
-      		engineResult = h3w.exitJavaProcess(null);
-      		h3launcher.process.destroy();
-      		*/
-      	//} catch (IOException e) {
-      	//	e.printStackTrace();
-      	//}
-      	}
+    }
 
     /**
      * @return the HTTP port used by the Heritrix GUI.
@@ -287,7 +197,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
      *
      * @return Name to use for accessing Heritrix web GUI
      */
-    private String getHeritrixAdminName() {
+    protected String getHeritrixAdminName() {
         return Settings.get(HarvesterSettings.HERITRIX_ADMIN_NAME);
     }
 
@@ -296,7 +206,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
      *
      * @return Password to use for accessing the Heritrix GUI
      */
-    private String getHeritrixAdminPassword() {
+    protected String getHeritrixAdminPassword() {
         return Settings.get(HarvesterSettings.HERITRIX_ADMIN_PASSWORD);
     }
 

@@ -40,16 +40,15 @@ public class H3LaunchTest {
 		String keyStorePassword = null;
 		String userName = "test";
 		String password = "test*test";
-		File heritrix3Bundle=null;
+		File heritrix3Bundle = null;
 		File unpackDir= null;
 		if (args.length != 2) {
 			System.err.println("Missing args: orderxmlpath and/or Seedsfilepath");
 			System.exit(1);	
 		}
 		
-		lauchHeritrix(heritrix3Bundle, unpackDir, hostname, port);
-		
-		
+		launchHeritrix(heritrix3Bundle, unpackDir, hostname, port);
+	
 		
 		File cxmlFile = new File(args[0]);
 		File seedsFile = new File(args[1]);
@@ -62,10 +61,8 @@ public class H3LaunchTest {
 		EngineResult engineResult;
 		engineResult = h3w.waitForEngineReady(60, 1000);
 		
-		
 		if (engineResult != null && engineResult.status != ResultStatus.OK) {
-			// FIXME add suitable response for this failure.
-			
+			throw new IOFailure("Heritrix3 instance failed to start ");
 		}
 		
 		// debug
@@ -128,8 +125,7 @@ public class H3LaunchTest {
 	//}
 	}
 
-
-	public static void lauchHeritrix(File heritrix3Bundle, File unpackDir, String hostname, int port)  {
+	public static void launchHeritrix(File heritrix3Bundle, File unpackDir, String hostname, int port)  {
 		String zipFileStr = "/home/nicl/workspace/heritrix3-wrapper/NetarchiveSuite-heritrix3-bundler-5.0-SNAPSHOT.zip";
 		String unpackDirStr = "/home/nicl/heritrix3-wrapper-test/";
 		String basedirStr = unpackDirStr + "heritrix-3.2.0/";
@@ -140,14 +136,14 @@ public class H3LaunchTest {
 				"-a h3server:h3server",
 				"-s h3server.jks,h3server,h3server"
 		};
-		UnzipUtils unzipUtils = new UnzipUtils();
 		CommandLauncher h3launcher;
 		Heritrix3Wrapper h3wrapper;
 		EngineResult engineResult;
 		JobResult jobResult;
 		PrintWriter outputPrinter;
+		PrintWriter errorPrinter;
 		try {
-			unzipUtils.unzip(zipFileStr, unpackDirStr);
+			UnzipUtils.unzip(zipFileStr, unpackDirStr);
 			File basedir = new File(basedirStr);
 
 			//File h3serverjksFile = getTestResourceFile("h3server.jks");
@@ -155,7 +151,7 @@ public class H3LaunchTest {
 
 			h3launcher = CommandLauncher.getInstance();
 			outputPrinter = new PrintWriter(new File(basedir, "heritrix3.out"), "UTF-8");
-			PrintWriter errorPrinter = new PrintWriter(new File(basedir, "heritrix3.err"), "UTF-8");
+			errorPrinter = new PrintWriter(new File(basedir, "heritrix3.err"), "UTF-8");
 			h3launcher.init(basedir, cmd);
 			h3launcher.env.put("FOREGROUND", "true");
 			h3launcher.start(new LaunchResultHandlerAbstract() {
