@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
@@ -44,7 +43,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.Heritrix3Files;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
-//import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport;
 
@@ -58,110 +57,79 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
     private static final Logger log = LoggerFactory.getLogger(BnfHeritrixController.class);
 
     /**
-     * The below commands and attributes are copied from the attributes and operations exhibited by the Heritrix MBeans
-     * of type CrawlJob and CrawlService.Job, as they appear in JConsole.
-     * <p>
-     * Only operations and attributes used in NAS are listed.
-     */
-    private static enum CrawlServiceAttribute {
-        /** The number of alerts raised by Heritrix. */
-        AlertCount,
-        /** True if Heritrix is currently crawling, false otherwise. */
-        IsCrawling,
-        /** The ID of the job being currently crawled by Heritrix. */
-        CurrentJob;
-
-        /**
-         * Returns the {@link CrawlServiceAttribute} enum value matching the given name. Throws {@link UnknownID} if no
-         * match is found.
-         *
-         * @param name the attribute name
-         * @return the corresponding {@link CrawlServiceAttribute} enum value.
-         */
-        public static CrawlServiceAttribute fromString(String name) {
-            for (CrawlServiceAttribute att : values()) {
-                if (att.name().equals(name)) {
-                    return att;
-                }
-            }
-            throw new UnknownID(name + " : unknown CrawlServiceAttribute !");
-        }
-    }
-
-    /**
      * Enum listing the different job attributes available.
      */
     
-    private static enum CrawlServiceJobAttribute {
-        /** The time in seconds elapsed since the crawl began. */
-        CrawlTime,
-        /** The current download rate in URI/s. */
-        CurrentDocRate,
-        /** The current download rate in kB/s. */
-        CurrentKbRate,
-        /** The number of URIs discovered by Heritrix. */
-        DiscoveredCount,
-        /** The average download rate in URI/s. */
-        DocRate,
-        /** The number of URIs downloaded by Heritrix. */
-        DownloadedCount,
-        /** A string summarizing the Heritrix frontier. */
-        FrontierShortReport,
-        /** The average download rate in kB/s. */
-        KbRate,
-        /** The job status (Heritrix status). */
-        Status,
-        /** The number of active toe threads. */
-        ThreadCount;
+//    private static enum CrawlServiceJobAttribute {
+//        /** The time in seconds elapsed since the crawl began. */
+//        CrawlTime,
+//        /** The current download rate in URI/s. */
+//        CurrentDocRate,
+//        /** The current download rate in kB/s. */
+//        CurrentKbRate,
+//        /** The number of URIs discovered by Heritrix. */
+//        DiscoveredCount,
+//        /** The average download rate in URI/s. */
+//        DocRate,
+//        /** The number of URIs downloaded by Heritrix. */
+//        DownloadedCount,
+//        /** A string summarizing the Heritrix frontier. */
+//        FrontierShortReport,
+//        /** The average download rate in kB/s. */
+//        KbRate,
+//        /** The job status (Heritrix status). */
+//        Status,
+//        /** The number of active toe threads. */
+//        ThreadCount;
+//
+//        /**
+//         * Returns the {@link CrawlServiceJobAttribute} enum value matching the given name. Throws {@link UnknownID} if
+//         * no match is found.
+//         *
+//         * @param name the attribute name
+//         * @return the corresponding {@link CrawlServiceJobAttribute} enum value.
+//         */
+//        public static CrawlServiceJobAttribute fromString(String name) {
+//            for (CrawlServiceJobAttribute att : values()) {
+//                if (att.name().equals(name)) {
+//                    return att;
+//                }
+//            }
+//            throw new UnknownID(name + " : unknown CrawlServiceJobAttribute !");
+//        }
+//    }
 
-        /**
-         * Returns the {@link CrawlServiceJobAttribute} enum value matching the given name. Throws {@link UnknownID} if
-         * no match is found.
-         *
-         * @param name the attribute name
-         * @return the corresponding {@link CrawlServiceJobAttribute} enum value.
-         */
-        public static CrawlServiceJobAttribute fromString(String name) {
-            for (CrawlServiceJobAttribute att : values()) {
-                if (att.name().equals(name)) {
-                    return att;
-                }
-            }
-            throw new UnknownID(name + " : unknown CrawlServiceJobAttribute !");
-        }
-    }
-
-    /**
-     * Enum class defining the general operations available to the Heritrix operator.
-     */
-    private static enum CrawlServiceOperation {
-        /** Adds a new job to an Heritrix instance. */
-        addJob,
-        /** Fetches the identifiers of pending jobs. */
-        pendingJobs,
-        /** Fetches the identifiers of completed jobs. */
-        completedJobs,
-        /** Shuts down an Heritrix instance. */
-        shutdown,
-        /** Instructs an Heritrix instance to starts crawling jobs. */
-        startCrawling,
-        /** Instructs an Heritrix instance to terminate the current job. */
-        terminateCurrentJob;
-    }
-
-    /**
-     * Enum class defining the Job-operations available to the Heritrix operator.
-     */
-    private static enum CrawlServiceJobOperation {
-        /** Fetches the progress statistics string from an Heritrix instance. */
-        progressStatistics,
-        /**
-         * Fetches the progress statistics legend string from an Heritrix instance.
-         */
-        progressStatisticsLegend,
-        /** Fetches the frontier report. */
-        frontierReport;
-    }
+//    /**
+//     * Enum class defining the general operations available to the Heritrix operator.
+//     */
+//    private static enum CrawlServiceOperation {
+//        /** Adds a new job to an Heritrix instance. */
+//        addJob,
+//        /** Fetches the identifiers of pending jobs. */
+//        pendingJobs,
+//        /** Fetches the identifiers of completed jobs. */
+//        completedJobs,
+//        /** Shuts down an Heritrix instance. */
+//        shutdown,
+//        /** Instructs an Heritrix instance to starts crawling jobs. */
+//        startCrawling,
+//        /** Instructs an Heritrix instance to terminate the current job. */
+//        terminateCurrentJob;
+//    }
+//
+//    /**
+//     * Enum class defining the Job-operations available to the Heritrix operator.
+//     */
+//    private static enum CrawlServiceJobOperation {
+//        /** Fetches the progress statistics string from an Heritrix instance. */
+//        progressStatistics,
+//        /**
+//         * Fetches the progress statistics legend string from an Heritrix instance.
+//         */
+//        progressStatisticsLegend,
+//        /** Fetches the frontier report. */
+//        frontierReport;
+//    }
 
     /**
      * Shall we abort, if we lose the connection to Heritrix.
@@ -195,17 +163,7 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      */
     @Override
     public void initialize() {
-    	/*
-        if (processHasExited()) {
-            String errMsg = "Heritrix process of " + this + " died before initialization";
-            log.warn(errMsg);
-            throw new IOFailure(errMsg);
-        } 
-        */
-        // establish initial connection to H3 using REST
-    	// Already done that in the AbstractRestHeritrixController constructor
-        //log.info("Abort, if we lose the connection to Heritrix, is {}", ABORT_IF_CONN_LOST);
-        
+    	      
     	/////////////////////////////////////////////////////
         // Initialize H3 wrapper 
     	/////////////////////////////////////////////////////
@@ -308,15 +266,12 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
   		EngineResult engineResult = null;
   		try {
       		engineResult = h3wrapper.rescanJobDirectory();
-      		log.debug("Result of rescanJobDirectory() operation: " 
-      				+ new String(engineResult.response, "UTF-8"));
+      		log.debug("Result of rescanJobDirectory() operation: " + new String(engineResult.response, "UTF-8"));
       		jobResult = h3wrapper.buildJobConfiguration(jobName);
-      		log.debug("Result of buildJobConfiguration() operation: "
-      				+ new String(jobResult.response, "UTF-8"));
+      		log.debug("Result of buildJobConfiguration() operation: " + new String(jobResult.response, "UTF-8"));
       		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.NASCENT, 60, 1000);
       		jobResult = h3wrapper.launchJob(jobName);
-      		log.debug("Result of launchJob() operation: "
-      				+ new String(jobResult.response, "UTF-8"));
+      		log.debug("Result of launchJob() operation: " + new String(jobResult.response, "UTF-8"));
       		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.PAUSED, 60, 1000);
       		jobResult = h3wrapper.unpauseJob(jobName);
       		
@@ -331,7 +286,16 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
     @Override
     public void requestCrawlStop(String reason) {
     	log.info("Terminating job {}. Reason: {}", this.jobName,  reason);
-        h3wrapper.terminateJob(this.jobName);
+    	JobResult jobResult = h3wrapper.job(jobName);
+    	if (jobResult.job.isRunning) {
+    		JobResult result = h3wrapper.terminateJob(this.jobName);
+    		if (!result.job.isRunning) {
+    			log.warn("Job '{}' terminated", this.jobName);
+    		}
+    	} else {
+    		log.warn("Job '{}' not terminated, as it was not running", this.jobName);
+    	}
+        
     }
 
     /**
@@ -353,7 +317,7 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      */
     public void cleanup(File crawlDir) {
         // Before cleaning up, we need to wait for the reports to be generated
-        waitForReportGeneration(crawlDir);
+        //waitForReportGeneration(crawlDir);
         // TODO Should we teardown job as well????
         EngineResult result = h3wrapper.exitJavaProcess(null);
         // TODO examine the result of exitJavaProcess
@@ -413,136 +377,179 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      * @param cpm the crawlProgress message being prepared
      */
     private void fetchCrawlServiceJobAttributes(CrawlProgressMessage cpm, JobResult job) {
-    	//FIXME add Heritrix3 information to the CrawlProgressMessage
-        // H1 attribute CrawlTime =>    elapsedSeconds
-        // H1 attribute CurrentDocRate => processedDocsPerSec
-        // H1 CurrentKbRate => processedKBPerSec 	
-    	
-    	Long elapsedSeconds = job.job.elapsedReport.elapsedMilliseconds / 1000L; // CrawlTime
-    	//job.job.rateReport.averageDocsPerSecond (DocRate)
-    	//job.job.rateReport.averageKiBPerSec(KbRate)
-    	//job.job.rateReport.currentDocsPerSecond (CurrentDocRate)
-    	//job.job.rateReport.currentKiBPerSec (CurrentKbRate)
-    	
-   /*     
-    H1 DiscoveredCount => DiscoveredFilesCount
-    H1 DocRate => ProcessedDocsPerSec
-    H1 DownloadedCount => DownloadedFilesCount
-    H1 FrontierShortReport => FrontierShortReport
-    H1 KbRate => CurrentProcessedKBPerSec
-    H1 Status => one of CrawlStatus.CRAWLER_PAUSING, CrawlStatus.CRAWLER_PAUSED, CrawlStatus.CRAWLER_ACTIVE);
-   */ 
-    	
-    	/*
-        String progressStats = (String) executeMBeanOperation(CrawlServiceJobOperation.progressStatistics);
-        CrawlServiceJobInfo jStatus = cpm.getJobStatus();
-        String newProgressStats = "?";
-        if (progressStats != null) {
-            newProgressStats = progressStats;
-        }
+    	CrawlServiceJobInfo jStatus = cpm.getJobStatus();
+        
+    	/* progressStatistics. FIXME relevant in H3 */
+        String newProgressStats = "?"; // Fetched from H1 bean: CrawlServiceJobOperation.progressStatistics);
         jStatus.setProgressStatistics(newProgressStats);
-
+        
+        /* FIXME relevant in H3?
         if (progressStatisticsLegend == null) {
             progressStatisticsLegend = (String) executeMBeanOperation(CrawlServiceJobOperation.progressStatisticsLegend);
-        }
+        }*/
 
-        List<Attribute> jobAtts = getMBeanAttributes(CrawlServiceJobAttribute.values());
-
-        for (Attribute att : jobAtts) {
-            Object value = att.getValue();
-            CrawlServiceJobAttribute aCrawlServiceJobAttribute = CrawlServiceJobAttribute.fromString(att.getName());
-            switch (aCrawlServiceJobAttribute) {
-            case CrawlTime:
-                Long elapsedSeconds = -1L;
-                if (value != null) {
-                    elapsedSeconds = (Long) value;
-                }
-                jStatus.setElapsedSeconds(elapsedSeconds);
-                break;
-            case CurrentDocRate:
-                Double processedDocsPerSec = new Double(-1L);
-                if (value != null) {
-                    processedDocsPerSec = (Double) value;
-                }
-                jStatus.setCurrentProcessedDocsPerSec(processedDocsPerSec);
-                break;
-            case CurrentKbRate:
-                // NB Heritrix seems to store the average value in
-                // KbRate instead of CurrentKbRate...
-                // Inverse of doc rates.
-                Long processedKBPerSec = -1L;
-                if (value != null) {
-                    processedKBPerSec = (Long) value;
-                }
-                jStatus.setProcessedKBPerSec(processedKBPerSec);
-                break;
-            case DiscoveredCount:
-                Long discoveredCount = -1L;
-                if (value != null) {
-                    discoveredCount = (Long) value;
-                }
-                jStatus.setDiscoveredFilesCount(discoveredCount);
-                break;
-            case DocRate:
-                Double docRate = new Double(-1L);
-                if (value != null) {
-                    docRate = (Double) value;
-                }
-                jStatus.setProcessedDocsPerSec(docRate);
-                break;
-            case DownloadedCount:
-                Long downloadedCount = -1L;
-                if (value != null) {
-                    downloadedCount = (Long) value;
-                }
-                jStatus.setDownloadedFilesCount(downloadedCount);
-                break;
-            case FrontierShortReport:
-                String frontierShortReport = "?";
-                if (value != null) {
-                    frontierShortReport = (String) value;
-                }
-                jStatus.setFrontierShortReport(frontierShortReport);
-                break;
-            case KbRate:
-                // NB Heritrix seems to store the average value in
-                // KbRate instead of CurrentKbRate...
-                // Inverse of doc rates.
-                Long kbRate = -1L;
-                if (value != null) {
-                    kbRate = (Long) value;
-                }
-                jStatus.setCurrentProcessedKBPerSec(kbRate);
-                break;
-            case Status:
-                String newStatus = "?";
-                if (value != null) {
-                    newStatus = (String) value;
-                }
-                jStatus.setStatus(newStatus);
-                if (value != null) {
-                    String status = (String) value;
-                    if (CrawlController.PAUSING.equals(status)) {
-                        cpm.setStatus(CrawlStatus.CRAWLER_PAUSING);
-                    } else if (CrawlController.PAUSED.equals(status)) {
-                        cpm.setStatus(CrawlStatus.CRAWLER_PAUSED);
-                    } else {
-                        cpm.setStatus(CrawlStatus.CRAWLER_ACTIVE);
-                    }
-                }
-                break;
-            case ThreadCount:
-                Integer currentActiveToecount = -1;
-                if (value != null) {
-                    currentActiveToecount = (Integer) value;
-                }
-                jStatus.setActiveToeCount(currentActiveToecount);
-                break;
-            default:
-                log.debug("Unhandled attribute: {}", aCrawlServiceJobAttribute);
+        /*    	
+        case CrawlTime:
+            Long elapsedSeconds = -1L;
+            if (value != null) {
+                elapsedSeconds = (Long) value;
             }
-        }
+            jStatus.setElapsedSeconds(elapsedSeconds);
+            break;
         */
+    	
+    	Long value = job.job.elapsedReport.elapsedMilliseconds;
+    	Long elapsedSeconds = -1L;
+        if (value != null) {
+            elapsedSeconds = value / 1000L; 
+        }
+        jStatus.setElapsedSeconds(elapsedSeconds);
+/*        
+    case CurrentDocRate:
+        Double processedDocsPerSec = new Double(-1L);
+        if (value != null) {
+            processedDocsPerSec = (Double) value;
+        }
+        jStatus.setCurrentProcessedDocsPerSec(processedDocsPerSec);
+        break;
+*/
+        Double Dvalue = job.job.rateReport.currentDocsPerSecond;
+        Double processedDocsPerSec = new Double(-1L);
+        if (Dvalue != null) {
+            processedDocsPerSec = Dvalue;
+        }
+        jStatus.setCurrentProcessedDocsPerSec(processedDocsPerSec);
+       
+/*        
+    case CurrentKbRate:
+        // NB Heritrix seems to store the average value in
+        // KbRate instead of CurrentKbRate...
+        // Inverse of doc rates.
+        Long processedKBPerSec = -1L;
+        if (value != null) {
+            processedKBPerSec = (Long) value;
+        }
+        jStatus.setProcessedKBPerSec(processedKBPerSec);
+*/
+        Integer valueI = job.job.rateReport.currentKiBPerSec;
+        Integer processedKBPerSec = -1;
+        if (valueI != null) {
+            processedKBPerSec = valueI;
+        }
+        jStatus.setProcessedKBPerSec(processedKBPerSec);
+/*        
+    case DiscoveredCount:
+        Long discoveredCount = -1L;
+        if (value != null) {
+            discoveredCount = (Long) value;
+        }
+        jStatus.setDiscoveredFilesCount(discoveredCount);
+        break;
+*/
+        Long discoveredCount = -1L; // This value is not found in H3???
+        // value = job.job.sizeTotalsReport.totalCount; //FIXME correct???
+        jStatus.setDiscoveredFilesCount(discoveredCount);
+/*
+    case DocRate:
+        Double docRate = new Double(-1L);
+        if (value != null) {
+            docRate = (Double) value;
+        }
+        jStatus.setProcessedDocsPerSec(docRate);
+*/
+        Double docRate = new Double(-1L);
+        Dvalue = job.job.rateReport.averageDocsPerSecond;
+        if (Dvalue != null) {
+            docRate = (Double) Dvalue;
+        }
+        jStatus.setProcessedDocsPerSec(docRate);
+/*
+    case DownloadedCount:
+        Long downloadedCount = -1L;
+        if (value != null) {
+            downloadedCount = (Long) value;
+        }
+        jStatus.setDownloadedFilesCount(downloadedCount);
+  */
+        Long downloadedCount = -1L;
+        // FIXME available in H3???
+        jStatus.setDownloadedFilesCount(downloadedCount);
+/*        
+    case FrontierShortReport:
+        String frontierShortReport = "?";
+        if (value != null) {
+            frontierShortReport = (String) value;
+        }
+        jStatus.setFrontierShortReport(frontierShortReport);
+        break;
+*/     
+        String frontierShortReport = "?"; // Available in H3????
+        jStatus.setFrontierShortReport(frontierShortReport);
+/*    case KbRate:
+        // NB Heritrix seems to store the average value in
+        // KbRate instead of CurrentKbRate...
+        // Inverse of doc rates.
+        Long kbRate = -1L;
+        if (value != null) {
+            kbRate = (Long) value;
+        }
+        jStatus.setCurrentProcessedKBPerSec(kbRate);
+*/     
+    
+        Long kbRate = -1L;
+        valueI = job.job.rateReport.averageKiBPerSec;
+        if (valueI != null) {
+        	kbRate = (Long) value;
+        }
+        jStatus.setCurrentProcessedKBPerSec(kbRate);
+ 
+        /*
+        case Status:
+            String newStatus = "?";
+            if (value != null) {
+                newStatus = (String) value;
+            }
+            jStatus.setStatus(newStatus);
+            
+            if (value != null) {
+                String status = (String) value;
+                if (CrawlController.PAUSING.equals(status)) {
+                    cpm.setStatus(CrawlStatus.CRAWLER_PAUSING);
+                } else if (CrawlController.PAUSED.equals(status)) {
+                    cpm.setStatus(CrawlStatus.CRAWLER_PAUSED);
+                } else {
+                    cpm.setStatus(CrawlStatus.CRAWLER_ACTIVE);
+                }
+            }
+         */
+        
+        String newStatus = "?";
+        String StringValue = job.job.crawlControllerState;
+        if (StringValue != null) {
+            newStatus = (String) StringValue;
+        }
+        jStatus.setStatus(newStatus);
+        String status = (String) StringValue;
+        if (status.contains("PAUSE")) { // FIXME this is not correct
+            cpm.setStatus(CrawlStatus.CRAWLER_PAUSED);
+        } else {
+            cpm.setStatus(CrawlStatus.CRAWLER_ACTIVE);
+        }
+/*        
+    case ThreadCount:
+        Integer currentActiveToecount = -1;
+        if (value != null) {
+            currentActiveToecount = (Integer) value;
+        }
+        jStatus.setActiveToeCount(currentActiveToecount);
+        break;
+*/    
+        valueI = job.job.threadReport.toeCount;
+        Integer currentActiveToecount = -1;
+        if (valueI != null) {
+            currentActiveToecount = (Integer) valueI;
+        }
+        jStatus.setActiveToeCount(currentActiveToecount);
     }
 
     /**
@@ -565,13 +572,14 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
         */                
     }
 
-   
     /**
      * Periodically scans the crawl dir to see if Heritrix has finished generating the crawl reports. The time to wait
      * is bounded by {@link HarvesterSettings#WAIT_FOR_REPORT_GENERATION_TIMEOUT}.
-     *
+     * Currently not used
+     * 
      * @param crawlDir the crawl directory to scan.
      */
+    @Deprecated
     private void waitForReportGeneration(File crawlDir) {
         log.info("Started waiting for Heritrix report generation.");
 
@@ -589,50 +597,8 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
         // exit the loop.
         while (currentTime <= waitDeadline) {
             currentTime = System.currentTimeMillis();
-
-            boolean crawlServiceJobExists = false;
+            
             //FIXME see if job is finished, if so, reports can be considered to ready as well?????
-    /*        
-            try {
-                if (crawlServiceJobBeanName != null) {
-                    crawlServiceJobExists = getMBeanServerConnection().isRegistered(
-                            JMXUtils.getBeanName(crawlServiceJobBeanName));
-                } else {
-                    // An error occurred when initializing the controller
-                    // Simply log a warning for the record
-                    log.warn("crawlServiceJobBeanName is null, earlier initialization of controller did not complete.");
-                }
-            } catch (IOException e) {
-                log.warn("IOException", e);
-                continue;
-            }
-
-            if (!crawlServiceJobExists) {
-                log.info("{} MBean not found, report generation is finished. Exiting wait loop.",
-                        crawlServiceJobBeanName);
-                break;
-            }
-
-            String status = "";
-            try {
-                List<Attribute> atts = getAttributesNoRetry(crawlServiceJobBeanName,
-                        new String[] {CrawlServiceJobAttribute.Status.name()});
-                status = (String) atts.get(0).getValue();
-            } catch (IOFailure e) {
-                log.warn("IOFailure", e);
-                continue;
-            } catch (IndexOutOfBoundsException e) {
-                // sometimes the array is empty TODO find out why
-                log.warn("IndexOutOfBoundsException", e);
-                continue;
-            }
-
-            if (CrawlController.FINISHED.equals(status)) {
-                log.info("{} status is FINISHED, report generation is complete. Exiting wait loop.",
-                        crawlServiceJobBeanName);
-                return;
-            }
-*/
             try {
                 // Wait 20 seconds
                 Thread.sleep(20 * TimeUtils.SECOND_IN_MILLIS);
