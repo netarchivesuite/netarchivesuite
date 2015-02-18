@@ -70,11 +70,12 @@ public class IngestableFiles {
 
     private Long harvestId;
 
+    private File heritrixJobDir;	
     /**
      * Constructor for this class. HeritrixFiles contains information about crawlDir, jobId, and harvestnameprefix for a
      * specific finished harvestjob.
      *
-     * @param files An instance of HeritrixFiles
+     * @param files An instance of Heritrix3Files
      * @throws ArgumentNotValid if null-arguments are given; if jobID < 1; if crawlDir does not exist
      */
     public IngestableFiles(Heritrix3Files files) {
@@ -82,6 +83,7 @@ public class IngestableFiles {
         ArgumentNotValid.checkNotNull(files.getCrawlDir(), "crawlDir");
         ArgumentNotValid.checkPositive(files.getJobID(), "jobID");
         ArgumentNotValid.checkNotNullOrEmpty(files.getArchiveFilePrefix(), "harvestnamePrefix");
+        this.heritrixJobDir = files.getHeritrixJobDir();
         this.crawlDir = files.getCrawlDir();
         if (!crawlDir.exists()) {
             throw new ArgumentNotValid("The given crawlDir (" + crawlDir.getAbsolutePath() + ") does not exist");
@@ -133,7 +135,7 @@ public class IngestableFiles {
         if (success) {
             writer.close(); // close writer down
             if (!getTmpMetadataFile().exists()) {
-                String message = "No metadata was generated despite claims that metadata generation was successfull.";
+                String message = "No metadata was generated despite claims that metadata generation was successful.";
                 throw new PermissionDenied(message);
             }
             getTmpMetadataFile().renameTo(getMetadataFile());
@@ -189,7 +191,7 @@ public class IngestableFiles {
 
     /**
      * Constructs the single metadata arc file from the crawlDir and the jobID.
-     *
+     * 
      * @return metadata arc file as a File
      */
     protected File getMetadataFile() {
@@ -235,14 +237,14 @@ public class IngestableFiles {
      * @return the arcs dir in the our crawl directory.
      */
     public File getArcsDir() {
-        return new File(crawlDir, Constants.ARCDIRECTORY_NAME);
+        return new File(heritrixJobDir, Constants.ARCDIRECTORY_NAME);
     }
 
     /**
      * @return the warcs dir in the our crawl directory.
      */
     public File getWarcsDir() {
-        return new File(crawlDir, Constants.WARCDIRECTORY_NAME);
+        return new File(heritrixJobDir, Constants.WARCDIRECTORY_NAME);
     }
 
     /**
@@ -310,6 +312,7 @@ public class IngestableFiles {
      * Remove any temporary files.
      */
     public void cleanup() {
+    	log.debug("Removing the directory '{}'", getTmpMetadataDir());
         FileUtils.removeRecursively(getTmpMetadataDir());
         writer = null;
     }

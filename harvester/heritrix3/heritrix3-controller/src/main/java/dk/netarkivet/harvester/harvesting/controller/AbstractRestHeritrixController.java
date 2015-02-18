@@ -23,16 +23,12 @@
 package dk.netarkivet.harvester.harvesting.controller;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.netarchivesuite.heritrix3wrapper.CommandLauncher;
-import org.netarchivesuite.heritrix3wrapper.EngineResult;
+
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
-import org.netarchivesuite.heritrix3wrapper.JobResult;
 import org.netarchivesuite.heritrix3wrapper.LaunchResultHandlerAbstract;
-import org.netarchivesuite.heritrix3wrapper.ResultStatus;
-import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper.CrawlControllerState;
 import org.netarchivesuite.heritrix3wrapper.unzip.UnzipUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,13 +51,13 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
     private static final Logger log = LoggerFactory.getLogger(AbstractRestHeritrixController.class);
 
     /** The various files used by Heritrix. */
-    private final Heritrix3Files files;
+    protected final Heritrix3Files files;
 
     protected Heritrix3Wrapper h3wrapper;
     protected CommandLauncher h3launcher;
     protected PrintWriter outputPrinter;
     protected PrintWriter errorPrinter; 
-    
+    protected File heritrixBaseDir;
     
     /** The host name for this machine that matches what Heritrix uses in its MBean names. */
     private final String hostName;
@@ -75,7 +71,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
      * @param files Files that are used to set up Heritrix.
      */
     public AbstractRestHeritrixController(Heritrix3Files files) {
-        ArgumentNotValid.checkNotNull(files, "HeritrixFile files");
+        ArgumentNotValid.checkNotNull(files, "Heritrix3Files files");
         this.files = files;
         SystemUtils.checkPortNotUsed(guiPort);
         
@@ -86,8 +82,14 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
             //public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix.certificate";
             String cerficatePath = files.getCertificateFile().getAbsolutePath();
             
-            String unpackDirStr = files.getCrawlDir().getAbsolutePath();
-            String basedirStr = unpackDirStr + "heritrix-3.2.0/";
+            heritrixBaseDir = files.getHeritrixBaseDir();
+            if (!heritrixBaseDir.isDirectory()) {
+            	heritrixBaseDir.mkdirs();
+            }
+            if (!heritrixBaseDir.isDirectory()) {
+            	throw new IOFailure("Unable to create heritrixbasedir: " + heritrixBaseDir.getAbsolutePath() );
+            }
+            
             String[] cmd = {
             "./bin/heritrix",
             //  "-b 192.168.1.101",
@@ -100,14 +102,14 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
 
             log.debug("Unzipping heritrix into the crawldir");
          
-            UnzipUtils.unzip(zipFileStr, unpackDirStr);
-            File basedir = new File(basedirStr);
+            UnzipUtils.unzip(zipFileStr, heritrixBaseDir.getAbsolutePath());
+            //File basedir = new File(basedirStr);
             
             h3launcher = CommandLauncher.getInstance();
         	
             outputPrinter = new PrintWriter(files.getHeritrixStdoutLog(), "UTF-8");
             errorPrinter = new PrintWriter(files.getHeritrixStderrLog(), "UTF-8");
-            h3launcher.init(basedir, cmd);
+            h3launcher.init(heritrixBaseDir, cmd);
             
             /** The bin/heritrix script should read the following environment-variables:
              * 

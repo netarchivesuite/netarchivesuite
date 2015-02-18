@@ -192,21 +192,23 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
         
         // POST: Heritrix3 is up and running and responds nicely
         
-        // Create a new job 
+            }
+
+    @Override
+    public void requestCrawlStart() {
+    	
+    	// Create a new job 
 
         File cxmlFile = getHeritrixFiles().getOrderXmlFile();
         File seedsFile = getHeritrixFiles().getSeedsTxtFile();
         JobResult jobResult;
 
         
-        File basedirStr = null;
-  		File jobsFile = new File(basedirStr, "jobs/");
-  		if (!jobsFile.exists()) {
-  			jobsFile.mkdirs();
+  		File jobFile = files.getHeritrixJobDir();
+  		if (!jobFile.exists()) {
+  			jobFile.mkdirs();
   		 }
-  		jobName = "job-" + Long.toString(System.currentTimeMillis());
-  		File jobFile = new File(jobsFile, jobName);
-  		jobFile.mkdirs();
+  		
   		try {
   			Heritrix3Wrapper.copyFile( cxmlFile, jobFile );
   			Heritrix3Wrapper.copyFileAs( seedsFile, jobFile, "seeds.txt" ); 
@@ -215,7 +217,7 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
   		}
   		
   		// PRE: h3 is running, and the job files copied to their final location? 
-  		
+  		EngineResult engineResult = null;
   		try {
       		engineResult = h3wrapper.rescanJobDirectory();
       		log.debug("Result of rescanJobDirectory() operation: " 
@@ -229,52 +231,6 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
       				+ new String(jobResult.response, "UTF-8"));
       		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.PAUSED, 60, 1000);
       		jobResult = h3wrapper.unpauseJob(jobName);
-      		} catch (Throwable e) {
-      			throw new IOFailure("Unknown error during communication with heritrix3", e);
-      		}
-  		
-  		// POST: h3 is running, and the job with name 'jobName' is running
-  		log.debug("h3-State after unpausing job '{}': {}", jobName, jobResult.response);
-    }
-
-    @Override
-    public void requestCrawlStart() {
-    	
-        // Create a new job 
-
-        File cxmlFile = getHeritrixFiles().getOrderXmlFile();
-        File seedsFile = getHeritrixFiles().getSeedsTxtFile();
-        JobResult jobResult;
-
-        
-        File basedirStr = null;
-  		File jobsFile = new File(basedirStr, "jobs/");
-  		if (!jobsFile.exists()) {
-  			jobsFile.mkdirs();
-  		 }
-  		jobName = "job-" + Long.toString(System.currentTimeMillis());
-  		File jobFile = new File(jobsFile, jobName);
-  		jobFile.mkdirs();
-  		try {
-  			Heritrix3Wrapper.copyFile( cxmlFile, jobFile );
-  			Heritrix3Wrapper.copyFileAs( seedsFile, jobFile, "seeds.txt" ); 
-  		} catch (IOException e) {
-  			throw new IOFailure("Problem occurred during the copying of files to our heritrix job", e);
-  		}
-  		
-  		// PRE: h3 is running, and the job files copied to their final location? 
-  		EngineResult engineResult = null;
-  		try {
-      		engineResult = h3wrapper.rescanJobDirectory();
-      		log.debug("Result of rescanJobDirectory() operation: " + new String(engineResult.response, "UTF-8"));
-      		jobResult = h3wrapper.buildJobConfiguration(jobName);
-      		log.debug("Result of buildJobConfiguration() operation: " + new String(jobResult.response, "UTF-8"));
-      		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.NASCENT, 60, 1000);
-      		jobResult = h3wrapper.launchJob(jobName);
-      		log.debug("Result of launchJob() operation: " + new String(jobResult.response, "UTF-8"));
-      		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.PAUSED, 60, 1000);
-      		jobResult = h3wrapper.unpauseJob(jobName);
-      		
       		} catch (Throwable e) {
       			throw new IOFailure("Unknown error during communication with heritrix3", e);
       		}
