@@ -37,6 +37,11 @@ public class Heritrix3Files {
 	private File h3JobDir;
 	private String jobName;
 	private File h3LogDir;
+
+	private File seedsFile;
+
+	private File orderFile;
+	//private Job theJob;
 	
 	/** The logger for this class. */
     private static final Log LOG = LogFactory.getLog(Heritrix3Files.class);
@@ -95,6 +100,8 @@ public class Heritrix3Files {
 	
 	private void setCrawldir(File crawldir) {
 		this.crawlDir = crawldir;
+		this.seedsFile = new File(crawldir, "seeds.txt");
+		this.orderFile = new File(crawldir, "crawler-beans.cxml");
 	}
 
 	private Heritrix3Files(){
@@ -106,9 +113,18 @@ public class Heritrix3Files {
 
 	public void writeSeedsTxt(String seedListAsString) {
 		ArgumentNotValid.checkNotNullOrEmpty(seedListAsString, "String seedListAsString");
-		LOG.debug("Writing seeds to disk as file: " + getSeedsTxtFile().getAbsolutePath());
-		FileUtils.writeBinaryFile(getSeedsTxtFile(), seedListAsString.getBytes());
+		LOG.debug("Writing seeds to disk as file: " + seedsFile.getAbsolutePath());
+		FileUtils.writeBinaryFile(seedsFile, seedListAsString.getBytes());
 	}
+	
+	public File getSeedsFile() {		
+		return this.seedsFile;
+	}
+	
+	public File getOrderFile() {		
+		return this.orderFile;
+	}
+
 
 	public void setIndexDir(File indexDir) {
 		ArgumentNotValid.checkExistsDirectory(indexDir, "File indexDir");
@@ -116,7 +132,7 @@ public class Heritrix3Files {
 		
 	}
 	public void writeOrderXml(HeritrixTemplate orderXMLdoc) { 
-		File destination = new File(h3JobDir, "crawler-beans.cxml"); 
+		File destination = this.orderFile; 
 		orderXMLdoc.writeToFile(destination);
 		this.orderXML = destination;	
 	}

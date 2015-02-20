@@ -136,7 +136,6 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      */
     private static final boolean ABORT_IF_CONN_LOST = Settings.getBoolean(HarvesterSettings.ABORT_IF_CONNECTION_LOST);
 
-   
     /**
      * The name that Heritrix gives to the job we ask it to create. This is part of the name of the MBean for that job,
      * but we can only retrieve the name after the MBean has been created.
@@ -199,8 +198,8 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
     	
     	// Create a new job 
 
-        File cxmlFile = getHeritrixFiles().getOrderXmlFile();
-        File seedsFile = getHeritrixFiles().getSeedsTxtFile();
+        File cxmlFile = getHeritrixFiles().getOrderFile();
+        File seedsFile = getHeritrixFiles().getSeedsFile();
         JobResult jobResult;
 
         
