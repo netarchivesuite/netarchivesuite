@@ -51,12 +51,17 @@ public class Heritrix3Files {
 		Heritrix3Files files = new Heritrix3Files();
 		files.setCrawldir(crawldir);
 		files.setJobId(harvestInfo.getJobID());
+		files.setHarvestID(harvestInfo.getOrigHarvestDefinitionID());
 		files.setArchivePrefix(harvestInfo.getHarvestFilenamePrefix());
 		files.setHeritrixZip();
 		files.setCertificateFile();
 		files.setHeritrixBaseDir();
 		files.setHeritrixJobDir();
 		return files;
+	}
+
+	private void setHarvestID(Long origHarvestDefinitionID) {
+		this.harvestID = origHarvestDefinitionID;
 	}
 
 	private void setHeritrixJobDir() {
@@ -90,6 +95,7 @@ public class Heritrix3Files {
 		Heritrix3Files files = new Heritrix3Files();
 		files.setCrawldir(crawldir);
 		files.setJobId(job.getJobID());
+		files.setHarvestID(job.getOrigHarvestDefinitionID());
 		files.setArchivePrefix(job.getHarvestFilenamePrefix());
 		files.setHeritrixZip();
 		files.setCertificateFile();
