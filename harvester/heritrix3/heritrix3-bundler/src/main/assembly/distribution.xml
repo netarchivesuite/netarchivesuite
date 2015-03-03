@@ -80,7 +80,7 @@
                 <exclude>xerces:*:jar</exclude>
                 <exclude>com.ibm.icu:icu4j:jar</exclude>
             </excludes>
-            <outputDirectory>/heritrix-3.2.0/lib/</outputDirectory>
+            <outputDirectory>/heritrix-3.3.0-LBS-2014-03/lib/</outputDirectory>
         </dependencySet>
     </dependencySets>
 </assembly>

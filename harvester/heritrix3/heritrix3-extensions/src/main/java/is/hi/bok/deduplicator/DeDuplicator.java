@@ -798,17 +798,17 @@ public class DeDuplicator extends Processor implements InitializingBean {
 	protected void doTimestampAnalysis(CrawlURI curi, Document urlHit, 
             Statistics currHostStats, boolean isDuplicate){
         
-        HttpMethod method = curi.getHttpMethod();
+        //HttpMethod method = curi.getHttpMethod();
 
         // Compare datestamps (last-modified versus the indexed date)
         Date lastModified = null;
-        if (method.getResponseHeader("last-modified") != null) {
+        if (curi.getHttpResponseHeader("last-modified") != null) {
             SimpleDateFormat sdf = 
             	new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", 
                         Locale.ENGLISH);
             try {
 				lastModified = sdf.parse(
-						method.getResponseHeader("last-modified").getValue());
+						curi.getHttpResponseHeader("last-modified"));			// .getValue()
 			} catch (ParseException e) {
 				logger.log(Level.INFO,"Exception parsing last modified of " + 
 						curi.toString(),e);

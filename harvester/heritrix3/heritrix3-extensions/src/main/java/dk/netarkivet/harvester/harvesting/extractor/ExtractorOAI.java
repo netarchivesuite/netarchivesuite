@@ -33,9 +33,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.ReplayCharSequence;
 import org.archive.modules.CrawlURI;
-import org.archive.modules.extractor.Extractor;
+import org.archive.modules.extractor.ContentExtractor;
 import org.archive.modules.extractor.Hop;
-import org.archive.modules.extractor.Link;
 import org.archive.modules.extractor.LinkContext;
 import org.archive.net.UURI;
 import org.archive.util.TextUtils;
@@ -64,7 +63,7 @@ import org.archive.util.TextUtils;
  *      </newObject> 
  * </newObject>
  */
-public class ExtractorOAI extends Extractor {
+public class ExtractorOAI extends ContentExtractor {
 
     /**
      * Regular expression matching the resumptionToken.
@@ -99,7 +98,7 @@ public class ExtractorOAI extends Extractor {
      * @param curi the CrawlUI from which to extract the link.
      */
     @Override
-    protected void extract(CrawlURI curi) {
+	protected boolean innerExtract(CrawlURI curi) {
     	// I believe this is handled by the ShouldProcess method
         // FIXME: code needs refactoring to work again
         //if (!isHttpTransactionContentToProcess(curi)) {
@@ -108,17 +107,17 @@ public class ExtractorOAI extends Extractor {
     	
         String mimeType = curi.getContentType();
         if (mimeType == null) {
-            return;
+            return false;
         }
         if ((mimeType.toLowerCase().indexOf("xml") < 0)
             && (!curi.toString().toLowerCase().endsWith(".rss"))
             && (!curi.toString().toLowerCase().endsWith(".xml"))) {
-            return;
+            return false;
         }
         try {
             String query = curi.getUURI().getQuery();
             if (!query.contains("verb=ListRecords")) { //Not an OAI-PMH document
-                return;
+                return false;
             }
         } catch (URIException e) {
             log.error("Cannot get query part from '" + curi + "'", e);
@@ -135,7 +134,7 @@ public class ExtractorOAI extends Extractor {
         if (cs == null) {
             log.error("Failed getting ReplayCharSequence: "
                     + curi.toString());
-            return;
+            return false;
         }
         try {
             boolean foundResumptionToken = processXml(curi, cs);
@@ -152,6 +151,7 @@ public class ExtractorOAI extends Extractor {
                 }
             }
         }
+        return true;
     }
 
     /**
@@ -182,8 +182,9 @@ public class ExtractorOAI extends Extractor {
                 //curi.createCrawlURI(baseUURI, link, scheduling, seed)
                 //Link.add(uri, max, newUri, context, hop);
                 //This code beneath refactored by looking at ExtractorCSS code in Heritrix-3.2.0 src.
-                Link.add(curi, 10, newUri.toString(), LinkContext.NAVLINK_MISC, Hop.NAVLINK);
-                
+                // FIXME
+                add(curi, 10, newUri.toString(), LinkContext.NAVLINK_MISC, Hop.NAVLINK);
+                //LinkContext.add(curi, 10, newUri.toString(), LinkContext.NAVLINK_MISC, Hop.NAVLINK);
             } catch (URISyntaxException e) {
                 log.error(e);
             } catch (URIException e) {
@@ -210,15 +211,9 @@ public class ExtractorOAI extends Extractor {
     }
 
     @Override
-    protected boolean shouldProcess(CrawlURI arg0) {
-        return arg0.isHttpTransaction();
+    protected boolean shouldExtract(CrawlURI curi) {
+        return curi.isHttpTransaction();
 
     }
-    //TODO should there be a shouldExtract(CrawlURI arg0) method
-    /*@Override
-    protected boolean shouldExtract(CrawlURI argo) {
-    	
-    }
-    */
 
 }

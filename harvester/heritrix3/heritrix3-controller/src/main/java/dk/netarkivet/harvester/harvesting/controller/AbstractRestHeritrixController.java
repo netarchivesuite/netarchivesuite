@@ -102,7 +102,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
 
             log.debug("Unzipping heritrix into the crawldir");
          
-            UnzipUtils.unzip(zipFileStr, heritrixBaseDir.getAbsolutePath());
+            UnzipUtils.unzip(zipFileStr, 1, heritrixBaseDir.getAbsolutePath());
             //File basedir = new File(basedirStr);
             
             h3launcher = CommandLauncher.getInstance();

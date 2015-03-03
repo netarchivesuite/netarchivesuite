@@ -51,15 +51,15 @@ public abstract class HeritrixLauncher {
      * @throws ArgumentNotValid If either seedsfile or orderfile does not exist.
      */
     protected HeritrixLauncher(Heritrix3Files files) throws ArgumentNotValid {
-        if (!files.getOrderXmlFile().isFile()) {
-            throw new ArgumentNotValid("File '" + files.getOrderXmlFile().getName() + "' must exist in order for "
+        if (!files.getOrderFile().isFile()) {
+            throw new ArgumentNotValid("File '" + files.getOrderFile().getName() + "' must exist in order for "
                     + "Heritrix to run. This filepath does not refer to existing file: "
-                    + files.getOrderXmlFile().getAbsolutePath());
+                    + files.getOrderFile().getAbsolutePath());
         }
-        if (!files.getSeedsTxtFile().isFile()) {
-            throw new ArgumentNotValid("File '" + files.getSeedsTxtFile().getName() + "' must exist in order for "
+        if (!files.getSeedsFile().isFile()) {
+            throw new ArgumentNotValid("File '" + files.getSeedsFile().getName() + "' must exist in order for "
                     + "Heritrix to run. This filepath does not refer to existing file: "
-                    + files.getSeedsTxtFile().getAbsolutePath());
+                    + files.getSeedsFile().getAbsolutePath());
         }
         this.files = files;
         this.args = new Object[] {files};

@@ -23,7 +23,7 @@ import dk.netarkivet.harvester.datamodel.Job;
 public class Heritrix3Files {
 
 	
-	private static final String HERITRIX_UNPACKDIR = "heritrix-3.2.0/";
+	private static final String HERITRIX_UNPACKDIR = "heritrix3/";
 	
 	private File crawlDir;
 	private Long harvestID;

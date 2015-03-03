@@ -75,7 +75,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.IOUtils;
@@ -91,7 +90,6 @@ import org.archive.modules.CrawlMetadata;
 import org.archive.modules.CrawlURI;
 import org.archive.modules.ProcessResult;
 import org.archive.modules.deciderules.recrawl.IdenticalDigestDecideRule;
-import org.archive.modules.extractor.Link;
 import org.archive.modules.writer.WriterPoolProcessor;
 import org.archive.spring.ConfigPath;
 import org.archive.uid.RecordIDGenerator;
@@ -764,10 +762,9 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements WARCWrit
         recordInfo.setExtraHeaders(namedFields);
         
         if(curi.isHttpTransaction()) {
-            HttpMethod method = curi.getHttpMethod();
-            saveHeader(A_ETAG_HEADER,method,namedFields,HEADER_KEY_ETAG);
-            saveHeader(A_LAST_MODIFIED_HEADER,method,namedFields,
-            		HEADER_KEY_LAST_MODIFIED);
+            //HttpMethod method = curi.getHttpMethod();
+            saveHeader(A_ETAG_HEADER, curi, namedFields, HEADER_KEY_ETAG);
+            saveHeader(A_LAST_MODIFIED_HEADER, curi,namedFields, HEADER_KEY_LAST_MODIFIED);
         }
         // truncate to zero-length (all necessary info is above)
         namedFields.addLabelValue(HEADER_KEY_TRUNCATED,
@@ -792,11 +789,13 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements WARCWrit
      * @param origName header name to get if present
      * @param method http operation containing headers
      */
-    protected void saveHeader(String origName, HttpMethod method, 
+    // Was: HttpMethod method
+    protected void saveHeader(String origName, CrawlURI curi, 
     		ANVLRecord headers, String newName) {
-        Header header = method.getResponseHeader(origName);
+        String header = curi.getHttpResponseHeader(origName);
         if(header!=null) {
-            headers.addLabelValue(newName, header.getValue());
+        	// .getValue()
+            headers.addLabelValue(newName, header);
         }
     }
 
@@ -858,9 +857,9 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements WARCWrit
         }
 
         // Add outlinks though they are effectively useless without anchor text.
-        Collection<Link> links = curi.getOutLinks();
+        Collection<CrawlURI> links = curi.getOutLinks();
         if (links != null && links.size() > 0) {
-            for (Link link: links) {
+            for (CrawlURI link: links) {
                 r.addLabelValue("outlink", link.toString());
             }
         }

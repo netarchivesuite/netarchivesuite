@@ -168,6 +168,16 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jwat</groupId>
+      <artifactId>jwat-arc</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jwat</groupId>
+      <artifactId>jwat-warc</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>berkeleydb</groupId>
       <artifactId>je</artifactId>
       <version><!-- FIXME: 3.3.82 -->3.2.76</version>

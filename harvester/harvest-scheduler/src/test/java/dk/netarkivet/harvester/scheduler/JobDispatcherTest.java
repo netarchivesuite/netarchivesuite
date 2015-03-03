@@ -130,7 +130,7 @@ public class JobDispatcherTest {
     public void testSubmitNewJobsMakesDuplicateReductionInfo() throws DocumentException {
         prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
         Document doc = OrderXmlBuilder.create().enableDeduplication().getDoc();
-        HeritrixTemplate h1temp = new H1HeritrixTemplate(doc);
+        HeritrixTemplate h1temp = new H1HeritrixTemplate(doc, false);
         when(jobMock.getOrderXMLdoc()).thenReturn(h1temp);
         // FIXME Which is correct? Does this fail currently?
         // when(jobMock.getOrderXMLdoc()).thenReturn(doc);
@@ -204,7 +204,7 @@ public class JobDispatcherTest {
         when(job.getJobID()).thenReturn(jobID);
         when(job.getOrigHarvestDefinitionID()).thenReturn(9L);
         when(job.getOrderXMLdoc()).thenReturn(
-        		new H1HeritrixTemplate(new DefaultDocument())); //FIXME only works for H1 templates
+        		new H1HeritrixTemplate(new DefaultDocument(), false)); //FIXME only works for H1 templates
         return job;
     }
 

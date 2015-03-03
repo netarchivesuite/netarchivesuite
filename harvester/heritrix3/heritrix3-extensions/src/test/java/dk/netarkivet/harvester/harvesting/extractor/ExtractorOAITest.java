@@ -34,7 +34,6 @@ import org.apache.commons.httpclient.URIException;
 import org.archive.io.ReplayCharSequence;
 import org.archive.modules.CrawlURI;
 import org.archive.modules.extractor.Extractor;
-import org.archive.modules.extractor.Link;
 import org.archive.net.UURIFactory;
 import org.archive.util.Recorder;
 //import org.archive.util.HttpRecorder;
@@ -141,8 +140,9 @@ public class ExtractorOAITest {
         //x.innerProcess(curi);
         // TODO check if this works.
         x.process(curi);
-        Collection<Link> links = curi.getOutLinks();
-        Link link1 = links.iterator().next();
-        assertTrue(link1.getDestination().toString().contains("resumptionToken=foobar"));
+        Collection<CrawlURI> links = curi.getOutLinks();
+        CrawlURI link1 = links.iterator().next();
+        // .destination not long exists.
+        assertTrue(link1.getURI().toString().contains("resumptionToken=foobar"));
     }
 }
