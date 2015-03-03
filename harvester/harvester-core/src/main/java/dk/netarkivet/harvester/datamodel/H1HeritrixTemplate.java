@@ -800,8 +800,12 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 			String scheduleName, String performer) {
 		
 		Node WARCWRITERNODE = template.selectSingleNode(WARCWRITERPROCESSOR_XPATH);
+		if (WARCWRITERNODE == null) {
+			throw new IOFailure("Unable to locate the '" + WARCWRITERPROCESSOR_XPATH + "' element in order.xml: "
+                    + template.asXML());
+        } 
+		
 		Element warcwriterElement = (Element) WARCWRITERNODE;
-        
 		Element metadataMap = warcwriterElement.addElement("map");
         metadataMap.addAttribute("name", "metadata-items");
         
