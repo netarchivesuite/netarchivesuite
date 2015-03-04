@@ -2,7 +2,10 @@ Reorganized NetarchiveSuite sources into a multi-module maven build.
 
 Build with
 
-  mvn clean install
+  mvn clean install 
+or 
+  mvn clean install -Dmaven.test.skip=true 
+(if tests are to be skipped)
 
 
 If you do not have Maven configured to use the SBForge nexus repository
