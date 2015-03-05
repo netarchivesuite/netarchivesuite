@@ -82,6 +82,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
             //public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix.certificate";
             String cerficatePath = files.getCertificateFile().getAbsolutePath();
             
+            
             heritrixBaseDir = files.getHeritrixBaseDir();
             if (!heritrixBaseDir.isDirectory()) {
             	heritrixBaseDir.mkdirs();
@@ -89,6 +90,9 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
             if (!heritrixBaseDir.isDirectory()) {
             	throw new IOFailure("Unable to create heritrixbasedir: " + heritrixBaseDir.getAbsolutePath() );
             }
+            //File cfFile = new File(heritrixBaseDir, "h3server.jks");
+            
+            Heritrix3Wrapper.copyFileAs(new File(cerficatePath), heritrixBaseDir, "h3server.jks"); 
             
             String[] cmd = {
             "./bin/heritrix",
@@ -97,7 +101,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
             "-a " + getHeritrixAdminName() + ":" + getHeritrixAdminPassword(),
             
             //String cerficatePath = files.getCertificateFile().getAbsolutePath();
-            //  "-s h3server.jks,h3server,h3server"
+             "-s h3server.jks,h3server,h3server"
             };
 
             log.debug("Unzipping heritrix into the crawldir");
