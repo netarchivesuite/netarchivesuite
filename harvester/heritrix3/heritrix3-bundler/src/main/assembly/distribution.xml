@@ -79,7 +79,7 @@
                 <exclude>javax.mail:mail:jar</exclude>
                 <exclude>javax.activation:activation:jar</exclude>
                 <!-- xml -->
-                <exclude>jaxen:jaxen:jar</exclude>
+                <!--exclude>jaxen:jaxen:jar</exclude-->
                 <exclude>jdom:jdom:jar</exclude>
                 <exclude>xml-apis:xml-apis:jar</exclude>
                 <exclude>xom:xom:jar</exclude>
