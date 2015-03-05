@@ -25,6 +25,11 @@
                   <exclude>*/lib/oro-2.0.8.LICENSE</exclude>
                   <exclude>*/lib/junit-*.jar</exclude>
                   <exclude>*/lib/junit.*</exclude>
+                  <!-- Removing duplicates. -->
+                  <exclude>*/lib/webarchive-commons-1.1.4.jar</exclude>
+                  <!--exclude>*/lib/commons-configuration-1.6.jar</exclude-->
+                  <!--exclude>*/lib/httpclient-4.2.5.jar</exclude-->
+                  <!--exclude>*/lib/httpcore-4.2.4.jar</exclude-->
                 </excludes>
             </unpackOptions>
             <outputDirectory>/</outputDirectory>
@@ -36,6 +41,8 @@
                 <include>*:jar</include>
             </includes>
             <excludes>
+                <exclude>org.slf4j:*:jar</exclude>
+                <exclude>ch.qos.logback:*:jar</exclude>
                 <exclude>commons-fileupload:commons-fileupload:jar</exclude>
                 <exclude>commons-httpclient:commons-httpclient:jar</exclude>
                 <exclude>commons-cli:commons-cli:jar</exclude>
@@ -79,6 +86,10 @@
                 <exclude>xalan:xalan:jar</exclude>
                 <exclude>xerces:*:jar</exclude>
                 <exclude>com.ibm.icu:icu4j:jar</exclude>
+                <!-- Removing duplicates. -->
+                <exclude>commons-configuration:commons-configuration:jar:1.6</exclude>
+                <exclude>org.apache.httpcomponents:httpclient:jar:4.2.5</exclude>
+                <exclude>org.apache.httpcomponents:httpcore:jar:4.2.4</exclude>
             </excludes>
             <outputDirectory>/heritrix-3.3.0-LBS-2014-03/lib/</outputDirectory>
         </dependencySet>

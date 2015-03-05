@@ -36,6 +36,12 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>harvester-core</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>heritrix1-frontier</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
