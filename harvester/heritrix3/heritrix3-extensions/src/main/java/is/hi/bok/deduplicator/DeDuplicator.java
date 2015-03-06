@@ -81,11 +81,11 @@ import dk.netarkivet.common.utils.AllDocsCollector;
        <property name="changeContentSize" value="false"/>
         <property name="mimeFilter" value="^text/.*"/>
          
-        <property name="filterMode" value="BLACKLIST"/> Other options:	  
-        <property name="analysisMode" value="TIMESTAMP"/> Other options:
+        <property name="filterMode" value="BLACKLIST"/> Other option:	 WHITELIST 
+        <property name="analysisMode" value="TIMESTAMP"/> Other options: NONE, TIMESTAMP_AND_ETAG
         
         <property name="origin" value=""/>
-        <property name="originHandling" value="INDEX"/> Other options: 
+        <property name="originHandling" value="INDEX"/> Other options: NONE,???
         <property name="statsPerHost" value="true"/>
 
  * 
@@ -118,7 +118,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
     	DIGEST
     }
     
-    private final static String DEFAULT_MATCHING_METHOD = "URL"; 
+    private final static MatchingMethod DEFAULT_MATCHING_METHOD = MatchingMethod.URL; 
     {
         setMatchingMethod(DEFAULT_MATCHING_METHOD);
     }
@@ -127,14 +127,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
     }
     
     /** SETTER used by Spring */
-    public void setMatchingMethod(String matchingMethod) {
-    	MatchingMethod method = null;
-    	try {
-			method = DeDuplicator.MatchingMethod.valueOf(matchingMethod);
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("MatchingMethod '" + matchingMethod 
-					+ "' is not accepted.");
-		}
+    public void setMatchingMethod(MatchingMethod method) {
     	kp.put(ATTR_MATCHING_METHOD, method);
     }
     
@@ -171,14 +164,14 @@ public class DeDuplicator extends Processor implements InitializingBean {
      */
     public final static String ATTR_EQUIVALENT = "try-equivalent";
     {
-    	setTryEquivalent("false");
+    	setTryEquivalent(false);
     }
-    public boolean getTryEquivalent(){
+    public Boolean getTryEquivalent(){
     	return (Boolean)kp.get(ATTR_EQUIVALENT);
     }
     /** SPRING SETTER */
-    public void setTryEquivalent(String tryEquivalent){
-    	kp.put(ATTR_EQUIVALENT, Boolean.valueOf(tryEquivalent));
+    public void setTryEquivalent(Boolean tryEquivalent){
+    	kp.put(ATTR_EQUIVALENT, tryEquivalent);
     }
 
     /* The filter on mime types. This is either a blacklist or whitelist
@@ -202,7 +195,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
      */
     public final static String ATTR_FILTER_MODE = "filter-mode";
     {
-    	setfilterMode("BLACKLIST");
+    	setfilterMode(FilterMode.BLACKLIST);
     }
     
     public FilterMode getFilterMode() {
@@ -220,15 +213,8 @@ public class DeDuplicator extends Processor implements InitializingBean {
     	return fMode.equals(FilterMode.BLACKLIST);
     }
     /** SPRING SETTER method */
-    public void setfilterMode(String filterMode){
-    	FilterMode method = null;
-    	try {
-			method = FilterMode.valueOf(filterMode);
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("FilterMode '" + filterMode 
-					+ "' is not accepted.");
-		}
-    	kp.put(ATTR_FILTER_MODE, method);
+    public void setfilterMode(FilterMode filterMode){
+    	kp.put(ATTR_FILTER_MODE, filterMode);
     }
    
     
@@ -240,7 +226,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
     /* Analysis mode. */
     public final static String ATTR_ANALYZE_MODE = "analyze-modes";
     {
-    	setAnalyzeMode("TIMESTAMP");
+    	setAnalysisMode(AnalysisMode.TIMESTAMP);
     }
     
     public boolean getAnalyzeTimestamp() {
@@ -248,42 +234,38 @@ public class DeDuplicator extends Processor implements InitializingBean {
         return analysisMode.equals(AnalysisMode.TIMESTAMP);
     }
     
-    public void setAnalyzeMode(String analyzeMode) {
-    	AnalysisMode method = null;
-    	try {
-			method = AnalysisMode.valueOf(analyzeMode);
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("AnalysisMode '" + analyzeMode 
-					+ "' is not accepted.");
-		}
-    	
-		kp.put(ATTR_ANALYZE_MODE, method);
+    public void setAnalysisMode(AnalysisMode analyzeMode) {	
+		kp.put(ATTR_ANALYZE_MODE, analyzeMode);
+    }
+    
+    public AnalysisMode getAnalysisMode()  {	
+    	return (AnalysisMode) kp.get(ATTR_ANALYZE_MODE);
     }
     
 
     /* Should the content size information be set to zero when a duplicate is found? */
     public final static String ATTR_CHANGE_CONTENT_SIZE = "change-content-size";
     {
-    	setChangeContentSize("false");
+    	setChangeContentSize(false);
     }
-    public boolean getChangeContentSize(){
+    public Boolean getChangeContentSize(){
     	return (Boolean)kp.get(ATTR_CHANGE_CONTENT_SIZE);
     }
     /** SPRING SETTER */
-    public void setChangeContentSize(String changeContentSize){
-    	kp.put(ATTR_CHANGE_CONTENT_SIZE, Boolean.valueOf(changeContentSize));
+    public void setChangeContentSize(Boolean changeContentSize){
+    	kp.put(ATTR_CHANGE_CONTENT_SIZE, changeContentSize);
     }
 
     /* Should statistics be tracked per host? **/
     public final static String ATTR_STATS_PER_HOST = "stats-per-host";
     {
-    	setStatsPerHost("false");
+    	setStatsPerHost(false);
     }
-    public boolean getStatsPerHost(){
+    public Boolean getStatsPerHost(){
     	return (Boolean)kp.get(ATTR_STATS_PER_HOST);
     }
-    public void setStatsPerHost(String statsPerHost){
-    	kp.put(ATTR_STATS_PER_HOST, Boolean.valueOf(statsPerHost));
+    public void setStatsPerHost(Boolean statsPerHost){
+    	kp.put(ATTR_STATS_PER_HOST, statsPerHost);
     }
     
     /* How should 'origin' be handled */
@@ -293,22 +275,15 @@ public class DeDuplicator extends Processor implements InitializingBean {
     	PROCESSOR,  // Use processor setting -- ATTR_ORIGIN
     	INDEX       // Use index information, each hit on index should contain origin
     }
-    public final static String DEFAULT_ORIGIN_HANDLING = "NONE";
+    public final static OriginHandling DEFAULT_ORIGIN_HANDLING = OriginHandling.NONE;
     {
         setOriginHandling(DEFAULT_ORIGIN_HANDLING);
     }
     public OriginHandling getOriginHandling() {
         return (OriginHandling) kp.get(ATTR_ORIGIN_HANDLING);
     }
-    public void setOriginHandling(String originHandling) {
-    	OriginHandling method = null;
-    	try {
-			method = OriginHandling.valueOf(originHandling);
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("OriginHandling '" + originHandling 
-					+ "' is not accepted.");
-		}
-		kp.put(ATTR_ORIGIN_HANDLING, method);
+    public void setOriginHandling(OriginHandling originHandling) {
+    	kp.put(ATTR_ORIGIN_HANDLING, originHandling);
     }
 
        
