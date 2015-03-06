@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.httpclient.HttpMethod;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -73,6 +72,24 @@ import dk.netarkivet.common.utils.AllDocsCollector;
  * 
  * @author Kristinn Sigur&eth;sson
  * @author Søren Vejrup Carlsen
+ * 
+ * <bean id="DeDuplicator" class="is.hi.bok.deduplicator.DeDuplicator">
+ * <!-- DEDUPLICATION_INDEX_LOCATION is replaced by path on harvest-server -->
+ * <property name="indexLocation" value="/home/svc/dedupcrawllogindex/empty-cache"/> 
+	<property name="matchingMethod" value="URL"/>  other option: DIGEST
+    <property name="tryEquivalent" value="true"/> 
+       <property name="changeContentSize" value="false"/>
+        <property name="mimeFilter" value="^text/.*"/>
+         
+        <property name="filterMode" value="BLACKLIST"/> Other options:	  
+        <property name="analysisMode" value="TIMESTAMP"/> Other options:
+        
+        <property name="origin" value=""/>
+        <property name="originHandling" value="INDEX"/> Other options: 
+        <property name="statsPerHost" value="true"/>
+
+ * 
+ * 
  */
 @SuppressWarnings({"unchecked"})
 public class DeDuplicator extends Processor implements InitializingBean {
@@ -88,25 +105,37 @@ public class DeDuplicator extends Processor implements InitializingBean {
     public String getIndexLocation() {
         return (String) kp.get(ATTR_INDEX_LOCATION);
     }
+    /** SETTER used by Spring */
     public void setIndexLocation(String indexLocation) {
         kp.put(ATTR_INDEX_LOCATION,indexLocation);
     }
 
     /* The matching method in use (by url or content digest) */
     private final static String ATTR_MATCHING_METHOD = "matching-method";
-    enum MatchingMethod {
+    
+    public enum MatchingMethod {
     	URL,
     	DIGEST
     }
-    private final static MatchingMethod DEFAULT_MATCHING_METHOD = MatchingMethod.URL; 
+    
+    private final static String DEFAULT_MATCHING_METHOD = "URL"; 
     {
         setMatchingMethod(DEFAULT_MATCHING_METHOD);
     }
     public MatchingMethod getMatchingMethod() {
         return (MatchingMethod) kp.get(ATTR_MATCHING_METHOD);
     }
-    public void setMatchingMethod(MatchingMethod matchinMethod) {
-    		kp.put(ATTR_MATCHING_METHOD, matchinMethod);
+    
+    /** SETTER used by Spring */
+    public void setMatchingMethod(String matchingMethod) {
+    	MatchingMethod method = null;
+    	try {
+			method = DeDuplicator.MatchingMethod.valueOf(matchingMethod);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("MatchingMethod '" + matchingMethod 
+					+ "' is not accepted.");
+		}
+    	kp.put(ATTR_MATCHING_METHOD, method);
     }
     
     /* On duplicate, should jump to which part of processing chain? 
@@ -116,11 +145,14 @@ public class DeDuplicator extends Processor implements InitializingBean {
     public String getJumpTo(){
     	return (String)kp.get(ATTR_JUMP_TO);
     }
+    /** SPRING SETTER. 
+     * TODO Are we using this property??  The netarkivet are not
+     */
     public void setJumpTo(String jumpTo){
     	kp.put(ATTR_JUMP_TO, jumpTo);
     }
 
-    /* Origin of duplicate URLs. May be overridden by info from index*/
+    /* Origin of duplicate URLs. May be overridden by info from index */
     public final static String ATTR_ORIGIN = "origin";
     {
         setOrigin("");
@@ -128,6 +160,8 @@ public class DeDuplicator extends Processor implements InitializingBean {
     public String getOrigin() {
         return (String) kp.get(ATTR_ORIGIN);
     }
+    
+    /** SPRING SETTER */
     public void setOrigin(String origin) {
         kp.put(ATTR_ORIGIN,origin);
     }
@@ -137,13 +171,14 @@ public class DeDuplicator extends Processor implements InitializingBean {
      */
     public final static String ATTR_EQUIVALENT = "try-equivalent";
     {
-    	setTryEquivalent(false);
+    	setTryEquivalent("false");
     }
     public boolean getTryEquivalent(){
     	return (Boolean)kp.get(ATTR_EQUIVALENT);
     }
-    public void setTryEquivalent(boolean tryEquivalent){
-    	kp.put(ATTR_EQUIVALENT,tryEquivalent);
+    /** SPRING SETTER */
+    public void setTryEquivalent(String tryEquivalent){
+    	kp.put(ATTR_EQUIVALENT, Boolean.valueOf(tryEquivalent));
     }
 
     /* The filter on mime types. This is either a blacklist or whitelist
@@ -157,6 +192,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
     public String getMimeFilter(){
     	return (String)kp.get(ATTR_MIME_FILTER);
     }
+    // USED by SPRING
     public void setMimeFilter(String mimeFilter){
     	kp.put(ATTR_MIME_FILTER, mimeFilter);
     }
@@ -166,79 +202,113 @@ public class DeDuplicator extends Processor implements InitializingBean {
      */
     public final static String ATTR_FILTER_MODE = "filter-mode";
     {
-    	setBlacklist(true);
-    }
-    public boolean getBlacklist(){
-    	return (Boolean)kp.get(ATTR_FILTER_MODE);
-    }
-    public void setBlacklist(boolean blacklist){
-    	kp.put(ATTR_FILTER_MODE, blacklist);
+    	setfilterMode("BLACKLIST");
     }
     
+    public FilterMode getFilterMode() {
+    	return (FilterMode) kp.get(ATTR_FILTER_MODE);
+    }
+    
+    
+    public enum FilterMode {
+    	BLACKLIST, WHITELIST
+    };
+    
+    
+    public Boolean getBlacklist(){
+    	FilterMode fMode = (FilterMode) kp.get(ATTR_FILTER_MODE);
+    	return fMode.equals(FilterMode.BLACKLIST);
+    }
+    /** SPRING SETTER method */
+    public void setfilterMode(String filterMode){
+    	FilterMode method = null;
+    	try {
+			method = FilterMode.valueOf(filterMode);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("FilterMode '" + filterMode 
+					+ "' is not accepted.");
+		}
+    	kp.put(ATTR_FILTER_MODE, method);
+    }
+   
+    
+    public enum AnalysisMode {
+    	NONE, TIMESTAMP, TIMESTAMP_AND_ETAG
+    };
+    
+    
     /* Analysis mode. */
-    public final static String ATTR_ANALYZE_TIMESTAMP = "analyze-timestamp";
+    public final static String ATTR_ANALYZE_MODE = "analyze-modes";
     {
-        setAnalyzeTimestamp(false);
+    	setAnalyzeMode("TIMESTAMP");
     }
+    
     public boolean getAnalyzeTimestamp() {
-        return (Boolean) kp.get(ATTR_ANALYZE_TIMESTAMP);
+    	AnalysisMode analysisMode = (AnalysisMode) kp.get(ATTR_ANALYZE_MODE);
+        return analysisMode.equals(AnalysisMode.TIMESTAMP);
     }
-    public void setAnalyzeTimestamp(boolean analyzeTimestamp) {
-		kp.put(ATTR_ANALYZE_TIMESTAMP,analyzeTimestamp);
+    
+    public void setAnalyzeMode(String analyzeMode) {
+    	AnalysisMode method = null;
+    	try {
+			method = AnalysisMode.valueOf(analyzeMode);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("AnalysisMode '" + analyzeMode 
+					+ "' is not accepted.");
+		}
+    	
+		kp.put(ATTR_ANALYZE_MODE, method);
     }
+    
 
     /* Should the content size information be set to zero when a duplicate is found? */
     public final static String ATTR_CHANGE_CONTENT_SIZE = "change-content-size";
     {
-    	setChangeContentSize(false);
+    	setChangeContentSize("false");
     }
     public boolean getChangeContentSize(){
     	return (Boolean)kp.get(ATTR_CHANGE_CONTENT_SIZE);
     }
-    public void setChangeContentSize(boolean changeContentSize){
-    	kp.put(ATTR_CHANGE_CONTENT_SIZE, changeContentSize);
+    /** SPRING SETTER */
+    public void setChangeContentSize(String changeContentSize){
+    	kp.put(ATTR_CHANGE_CONTENT_SIZE, Boolean.valueOf(changeContentSize));
     }
 
     /* Should statistics be tracked per host? **/
     public final static String ATTR_STATS_PER_HOST = "stats-per-host";
     {
-    	setStatsPerHost(false);
+    	setStatsPerHost("false");
     }
     public boolean getStatsPerHost(){
     	return (Boolean)kp.get(ATTR_STATS_PER_HOST);
     }
-    public void setStatsPerHost(boolean statsPerHost){
-    	kp.put(ATTR_STATS_PER_HOST,statsPerHost);
-    }
-
-    /* Should we use sparse queries (uses less memory at a cost to performance? */
-    public final static String ATTR_USE_SPARSE_RANGE_FILTER = "use-sparse-range-filter";
-    {
-    	setUseSparseRengeFilter(false);
-    }
-    public boolean getUseSparseRengeFilter(){
-    	return (Boolean)kp.get(ATTR_USE_SPARSE_RANGE_FILTER);
-    }
-    public void setUseSparseRengeFilter(boolean useSparseRengeFilter){
-    	kp.put(ATTR_USE_SPARSE_RANGE_FILTER, useSparseRengeFilter);
+    public void setStatsPerHost(String statsPerHost){
+    	kp.put(ATTR_STATS_PER_HOST, Boolean.valueOf(statsPerHost));
     }
     
     /* How should 'origin' be handled */
     public final static String ATTR_ORIGIN_HANDLING = "origin-handling";
-    enum OriginHandling {
+    public enum OriginHandling {
     	NONE,  		// No origin information
     	PROCESSOR,  // Use processor setting -- ATTR_ORIGIN
     	INDEX       // Use index information, each hit on index should contain origin
     }
-    public final static OriginHandling DEFAULT_ORIGIN_HANDLING = OriginHandling.NONE;
+    public final static String DEFAULT_ORIGIN_HANDLING = "NONE";
     {
         setOriginHandling(DEFAULT_ORIGIN_HANDLING);
     }
     public OriginHandling getOriginHandling() {
         return (OriginHandling) kp.get(ATTR_ORIGIN_HANDLING);
     }
-    public void setOriginHandling(OriginHandling originHandling) {
-		kp.put(ATTR_ORIGIN_HANDLING,originHandling);
+    public void setOriginHandling(String originHandling) {
+    	OriginHandling method = null;
+    	try {
+			method = OriginHandling.valueOf(originHandling);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("OriginHandling '" + originHandling 
+					+ "' is not accepted.");
+		}
+		kp.put(ATTR_ORIGIN_HANDLING, method);
     }
 
        
