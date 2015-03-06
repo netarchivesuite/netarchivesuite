@@ -24,9 +24,9 @@ package dk.netarkivet.harvester.harvesting.controller;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.concurrent.Semaphore;
 
 import org.netarchivesuite.heritrix3wrapper.CommandLauncher;
-
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
 import org.netarchivesuite.heritrix3wrapper.LaunchResultHandlerAbstract;
 import org.netarchivesuite.heritrix3wrapper.unzip.UnzipUtils;
@@ -55,6 +55,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
 
     protected Heritrix3Wrapper h3wrapper;
     protected CommandLauncher h3launcher;
+    protected LaunchResultHandlerAbstract h3handler;
     protected PrintWriter outputPrinter;
     protected PrintWriter errorPrinter; 
     protected File heritrixBaseDir;
@@ -76,13 +77,13 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
         SystemUtils.checkPortNotUsed(guiPort);
         
         hostName = SystemUtils.getLocalHostName();
+        //hostName = SystemUtils.getLocalIP();
         try {
             log.info("Starting Heritrix for {} in crawldir {}", this, files.getCrawlDir());
             String zipFileStr = files.getHeritrixZip().getAbsolutePath();
-            //public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix.certificate";
             String cerficatePath = files.getCertificateFile().getAbsolutePath();
-            
-            
+            //public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix.certificate";
+
             heritrixBaseDir = files.getHeritrixBaseDir();
             if (!heritrixBaseDir.isDirectory()) {
             	heritrixBaseDir.mkdirs();
@@ -90,31 +91,13 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
             if (!heritrixBaseDir.isDirectory()) {
             	throw new IOFailure("Unable to create heritrixbasedir: " + heritrixBaseDir.getAbsolutePath() );
             }
-            //File cfFile = new File(heritrixBaseDir, "h3server.jks");
-            
-            Heritrix3Wrapper.copyFileAs(new File(cerficatePath), heritrixBaseDir, "h3server.jks"); 
-            
-            String[] cmd = {
-            "./bin/heritrix",
-            //  "-b 192.168.1.101",
-            "-p " + guiPort,
-            "-a " + getHeritrixAdminName() + ":" + getHeritrixAdminPassword(),
-            
-            //String cerficatePath = files.getCertificateFile().getAbsolutePath();
-             "-s h3server.jks,h3server,h3server"
-            };
 
             log.debug("Unzipping heritrix into the crawldir");
-         
             UnzipUtils.unzip(zipFileStr, 1, heritrixBaseDir.getAbsolutePath());
-            //File basedir = new File(basedirStr);
-            
-            h3launcher = CommandLauncher.getInstance();
-        	
-            outputPrinter = new PrintWriter(files.getHeritrixStdoutLog(), "UTF-8");
-            errorPrinter = new PrintWriter(files.getHeritrixStderrLog(), "UTF-8");
-            h3launcher.init(heritrixBaseDir, cmd);
-            
+
+            log.debug("Copying certificate into heritrix dir");
+            Heritrix3Wrapper.copyFileAs(new File(cerficatePath), heritrixBaseDir, "h3server.jks"); 
+
             /** The bin/heritrix script should read the following environment-variables:
              * 
              * JAVA_HOME Point at a JDK install to use  
@@ -131,6 +114,20 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
              *
              * FOREGROUND      
              */
+            String[] cmd = {
+                    "./bin/heritrix",
+                    "-b",
+                    //getHostName(),
+                    hostName,
+                    "-p ",
+                    Integer.toString(guiPort),
+                    "-a ",
+                    getHeritrixAdminName() + ":" + getHeritrixAdminPassword(),
+                    "-s",
+                    "h3server.jks,h3server,h3server"
+            };
+            h3launcher = CommandLauncher.getInstance();
+            h3launcher.init(heritrixBaseDir, cmd);
             h3launcher.env.put("FOREGROUND", "true");
             String javaOpts = "";
             String jvmOptsStr = Settings.get(HarvesterSettings.HERITRIX_JVM_OPTS);
@@ -138,43 +135,54 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
             	javaOpts = " " + jvmOptsStr;
             }
             h3launcher.env.put("JAVA_OPTS", 
-            		"-Xmx" + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE)
-            		+ javaOpts);
+            		"-Xmx" + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE) + javaOpts);
             h3launcher.env.put("HERITRIX_OUT", files.getHeritrixOutput().getAbsolutePath());
             // TODO NEED THIS?
             //h3launcher.env.put("HERITRIX_HOME", files.getCrawlDir().getAbsolutePath());
             // TODO NEED THIS?
             //h3launcher.env.put("JAVA_HOME", ....)	
-            	
-            
-            h3launcher.start(new LaunchResultHandlerAbstract() {
-            	@Override
-            	public void exitValue(int exitValue) {
-            		// debug
-            		System.out.println("exitValue=" + exitValue);
-           	}
-            	@Override
-            	public void output(String line) {
-            		outputPrinter.println(line);
-            	}
-            	@Override
-            	public void closeOutput() {
-            		outputPrinter.close();
-            	}
-            	@Override
-            	public void error(String line) {
-            		errorPrinter.println(line);
-            	}
-            	@Override
-            	public void closeError() {
-            		errorPrinter.close();
-            	}
-            });
+            outputPrinter = new PrintWriter(files.getHeritrixStdoutLog(), "UTF-8");
+            errorPrinter = new PrintWriter(files.getHeritrixStderrLog(), "UTF-8");
+            h3handler = new LaunchResultHandler(outputPrinter, errorPrinter);
+            h3launcher.start(h3handler);
         } catch( Throwable e) {
         	log.debug("Unexpected error while launching H3: ", e);
         	throw new IOFailure("Unexpected error while launching H3: ", e);
         }
 
+    }
+
+    public static class LaunchResultHandler implements LaunchResultHandlerAbstract {
+    	protected Semaphore semaphore = new Semaphore(-2);
+        protected PrintWriter outputPrinter;
+        protected PrintWriter errorPrinter;
+    	public LaunchResultHandler(PrintWriter outputPrinter, PrintWriter errorPrinter) {
+    		this.outputPrinter = outputPrinter;
+    		this.errorPrinter = errorPrinter;
+    	}
+    	@Override
+    	public void exitValue(int exitValue) {
+    		semaphore.release();
+        	log.info("Heritrix3 exitValue=: {}", exitValue);
+   	    }
+    	@Override
+    	public void output(String line) {
+    		outputPrinter.println(line);
+    	}
+    	@Override
+    	public void closeOutput() {
+    		outputPrinter.close();
+    		semaphore.release();
+    	}
+    	@Override
+    	public void error(String line) {
+    		errorPrinter.println(line);
+    	}
+    	@Override
+    	public void closeError() {
+    		errorPrinter.close();
+    		semaphore.release();
+    	}
     }
 
     /**

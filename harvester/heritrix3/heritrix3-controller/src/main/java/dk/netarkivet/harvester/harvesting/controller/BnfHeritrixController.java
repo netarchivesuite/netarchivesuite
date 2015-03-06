@@ -162,15 +162,14 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      */
     @Override
     public void initialize() {
-    	      
+
     	/////////////////////////////////////////////////////
         // Initialize H3 wrapper 
     	/////////////////////////////////////////////////////
-        
+
     	//File keystoreFile= null;
         //String keyStorePassword = null;
 
-       
         h3wrapper = Heritrix3Wrapper.getInstance(getHostName(), getGuiPort(), 
         		null, null, getHeritrixAdminName(), getHeritrixAdminPassword());
 
@@ -190,8 +189,8 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
         }
         
         // POST: Heritrix3 is up and running and responds nicely
-        
-            }
+        log.info("Heritrix3 REST interface connectable.");
+    }
 
     @Override
     public void requestCrawlStart() {
