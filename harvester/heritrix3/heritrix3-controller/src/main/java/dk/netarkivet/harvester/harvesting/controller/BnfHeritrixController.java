@@ -184,8 +184,13 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
         	throw new IOFailure("Heritrix not started: " + e);
         }
 
-        if (engineResult != null && engineResult.status != ResultStatus.OK) {
-        	throw new IOFailure("Heritrix not started. Resultstate = " + engineResult.status);
+        if (engineResult != null) {
+        	if (engineResult.status != ResultStatus.OK) {
+            	log.error("Heritrix3 wrapper could not connect to Heritrix3. Resultstate = {}", engineResult.status, engineResult.t);
+            	throw new IOFailure("Heritrix3 wrapper could not connect to Heritrix3. Resultstate = " + engineResult.status);
+        	}
+        } else {
+        	throw new IOFailure("Heritrix3 wrapper returned null engine result.");
         }
         
         // POST: Heritrix3 is up and running and responds nicely
