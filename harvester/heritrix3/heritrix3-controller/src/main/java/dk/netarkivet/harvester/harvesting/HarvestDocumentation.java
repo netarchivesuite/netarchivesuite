@@ -282,8 +282,9 @@ public class HarvestDocumentation {
         for (File hf : heritrixFiles) {
             files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
         }
+        
         // Generate an arcfiles-report.txt if configured to do so.
-        // FIXME This is not possible to extract from the crawl.log (Is this list available in any other way
+        // FIXME This is not possible to extract from the crawl.log (Is this list available in any other way?)
         
         boolean genArcFilesReport = Settings.getBoolean(HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         if (genArcFilesReport) {
@@ -297,8 +298,6 @@ public class HarvestDocumentation {
             log.debug("Creation of the arcfiles-report.txt has been disabled by the setting '{}'!",
                     HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         }
-
-         
 
         // Add log files
         File logDir = new File(crawlDir, "logs");

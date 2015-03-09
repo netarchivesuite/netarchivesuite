@@ -22,17 +22,13 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.sql.Clob;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,11 +54,12 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * <p>
  * 
  * Heritrix3 has a new model based on spring, So the XPATH is no good for processing.
- * Instead we use placeholders instead.
+ * Instead we use placeholders instead, marked by %{..} instead of ${..}, which is used by 
+ * Heritrix3 already.
  * 
  * The template is a H3 template if it contains the string: 
  * 
- * "xmlns:"http://www.springframework.org/...."
+ * "xmlns="http://www.springframework.org/...."
  * 
  */
 public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable {
@@ -74,6 +71,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     /** QuotaEnforcer states for this template. */
     private Long forceMaxbytesPerDomain;
     private Long forceMaxobjectsPerDomain;
+    
     // This value is coming from the property: 
     // settings.harvester.scheduler.jobGen.objectLimitIsSetByQuotaEnforcer
     private boolean maxobjectsSetByQuotaEnforcer;
@@ -87,11 +85,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
     public static final String MAX_TIME_SECONDS_PLACEHOLDER = "MAX_TIME_SECONDS_PLACEHOLDER";
     public static final String CRAWLERTRAPS_PLACEHOLDER = "CRAWLERTRAPS_PLACEHOLDER";
-    public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER = "DEDUPLICATION_INDEX_LOCATION"; 
-    public static final String SEEDS_FILE_PATH_PLACEHOLDER = "SEEDS_FILE_PATH";
-    public static final String ARCHIVE_FILE_PREFIX_PLACEHOLDER = "ARCHIVE_FILE_PREFIX";
-	
-    // PLACEHOLDERS for archiver beans
+    public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER = "DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER"; 
+    public static final String SEEDS_FILE_PATH_PLACEHOLDER = "SEEDS_FILE_PATH_PLACEHOLDER";
+    public static final String ARCHIVE_FILE_PREFIX_PLACEHOLDER = "ARCHIVE_FILE_PREFIX_PLACEHOLDER";
+     
+    // PLACEHOLDERS for archiver beans (Maybe not necessary)
     
     final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "ARCHIVER_BEAN_REFERENCE_PLACEHOLDER";	
 	final String ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER = "ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER";
@@ -166,10 +164,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 //            </list>
 //           </property> -->
 //     </bean>
-    	if (!template.contains(CRAWLERTRAPS_PLACEHOLDER)) {
+    	if (!template.contains(CRAWLERTRAPS_PLACEHOLDER)) {	
     		// TODO Log and return from method instead of throwing an exception????
     		throw new IllegalState("Crawlertraps has already been inserted");
     	}
+    	
     	StringBuilder sb = new StringBuilder();
     	for (String trap: crawlertraps) {
     		sb.append("<value>" + trap + "</value>\n");
@@ -191,8 +190,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		if (template.contains(MAX_TIME_SECONDS_PLACEHOLDER)) {
 			Map<String,String> env = new HashMap<String,String>();
 	        env.put(MAX_TIME_SECONDS_PLACEHOLDER, Long.toString(maxJobRunningTimeSecondsL));
-	    	boolean bFailOnMissing = true;
-	    	this.template = Template.untemplate(template, env, bFailOnMissing);
+	    	this.template = Template.untemplate(template, env, false);
 		} else {
 			log.warn("The placeholder '" + MAX_TIME_SECONDS_PLACEHOLDER 
 					+ "' was not found in the template. Therefore maxRunningTime not set");
@@ -209,8 +207,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
      * @param orderXMLdoc
      * @param forceMaxObjectsPerDomain The maximum number of objects to retrieve per domain, or 0 for no limit.
      * @throws PermissionDenied If unable to replace the frontier node of the orderXMLdoc Document
-     * @throws IOFailure If the group-max-fetch-success element is not found in the orderXml. TODO The
-     * group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
+     * @throws IOFailure If the group-max-fetch-success element is not found in the orderXml. 
+     * 
+     * TODO The group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
      */
     //@Override NOT PART OF INTERFACE
     public void editOrderXML_maxObjectsPerDomain( 
@@ -293,7 +292,6 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	}
 
 	@Override
-	//TODO 
 	public void setMaxObjectsPerDomain(Long maxobjectsL) {
 		this.forceMaxobjectsPerDomain = maxobjectsL;
 	}
@@ -314,11 +312,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	public boolean IsDeduplicationEnabled() {
 		// LOOK for the string DEDUPLICATION_INDEX_LOCATION or the pattern '<bean id="DeDuplicator"'
 		String deduplicationBeanPattern =  "<bean id=\"DeDuplicator\"";
-		if (template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER) || template.contains(deduplicationBeanPattern)) { 
-			return true;
-		} else {
-			return false;
-		}
+		
+		return (template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER) 
+				|| template.contains(deduplicationBeanPattern)); 
 	}	
 
 	/**
@@ -434,13 +430,16 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   	 * It is not an error, if the property placeholder does not exist.
   	 */
   	private void setWarcArchiveformat() {
+  		
   		String warcWriterbeanReference = "<ref bean=\"warcWriter\"/>";
   		String warcWriterProcessorBean = "<bean id=\"warcWriter\" class=\"dk.netarkivet.harvester.harvesting.NasWARCProcessor\">";
-  		warcWriterProcessorBean += "METADATA_ITEMS\n</bean>"; 
+  		warcWriterProcessorBean += "%{METADATA_ITEMS}\n</bean>";
   		String propertyPrefix = "warcWriter.";
+  		
   		Map<String,String> envMandatory = new HashMap<String,String>();
   		envMandatory.put(ARCHIVER_BEAN_REFERENCE_PLACEHOLDER, warcWriterbeanReference);
   		envMandatory.put(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER, warcWriterProcessorBean);
+  		
   		Map<String,String> envOptional = new HashMap<String,String>();
   		envOptional.put(WARC_Write_Requests_PLACEHOLDER, 
   				propertyPrefix + "writeRequests=" + 
@@ -458,7 +457,6 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   		envOptional.put(WARC_SkipIdenticalDigests_PLACEHOLDER,
   				propertyPrefix + "skipIdenticalDigests=" +
   						Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS));
-
   		/* TODO
 	    	envOptional.put(WARC_StartNewFilesOnCheckpoint_PLACEHOLDER,
 	    			Settings.get(HarvesterSettings.HE)); 
@@ -524,39 +522,42 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	public void setDeduplicationIndexLocation(String absolutePath) {
 		if (!template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER)) {
 			throw new IllegalState("The placeholder for the deduplication index location property '" +  DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER 
-					+ "' was not found. Maybe the placeholder has already been replaced with the correct value.");
+					+ "' was not found. Maybe the placeholder has already been replaced with the correct value: " 
+					+ template);
 		}
-		boolean bFailOnMissing = true;
+		
     	Map<String,String> env = new HashMap<String,String>();
     	
     	env.put(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER, absolutePath);
-    	this.template = Template.untemplate(template, env, bFailOnMissing);
+    	this.template = Template.untemplate(template, env, false);
 	}
 
 	@Override
 	public void setSeedsFilePath(String absolutePath) {
 		if (!template.contains(SEEDS_FILE_PATH_PLACEHOLDER)) {
 			throw new IllegalState("The placeholder for the seeds file path property '" +  SEEDS_FILE_PATH_PLACEHOLDER 
-					+ "' was not found. Maybe the placeholder has already been replaced with the correct value.");
+					+ "' was not found. Maybe the placeholder has already been replaced with the correct value: " 
+					+ template);
 		}
-		boolean bFailOnMissing = true;
+		
     	Map<String,String> env = new HashMap<String,String>();
     	
     	env.put(SEEDS_FILE_PATH_PLACEHOLDER, absolutePath);
-    	this.template = Template.untemplate(template, env, bFailOnMissing);
+    	this.template = Template.untemplate(template, env, false);
 	}
 
 	@Override
 	public void setArchiveFilePrefix(String archiveFilePrefix) {
 		if (!template.contains(ARCHIVE_FILE_PREFIX_PLACEHOLDER)) {
 			throw new IllegalState("The placeholder for the archive file prefix property '" + ARCHIVE_FILE_PREFIX_PLACEHOLDER 
-					+ "' was not found. Maybe the placeholder has already been replaced with the correct value.");
+					+ "' was not found. Maybe the placeholder has already been replaced with the correct value. The template looks like this: " 
+					+ template);
 		}
-		boolean bFailOnMissing = true;
+		
     	Map<String,String> env = new HashMap<String,String>();
     	
     	env.put(ARCHIVE_FILE_PREFIX_PLACEHOLDER, archiveFilePrefix);
-    	this.template = Template.untemplate(template, env, bFailOnMissing);
+    	this.template = Template.untemplate(template, env, false);
 		
 	}
 
@@ -569,9 +570,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	@Override
 	public void removeDeduplicatorIfPresent() {
 		//NOP
-		log.warn("Removing the Deduplicator is not possible with the H3 templates and should not needed either there.");
+		log.warn("Removing the Deduplicator is not possible with the H3 templates and should not be required with the H3 template.");
 	}
-
+	
 //<property name="metadataItems">
 //  <map>
 //        <entry key="harvestInfo.version" value="1.03"/> <!-- TODO maybe not add this one -->
@@ -593,6 +594,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
 	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
 			String scheduleName, String performer) {
+		if (!template.contains(METADATA_ITEMS_PLACEHOLDER)) {
+			throw new IllegalState("The placeholder for the property '" + METADATA_ITEMS_PLACEHOLDER  
+					+ "' was not found. Maybe the placeholder has already been replaced with the correct value. The template looks like this: " 
+					+ template); 
+		}
 		String startMetadataEntry = "<entry key=\"";
 		String endMetadataEntry = "\"</>";
 		String valuePart = "\"> value=\"";
@@ -619,6 +625,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + valuePart + 
 				origHarvestdefinitionName + endMetadataEntry);
+		
 		/* optional schedule-name. */
 		if (scheduleName != null) {
 			sb.append(startMetadataEntry);
@@ -628,11 +635,13 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		sb.append(HARVESTINFO_HARVESTFILENAMEPREFIX + valuePart + ajob.getHarvestFilenamePrefix() + endMetadataEntry);
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_JOBSUBMITDATE + valuePart + ajob.getSubmittedDate() + endMetadataEntry);
+		
 		/* optional HARVESTINFO_PERFORMER */
 		if (performer != null){
 			sb.append(startMetadataEntry);
 			sb.append(HARVESTINFO_PERFORMER + valuePart + performer  + endMetadataEntry);
 		}
+		
 		/* optional HARVESTINFO_PERFORMER */
 		if (ajob.getHarvestAudience() != null) {
 			sb.append(startMetadataEntry);
@@ -642,8 +651,10 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		
 		Map<String,String> envMandatory = new HashMap<String,String>();
 		String templateClone = template;
+		
 		envMandatory.put(METADATA_ITEMS_PLACEHOLDER, sb.toString());
-  		templateClone = Template.untemplate(templateClone, envMandatory, true);
+  		templateClone = Template.untemplate(templateClone, envMandatory, false);
+  		this.template = templateClone;
 	}
 	
 	@Override

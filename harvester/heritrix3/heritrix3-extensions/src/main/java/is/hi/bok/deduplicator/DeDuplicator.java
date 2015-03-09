@@ -85,7 +85,7 @@ import dk.netarkivet.common.utils.AllDocsCollector;
         <property name="analysisMode" value="TIMESTAMP"/> Other options: NONE, TIMESTAMP_AND_ETAG
         
         <property name="origin" value=""/>
-        <property name="originHandling" value="INDEX"/> Other options: NONE,???
+        <property name="originHandling" value="INDEX"/> Other options: NONE,PROCESSOR
         <property name="statsPerHost" value="true"/>
 
  * 

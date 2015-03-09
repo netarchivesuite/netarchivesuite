@@ -25,11 +25,12 @@ package dk.netarkivet.common.utils;
 import java.util.Map;
 
 /**
- * Simple template engine functions that replaces ${...} in an array of strings or a single string. Error handling can
- * be deduced from the unit test.
+ * Simple template engine functions that replaces %{...} in an array of strings or a single string. Error handling can
+ * be deduced from the unit test. Uses %{..} to avoid replacing ${} strings which are not our concern
  */
 public class Template {
-
+	final static char MARKER = '%';
+	
     /**
      * Prohibit external construction for now.
      */
@@ -37,7 +38,7 @@ public class Template {
     }
 
     /**
-     * Takes an array of strings and returns a concatenated string with all ${...} occurrences replaced according to the
+     * Takes an array of strings and returns a concatenated string with all %{...} occurrences replaced according to the
      * env map.
      *
      * @param strArray array of strings to be processed with env strings
@@ -58,7 +59,7 @@ public class Template {
     }
 
     /**
-     * Takes a string and replaces all ${...} occurrences with env map strings.
+     * Takes a string and replaces all %{...} occurrences with env map strings.
      *
      * @param str string to be processed
      * @param env map of replacement strings
@@ -76,13 +77,13 @@ public class Template {
         int tIdx;
         int c;
         while (sIdx != -1) {
-            sIdx = str.indexOf('$', pIdx);
+            sIdx = str.indexOf(MARKER, pIdx);
             if (sIdx != -1) {
                 if (sIdx + 1 < strLen) {
                     c = str.charAt(sIdx + 1);
-                    if (c == '$') {
+                    if (c == MARKER) {
                         sb.append(str, pIdx, sIdx);
-                        sb.append('$');
+                        sb.append(MARKER);
                         sIdx += 2;
                         pIdx = sIdx;
                     } else if (c == '{') {

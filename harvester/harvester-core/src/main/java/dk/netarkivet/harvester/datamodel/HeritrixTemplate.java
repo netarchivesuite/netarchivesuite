@@ -26,7 +26,7 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 public abstract class HeritrixTemplate implements Serializable {
 
 	private static final CharSequence H1_SIGNATURE = "<crawl-order xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance"; 
-	private static final CharSequence H3_SIGNATURE = "xmlns:\"http://www.springframework.org/";
+	private static final CharSequence H3_SIGNATURE = "xmlns=\"http://www.springframework.org/";
 
 	// Constants for the metadata added to the warcinfo record when using WARC
 
