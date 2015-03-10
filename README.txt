@@ -50,3 +50,11 @@ build-tools/src/main/resources/eclipse-formatter-settings.xml
 
 /tra 2014-08-29
 
+
+Distribution:
+============
+The distribution is put into the directory:
+deploy/distribution/target
+
+
+

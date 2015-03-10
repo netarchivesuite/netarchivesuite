@@ -123,13 +123,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         HeritrixTemplate doc;
         try {
         	doc = HeritrixTemplate.read(orderXmlFile);
-            //doc = XmlUtils.getXmlDoc(orderXmlFile);
         } catch (ArgumentNotValid e) {
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                    "errormsg;invalid.order.file.0", orderXmlToReplace, e);
+                    "errormsg;invalid.order.file.0", orderXmlToReplace + orderXmlToUpload, e);
             return;
         }
-        //HeritrixTemplate ht = new HeritrixTemplate(doc);
+        
         // 2: Update orderxml: 'orderXmlToReplace' if it exists, otherwise
         // create
 
