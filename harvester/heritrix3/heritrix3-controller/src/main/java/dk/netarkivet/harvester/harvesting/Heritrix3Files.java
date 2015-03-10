@@ -41,7 +41,8 @@ public class Heritrix3Files {
 	private File seedsFile;
 
 	private File orderFile;
-	//private Job theJob;
+	
+	private Job theJob;
 	
 	/** The logger for this class. */
     private static final Log LOG = LogFactory.getLog(Heritrix3Files.class);
@@ -60,6 +61,20 @@ public class Heritrix3Files {
 		return files;
 	}
 
+	public static Heritrix3Files getH3HeritrixFiles(File crawldir, Job job) { 
+		Heritrix3Files files = new Heritrix3Files();
+		files.setCrawldir(crawldir);
+		files.setJobId(job.getJobID());
+		files.setHarvestID(job.getOrigHarvestDefinitionID());
+		files.setArchivePrefix(job.getHarvestFilenamePrefix());
+		files.setHeritrixZip();
+		files.setCertificateFile();
+		files.setHeritrixBaseDir();
+		files.setHeritrixJobDir();
+		files.theJob = job; // FIXME is this used at all???
+		return files;
+	}
+	
 	private void setHarvestID(Long origHarvestDefinitionID) {
 		this.harvestID = origHarvestDefinitionID;
 	}
@@ -89,19 +104,6 @@ public class Heritrix3Files {
 
 	private void setJobId(Long jobID) {
 		this.jobID = jobID;
-	}
-
-	public static Heritrix3Files getH3HeritrixFiles(File crawldir, Job job) { 
-		Heritrix3Files files = new Heritrix3Files();
-		files.setCrawldir(crawldir);
-		files.setJobId(job.getJobID());
-		files.setHarvestID(job.getOrigHarvestDefinitionID());
-		files.setArchivePrefix(job.getHarvestFilenamePrefix());
-		files.setHeritrixZip();
-		files.setCertificateFile();
-		files.setHeritrixBaseDir();
-		files.setHeritrixJobDir();
-		return files;
 	}
 	
 	private void setCrawldir(File crawldir) {

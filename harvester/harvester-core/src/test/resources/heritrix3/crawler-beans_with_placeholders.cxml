@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  HERITRIX 3 CRAWL JOB CONFIGURATION FILE - MIGRATE TEMPLATE
-  
-   This is a relatively minimal configuration suitable for many crawls.
-   
-   Commented-out beans and properties are provided as an example; values
-   shown in comments reflect the actual defaults which are in effect
-   without specification. (To change from the default behavior, 
-   uncomment AND alter the shown values.)   
-
-
-   This is also the first step towards a way of migrating our NetarchiveSuite H1 templates to H3.3.0
-
-   This means adding beans for a QuotaEnforcer, a DeDuplicator, a WARCWriterProcessor with added WarcInfo metadata.
+  HERITRIX 3 CRAWL JOB CONFIGURATION FILE - for use with NetarchiveSuite 5.0
 
  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -45,81 +33,77 @@
 # http://java.sun.com/javase/6/docs/api/java/util/Properties.html#load%28java.io.Reader%29
 
 ###
-### some of these overrides is actually just the default value, so they can be skipped
+### some of these overrides is actually just the default value, so they can be deleted
 ###
 
 metadata.jobName=default_orderxml
 metadata.description=Default Profile
 metadata.operator=Admin
-loggerModule.path=logs
+metadata.operatorContactUrl=http://netarkivet.dk/webcrawler/
+metadata.userAgentTemplate=Mozilla/5.0 (compatible; heritrix/3.3.0 +@OPERATOR_CONTACT_URL@)
+metadata.operatorFrom=info@netarkivet.dk
 
-#crawlController.checkpointsDir=checkpoints
+# the RobotsTxt policy is set by metadata.robotsPolicyName=ignore (other standard policies are obey=classic). Other policies are #FirstNamedRobotsPolicy, MostFavoredRobotsPolicy, Custom). The default is obey
+metadata.robotsPolicyName=ignore
+
+## Overrides for the BDBMODULE.
 bdb.dir=state
+bdb.cachePercent=40
+
+## Overrides for the CrawlController
+crawlController.pauseAtStart=false
 crawlController.scratchDir=scratch
 crawlController.maxToeThreads=50
 crawlController.recorderOutBufferBytes=4096
 crawlController.recorderInBufferBytes=65536
-bdb.cachePercent=40
-seeds.textSource.path=seeds.txt
+
+#Is it necessary to override this?
+#seeds.textSource.path=seeds.txt
+
+# IS these correct overrides??
 scope.rules[2].maxHops=25
 scope.rules[6].maxRepetitions=3
 scope.rules[3].maxTransHops=5
 scope.rules[3].maxSpeculativeHops=1
-metadata.operatorContactUrl=http://netarkivet.dk/webcrawler/
-#metadata.userAgentTemplate=Mozilla/5.0 (compatible; heritrix/1.14.4 +@OPERATOR_CONTACT_URL@)
 
-# Change the former line to:
 
-metadata.userAgentTemplate=Mozilla/5.0 (compatible; heritrix/3.3.0 +@OPERATOR_CONTACT_URL@)
-
-metadata.operatorFrom=info@netarkivet.dk
-
-# the metadata.robotsHonoringPolicy settings does not work.
-#metadata.robotsHonoringPolicy.type=IGNORE
-#metadata.robotsHonoringPolicy.masquerade=false
-
-# this is set by metadata.robotsPolicyName=ignore (other standard policies are obey=classic). Other policies are FirstNamedRobotsPolicy, MostFavoredRobotsPolicy, Custom
-
+# Politeness settings
 disposition.delayFactor=1.0
 disposition.maxDelayMs=1000
 disposition.minDelayMs=300
-frontier.maxRetries=3
-frontier.retryDelaySeconds=300
-preparer.preferenceEmbedHops=1
 disposition.maxPerHostBandwidthUsageKbSec=500
-crawlController.pauseAtStart=false
 
-# Property no longer exists?
-#crawlController.pauseAtFinish=false
+preparer.preferenceEmbedHops=1
+preparer.preferenceDepthHops=-1
 
 seeds.sourceTagSeeds=false
-frontier.recoveryLogEnabled=false
 
-# Property no longer exists?
-#frontier.holdQueues=true
+# Default values of the frontier to be overridden
 frontier.balanceReplenishAmount=3000
 frontier.errorPenaltyAmount=100
 frontier.queueTotalBudget=-1
 frontier.snoozeLongMs=300000
-
-# Settings no longer relevant?
-#preparer.uriCanonicalizationPolicy.rules[0].enabled=true
-#preparer.uriCanonicalizationPolicy.rules[1].enabled=true
-#preparer.uriCanonicalizationPolicy.rules[3].enabled=true
-#preparer.uriCanonicalizationPolicy.rules[5].enabled=true
+frontier.maxRetries=3
+frontier.retryDelaySeconds=300
+frontier.recoveryLogEnabled=false
 
 preselector.enabled=true
 preselector.logToFile=false
 preselector.recheckScope=true
 preselector.blockAll=false
+
 preconditions.enabled=true
 preconditions.ipValidityDurationSeconds=21600
 preconditions.robotsValidityDurationSeconds=86400
 preconditions.calculateRobotsOnly=false
+
+
+### Overrids for the fetchers
 fetchDns.enabled=true
 fetchDns.acceptNonDnsResolves=false
 fetchDns.digestContent=true
 fetchDns.digestAlgorithm=sha1
+
 fetchHttp.enabled=true
 fetchHttp.timeoutSeconds=1200
 fetchHttp.soTimeoutMs=20000
@@ -136,8 +120,8 @@ fetchHttp.sendConnectionClose=true
 fetchHttp.sendReferer=true
 fetchHttp.sendRange=false
 
+### Overrids for the extractors
 extractorHttp.enabled=true
-
 extractorHtml.enabled=true
 extractorHtml.extractJavascript=true
 extractorHtml.treatFramesAsEmbedLinks=false
@@ -149,35 +133,40 @@ extractorCss.enabled=true
 extractorJs.enabled=true
 extractorSwf.enabled=true
 
+
 arcWriter.enabled=true
 arcWriter.compress=false
 arcWriter.prefix=IAH
 
-#arcWriter.suffix=${HOSTNAME}
 arcWriter.maxFileSizeBytes=100000000
 arcWriter.poolMaxActive=5
-
-#Setting no longer exists???
-#arcWriter.poolMaxWaitMs=300000
-
 arcWriter.maxTotalBytesToWrite=0
 arcWriter.skipIdenticalDigests=false
 
+## Overrides for the CandidatesProcessor
+## Note: The default of seedsRedirectNewSeeds is true
 candidates.seedsRedirectNewSeeds=false
-preparer.preferenceDepthHops=-1
+
+## Overrides for the statisticsTracker
 statisticsTracker.intervalSeconds=20
 
-# Setting no longer exists?
-#bdb.checkpointCopyLogs=true
-
-%{ARCHIVE_FILE_PREFIX_PLACEHOLDER}
-%{MAX_TIME_SECONDS_PLACEHOLDER}
+##Overrides for the crawlLimiter
 crawlLimiter.maxBytesDownload=0
 crawlLimiter.maxDocumentsDownload=0
-crawlLimiter.maxTimeSeconds=0
+crawlLimiter.maxTimeSeconds=%{MAX_TIME_SECONDS_PLACEHOLDER}
+
 
 %{ARCHIVE_FILE_PREFIX_PLACEHOLDER}
 %{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}
+
+%{WARC_Write_Requests_PLACEHOLDER}
+%{WARC_Write_Metadata_PLACEHOLDER}
+%{WARC_Write_RevisitForIdenticalDigests_PLACEHOLDER}
+%{WARC_Write_RevisitForNotModified_PLACEHOLDER}
+%{WARC_StartNewFilesOnCheckpoint_PLACEHOLDER}
+%{WARC_SkipIdenticalDigests_PLACEHOLDER}
+
+%{ARCHIVE_FILE_PREFIX_PLACEHOLDER}
 
    </value>
   </property>
@@ -193,18 +182,18 @@ crawlLimiter.maxTimeSeconds=0
  </bean>
 
  <!-- CRAWL METADATA: including identification of crawler/operator -->
+
  <bean id="metadata" class="org.archive.modules.CrawlMetadata" autowire="byName">
-       <property name="operatorContactUrl" value="[see override above]"/>
-       <property name="jobName" value="[see override above]"/>
-       <property name="description" value="[see override above]"/>
-       <property name="robotsPolicyName" value="ignore"/>
+<!--       <property name="operatorContactUrl" value="[see override above]"/> -->
+<!--       <property name="jobName" value="[see override above]"/> -->
+<!--       <property name="description" value="[see override above]"/> -->
+<!--       <property name="robotsPolicyName" value="ignore"/> -->
   <!-- <property name="operator" value=""/> -->
   <!-- <property name="operatorFrom" value=""/> -->
   <!-- <property name="organization" value=""/> -->
   <!-- <property name="audience" value=""/> -->
   <!-- <property name="userAgentTemplate" 
-         value="Mozilla/5.0 (compatible; heritrix/@VERSION@ +@OPERATOR_CONTACT_URL@)"/> -->
-       
+         value="Mozilla/5.0 (compatible; heritrix/@VERSION@ +@OPERATOR_CONTACT_URL@)"/> -->       
  </bean>
  
  <!-- SEEDS: crawl starting points -->
@@ -302,7 +291,8 @@ crawlLimiter.maxTimeSeconds=0
         <ref bean="canonicalizationPolicy" />
        </property> -->
    <property name="queueAssignmentPolicy"> 
-        <ref bean="queueAssignmentPolicy" /> 
+        <ref bean="queueAssignmentPolicy" />
+ 
 <!-- Bundled with NAS is two queueAssignPolicies (code is in heritrix3-extensions): 
  dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
  dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy 
@@ -398,7 +388,10 @@ crawlLimiter.maxTimeSeconds=0
  </bean>
  <bean id="extractorSwf" class="org.archive.modules.extractor.ExtractorSWF">
  </bean> 
- <!-- assembled into ordered FetchChain bean -->
+
+
+ <!-- assembled into ordered FetchChain bean  -->
+
  <bean id="fetchProcessors" class="org.archive.modules.FetchChain">
   <property name="processors">
    <list>
@@ -546,7 +539,6 @@ The below is how they will be generated by the HeritrixTemplate class when gener
    class="org.archive.crawler.framework.CrawlController">
   <!-- <property name="maxToeThreads" value="25" /> -->
   <!-- <property name="pauseAtStart" value="true" /> -->
-  <!-- <property name="pauseAtFinish" value="false" /> -->
   <!-- <property name="recorderInBufferBytes" value="524288" /> -->
   <!-- <property name="recorderOutBufferBytes" value="16384" /> -->
   <!-- <property name="scratchDir" value="scratch" /> -->
@@ -555,7 +547,6 @@ The below is how they will be generated by the HeritrixTemplate class when gener
  <!-- FRONTIER: Record of all URIs discovered and queued-for-collection -->
  <bean id="frontier" 
    class="org.archive.crawler.frontier.BdbFrontier">
-  <!-- <property name="holdQueues" value="true" /> -->
   <!-- <property name="queueTotalBudget" value="-1" /> -->
   <!-- <property name="balanceReplenishAmount" value="3000" /> -->
   <!-- <property name="errorPenaltyAmount" value="100" /> -->
@@ -568,6 +559,7 @@ The below is how they will be generated by the HeritrixTemplate class when gener
   <!-- <property name="maxRetries" value="30" /> -->
   <!-- <property name="recoveryLogEnabled" value="true" /> -->
   <!-- <property name="maxOutlinks" value="6000" /> -->
+  <!-- <property name="extractIndependently" value="false" /> -->
   <!-- <property name="outbound">
         <bean class="java.util.concurrent.ArrayBlockingQueue">
          <constructor-arg value="200"/>

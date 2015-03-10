@@ -88,7 +88,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER = "DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER"; 
     public static final String SEEDS_FILE_PATH_PLACEHOLDER = "SEEDS_FILE_PATH_PLACEHOLDER";
     public static final String ARCHIVE_FILE_PREFIX_PLACEHOLDER = "ARCHIVE_FILE_PREFIX_PLACEHOLDER";
-     
+    public static final String QUOTAENFORCER_PLACEHOLDER = "QUOTAENFORCER_PLACEHOLDER";
+    
     // PLACEHOLDERS for archiver beans (Maybe not necessary)
     
     final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "ARCHIVER_BEAN_REFERENCE_PLACEHOLDER";	
@@ -181,7 +182,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
     /**
      * Update the maxTimeSeconds property in the heritrix3 template, if possible.
-     * @param maxJobRunningTimeSecondsL Force the harvestjob to end after this number of seconds 
+     * @param maxJobRunningTimeSecondsL Force the harvestJob to end after this number of seconds 
      * Property of the org.archive.crawler.framework.CrawlLimitEnforcer
      * <!-- <property name="maxTimeSeconds" value="0" /> -->
      */
@@ -459,7 +460,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   						Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS));
   		/* TODO
 	    	envOptional.put(WARC_StartNewFilesOnCheckpoint_PLACEHOLDER,
-	    			Settings.get(HarvesterSettings.HE)); 
+	    			Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS)); 
 	    			// Add a new setting to HarvesterSettings
   		 */
   		String templateClone = template;
@@ -475,8 +476,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	/**
 	 * DUPLICATE method
 	 * With H3 template, we accumulate the crawlertraps, and then push them to the template when
-	 * asked to write it to a file.
-	 * The elementName is currently not used.
+	 * asked to write it to a file.e her sikkert har hørt det før.. Men er det egentligt ulovligt at have tekst foran på sin bil
+	 * The elementName is currently not usee her sikkert har hørt det før.. Men er det egentligt ulovligt at have tekst foran på sin bild.
 	 */
 	public void insertCrawlerTraps(String elementName, List<String> crawlertraps) {
 		editOrderXMLAddCrawlerTraps(elementName, crawlertraps);
