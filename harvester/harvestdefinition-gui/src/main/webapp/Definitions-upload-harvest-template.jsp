@@ -119,13 +119,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     String message = "";
     try {
         // 1: Try to convert orderxml-file to HeritrixTemplate object
-        // This throws ArgumentNotValid, if xml is invalid according to out requirements
-        HeritrixTemplate doc;
+        // This throws ArgumentNotValid, if xml is invalid according to our requirements
+        HeritrixTemplate doc = null;
         try {
         	doc = HeritrixTemplate.read(orderXmlFile);
         } catch (ArgumentNotValid e) {
+            String document = orderXmlToReplace;
+	    	if (document.isEmpty()) {
+				document = orderXmlToUpload;
+			}	
+            e.printStackTrace(); //Necessary to find out what the problem is.
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                    "errormsg;invalid.order.file.0", orderXmlToReplace + orderXmlToUpload, e);
+                    "errormsg;invalid.order.file.0", document, e);
             return;
         }
         

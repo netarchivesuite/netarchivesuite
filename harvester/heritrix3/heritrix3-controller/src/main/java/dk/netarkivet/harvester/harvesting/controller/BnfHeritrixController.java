@@ -303,16 +303,21 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
                 progressStatisticsLegend);
         cpm.setHostUrl(getHeritrixConsoleURL());
         JobResult jobResult = h3wrapper.job(jobName);
-        getCrawlServiceAttributes(cpm, jobResult);
-        
+        if (jobResult != null) {
+        	getCrawlServiceAttributes(cpm, jobResult);
+        } else {
+        	log.warn("Unable to engineStatus for job '{}'", jobName);
+        }
         if (cpm.crawlIsFinished()) {
             cpm.setStatus(CrawlStatus.CRAWLING_FINISHED);
             // No need to go further, CrawlService.Job bean does not exist
             return cpm;
         }
-
-        fetchCrawlServiceJobAttributes(cpm, jobResult);
-
+        if (jobResult != null) {
+        	fetchCrawlServiceJobAttributes(cpm, jobResult);
+        } else {
+        	log.warn("Unable to get JobAttributes for job '{}'", jobName);
+        }
         return cpm;
     }
 

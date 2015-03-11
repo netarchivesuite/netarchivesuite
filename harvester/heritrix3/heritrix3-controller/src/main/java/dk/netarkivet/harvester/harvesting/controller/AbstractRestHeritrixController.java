@@ -37,6 +37,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.Heritrix3Files;
@@ -82,7 +83,6 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
             log.info("Starting Heritrix for {} in crawldir {}", this, files.getCrawlDir());
             String zipFileStr = files.getHeritrixZip().getAbsolutePath();
             String cerficatePath = files.getCertificateFile().getAbsolutePath();
-            //public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix.certificate";
 
             heritrixBaseDir = files.getHeritrixBaseDir();
             if (!heritrixBaseDir.isDirectory()) {
@@ -126,24 +126,32 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
                     "-s",
                     "h3server.jks,h3server,h3server"
             };
+            log.info("Starting Heritrix3 with the following arguments:{} ", 
+            		StringUtils.conjoin(" ", cmd));
             h3launcher = CommandLauncher.getInstance();
             h3launcher.init(heritrixBaseDir, cmd);
             h3launcher.env.put("FOREGROUND", "true");
+            log.info(".. and setting FOREGROUND to 'true'");
             String javaOpts = "";
             String jvmOptsStr = Settings.get(HarvesterSettings.HERITRIX_JVM_OPTS);
             if ((jvmOptsStr != null) && (!jvmOptsStr.isEmpty())) {
             	javaOpts = " " + jvmOptsStr;
             }
-            h3launcher.env.put("JAVA_OPTS", 
-            		"-Xmx" + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE) + javaOpts);
-            h3launcher.env.put("HERITRIX_OUT", files.getHeritrixOutput().getAbsolutePath());
+            String javaOptsValue = "-Xmx" + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE) + javaOpts; 
+            h3launcher.env.put("JAVA_OPTS", javaOptsValue);
+            log.info(".. and setting JAVA_OPTS to '{}'", javaOptsValue);
+            String heritrixOutValue = files.getHeritrixOutput().getAbsolutePath();
+            h3launcher.env.put("HERITRIX_OUT", heritrixOutValue);
+            log.info(".. and setting HERITRIX_OUT to '{}'", heritrixOutValue);
             // TODO NEED THIS?
             //h3launcher.env.put("HERITRIX_HOME", files.getCrawlDir().getAbsolutePath());
             // TODO NEED THIS?
             //h3launcher.env.put("JAVA_HOME", ....)	
+            
             outputPrinter = new PrintWriter(files.getHeritrixStdoutLog(), "UTF-8");
             errorPrinter = new PrintWriter(files.getHeritrixStderrLog(), "UTF-8");
             h3handler = new LaunchResultHandler(outputPrinter, errorPrinter);
+            log.info("..using the following environment settings: ");
             h3launcher.start(h3handler);
         } catch( Throwable e) {
         	log.debug("Unexpected error while launching H3: ", e);

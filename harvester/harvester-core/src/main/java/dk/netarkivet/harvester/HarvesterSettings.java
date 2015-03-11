@@ -572,6 +572,8 @@ public class HarvesterSettings {
     public static String HERITRIX3_BUNDLE = "settings.harvester.harvesting.heritrix.bundle";
 
     public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix.certificate";
+
+    public static String HERITRIX3_CERTIFICATE_PASSWORD = "settings.harvester.harvesting.heritrix.certificatePassword";
     
     /**
      * <b>settings.harvester.performer</b>: <br>

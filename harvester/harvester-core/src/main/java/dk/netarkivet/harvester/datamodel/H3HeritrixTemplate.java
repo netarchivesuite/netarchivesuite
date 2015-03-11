@@ -165,19 +165,24 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 //            </list>
 //           </property> -->
 //     </bean>
-    	if (!template.contains(CRAWLERTRAPS_PLACEHOLDER)) {	
-    		// TODO Log and return from method instead of throwing an exception????
-    		throw new IllegalState("Crawlertraps has already been inserted");
-    	}
+    	if (!crawlertraps.isEmpty()) {
+    		log.warn("No crawlertraps yet. Insertion is postponed"); // The case at Creation Time
+    		return template;
+    	} else if (!template.contains(CRAWLERTRAPS_PLACEHOLDER)) {	
+    		log.warn("The placeholder '" + CRAWLERTRAPS_PLACEHOLDER + "' is absent from the template. No insertion is done");
+    		return template;
+    	} else {
     	
     	StringBuilder sb = new StringBuilder();
     	for (String trap: crawlertraps) {
     		sb.append("<value>" + trap + "</value>\n");
     	}
+    	// Maybe add the CRAWLERTRAPS_PLACEHOLDER to the end of the String
     	Map<String,String> env = new HashMap<String,String>();
         env.put(CRAWLERTRAPS_PLACEHOLDER, sb.toString());
     	boolean bFailOnMissing = true;
     	return Template.untemplate(template, env, bFailOnMissing);
+    	}
     }
 
     /**
@@ -371,7 +376,6 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
      */
 	@Override
 	public void setArchiveFormat(String archiveFormat) {		
-
 		if ("arc".equalsIgnoreCase(archiveFormat)) {
 			log.debug("ARC format selected to be used by Heritrix");
 			setArcArchiveformat();
@@ -434,7 +438,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   		
   		String warcWriterbeanReference = "<ref bean=\"warcWriter\"/>";
   		String warcWriterProcessorBean = "<bean id=\"warcWriter\" class=\"dk.netarkivet.harvester.harvesting.NasWARCProcessor\">";
-  		warcWriterProcessorBean += "%{METADATA_ITEMS}\n</bean>";
+  		warcWriterProcessorBean += "%{METADATA_ITEMS_PLACEHOLDER}\n</bean>";
   		String propertyPrefix = "warcWriter.";
   		
   		Map<String,String> envMandatory = new HashMap<String,String>();
@@ -535,16 +539,17 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
 	@Override
 	public void setSeedsFilePath(String absolutePath) {
-		if (!template.contains(SEEDS_FILE_PATH_PLACEHOLDER)) {
-			throw new IllegalState("The placeholder for the seeds file path property '" +  SEEDS_FILE_PATH_PLACEHOLDER 
-					+ "' was not found. Maybe the placeholder has already been replaced with the correct value: " 
-					+ template);
-		}
-		
-    	Map<String,String> env = new HashMap<String,String>();
-    	
-    	env.put(SEEDS_FILE_PATH_PLACEHOLDER, absolutePath);
-    	this.template = Template.untemplate(template, env, false);
+// 	TODO Maybe replace this by a NOP		
+//		if (!template.contains(SEEDS_FILE_PATH_PLACEHOLDER)) {
+//			throw new IllegalState("The placeholder for the seeds file path property '" +  SEEDS_FILE_PATH_PLACEHOLDER 
+//					+ "' was not found. Maybe the placeholder has already been replaced with the correct value: " 
+//					+ template);
+//		}
+//		
+//    	Map<String,String> env = new HashMap<String,String>();
+//    	
+//    	env.put(SEEDS_FILE_PATH_PLACEHOLDER, absolutePath);
+//    	this.template = Template.untemplate(template, env, false);
 	}
 
 	@Override
@@ -654,8 +659,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		String templateClone = template;
 		
 		envMandatory.put(METADATA_ITEMS_PLACEHOLDER, sb.toString());
-  		templateClone = Template.untemplate(templateClone, envMandatory, false);
-  		this.template = templateClone;
+  		this.template = Template.untemplate(templateClone, envMandatory, false);
+  		//this.template = templateClone;
 	}
 	
 	@Override

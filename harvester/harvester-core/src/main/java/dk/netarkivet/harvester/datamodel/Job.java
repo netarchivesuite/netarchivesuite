@@ -276,6 +276,7 @@ public class Job implements Serializable, JobInfo {
         addConfiguration(cfg);
 
         setMaxJobRunningTime(forceMaxJobRunningTime);
+        
         setArchiveFormatInTemplate(Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT));
         status = JobStatus.NEW;
     }

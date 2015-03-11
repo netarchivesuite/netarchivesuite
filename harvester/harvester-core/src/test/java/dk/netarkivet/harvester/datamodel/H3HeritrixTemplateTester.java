@@ -7,6 +7,7 @@ import java.net.URL;
 
 import org.junit.Test;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 
 public class H3HeritrixTemplateTester {
@@ -14,6 +15,8 @@ public class H3HeritrixTemplateTester {
 	String basicArchiveFilePrefix = "netarkivet-1-1";
 	String correctTemplateName = "crawler-beans_with_placeholders.cxml";
 	String incorrectTemplateName = "crawler-beans_no_placeholders.cxml";
+	String incorrectSignature = "crawler-beans_without_h3_signature.cxml";
+	
 	@Test
 	public void testArchiveFilePrefixSetter() {
 		URL url = this.getClass().getClassLoader().getResource("heritrix3");
@@ -41,6 +44,21 @@ public class H3HeritrixTemplateTester {
 		} catch (IllegalState e) {
 			e.printStackTrace();
 			fail("Shouldn't have thrown IllegalState with placeholder available");
+		}
+	}
+	@Test
+	public void test() {
+		URL url = this.getClass().getClassLoader().getResource("heritrix3");
+		assertFalse("Link til Heritrix3 ressources is broken", url == null);
+	    File basedir = new File(url.getFile());
+		File beansWithOutH3Signature = new File(basedir, incorrectSignature);
+		try { 
+			HeritrixTemplate.read(beansWithOutH3Signature);
+			fail("Should throw ArgumentNotValid exception on missing h1 or h3 signature");
+		} catch (Throwable e) {
+			if (!(e instanceof ArgumentNotValid)) {
+				fail("ArgumentNotValid Exception expected, not " + e.getClass().getName());
+			}
 		}
 	}
 
