@@ -24,8 +24,10 @@ package dk.netarkivet.harvester.harvesting;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.H3HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 
 /**
@@ -129,15 +131,21 @@ public abstract class HeritrixLauncher {
     public static void makeTemplateReadyForHeritrix3(Heritrix3Files files) throws IOFailure {
     	
     	HeritrixTemplate templ = HeritrixTemplate.read(files.getOrderXmlFile());
-    	
-    	//templ.setDiskPath(files.getCrawlDir().getAbsolutePath()); //TODO is relevant for H3??
-    	//templ.setArchiveFilePrefix(files.getArchiveFilePrefix()); //TODO
-    	templ.setSeedsFilePath(files.getSeedsTxtFile().getAbsolutePath()); //TODO
-    	
-        if (templ.IsDeduplicationEnabled()) {
-        	templ.setDeduplicationIndexLocation(files.getIndexDir().getAbsolutePath());
-        }
-        files.writeOrderXml(templ);
+    	if (templ instanceof H3HeritrixTemplate) {
+    		H3HeritrixTemplate template = (H3HeritrixTemplate) templ;
+    		//templ.setDiskPath(files.getCrawlDir().getAbsolutePath()); //TODO is relevant for H3??
+    		//templ.setArchiveFilePrefix(files.getArchiveFilePrefix()); //TODO
+    		template.setSeedsFilePath(files.getSeedsTxtFile().getAbsolutePath()); //TODO
+
+    		if (template.IsDeduplicationEnabled()) {
+    			template.setDeduplicationIndexLocation(files.getIndexDir().getAbsolutePath());
+    		}
+    		// Remove superfluous Placeholders in the template (maybe unnecessary)
+    		template.removePlaceholders();
+    		files.writeOrderXml(template);
+    	} else {
+    		throw new IllegalState("The template is not a H3 template!");
+    	}
         
     }
 }

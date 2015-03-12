@@ -140,7 +140,8 @@ public class Heritrix3Files {
 		
 	}
 	public void writeOrderXml(HeritrixTemplate orderXMLdoc) { 
-		File destination = this.orderFile; 
+		File destination = this.orderFile;
+		
 		orderXMLdoc.writeToFile(destination);
 		this.orderXML = destination;	
 	}

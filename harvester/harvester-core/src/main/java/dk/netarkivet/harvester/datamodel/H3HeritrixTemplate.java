@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,16 +78,14 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     /** Has this HeritrixTemplate been verified. */
     private boolean verified;
 
-    private final String METADATA_ITEMS_PLACEHOLDER = "METADATA_ITEMS_PLACEHOLDER";
-    
-    private List<String> crawlertraps = new ArrayList<String>();
-
+    public final static String METADATA_ITEMS_PLACEHOLDER = "%{METADATA_ITEMS_PLACEHOLDER}";
     public static final String MAX_TIME_SECONDS_PLACEHOLDER = "MAX_TIME_SECONDS_PLACEHOLDER";
-    public static final String CRAWLERTRAPS_PLACEHOLDER = "CRAWLERTRAPS_PLACEHOLDER";
-    public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER = "DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER"; 
+    public static final String CRAWLERTRAPS_PLACEHOLDER = "%{CRAWLERTRAPS_PLACEHOLDER}";
+    public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER 
+    	= "%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}"; 
     public static final String SEEDS_FILE_PATH_PLACEHOLDER = "SEEDS_FILE_PATH_PLACEHOLDER";
     public static final String ARCHIVE_FILE_PREFIX_PLACEHOLDER = "ARCHIVE_FILE_PREFIX_PLACEHOLDER";
-    public static final String QUOTAENFORCER_PLACEHOLDER = "QUOTAENFORCER_PLACEHOLDER";
+    public static final String QUOTAENFORCER_PLACEHOLDER = "%{QUOTAENFORCER_PLACEHOLDER}";
     
     // PLACEHOLDERS for archiver beans (Maybe not necessary)
     
@@ -134,57 +131,13 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
     /**
      * Return HeritrixTemplate as XML.
-     * Note that we insert the crawlertraps before returning the xml.
      * @return HeritrixTemplate as XML
      */
     @Override
     public String getXML() {
-        return writeCrawlerTrapsToTemplate();
+        return template;
     }
-
-    /**
-     * Method to add a list of crawler traps with a given element name. It is used both to add per-domain traps and
-     * global traps.
-     *
-     * @param elementName The name of the added element. (not used by the H3 - template.
-     * @param crawlerTraps A list of crawler trap regular expressions to add to this job.
-     */
-    public void editOrderXMLAddCrawlerTraps(String elementName, List<String> crawlerTraps) {        
-    	// For now only add the crawlertraps to the list;
-        this.crawlertraps.addAll(crawlerTraps);	
-        log.debug("Now the list of crawlertraps contain " +  this.crawlertraps.size() + " traps");
-    }
-        
-    private String writeCrawlerTrapsToTemplate() {
-    	//
-//      <bean class="org.archive.modules.deciderules.MatchesListRegexDecideRule">
-//      <!-- <property name="listLogicalOr" value="true" /> -->
-//      <!-- <property name="regexList">
-//            <list>
-//            CRAWLERTRAPS_PLACEHOLDER 
-//            </list>
-//           </property> -->
-//     </bean>
-    	if (!crawlertraps.isEmpty()) {
-    		log.warn("No crawlertraps yet. Insertion is postponed"); // The case at Creation Time
-    		return template;
-    	} else if (!template.contains(CRAWLERTRAPS_PLACEHOLDER)) {	
-    		log.warn("The placeholder '" + CRAWLERTRAPS_PLACEHOLDER + "' is absent from the template. No insertion is done");
-    		return template;
-    	} else {
-    	
-    	StringBuilder sb = new StringBuilder();
-    	for (String trap: crawlertraps) {
-    		sb.append("<value>" + trap + "</value>\n");
-    	}
-    	// Maybe add the CRAWLERTRAPS_PLACEHOLDER to the end of the String
-    	Map<String,String> env = new HashMap<String,String>();
-        env.put(CRAWLERTRAPS_PLACEHOLDER, sb.toString());
-    	boolean bFailOnMissing = true;
-    	return Template.untemplate(template, env, bFailOnMissing);
-    	}
-    }
-
+    
     /**
      * Update the maxTimeSeconds property in the heritrix3 template, if possible.
      * @param maxJobRunningTimeSecondsL Force the harvestJob to end after this number of seconds 
@@ -478,20 +431,43 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
 	@Override
 	/**
-	 * DUPLICATE method
-	 * With H3 template, we accumulate the crawlertraps, and then push them to the template when
-	 * asked to write it to a file.e her sikkert har hørt det før.. Men er det egentligt ulovligt at have tekst foran på sin bil
-	 * The elementName is currently not usee her sikkert har hørt det før.. Men er det egentligt ulovligt at have tekst foran på sin bild.
+	 * With H3 template, we insert the crawlertraps into the template at once
+	 * @param elementName The elementName is currently not used with H3
+	 * @param crawlertraps A list of crawlertraps to be inserted
 	 */
 	public void insertCrawlerTraps(String elementName, List<String> crawlertraps) {
-		editOrderXMLAddCrawlerTraps(elementName, crawlertraps);
-	}
+//      <bean class="org.archive.modules.deciderules.MatchesListRegexDecideRule">
+//      <!-- <property name="listLogicalOr" value="true" /> -->
+//      <!-- <property name="regexList">
+//            <list>
+//            CRAWLERTRAPS_PLACEHOLDER 
+//            </list>
+//           </property> -->
+//     </bean>
+    	if (!crawlertraps.isEmpty()) {
+    		log.debug("No crawlertraps yet. No insertion is done");
+    		return;
+    	} else if (!template.contains(CRAWLERTRAPS_PLACEHOLDER)) {	
+    		log.warn("The placeholder '" + CRAWLERTRAPS_PLACEHOLDER 
+    				+ "' is absent from the template. No insertion is done at all. {} traps were ignored", 
+    				crawlertraps);
+    		return;
+    	} else {
+    		log.info("Inserting {} crawlertraps into the template", crawlertraps);
+    		StringBuilder sb = new StringBuilder();
+    		for (String trap: crawlertraps) {
+    			sb.append("<value>" + trap + "</value>\n");
+    		}
+    		sb.append(CRAWLERTRAPS_PLACEHOLDER + "\n");
+    		String templateNew = template.replace(CRAWLERTRAPS_PLACEHOLDER, sb.toString());
+    		this.template = templateNew;
+    	}
+ 	}
 
 	@Override
 	public void writeTemplate(OutputStream os) throws IOFailure {
-		String templateWithTraps = writeCrawlerTrapsToTemplate();
 		try {
-			os.write(templateWithTraps.getBytes(Charset.forName("UTF-8")));
+			os.write(template.getBytes(Charset.forName("UTF-8")));
 		} catch (IOException e) {
 			throw new IOFailure("Unable to write template to outputstream", e);
 		}
@@ -505,11 +481,10 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
 	@Override
 	public void writeToFile(File orderXmlFile) {
-		String templateWithTraps = writeCrawlerTrapsToTemplate();
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter( new FileWriter(orderXmlFile));
-			writer.write(templateWithTraps);
+			writer.write(template);
 		} catch(IOException e) {
 			throw new IOFailure("Unable to write template to file '" + orderXmlFile.getAbsolutePath() + "'.", e);
 		} finally {
@@ -655,12 +630,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		}
 		sb.append("</map>\n");
 		
-		Map<String,String> envMandatory = new HashMap<String,String>();
-		String templateClone = template;
-		
-		envMandatory.put(METADATA_ITEMS_PLACEHOLDER, sb.toString());
-  		this.template = Template.untemplate(templateClone, envMandatory, false);
-  		//this.template = templateClone;
+		// Replace command
+		String templateNew = template.replace(METADATA_ITEMS_PLACEHOLDER, sb.toString());
+		this.template = templateNew;
 	}
 	
 	@Override
@@ -670,6 +642,23 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		} catch (IOException e) {
 			throw new IOFailure("Unable to write to JspWriter", e);
 		}
+	}
+	
+	/**
+	 *  Hack to remove existing placeholders, that is still present after template 
+	 *  manipulation is completed.
+	 */
+	public void removePlaceholders() {
+		template = template.replace(METADATA_ITEMS_PLACEHOLDER, "");
+		template = template.replace(CRAWLERTRAPS_PLACEHOLDER, "");
 		
+		if (template.contains(METADATA_ITEMS_PLACEHOLDER)) {
+			throw new IllegalState("The placeholder for the property '" + METADATA_ITEMS_PLACEHOLDER  
+					+ "' should have been deleted now."); 
+		}
+		if (template.contains(CRAWLERTRAPS_PLACEHOLDER)) {
+			throw new IllegalState("The placeholder for the property '" + CRAWLERTRAPS_PLACEHOLDER  
+					+ "' should have been deleted now."); 
+		}		
 	}
 }

@@ -207,14 +207,15 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
         JobResult jobResult;
 
         
-  		File jobFile = files.getHeritrixJobDir();
-  		if (!jobFile.exists()) {
-  			jobFile.mkdirs();
-  		 }
+  		File jobDir = files.getHeritrixJobDir();
+  		if (!jobDir.exists()) {
+  			jobDir.mkdirs();
+  		}
   		
   		try {
-  			Heritrix3Wrapper.copyFile( cxmlFile, jobFile );
-  			Heritrix3Wrapper.copyFileAs( seedsFile, jobFile, "seeds.txt" ); 
+  			log.info("Copying the crawler-beans.cxml file and seeds.txt to the heritrix3 jobdir '{}'", jobDir);
+  			Heritrix3Wrapper.copyFile( cxmlFile, jobDir );
+  			Heritrix3Wrapper.copyFileAs( seedsFile, jobDir, "seeds.txt" ); 
   		} catch (IOException e) {
   			throw new IOFailure("Problem occurred during the copying of files to our heritrix job", e);
   		}
@@ -246,13 +247,17 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
     public void requestCrawlStop(String reason) {
     	log.info("Terminating job {}. Reason: {}", this.jobName,  reason);
     	JobResult jobResult = h3wrapper.job(jobName);
-    	if (jobResult.job.isRunning) {
-    		JobResult result = h3wrapper.terminateJob(this.jobName);
-    		if (!result.job.isRunning) {
-    			log.warn("Job '{}' terminated", this.jobName);
+    	if (jobResult != null) {
+    		if (jobResult.job.isRunning) {
+    			JobResult result = h3wrapper.terminateJob(this.jobName);
+    			if (!result.job.isRunning) {
+    				log.warn("Job '{}' terminated", this.jobName);
+    			}
+    		} else {
+    			log.warn("Job '{}' not terminated, as it was not running", this.jobName);
     		}
     	} else {
-    		log.warn("Job '{}' not terminated, as it was not running", this.jobName);
+    		log.warn("Job '{}' has maybe already been terminated and/or heritrix3 is no longer running", this.jobName); 
     	}
         
     }

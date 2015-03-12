@@ -253,7 +253,7 @@ public abstract class HeritrixTemplate implements Serializable {
 	 * Method to add settings to the WARCWriterProcesser, so that it can generate a proper WARCINFO record. 
 	 * @param ajob a HarvestJob
 	 * @param origHarvestdefinitionName The name of the harvestdefinition behind this job
-	 * @param scheduleName The name of the schedule used. (Will be null?, if the job ia not a selectiveHarvest).
+	 * @param scheduleName The name of the schedule used. (Will be null, if the job is not a selectiveHarvest).
 	 * @param performer The name of organisation/person doing this harvest 
 	 */
 	public abstract void insertWarcInfoMetadata(Job ajob,

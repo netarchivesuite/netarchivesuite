@@ -153,6 +153,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
             h3handler = new LaunchResultHandler(outputPrinter, errorPrinter);
             log.info("..using the following environment settings: ");
             h3launcher.start(h3handler);
+            log.info("Heritrix3 launched successfully");
         } catch( Throwable e) {
         	log.debug("Unexpected error while launching H3: ", e);
         	throw new IOFailure("Unexpected error while launching H3: ", e);
