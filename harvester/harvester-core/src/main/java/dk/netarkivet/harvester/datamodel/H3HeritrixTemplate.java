@@ -580,12 +580,14 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 					+ "' was not found. Maybe the placeholder has already been replaced with the correct value. The template looks like this: " 
 					+ template); 
 		}
-		String startMetadataEntry = "<entry key=\"";
-		String endMetadataEntry = "\"</>";
-		String valuePart = "\"> value=\"";
+		String startMetadataEntry = "\n<entry key=\"";
+		String endMetadataEntry = "\"/>";
+		String valuePart = "\" value=\"";
 		StringBuilder sb = new StringBuilder();
-		sb.append("<property name=\"metadata-items\">\n<map>\n");
-
+		sb.append("<property name=\"metadataItems\">\n<map>\n");
+		
+		// <entry key="harvestInfo.version" value="1.03"/>
+		
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_VERSION + valuePart + HARVESTINFO_VERSION_NUMBER + endMetadataEntry); 
 		sb.append(startMetadataEntry);
@@ -628,7 +630,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 			sb.append(startMetadataEntry);
 			sb.append(HARVESTINFO_AUDIENCE + valuePart + ajob.getHarvestAudience() + endMetadataEntry);
 		}
-		sb.append("</map>\n");
+		sb.append("\n</map>\n</property>\n");
 		
 		// Replace command
 		String templateNew = template.replace(METADATA_ITEMS_PLACEHOLDER, sb.toString());
