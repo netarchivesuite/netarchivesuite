@@ -29,9 +29,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.jsp.JspWriter;
 
@@ -45,7 +43,6 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.Template;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
@@ -67,37 +64,39 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
     private String template;
     
-    /** QuotaEnforcer states for this template. */
+    /** QuotaEnforcer states for this template. TODO necessary?? */
     private Long forceMaxbytesPerDomain;
-    private Long forceMaxobjectsPerDomain;
-    
-    // This value is coming from the property: 
-    // settings.harvester.scheduler.jobGen.objectLimitIsSetByQuotaEnforcer
-    private boolean maxobjectsSetByQuotaEnforcer;
-
+    private Long forceMaxobjectsPerDomain; 
+   
     /** Has this HeritrixTemplate been verified. */
     private boolean verified;
 
     public final static String METADATA_ITEMS_PLACEHOLDER = "%{METADATA_ITEMS_PLACEHOLDER}";
-    public static final String MAX_TIME_SECONDS_PLACEHOLDER = "MAX_TIME_SECONDS_PLACEHOLDER";
+    public static final String MAX_TIME_SECONDS_PLACEHOLDER = "%{MAX_TIME_SECONDS_PLACEHOLDER}";
     public static final String CRAWLERTRAPS_PLACEHOLDER = "%{CRAWLERTRAPS_PLACEHOLDER}";
+    
     public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER 
     	= "%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}"; 
-    public static final String SEEDS_FILE_PATH_PLACEHOLDER = "SEEDS_FILE_PATH_PLACEHOLDER";
-    public static final String ARCHIVE_FILE_PREFIX_PLACEHOLDER = "ARCHIVE_FILE_PREFIX_PLACEHOLDER";
-    public static final String QUOTAENFORCER_PLACEHOLDER = "%{QUOTAENFORCER_PLACEHOLDER}";
+
+    public static final String ARCHIVE_FILE_PREFIX_PLACEHOLDER = "%{ARCHIVE_FILE_PREFIX_PLACEHOLDER}";
     
-    // PLACEHOLDERS for archiver beans (Maybe not necessary)
+    //public static final String QUOTAENFORCER_PLACEHOLDER = "%{QUOTAENFORCER_PLACEHOLDER}";
+    //budget placeholders
     
-    final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "ARCHIVER_BEAN_REFERENCE_PLACEHOLDER";	
-	final String ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER = "ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER";
-	final String WARC_Write_Requests_PLACEHOLDER = "WARC_Write_Requests_PLACEHOLDER";
-	final String WARC_Write_Metadata_PLACEHOLDER = "WARC_Write_Metadata_PLACEHOLDER";
-	final String WARC_Write_RevisitForIdenticalDigests_PLACEHOLDER = "WARC_Write_RevisitForIdenticalDigests_PLACEHOLDER";
-	final String WARC_Write_RevisitForNotModified_PLACEHOLDER = "WARC_Write_RevisitForNotModified_PLACEHOLDER";
-	final String WARC_StartNewFilesOnCheckpoint_PLACEHOLDER = "WARC_StartNewFilesOnCheckpoint_PLACEHOLDER";
-	final String WARC_SkipIdenticalDigests_PLACEHOLDER = "WARC_skipIdenticalDigests_PLACEHOLDER";    
+    public static final String FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER 
+    	= "%{FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER}";
     
+    public static final String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER = 
+    		"%{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER}";
+    
+    public static final String QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER 
+    	= "%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}"; 
+    
+    
+    // PLACEHOLDERS for archiver beans (Maybe not necessary)    
+    final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";	
+	final String ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER = "%{ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER}";
+	
     /**
      * Constructor for HeritrixTemplate class.
      *
@@ -147,16 +146,13 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     @Override
 	public void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL) {
 		if (template.contains(MAX_TIME_SECONDS_PLACEHOLDER)) {
-			Map<String,String> env = new HashMap<String,String>();
-	        env.put(MAX_TIME_SECONDS_PLACEHOLDER, Long.toString(maxJobRunningTimeSecondsL));
-	    	this.template = Template.untemplate(template, env, false);
+	    	this.template = template.replace(MAX_TIME_SECONDS_PLACEHOLDER, 
+	    			Long.toString(maxJobRunningTimeSecondsL));
 		} else {
 			log.warn("The placeholder '" + MAX_TIME_SECONDS_PLACEHOLDER 
 					+ "' was not found in the template. Therefore maxRunningTime not set");
 		}
 	}
-    
-    final String QUOTA_ENFORCER_MAX_BYTES_TEMPLATE = "QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE";
 
     /**
      * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of objects to be
@@ -171,7 +167,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
      * TODO The group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
      */
     //@Override NOT PART OF INTERFACE
-    public void editOrderXML_maxObjectsPerDomain( 
+/*    public void editOrderXML_maxObjectsPerDomain( 
     		long forceMaxObjectsPerDomain,
             boolean maxObjectsIsSetByQuotaEnforcer) {
     	Map<String,String> env = new HashMap<String,String>();
@@ -196,29 +192,10 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     	}
     	
     	boolean bFailOnMissing = false;
-    	template = Template.untemplate(template, env, bFailOnMissing);
-    	
-    	
-    	
-//    	Map<String,String> env = new HashMap<String,String>();
-//    	
-//    	String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE = "QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE"; 
-//    	String FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE = "FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE";
-//    		
-//    	Long FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT = -1L;
-//    	//Long QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_DEFAULT = -1L;
-//        env.put(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE, 
-//    				String.valueOf(maxobjectsL));
-//    	env.put(FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE, 
-//    				String.valueOf(FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT));
-//    	
-//    	
-//    	boolean bFailOnMissing = false;
-//    	template = Template.untemplate(template, env, bFailOnMissing);
-//    	
-    	    	
+    	template = Template.untemplate(template, env, bFailOnMissing);	
+        	    	
     }
-
+*/
     
 	@Override
 	public void setMaxBytesPerDomain(Long maxbytesL) {
@@ -268,18 +245,22 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
 	@Override
 	// This method is used to decide, whether to request a deduplication index or not.
+	// Done by checking, if both  
+	//   - a DeDuplicator bean is present in the template
+	// and
+	//   - a  DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER is also present.
 	public boolean IsDeduplicationEnabled() {
 		// LOOK for the string DEDUPLICATION_INDEX_LOCATION or the pattern '<bean id="DeDuplicator"'
 		String deduplicationBeanPattern =  "<bean id=\"DeDuplicator\"";
-		
 		return (template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER) 
-				|| template.contains(deduplicationBeanPattern)); 
+				&& template.contains(deduplicationBeanPattern)); 
 	}	
 
 	/**
-     * Activates or deactivate the quota-enforcer, depending on budget definition. Object limit can be defined either by
+     * Configuring the quota-enforcer, depending on budget definition. Object limit can be defined either by
      * using the queue-total-budget property or the quota enforcer. Which is chosen is set by the argument
      * maxObjectsIsSetByQuotaEnforcer}'s value. So quota enforcer is set as follows:
+     * If all values in the quotaenforcer is infinity, it is in effect disabled
      * <ul>
      * <li>Object limit is not set by quota enforcer, disabled only if there is no byte limit.</li>
      * <li>Object limit is set by quota enforcer, so it should be enabled if a byte or object limit is set.</li>
@@ -289,38 +270,43 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
      * @param forceMaxBytesPerDomain The number of max bytes per domain enforced (can be no limit)
      * @param forceMaxObjectsPerDomain The number of max objects per domain enforced (can be no limit)
      */
-	@Override
 	public void configureQuotaEnforcer(boolean maxObjectsIsSetByQuotaEnforcer,
 			long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain) {
-		boolean quotaEnabled = true;
-
 		this.forceMaxobjectsPerDomain = forceMaxObjectsPerDomain;
 		this.forceMaxbytesPerDomain = forceMaxBytesPerDomain;
+		String tmp = template;
+		if (!maxObjectsIsSetByQuotaEnforcer) {
+			// SetMaxObjects in the global budget to forceMaxObjectsPerDomain??
+			String tmp1 = tmp.replace(
+					FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER, Long.toString( forceMaxObjectsPerDomain ));
+			// SetMaxObjects to infinity in the quotaEnforcer
+			tmp = tmp1.replace(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER, 
+					Long.toString(Constants.HERITRIX_MAXOBJECTS_INFINITY));
+		} else {
+			// SetMaxObjects in the global budget to Infinity
+			String tmp1 = tmp.replace(
+					FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER, Long.toString( Constants.HERITRIX_MAXOBJECTS_INFINITY ));			
+			// SetMaxObjects to forceMaxObjectsPerDomain in the quotaEnforcer
+			tmp = tmp1.replace(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER, 
+					Long.toString(forceMaxObjectsPerDomain));
+		}
 		
-    	if (!maxObjectsIsSetByQuotaEnforcer) { // We use the frontier globalBudget instead
-            // If the Object limit is not set by quota enforcer, it should be disabled 
-            // 	iff there is no byte limit (i.e. the maxBytes is infinite)
-            quotaEnabled = forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
-            
-
-        } else {
-            // Object limit is set by quota enforcer, so it should be enabled whether
-            // a byte or object limit is set.
-            quotaEnabled = forceMaxObjectsPerDomain != Constants.HERITRIX_MAXOBJECTS_INFINITY
-                    || forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY;
-        }
-
-    	if (quotaEnabled) {
-    	 	// FIXME insert quota-enforcer beans into the cxml-file or not depending on the Jobs values
-        	// or whether or not the there are quota-enforcer templates in the cxml-file.
-    		
-    	} else {
-    		// set forceMaxObjectsPerDomain == Constants.HERITRIX_MAXOBJECTS_INFINITY
-    		// set forceMaxBytesPerDomain == Constants.HERITRIX_MAXBYTES_INFINITY;
-    	}
+		// SetMAX???? in the QuotaEnforcer to forceMaxBytesPerDomain
+		// Divide by 1024 since Heritrix uses KB rather than bytes,
+		// and add 1 to avoid to low limit due to rounding.
+		String maxBytesStringValue = "-l";
+		if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY) {
+			maxBytesStringValue = Long.toString(( forceMaxBytesPerDomain 
+					/ Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1);
+			log.debug("MaxbytesPerDomain set to {} Kbytes per domain", maxBytesStringValue);
+		} else {
+			log.debug("MaxbytesPerDomain set to infinite number of Kbytes per domain");	
+		}
+		
+		this.template = tmp.replace(QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER, maxBytesStringValue);
 		
 	}
-
+	
 	 /**
      * Make sure that Heritrix will archive its data in the chosen archiveFormat.
      *
@@ -328,12 +314,20 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
      * @throw ArgumentNotValid If the chosen archiveFormat is not supported.
      */
 	@Override
-	public void setArchiveFormat(String archiveFormat) {		
+	public void setArchiveFormat(String archiveFormat) {
+		if (!template.contains(ARCHIVER_BEAN_REFERENCE_PLACEHOLDER)){
+    		throw new IllegalState("The placeholder '" + ARCHIVER_BEAN_REFERENCE_PLACEHOLDER 
+  					+ "' is missing. Unable to insert proper archive writer");
+    	}
+    	if (!template.contains(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER)) {
+  			throw new IllegalState("The placeholder '" + ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER 
+  					+ "' is missing. Unable to insert proper archive writer");
+  		}
 		if ("arc".equalsIgnoreCase(archiveFormat)) {
-			log.debug("ARC format selected to be used by Heritrix");
+			log.debug("ARC format selected to be used by Heritrix3");
 			setArcArchiveformat();
 		} else if ("warc".equalsIgnoreCase(archiveFormat)) {
-			log.debug("WARC format selected to be used by Heritrix");
+			log.debug("WARC format selected to be used by Heritrix3");
 			setWarcArchiveformat();
 		} else {
 			throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.HERITRIX_ARCHIVE_FORMAT
@@ -342,17 +336,12 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	}
 
 	/**
-	 * Set the archiveformat as ARC. This means enabling the ARCWriterProcessor in the template
+	 * Set the archive-format as ARC. This means enabling the ARCWriterProcessor in the template
 	 */
 	private void setArcArchiveformat(){
-    	boolean bFailOnMissing = true;
-    	Map<String,String> env = new HashMap<String,String>();
-    	
-    	String arcWriterbeanReference = "<ref bean=\"arcWriter\"/>";
-    	env.put(ARCHIVER_BEAN_REFERENCE_PLACEHOLDER, arcWriterbeanReference);
-    	env.put(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER, getArcWriterProcessor()); 
-    	
-    	this.template = Template.untemplate(template, env, bFailOnMissing);
+		String arcWriterbeanReference = "<ref bean=\"arcWriter\"/>";
+    	String templateNew = template.replace(ARCHIVER_BEAN_REFERENCE_PLACEHOLDER, arcWriterbeanReference);
+    	template = templateNew.replace(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER, getArcWriterProcessor()); 
     }
     		
   	private String getArcWriterProcessor() {
@@ -373,11 +362,12 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 //  	        </list>
 //  	       </property> -->
 //  	 </bean>
-  	   //TODO add some properties as properties defined at the front of the arcwriter
-  	   // 
+// 
   	   String arcWriterBean 
   	   	= "<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">";
-  	   arcWriterBean += "</bean>"; 
+  	   arcWriterBean += "</bean>";
+  	   //TODO add prefix-placeholder and compress setting
+  	   
   	   return arcWriterBean;  			      
   	}
 
@@ -387,51 +377,63 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   	 * It is an error, if the WARC place-holders doesnt't exist.
   	 * It is not an error, if the property placeholder does not exist.
   	 */
-  	private void setWarcArchiveformat() {
-  		
+  	private void setWarcArchiveformat() { 		
   		String warcWriterbeanReference = "<ref bean=\"warcWriter\"/>";
   		String warcWriterProcessorBean = "<bean id=\"warcWriter\" class=\"dk.netarkivet.harvester.harvesting.NasWARCProcessor\">";
-  		warcWriterProcessorBean += "%{METADATA_ITEMS_PLACEHOLDER}\n</bean>";
-  		String propertyPrefix = "warcWriter.";
-  		
-  		Map<String,String> envMandatory = new HashMap<String,String>();
-  		envMandatory.put(ARCHIVER_BEAN_REFERENCE_PLACEHOLDER, warcWriterbeanReference);
-  		envMandatory.put(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER, warcWriterProcessorBean);
-  		
-  		Map<String,String> envOptional = new HashMap<String,String>();
-  		envOptional.put(WARC_Write_Requests_PLACEHOLDER, 
-  				propertyPrefix + "writeRequests=" + 
-  						Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS));
-  		envOptional.put(WARC_Write_Metadata_PLACEHOLDER,
-  				propertyPrefix + "writeMetadata=" +
-  						Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA));
-  		envOptional.put(WARC_Write_RevisitForIdenticalDigests_PLACEHOLDER,
-  				propertyPrefix + "writeRevisitForIdenticalDigests=" +
-  						Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS));
-  		envOptional.put(WARC_Write_RevisitForNotModified_PLACEHOLDER,
-  				propertyPrefix + "writeRevisitForNotModified=" +
-  						Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED));
-
-  		envOptional.put(WARC_SkipIdenticalDigests_PLACEHOLDER,
-  				propertyPrefix + "skipIdenticalDigests=" +
-  						Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS));
-  		/* TODO
-	    	envOptional.put(WARC_StartNewFilesOnCheckpoint_PLACEHOLDER,
-	    			Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS)); 
-	    			// Add a new setting to HarvesterSettings
-  		 */
-  		String templateClone = template;
-
-  		templateClone = Template.untemplate(templateClone, envMandatory, true);
-  		templateClone = Template.untemplate(templateClone, envOptional, false);
-  		this.template = templateClone;
-  	}	
-
-	
+  		String propertyName="\n<property name\"";
+  		String valuePrefix = "\" value=\"";
+  		String valueSuffix = "\"";
+  		String propertyEnd="/>";
+  		if (!template.contains(ARCHIVER_BEAN_REFERENCE_PLACEHOLDER)) {
+  			throw new IllegalState("The placeholder '" + ARCHIVER_BEAN_REFERENCE_PLACEHOLDER 
+  					+ "' is missing");
+  		}
+  		if (!template.contains(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER)) {
+  			throw new IllegalState("The placeholder '" + ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER 
+  					+ "' is missing");
+  		}
+  		StringBuilder propertyBuilder = new StringBuilder();
+  		propertyBuilder.append(propertyName + "prefix" + valuePrefix 
+  				+ ARCHIVE_FILE_PREFIX_PLACEHOLDER
+  				+ valueSuffix + propertyEnd);
+  		propertyBuilder.append(propertyName + "writeRequests" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS)
+  				+ valueSuffix + propertyEnd);
+  		propertyBuilder.append(propertyName + "writeMetadata" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA)
+  				+ valueSuffix + propertyEnd);
+  		propertyBuilder.append(propertyName + "writeRevisitForIdenticalDigests" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS)
+  				+ valueSuffix + propertyEnd);
+  		propertyBuilder.append(propertyName + "writeRevisitForNotModified" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED)
+  				+ valueSuffix + propertyEnd);
+  		propertyBuilder.append(propertyName + "skipIdenticalDigests" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS)
+  				+ valueSuffix + propertyEnd);
+  		propertyBuilder.append(		
+  		  		
+  		  		
+  		  		
+  		  		
+  		  		
+  			  propertyName + "startNewFilesOnCheckpoint" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_START_NEW_FILES_ON_CHECKPOINT)
+  				+ valueSuffix + propertyEnd);
+  		warcWriterProcessorBean += propertyBuilder.toString();
+  		warcWriterProcessorBean += "\n\n%{METADATA_ITEMS_PLACEHOLDER}\n</bean>";
+  		String templateNew = template.replace(
+  				ARCHIVER_BEAN_REFERENCE_PLACEHOLDER, warcWriterbeanReference);
+  		this.template = templateNew.replace(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER,
+  				warcWriterProcessorBean);
+   	}
 
 	@Override
 	/**
-	 * With H3 template, we insert the crawlertraps into the template at once
+	 * With H3 template, we insert the crawlertraps into the template at once.
+	 * They are inserted to be part of a org.archive.modules.deciderules.MatchesListRegexDecideRule
+	 * bean.
+	 * 
 	 * @param elementName The elementName is currently not used with H3
 	 * @param crawlertraps A list of crawlertraps to be inserted
 	 */
@@ -505,26 +507,13 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 					+ "' was not found. Maybe the placeholder has already been replaced with the correct value: " 
 					+ template);
 		}
-		
-    	Map<String,String> env = new HashMap<String,String>();
-    	
-    	env.put(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER, absolutePath);
-    	this.template = Template.untemplate(template, env, false);
+    	String templateNew = template.replace(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER, absolutePath); 
+    	this.template = templateNew;
 	}
 
 	@Override
 	public void setSeedsFilePath(String absolutePath) {
-// 	TODO Maybe replace this by a NOP		
-//		if (!template.contains(SEEDS_FILE_PATH_PLACEHOLDER)) {
-//			throw new IllegalState("The placeholder for the seeds file path property '" +  SEEDS_FILE_PATH_PLACEHOLDER 
-//					+ "' was not found. Maybe the placeholder has already been replaced with the correct value: " 
-//					+ template);
-//		}
-//		
-//    	Map<String,String> env = new HashMap<String,String>();
-//    	
-//    	env.put(SEEDS_FILE_PATH_PLACEHOLDER, absolutePath);
-//    	this.template = Template.untemplate(template, env, false);
+	 log.debug("Note: SeedsFilePath is not set in h3");
 	}
 
 	@Override
@@ -534,11 +523,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 					+ "' was not found. Maybe the placeholder has already been replaced with the correct value. The template looks like this: " 
 					+ template);
 		}
-		
-    	Map<String,String> env = new HashMap<String,String>();
-    	
-    	env.put(ARCHIVE_FILE_PREFIX_PLACEHOLDER, archiveFilePrefix);
-    	this.template = Template.untemplate(template, env, false);
+		String templateNew = template.replace(METADATA_ITEMS_PLACEHOLDER, archiveFilePrefix);		
+    	this.template = templateNew;
 		
 	}
 

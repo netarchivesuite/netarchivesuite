@@ -120,10 +120,11 @@ National Library.
                 </archiveNaming>
                 <warc>
                 	<skipIdenticalDigests>false</skipIdenticalDigests>
-					<writeRequests>false</writeRequests>
-					<writeMetadata>false</writeMetadata>
-					<writeRevisitForIdenticalDigests>false</writeRevisitForIdenticalDigests>
-					<writeRevisitForNotModified>false</writeRevisitForNotModified>
+			<writeRequests>true</writeRequests>
+			<writeMetadata>true</writeMetadata>
+			<writeRevisitForIdenticalDigests>false</writeRevisitForIdenticalDigests>
+			<writeRevisitForNotModified>false</writeRevisitForNotModified>
+			<startNewFilesOnCheckpoint>true</startNewFilesOnCheckpoint>
                 </warc>
             </heritrix>
             <frontier>
