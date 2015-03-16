@@ -95,7 +95,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     
     // PLACEHOLDERS for archiver beans (Maybe not necessary)    
     final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";	
-	final String ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER = "%{ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER}";
+	final String ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER = "%{ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER}";
 	
     /**
      * Constructor for HeritrixTemplate class.
@@ -319,8 +319,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     		throw new IllegalState("The placeholder '" + ARCHIVER_BEAN_REFERENCE_PLACEHOLDER 
   					+ "' is missing. Unable to insert proper archive writer");
     	}
-    	if (!template.contains(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER)) {
-  			throw new IllegalState("The placeholder '" + ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER 
+    	if (!template.contains(ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER)) {
+  			throw new IllegalState("The placeholder '" + ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER 
   					+ "' is missing. Unable to insert proper archive writer");
   		}
 		if ("arc".equalsIgnoreCase(archiveFormat)) {
@@ -341,7 +341,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	private void setArcArchiveformat(){
 		String arcWriterbeanReference = "<ref bean=\"arcWriter\"/>";
     	String templateNew = template.replace(ARCHIVER_BEAN_REFERENCE_PLACEHOLDER, arcWriterbeanReference);
-    	template = templateNew.replace(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER, getArcWriterProcessor()); 
+    	template = templateNew.replace(ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER, getArcWriterProcessor()); 
     }
     		
   	private String getArcWriterProcessor() {
@@ -380,7 +380,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   	private void setWarcArchiveformat() { 		
   		String warcWriterbeanReference = "<ref bean=\"warcWriter\"/>";
   		String warcWriterProcessorBean = "<bean id=\"warcWriter\" class=\"dk.netarkivet.harvester.harvesting.NasWARCProcessor\">";
-  		String propertyName="\n<property name\"";
+  		String propertyName="\n<property name=\"";
   		String valuePrefix = "\" value=\"";
   		String valueSuffix = "\"";
   		String propertyEnd="/>";
@@ -388,8 +388,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   			throw new IllegalState("The placeholder '" + ARCHIVER_BEAN_REFERENCE_PLACEHOLDER 
   					+ "' is missing");
   		}
-  		if (!template.contains(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER)) {
-  			throw new IllegalState("The placeholder '" + ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER 
+  		if (!template.contains(ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER)) {
+  			throw new IllegalState("The placeholder '" + ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER 
   					+ "' is missing");
   		}
   		StringBuilder propertyBuilder = new StringBuilder();
@@ -412,11 +412,6 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   				+ Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS)
   				+ valueSuffix + propertyEnd);
   		propertyBuilder.append(		
-  		  		
-  		  		
-  		  		
-  		  		
-  		  		
   			  propertyName + "startNewFilesOnCheckpoint" + valuePrefix 
   				+ Settings.get(HarvesterSettings.HERITRIX_WARC_START_NEW_FILES_ON_CHECKPOINT)
   				+ valueSuffix + propertyEnd);
@@ -424,7 +419,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   		warcWriterProcessorBean += "\n\n%{METADATA_ITEMS_PLACEHOLDER}\n</bean>";
   		String templateNew = template.replace(
   				ARCHIVER_BEAN_REFERENCE_PLACEHOLDER, warcWriterbeanReference);
-  		this.template = templateNew.replace(ARCHIVE_PROCESSOR_BEAN_PLACEHOLDER,
+  		this.template = templateNew.replace(ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER,
   				warcWriterProcessorBean);
    	}
 
