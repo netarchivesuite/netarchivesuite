@@ -149,8 +149,9 @@ public class HeritrixController extends AbstractRestHeritrixController {
      *
      * @param files Files that are used to set up Heritrix.
      */
-    public HeritrixController(Heritrix3Files files) {
+    public HeritrixController(Heritrix3Files files, String jobName) {
         super(files);
+        this.jobName = jobName;
     }
 
     /**
@@ -221,6 +222,8 @@ public class HeritrixController extends AbstractRestHeritrixController {
   		try {
       		engineResult = h3wrapper.rescanJobDirectory();
       		log.debug("Result of rescanJobDirectory() operation: " + new String(engineResult.response, "UTF-8"));
+      		jobResult = h3wrapper.job(jobName);
+
       		jobResult = h3wrapper.buildJobConfiguration(jobName);
       		log.debug("Result of buildJobConfiguration() operation: " + new String(jobResult.response, "UTF-8"));
       		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.NASCENT, 60, 1000);

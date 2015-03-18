@@ -58,6 +58,9 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
 
     /** The CrawlController used. */
     private HeritrixController heritrixController;
+
+    private String jobName;
+
     /** Is the heritrix crawl finished. */
     private boolean crawlIsOver = false;
 
@@ -67,8 +70,9 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
      * @param files the files needed by Heritrix to launch a job.
      * @throws ArgumentNotValid
      */
-    private HeritrixLauncher(Heritrix3Files files) throws ArgumentNotValid {
+    private HeritrixLauncher(Heritrix3Files files, String jobName) throws ArgumentNotValid {
         super(files);
+        this.jobName = jobName;
     }
 
     /**
@@ -78,9 +82,9 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
      * @return {@link HeritrixLauncher} object
      * @throws ArgumentNotValid If either order.xml or seeds.txt does not exist, or argument files is null.
      */
-    public static HeritrixLauncher getInstance(Heritrix3Files files) throws ArgumentNotValid {
+    public static HeritrixLauncher getInstance(Heritrix3Files files, String jobName) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "Heritrix3Files files");
-        return new HeritrixLauncher(files); // The launching takes place here
+        return new HeritrixLauncher(files, jobName); // The launching takes place here
     } 
 
     /**
@@ -94,7 +98,7 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
      */
     public void doCrawl() throws IOFailure {
         setupOrderfile(getHeritrixFiles());
-        heritrixController = new HeritrixController(getHeritrixFiles());
+        heritrixController = new HeritrixController(getHeritrixFiles(), jobName);
 
         PeriodicTaskExecutor exec = null;
         try {

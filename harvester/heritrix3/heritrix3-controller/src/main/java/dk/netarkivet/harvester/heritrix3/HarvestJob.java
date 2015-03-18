@@ -48,10 +48,13 @@ public class HarvestJob {
 
     private Heritrix3Files files;
 
+    private String jobName;
+
     public void init(Job job, HarvestDefinitionInfo origHarvestInfo, List<MetadataEntry> metadataEntries) {
         this.job = job;
         //this.origHarvestInfo = origHarvestInfo;
         //this.metadataEntries = metadataEntries;
+        jobName = job.getJobID() + "_" + System.currentTimeMillis();
         crawlDir = createCrawlDir();
         files = writeHarvestFiles(crawlDir, job, origHarvestInfo, metadataEntries);
 	}
@@ -68,7 +71,7 @@ public class HarvestJob {
      */
     public void runHarvest() throws ArgumentNotValid {
         log.info("Starting crawl of job : {}", job.getJobID());
-        HeritrixLauncherAbstract hl = HeritrixLauncherFactory.getInstance(files);
+        HeritrixLauncherAbstract hl = HeritrixLauncherFactory.getInstance(files, jobName);
         hl.doCrawl();
     }
 
@@ -86,7 +89,7 @@ public class HarvestJob {
         // to send a proper message if something goes wrong.
         try {
             File baseCrawlDir = new File(Settings.get(Heritrix3Settings.HARVEST_CONTROLLER_SERVERDIR));
-            crawlDir = new File(baseCrawlDir, job.getJobID() + "_" + System.currentTimeMillis());
+            crawlDir = new File(baseCrawlDir, jobName);
             FileUtils.createDir(crawlDir);
             log.info("Created crawl directory: '{}'", crawlDir);
             return crawlDir;

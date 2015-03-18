@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assert;
+
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
@@ -26,6 +28,8 @@ public class Heritrix3ControllerTest {
 		Job j = new Job(1L, cfg, orderXMLdoc, hc,-1L,-1L, 0L, 1);
 		j.setJobID(1L);
 		Heritrix3Files files = Heritrix3Files.getH3HeritrixFiles(crawlDir, j);
-		HeritrixController bhc = new HeritrixController(files);
+        String jobName = j.getJobID() + "_" + System.currentTimeMillis();
+		HeritrixController bhc = new HeritrixController(files, jobName);
+		Assert.assertNotNull(bhc);
 	}
 }
