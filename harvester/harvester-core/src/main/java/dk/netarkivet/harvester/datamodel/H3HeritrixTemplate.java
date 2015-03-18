@@ -91,7 +91,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     	= "%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}"; 
     
     
-    // PLACEHOLDERS for archiver beans (Maybe not necessary)    
+    // PLACEHOLDERS for archiver beans (Maybe not necessary)
     final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";	
 	final String ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER = "%{ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER}";
 	
@@ -350,12 +350,14 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   		propertyBuilder.append(propertyName + "writeMetadata" + valuePrefix 
   				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA)
   				+ valueSuffix + propertyEnd);
+ /*
   		propertyBuilder.append(propertyName + "writeRevisitForIdenticalDigests" + valuePrefix 
   				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS)
   				+ valueSuffix + propertyEnd);
   		propertyBuilder.append(propertyName + "writeRevisitForNotModified" + valuePrefix 
   				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED)
   				+ valueSuffix + propertyEnd);
+  */
   		propertyBuilder.append(propertyName + "skipIdenticalDigests" + valuePrefix 
   				+ Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS)
   				+ valueSuffix + propertyEnd);
