@@ -7,51 +7,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-//import java.util.logging.Level;
 import org.archive.modules.CrawlMetadata;
 import org.archive.modules.writer.WARCWriterProcessor;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.anvl.ANVLRecord;
 
 /**
- * An attempt to add custom metadata to the WARCInfo records written
+ * Custom NAS WARCWriterProcessor addding NetarchiveSuite metadata to the WARCInfo records written
  * by Heritrix by just extending the org.archive.modules.writer.WARCWriterProcessor;
  * This was not possible in H1.
- * @author svc
- * 
- * TODO Add new properties to the NasWARCProcessor 
+ * @author svc 
  * 
  */
 public class NasWARCProcessor extends WARCWriterProcessor {
 
-
- private static final String HARVESTINFO_VERSION = "harvestInfo.version";
-    private static final String HARVESTINFO_JOBID = "harvestInfo.jobId";
-    private static final String HARVESTINFO_CHANNEL = "harvestInfo.channel";
-	
-private static final String HARVESTINFO_HARVESTNUM = "harvestInfo.harvestNum";
-	
-private static final String HARVESTINFO_ORIGHARVESTDEFINITIONID = "harvestInfo.origHarvestDefinitionID";
-	
-private static final String HARVESTINFO_MAXBYTESPERDOMAIN = "harvestInfo.maxBytesPerDomain";
-	
-private static final String HARVESTINFO_MAXOBJECTSPERDOMAIN = "harvestInfo.maxObjectsPerDomain";
-	
-private static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.orderXMLName";
-	
-private static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
-	
-private static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
-	
-private static final String HARVESTINFO_HARVESTFILENAMEPREFIX = "harvestInfo.harvestFilenamePrefix";
-private static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";
-
-private static final String HARVESTINFO_PERFORMER = "harvestInfo.performer";
-
-private static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
-
-
+	// Constants for the contents of the WarcInfo record
+	private static final String HARVESTINFO_VERSION = "harvestInfo.version";
+	private static final String HARVESTINFO_JOBID = "harvestInfo.jobId";
+	private static final String HARVESTINFO_CHANNEL = "harvestInfo.channel";
+	private static final String HARVESTINFO_HARVESTNUM = "harvestInfo.harvestNum";
+	private static final String HARVESTINFO_ORIGHARVESTDEFINITIONID = "harvestInfo.origHarvestDefinitionID";
+	private static final String HARVESTINFO_MAXBYTESPERDOMAIN = "harvestInfo.maxBytesPerDomain";
+	private static final String HARVESTINFO_MAXOBJECTSPERDOMAIN = "harvestInfo.maxObjectsPerDomain";
+	private static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.orderXMLName";
+	private static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
+	private static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
+	private static final String HARVESTINFO_HARVESTFILENAMEPREFIX = "harvestInfo.harvestFilenamePrefix";
+	private static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";
+	private static final String HARVESTINFO_PERFORMER = "harvestInfo.performer";
+	private static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
 
 	public NasWARCProcessor() {
 		super();
@@ -64,9 +48,10 @@ private static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
      * Add to bean WARCProcessor bean as as
      * <property name="metadataItems"> 
      * <map>
-     *   <entry key="Brugernavn" value="Vilhelm"/>
-     *   <entry key="Pw" value="Caroline"/>
-     *   <entry key="Login" value="Login"/>
+     * 	<entry key="harvestInfo.version" value="0.5"/>
+	 *	<entry key="harvestInfo.jobId" value="23"/>
+	 *  <entry key="harvestInfo.channel" value="FOCUSED"/>
+	 * ...	
      * </map>
 
      */

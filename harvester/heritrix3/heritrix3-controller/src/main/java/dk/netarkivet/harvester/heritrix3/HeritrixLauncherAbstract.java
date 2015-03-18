@@ -22,6 +22,9 @@
  */
 package dk.netarkivet.harvester.heritrix3;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -45,6 +48,10 @@ public abstract class HeritrixLauncherAbstract {
     /** The period to wait in seconds before checking if Heritrix3 has done anything. */
     protected static final int CRAWL_CONTROL_WAIT_PERIOD = Settings.getInt(Heritrix3Settings.CRAWL_LOOP_WAIT_TIME);
 
+    /** The logger for this class. */
+	
+    private static final Logger log = LoggerFactory.getLogger(HeritrixLauncher.class);
+    
     /**
      * Private HeritrixLauncher constructor. Sets up the HeritrixLauncher from the given order file and seedsfile.
      *
@@ -99,12 +106,12 @@ public abstract class HeritrixLauncherAbstract {
 
     public void setupOrderfile(Heritrix3Files files) {
     	// Here the last changes of the template is performed
+    	log.info("Make the template ready for Heritrix3");
         makeTemplateReadyForHeritrix3(files);
     }
 
     /**
-     * FIXME METHOD NOT FULLY IMPLEMENTED YET
-     * Updates the diskpath value, archivefile_prefix, seedsfile, and deduplication -information.
+     * Updates the archivefile_prefix, and location of the deduplication index if needed.
      * @param files
      * @throws IOFailure
      */
@@ -112,10 +119,7 @@ public abstract class HeritrixLauncherAbstract {
      * This method prepares the crawler-beans.cxml file used by the Heritrix3 crawler. </p> 1. alters the crawler-beans.cxml in the
      * following-way: (overriding whatever is in the crawler-beans.cxml)</br>
      * <ol>
-     * <li>sets the disk-path to the outputdir specified in Heritrix3Files.</li>
-     * <li>sets the seedsfile to the seedsfile specified in Heritrix3Files.</li>
      * <li>sets the prefix of the arcfiles to unique prefix defined in Heritrix3Files</li>
-     * <li>checks that the arcs-file dir is 'arcs' - to ensure that we know where the arc-files are when crawl finishes</li>
      * <p>
      * <li>if deduplication is enabled, sets the node pointing to index directory for deduplication (see step 3)</li>
      * </ol>
@@ -131,14 +135,14 @@ public abstract class HeritrixLauncherAbstract {
     	HeritrixTemplate templ = HeritrixTemplate.read(files.getOrderXmlFile());
     	if (templ instanceof H3HeritrixTemplate) {
     		H3HeritrixTemplate template = (H3HeritrixTemplate) templ;
-    		//templ.setDiskPath(files.getCrawlDir().getAbsolutePath()); //TODO is relevant for H3??
-    		//templ.setArchiveFilePrefix(files.getArchiveFilePrefix()); //TODO
-    		template.setSeedsFilePath(files.getSeedsTxtFile().getAbsolutePath()); //TODO
+    		//templ.setDiskPath(files.getCrawlDir().getAbsolutePath()); NOP
+    		template.setArchiveFilePrefix(files.getArchiveFilePrefix());
+    		//template.setSeedsFilePath(files.getSeedsTxtFile().getAbsolutePath()); NOP
 
     		if (template.IsDeduplicationEnabled()) {
     			template.setDeduplicationIndexLocation(files.getIndexDir().getAbsolutePath());
     		}
-    		// Remove superfluous Placeholders in the template (maybe unnecessary)
+    		// Remove superfluous placeholders in the template (maybe unnecessary)
     		template.removePlaceholders();
     		files.writeOrderXml(template);
     	} else {

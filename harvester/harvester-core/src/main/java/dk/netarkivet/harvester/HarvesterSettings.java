@@ -541,12 +541,12 @@ public class HarvesterSettings {
     public static String HERITRIX_WARC_WRITE_REQUESTS = "settings.harvester.harvesting.heritrix.warc.writeRequests";
     /**
      * <b>settings.harvester.harvesting.heritrix.warc.writeMetadata</b> Represents the 'write-metadata' setting in the
-     * Heritrix WARCWriterProcessor. The default is false.
+     * Heritrix WARCWriterProcessor. The default is true.
      */
     public static String HERITRIX_WARC_WRITE_METADATA = "settings.harvester.harvesting.heritrix.warc.writeMetadata";
     /**
      * <b>settings.harvester.harvesting.heritrix.warc.writeRevisitForIdenticalDigests</b> Represents the
-     * 'write-revisit-for-identical-digests' setting in the Heritrix WARCWriterProcessor. The default is false.
+     * 'write-revisit-for-identical-digests' setting in the Heritrix WARCWriterProcessor. The default is true.
      */
     public static String HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS = "settings.harvester.harvesting.heritrix.warc.writeRevisitForIdenticalDigests";
     /**
@@ -555,6 +555,15 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED = "settings.harvester.harvesting.heritrix.warc.writeRevisitForNotModified";
 
+    /**
+     * <b>settings.harvester.harvesting.heritrix.warc.startNewFilesOnCheckpoint</b> Represents the
+     * 'startNewFilesOnCheckpoint' setting in the Heritrix WARCWriterProcessor. Only available with H3. The default is true.
+     */
+    public static String HERITRIX_WARC_START_NEW_FILES_ON_CHECKPOINT 
+    	= "settings.harvester.harvesting.heritrix.warc.startNewFilesOnCheckpoint";
+    
+    
+    
     /**
      * <b>settings.harvester.harvesting.heritrix.version</b> Represents the version of Heritrix used by Netarchivesuite 
      * The default is h3. The optional value is h1.
