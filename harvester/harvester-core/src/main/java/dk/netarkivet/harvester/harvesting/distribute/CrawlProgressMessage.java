@@ -24,6 +24,9 @@ package dk.netarkivet.harvester.harvesting.distribute;
 
 import java.io.Serializable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.harvester.distribute.HarvesterMessage;
 import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
@@ -40,6 +43,10 @@ import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
 @SuppressWarnings({"serial"})
 public class CrawlProgressMessage extends HarvesterMessage implements Serializable {
 
+	/** The logger for this class. */
+	
+    private static final Logger log = LoggerFactory.getLogger(CrawlProgressMessage.class);
+	
     /**
      * The general status of a job in NAS.
      */
@@ -103,7 +110,6 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
         public void setCurrentJob(String currentJob) {
             this.currentJob = currentJob;
         }
-
     }
 
     /**
@@ -349,11 +355,12 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
      * @return true if Heritrix has finished crawling the job, false otherwise.
      */
     public boolean crawlIsFinished() {
-
+    	// Evidently heritrixStatus.currentJob is set to "", if no job is crawling
         boolean jobInProgress = heritrixStatus.isCrawling() && !heritrixStatus.getCurrentJob().isEmpty();
 
         if (!jobInProgress) {
-        	// TODO does this work for H3 as well
+        	// FIXME does this work for H3 as well (If not modify the above logic)
+        	log.info("Job {} seems to be no longer in progress. ", jobID);
             return true;
         }
         
@@ -361,8 +368,12 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
         
         if (statusAsString != null) {
         	// FIXME probably only works for H1 equals to the String "FINISHED"
+        	log.info("StatusAsString = '{}'", statusAsString);
             return statusAsString.equals(Heritrix1Constants.CRAWLCONTROLLER_FINISHED);
-        }
+        } 
+        // statusAsString is null
+        log.info("statusAsString is null for job {}. Considering the crawl to be not finished", jobID);
+        
         return false;
     }
 

@@ -41,7 +41,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
@@ -75,14 +74,13 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     public static final String MAX_TIME_SECONDS_PLACEHOLDER = "%{MAX_TIME_SECONDS_PLACEHOLDER}";
     public static final String CRAWLERTRAPS_PLACEHOLDER = "%{CRAWLERTRAPS_PLACEHOLDER}";
     
+    public static final String DEDUPLICATION_BEAN_REFERENCE_PATTERN = "<ref bean=\"DeDuplicator\"/>";
+    public static final String DEDUPLICATION_BEAN_PATTERN =  "<bean id=\"DeDuplicator\"";
     public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER 
     	= "%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}"; 
 
     public static final String ARCHIVE_FILE_PREFIX_PLACEHOLDER = "%{ARCHIVE_FILE_PREFIX_PLACEHOLDER}";
-    
-    //public static final String QUOTAENFORCER_PLACEHOLDER = "%{QUOTAENFORCER_PLACEHOLDER}";
-    //budget placeholders
-    
+        
     public static final String FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER 
     	= "%{FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER}";
     
@@ -154,71 +152,10 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		}
 	}
 
-    /**
-     * Auxiliary method to modify the orderXMLdoc Document with respect to setting the maximum number of objects to be
-     * retrieved per domain. This method updates 'group-max-fetch-success' element of the QuotaEnforcer pre-fetch
-     * processor node (org.archive.crawler.frontier.BdbFrontier) with the value of the argument forceMaxObjectsPerDomain
-     *
-     * @param orderXMLdoc
-     * @param forceMaxObjectsPerDomain The maximum number of objects to retrieve per domain, or 0 for no limit.
-     * @throws PermissionDenied If unable to replace the frontier node of the orderXMLdoc Document
-     * @throws IOFailure If the group-max-fetch-success element is not found in the orderXml. 
-     * 
-     * TODO The group-max-fetch-success check should also be performed in TemplateDAO.create, TemplateDAO.update
-     */
-    //@Override NOT PART OF INTERFACE
-/*    public void editOrderXML_maxObjectsPerDomain( 
-    		long forceMaxObjectsPerDomain,
-            boolean maxObjectsIsSetByQuotaEnforcer) {
-    	Map<String,String> env = new HashMap<String,String>();
-    	
-    	String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE = "QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE"; 
-    	String FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE = "FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE";
-    		
-    	
-    	Long FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT = -1L;
-    	Long QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_DEFAULT = -1L;
-    	
-    	if (maxObjectsIsSetByQuotaEnforcer) {
-    		env.put(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE, 
-    				String.valueOf(forceMaxObjectsPerDomain));
-    		env.put(FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE, 
-    				String.valueOf(FRONTIER_QUEUE_TOTAL_BUDGET_DEFAULT));
-    	} else {
-    		env.put(FRONTIER_QUEUE_TOTAL_BUDGET_TEMPLATE, 
-    				String.valueOf(forceMaxObjectsPerDomain));
-    		env.put(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_TEMPLATE,
-    				String.valueOf(QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_DEFAULT));
-    	}
-    	
-    	boolean bFailOnMissing = false;
-    	template = Template.untemplate(template, env, bFailOnMissing);	
-        	    	
-    }
-*/
     
 	@Override
 	public void setMaxBytesPerDomain(Long maxbytesL) {
-		this.forceMaxbytesPerDomain = maxbytesL;
-		
-//		String maxBytesStringValue = "";
-//
-//		if (maxbytesL == 0) {
-//			maxBytesStringValue = "0";
-//		} else if (maxbytesL != Constants.HERITRIX_MAXBYTES_INFINITY) {
-//          // Divide by 1024 since Heritrix uses KB rather than bytes,
-//          // and add 1 to avoid to low limit due to rounding.
-//    	  maxBytesStringValue = Long.toString((maxbytesL / Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1);
-//		} else {
-//    	  maxBytesStringValue = String.valueOf(Constants.HERITRIX_MAXBYTES_INFINITY);
-//		}
-//
-//		if (template.contains(QUOTA_ENFORCER_MAX_BYTES_TEMPLATE)) {
-//			// Insert value
-//			
-//		} else {
-//	      throw new IOFailure("Unable to locate QuotaEnforcer template to set maxBytesPerDomain in template: " + template);
-//	  }
+		this.forceMaxbytesPerDomain = maxbytesL;		
 	}	
   
 
@@ -239,7 +176,17 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     
 	@Override
 	public boolean isValid() {
-		//always returns true, currently
+		/*
+		StringBuilder errors = new StringBuilder();
+		// check for Deduplication index-location placeholder and DEDUPLICATION_BEAN_PATTERN
+		if (template.contains(DEDUPLICATION_BEAN_PATTERN)) {
+			if (!template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER)) {
+				errors.append("Has DefdMissing placeholder '" +  DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER + "'"
+			}
+		} 
+		template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER) 
+		&& template.contains(deduplicationBeanPattern)
+		*/
 		return true;
 	}
 
@@ -249,18 +196,19 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	//   - a DeDuplicator bean is present in the template
 	// and
 	//   - a  DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER is also present.
+	// and 
+	//   - a DeDuplicator reference bean is present in the template
 	public boolean IsDeduplicationEnabled() {
-		// LOOK for the string DEDUPLICATION_INDEX_LOCATION or the pattern '<bean id="DeDuplicator"'
-		String deduplicationBeanPattern =  "<bean id=\"DeDuplicator\"";
 		return (template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER) 
-				&& template.contains(deduplicationBeanPattern)); 
+				&& template.contains(DEDUPLICATION_BEAN_PATTERN)
+				&& template.contains(DEDUPLICATION_BEAN_REFERENCE_PATTERN)); 
 	}	
 
 	/**
      * Configuring the quota-enforcer, depending on budget definition. Object limit can be defined either by
      * using the queue-total-budget property or the quota enforcer. Which is chosen is set by the argument
      * maxObjectsIsSetByQuotaEnforcer}'s value. So quota enforcer is set as follows:
-     * If all values in the quotaenforcer is infinity, it is in effect disabled
+     * If all values in the quotaEnforcer is infinity, it is in effect disabled
      * <ul>
      * <li>Object limit is not set by quota enforcer, disabled only if there is no byte limit.</li>
      * <li>Object limit is set by quota enforcer, so it should be enabled if a byte or object limit is set.</li>
@@ -291,7 +239,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 					Long.toString(forceMaxObjectsPerDomain));
 		}
 		
-		// SetMAX???? in the QuotaEnforcer to forceMaxBytesPerDomain
+		// SetMaxbytes in the QuotaEnforcer to forceMaxBytesPerDomain
 		// Divide by 1024 since Heritrix uses KB rather than bytes,
 		// and add 1 to avoid to low limit due to rounding.
 		String maxBytesStringValue = "-l";
@@ -514,11 +462,12 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	@Override
 	public void setArchiveFilePrefix(String archiveFilePrefix) {
 		if (!template.contains(ARCHIVE_FILE_PREFIX_PLACEHOLDER)) {
-			throw new IllegalState("The placeholder for the archive file prefix property '" + ARCHIVE_FILE_PREFIX_PLACEHOLDER 
+			throw new IllegalState("The placeholder for the archive file prefix property '" 
+					+ ARCHIVE_FILE_PREFIX_PLACEHOLDER 
 					+ "' was not found. Maybe the placeholder has already been replaced with the correct value. The template looks like this: " 
 					+ template);
 		}
-		String templateNew = template.replace(METADATA_ITEMS_PLACEHOLDER, archiveFilePrefix);		
+		String templateNew = template.replace(ARCHIVE_FILE_PREFIX_PLACEHOLDER, archiveFilePrefix);		
     	this.template = templateNew;
 		
 	}
