@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.heritrix3;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * FIXME this class does not work for Heritrix3!
@@ -79,7 +78,7 @@ class ArchiveFilesReportGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArchiveFilesReportGenerator.class);
 
-    private static final String ARCHIVE_FORMAT = Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT);
+    private static final String ARCHIVE_FORMAT = Settings.get(Heritrix3Settings.HERITRIX_ARCHIVE_FORMAT);
 
     private static final SimpleDateFormat ISO_8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
@@ -146,13 +145,13 @@ class ArchiveFilesReportGenerator {
     /**
      * The name of the report file. It will be generated in the crawl directory.
      */
-    public static final String REPORT_FILE_NAME = Settings.get(HarvesterSettings.METADATA_ARCHIVE_FILES_REPORT_NAME);
+    public static final String REPORT_FILE_NAME = Settings.get(Heritrix3Settings.METADATA_ARCHIVE_FILES_REPORT_NAME);
 
     /**
      * The header line of the report file.
      */
     public static final String REPORT_FILE_HEADER = Settings
-            .get(HarvesterSettings.METADATA_ARCHIVE_FILES_REPORT_HEADER);
+            .get(Heritrix3Settings.METADATA_ARCHIVE_FILES_REPORT_HEADER);
 
     /**
      * The Heritrix crawl directory.

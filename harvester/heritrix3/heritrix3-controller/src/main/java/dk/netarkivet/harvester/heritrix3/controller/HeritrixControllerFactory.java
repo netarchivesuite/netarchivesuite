@@ -21,16 +21,16 @@
  * #L%
  */
 
-package dk.netarkivet.harvester.harvesting.controller;
+package dk.netarkivet.harvester.heritrix3.controller;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.SettingsFactory;
-import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.heritrix3.Heritrix3Settings;
 
 /**
  * A factory class for HeritrixController instances.
  */
-public class HeritrixControllerFactory extends SettingsFactory<HeritrixController> {
+public class HeritrixControllerFactory extends SettingsFactory<IHeritrixController> {
 
     /**
      * Returns an instance of the default HeritrixController implementation defined by the setting
@@ -41,8 +41,8 @@ public class HeritrixControllerFactory extends SettingsFactory<HeritrixControlle
      * @return the HeritrixController instance.
      * @throws ArgumentNotValid if the instance cannot be constructed.
      */
-    public static HeritrixController getDefaultHeritrixController(Object... args) throws ArgumentNotValid {
-        return SettingsFactory.getInstance(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, args);
+    public static IHeritrixController getDefaultHeritrixController(Object... args) throws ArgumentNotValid {
+        return SettingsFactory.getInstance(Heritrix3Settings.HERITRIX_CONTROLLER_CLASS, args);
     }
 
 }

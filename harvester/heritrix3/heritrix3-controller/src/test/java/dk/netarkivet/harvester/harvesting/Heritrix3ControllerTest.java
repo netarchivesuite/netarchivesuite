@@ -11,7 +11,8 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.Password;
 import dk.netarkivet.harvester.datamodel.SeedList;
-import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
+import dk.netarkivet.harvester.heritrix3.Heritrix3Files;
+import dk.netarkivet.harvester.heritrix3.controller.HeritrixController;
 
 public class Heritrix3ControllerTest {
 	public static void main(String args[]) {
@@ -25,6 +26,6 @@ public class Heritrix3ControllerTest {
 		Job j = new Job(1L, cfg, orderXMLdoc, hc,-1L,-1L, 0L, 1);
 		j.setJobID(1L);
 		Heritrix3Files files = Heritrix3Files.getH3HeritrixFiles(crawlDir, j);
-		BnfHeritrixController bhc = new BnfHeritrixController(files);
+		HeritrixController bhc = new HeritrixController(files);
 	}
 }

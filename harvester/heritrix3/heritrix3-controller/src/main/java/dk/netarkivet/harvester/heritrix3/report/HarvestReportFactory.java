@@ -20,12 +20,14 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.harvesting.report;
+package dk.netarkivet.harvester.heritrix3.report;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.report.HarvestReport;
+import dk.netarkivet.harvester.heritrix3.Heritrix3Settings;
 
 /**
  * Factory class for instantiating a specific implementation of {@link HarvestReport}. The implementation class is
@@ -43,7 +45,7 @@ public class HarvestReportFactory extends SettingsFactory<HarvestReport> {
      * @throws ArgumentNotValid if the instance cannot be constructed.
      */
     public static HarvestReport generateHarvestReport(Object... args) throws ArgumentNotValid, IOFailure {
-        return SettingsFactory.getInstance(HarvesterSettings.HARVEST_REPORT_CLASS, args);
+        return SettingsFactory.getInstance(Heritrix3Settings.HARVEST_REPORT_CLASS, args);
     }
 
 }

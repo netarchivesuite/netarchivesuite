@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.harvesting.report;
+package dk.netarkivet.harvester.heritrix3.report;
 
 import gnu.inet.encoding.IDNA;
 
@@ -43,10 +43,12 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FixedUURI;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.StopReason;
-import dk.netarkivet.harvester.harvesting.Heritrix3Files;
 import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
+import dk.netarkivet.harvester.harvesting.report.DomainStatsReport;
+import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
+import dk.netarkivet.harvester.heritrix3.Heritrix3Files;
+import dk.netarkivet.harvester.heritrix3.Heritrix3Settings;
 
 /**
  * Base implementation for a harvest report.
@@ -197,7 +199,7 @@ public class HarvestReportGenerator {
     private void parseCrawlLog(File file) throws IOFailure {
         // read whether or not to disregard the SeedURL information
         // in the crawl.log
-        boolean disregardSeedUrls = Settings.getBoolean(HarvesterSettings.DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG);
+        boolean disregardSeedUrls = Settings.getBoolean(Heritrix3Settings.DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG);
         BufferedReader in = null;
 
         try {

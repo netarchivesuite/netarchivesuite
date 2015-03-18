@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.harvesting.controller;
+package dk.netarkivet.harvester.heritrix3.controller;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -39,14 +39,13 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.Heritrix3Files;
+import dk.netarkivet.harvester.heritrix3.Heritrix3Files;
+import dk.netarkivet.harvester.heritrix3.Heritrix3Settings;
 
 /**
  * Abstract base class for REST-based Heritrix controllers.
  */
-@SuppressWarnings({"rawtypes"})
-public abstract class AbstractRestHeritrixController implements HeritrixController {
+public abstract class AbstractRestHeritrixController implements IHeritrixController {
 
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(AbstractRestHeritrixController.class);
@@ -65,7 +64,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
     private final String hostName;
 
     /** The port to use for Heritrix GUI, as set in settings.xml. */
-    private final int guiPort = Settings.getInt(HarvesterSettings.HERITRIX_GUI_PORT);
+    private final int guiPort = Settings.getInt(Heritrix3Settings.HERITRIX_GUI_PORT);
  
    /**
      * Create a BnfHeritrixController object.
@@ -133,11 +132,11 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
             h3launcher.env.put("FOREGROUND", "true");
             log.info(".. and setting FOREGROUND to 'true'");
             String javaOpts = "";
-            String jvmOptsStr = Settings.get(HarvesterSettings.HERITRIX_JVM_OPTS);
+            String jvmOptsStr = Settings.get(Heritrix3Settings.HERITRIX_JVM_OPTS);
             if ((jvmOptsStr != null) && (!jvmOptsStr.isEmpty())) {
             	javaOpts = " " + jvmOptsStr;
             }
-            String javaOptsValue = "-Xmx" + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE) + javaOpts; 
+            String javaOptsValue = "-Xmx" + Settings.get(Heritrix3Settings.HERITRIX_HEAP_SIZE) + javaOpts; 
             h3launcher.env.put("JAVA_OPTS", javaOptsValue);
             log.info(".. and setting JAVA_OPTS to '{}'", javaOptsValue);
             String heritrixOutValue = files.getHeritrixOutput().getAbsolutePath();
@@ -158,7 +157,6 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
         	log.debug("Unexpected error while launching H3: ", e);
         	throw new IOFailure("Unexpected error while launching H3: ", e);
         }
-
     }
 
     public static class LaunchResultHandler implements LaunchResultHandlerAbstract {
@@ -221,7 +219,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
      * @return Name to use for accessing Heritrix web GUI
      */
     protected String getHeritrixAdminName() {
-        return Settings.get(HarvesterSettings.HERITRIX_ADMIN_NAME);
+        return Settings.get(Heritrix3Settings.HERITRIX_ADMIN_NAME);
     }
 
     /**
@@ -230,7 +228,7 @@ public abstract class AbstractRestHeritrixController implements HeritrixControll
      * @return Password to use for accessing the Heritrix GUI
      */
     protected String getHeritrixAdminPassword() {
-        return Settings.get(HarvesterSettings.HERITRIX_ADMIN_PASSWORD);
+        return Settings.get(Heritrix3Settings.HERITRIX_ADMIN_PASSWORD);
     }
 
 

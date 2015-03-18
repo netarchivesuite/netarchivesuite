@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.heritrix3;
 
 import java.io.File;
 import java.io.FilenameFilter;

@@ -20,16 +20,16 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.harvesting.controller;
+package dk.netarkivet.harvester.heritrix3.controller;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.netarchivesuite.heritrix3wrapper.EngineResult;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
+import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper.CrawlControllerState;
 import org.netarchivesuite.heritrix3wrapper.JobResult;
 import org.netarchivesuite.heritrix3wrapper.ResultStatus;
-import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper.CrawlControllerState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,27 +39,26 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.Heritrix3Files;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport;
+import dk.netarkivet.harvester.heritrix3.Heritrix3Files;
+import dk.netarkivet.harvester.heritrix3.Heritrix3Settings;
 
 /**
  * This implementation of the HeritrixController interface starts Heritrix as a separate process and uses JMX to
  * communicate with it. Each instance executes exactly one process that runs exactly one crawl job.
  */
-public class BnfHeritrixController extends AbstractRestHeritrixController {
+public class HeritrixController extends AbstractRestHeritrixController {
 
     /** The logger for this class. */
-    private static final Logger log = LoggerFactory.getLogger(BnfHeritrixController.class);
+    private static final Logger log = LoggerFactory.getLogger(HeritrixController.class);
 
     /**
      * Enum listing the different job attributes available.
      */
-    
 //    private static enum CrawlServiceJobAttribute {
 //        /** The time in seconds elapsed since the crawl began. */
 //        CrawlTime,
@@ -134,7 +133,7 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
     /**
      * Shall we abort, if we lose the connection to Heritrix.
      */
-    private static final boolean ABORT_IF_CONN_LOST = Settings.getBoolean(HarvesterSettings.ABORT_IF_CONNECTION_LOST);
+    private static final boolean ABORT_IF_CONN_LOST = Settings.getBoolean(Heritrix3Settings.ABORT_IF_CONNECTION_LOST);
 
     /**
      * The name that Heritrix gives to the job we ask it to create. This is part of the name of the MBean for that job,
@@ -150,7 +149,7 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      *
      * @param files Files that are used to set up Heritrix.
      */
-    public BnfHeritrixController(Heritrix3Files files) {
+    public HeritrixController(Heritrix3Files files) {
         super(files);
     }
 
@@ -158,7 +157,7 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      * Initialize the JMXconnection to the Heritrix.
      *
      * @throws IOFailure If Heritrix dies before initialization, or we encounter any problems during the initialization.
-     * @see HeritrixController#initialize()
+     * @see IHeritrixController#initialize()
      */
     @Override
     public void initialize() {
@@ -199,19 +198,16 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
 
     @Override
     public void requestCrawlStart() {
-    	
     	// Create a new job 
-
         File cxmlFile = getHeritrixFiles().getOrderFile();
         File seedsFile = getHeritrixFiles().getSeedsFile();
         JobResult jobResult;
 
-        
   		File jobDir = files.getHeritrixJobDir();
   		if (!jobDir.exists()) {
   			jobDir.mkdirs();
   		}
-  		
+
   		try {
   			log.info("Copying the crawler-beans.cxml file and seeds.txt to the heritrix3 jobdir '{}'", jobDir);
   			Heritrix3Wrapper.copyFile( cxmlFile, jobDir );
@@ -219,26 +215,23 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
   		} catch (IOException e) {
   			throw new IOFailure("Problem occurred during the copying of files to our heritrix job", e);
   		}
-  		
+
   		// PRE: h3 is running, and the job files copied to their final location? 
   		EngineResult engineResult = null;
   		try {
       		engineResult = h3wrapper.rescanJobDirectory();
-      		log.debug("Result of rescanJobDirectory() operation: " 
-      				+ new String(engineResult.response, "UTF-8"));
+      		log.debug("Result of rescanJobDirectory() operation: " + new String(engineResult.response, "UTF-8"));
       		jobResult = h3wrapper.buildJobConfiguration(jobName);
-      		log.debug("Result of buildJobConfiguration() operation: "
-      				+ new String(jobResult.response, "UTF-8"));
+      		log.debug("Result of buildJobConfiguration() operation: " + new String(jobResult.response, "UTF-8"));
       		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.NASCENT, 60, 1000);
       		jobResult = h3wrapper.launchJob(jobName);
-      		log.debug("Result of launchJob() operation: "
-      				+ new String(jobResult.response, "UTF-8"));
+      		log.debug("Result of launchJob() operation: " + new String(jobResult.response, "UTF-8"));
       		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.PAUSED, 60, 1000);
       		jobResult = h3wrapper.unpauseJob(jobName);
-      		} catch (Throwable e) {
-      			throw new IOFailure("Unknown error during communication with heritrix3", e);
-      		}
-  		
+      	} catch (Throwable e) {
+      		throw new IOFailure("Unknown error during communication with heritrix3", e);
+      	}
+
   		// POST: h3 is running, and the job with name 'jobName' is running
   		log.debug("h3-State after unpausing job '{}': {}", jobName, jobResult.response);
     }
@@ -277,7 +270,7 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
      * CommonSettings.PROCESS_TIMEOUT setting.
      *
      * @param crawlDir the crawldir to cleanup
-     * @see HeritrixController#cleanup()
+     * @see IHeritrixController#cleanup()
      */
     public void cleanup(File crawlDir) {
         // Before cleaning up, we need to wait for the reports to be generated
@@ -553,7 +546,7 @@ public class BnfHeritrixController extends AbstractRestHeritrixController {
         log.info("Started waiting for Heritrix report generation.");
 
         long currentTime = System.currentTimeMillis();
-        long waitSeconds = Settings.getLong(HarvesterSettings.WAIT_FOR_REPORT_GENERATION_TIMEOUT);
+        long waitSeconds = Settings.getLong(Heritrix3Settings.WAIT_FOR_REPORT_GENERATION_TIMEOUT);
         long waitDeadline = currentTime + TimeUtils.SECOND_IN_MILLIS * waitSeconds;
 
        

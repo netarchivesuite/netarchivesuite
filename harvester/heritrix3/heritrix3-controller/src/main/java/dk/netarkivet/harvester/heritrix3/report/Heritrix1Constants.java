@@ -21,7 +21,7 @@
  * #L%
  */
 
-package dk.netarkivet.harvester.harvesting.report;
+package dk.netarkivet.harvester.heritrix3.report;
 /*
 import org.archive.crawler.datamodel.CrawlURI;
 import org.archive.crawler.deciderules.DecideRuleSequence;

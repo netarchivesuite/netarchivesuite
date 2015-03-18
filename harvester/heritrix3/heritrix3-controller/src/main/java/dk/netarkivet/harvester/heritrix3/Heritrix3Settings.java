@@ -1,38 +1,19 @@
-/*
- * #%L
- * Netarchivesuite - harvester
- * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
- *             the National Library of France and the Austrian National Library.
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU General Lesser Public
- * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/lgpl-2.1.html>.
- * #L%
- */
-package dk.netarkivet.harvester;
+package dk.netarkivet.harvester.heritrix3;
 
 import java.util.regex.Pattern;
 
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
+import dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter;
 import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 
-/** Settings specific to the harvester module of NetarchiveSuite. */
-public class HarvesterSettings {
+/**
+ * Settings specific to the heritrix3 harvester module of NetarchiveSuite.
+ */
+public class Heritrix3Settings {
 
-    /** The default place in classpath where the settings file can be found. */
-    private static final String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/harvester/settings.xml";
+	/** The default place in classpath where the settings file can be found. */
+    private static final String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/harvester/heritrix3/settings.xml";
 
     /*
      * The static initialiser is called when the class is loaded. It will add default values for all settings defined in

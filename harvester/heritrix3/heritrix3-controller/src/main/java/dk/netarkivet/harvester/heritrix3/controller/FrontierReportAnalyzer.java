@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.harvesting.controller;
+package dk.netarkivet.harvester.heritrix3.controller;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -50,7 +50,7 @@ public class FrontierReportAnalyzer implements Runnable {
     /** The logger to use. */
     static final Log LOG = LogFactory.getLog(FrontierReportAnalyzer.class);
     /** The controller used to communicate with the Heritrix3 instance. */
-    private final BnfHeritrixController heritrixController;
+    private final HeritrixController heritrixController;
     /** The last time this Analyzer was executed. */
     private long lastExecTime = System.currentTimeMillis();
 
@@ -60,7 +60,7 @@ public class FrontierReportAnalyzer implements Runnable {
      *
      * @param heritrixController the controller allowing communication with the Heritrix3 crawler instance.
      */
-    public FrontierReportAnalyzer(BnfHeritrixController heritrixController) {
+    public FrontierReportAnalyzer(HeritrixController heritrixController) {
         super();
         this.heritrixController = heritrixController;
 

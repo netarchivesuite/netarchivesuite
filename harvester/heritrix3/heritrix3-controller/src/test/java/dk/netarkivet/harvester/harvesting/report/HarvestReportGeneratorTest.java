@@ -5,8 +5,10 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 
-import dk.netarkivet.harvester.harvesting.Heritrix3Files;
 import dk.netarkivet.harvester.harvesting.PersistentJobData;
+import dk.netarkivet.harvester.heritrix3.Heritrix3Files;
+import dk.netarkivet.harvester.heritrix3.report.HarvestReportFactory;
+import dk.netarkivet.harvester.heritrix3.report.HarvestReportGenerator;
 
 public class HarvestReportGeneratorTest {
 

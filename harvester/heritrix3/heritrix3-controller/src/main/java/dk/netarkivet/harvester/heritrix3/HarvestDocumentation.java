@@ -21,7 +21,7 @@
  * #L%
  */
 
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.heritrix3;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -45,7 +45,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.archive.ArchiveProfile;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.PersistentJobData;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
@@ -61,7 +61,6 @@ public class HarvestDocumentation {
 
     private static final Logger log = LoggerFactory.getLogger(HarvestDocumentation.class);
 
-   
     /**
      * Documents the harvest under the given dir in a packaged metadata arc file in a directory 'metadata' under the
      * current dir. Only documents the files belonging to the given jobID, the rest are moved to oldjobs.
@@ -212,7 +211,6 @@ public class HarvestDocumentation {
         }
     }
 
-    
     /**
      * Iterates over the (W)ARC files in the given dir and moves away files that do not belong to the given job into a
      * "lost-files" directory under oldjobs named with a timestamp.
@@ -223,7 +221,7 @@ public class HarvestDocumentation {
      */
     private static void moveAwayForeignFiles(ArchiveProfile archiveProfile, File dir, IngestableFiles files) {
         File[] archiveFiles = dir.listFiles(archiveProfile.filename_filter);
-        File oldJobsDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
+        File oldJobsDir = new File(Settings.get(Heritrix3Settings.HARVEST_CONTROLLER_OLDJOBSDIR));
         File lostfilesDir = new File(oldJobsDir, "lost-files-" + new Date().getTime());
         List<File> movedFiles = new ArrayList<File>();
         log.info("Looking for files not having harvestprefix '{}'", files.getHarvestnamePrefix());
@@ -286,7 +284,7 @@ public class HarvestDocumentation {
         // Generate an arcfiles-report.txt if configured to do so.
         // FIXME This is not possible to extract from the crawl.log (Is this list available in any other way?)
         
-        boolean genArcFilesReport = Settings.getBoolean(HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
+        boolean genArcFilesReport = Settings.getBoolean(Heritrix3Settings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         if (genArcFilesReport) {
         	log.warn("Creating the arcfiles-report.txt is not yet implemented for Heritrix3");
         	/*
@@ -296,7 +294,7 @@ public class HarvestDocumentation {
                     */
         } else {
             log.debug("Creation of the arcfiles-report.txt has been disabled by the setting '{}'!",
-                    HarvesterSettings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
+            		Heritrix3Settings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         }
 
         // Add log files

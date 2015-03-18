@@ -20,29 +20,28 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.heritrix3;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.SettingsFactory;
-import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
- * Factory class for instantiating a specific implementation of {@link HeritrixLauncher}. The implementation class is
+ * Factory class for instantiating a specific implementation of {@link HeritrixLauncherAbstract}. The implementation class is
  * defined by the setting <em>dk.netarkivet.harvester.harvesting.heritrixLauncher.class</em>.
  */
-public class HeritrixLauncherFactory extends SettingsFactory<HeritrixLauncher> {
+public class HeritrixLauncherFactory extends SettingsFactory<HeritrixLauncherAbstract> {
 
     /**
-     * Returns an instance of the default {@link HeritrixLauncher} implementation defined by the setting
+     * Returns an instance of the default {@link HeritrixLauncherAbstract} implementation defined by the setting
      * dk.netarkivet.harvester.harvesting.heritrixLauncher.class . This class must have a constructor or factory method
      * with a signature matching the array args.
      *
      * @param args the arguments to the constructor or factory method
-     * @return the {@link HeritrixLauncher} instance.
+     * @return the {@link HeritrixLauncherAbstract} instance.
      * @throws ArgumentNotValid if the instance cannot be constructed.
      */
-    public static HeritrixLauncher getInstance(Object... args) throws ArgumentNotValid {
-        return SettingsFactory.getInstance(HarvesterSettings.HERITRIX_LAUNCHER_CLASS, args);
+    public static HeritrixLauncherAbstract getInstance(Object... args) throws ArgumentNotValid {
+        return SettingsFactory.getInstance(Heritrix3Settings.HERITRIX_LAUNCHER_CLASS, args);
     }
 
 }

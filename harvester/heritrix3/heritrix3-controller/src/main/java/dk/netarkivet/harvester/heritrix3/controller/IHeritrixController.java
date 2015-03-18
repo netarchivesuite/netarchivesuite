@@ -21,7 +21,7 @@
  * #L%
  */
 
-package dk.netarkivet.harvester.harvesting.controller;
+package dk.netarkivet.harvester.heritrix3.controller;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 
@@ -29,7 +29,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * This interface encapsulates the direct access to Heritrix, allowing for accessing in various ways (direct class
  * access or JMX). Heritrix is expected to perform one crawl for each instance of an implementing class.
  */
-public interface HeritrixController {
+public interface IHeritrixController {
 
     /**
      * Initialize a new CrawlController for executing a Heritrix crawl. This does not start the crawl.

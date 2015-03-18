@@ -36,5 +36,5 @@
  *     </li>
  * </ul>
  */
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.heritrix3;
 

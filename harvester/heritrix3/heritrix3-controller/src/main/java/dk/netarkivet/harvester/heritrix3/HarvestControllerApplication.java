@@ -20,10 +20,9 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.heritrix3;
 
 import dk.netarkivet.common.utils.ApplicationUtils;
-import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerServer;
 
 /**
  * This application controls the Heritrix3 harvester which does the actual harvesting, and is also responsible for

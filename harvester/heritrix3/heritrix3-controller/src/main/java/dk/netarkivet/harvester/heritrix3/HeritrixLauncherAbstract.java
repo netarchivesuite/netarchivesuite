@@ -20,13 +20,12 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.heritrix3;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.H3HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 
@@ -35,7 +34,7 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
  * necessary information to do a crawl. The crawl is performed when doOneCrawl() is called. doOneCrawl() monitors
  * progress and returns when the crawl is finished or must be stopped because it has stalled.
  */
-public abstract class HeritrixLauncher {
+public abstract class HeritrixLauncherAbstract {
 
     /** Class encapsulating placement of various files. */
     private Heritrix3Files files;
@@ -44,7 +43,7 @@ public abstract class HeritrixLauncher {
     private Object[] args;
 
     /** The period to wait in seconds before checking if Heritrix3 has done anything. */
-    protected static final int CRAWL_CONTROL_WAIT_PERIOD = Settings.getInt(HarvesterSettings.CRAWL_LOOP_WAIT_TIME);
+    protected static final int CRAWL_CONTROL_WAIT_PERIOD = Settings.getInt(Heritrix3Settings.CRAWL_LOOP_WAIT_TIME);
 
     /**
      * Private HeritrixLauncher constructor. Sets up the HeritrixLauncher from the given order file and seedsfile.
@@ -52,7 +51,7 @@ public abstract class HeritrixLauncher {
      * @param files Object encapsulating location of Heritrix3 crawldir and configuration files.
      * @throws ArgumentNotValid If either seedsfile or orderfile does not exist.
      */
-    protected HeritrixLauncher(Heritrix3Files files) throws ArgumentNotValid {
+    protected HeritrixLauncherAbstract(Heritrix3Files files) throws ArgumentNotValid {
         if (!files.getOrderFile().isFile()) {
             throw new ArgumentNotValid("File '" + files.getOrderFile().getName() + "' must exist in order for "
                     + "Heritrix to run. This filepath does not refer to existing file: "
@@ -73,7 +72,7 @@ public abstract class HeritrixLauncher {
      * @param args the arguments to be passed to the constructor or non-static factory method of the HeritrixController
      * class specified in settings
      */
-    public HeritrixLauncher(Object... args) {
+    public HeritrixLauncherAbstract(Object... args) {
         this.args = args;
     }
 
@@ -128,8 +127,7 @@ public abstract class HeritrixLauncher {
      * @throws IOFailure - When the orderfile could not be saved to disk 
      *                     When a specific element cannot be found in the document. 
      */
-    public static void makeTemplateReadyForHeritrix3(Heritrix3Files files) throws IOFailure {
-    	
+    public static void makeTemplateReadyForHeritrix3(Heritrix3Files files) throws IOFailure {    	
     	HeritrixTemplate templ = HeritrixTemplate.read(files.getOrderXmlFile());
     	if (templ instanceof H3HeritrixTemplate) {
     		H3HeritrixTemplate template = (H3HeritrixTemplate) templ;
@@ -146,6 +144,6 @@ public abstract class HeritrixLauncher {
     	} else {
     		throw new IllegalState("The template is not a H3 template!");
     	}
-        
     }
+
 }
