@@ -39,6 +39,9 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
  */
 public abstract class HeritrixLauncherAbstract {
 
+    /** The logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(HeritrixLauncherAbstract.class);
+    
     /** Class encapsulating placement of various files. */
     private Heritrix3Files files;
 
@@ -48,10 +51,6 @@ public abstract class HeritrixLauncherAbstract {
     /** The period to wait in seconds before checking if Heritrix3 has done anything. */
     protected static final int CRAWL_CONTROL_WAIT_PERIOD = Settings.getInt(Heritrix3Settings.CRAWL_LOOP_WAIT_TIME);
 
-    /** The logger for this class. */
-	
-    private static final Logger log = LoggerFactory.getLogger(HeritrixLauncher.class);
-    
     /**
      * Private HeritrixLauncher constructor. Sets up the HeritrixLauncher from the given order file and seedsfile.
      *
