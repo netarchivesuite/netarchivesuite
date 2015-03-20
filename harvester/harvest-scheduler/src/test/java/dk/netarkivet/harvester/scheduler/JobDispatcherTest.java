@@ -39,7 +39,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.tree.DefaultDocument;
 import org.junit.Before;
@@ -89,7 +88,7 @@ public class JobDispatcherTest {
      */
     @Test
     public void testSubmitNewJobs() throws DocumentException {
-        prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
+        prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock, false);
 
         jobDispatcher.submitNextNewJob(SELECTIVE_HARVEST_CHANNEL);
 
@@ -108,7 +107,7 @@ public class JobDispatcherTest {
      */
     @Test
     public void testSubmitNewJobsMakesAliasInfo() throws SQLException {
-        prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
+        prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock, false);
         String originalDomain = "netarkiv.dk";
         String aliasDomain = "netatarkivalias.dk";
         when(jobDAO.getJobAliasInfo(any(Job.class))).thenReturn(
@@ -128,10 +127,7 @@ public class JobDispatcherTest {
      */
     @Test
     public void testSubmitNewJobsMakesDuplicateReductionInfo() throws DocumentException {
-        prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
-        Document doc = OrderXmlBuilder.create().enableDeduplication().getDoc();
-        HeritrixTemplate h1temp = new H1HeritrixTemplate(doc, false);
-        when(jobMock.getOrderXMLdoc()).thenReturn(h1temp);
+        prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock, true);
         // FIXME Which is correct? Does this fail currently?
         // when(jobMock.getOrderXMLdoc()).thenReturn(doc);
         List<Long> jobIDsForDuplicateReduction = Arrays.asList(new Long[] {1L});
@@ -161,7 +157,7 @@ public class JobDispatcherTest {
      */
     @Test
     public void testSendingToCorrectQueue() {
-        prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock);
+        prepareDefaultMockAnswers(SELECTIVE_HARVEST_CHANNEL, jobMock, false);
 
         jobDispatcher.submitNextNewJob(SELECTIVE_HARVEST_CHANNEL);
         verify(jmsConnection).send(crawlMessageCaptor.capture());
@@ -171,7 +167,7 @@ public class JobDispatcherTest {
         reset(jmsConnection);
 
         Job snapshotJob = createJob(2);
-        prepareDefaultMockAnswers(SNAPSHOT, snapshotJob);
+        prepareDefaultMockAnswers(SNAPSHOT, snapshotJob, false);
         jobDispatcher.submitNextNewJob(SNAPSHOT);
         verify(jmsConnection).send(crawlMessageCaptor.capture());
         assertTrue(snapshotJob == crawlMessageCaptor.getValue().getJob());
@@ -208,11 +204,22 @@ public class JobDispatcherTest {
         return job;
     }
 
-    private void prepareDefaultMockAnswers(HarvestChannel channel, Job job) {
+    private void prepareDefaultMockAnswers(HarvestChannel channel, Job job, boolean dedup) {
         Iterator<Long> jobIDIterator = Arrays.asList(new Long[] {job.getJobID()}).iterator();
         when(jobDAO.getAllJobIds(JobStatus.NEW, channel)).thenReturn(jobIDIterator);
         when(jobDAO.read(job.getJobID())).thenReturn(job);
         when(harvestDefinitionDAO.getHarvestName(harvest.getOid())).thenReturn(harvest.getName());
         when(harvestDefinitionDAO.getSparsePartialHarvest(harvest.getName())).thenReturn(harvest);
+        OrderXmlBuilder builder = OrderXmlBuilder.createDefault();
+        if (dedup) {
+            builder = builder.enableDeduplication();
+        } else {
+            builder = builder.disableDeduplication();
+        }
+        HeritrixTemplate h1temp = new H1HeritrixTemplate(builder.getDoc(), false);
+        when(job.getOrderXMLdoc()).thenReturn(h1temp);
+        when(job.getChannel()).thenReturn(SELECTIVE_HARVEST_CHANNEL.getName());
+        when(job.getOrderXMLName()).thenReturn("What is the purpose of this test?");
+        when(job.getHarvestFilenamePrefix()).thenReturn("1-bla-");
     }
 }
