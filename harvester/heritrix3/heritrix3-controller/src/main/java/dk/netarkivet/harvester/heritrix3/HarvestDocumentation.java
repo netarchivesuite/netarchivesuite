@@ -306,9 +306,9 @@ public class HarvestDocumentation {
             }
         });
         
-        for (File hf : heritrixFilesReports) {
-            files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
-        }
+        //for (File hf : heritrixFilesReports) {
+        //    files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
+        //}
         
         // Generate an arcfiles-report.txt if configured to do so.
         // FIXME This is not possible to extract from the crawl.log (Is this list available in any other way?)
