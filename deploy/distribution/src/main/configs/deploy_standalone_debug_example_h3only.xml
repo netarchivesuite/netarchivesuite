@@ -213,64 +213,6 @@ National Library.
           </archive>
         </settings>
       </applicationName>
-      <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10045 -Xmx1536m</deployJavaOpt>
-        <deployClassPath>lib/netarchivesuite-heritrix1-controller.jar</deployClassPath>
-        <settings>
-          <common>
-            <applicationInstanceId>low</applicationInstanceId>
-            <jmx>
-              <port>8114</port>
-              <rmiPort>8214</rmiPort>
-            </jmx>
-            <remoteFile>
-              <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-              <port>8044</port>
-            </remoteFile>
-          </common>
-          <harvester>
-            <harvesting>
-              <channel>SNAPSHOT</channel>
-              <heritrix>
-                <guiPort>8190</guiPort>
-                <jmxPort>8191</jmxPort>
-                <jmxUsername>controlRole</jmxUsername>
-                <jmxPassword>R_D</jmxPassword>
-              </heritrix>
-              <serverDir>harvester_low</serverDir>
-            </harvesting>
-          </harvester>
-        </settings>
-      </applicationName>
-      <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10046 -Xmx1536m</deployJavaOpt>
-        <deployClassPath>lib/netarchivesuite-heritrix1-controller.jar</deployClassPath>
-        <settings>
-          <common>
-            <applicationInstanceId>high</applicationInstanceId>
-            <jmx>
-              <port>8115</port>
-              <rmiPort>8215</rmiPort>
-            </jmx>
-            <remoteFile>
-              <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-              <port>8045</port>
-            </remoteFile>
-          </common>
-          <harvester>
-            <harvesting>
-              <channel>FOCUSED</channel>
-              <heritrix>
-                <guiPort>8192</guiPort>
-                <jmxPort>8193</jmxPort>
-                <jmxUsername>controlRole</jmxUsername>
-                <jmxPassword>R_D</jmxPassword>
-              </heritrix>
-              <serverDir>harvester_high</serverDir>
-            </harvesting>
-          </harvester>
-        </settings>
-      </applicationName>
       <applicationName name="dk.netarkivet.harvester.indexserver.IndexServerApplication">
         <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10047 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
