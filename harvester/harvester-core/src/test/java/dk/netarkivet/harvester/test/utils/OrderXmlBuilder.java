@@ -28,7 +28,8 @@ import dk.netarkivet.common.xml.NodeTraverser;
 import dk.netarkivet.common.xml.XmlBuilder;
 
 public class OrderXmlBuilder extends XmlBuilder {
-    public static final String DEFAULT_ORDER_XML_NAME = "FullSite-order";
+
+	public static final String DEFAULT_ORDER_XML_NAME = "FullSite-order";
     public static final String ORDER_XML_NAME = "order.xml";
 
     private OrderXmlBuilder() {}
@@ -41,7 +42,8 @@ public class OrderXmlBuilder extends XmlBuilder {
     public static OrderXmlBuilder createDefault(String name) { return new OrderXmlBuilder(name);}
 
     public OrderXmlBuilder enableDeduplication() {
-        Node deduplicationNode = NodeTraverser.create(xmlDoc).getChildNode("crawl-order", null)
+        Node deduplicationNode = NodeTraverser.create(xmlDoc)
+        		.getChildNode("crawl-order", null)
                 .getChildNode("controller", null)
                 .getChildNode("map", "write-processors")
                 .getChildNode("newObject", "DeDuplicator")
@@ -49,4 +51,16 @@ public class OrderXmlBuilder extends XmlBuilder {
         deduplicationNode.setTextContent("true");
         return this;
     }
+
+    public OrderXmlBuilder disableDeduplication() {
+        Node deduplicationNode = NodeTraverser.create(xmlDoc)
+        		.getChildNode("crawl-order", null)
+                .getChildNode("controller", null)
+                .getChildNode("map", "write-processors")
+                .getChildNode("newObject", "DeDuplicator")
+                .getChildNode("boolean", "enabled").getNode();
+        deduplicationNode.setTextContent("false");
+        return this;
+    }
+
 }

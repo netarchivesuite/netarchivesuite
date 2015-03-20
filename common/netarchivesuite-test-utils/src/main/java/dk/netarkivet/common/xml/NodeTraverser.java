@@ -24,6 +24,7 @@ package dk.netarkivet.common.xml;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -52,7 +53,7 @@ public class NodeTraverser {
     }
 
     /** Will create a NodeTraverser for accessing the indicated node. If the current node does
-     * existes it will be created.
+     * exist it will be created.
      * @param element The tag for the element to make available, eg. <crawl-order>.....
      * @param name A optional name attribute to add to the element if created.
      * @return The NodeTraverser reference, which can be used to create further child nodes.
@@ -63,8 +64,15 @@ public class NodeTraverser {
         if (nodes != null) {
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
-                if ((name == null || name.equals(node.getNodeName()))
-                        && element.equals(node.getAttributes().getNamedItem("name"))) {
+                NamedNodeMap attributes = node.getAttributes();
+                String nameAttr = null;
+                if (attributes != null) {
+                	Node attrNode = attributes.getNamedItem("name");
+                	if (attrNode != null && attrNode.getNodeType() == Node.ATTRIBUTE_NODE) {
+                		nameAttr = attrNode.getNodeValue();
+                	}
+                }
+                if (element.equals(node.getNodeName()) && (name == null || name.equals(nameAttr))) {
                     childNode = node;
                     break;
                 }
@@ -77,7 +85,6 @@ public class NodeTraverser {
             }
             currentNode.appendChild(newNode);
             childNode = newNode;
-
         }
         currentNode = childNode;
 
