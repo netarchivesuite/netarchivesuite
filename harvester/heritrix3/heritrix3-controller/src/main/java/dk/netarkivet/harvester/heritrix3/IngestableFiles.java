@@ -35,6 +35,7 @@ import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 
@@ -169,13 +170,13 @@ public class IngestableFiles {
      * Gets the files containing the metadata.
      *
      * @return the files in the metadata dir
-     * @throws PermissionDenied if the metadata file is not ready, either because generation is still going on or there
+     * @throws IllegalState if the metadata file is not ready, either because generation is still going on or there
      * was an error generating the metadata.
      */
     public List<File> getMetadataArcFiles() {
         // Our one known metadata file must exist.
         if (!isMetadataReady()) {
-            throw new PermissionDenied("Metadata file " + getMetadataFile().getAbsolutePath() + " does not exist");
+            throw new IllegalState("Metadata file " + getMetadataFile().getAbsolutePath() + " does not exist");
         }
         return Arrays.asList(new File[] {getMetadataFile()});
     }
@@ -258,6 +259,8 @@ public class IngestableFiles {
             if (!warcsdir.isDirectory()) {
                 throw new IOFailure(warcsdir.getPath() + " is not a directory");
             }
+	    log
+
             return Arrays.asList(warcsdir.listFiles(FileUtils.WARCS_FILTER));
         } else {
             return new LinkedList<File>();
