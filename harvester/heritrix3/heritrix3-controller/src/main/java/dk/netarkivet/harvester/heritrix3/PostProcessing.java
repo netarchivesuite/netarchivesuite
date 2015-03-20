@@ -118,7 +118,6 @@ public class PostProcessing {
      */
     public void doPostProcessing(File crawlDir, Throwable crawlException) throws IOFailure {
         log.debug("Post-processing files in '{}'", crawlDir.getAbsolutePath());
-        //FIXME: Is it necessary to change this????
         if (!PersistentJobData.existsIn(crawlDir)) {
             throw new IOFailure("No harvestInfo found in directory: " + crawlDir.getAbsolutePath());
         }
@@ -129,7 +128,7 @@ public class PostProcessing {
         StringBuilder errorMessage = new StringBuilder();
         HarvestReport dhr = null;
         List<File> failedFiles = new ArrayList<File>();
-        // FIXME this is not yet implemented
+
         Heritrix3Files files = Heritrix3Files.getH3HeritrixFiles(crawlDir, harvestInfo);
         
         try {
@@ -158,18 +157,22 @@ public class PostProcessing {
                 setErrorMessages(csm, crawlException, errorMessage.toString(), dhr == null, failedFiles.size());
             }
             try {
-		if (jmsConnection != null) {
-	                jmsConnection.send(csm); 
-		}
-                if (crawlException == null && errorMessage.length() == 0) {
-                    files.deleteFinalLogs();
-                }
+            	if (jmsConnection != null) {
+            		jmsConnection.send(csm); 
+            	} else {
+            		log.error("Message not sent, as jmsConnection variable was null!");
+            	}
+            	if (crawlException == null && errorMessage.length() == 0) {
+            		log.info("Deleting final logs");
+            		files.deleteFinalLogs();
+            	}
             } finally {
                 // Delete superfluous files and move the rest to oldjobs.
                 // Cleanup is in an extra finally, because it consists of large amounts
                 // of data we need to remove, even on send trouble.
-                log.info("Cleanup after harvesting job with id: {}.", jobID);
-                files.cleanUpAfterHarvest(new File(Settings.get(Heritrix3Settings.HARVEST_CONTROLLER_OLDJOBSDIR)));
+            	File oldJobsdir = new File(Settings.get(Heritrix3Settings.HARVEST_CONTROLLER_OLDJOBSDIR));
+                log.info("Cleanup after harvesting job with id '{}' and moving the rest of the job to oldjobsdir '{}' ", jobID, oldJobsdir);
+                files.cleanUpAfterHarvest(oldJobsdir);
             }
         }
         log.info("Done post-processing files for job {} in dir: '{}'", jobID, crawlDir.getAbsolutePath());

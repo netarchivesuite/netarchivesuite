@@ -129,7 +129,7 @@ public class HarvestDocumentation {
             }
 
             // Insert the harvestdetails into metadata archivefile.
-            filesAddedAndNowDeletable = writeHarvestDetails(jobID, harvestID, crawlDir, mdfw,
+            filesAddedAndNowDeletable = writeHarvestDetails(jobID, harvestID, ingestables, mdfw,
                     Constants.getHeritrixVersionString());
             // All these files just added to the metadata archivefile can now be deleted
             // except for the files we need for later processing):
@@ -261,23 +261,52 @@ public class HarvestDocumentation {
      * @return a list of files added to the archive file.
      * @throws ArgumentNotValid If null arguments occur
      */
-    private static List<File> writeHarvestDetails(long jobID, long harvestID, File crawlDir, MetadataFileWriter mdfw,
+    private static List<File> writeHarvestDetails(long jobID, long harvestID, IngestableFiles ingestableFiles, MetadataFileWriter mdfw,
             String heritrixVersion) {
         List<File> filesAdded = new ArrayList<File>();
-
+        
         // We will sort the files by URL
         TreeSet<MetadataFile> files = new TreeSet<MetadataFile>();
 
-        // List heritrix files in the crawl directory
+        // look for files in the crawldir and the ${heritrix3jobdir}, and ${heritrix3jobdir}/latest
+        // - reports is relative to ${heritrix3jobdir}/latest/ 
+        // - logs is relative to ${heritrix3jobdir}
+        File crawlDir = ingestableFiles.getCrawlDir();
+        File jobsDir = ingestableFiles.getHeritrix3JobDir();
+        File reportsDir = new File(jobsDir, "reports");
+        
+        
+        // Find and add Heritrix files in the crawl directory
         File[] heritrixFiles = crawlDir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File f) {
                 return (f.isFile() && f.getName().matches(MetadataFile.HERITRIX_FILE_PATTERN));
             }
         });
-
-        // Add files in the crawl directory
+        
         for (File hf : heritrixFiles) {
+            files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
+        }
+        
+        // Find and add Heritrix files in the heritrixjobdir
+        File[] heritrixFilesJobDir = jobsDir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return (f.isFile() && f.getName().matches(MetadataFile.HERITRIX_FILE_PATTERN));
+            }
+        });
+        for (File hf : heritrixFilesJobDir) {
+            files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
+        }
+        // Find and add Heritrix files in the heritrixReportsDir
+        File[] heritrixFilesReports = reportsDir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return (f.isFile() && f.getName().matches(MetadataFile.HERITRIX_FILE_PATTERN));
+            }
+        });
+        
+        for (File hf : heritrixFilesReports) {
             files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
         }
         
@@ -298,7 +327,7 @@ public class HarvestDocumentation {
         }
 
         // Add log files
-        File logDir = new File(crawlDir, "logs");
+        File logDir = new File(jobsDir, "logs");
         if (logDir.exists()) {
             File[] heritrixLogFiles = logDir.listFiles(new FileFilter() {
                 @Override

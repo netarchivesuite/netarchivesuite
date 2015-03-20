@@ -1,0 +1,11 @@
+These files here are used to deploy a NAS QUICKSTART system.
+
+The mq.sh can be used to install the necessary JMS-broker, a prerequisite before installing
+the NAS quickstart system.
+
+The install scripts can be used to deploy NAS to test@localhost using ssh.
+In order for seemless deployment, you need to add the ssh public key to the test@localhost:/.ssh/authorized_keys file
+
+Note that NAS-5.0 requires Java 8 to build and to run.
+ 
+

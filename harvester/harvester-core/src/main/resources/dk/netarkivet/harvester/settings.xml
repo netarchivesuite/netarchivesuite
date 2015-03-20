@@ -149,7 +149,7 @@ National Library.
                 <enabled>true</enabled>
             </deduplication>
             <metadata>
-                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
+                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out|\.cxml)</heritrixFilePattern>
                 <reportFilePattern>.*-report.txt</reportFilePattern>
                 <logFilePattern>.*(\.log|\.out)</logFilePattern>
                 <archiveFilesReport>

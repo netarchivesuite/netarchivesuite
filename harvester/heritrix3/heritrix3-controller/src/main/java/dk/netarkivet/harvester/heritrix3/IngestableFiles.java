@@ -259,12 +259,16 @@ public class IngestableFiles {
             if (!warcsdir.isDirectory()) {
                 throw new IOFailure(warcsdir.getPath() + " is not a directory");
             }
-	    log
+	    //log
 
             return Arrays.asList(warcsdir.listFiles(FileUtils.WARCS_FILTER));
         } else {
             return new LinkedList<File>();
         }
+    }
+    
+    public File getHeritrix3JobDir() {
+    	return this.heritrixJobDir;
     }
 
     /**

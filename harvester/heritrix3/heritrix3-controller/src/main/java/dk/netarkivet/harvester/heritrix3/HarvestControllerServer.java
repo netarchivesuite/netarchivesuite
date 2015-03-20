@@ -162,8 +162,6 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         }
         log.info("Harvesting requires at least {} bytes free.", minSpaceRequired);
 
-        postProcessing = PostProcessing.getInstance(jmsConnection);
-
         // Get JMS-connection
         // Channel THIS_CLIENT is only used for replies to store messages so
         // do not set as listener here. It is registered in the arcrepository
@@ -172,6 +170,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         // registered below.
 
         jmsConnection = JMSConnectionFactory.getInstance();
+        postProcessing = PostProcessing.getInstance(jmsConnection);
         log.debug("Obtained JMS connection.");
 
         status = new CrawlStatus();
