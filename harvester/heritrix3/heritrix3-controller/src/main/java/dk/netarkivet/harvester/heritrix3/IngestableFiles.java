@@ -237,14 +237,14 @@ public class IngestableFiles {
      * @return the arcs dir in the our crawl directory.
      */
     public File getArcsDir() {
-        return new File(heritrixJobDir, Constants.ARCDIRECTORY_NAME);
+        return new File(heritrixJobDir, "latest/" + Constants.ARCDIRECTORY_NAME);
     }
 
     /**
      * @return the warcs dir in the our crawl directory.
      */
     public File getWarcsDir() {
-        return new File(heritrixJobDir, Constants.WARCDIRECTORY_NAME);
+        return new File(heritrixJobDir, "latest/" + Constants.WARCDIRECTORY_NAME);
     }
 
     /**

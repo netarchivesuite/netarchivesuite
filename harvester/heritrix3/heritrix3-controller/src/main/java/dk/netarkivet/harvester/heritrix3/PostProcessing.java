@@ -158,7 +158,9 @@ public class PostProcessing {
                 setErrorMessages(csm, crawlException, errorMessage.toString(), dhr == null, failedFiles.size());
             }
             try {
-                jmsConnection.send(csm);
+		if (jmsConnection != null) {
+	                jmsConnection.send(csm); 
+		}
                 if (crawlException == null && errorMessage.length() == 0) {
                     files.deleteFinalLogs();
                 }
