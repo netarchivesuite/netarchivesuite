@@ -313,9 +313,10 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 // 
   	   String arcWriterBean 
   	   	= "<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">";
-  	   arcWriterBean += "</bean>";
-  	   //TODO add prefix-placeholder and compress setting
-  	   
+  	   // TODO Read compress value from heritrix3Settings
+  	   arcWriterBean += "\n<property name=\"compress\" value=\"false\"/>"
+  			 + "\n<property name=\"prefix\" value=\"" + ARCHIVE_FILE_PREFIX_PLACEHOLDER  
+  	   		+ "\"/></bean>";
   	   return arcWriterBean;  			      
   	}
 
@@ -341,6 +342,13 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   					+ "' is missing");
   		}
   		StringBuilder propertyBuilder = new StringBuilder();
+  		// TODO Read template from Heritrix3Settings
+  		propertyBuilder.append(propertyName + "template" + valuePrefix 
+  				+ "${prefix}-${timestamp17}-${serialno}-${heritrix.hostname}"
+  				// Default value: ${prefix}-${timestamp17}-${serialno}-${heritrix.pid}~${heritrix.hostname}~${heritrix.port}
+  				+ valueSuffix + propertyEnd);
+  		propertyBuilder.append(propertyName + "compress" + valuePrefix + "false"  // TODO Replace false by Heritrix3Settingsvalue 
+  				+ valueSuffix + propertyEnd);
   		propertyBuilder.append(propertyName + "prefix" + valuePrefix 
   				+ ARCHIVE_FILE_PREFIX_PLACEHOLDER
   				+ valueSuffix + propertyEnd);
@@ -361,10 +369,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   		propertyBuilder.append(propertyName + "skipIdenticalDigests" + valuePrefix 
   				+ Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS)
   				+ valueSuffix + propertyEnd);
-  		propertyBuilder.append(		
+ 		propertyBuilder.append(		
   			  propertyName + "startNewFilesOnCheckpoint" + valuePrefix 
   				+ Settings.get(HarvesterSettings.HERITRIX_WARC_START_NEW_FILES_ON_CHECKPOINT)
   				+ valueSuffix + propertyEnd);
+  		
   		warcWriterProcessorBean += propertyBuilder.toString();
   		warcWriterProcessorBean += "\n\n%{METADATA_ITEMS_PLACEHOLDER}\n</bean>";
   		String templateNew = template.replace(

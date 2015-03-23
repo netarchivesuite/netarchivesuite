@@ -285,31 +285,39 @@ public class HarvestDocumentation {
                 return (f.isFile() && f.getName().matches(MetadataFile.HERITRIX_FILE_PATTERN));
             }
         });
-        
         for (File hf : heritrixFiles) {
             files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
         }
-        
-        // Find and add Heritrix files in the heritrixjobdir
-        File[] heritrixFilesJobDir = jobsDir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return (f.isFile() && f.getName().matches(MetadataFile.HERITRIX_FILE_PATTERN));
-            }
-        });
-        for (File hf : heritrixFilesJobDir) {
-            files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
+
+        // Find and add Heritrix files in the heritrixjobdir (if it exists)
+        if (jobsDir.exists()) {
+        	File[] heritrixFilesJobDir = jobsDir.listFiles(new FileFilter() {
+        		@Override
+        		public boolean accept(File f) {
+        			return (f.isFile() && f.getName().matches(MetadataFile.HERITRIX_FILE_PATTERN));
+        		}
+        	});
+        	for (File hf : heritrixFilesJobDir) {
+        		files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
+        	}
+        } else {
+        	log.warn("The directory {} does not exist", jobsDir.getAbsolutePath()); 
         }
-        // Find and add Heritrix files in the heritrixReportsDir
-        File[] heritrixFilesReports = reportsDir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return (f.isFile() && f.getName().matches(MetadataFile.HERITRIX_FILE_PATTERN));
-            }
-        });
         
-        for (File hf : heritrixFilesReports) {
-            files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
+        // Find and add Heritrix files in the heritrixReportsDir (if it exists)
+        if (reportsDir.exists()) {
+        	File[] heritrixFilesReports = reportsDir.listFiles(new FileFilter() {
+        		@Override
+        		public boolean accept(File f) {
+        			return (f.isFile() && f.getName().matches(MetadataFile.HERITRIX_FILE_PATTERN));
+        		}
+        	});
+
+        	for (File hf : heritrixFilesReports) {
+        		files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
+        	} 
+        } else {
+        	log.warn("The directory {} does not exist", reportsDir.getAbsolutePath());
         }
         
         // Generate an arcfiles-report.txt if configured to do so.
