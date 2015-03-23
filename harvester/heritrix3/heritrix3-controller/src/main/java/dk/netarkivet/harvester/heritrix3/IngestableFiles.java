@@ -249,6 +249,17 @@ public class IngestableFiles {
     }
 
     /**
+     * @return the warcs dir in the our crawl directory.
+     */
+    public File getReportsDir() {
+        return new File(heritrixJobDir, "latest/reports");
+    }
+    
+    
+    
+    
+    
+    /**
      * Get a list of all WARC files that should get ingested. Any open files should be closed with closeOpenFiles first.
      *
      * @return The WARC files that are ready to get ingested.

@@ -127,8 +127,8 @@ National Library.
                 </warc>
             </heritrix>
             <frontier>
-                <!-- 10 minutes -->
-                <frontierReportWaitTime>600</frontierReportWaitTime>
+                <!-- 2,5 minutes -->
+                <frontierReportWaitTime>150</frontierReportWaitTime>
                 <filter>
                     <class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
                     <args></args>
@@ -148,7 +148,7 @@ National Library.
                 <enabled>true</enabled>
             </deduplication>
             <metadata>
-                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
+                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out|\.cxml)</heritrixFilePattern>
                 <reportFilePattern>.*-report.txt</reportFilePattern>
                 <logFilePattern>.*(\.log|\.out)</logFilePattern>
                 <archiveFilesReport>

@@ -273,8 +273,10 @@ public class HarvestDocumentation {
         // - logs is relative to ${heritrix3jobdir}
         File crawlDir = ingestableFiles.getCrawlDir();
         File jobsDir = ingestableFiles.getHeritrix3JobDir();
-        File reportsDir = new File(jobsDir, "reports");
+        File reportsDir = ingestableFiles.getReportsDir();
         
+        log.info("Looking for heritrix files in the following directories: {},{}, {}",
+        		crawlDir.getAbsolutePath(), jobsDir.getAbsolutePath(), reportsDir.getAbsolutePath());
         
         // Find and add Heritrix files in the crawl directory
         File[] heritrixFiles = crawlDir.listFiles(new FileFilter() {
@@ -306,9 +308,9 @@ public class HarvestDocumentation {
             }
         });
         
-        //for (File hf : heritrixFilesReports) {
-        //    files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
-        //}
+        for (File hf : heritrixFilesReports) {
+            files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
+        }
         
         // Generate an arcfiles-report.txt if configured to do so.
         // FIXME This is not possible to extract from the crawl.log (Is this list available in any other way?)
