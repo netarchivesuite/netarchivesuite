@@ -164,4 +164,8 @@ public final class Constants {
 
     /** The current website for the NetarchiveSuite project. */
     public static final String PROJECT_WEBSITE = "https://sbforge.org/display/NAS";
+
+	public static String getHeritrix3VersionString() {
+		return "3.3.0-LBS-2014-03"; 
+	}
 }

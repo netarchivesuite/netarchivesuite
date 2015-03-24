@@ -129,8 +129,7 @@ public class HarvestDocumentation {
             }
 
             // Insert the harvestdetails into metadata archivefile.
-            filesAddedAndNowDeletable = writeHarvestDetails(jobID, harvestID, ingestables, mdfw,
-                    Constants.getHeritrixVersionString());
+            filesAddedAndNowDeletable = writeHarvestDetails(jobID, harvestID, ingestables, mdfw, Constants.getHeritrix3VersionString());
             // All these files just added to the metadata archivefile can now be deleted
             // except for the files we need for later processing):
             // - crawl.log is needed to create domainharvestreport later
