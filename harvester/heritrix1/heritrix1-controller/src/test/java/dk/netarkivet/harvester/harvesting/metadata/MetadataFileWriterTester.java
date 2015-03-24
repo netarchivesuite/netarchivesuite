@@ -31,12 +31,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.archive.util.anvl.ANVLRecord;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.TestName;
+import org.jwat.common.ANVLRecord;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SlowTest;

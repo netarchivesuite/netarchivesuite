@@ -25,14 +25,28 @@ package dk.netarkivet.harvester.harvesting.metadata;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
 
-import org.archive.io.arc.ARCWriter;
+import org.apache.commons.io.IOUtils;
+import org.jwat.arc.ArcFileNaming;
+import org.jwat.arc.ArcFileNamingSingleFile;
+import org.jwat.arc.ArcFileWriter;
+import org.jwat.arc.ArcFileWriterConfig;
+import org.jwat.arc.ArcHeader;
+import org.jwat.arc.ArcRecord;
+import org.jwat.arc.ArcRecordBase;
+import org.jwat.arc.ArcVersion;
+import org.jwat.arc.ArcVersionBlock;
+import org.jwat.arc.ArcVersionHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.arc.ARCUtils;
+import dk.netarkivet.common.utils.SystemUtils;
 
 /**
  * MetadataFileWriter that writes to ARC files.
@@ -42,7 +56,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     private static final Logger log = LoggerFactory.getLogger(MetadataFileWriterArc.class);
 
     /** Writer to this jobs metadatafile. This is closed when the metadata is marked as ready. */
-    private ARCWriter writer = null;
+    private ArcFileWriter writer = null;
 
     /**
      * Create a <code>MetadataFileWriter</code> for ARC output.
@@ -52,8 +66,35 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
      */
     public static MetadataFileWriter createWriter(File metadataARCFile) {
         MetadataFileWriterArc mtfw = new MetadataFileWriterArc();
-        mtfw.writer = ARCUtils.createARCWriter(metadataARCFile);
+    	ArcFileNaming naming = new ArcFileNamingSingleFile(metadataARCFile);
+    	ArcFileWriterConfig config = new ArcFileWriterConfig(metadataARCFile.getParentFile(), false, Long.MAX_VALUE, true);
+        mtfw.writer = ArcFileWriter.getArcWriterInstance(naming, config);
+        mtfw.open();
         return mtfw;
+    }
+
+    protected void open() {
+        ArcVersionHeader versionHeader;
+        ArcRecordBase record;
+        byte[] versionHeaderBytes;
+        try {
+            writer.open();
+            versionHeader = ArcVersionHeader.create(ArcVersion.VERSION_1, "InternetArchive");
+            versionHeader.rebuild();
+            versionHeaderBytes = versionHeader.getHeader();
+            record = ArcVersionBlock.createRecord(writer.writer);
+            record.header.recordFieldVersion = 1;
+            record.header.urlStr = "filedesc://" + writer.getFile().getName();
+            record.header.ipAddressStr = "0.0.0.0";
+            record.header.archiveDate = new Date();
+            record.header.contentTypeStr = "text/plain";
+            record.header.archiveLength = new Long(versionHeaderBytes.length);
+            writer.writer.writeHeader(record);
+            writer.writer.writePayload(versionHeaderBytes);
+            writer.writer.closeRecord();
+        } catch (IOException e) {
+            throw new IOFailure("Error opening MetadataFileWriterArc", e);
+        }
     }
 
     @Override
@@ -75,42 +116,68 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
 
     @Override
     public void writeFileTo(File file, String uri, String mime) {
-        ARCUtils.writeFileToARC(writer, file, uri, mime);
+        writeTo(file, uri, mime);
     }
 
     /**
-     * Writes a File to an ARCWriter, if available, otherwise logs the failure to the class-logger.
+     * Writes a File to an ArcWriter, if available, otherwise logs the failure to the class-logger.
      *
      * @param fileToArchive the File to archive
      * @param URL the URL with which it is stored in the arcfile
      * @param mimetype The mimetype of the File-contents
      * @return true, if file exists, and is written to the arcfile.
-     * <p>
-     * TODO I wonder if this is a clone of the ARCUtils method. (nicl)
      */
     @Override
     public boolean writeTo(File fileToArchive, String URL, String mimetype) {
-        if (fileToArchive.isFile()) {
-            try {
-                ARCUtils.writeFileToARC(writer, fileToArchive, URL, mimetype);
-            } catch (IOFailure e) {
-                log.warn("Error writing file '{}' to metadata file: ", fileToArchive.getAbsolutePath(), e);
-                return false;
-            }
-            log.debug("Wrote '{}' to '{}'.", fileToArchive.getAbsolutePath(), writer.getFile().getAbsolutePath());
-            return true;
-        } else {
-            log.debug("No '{}' found in dir: {}", fileToArchive.getName(), fileToArchive.getParent());
-            return false;
+        if (!fileToArchive.isFile()) {
+            throw new IOFailure("Not a file: " + fileToArchive.getPath());
         }
+        log.info("{} {}", fileToArchive, fileToArchive.length());
+        InputStream in = null;
+        try {
+            ArcRecordBase record = ArcRecord.createRecord(writer.writer);
+            ArcHeader header = record.header;
+            header.urlStr = URL;
+            header.archiveDate = new Date(fileToArchive.lastModified());
+            header.ipAddressStr = SystemUtils.getLocalIP();
+            header.contentTypeStr = mimetype;
+            header.archiveLength = fileToArchive.length();
+            in = new FileInputStream(fileToArchive);
+            writer.writer.writeHeader(record);
+            writer.writer.streamPayload(in);
+            writer.writer.closeRecord();
+        } catch (FileNotFoundException e) {
+            throw new IOFailure("Unable to open file: " + fileToArchive.getPath(), e);
+        } catch (IOException e) {
+            throw new IOFailure("Epic IO fail while writing to ARC file: " + fileToArchive.getPath(), e);
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+        return true;
     }
 
-    /* Copied from the ARCWriter. */
+    /* Copied from the ArcWriter. (Before change to JWAT) */
     @Override
     public void write(String uri, String contentType, String hostIP, long fetchBeginTimeStamp, byte[] payload)
             throws IOException {
-        ByteArrayInputStream in = new ByteArrayInputStream(payload);
-        writer.write(uri, contentType, hostIP, fetchBeginTimeStamp, payload.length, in);
+        ByteArrayInputStream in = null;
+        try {
+            ArcRecordBase record = ArcRecord.createRecord(writer.writer);
+            ArcHeader header = record.header;
+            header.urlStr = uri;
+            header.archiveDate = new Date(fetchBeginTimeStamp);
+            header.ipAddressStr = hostIP;
+            header.archiveLength = new Long(payload.length);
+            header.contentTypeStr = contentType;
+            in = new ByteArrayInputStream(payload);
+            writer.writer.writeHeader(record);
+            writer.writer.streamPayload(in);
+            writer.writer.closeRecord();
+        } catch (IOException e) {
+            throw new IOFailure("Epic IO fail while writing payload to ARC file.", e);
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
     }
 
 }

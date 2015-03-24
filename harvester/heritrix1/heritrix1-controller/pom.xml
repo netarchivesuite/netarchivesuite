@@ -19,16 +19,16 @@
       <artifactId>common-core</artifactId>
       <version>${project.version}</version>
       <exclusions>
-<!--
         <exclusion>
           <groupId>org.netpreserve.commons</groupId>
           <artifactId>webarchive-commons</artifactId>
         </exclusion>
--->
+<!--
         <exclusion>
           <groupId>fastutil</groupId>
           <artifactId>fastutil</artifactId>
         </exclusion>
+-->
         <exclusion>
           <groupId>org.gnu.inet</groupId>
           <artifactId>libidn</artifactId>
@@ -458,6 +458,12 @@
       <version>${project.version}</version>
       <scope>test</scope>
       <type>test-jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jwat</groupId>
+      <artifactId>jwat-common</artifactId>
+      <version>${jwat.version}</version>
     </dependency>
 
     <!-- not in Maven Central -->
