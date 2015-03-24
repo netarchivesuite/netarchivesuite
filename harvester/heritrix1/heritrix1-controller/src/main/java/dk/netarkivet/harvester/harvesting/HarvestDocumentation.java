@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-import org.archive.util.anvl.ANVLRecord;
+import org.jwat.common.ANVLRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

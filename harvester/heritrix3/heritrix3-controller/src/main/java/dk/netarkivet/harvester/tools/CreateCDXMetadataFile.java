@@ -37,7 +37,7 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.archive.util.anvl.ANVLRecord;
+import org.jwat.common.ANVLRecord;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -300,7 +300,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         }
 
         private void insertWarcInfo(MetadataFileWriterWarc writer, Long jobID) {
-            ANVLRecord infoPayload = new ANVLRecord(3);
+            ANVLRecord infoPayload = new ANVLRecord();
             infoPayload.addLabelValue("software",
                     "NetarchiveSuite/" + dk.netarkivet.common.Constants.getVersionString() + "/"
                             + dk.netarkivet.common.Constants.PROJECT_WEBSITE);

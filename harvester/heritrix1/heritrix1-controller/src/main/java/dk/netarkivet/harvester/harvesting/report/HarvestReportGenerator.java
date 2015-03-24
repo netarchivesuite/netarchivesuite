@@ -28,11 +28,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.httpclient.URIException;
-import org.archive.url.UsableURI;
+import org.jwat.common.Uri;
+import org.jwat.common.UriProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +42,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.FixedUURI;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -268,7 +269,7 @@ public class HarvestReportGenerator {
                     // Transform any IDNA encoded seedDomain back to Unicode
                     seedDomain = IDNA.toUnicode(seedDomain);
                 }
-            } catch (URIException e) {
+            } catch (URISyntaxException e) {
                 log.debug("Unable to extract a domain from the seedURL found in field 11 of crawl.log: '{}'.", seedURL,
                         e);
             }
@@ -284,7 +285,7 @@ public class HarvestReportGenerator {
                 // Transform the any IDNA encoded domain back to Unicode
                 objectDomain = IDNA.toUnicode(objectDomain);
             }
-        } catch (URIException e) {
+        } catch (URISyntaxException e) {
             log.debug("Unable to extract a domain from the object URL found in field 4 of crawl.log: '{}'.", objectUrl,
                     e);
         }
@@ -363,9 +364,16 @@ public class HarvestReportGenerator {
      * @return the domainName if possible or null, if not possible
      * @throws URIException If unable to create valid URI from the given string
      */
-    private String getDomainNameFromURIString(String uriAsString) throws URIException {
-        UsableURI uuri = new FixedUURI(uriAsString, false);
-        String hostName = uuri.getReferencedHost();
+    private String getDomainNameFromURIString(String uriAsString) throws URISyntaxException {
+        //UsableURI uuri = new FixedUURI(uriAsString, false);
+        //String hostName = uuri.getReferencedHost();
+        Uri uri = new Uri(uriAsString, UriProfile.RFC3986_ABS_16BIT_LAX);
+        String hostName;
+        if ("dns".equals(uri.getScheme())) {
+        	hostName = uri.getPath();
+        } else {
+            hostName = uri.getHost();
+        }
         if (hostName == null) {
             log.debug("Not possible to extract domainname from URL: {}", uriAsString);
             return null;
