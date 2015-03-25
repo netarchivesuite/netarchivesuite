@@ -39,6 +39,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
@@ -192,7 +193,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
         } else {
         	throw new IOFailure("Heritrix3 wrapper returned null engine result.");
         }
-        
+
         // POST: Heritrix3 is up and running and responds nicely
         log.info("Heritrix3 REST interface connectable.");
     }
@@ -255,7 +256,6 @@ public class HeritrixController extends AbstractRestHeritrixController {
     	} else {
     		log.warn("Job '{}' has maybe already been terminated and/or heritrix3 is no longer running", this.jobName); 
     	}
-        
     }
 
     /**
@@ -276,12 +276,32 @@ public class HeritrixController extends AbstractRestHeritrixController {
      * @see IHeritrixController#cleanup()
      */
     public void cleanup(File crawlDir) {
-        // Before cleaning up, we need to wait for the reports to be generated
-        //waitForReportGeneration(crawlDir);
-        // TODO Should we teardown job as well????
-        EngineResult result = h3wrapper.exitJavaProcess(null);
-        // TODO examine the result of exitJavaProcess
-        h3launcher.process.destroy(); // TODO Should we catch something here
+    	JobResult jobResult;
+  		try {
+  	        // Before cleaning up, we need to wait for the reports to be generated
+  	        //waitForReportGeneration(crawlDir);
+  	        // TODO Should we teardown job as well????
+  			jobResult = h3wrapper.job(jobName);
+  			if (jobResult != null) {
+  				if (jobResult.status == ResultStatus.OK && jobResult.job.crawlControllerState != null) {
+  					if (CrawlControllerState.FINISHED.name().equals(jobResult.job.crawlControllerState)) {
+  	  		  			jobResult = h3wrapper.teardownJob(jobName);
+  					} else {
+  			      		throw new IOFailure("Heritrix3 job  '" + jobName + "' not finished");
+  					}
+  				}
+  			} else {
+  	      		throw new IOFailure("Unknown error during communication with heritrix3");
+  			}
+  	    	h3wrapper.waitForJobState(jobName, null, 10, 1000);
+  	        EngineResult result = h3wrapper.exitJavaProcess(null);
+  	        if (result == null || (result.status != ResultStatus.RESPONSE_EXCEPTION && result.status != ResultStatus.OFFLINE)) {
+  	        	throw new IOFailure("Heritrix3 could not be shut down");
+  	        }
+  	        //h3launcher.process.destroy(); // TODO Should we catch something here
+      	} catch (Throwable e) {
+      		throw new IOFailure("Unknown error during communication with heritrix3", e);
+      	}
     }
 
     /**
