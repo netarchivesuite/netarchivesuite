@@ -365,8 +365,6 @@ public class HarvestReportGenerator {
      * @throws URIException If unable to create valid URI from the given string
      */
     private String getDomainNameFromURIString(String uriAsString) throws URISyntaxException {
-        //UsableURI uuri = new FixedUURI(uriAsString, false);
-        //String hostName = uuri.getReferencedHost();
         Uri uri = new Uri(uriAsString, UriProfile.RFC3986_ABS_16BIT_LAX);
         String hostName;
         if ("dns".equals(uri.getScheme())) {

@@ -471,8 +471,6 @@ public class HarvestDocumentationTester {
         String URL = "metadata://netarkivet.dk/crawl/setup/order.xml?heritrixVersion="
                 + Constants.getHeritrixVersionString() + "&harvestid=" + Heritrix1ControllerTestInfo.HARVEST_ID + "&jobid="
                 + Heritrix1ControllerTestInfo.JOB_ID;
-        // debug
-        System.out.println(metadataArcFile.getPath());
         findAndVerifyMetadata(metadataArcFile, URL);
         checkThatNoLongerExist(new File(WORKING_DIR, "order.xml"));
 

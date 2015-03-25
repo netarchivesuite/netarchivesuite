@@ -41,25 +41,14 @@ public class OrderXmlBuilder extends XmlBuilder {
     public static OrderXmlBuilder createDefault() { return createDefault(ORDER_XML_NAME); }
     public static OrderXmlBuilder createDefault(String name) { return new OrderXmlBuilder(name);}
 
-    public OrderXmlBuilder enableDeduplication() {
+    public OrderXmlBuilder setDeduplication(boolean dedup) {
         Node deduplicationNode = NodeTraverser.create(xmlDoc)
         		.getChildNode("crawl-order", null)
                 .getChildNode("controller", null)
                 .getChildNode("map", "write-processors")
                 .getChildNode("newObject", "DeDuplicator")
                 .getChildNode("boolean", "enabled").getNode();
-        deduplicationNode.setTextContent("true");
-        return this;
-    }
-
-    public OrderXmlBuilder disableDeduplication() {
-        Node deduplicationNode = NodeTraverser.create(xmlDoc)
-        		.getChildNode("crawl-order", null)
-                .getChildNode("controller", null)
-                .getChildNode("map", "write-processors")
-                .getChildNode("newObject", "DeDuplicator")
-                .getChildNode("boolean", "enabled").getNode();
-        deduplicationNode.setTextContent("false");
+        deduplicationNode.setTextContent(Boolean.toString(dedup));
         return this;
     }
 

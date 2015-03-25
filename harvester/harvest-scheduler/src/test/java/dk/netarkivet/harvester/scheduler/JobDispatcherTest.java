@@ -211,11 +211,7 @@ public class JobDispatcherTest {
         when(harvestDefinitionDAO.getHarvestName(harvest.getOid())).thenReturn(harvest.getName());
         when(harvestDefinitionDAO.getSparsePartialHarvest(harvest.getName())).thenReturn(harvest);
         OrderXmlBuilder builder = OrderXmlBuilder.createDefault();
-        if (dedup) {
-            builder = builder.enableDeduplication();
-        } else {
-            builder = builder.disableDeduplication();
-        }
+        builder = builder.setDeduplication(dedup);
         HeritrixTemplate h1temp = new H1HeritrixTemplate(builder.getDoc(), false);
         when(job.getOrderXMLdoc()).thenReturn(h1temp);
         when(job.getChannel()).thenReturn(SELECTIVE_HARVEST_CHANNEL.getName());

@@ -132,7 +132,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
         if (!fileToArchive.isFile()) {
             throw new IOFailure("Not a file: " + fileToArchive.getPath());
         }
-        log.info("{} {}", fileToArchive, fileToArchive.length());
+        log.info("Writing file '{}' to ARC file: {}", fileToArchive, fileToArchive.length());
         InputStream in = null;
         try {
             ArcRecordBase record = ArcRecord.createRecord(writer.writer);
