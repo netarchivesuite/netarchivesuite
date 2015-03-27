@@ -1,3 +1,5 @@
 /admin.data
 /derby.log
 /target/
+derbyDB
+tests/commontempdir
