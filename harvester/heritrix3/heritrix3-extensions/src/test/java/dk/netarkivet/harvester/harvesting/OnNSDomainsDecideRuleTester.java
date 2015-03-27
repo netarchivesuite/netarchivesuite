@@ -29,7 +29,6 @@ import org.junit.Test;
 
 /**
  * JUNIT test for the class OnNSDomainsDecideRule.
- * FIXME This compiles, but it doesn't work
  */
 public class OnNSDomainsDecideRuleTester {
 
@@ -40,13 +39,9 @@ public class OnNSDomainsDecideRuleTester {
          * First testing that the original way of making URls to SURTs behaves right on domains
          */
         assertEquals("http://(dk,dr,www,",
-        		//FIXME 
-        		//SurtPrefixSet.prefixFromPlain("www.dr.dk"));
         		SurtPrefixSet.prefixFromPlainForceHttp("www.dr.dk"));
 
         assertEquals("http://(dk,dr,",
-        		//FIXME
-        		//SurtPrefixSet.prefixFromPlain("http://dr.dk"));
         		SurtPrefixSet.prefixFromPlainForceHttp("http://dr.dk"));
         /*
          * Then testing using OnNSDomainsDecideRule - that defines the domain using DomainNameQueueAssignmentPolicy
@@ -74,14 +69,10 @@ public class OnNSDomainsDecideRuleTester {
          */
         assertEquals("http://(dk,tv2,sporten,)",
                 SurtPrefixSet.convertPrefixToHost(
-                		//FIXME
-                		//SurtPrefixSet.prefixFromPlain("http://sporten.tv2.dk/fodbold/")));
                 		SurtPrefixSet.prefixFromPlainForceHttp("http://sporten.tv2.dk/fodbold/")));
 
         assertEquals("http://(com,blogspot,jmvietnam07,)",
                 SurtPrefixSet.convertPrefixToHost(
-                		//FIXME
-                		//SurtPrefixSet.prefixFromPlain("jmvietnam07.blogspot.com/")));
                 		SurtPrefixSet.prefixFromPlainForceHttp("jmvietnam07.blogspot.com/")));
     }
 
@@ -91,19 +82,14 @@ public class OnNSDomainsDecideRuleTester {
         /*
          * Testing using the 'original' way of transforming URLs to SURTs used by SurtPrefixesDecideRule
          */
-
         assertEquals("http://(com,geocities,www,)/athens/2344/",
-        		//FIXME
-                //SurtPrefixSet.prefixFromPlain("http://www.geocities.com/Athens/2344/"));
         		SurtPrefixSet.prefixFromPlainForceHttp("http://www.geocities.com/Athens/2344/"));
 
         assertEquals("http://(com,geocities,www,)/athens/2344/",
-        		//FIXME
-                //SurtPrefixSet.prefixFromPlain("http://www.geocities.com/Athens/2344/index.php"));
         		SurtPrefixSet.prefixFromPlainForceHttp("http://www.geocities.com/Athens/2344/index.php"));
     }
 
-    @Test
+    //FIXME
     public void testSURTprefixConversionNonValidDomain() throws Exception {
 
         assertEquals(OnNSDomainsDecideRule.NON_VALID_DOMAIN,

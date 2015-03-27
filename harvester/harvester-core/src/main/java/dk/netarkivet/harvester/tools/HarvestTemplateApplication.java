@@ -29,12 +29,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.dom4j.Document;
-import org.dom4j.io.XMLWriter;
-
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 
@@ -154,9 +149,8 @@ public class HarvestTemplateApplication {
                         .println("There is no template named '" + templateName + "'. Use the create-command instead.");
             } else {
                 try {
-                    // Try to convert orderxml-file to Document object
-                    Document doc = XmlUtils.getXmlDoc(templateFile);
-                    H1HeritrixTemplate ht = new H1HeritrixTemplate(doc);
+                    // Try to convert orderxml-file to HeritrixTemplate object
+                    HeritrixTemplate ht = HeritrixTemplate.read(templateFile);
                     dao.update(templateName, ht);
                     System.out.println("The template '" + templateName + "' has now been updated.");
                 } catch (IOFailure e) {
@@ -184,9 +178,8 @@ public class HarvestTemplateApplication {
                 System.err.println("There is already a template with name '" + templateName + "'.");
             } else {
                 try {
-                    // Try to convert orderxml-file to Document object
-                    Document doc = XmlUtils.getXmlDoc(templateFile);
-                    H1HeritrixTemplate ht = new H1HeritrixTemplate(doc);
+                    // Try to convert orderxml-file to HeritrixTemplate object
+                    HeritrixTemplate ht = HeritrixTemplate.read(templateFile);
                     dao.create(templateName, ht);
                     System.out.println("The template '" + templateName + "' has now been created.");
                 } catch (IOFailure e) {
