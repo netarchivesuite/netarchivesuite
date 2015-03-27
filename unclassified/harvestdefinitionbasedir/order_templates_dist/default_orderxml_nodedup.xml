@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  HERITRIX 3 CRAWL JOB CONFIGURATION FILE - For use with NetarchiveSuite 5.0
+  HERITRIX 3 CRAWL JOB CONFIGURATION FILE - MIGRATE TEMPLATE
+  
+   This is a relatively minimal configuration suitable for many crawls.
+   
+   Commented-out beans and properties are provided as an example; values
+   shown in comments reflect the actual defaults which are in effect
+   without specification. (To change from the default behavior, 
+   uncomment AND alter the shown values.)   
+
+   This is also the first step towards a way of migrating our NetarchiveSuite H1 templates to H3.3.0
+
+   This means adding beans for a QuotaEnforcer, a DeDuplicator, a WARCWriterProcessor with added WarcInfo metadata.
 
  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -36,8 +47,10 @@
 ### some of these overrides is actually just the default value, so they can be skipped
 ###
 
-metadata.jobName=host_100levels_orderxml
-metadata.description=Special template for host-distinctive domains
+## Q: can overrides like 'fetchDns.enabled=false' be used to disable the beans?
+
+metadata.jobName=default_orderxml_nodedup
+metadata.description=Default Profile with deduplication disabled
 metadata.operator=Admin
 metadata.userAgentTemplate=Mozilla/5.0 (compatible; heritrix/3.3.0 +@OPERATOR_CONTACT_URL@)
 ## Edit the two following lines to match your setup.
@@ -51,7 +64,7 @@ crawlLimiter.maxDocumentsDownload=0
 ## MaxTimeseconds inserted by NetarchiveSuite (Delete line, if behaviour unwanted)
 crawlLimiter.maxTimeSeconds=%{MAX_TIME_SECONDS_PLACEHOLDER}
 
-crawlController.maxToeThreads=100
+crawlController.maxToeThreads=50
 crawlController.recorderOutBufferBytes=4096
 crawlController.recorderInBufferBytes=65536
 crawlController.pauseAtStart=false
@@ -64,15 +77,10 @@ bdb.cachePercent=40
 ## seeds properties
 seeds.sourceTagSeeds=false
 
-## Override properties for org.archive.modules.deciderules.TooManyHopsDecideRule
-scope.rules[2].maxHops=100
-
-## Override properties for org.archive.modules.deciderules.TransclusionDecideRule
-scope.rules[3].maxTransHops=10
-scope.rules[3].maxSpeculativeHops=1
-
-## Override properties org.archive.modules.deciderules.PathologicalPathDecideRule
+scope.rules[2].maxHops=25
 scope.rules[6].maxRepetitions=3
+scope.rules[3].maxTransHops=5
+scope.rules[3].maxSpeculativeHops=1
 
 ## Politeness overrides
 disposition.delayFactor=1.0
@@ -83,12 +91,15 @@ disposition.maxPerHostBandwidthUsageKbSec=500
 preparer.preferenceEmbedHops=1
 preparer.preferenceDepthHops=-1
 
-## Frontier settings
 frontier.maxRetries=3
 frontier.retryDelaySeconds=300
 frontier.recoveryLogEnabled=false
 frontier.balanceReplenishAmount=3000
 frontier.errorPenaltyAmount=100
+## Can be used instead of the QuotaEnforcer module. In this case the following line should look 
+## like: frontier.queueTotalBudget=%{FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER}
+## instead of: frontier.queueTotalBudget=
+
 frontier.queueTotalBudget=%{FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER}
 frontier.snoozeLongMs=300000
 
@@ -108,7 +119,7 @@ fetchDns.digestContent=true
 fetchDns.digestAlgorithm=sha1
 
 fetchHttp.enabled=true
-fetchHttp.timeoutSeconds=300
+fetchHttp.timeoutSeconds=1200
 fetchHttp.soTimeoutMs=20000
 fetchHttp.maxFetchKBSec=0
 fetchHttp.maxLengthBytes=0
@@ -133,7 +144,7 @@ extractorCss.enabled=true
 extractorJs.enabled=true
 extractorSwf.enabled=true
 
-candidates.seedsRedirectNewSeeds=true
+candidates.seedsRedirectNewSeeds=false
 statisticsTracker.intervalSeconds=20
 
    </value>
@@ -183,8 +194,8 @@ statisticsTracker.intervalSeconds=20
     <!-- Begin by REJECTing all... -->
     <bean class="org.archive.modules.deciderules.RejectDecideRule">
     </bean>
-    <!-- ...then ACCEPT those urls on the hosts defined by the seeds... -->
-    <bean class="org.archive.modules.deciderules.surt.OnHostsDecideRule">
+    <!-- ...then ACCEPT those within configured/seed-implied SURT prefixes... -->
+    <bean class="org.archive.modules.deciderules.surt.SurtPrefixedDecideRule">
      <!-- <property name="seedsAsSurtPrefixes" value="true" /> -->
      <!-- <property name="alsoCheckVia" value="true" /> -->
      <!-- <property name="surtsSourceFile" value="" /> -->
@@ -210,79 +221,7 @@ statisticsTracker.intervalSeconds=20
     <bean class="org.archive.modules.deciderules.MatchesListRegexDecideRule">
      <property name="listLogicalOr" value="true" />
      <property name="regexList">
-           <list>
-		<value>.*core\.UserAdmin.*core\.UserLogin.*</value>
-		<value>.*core\.UserAdmin.*register\.UserSelfRegistration.*</value>
-		<value>.*\/w\/index\.php\?title=Speci[ae]l:Recentchanges.*</value>
-		<value>.*act=calendar&amp;cal_id=.*</value>
-		<value>.*advCalendar_pi.*</value>
-		<value>.*cal\.asp\?date=.*</value>
-		<value>.*cal\.asp\?view=monthly&amp;date=.*</value>
-		<value>.*cal\.asp\?view=weekly&amp;date=.*</value>
-		<value>.*cal\.asp\?view=yearly&amp;date=.*</value>
-		<value>.*cal\.asp\?view=yearly&amp;year=.*</value>
-		<value>.*cal\/cal_day\.php\?op=day&amp;date=.*</value>
-		<value>.*cal\/cal_week\.php\?op=week&amp;date=.*</value>
-		<value>.*cal\/calendar\.php\?op=cal&amp;month=.*</value>
-		<value>.*cal\/yearcal\.php\?op=yearcal&amp;ycyear=.*</value>
-		<value>.*calendar\.asp\?calmonth=.*</value>
-		<value>.*calendar\.asp\?qMonth=.*</value>
-		<value>.*calendar\.php\?sid=.*</value>
-		<value>.*calendar\.php\?start=.*</value>
-		<value>.*calendar\.php\?Y=.*</value>
-		<value>.*calendar\/\?CLmDemo_horizontal=.*</value>
-		<value>.*calendar_menu\/calendar\.php\?.*</value>
-		<value>.*calendar_scheduler\.php\?d=.*</value>
-		<value>.*calendar_year\.asp\?qYear=.*</value>
-		<value>.*calendarix\/calendar\.php\?op=.*</value>
-		<value>.*calendarix\/yearcal\.php\?op=.*</value>
-		<value>.*calender\/default\.asp\?month=.*</value>
-		<value>.*Default\.asp\?month=.*</value>
-		<value>.*events\.asp\?cat=0&amp;mDate=.*</value>
-		<value>.*events\.asp\?cat=1&amp;mDate=.*</value>
-		<value>.*events\.asp\?MONTH=.*</value>
-		<value>.*events\.asp\?month=.*</value>
-		<value>.*index\.php\?iDate=.*</value>
-		<value>.*index\.php\?module=PostCalendar&amp;func=view.*</value>
-		<value>.*index\.php\?option=com_events&amp;task=view.*</value>
-		<value>.*index\.php\?option=com_events&amp;task=view_day&amp;year=.*</value>
-		<value>.*index\.php\?option=com_events&amp;task=view_detail&amp;year=.*</value>
-		<value>.*index\.php\?option=com_events&amp;task=view_month&amp;year=.*</value>
-		<value>.*index\.php\?option=com_events&amp;task=view_week&amp;year=.*</value>
-                <value>.*index\.php\?option=com_events&amp;task=view_year&amp;year=.*</value>
-                <value>.*index\.php\?option=com_extcalendar&amp;Itemid.*</value>
-                <value>.*modules\.php\?name=Calendar&amp;op=modload&amp;file=index.*</value>
-                <value>.*modules\.php\?name=vwar&amp;file=calendar&amp;action=list&amp;month=.*</value>
-                <value>.*modules\.php\?name=vwar&amp;file=calendar.*</value>
-                <value>.*modules\.php\?name=vWar&amp;mod=calendar.*</value>
-                <value>.*modules\/piCal\/index\.php\?caldate=.*</value>
-                <value>.*modules\/piCal\/index\.php\?cid=.*</value>
-                <value>.*option,com_events\/task,view_day\/year.*</value>
-                <value>.*option,com_events\/task,view_month\/year.*</value>
-                <value>.*option,com_extcalendar\/Itemid.*</value>
-                <value>.*task,view_month\/year.*</value>
-                <value>.*shopping_cart\.php.*</value>
-                <value>.*action.add_product.*</value>
-                <value>.*action.remove_product.*</value>
-                <value>.*action.buy_now.*</value>
-                <value>.*checkout_payment\.php.*</value>
-                <value>.*login.*login.*login.*login.*</value>
-                <value>.*homepage_calendar\.asp.*</value>
-                <value>.*MediaWiki.*Movearticle.*</value>
-                <value>.*index\.php.*action=edit.*</value>
-                <value>.*comcast\.net.*othastar.*</value>
-                <value>.*Login.*Login.*Login.*</value>
-                <value>.*redir.*redir.*redir.*</value>
-                <value>.*bookingsystemtime\.asp\?dato=.*</value>
-                <value>.*bookingsystem\.asp\?date=.*</value>
-                <value>.*cart\.asp\?mode=add.*</value>
-                <value>.*\/photo.*\/photo.*\/photo.*</value>
-                <value>.*\/skins.*\/skins.*\/skins.*</value>
-                <value>.*\/scripts.*\/scripts.*\/scripts.*</value>
-                <value>.*\/styles.*\/styles.*\/styles.*</value>
-                <value>.*\/coppermine\/login\.php\?referer=.*</value>
-                <value>.*\/images.*\/images.*\/images.*</value>
-                <value>.*\/stories.*\/stories.*\/stories.*</value>	
+           <list>	
 <!-- Here we inject our global crawlertraps, domain specific crawlertraps -->
 %{CRAWLERTRAPS_PLACEHOLDER}
            </list>
@@ -328,7 +267,8 @@ statisticsTracker.intervalSeconds=20
   <!-- <property name="canonicalizationPolicy"> 
         <ref bean="canonicalizationPolicy" />
        </property> -->
-   <property name="queueAssignmentPolicy"> <ref bean="ourQueueAssignmentPolicy" /> 
+   <property name="queueAssignmentPolicy"> 
+        <ref bean="queueAssignmentPolicy" /> 
 <!-- Bundled with NAS is two queueAssignPolicies (code is in heritrix3-extensions): 
  dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
  dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy 
@@ -363,23 +303,32 @@ statisticsTracker.intervalSeconds=20
   <!-- <property name="allowByRegex" value="" /> -->
  </bean>
  <bean id="preconditions" class="org.archive.crawler.prefetch.PreconditionEnforcer">
- </bean>
 
+  <!-- refer to a list of credentials -->
+  <property name="credentialStore">
+    <ref bean="credentialStore" />
+  </property> 
+ </bean>
  <bean id="fetchDns" class="org.archive.modules.fetcher.FetchDNS">
  </bean>
+
  <bean id="fetchHttp" class="org.archive.modules.fetcher.FetchHTTP">
  </bean>
+
  <bean id="extractorHttp" class="org.archive.modules.extractor.ExtractorHTTP">
  </bean>
+
  <bean id="extractorHtml" class="org.archive.modules.extractor.ExtractorHTML">
  </bean>
+
  <bean id="extractorCss" class="org.archive.modules.extractor.ExtractorCSS">
  </bean> 
+
  <bean id="extractorJs" class="org.archive.modules.extractor.ExtractorJS">
  </bean>
+
  <bean id="extractorSwf" class="org.archive.modules.extractor.ExtractorSWF">
  </bean> 
-
 
  <!-- assembled into ordered FetchChain bean -->
  <bean id="fetchProcessors" class="org.archive.modules.FetchChain">
@@ -415,21 +364,9 @@ statisticsTracker.intervalSeconds=20
  <!-- processors declared as named beans -->
 
 <!-- Here the (W)arc writer is inserted -->
+
 %{ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER}
 
-<bean id="DeDuplicator" class="is.hi.bok.deduplicator.DeDuplicator">
-<!-- DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER is replaced by path on harvest-server -->
-        <property name="indexLocation" value="%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}"/> 
-        <property name="matchingMethod" value="URL"/> 
-        <property name="tryEquivalent" value="TRUE"/> 
-        <property name="changeContentSize" value="false"/>
-        <property name="mimeFilter" value="^text/.*"/>
-        <property name="filterMode" value="BLACKLIST"/>
-<!--  <property name="analysisMode" value="TIMESTAMP"/> TODO does not work. but isn't a problem, as the default is always USED --> 
-        <property name="origin" value=""/>
-        <property name="originHandling" value="INDEX"/>
-        <property name="statsPerHost" value="true"/>
-</bean> 
 
  <bean id="candidates" class="org.archive.crawler.postprocessor.CandidatesProcessor">
   <!-- <property name="seedsRedirectNewSeeds" value="true" /> -->
@@ -442,10 +379,6 @@ statisticsTracker.intervalSeconds=20
   <property name="processors">
    <list>
     <!-- write to aggregate archival files... -->
-
-    <!-- remove the reference below, and the DeDuplicator bean itself to disable Deduplication -->
-    <ref bean="DeDuplicator"/>
-
     <!-- Here the reference to the (w)arcWriter bean is inserted -->	
 
     %{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}
@@ -505,11 +438,11 @@ statisticsTracker.intervalSeconds=20
 default H3 policy is org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy
 -->
 
- <bean id="ourQueueAssignmentPolicy"
+ <bean id="queueAssignmentPolicy"
   class="dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy"> 
-  <property name="forceQueueAssignment" value=""/> <!-- the default is "" -->
-  <property name="deferToPrevious" value="true"/>  <!-- the default is true -->
-  <property name="parallelQueues" value="1" />     <!-- the default is 1 -->
+  <property name="forceQueueAssignment" value="" /> <!-- TODO evaluate this default -->
+  <property name="deferToPrevious" value="true" />  <!-- TODO evaluate this default -->
+  <property name="parallelQueues" value="1" />      <!-- TODO evaluate this default -->
  </bean>
 
  <!-- URI PRECEDENCE POLICY -->
@@ -524,6 +457,73 @@ default H3 policy is org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPo
  <bean id="costAssignmentPolicy" 
    class="org.archive.crawler.frontier.UnitCostAssignmentPolicy">
  </bean>
+
+ 
+<!-- CREDENTIAL STORE: HTTP authentication or FORM POST credentials -->
+
+<!-- sample use of credentialStore http://stackoverflow.com/questions/17756520/use-of-heritrixs-htmlformcredential-and-credentialstore  -->
+
+ <bean id="credentialStore" 
+   class="org.archive.modules.credential.CredentialStore">
+ <property name="credentials">
+ <map>
+    <entry key="licitationen" value-ref="licitationen_login_1"/>
+    <entry key="mymusic" value-ref="mymusic_login_1"/>
+    <entry key="arto" value-ref="arto_login_1"/>
+    <entry key="heerfordt" value-ref="heerfordt_login_1"/>
+ </map>
+</property>
+</bean>
+
+<bean id="licitationen_login_1" class="org.archive.modules.credential.HttpAuthenticationCredential"> <!-- renamed from Rfc2617Credential -->
+  <property name="domain" value="www.licitationen.dk" />
+  <property name="realm" value="Dagbladet Licitationen"/>
+  <property name="login" value="*****"/>
+  <property name="password" value="*****"/>
+</bean>
+
+<bean id="mymusic_login_1" class="org.archive.modules.credential.HtmlFormCredential">
+  <property name="domain" value="www.mymusic.dk"/>
+  <property name="loginUri" value="http://www.mymusic.dk/konto/login2.asp"/>
+  <!-- <property name="httpMethod" value="Method.POST"/> -->
+  <property name="formItems">
+    <map>
+	<entry key="username" value="*****"/>
+	<entry key="password" value="*****"/>
+	<entry key="autologin" value="y"/>
+    </map>
+  </property>
+</bean>
+
+<bean id="arto_login_1" class="org.archive.modules.credential.HtmlFormCredential">
+  <property name="domain" value="www.arto.dk"/>
+  <property name="loginUri" value="http://www.arto.dk/r2/frames/navigation.asp"/>
+  <!-- <property name="httpMethod" value="Method.POST"/> -->
+  <property name="formItems">
+    <map>
+        <entry key="action" value="submit"/>
+	<entry key="brugernavn" value="****"/>
+	<entry key="kodeord" value="*****"/>
+	<entry key="AutoLogin" value="ja"/>
+	<entry key="loginKnap" value="Log ind"/>
+    </map>
+  </property>
+</bean>
+
+<bean id="heerfordt_login_1" class="org.archive.modules.credential.HtmlFormCredential">
+  <property name="domain" value="heerfordt.dk"/>
+  <property name="loginUri" value="http://heerfordt.dk/"/>
+<!--  <property name="http-method" value="POST"/> -->
+  <property name="formItems">
+    <map>
+	<entry key="Brugernavn" value="*****"/>
+	<entry key="Pw" value="*****"/>
+	<entry key="Login" value="Login"/>
+    </map>
+  </property>
+</bean>
+
+<!-- sample credentials ended -->
 
 <!-- QUOTA ENFORCER BEAN -->
 

@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<crawl-order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="heritrix_settings.xsd">
+    <meta>
+        <name>host_10levels_orderxml</name>
+        <description>Special template for host-distinctive domains</description>
+        <operator>Admin</operator>
+        <organization/>
+        <audience/>
+        <date>20080118111217</date>
+    </meta>
+    <controller>
+        <string name="settings-directory">settings</string>
+        <string name="disk-path"/>
+        <string name="logs-path">logs</string>
+        <string name="checkpoints-path">checkpoints</string>
+        <string name="state-path">state</string>
+        <string name="scratch-path">scratch</string>
+        <long name="max-bytes-download">0</long>
+        <long name="max-document-download">0</long>
+        <long name="max-time-sec">0</long>
+        <integer name="max-toe-threads">100</integer>
+        <integer name="recorder-out-buffer-bytes">4096</integer>
+        <integer name="recorder-in-buffer-bytes">65536</integer>
+        <integer name="bdb-cache-percent">0</integer>
+	<!-- DecidingScope migrated from HostScope -->
+        <newObject name="scope" class="org.archive.crawler.deciderules.DecidingScope">
+            <boolean name="enabled">true</boolean>
+            <string name="seedsfile">seeds.txt</string>
+            <boolean name="reread-seeds-on-config">true</boolean>
+            <!-- DecideRuleSequence. Multiple DecideRules applied in order with last non-PASS the resulting decision -->
+            <newObject name="decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+
+        	<map name="rules">
+			<newObject name="rejectByDefault" class="org.archive.crawler.deciderules.RejectDecideRule"/>
+			<newObject name="acceptIfOnSeedsHosts" class="org.archive.crawler.deciderules.OnHostsDecideRule">
+                                <string name="decision">ACCEPT</string>
+                                <string name="surts-dump-file"/>
+                                <boolean name="also-check-via">false</boolean>
+                                <boolean name="rebuild-on-reconfig">true</boolean>
+                        </newObject>
+
+            		<newObject name="rejectIfTooManyHops" class="org.archive.crawler.deciderules.TooManyHopsDecideRule">
+            			<integer name="max-hops">10</integer>
+          		</newObject>
+			<newObject name="rejectIfPathological" class="org.archive.crawler.deciderules.PathologicalPathDecideRule">
+            			<integer name="max-repetitions">3</integer>
+          		</newObject>
+			<newObject name="acceptIfTranscluded" class="org.archive.crawler.deciderules.TransclusionDecideRule">
+            			<integer name="max-trans-hops">10</integer>
+            			<integer name="max-speculative-hops">1</integer>
+          		</newObject>
+			<newObject name="pathdepthfilter" class="org.archive.crawler.deciderules.TooManyPathSegmentsDecideRule">
+            			<integer name="max-path-depth">20</integer>
+          		</newObject>
+
+			<newObject name="global_crawlertraps" class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule">
+			     <string name="decision">REJECT</string>
+			     <string name="list-logic">OR</string>
+			     <stringList name="regexp-list">
+			     <string>.*core\.UserAdmin.*core\.UserLogin.*</string>
+			     <string>.*core\.UserAdmin.*register\.UserSelfRegistration.*</string>
+			     <string>.*\/w\/index\.php\?title=Speci[ae]l:Recentchanges.*</string>
+			     <string>.*act=calendar&amp;cal_id=.*</string>
+			     <string>.*advCalendar_pi.*</string>
+			     <string>.*cal\.asp\?date=.*</string>
+			     <string>.*cal\.asp\?view=monthly&amp;date=.*</string>
+			     <string>.*cal\.asp\?view=weekly&amp;date=.*</string>
+			     <string>.*cal\.asp\?view=yearly&amp;date=.*</string>
+			     <string>.*cal\.asp\?view=yearly&amp;year=.*</string>
+			     <string>.*cal\/cal_day\.php\?op=day&amp;date=.*</string>
+			     <string>.*cal\/cal_week\.php\?op=week&amp;date=.*</string>
+			     <string>.*cal\/calendar\.php\?op=cal&amp;month=.*</string>
+			     <string>.*cal\/yearcal\.php\?op=yearcal&amp;ycyear=.*</string>
+			     <string>.*calendar\.asp\?calmonth=.*</string>
+			     <string>.*calendar\.asp\?qMonth=.*</string>
+			     <string>.*calendar\.php\?sid=.*</string>
+			     <string>.*calendar\.php\?start=.*</string>
+			     <string>.*calendar\.php\?Y=.*</string>
+			     <string>.*calendar\/\?CLmDemo_horizontal=.*</string>
+			     <string>.*calendar_menu\/calendar\.php\?.*</string>
+			     <string>.*calendar_scheduler\.php\?d=.*</string>
+			     <string>.*calendar_year\.asp\?qYear=.*</string>
+			     <string>.*calendarix\/calendar\.php\?op=.*</string>
+			     <string>.*calendarix\/yearcal\.php\?op=.*</string>
+			     <string>.*calender\/default\.asp\?month=.*</string>
+			     <string>.*Default\.asp\?month=.*</string>
+			     <string>.*events\.asp\?cat=0&amp;mDate=.*</string>
+			     <string>.*events\.asp\?cat=1&amp;mDate=.*</string>
+			     <string>.*events\.asp\?MONTH=.*</string>
+			     <string>.*events\.asp\?month=.*</string>
+			     <string>.*index\.php\?iDate=.*</string>
+			     <string>.*index\.php\?module=PostCalendar&amp;func=view.*</string>
+			     <string>.*index\.php\?option=com_events&amp;task=view.*</string>
+			     <string>.*index\.php\?option=com_events&amp;task=view_day&amp;year=.*</string>
+			     <string>.*index\.php\?option=com_events&amp;task=view_detail&amp;year=.*</string>
+			     <string>.*index\.php\?option=com_events&amp;task=view_month&amp;year=.*</string>
+			     <string>.*index\.php\?option=com_events&amp;task=view_week&amp;year=.*</string>
+                            <string>.*index\.php\?option=com_events&amp;task=view_year&amp;year=.*</string>
+                            <string>.*index\.php\?option=com_extcalendar&amp;Itemid.*</string>
+                            <string>.*modules\.php\?name=Calendar&amp;op=modload&amp;file=index.*</string>
+                            <string>.*modules\.php\?name=vwar&amp;file=calendar&amp;action=list&amp;month=.*</string>
+                            <string>.*modules\.php\?name=vwar&amp;file=calendar.*</string>
+                            <string>.*modules\.php\?name=vWar&amp;mod=calendar.*</string>
+                            <string>.*modules\/piCal\/index\.php\?caldate=.*</string>
+                            <string>.*modules\/piCal\/index\.php\?cid=.*</string>
+                            <string>.*option,com_events\/task,view_day\/year.*</string>
+                            <string>.*option,com_events\/task,view_month\/year.*</string>
+                            <string>.*option,com_extcalendar\/Itemid.*</string>
+                            <string>.*task,view_month\/year.*</string>
+                            <string>.*shopping_cart\.php.*</string>
+                            <string>.*action.add_product.*</string>
+                            <string>.*action.remove_product.*</string>
+                            <string>.*action.buy_now.*</string>
+                            <string>.*checkout_payment\.php.*</string>
+                            <string>.*login.*login.*login.*login.*</string>
+                            <string>.*homepage_calendar\.asp.*</string>
+                            <string>.*MediaWiki.*Movearticle.*</string>
+                            <string>.*index\.php.*action=edit.*</string>
+                            <string>.*comcast\.net.*othastar.*</string>
+                            <string>.*Login.*Login.*Login.*</string>
+                            <string>.*redir.*redir.*redir.*</string>
+                            <string>.*bookingsystemtime\.asp\?dato=.*</string>
+                            <string>.*bookingsystem\.asp\?date=.*</string>
+                            <string>.*cart\.asp\?mode=add.*</string>
+                            <string>.*\/photo.*\/photo.*\/photo.*</string>
+                            <string>.*\/skins.*\/skins.*\/skins.*</string>
+                            <string>.*\/scripts.*\/scripts.*\/scripts.*</string>
+                            <string>.*\/styles.*\/styles.*\/styles.*</string>
+                            <string>.*\/coppermine\/login\.php\?referer=.*</string>
+                            <string>.*\/images.*\/images.*\/images.*</string>
+                            <string>.*\/stories.*\/stories.*\/stories.*</string>
+                        </stringList>
+                    </newObject>
+
+		</map> <!-- end rules -->
+            </newObject> <!-- end decide-rules -->
+        </newObject> <!-- End DecidingScope -->
+        <map name="http-headers">
+            <string name="user-agent">Mozilla/5.0 (compatible; heritrix/1.12.1 +http://my_website.com/my_infopage.html)</string>
+            <string name="from">my_email@my_website.com</string>
+        </map>
+        <newObject name="robots-honoring-policy" class="org.archive.crawler.datamodel.RobotsHonoringPolicy">
+            <string name="type">ignore</string>
+            <boolean name="masquerade">false</boolean>
+            <text name="custom-robots"/>
+            <stringList name="user-agents">
+            </stringList>
+        </newObject>
+        <newObject name="frontier" class="org.archive.crawler.frontier.BdbFrontier">
+            <float name="delay-factor">1.0</float>
+            <integer name="max-delay-ms">1000</integer>
+            <integer name="min-delay-ms">300</integer>
+            <integer name="max-retries">5</integer>
+            <long name="retry-delay-seconds">300</long>
+            <integer name="preference-embed-hops">1</integer>
+            <integer name="total-bandwidth-usage-KB-sec">1500</integer>
+            <integer name="max-per-host-bandwidth-usage-KB-sec">500</integer>
+            
+        <string name="queue-assignment-policy">dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy</string>
+    
+            <string name="force-queue-assignment"/>
+            <boolean name="pause-at-start">false</boolean>
+            <boolean name="pause-at-finish">false</boolean>
+            <boolean name="source-tag-seeds">false</boolean>
+            <boolean name="recovery-log-enabled">false</boolean>
+            <boolean name="hold-queues">true</boolean>
+            <integer name="balance-replenish-amount">3000</integer>
+            <integer name="error-penalty-amount">100</integer>
+            <long name="queue-total-budget">-1</long>
+            <string name="cost-policy">org.archive.crawler.frontier.UnitCostAssignmentPolicy</string>
+            <long name="snooze-deactivate-ms">300000</long>
+	    <integer name="target-ready-backlog">50</integer>	
+            <string name="uri-included-structure">org.archive.crawler.util.BdbUriUniqFilter</string>
+            <boolean name="dump-pending-at-close">false</boolean>
+        </newObject>
+
+        <map name="uri-canonicalization-rules">
+            <newObject name="Lowercase" class="org.archive.crawler.url.canonicalize.LowercaseRule">
+                <boolean name="enabled">true</boolean>
+            </newObject>
+            <newObject name="Userinfo" class="org.archive.crawler.url.canonicalize.StripUserinfoRule">
+                <boolean name="enabled">true</boolean>
+            </newObject>
+            <newObject name="WWW" class="org.archive.crawler.url.canonicalize.StripWWWRule">
+                <boolean name="enabled">false</boolean>
+            </newObject>
+            <newObject name="SessionIDs" class="org.archive.crawler.url.canonicalize.StripSessionIDs">
+                <boolean name="enabled">true</boolean>
+            </newObject>
+            <newObject name="QueryStrPrefix" class="org.archive.crawler.url.canonicalize.FixupQueryStr">
+                <boolean name="enabled">true</boolean>
+            </newObject>
+        </map>
+        <!-- Heritrix pre-fetch processors -->
+        <map name="pre-fetch-processors">
+
+            <newObject name="QuotaEnforcer" class="org.archive.crawler.prefetch.QuotaEnforcer">
+                <boolean name="force-retire">false</boolean>
+    		<boolean name="enabled">true</boolean>
+		<newObject name="QuotaEnforcer#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+              <long name="server-max-fetch-successes">-1</long>
+              <long name="server-max-success-kb">-1</long>
+              <long name="server-max-fetch-responses">-1</long>
+              <long name="server-max-all-kb">-1</long>
+
+              <long name="host-max-fetch-successes">-1</long>
+              <long name="host-max-success-kb">-1</long>
+              <long name="host-max-fetch-responses">-1</long>
+              <long name="host-max-all-kb">-1</long>
+
+              <long name="group-max-fetch-successes">-1</long>
+              <long name="group-max-success-kb">-1</long>
+              <long name="group-max-fetch-responses">-1</long>
+              <long name="group-max-all-kb">-1</long>
+
+            </newObject>
+
+            <newObject name="Preselector" class="org.archive.crawler.prefetch.Preselector">
+                <boolean name="enabled">true</boolean>
+		<newObject name="Preselector#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+                <boolean name="override-logger">false</boolean>
+                <boolean name="recheck-scope">true</boolean>
+                <boolean name="block-all">false</boolean>
+                <string name="block-by-regexp"/>
+		<string name="allow-by-regexp"/>
+            </newObject>
+            <newObject name="Preprocessor" class="org.archive.crawler.prefetch.PreconditionEnforcer">
+                <boolean name="enabled">true</boolean>
+		<newObject name="Preprocessor#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+                <integer name="ip-validity-duration-seconds">21600</integer>
+                <integer name="robot-validity-duration-seconds">86400</integer>
+                <boolean name="calculate-robots-only">false</boolean>
+            </newObject>
+        </map> <!--End of Heritrix pre-fetch processors -->
+        <!-- Heritrix fetch processors -->
+        <map name="fetch-processors">
+            <newObject name="DNS" class="org.archive.crawler.fetcher.FetchDNS">
+                <boolean name="enabled">true</boolean>
+		<newObject name="DNS#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+                <boolean name="accept-non-dns-resolves">false</boolean>
+		<boolean name="digest-content">true</boolean>
+		<string name="digest-algorithm">sha1</string>
+
+            </newObject>
+            <newObject name="HTTP" class="org.archive.crawler.fetcher.FetchHTTP">
+                <boolean name="enabled">true</boolean>
+                <newObject name="HTTP#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+                <newObject name="midfetch-decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+			<map name="rules">
+          		</map>	
+		</newObject>
+		<integer name="timeout-seconds">300</integer>
+                <integer name="sotimeout-ms">20000</integer>
+                <integer name="fetch-bandwidth">0</integer>
+                <long name="max-length-bytes">0</long>
+                <boolean name="ignore-cookies">false</boolean>
+                <boolean name="use-bdb-for-cookies">true</boolean>
+                <string name="load-cookies-from-file"/>
+                <string name="save-cookies-to-file"/>
+                <string name="trust-level">open</string>
+                <stringList name="accept-headers">
+                </stringList>
+                <string name="http-proxy-host"/>
+                <string name="http-proxy-port"/>
+                <string name="default-encoding">ISO-8859-1</string>
+		<boolean name="digest-content">true</boolean>
+		<string name="digest-algorithm">sha1</string>
+		<boolean name="send-if-modified-since">true</boolean>
+		<boolean name="send-if-none-match">true</boolean>
+                <boolean name="send-connection-close">true</boolean>
+                <boolean name="send-referer">true</boolean>
+                <boolean name="send-range">false</boolean>
+		<string name="http-bind-address"/>
+    </newObject>
+        </map> <!-- end of Heritrix Fetch processors -->
+               
+        <!-- Heritrix extract processors -->
+        <map name="extract-processors">
+            <newObject name="ExtractorHTTP" class="org.archive.crawler.extractor.ExtractorHTTP">
+                <boolean name="enabled">true</boolean>
+		<newObject name="ExtractorHTTP#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+            </newObject>
+            <newObject name="ExtractorHTML" class="org.archive.crawler.extractor.ExtractorHTML">
+                <boolean name="enabled">true</boolean>
+		<newObject name="ExtractorHTML#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+		<boolean name="extract-javascript">true</boolean>
+		<boolean name="treat-frames-as-embed-links">true</boolean>
+		<boolean name="ignore-form-action-urls">true</boolean>
+		<boolean name="extract-value-attributes">true</boolean>
+		<boolean name="ignore-unexpected-html">true</boolean>
+            </newObject>
+            <newObject name="ExtractorCSS" class="org.archive.crawler.extractor.ExtractorCSS">
+                <boolean name="enabled">true</boolean>
+		<newObject name="ExtractorCSS#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+            </newObject>
+            <newObject name="ExtractorJS" class="org.archive.crawler.extractor.ExtractorJS">
+                <boolean name="enabled">true</boolean>
+		<newObject name="ExtractorJS#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+	    </newObject>
+            <newObject name="ExtractorSWF" class="org.archive.crawler.extractor.ExtractorSWF">
+                <boolean name="enabled">true</boolean>
+		<newObject name="ExtractorSWF#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+	     </newObject>
+        </map> <!-- end of Heritrix extract processors -->
+        <!-- Heritrix write processors -->  
+        <map name="write-processors">
+            <newObject name="DeDuplicator" class="is.hi.bok.deduplicator.DeDuplicator">
+        	<boolean name="enabled">true</boolean>
+        	<map name="filters">
+        	</map>
+        	<string name="index-location"/>
+        	<string name="matching-method">By URL</string>
+        	<boolean name="try-equivalent">true</boolean>
+        	<boolean name="change-content-size">false</boolean>
+        	<string name="mime-filter">^text/.*</string>
+        	<string name="filter-mode">Blacklist</string>
+        	<string name="analysis-mode">Timestamp</string>
+        	<string name="log-level">SEVERE</string>
+        	<string name="origin"/>
+        	<string name="origin-handling">Use index information</string>
+        	<boolean name="stats-per-host">true</boolean>
+            <boolean name="use-sparse-range-filter">true</boolean>
+    	   </newObject>
+    	<newObject name="Archiver" class="org.archive.crawler.writer.ARCWriterProcessor">
+                <boolean name="enabled">true</boolean>
+		<newObject name="Archiver#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+		<boolean name="compress">false</boolean>
+                <string name="prefix">IAH</string>
+                <string name="suffix">${HOSTNAME}</string>
+                <integer name="max-size-bytes">100000000</integer>
+                <stringList name="path">
+                    <string>arcs</string>
+                </stringList>
+                <integer name="pool-max-active">1</integer>
+                <integer name="pool-max-wait">300000</integer>
+                <long name="total-bytes-to-write">0</long>
+		<boolean name="skip-identical-digests">false</boolean>
+    </newObject>
+<newObject name="WARCArchiver" class="dk.netarkivet.harvester.harvesting.WARCWriterProcessor">
+        <boolean name="enabled">false</boolean>
+        <newObject name="WARCArchiver#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          <map name="rules">
+          </map>
+        </newObject>
+        <boolean name="compress">false</boolean>
+        <string name="prefix">netarkivet</string>
+        <string name="suffix">${HOSTNAME}</string>
+        <long name="max-size-bytes">100000000</long>
+        <stringList name="path">
+          <string>warcs</string>
+        </stringList>
+        <integer name="pool-max-active">5</integer>
+        <integer name="pool-max-wait">300000</integer>
+        <long name="total-bytes-to-write">0</long>
+        <boolean name="skip-identical-digests">false</boolean>
+        <boolean name="write-requests">true</boolean>
+        <boolean name="write-metadata">true</boolean>
+        <boolean name="write-revisit-for-identical-digests">true</boolean>
+        <boolean name="write-revisit-for-not-modified">true</boolean>
+      </newObject>
+        </map> <!-- End of Heritrix write processors -->
+        <!-- Heritrix post processors --> 
+        <map name="post-processors">
+            <newObject name="Updater" class="org.archive.crawler.postprocessor.CrawlStateUpdater">
+                <boolean name="enabled">true</boolean>
+		<newObject name="Updater#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+            </newObject>
+            <newObject name="LinksScoper" class="org.archive.crawler.postprocessor.LinksScoper">
+                <boolean name="enabled">true</boolean>
+		<newObject name="LinksScoper#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+		<boolean name="override-logger">false</boolean>
+                <boolean name="seed-redirects-new-seed">true</boolean>
+		<integer name="preference-depth-hops">-1</integer>
+
+		<newObject name="scope-rejected-url-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+			<map name="rules">
+          		</map>
+		</newObject>
+            </newObject>
+            
+    	<newObject name="Scheduler" class="org.archive.crawler.postprocessor.FrontierScheduler">
+                <boolean name="enabled">true</boolean>
+		<newObject name="Scheduler#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+	</newObject>
+    
+    	<newObject name="ContentSize" class="dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor">
+        	<boolean name="enabled">true</boolean>
+		<newObject name="ContentSize#decide-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
+          		<map name="rules">
+          		</map>
+		</newObject>
+    	</newObject>
+    
+        </map>  <!-- end of Heritrix post processors --> 
+
+        <map name="loggers">
+            <newObject name="crawl-statistics" class="org.archive.crawler.admin.StatisticsTracker">
+                <integer name="interval-seconds">20</integer>
+            </newObject>
+        </map>
+        <string name="recover-path"/>
+        <boolean name="checkpoint-copy-bdbje-logs">true</boolean>
+        <boolean name="recover-retain-failures">false</boolean>
+        <newObject name="credential-store" class="org.archive.crawler.datamodel.CredentialStore">
+            <map name="credentials">
+            </map>
+        </newObject>
+    </controller>
+</crawl-order>
