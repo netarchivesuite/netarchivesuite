@@ -40,7 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dom4j.Document;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;

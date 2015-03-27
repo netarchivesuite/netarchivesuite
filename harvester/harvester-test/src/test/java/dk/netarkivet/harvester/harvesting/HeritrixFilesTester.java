@@ -126,20 +126,14 @@ public class HeritrixFilesTester {
             // Expected
         }
         
-        //DocumentFactory docFactory = DocumentFactory.getInstance();
-        /*
-        try {
-            hf.writeOrderXml(docFactory.createDocument());
-            fail("ArgumentNotValid exception with Document with no contents");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
-        */
-
+   
         // test, that order xml is written, if argument is valid
 
         //Document doc = XmlUtils.getXmlDoc(TestInfo.ORDER_FILE);
-        HeritrixTemplate doc = HeritrixTemplate.read(TestInfo.ORDER_FILE); 
+        File orderFile = new File("tests/dk/netarkivet/harvester/scheduler/data/originals/order.xml");
+
+        //HeritrixTemplate doc = HeritrixTemplate.read(TestInfo.ORDER_FILE);
+        HeritrixTemplate doc = HeritrixTemplate.read(orderFile);
         try {
             hf.writeOrderXml(doc);
         } catch (Exception e) {
