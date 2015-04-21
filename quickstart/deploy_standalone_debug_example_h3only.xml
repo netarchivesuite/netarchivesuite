@@ -163,6 +163,7 @@ National Library.
       <applicationName name="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication">
         <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10042 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+	<deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
         <settings>
           <common>
             <jmx>
@@ -179,6 +180,7 @@ National Library.
       <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
         <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10043 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+	<deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
         <settings>
           <common>
             <jmx>
@@ -195,6 +197,7 @@ National Library.
       <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
         <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10044 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+	<deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
         <settings>
           <common>
             <jmx>
