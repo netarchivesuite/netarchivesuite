@@ -242,7 +242,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		// SetMaxbytes in the QuotaEnforcer to forceMaxBytesPerDomain
 		// Divide by 1024 since Heritrix uses KB rather than bytes,
 		// and add 1 to avoid to low limit due to rounding.
-		String maxBytesStringValue = "-l";
+		String maxBytesStringValue = "-1";
 		if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY) {
 			maxBytesStringValue = Long.toString(( forceMaxBytesPerDomain 
 					/ Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1);

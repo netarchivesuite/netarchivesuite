@@ -200,6 +200,7 @@ public class HarvestReportGenerator {
         // read whether or not to disregard the SeedURL information
         // in the crawl.log
         boolean disregardSeedUrls = Settings.getBoolean(Heritrix3Settings.DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG);
+        log.info("DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG: " + disregardSeedUrls); 
         BufferedReader in = null;
 
         try {
@@ -220,6 +221,7 @@ public class HarvestReportGenerator {
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } finally {
+        	
             if (in != null) {
                 try {
                     in.close();

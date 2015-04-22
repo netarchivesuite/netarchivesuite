@@ -44,10 +44,9 @@ public class ContentSizeAnnotationPostProcessor extends Processor {
 
     /**
      * Constructor.
-     * @param name the name of the processor.
      * @see Processor
      */
-    public ContentSizeAnnotationPostProcessor(String name) {
+    public ContentSizeAnnotationPostProcessor() {
         super();
     }
 
