@@ -450,6 +450,9 @@ statisticsTracker.intervalSeconds=20
     <!-- Here the reference to the (w)arcWriter bean is inserted -->	
 
     %{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}
+
+    <bean id="ContentSizeAnnotationPostProcessor"  class="dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor"/>
+
  
     <!-- ...send each outlink candidate URI to CandidatesChain, 
          and enqueue those ACCEPTed to the frontier... -->
