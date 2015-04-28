@@ -427,6 +427,45 @@
           </includes>
         </configuration>
       </plugin>
+
+
+      <!-- enable JGit plugin -->
+      <plugin>
+        <groupId>ru.concerteza.buildnumber</groupId>
+        <artifactId>maven-jgit-buildnumber-plugin</artifactId>
+        <version>1.2.9</version>
+        <executions>
+          <execution>
+            <id>git-buildnumber</id>
+            <goals>
+              <goal>extract-buildnumber</goal>
+            </goals>
+            <phase>prepare-package</phase>
+          </execution>
+        </executions>
+      </plugin> 
+
+      <!-- specify manifest fields -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Specification-Title>${project.name}</Specification-Title>
+              <Specification-Version>${project.version}</Specification-Version>
+              <!--Specification-Vendor>${project.specification_vendor}</Specification-Vendor-->
+              <Implementation-Title>${project.groupId}.${project.artifactId}</Implementation-Title>
+              <Implementation-Version>${git.revision}</Implementation-Version>
+              <!--Implementation-Vendor>${project.implementation_vendor}</Implementation-Vendor-->
+              <X-Git-Branch>${git.branch}</X-Git-Branch>
+              <X-Git-Tag>${git.tag}</X-Git-Tag>
+              <X-Git-Commits-Count>${git.commitsCount}</X-Git-Commits-Count>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -448,6 +487,7 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>fullTest</id>
       <activation>
