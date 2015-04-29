@@ -123,7 +123,11 @@ public final class Constants {
                     + BUILDSTATUS;
             String implementationVersion = Constants.class.getPackage().getImplementationVersion();
             if (implementationVersion != null) {
-                version += " (r" + implementationVersion + ")";
+            	if (implementationVersion.length() != 40) {
+                    version += " (r" + implementationVersion + ")";
+            	} else {
+                    version += " (<a href=\"https://github.com/netarchivesuite/netarchivesuite/commit/" + implementationVersion + "\">" + implementationVersion.substring(0, 10) + "</a>)";
+            	}
             }
             return version;
         }
