@@ -20,25 +20,7 @@
       <version>${project.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>httpunit</groupId>
-      <artifactId>httpunit</artifactId>
-      <version>1.6</version>
-      <!-- <scope>test</scope> -->
-      <exclusions>
-        <exclusion>
-          <artifactId>xmlParserAPIs</artifactId>
-          <groupId>xerces</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jtidy</artifactId>
-          <groupId>jtidy</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
     <!-- Test dependencies. -->
-
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>netarchivesuite-test-utils</artifactId>
