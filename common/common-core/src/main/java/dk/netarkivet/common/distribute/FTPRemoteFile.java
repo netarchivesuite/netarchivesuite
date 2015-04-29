@@ -32,12 +32,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.DigestInputStream;
 import java.security.DigestOutputStream;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.io.CopyStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +46,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Class encapsulating upload to & download from an ftp-server.
@@ -95,14 +91,13 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     /** The password used to connect to the ftp-server. */
     private final String ftpUserPassword;
 
-    /** The FTP client object for the current connection. */
-    private transient FTPClient currentFTPClient;
-
     /** The name that we use for the file on the FTP server. This is only for internal use. */
     private final String ftpFileName;
 
     /** If useChecksums is true, contains the file checksum. */
     protected final String checksum;
+    
+    private FTPConnectionManager cm;
 
     // NOTE: The constants defining setting names below are left non-final on
     // purpose! Otherwise, the static initialiser that loads default values
@@ -136,6 +131,9 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             this.ftpUserName = Settings.get(CommonSettings.FTP_USER_NAME);
             this.ftpUserPassword = Settings.get(CommonSettings.FTP_USER_PASSWORD);
         }
+        FTPConnectionManager cm = new FTPConnectionManager(ftpUserName, ftpUserPassword, ftpServerName, ftpServerPort, 
+        		Settings.getInt(CommonSettings.FTP_RETRIES_SETTINGS), Settings.getInt(CommonSettings.FTP_DATATIMEOUT_SETTINGS));
+        
         if (filesize == 0) {
             if (useChecksums) {
                 checksum = ChecksumCalculator.calculateMd5(file);
@@ -144,16 +142,10 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             }
             ftpFileName = "-";
         } else {
-            // If the ftpServerName is localhost, it is not going to work across
-            // a network. Warn about this.
-            if (ftpServerName.equalsIgnoreCase("localhost")) {
-                ftpServerName = SystemUtils.getLocalHostName();
-                log.debug("ftpServerName set to localhost on machine: {}, resetting to {}",
-                        SystemUtils.getLocalHostName(), ftpServerName);
-            }
-            // A large enough number to make it unlikely that two files are
+ 
+        	// A large enough number to make it unlikely that two files are
             // created with the same FTP server name. Already the millisecond
-            // datestamp reduces likelyhood, with this even if two
+            // datestamp reduces the likelihood, with this even if two
             // processes/threads try to upload the same file in the same
             // millisecond (very unlikely) they have only .01% chance of
             // clashing.
@@ -168,12 +160,12 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 log.debug(message, e);
                 throw new IOFailure(message, e);
             }
-            log.debug("Writing '{}' as '{}' on ftp-server {}", file.getName(), ftpFileName, ftpServerName);
+            log.debug("Writing '{}' as '{}' on ftp-server {}", file.getName(), ftpFileName, cm.getFtpServer());
 
             // Writing inlined in constructor to allow the checksum field to
             // be final (and thus must be set in constructor).
             try {
-                logOn();
+                cm.logOn();
                 if (useChecksums) {
                     in = new DigestInputStream(in, ChecksumCalculator.getMessageDigest(ChecksumCalculator.MD5));
                 }
@@ -182,10 +174,10 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 while (!success && tried < FTP_RETRIES) {
                     tried++;
                     try {
-                        success = currentFTPClient.storeFile(ftpFileName, in);
+                        success = cm.getFTPClient().storeFile(ftpFileName, in);
                         if (!success) {
                             log.debug("FTP store failed attempt '{}' of {}: {}", tried, FTP_RETRIES,
-                                    getFtpErrorMessage());
+                                    cm.getFtpErrorMessage());
                         }
                     } catch (IOException e) {
                         String message = "Write operation to '" + ftpFileName + "' failed on attempt " + tried + " of "
@@ -212,7 +204,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 }
             } finally {
                 IOUtils.closeQuietly(in);
-                logOut();
+                cm.logOut();
                 log.debug("Ftp logout");
             }
         }
@@ -258,16 +250,17 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      * @return An InputStream that will deliver the data transferred by FTP. Holding on to this for long periods without
      * reading any data might cause a timeout.
      */
+    @Override
     public InputStream getInputStream() {
         if (filesize == 0) {
             return new ByteArrayInputStream(new byte[] {});
         }
         try {
-            logOn();
+            cm.logOn();
 
-            InputStream in = currentFTPClient.retrieveFileStream(ftpFileName);
+            InputStream in = cm.getFTPClient().retrieveFileStream(ftpFileName);
             if (in == null) {
-                throw new IOFailure("Unable to retrieve input stream:" + getFtpErrorMessage());
+                throw new IOFailure("Unable to retrieve input stream:" + cm.getFtpErrorMessage());
             }
             if (useChecksums) {
                 in = new DigestInputStream(in, ChecksumCalculator.getMessageDigest(ChecksumCalculator.MD5));
@@ -287,7 +280,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                             }
                         }
                     } finally {
-                        logOut();
+                        cm.logOut();
                         if (!multipleDownloads) {
                             cleanup();
                         }
@@ -313,6 +306,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      * @param out OutputStream that the data will be written to. This stream will not be closed by this operation.
      * @throws IOFailure If append operation fails
      */
+    @Override
     public void appendTo(OutputStream out) {
         ArgumentNotValid.checkNotNull(out, "OutputStream out");
 
@@ -321,13 +315,13 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
         }
 
         try {
-            logOn();
+            cm.logOn();
 
             if (useChecksums) {
                 out = new DigestOutputStream(out, ChecksumCalculator.getMessageDigest(ChecksumCalculator.MD5));
             }
-            if (!currentFTPClient.retrieveFile(ftpFileName, out)) {
-                final String msg = "Append operation from '" + ftpFileName + "' failed: " + getFtpErrorMessage();
+            if (!cm.getFTPClient().retrieveFile(ftpFileName, out)) {
+                final String msg = "Append operation from '" + ftpFileName + "' failed: " + cm.getFtpErrorMessage();
                 log.warn(msg);
                 throw new IOFailure(msg);
             }
@@ -350,7 +344,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } finally {
-            logOut();
+            cm.logOut();
             if (!multipleDownloads) {
                 cleanup();
             }
@@ -361,20 +355,21 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
      * Cleanup will delete the file on the FTP server. This method should never throw exceptions. It is idempotent,
      * meaning it can be called twice without trouble.
      */
+    @Override
     public void cleanup() {
         if (filesize == 0) {
             return;
         }
         log.debug("Deleting file '{}' from ftp server", ftpFileName);
         try {
-            logOn();
-            currentFTPClient.deleteFile(ftpFileName);
+            cm.logOn();
+            cm.getFTPClient().deleteFile(ftpFileName);
         } catch (Exception e) {
             log.warn("Error while deleting ftp file '{}' for file '{}'", ftpFileName, file.getName(), e);
         } finally {
             // try to disconnect before returning from method
             try {
-                logOut();
+                cm.logOut();
             } catch (Exception e) {
                 log.warn("Unexpected error while logging out ", e);
             }
@@ -383,102 +378,9 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     }
 
     /**
-     * Create FTPClient and log on to ftp-server, if not already connected to ftp-server. Attempts to set binary mode
-     * and passive mode. Will try to login up to FTP_RETRIES times, if login fails.
-     */
-    private void logOn() {
-        if (currentFTPClient != null && currentFTPClient.isConnected()) {
-            return;
-        } else { // create new FTPClient object and connect to ftp-server
-            currentFTPClient = new FTPClient();
-        }
-
-        if (log.isTraceEnabled()) {
-            log.trace("Try to logon to ftp://{}:{}@{}:{}", ftpUserName, ftpUserPassword.replaceAll(".", "*"),
-                    ftpServerName, ftpServerPort);
-        }
-
-        int tries = 0;
-        boolean logOnSuccessful = false;
-        while (!logOnSuccessful && tries < FTP_RETRIES) {
-            tries++;
-            try {
-                currentFTPClient.connect(ftpServerName, ftpServerPort);
-                currentFTPClient.setDataTimeout(FTP_DATATIMEOUT);
-                if (!currentFTPClient.login(ftpUserName, ftpUserPassword)) {
-                    final String message = "Could not log in [from host: " + SystemUtils.getLocalHostName() + "] to '"
-                            + ftpServerName + "' on port " + ftpServerPort + " with user '" + ftpUserName
-                            + "' password '" + ftpUserPassword.replaceAll(".", "*") + "': " + getFtpErrorMessage();
-                    log.warn(message);
-                    throw new IOFailure(message);
-                }
-
-                if (!currentFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE)) {
-                    final String message = "Could not set binary on '" + ftpServerName + "', losing high bits. "
-                            + "Error: " + getFtpErrorMessage();
-                    log.warn(message);
-                    throw new IOFailure(message);
-                }
-
-                // This only means that PASV is sent before every transfer
-                // command.
-                currentFTPClient.enterLocalPassiveMode();
-
-                log.debug("w/ DataTimeout (ms): {}", currentFTPClient.getDefaultTimeout());
-                logOnSuccessful = true;
-            } catch (IOException e) {
-                final String msg = "Connect to " + ftpServerName + " from host: " + SystemUtils.getLocalHostName()
-                        + " failed";
-                if (tries < FTP_RETRIES) {
-                    log.debug(
-                            "{}. Attempt #{} of max {}. Will sleep a while before trying to connect again. Exception: ",
-                            msg, tries, FTP_RETRIES, e);
-                    TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
-                } else {
-                    log.warn("{}. This was the last (#{}) connection attempt", msg, tries);
-                    throw new IOFailure(msg, e);
-                }
-            }
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Logged onto ftp://{}:{}@{}:{}", ftpUserName, ftpUserPassword.replaceAll(".", "*"),
-                    ftpServerName, ftpServerPort);
-        }
-    }
-
-    /**
-     * Log out from the FTP server.
-     */
-    private void logOut() {
-        log.debug("Trying to log out.");
-        try {
-            if (currentFTPClient != null) {
-                currentFTPClient.disconnect();
-            }
-        } catch (IOException e) {
-            String msg = "Disconnect from '" + ftpServerName + "' failed ";
-            if (e instanceof CopyStreamException) {
-                CopyStreamException realException = (CopyStreamException) e;
-                msg += "(real cause = " + realException.getIOException() + ")";
-            }
-            log.warn(msg, e);
-        }
-    }
-
-    /**
-     * Get the reply code and string from the ftp client.
-     *
-     * @return A string with the FTP servers last reply code and message.
-     */
-    private String getFtpErrorMessage() {
-        return ("Error " + currentFTPClient.getReplyCode() + ": '" + currentFTPClient.getReplyString() + "'");
-    }
-
-    /**
      * Return a human-readable description of the object.
      *
-     * @return description of object -- do not machineparse.
+     * @return description of object -- not machine readable
      */
     public String toString() {
         return "RemoteFile '" + file.getName() + "' (#" + checksum + ")";
