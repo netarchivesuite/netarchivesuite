@@ -36,11 +36,9 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Calendar;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.io.CopyStreamException;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCRecord;
@@ -53,11 +51,10 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * This class extends the functionality of FTPRemoteFile by allowing local input to be taken from an ArchiveRecord. It
- * has factory methods which return an instance of FTPRemoteFile when a File is used as input so that behaviour is
+ * has factory methods which return an instance of FTPRemoteFile when a File is used as input so that behavior is
  * effectively delegated to that class when required.
  */
 @SuppressWarnings({"serial"})
@@ -75,17 +72,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
      */
     private String name;
 
-    /**
-     * Ftp-connection information.
-     */
-    private String ftpServerName;
-    /** The ftp-server port. */
-    private final int ftpServerPort;
-    /** The username used to connect to the ftp-server. */
-    private final String ftpUserName;
-    /** The password used to connect to the ftp-server. */
-    private final String ftpUserPassword;
-
+    
     /** How many times we will retry upload, download, and logon. */
     private static final transient int FTP_RETRIES = Settings.getInt(FTP_RETRIES_SETTINGS);
 
@@ -102,12 +89,11 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
     }
-
-    /** The FTP client object for the current connection. */
-    private transient FTPClient currentFTPClient;
-
+    
     /** The name that we use for the file on the FTP server. */
     private final String ftpFileName;
+
+	private FTPConnectionManager connectionManager;
 
     /**
      * Create an instance of this class connected to an ARC or WARC record. Unfortunately the reflection we use to find
@@ -203,10 +189,10 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     @Override
     public void appendTo(OutputStream out) {
         ArgumentNotValid.checkNotNull(out, "OutputStream out");
-        logOn();
+        connectionManager.logOn();
         try {
-            if (!currentFTPClient.retrieveFile(ftpFileName, out)) {
-                final String msg = "Append operation from '" + ftpFileName + "' failed: " + getFtpErrorMessage();
+            if (!connectionManager.getFTPClient().retrieveFile(ftpFileName, out)) {
+                final String msg = "Append operation from '" + ftpFileName + "' failed: " + connectionManager.getFtpErrorMessage();
                 log.warn(msg);
                 throw new IOFailure(msg);
             }
@@ -220,22 +206,22 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } finally {
-            logOut();
+        	connectionManager.logOut();
             cleanup();
         }
     }
 
     @Override
     public InputStream getInputStream() {
-        logOn();
+    	connectionManager.logOn();
         try {
-            InputStream in = currentFTPClient.retrieveFileStream(ftpFileName);
+            InputStream in = connectionManager.getFTPClient().retrieveFileStream(ftpFileName);
             return new FilterInputStream(in) {
                 public void close() throws IOException {
                     try {
                         super.close();
                     } finally {
-                        logOut();
+                    	connectionManager.logOut();
                         cleanup();
                     }
                 }
@@ -273,14 +259,14 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
     public void cleanup() {
         log.debug("Deleting file '{}' from ftp server", ftpFileName);
         try {
-            logOn();
-            currentFTPClient.deleteFile(ftpFileName);
+        	connectionManager.logOn();
+        	connectionManager.getFTPClient().deleteFile(ftpFileName);
         } catch (Exception e) {
             log.warn("Error while deleting ftp file '{}' for file '{}'", ftpFileName, name, e);
         } finally {
             // try to disconnect before returning from method
             try {
-                logOut();
+            	connectionManager.logOut();
             } catch (Exception e) {
                 log.warn("Unexpected error while logging out ", e);
             }
@@ -321,24 +307,23 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
             log.debug("Created {} with name {}", this.getClass().getName(), toString());
         }
 
-        this.ftpServerName = Settings.get(FTP_SERVER_NAME);
-        this.ftpServerPort = Settings.getInt(FTP_SERVER_PORT);
-        this.ftpUserName = Settings.get(FTP_USER_NAME);
-        this.ftpUserPassword = Settings.get(FTP_USER_PASSWORD);
-        if (ftpServerName.equalsIgnoreCase("localhost")) {
-            ftpServerName = SystemUtils.getLocalHostName();
-            log.debug("ftpServerName set to localhost on machine: {}, resetting to {}", SystemUtils.getLocalHostName(),
-                    ftpServerName);
-        }
-        logOn();
+        this.connectionManager = new FTPConnectionManager(
+        		Settings.get(FTP_USER_NAME), 
+        		Settings.get(FTP_USER_PASSWORD), 
+        		Settings.get(FTP_SERVER_NAME), 
+        		Settings.getInt(FTP_SERVER_PORT), 
+        		Settings.getInt(FTP_RETRIES_SETTINGS), 
+        		Settings.getInt(FTP_DATATIMEOUT_SETTINGS));
+        
+        connectionManager.logOn();
         boolean success = false;
         int tried = 0;
         while (!success && tried < FTP_RETRIES) {
             tried++;
             try {
-                success = currentFTPClient.storeFile(ftpFileName, record);
+                success = connectionManager.getFTPClient().storeFile(ftpFileName, record);
                 if (!success) {
-                    log.debug("FTP store failed attempt '{}' of " + FTP_RETRIES + ": {}", tried, getFtpErrorMessage());
+                    log.debug("FTP store failed attempt '{}' of " + FTP_RETRIES + ": {}", tried, connectionManager.getFtpErrorMessage());
                 }
             } catch (IOException e) {
                 String message = "Write operation to '" + ftpFileName + "' failed on attempt " + tried + " of "
@@ -364,114 +349,16 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
             // not a serious bug
             log.warn("Problem closing inputstream: ", e);
         }
-        logOut();
+        connectionManager.logOut();
         log.debug("Ftp logout");
     }
 
     /**
-     * A human readbale description of the object which should be sufficient to identify and track it.
+     * A human readable description of the object which should be sufficient to identify and track it.
      *
      * @return description of this object.
      */
     public String toString() {
         return record.getHeader().getRecordIdentifier() + "_" + record.getHeader().getOffset() + "_" + "(" + name + ")";
     }
-
-    // TODO This code is copied from FTPRemoteFile. A better solution would
-    // be to have some sort of helper class - e.g. an FTPConnectionManager - with
-    // a single copy of this code.
-
-    /**
-     * Create FTPClient and log on to ftp-server, if not already connected to ftp-server. Attempts to set binary mode
-     * and passive mode. Will try to login up to FTP_RETRIES times, if login fails.
-     */
-    private void logOn() {
-        if (currentFTPClient != null && currentFTPClient.isConnected()) {
-            return;
-        } else { // create new FTPClient object and connect to ftp-server
-            currentFTPClient = new FTPClient();
-        }
-
-        if (log.isDebugEnabled()) {
-            log.trace("Try to logon to ftp://{}:{}@{}:{}", ftpUserName, ftpUserPassword.replaceAll(".", "*"),
-                    ftpServerName, ftpServerPort);
-        }
-
-        int tries = 0;
-        boolean logOnSuccessful = false;
-        while (!logOnSuccessful && tries < FTP_RETRIES) {
-            tries++;
-            try {
-                currentFTPClient.connect(ftpServerName, ftpServerPort);
-                currentFTPClient.setDataTimeout(FTP_DATATIMEOUT);
-                if (!currentFTPClient.login(ftpUserName, ftpUserPassword)) {
-                    final String message = "Could not log in [from host: " + SystemUtils.getLocalHostName() + "] to '"
-                            + ftpServerName + "' on port " + ftpServerPort + " with user '" + ftpUserName
-                            + "' password '" + ftpUserPassword.replaceAll(".", "*") + "': " + getFtpErrorMessage();
-                    log.warn(message);
-                    throw new IOFailure(message);
-                }
-
-                if (!currentFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE)) {
-                    final String message = "Could not set binary on '" + ftpServerName
-                            + "', losing high bits.  Error: " + getFtpErrorMessage();
-                    log.warn(message);
-                    throw new IOFailure(message);
-                }
-
-                // This only means that PASV is sent before every transfer
-                // command.
-                currentFTPClient.enterLocalPassiveMode();
-
-                log.debug("w/ DataTimeout (ms): {}", currentFTPClient.getDefaultTimeout());
-                logOnSuccessful = true;
-            } catch (IOException e) {
-                final String msg = "Connect to " + ftpServerName + " from host: " + SystemUtils.getLocalHostName()
-                        + " failed";
-                if (tries < FTP_RETRIES) {
-                    log.debug(
-                            "{}. Attempt #{} of max {}. Will sleep a while before trying to connect again. Exception: ",
-                            msg, tries, FTP_RETRIES);
-                    TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
-                } else {
-                    log.warn("{}. This was the last (#{}) connection attempt", msg, tries);
-                    throw new IOFailure(msg, e);
-                }
-            }
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Logged onto ftp://{}:{}@{}:{}", ftpUserName, ftpUserPassword.replaceAll(".", "*"),
-                    ftpServerName, ftpServerPort);
-        }
-    }
-
-    /**
-     * Get the reply code and string from the ftp client.
-     *
-     * @return A string with the FTP servers last reply code and message.
-     */
-    private String getFtpErrorMessage() {
-        return ("Error " + currentFTPClient.getReplyCode() + ": '" + currentFTPClient.getReplyString() + "'");
-    }
-
-    /**
-     * Log out from the FTP server.
-     */
-    private void logOut() {
-        log.debug("Trying to log out.");
-        try {
-            if (currentFTPClient != null) {
-                currentFTPClient.disconnect();
-            }
-        } catch (IOException e) {
-            String msg = "Disconnect from '" + ftpServerName + "' failed ";
-            if (e instanceof CopyStreamException) {
-                CopyStreamException realException = (CopyStreamException) e;
-                msg += "(real cause = " + realException.getIOException() + ")";
-            }
-            log.warn(msg, e);
-        }
-    }
-
 }
