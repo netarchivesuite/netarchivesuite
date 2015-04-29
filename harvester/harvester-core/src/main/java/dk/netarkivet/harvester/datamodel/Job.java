@@ -849,7 +849,6 @@ public class Job implements Serializable, JobInfo {
         }
         this.forceMaxBytesPerDomain = maxBytesPerDomain;
         orderXMLdoc.setMaxBytesPerDomain(maxBytesPerDomain);
-        //H1HeritrixTemplate.editOrderXML_maxBytesPerDomain(orderXMLdoc, maxBytesPerDomain);
 
         if (0L == maxBytesPerDomain && 0L != forceMaxObjectsPerDomain) {
             setMaxObjectsPerDomain(0L);
@@ -1178,8 +1177,8 @@ public class Job implements Serializable, JobInfo {
             URL uri = new URL(url);
             return DomainUtils.domainNameFromHostname(uri.getHost());
         } catch (MalformedURLException e) {
-            throw new ArgumentNotValid("The string '" + url
-                    + "' is not a valid URL");
+            log.warn("The string '{}' is not a valid URL", url);
+            return null;
         }
     }
     
