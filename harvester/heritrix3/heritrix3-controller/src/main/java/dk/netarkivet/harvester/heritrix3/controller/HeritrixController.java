@@ -158,7 +158,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
     /**
      * Initialize the JMXconnection to the Heritrix.
      *
-     * @throws IOFailure If Heritrix dies before initialization, or we encounter any problems during the initialization.
+     * @throws IOFailure If Heritrix dies before initialisation, or we encounter any problems during the initialisation.
      * @see IHeritrixController#initialize()
      */
     @Override
@@ -327,7 +327,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
         if (jobResult != null) {
         	getCrawlServiceAttributes(cpm, jobResult);
         } else {
-        	log.warn("Unable to engineStatus for job '{}'", jobName);
+        	log.warn("Unable to get Heritrix3 status for job '{}'", jobName);
         }
         if (cpm.crawlIsFinished()) {
             cpm.setStatus(CrawlStatus.CRAWLING_FINISHED);
@@ -363,151 +363,85 @@ public class HeritrixController extends AbstractRestHeritrixController {
      */
     private void fetchCrawlServiceJobAttributes(CrawlProgressMessage cpm, JobResult job) {
     	CrawlServiceJobInfo jStatus = cpm.getJobStatus();
-        
-    	/* progressStatistics. FIXME relevant in H3 */
-        String newProgressStats = "?"; // Fetched from H1 bean: CrawlServiceJobOperation.progressStatistics);
+
+/*
+           timestamp  discovered      queued   downloaded       doc/s(avg)  KB/s(avg)   dl-failures   busy-thread   mem-use-KB  heap-size-KB   congestion   max-depth   avg-depth
+2015-04-29T12:42:54Z         774         573          185        0.9(2.31)     49(41)            16             2        61249        270848            1         456         114
+*/
+        /*
         jStatus.setProgressStatistics(newProgressStats);
-        
-        /* FIXME relevant in H3?
         if (progressStatisticsLegend == null) {
             progressStatisticsLegend = (String) executeMBeanOperation(CrawlServiceJobOperation.progressStatisticsLegend);
-        }*/
-
-        /*    	
-        case CrawlTime:
-            Long elapsedSeconds = -1L;
-            if (value != null) {
-                elapsedSeconds = (Long) value;
-            }
-            jStatus.setElapsedSeconds(elapsedSeconds);
-            break;
+        }
         */
-    	
-    	Long value = job.job.elapsedReport.elapsedMilliseconds;
-    	Long elapsedSeconds = -1L;
-        if (value != null) {
-            elapsedSeconds = value / 1000L; 
+
+    	long totalUriCount = job.job.uriTotalsReport.totalUriCount;
+        long downloadedUriCount = job.job.uriTotalsReport.downloadedUriCount;
+        Double progress;
+        if (totalUriCount == 0) {
+        	progress = 0.0;
+        } else {
+            progress = downloadedUriCount * 100.0 / totalUriCount;
+        }
+        jStatus.setProgressStatistics(progress + "%");
+
+    	Long elapsedSeconds = job.job.elapsedReport.elapsedMilliseconds;
+        if (elapsedSeconds == null) {
+        	elapsedSeconds = -1L;
+        } else {
+            elapsedSeconds = elapsedSeconds / 1000L; 
         }
         jStatus.setElapsedSeconds(elapsedSeconds);
-/*        
-    case CurrentDocRate:
-        Double processedDocsPerSec = new Double(-1L);
-        if (value != null) {
-            processedDocsPerSec = (Double) value;
+
+        Double currentProcessedDocsPerSec = job.job.rateReport.currentDocsPerSecond;
+        if (currentProcessedDocsPerSec == null) {
+            currentProcessedDocsPerSec = new Double(-1L);
         }
-        jStatus.setCurrentProcessedDocsPerSec(processedDocsPerSec);
-        break;
-*/
-        Double Dvalue = job.job.rateReport.currentDocsPerSecond;
-        Double processedDocsPerSec = new Double(-1L);
-        if (Dvalue != null) {
-            processedDocsPerSec = Dvalue;
+        jStatus.setCurrentProcessedDocsPerSec(currentProcessedDocsPerSec);
+
+        Double processedDocsPerSec = job.job.rateReport.averageDocsPerSecond;
+        if (processedDocsPerSec == null) {
+            processedDocsPerSec = new Double(-1L);
         }
-        jStatus.setCurrentProcessedDocsPerSec(processedDocsPerSec);
-       
-/*        
-    case CurrentKbRate:
-        // NB Heritrix seems to store the average value in
-        // KbRate instead of CurrentKbRate...
-        // Inverse of doc rates.
-        Long processedKBPerSec = -1L;
-        if (value != null) {
-            processedKBPerSec = (Long) value;
-        }
-        jStatus.setProcessedKBPerSec(processedKBPerSec);
-*/
-        Integer valueI = job.job.rateReport.currentKiBPerSec;
-        Integer processedKBPerSec = -1;
-        if (valueI != null) {
-            processedKBPerSec = valueI;
-        }
-        jStatus.setProcessedKBPerSec(processedKBPerSec);
-/*        
-    case DiscoveredCount:
-        Long discoveredCount = -1L;
-        if (value != null) {
-            discoveredCount = (Long) value;
-        }
-        jStatus.setDiscoveredFilesCount(discoveredCount);
-        break;
-*/
-        Long discoveredCount = -1L; // This value is not found in H3???
-        // value = job.job.sizeTotalsReport.totalCount; //FIXME correct???
-        jStatus.setDiscoveredFilesCount(discoveredCount);
-/*
-    case DocRate:
-        Double docRate = new Double(-1L);
-        if (value != null) {
-            docRate = (Double) value;
-        }
-        jStatus.setProcessedDocsPerSec(docRate);
-*/
-        Double docRate = new Double(-1L);
-        Dvalue = job.job.rateReport.averageDocsPerSecond;
-        if (Dvalue != null) {
-            docRate = (Double) Dvalue;
-        }
-        jStatus.setProcessedDocsPerSec(docRate);
-/*
-    case DownloadedCount:
-        Long downloadedCount = -1L;
-        if (value != null) {
-            downloadedCount = (Long) value;
-        }
-        jStatus.setDownloadedFilesCount(downloadedCount);
-  */
-        Long downloadedCount = -1L;
-        // FIXME available in H3???
-        jStatus.setDownloadedFilesCount(downloadedCount);
-/*        
-    case FrontierShortReport:
-        String frontierShortReport = "?";
-        if (value != null) {
-            frontierShortReport = (String) value;
-        }
-        jStatus.setFrontierShortReport(frontierShortReport);
-        break;
-*/     
-        String frontierShortReport = "?"; // Available in H3????
-        jStatus.setFrontierShortReport(frontierShortReport);
-/*    case KbRate:
-        // NB Heritrix seems to store the average value in
-        // KbRate instead of CurrentKbRate...
-        // Inverse of doc rates.
-        Long kbRate = -1L;
-        if (value != null) {
-            kbRate = (Long) value;
+        jStatus.setProcessedDocsPerSec(processedDocsPerSec);
+
+        Integer kbRate = job.job.rateReport.currentKiBPerSec;
+        if (kbRate == null) {
+        	kbRate = -1;
         }
         jStatus.setCurrentProcessedKBPerSec(kbRate);
-*/     
-    
-        Long kbRate = -1L;
-        valueI = job.job.rateReport.averageKiBPerSec;
-        if (valueI != null) {
-        	kbRate = (Long) value;
+
+        Integer processedKBPerSec = job.job.rateReport.averageKiBPerSec;
+        if (processedKBPerSec == null) {
+            processedKBPerSec = -1;
         }
-        jStatus.setCurrentProcessedKBPerSec(kbRate);
- 
-        /*
-        case Status:
-            String newStatus = "?";
-            if (value != null) {
-                newStatus = (String) value;
-            }
-            jStatus.setStatus(newStatus);
-            
-            if (value != null) {
-                String status = (String) value;
-                if (CrawlController.PAUSING.equals(status)) {
-                    cpm.setStatus(CrawlStatus.CRAWLER_PAUSING);
-                } else if (CrawlController.PAUSED.equals(status)) {
-                    cpm.setStatus(CrawlStatus.CRAWLER_PAUSED);
-                } else {
-                    cpm.setStatus(CrawlStatus.CRAWLER_ACTIVE);
-                }
-            }
-         */
-        
+        jStatus.setProcessedKBPerSec(processedKBPerSec);
+
+        Long discoveredFilesCount = job.job.uriTotalsReport.totalUriCount;
+        if (discoveredFilesCount == null) {
+        	discoveredFilesCount = -1L;
+        }
+        jStatus.setDiscoveredFilesCount(discoveredFilesCount);
+
+        Long downloadedCount = job.job.uriTotalsReport.downloadedUriCount;
+        if (downloadedCount == null) {
+        	downloadedCount = -1L;
+        }
+        jStatus.setDownloadedFilesCount(downloadedCount);
+/*
+27 queues: 5 active (1 in-process; 0 ready; 4 snoozed); 0 inactive; 0 retired; 22 exhausted
+*/
+        String frontierShortReport = String.format("%d queues: %d active (%d in-process; %d ready; %d snoozed); %d inactive; %d retired; %d exhausted",
+        		job.job.frontierReport.totalQueues,
+        		job.job.frontierReport.activeQueues,
+        		job.job.frontierReport.inProcessQueues,
+        		job.job.frontierReport.readyQueues,
+        		job.job.frontierReport.snoozedQueues,
+        		job.job.frontierReport.inactiveQueues,
+        		job.job.frontierReport.retiredQueues,
+        		job.job.frontierReport.exhaustedQueues);
+        jStatus.setFrontierShortReport(frontierShortReport);
+
         String newStatus = "?";
         String StringValue = job.job.crawlControllerState;
         if (StringValue != null) {
@@ -520,19 +454,10 @@ public class HeritrixController extends AbstractRestHeritrixController {
         } else {
             cpm.setStatus(CrawlStatus.CRAWLER_ACTIVE);
         }
-/*        
-    case ThreadCount:
-        Integer currentActiveToecount = -1;
-        if (value != null) {
-            currentActiveToecount = (Integer) value;
-        }
-        jStatus.setActiveToeCount(currentActiveToecount);
-        break;
-*/    
-        valueI = job.job.threadReport.toeCount;
-        Integer currentActiveToecount = -1;
-        if (valueI != null) {
-            currentActiveToecount = (Integer) valueI;
+
+        Integer currentActiveToecount = job.job.threadReport.toeCount;
+        if (currentActiveToecount == null) {
+            currentActiveToecount = -1;
         }
         jStatus.setActiveToeCount(currentActiveToecount);
     }
