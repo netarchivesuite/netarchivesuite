@@ -11,6 +11,7 @@
     <includeBaseDirectory>false</includeBaseDirectory >
 
     <fileSets>
+<!--
         <fileSet>
             <directory>${project.basedir}/../../unclassified/</directory>
             <includes>
@@ -19,10 +20,13 @@
             </includes>
             <outputDirectory>/</outputDirectory>
         </fileSet>
-
+-->
         <fileSet>
             <directory>${project.basedir}/src/main/resources/</directory>
             <includes>
+                <include>archivedatabasedir/**</include>
+                <include>harvestdefinitionbasedir/**</include>
+                <include>order_templates_dist/**</include>
                 <include>examples/**</include>
                 <include>README.txt</include>
                 <include>derby.properties</include>
