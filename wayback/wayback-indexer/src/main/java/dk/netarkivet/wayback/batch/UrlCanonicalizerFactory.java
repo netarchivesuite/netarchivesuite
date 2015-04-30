@@ -33,7 +33,6 @@ import dk.netarkivet.wayback.WaybackSettings;
 /**
  * A factory for returning a UrlCanonicalizer.
  */
-@SuppressWarnings({"deprecation"})
 public class UrlCanonicalizerFactory extends SettingsFactory<UrlCanonicalizer> {
 
     /** Logger for this class. */
@@ -43,7 +42,7 @@ public class UrlCanonicalizerFactory extends SettingsFactory<UrlCanonicalizer> {
      * This method returns an instance of the UrlCanonicalizer class specified in the settings.xml for the
      * dk.netarkivet.wayback module. In the event that reading this file generates a SecurityException, as may occur in
      * batch operation if security does not allow System properties to be read, the method will fall back on returning
-     * an instance of the class dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer
+     * an instance of the class org.archive.wayback.util.url.AggressiveUrlCanonicalizer.
      *
      * @return a canonicalizer for urls
      */
