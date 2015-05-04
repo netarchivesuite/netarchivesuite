@@ -26,8 +26,10 @@ package dk.netarkivet.monitor.logging;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
@@ -36,24 +38,32 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.monitor.MonitorSettings;
 
+/**
+ * SLF4J appender that caches a certain number of log entries in a cyclic manor.
+ */
 public class CachingSLF4JAppender extends AppenderBase<ILoggingEvent> {
 
+	/** Log format string pattern. */
     protected String pattern;
 
+    /** Pattern layouter used to format log string. */
     protected PatternLayout layout;
 
     /** The size of the logging cache. */
-    private final int loggingHistorySize;
+    protected final int loggingHistorySize;
 
     /** The logging cache itself, caching the last "loggingHistorySize" log entries. */
-    private final List<String> loggingHistory;
+    protected final List<String> loggingHistory;
 
     /** The log entries exposed as MBeans. */
-    private final List<CachingSLF4JLogRecord> loggingMBeans;
+    protected final List<CachingSLF4JLogRecord> loggingMBeans;
 
     /** The place in the loggingHistory for the next LogRecord. */
-    private int currentIndex;
+    protected int currentIndex;
 
+    /**
+     * Initialize an instance of this class.
+     */
     public CachingSLF4JAppender() {
         layout = new PatternLayout();
         loggingHistorySize = Settings.getInt(MonitorSettings.LOGGING_HISTORY_SIZE);
@@ -65,6 +75,25 @@ public class CachingSLF4JAppender extends AppenderBase<ILoggingEvent> {
             loggingMBeans.add(new CachingSLF4JLogRecord(i, this));
         }
         currentIndex = 0;
+    }
+
+    /**
+     * Returns the pattern used to format the log string.
+     * @return the pattern used to format the log string
+     */
+    public String getPattern() {
+        return pattern;
+    }
+
+    /**
+     * Set the pattern used to format the log string.
+     * The method should be called before the setContext() or start() methods, most notably if used programmatically..
+     * @param pattern log pattern
+     */
+    public void setPattern(String pattern) {
+    	this.isStarted();
+        this.pattern = pattern;
+        layout.setPattern(pattern);
     }
 
     @Override
@@ -85,19 +114,35 @@ public class CachingSLF4JAppender extends AppenderBase<ILoggingEvent> {
         layout.stop();
     }
 
+    /**
+     * Close the appender and release associated resources.
+     */
+    public void close() {
+    	layout = null;
+    	loggingHistory.clear();
+    	if (!loggingMBeans.isEmpty()) {
+    		Iterator<CachingSLF4JLogRecord> iter = loggingMBeans.iterator();
+    		while (iter.hasNext()) {
+    			iter.next().close();
+    		}
+        	loggingMBeans.clear();
+    	}
+    }
+
     @Override
     protected void append(ILoggingEvent event) {
-        loggingHistory.set(currentIndex, layout.doLayout(event));
-        currentIndex = (currentIndex + 1) % loggingHistorySize;
-    }
-
-    public String getPattern() {
-        return pattern;
-    }
-
-    public void setPattern(String pattern) {
-        this.pattern = pattern;
-        layout.setPattern(pattern);
+    	switch (event.getLevel().toInt()) {
+    	case Level.TRACE_INT:
+    	case Level.DEBUG_INT:
+    		break;
+    	case Level.INFO_INT:
+    	case Level.WARN_INT:
+    	case Level.ERROR_INT:
+   		default:
+   	        loggingHistory.set(currentIndex, layout.doLayout(event));
+   	        currentIndex = (currentIndex + 1) % loggingHistorySize;
+   			break;
+    	}
     }
 
     /**

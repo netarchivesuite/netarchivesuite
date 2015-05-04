@@ -29,10 +29,18 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.management.SingleMBeanObject;
 
+/**
+ * Cached log entry and JMX bean in one.
+ */
 public class CachingSLF4JLogRecord implements SingleLogRecord {
 
+	/** Index in cached list. */
     private final int index;
+
+    /** Caching appender that created this caching log entry. */
     private final CachingSLF4JAppender cachingSLF4JAppender;
+
+    /** JMX bean object. */
     private SingleMBeanObject<SingleLogRecord> singleMBeanObject;
 
     /**
@@ -46,7 +54,6 @@ public class CachingSLF4JLogRecord implements SingleLogRecord {
         ArgumentNotValid.checkNotNull(cachingSLF4JAppender, "CachingSLF4JAppender cachingSLF4JAppender");
         this.index = index;
         this.cachingSLF4JAppender = cachingSLF4JAppender;
-
         register();
     }
 
