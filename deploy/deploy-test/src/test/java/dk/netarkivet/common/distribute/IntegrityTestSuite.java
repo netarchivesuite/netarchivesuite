@@ -373,7 +373,7 @@ public class IntegrityTestSuite {
             RemoteFile rf = RemoteFileFactory.getInstance(testFile1, true, false, true);
             rf.cleanup();
         }
-        logbackRecorder.assertLogNotContains("NullPointerException");
+        logbackRecorder.assertLogNotContains("A NullPointerException was thrown!", "NullPointerException");
     }
 
     /**
