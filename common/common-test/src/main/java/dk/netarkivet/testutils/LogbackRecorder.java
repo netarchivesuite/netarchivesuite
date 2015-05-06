@@ -76,7 +76,7 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
     protected List<ILoggingEvent> events = new ArrayList<ILoggingEvent>();
 
     /**
-     * Prohibit external package construction.
+     * Constructor only for use in unit tests.
      */
     protected LogbackRecorder() {
     }
@@ -128,13 +128,13 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
      * Tries to find a log entry with a specific log level containing a specific string and fails the if no match is
      * found.
      * @param level The log level of the log to find
-     * @param str The string to find in the log.
+     * @param logStringToLookup The string to find in the log.
      */
-    public synchronized void assertLogContains(Level level, String str) {
+    public synchronized void assertLogContains(Level level, String logStringToLookup) {
         boolean matchFound = false;
         Set<Level> matchedLevels = new HashSet<>();
         for (ILoggingEvent logEntry : events) {
-            if (logEntry.getFormattedMessage().indexOf(str) != -1) {
+            if (logEntry.getFormattedMessage().indexOf(logStringToLookup) != -1) {
                 if (logEntry.getLevel() == level) {
                     matchFound = true;
                     break;
@@ -145,13 +145,9 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         }
         if (!matchFound) {
             StringBuilder sb = new StringBuilder();
-            sb.append("Unable to find match level(");
-            sb.append(level);
-            sb.append(") in log: ");
-            sb.append(str);
+            sb.append("Unable to find match level(" + level + ") in log: " + logStringToLookup);
             if (!matchedLevels.isEmpty()) {
-                sb.append("\nFound matches for other log levels though: " );
-                sb.append(matchedLevels );
+                sb.append("\nFound matches for other log levels though: " + matchedLevels);
             }
             Assert.fail(sb.toString());
         }
@@ -159,18 +155,26 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
 
     /**
      * Assert that there is a recorded entry than contains the supplied string.
-     * @param msg error message or null
-     * @param str string to match for
+     * @param logStringToLookup string to match for
      */
-    public synchronized void assertLogContains(String msg, String str) {
+    public synchronized void assertLogContains(String logStringToLookup) {
+    	assertLogContains((String) null, logStringToLookup);
+    }
+
+    /**
+     * Assert that there is a recorded entry than contains the supplied string.
+     * @param msg error message or null
+     * @param logStringToLookup string to match for
+     */
+    public synchronized void assertLogContains(String msg, String logStringToLookup) {
         Iterator<ILoggingEvent> iter = events.iterator();
         boolean bMatched = false;
         while (!bMatched && iter.hasNext()) {
-            bMatched = (iter.next().getFormattedMessage().indexOf(str) != -1);
+            bMatched = (iter.next().getFormattedMessage().indexOf(logStringToLookup) != -1);
         }
         if (!bMatched) {
         	if (msg == null) {
-                msg = "Unable to match in log: " + str;
+                msg = "Unable to match in log: " + logStringToLookup;
         	}
             Assert.fail(msg);
         }
@@ -179,10 +183,10 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
     /**
      * Assert that there is a recorded entry than matches the supplied regular expression.
      * @param msg error message or null
-     * @param regex regular expression to match for
+     * @param regexToLookup regular expression to match for
      */
-    public synchronized void assertLogMatches(String msg, String regex) {
-        Pattern pattern = Pattern.compile(regex);
+    public synchronized void assertLogMatches(String msg, String regexToLookup) {
+        Pattern pattern = Pattern.compile(regexToLookup);
         Iterator<ILoggingEvent> iter = events.iterator();
         boolean bMatched = false;
         while (!bMatched && iter.hasNext()) {
@@ -190,7 +194,7 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
         }
         if (!bMatched) {
         	if (msg == null) {
-                msg = "Unable to match regex in log: " + regex;
+                msg = "Unable to match regex in log: " + regexToLookup;
         	}
             Assert.fail(msg);
         }
@@ -198,18 +202,26 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
 
     /**
      * Assert that there is no recorded entry with the supplied string 
-     * @param msg error message or null
-     * @param str log message to look for
+     * @param logStringToLookup log message to look for
      */
-    public synchronized void assertLogNotContains(String msg, String str) {
+    public synchronized void assertLogNotContains(String logStringToLookup) {
+    	assertLogNotContains(null, logStringToLookup);
+    }
+
+    /**
+     * Assert that there is no recorded entry with the supplied string 
+     * @param msg error message or null
+     * @param logStringToLookup log message to look for
+     */
+    public synchronized void assertLogNotContains(String msg, String logStringToLookup) {
         Iterator<ILoggingEvent> iter = events.iterator();
         boolean bMatched = false;
         while (!bMatched && iter.hasNext()) {
-            bMatched = (iter.next().getFormattedMessage().indexOf(str) != -1);
+            bMatched = (iter.next().getFormattedMessage().indexOf(logStringToLookup) != -1);
         }
         if (bMatched) {
         	if (msg == null) {
-                msg = "Able to match in log: " + str;
+                msg = "Able to match in log: " + logStringToLookup;
         	}
             Assert.fail(msg);
         }
@@ -236,14 +248,14 @@ public class LogbackRecorder extends ch.qos.logback.core.AppenderBase<ch.qos.log
 
     /**
      * Search the log entry list for a string starting from a specific index.
-     * @param str string to find
+     * @param logStringToLookup string to find
      * @param fromIndex log entry list start index
      * @return index of next occurrence or -1, if not found
      */
-    public synchronized int logIndexOf(String str, int fromIndex) {
+    public synchronized int logIndexOf(String logStringToLookup, int fromIndex) {
         boolean bMatched = false;
         while (fromIndex >= 0 && fromIndex < events.size() && !bMatched) {
-            if (events.get(fromIndex).getFormattedMessage().indexOf(str) != -1) {
+            if (events.get(fromIndex).getFormattedMessage().indexOf(logStringToLookup) != -1) {
                 bMatched = true;
             } else {
                 ++fromIndex;

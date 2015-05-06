@@ -40,6 +40,7 @@ import dk.netarkivet.monitor.MonitorSettings;
 
 /**
  * SLF4J appender that caches a certain number of log entries in a cyclic manor.
+ * "DEBUG and TRACE entries are excluded".
  */
 public class CachingSLF4JAppender extends AppenderBase<ILoggingEvent> {
 
