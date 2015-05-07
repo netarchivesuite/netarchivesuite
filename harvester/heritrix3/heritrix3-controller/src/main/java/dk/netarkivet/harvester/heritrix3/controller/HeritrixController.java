@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.heritrix3.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.netarchivesuite.heritrix3wrapper.EngineResult;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
@@ -455,7 +456,21 @@ public class HeritrixController extends AbstractRestHeritrixController {
             cpm.setStatus(CrawlStatus.CRAWLER_ACTIVE);
         }
 
-        Integer currentActiveToecount = job.job.threadReport.toeCount;
+        //Integer currentActiveToecount = job.job.threadReport.toeCount;
+        /*
+        Integer currentActiveToecount = null;
+        Iterator<String> iter = job.job.threadReport.processors.iterator();
+        String tmpStr;
+        int idx;
+        while (currentActiveToecount == null && iter.hasNext()) {
+        	tmpStr = iter.next();
+        	idx = tmpStr.indexOf(" noActiveProcessor");
+        	if (idx != -1) {
+        		currentActiveToecount = Integer.parseInt(tmpStr.substring(0, idx).trim());
+        	}
+        }
+        */
+        Integer currentActiveToecount = job.job.loadReport.busyThreads;
         if (currentActiveToecount == null) {
             currentActiveToecount = -1;
         }
