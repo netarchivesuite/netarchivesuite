@@ -168,7 +168,7 @@ public class TestWindowsMachine extends WindowsMachine {
             }
         } catch (IOException e) {
             String msg = "Cannot create the start script for application: " + app.getIdentification()
-                    + ", at machine: '" + name + "'";
+                    + ", at machine: '" + hostname + "'";
             log.trace(msg, e);
             throw new IOFailure(msg, e);
         }

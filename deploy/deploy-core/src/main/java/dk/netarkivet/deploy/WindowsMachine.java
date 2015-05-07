@@ -115,7 +115,7 @@ public class WindowsMachine extends Machine {
         res.append(ScriptConstants.ECHO_COPYING + Constants.SPACE);
         res.append(netarchiveSuiteFileName);
         res.append(Constants.SPACE + ScriptConstants.TO + Constants.COLON + Constants.SPACE);
-        res.append(name);
+        res.append(hostname);
         res.append(Constants.NEWLINE);
         // - scp 'NetarchiveSuite.zip' 'login'@'machine':
         res.append(ScriptConstants.SCP + Constants.SPACE);
@@ -144,7 +144,7 @@ public class WindowsMachine extends Machine {
         res.append(ScriptConstants.ECHO_UNZIPPING + Constants.SPACE);
         res.append(netarchiveSuiteFileName);
         res.append(Constants.SPACE + ScriptConstants.AT + Constants.COLON + Constants.SPACE);
-        res.append(name);
+        res.append(hostname);
         res.append(Constants.NEWLINE);
         // - ssh 'login'@'machine' 'unzip' 'environmentName' -o
         // 'NetarchiveSuite.zip
@@ -219,7 +219,7 @@ public class WindowsMachine extends Machine {
         res.append(Constants.NEWLINE);
         // - scp -r 'machine'/* 'login'@'machine':'environmentName'\\conf\\
         res.append(ScriptConstants.SCP + Constants.SPACE + ScriptConstants.DASH_R + Constants.SPACE);
-        res.append(name);
+        res.append(hostname);
         res.append(Constants.SLASH + Constants.STAR + Constants.SPACE);
         res.append(machineUserLogin());
         res.append(Constants.COLON);
@@ -361,7 +361,7 @@ public class WindowsMachine extends Machine {
             PrintWriter killPrinter = new PrintWriter(killAllScript, getTargetEncoding());
             try {
                 killPrinter.println(ScriptConstants.ECHO_KILL_ALL_APPS + Constants.COLON + Constants.SPACE
-                        + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
+                        + Constants.APOSTROPHE + hostname + Constants.APOSTROPHE);
                 killPrinter.println(ScriptConstants.CD + Constants.SPACE + Constants.QUOTE_MARK + getConfDirPath()
                         + Constants.QUOTE_MARK);
                 // insert path to kill script for all applications
@@ -401,7 +401,7 @@ public class WindowsMachine extends Machine {
             PrintWriter startPrinter = new PrintWriter(startAllScript, getTargetEncoding());
             try {
                 startPrinter.println(ScriptConstants.ECHO_START_ALL_APPS + Constants.COLON + Constants.SPACE
-                        + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
+                        + Constants.APOSTROPHE + hostname + Constants.APOSTROPHE);
                 startPrinter.println(ScriptConstants.CD + Constants.SPACE + Constants.QUOTE_MARK + getConfDirPath()
                         + Constants.QUOTE_MARK);
                 // insert path to kill script for all applications
@@ -517,7 +517,7 @@ public class WindowsMachine extends Machine {
                 }
             } catch (IOException e) {
                 String msg = "Cannot create the kill script for " + "application: " + app.getIdentification()
-                        + ", at machine: '" + name + "'";
+                        + ", at machine: '" + hostname + "'";
                 log.trace(msg, e);
                 throw new IOFailure(msg, e);
             }
@@ -618,7 +618,7 @@ public class WindowsMachine extends Machine {
             }
         } catch (IOException e) {
             String msg = "Cannot create the start script for application: " + app.getIdentification()
-                    + ", at machine: '" + name + "'";
+                    + ", at machine: '" + hostname + "'";
             log.trace(msg, e);
             throw new IOFailure(msg, e);
         }
@@ -722,7 +722,7 @@ public class WindowsMachine extends Machine {
             }
         } catch (IOException e) {
             String msg = "Cannot create the start script for application: " + app.getIdentification()
-                    + ", at machine: '" + name + "'";
+                    + ", at machine: '" + hostname + "'";
             log.trace(msg, e);
             throw new IOFailure(msg, e);
         }
@@ -966,7 +966,7 @@ public class WindowsMachine extends Machine {
      * @return The name of the script for creating the directories.
      */
     protected String getMakeDirectoryName() {
-        return Constants.WINDOWS_DIR_CREATE_PREFIX + name + scriptExtension;
+        return Constants.WINDOWS_DIR_CREATE_PREFIX + hostname + scriptExtension;
     }
 
     /**

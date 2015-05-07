@@ -25,6 +25,8 @@ package dk.netarkivet.deploy;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.dom4j.Element;
 
@@ -62,138 +64,91 @@ public class LinuxMachine extends Machine {
         scriptExtension = Constants.SCRIPT_EXTENSION_LINUX;
     }
 
+    protected static final class osInstallScriptTpl {
+        protected static final String[] mainScript = {
+            // echo copying null.zip to:kb-test-adm-001.kb.dk
+            "echo copying ${netarchiveSuiteFileName} to:${name}",
+            // scp null.zip dev@kb-test-adm-001.kb.dk:/home/dev
+            "scp ${netarchiveSuiteFileName} ${machineUserLogin}:${installDirValue}",
+            // echo deleting dev@kb-test-adm-001.kb.dk:/home/dev/TEST/lib
+            "echo deleting ${machineUserLogin}:${installDirValue}/${environmentName}/lib",
+            // ssh dev@kb-test-adm-001.kb.dk rm -rf /home/dev/TEST/lib
+            "ssh ${machineUserLogin} \"rm -rf ${installDirValue}/${environmentName}/lib\"",
+            // echo unzipping null.zip at:kb-test-adm-001.kb.dk
+            "echo unzipping ${netarchiveSuiteFileName} at:${name}",
+            // ssh dev@kb-test-adm-001.kb.dk unzip -q -o /home/dev/null.zip -d /home/dev/TEST
+            "ssh ${machineUserLogin} \"unzip -q -o ${installDirValue}/${netarchiveSuiteFileName} -d ${installDirValue}/${environmentName}\"",
+            // create other directories.
+            "${osInstallScriptCreateDir}",
+            // echo preparing for copying of settings and scripts
+            "echo preparing for copying of settings and scripts",
+            // For overriding jmxremote.password give user all rights.
+            // ssh machine: "if [ -e conf/jmxremote.password ];
+            // then chmod u+rwx conf/jmxremote.password; fi; "
+            "ssh ${machineUserLogin} \" cd ~; if [ -e ${installDirValue}/${environmentName}/conf/jmxremote.password ]; then chmod u+rwx ${installDirValue}/${environmentName}/conf/jmxremote.password; fi; \"",
+            // For overriding jmxremote.access give user all rights.
+            // ssh machine: "if [ -e conf/jmxremote.access ];
+            // then chmod u+rwx conf/jmxremote.access; fi; "
+            "ssh ${machineUserLogin} \" cd ~; if [ -e ${installDirValue}/${environmentName}/conf/jmxremote.access ]; then chmod u+rwx ${installDirValue}/${environmentName}/conf/jmxremote.access; fi; \"",
+            // echo copying settings and scripts
+            "echo copying settings and scripts",
+            // scp -r kb-test-adm-001.kb.dk/* dev@kb-test-adm-001.kb.dk:/home/dev/TEST/conf/
+            "scp -r ${name}/* ${machineUserLogin}:${installDirValue}/${environmentName}/conf/",
+            // INSTALL EXTERNAL JAR FILES.
+            "${osInstallExternalJarFiles}",
+            // APPLY HARVEST DEFINITION DATABASE!
+            "${osInstallDatabase}",
+            // APPLY ARCHIVE DATABASE!
+            "${osInstallArchiveDatabase}",
+            // echo make scripts executable
+            "echo make scripts executable",
+            // Allow only user to be able to deal with these files
+            // (go=-rwx,u=+rwx) = 700.
+            // ssh dev@kb-test-adm-001.kb.dk "chmod 700 /home/dev/TEST/conf/*.sh "
+            "ssh ${machineUserLogin} \"chmod 700 ${installDirValue}/${environmentName}/conf/*.sh \"",
+            // HANDLE JMXREMOTE PASSWORD AND ACCESS FILE.
+            "${JMXremoteFilesCommand}"
+            // END OF SCRIPT
+        };
+    }
+
     @Override
     protected String osInstallScript() {
-        StringBuilder res = new StringBuilder();
-        // echo copying null.zip to:kb-test-adm-001.kb.dk
-        res.append(ScriptConstants.ECHO_COPYING + Constants.SPACE);
-        res.append(netarchiveSuiteFileName);
-        res.append(Constants.SPACE + ScriptConstants.TO + Constants.COLON);
-        res.append(name);
-        res.append(Constants.NEWLINE);
-        // scp null.zip dev@kb-test-adm-001.kb.dk:/home/dev
-        res.append(ScriptConstants.SCP + Constants.SPACE);
-        res.append(netarchiveSuiteFileName);
-        res.append(Constants.SPACE);
-        res.append(machineUserLogin());
-        res.append(Constants.COLON);
-        res.append(machineParameters.getInstallDirValue());
-        res.append(Constants.NEWLINE);
-        // echo deleting dev@kb-test-adm-001.kb.dk:/home/dev/TEST/lib
-        res.append(ScriptConstants.ECHO_DELETING + Constants.SPACE);
-        res.append(machineUserLogin());
-        res.append(Constants.COLON);
-        res.append(getInstallDirPath() + getLocalLibDirPath());
-        res.append(Constants.NEWLINE);
-        // ssh dev@kb-test-adm-001.kb.dk rm -rf /home/dev/TEST/lib
-        res.append(ScriptConstants.SSH + Constants.SPACE);
-        res.append(machineUserLogin());
-        res.append(Constants.SPACE + Constants.QUOTE_MARK);
-        res.append(ScriptConstants.LINUX_FORCE_RECURSIVE_DELETE);
-        res.append(Constants.SPACE);
-        res.append(getInstallDirPath() + getLocalLibDirPath());
-        res.append(Constants.NEWLINE + Constants.QUOTE_MARK);
-        // echo unzipping null.zip at:kb-test-adm-001.kb.dk
-        res.append(ScriptConstants.ECHO_UNZIPPING + Constants.SPACE);
-        res.append(netarchiveSuiteFileName);
-        res.append(Constants.SPACE + ScriptConstants.AT + Constants.COLON);
-        res.append(name);
-        res.append(Constants.NEWLINE);
-        // ssh dev@kb-test-adm-001.kb.dk unzip -q -o /home/dev/null.zip -d
-        // /home/dev/TEST
-        res.append(ScriptConstants.SSH + Constants.SPACE);
-        res.append(machineUserLogin());
-        res.append(Constants.SPACE + Constants.QUOTE_MARK + ScriptConstants.LINUX_UNZIP_COMMAND + Constants.SPACE);
-        res.append(machineParameters.getInstallDirValue());
-        res.append(Constants.SLASH);
-        res.append(netarchiveSuiteFileName);
-        res.append(Constants.SPACE + ScriptConstants.SCRIPT_DIR + Constants.SPACE);
-        res.append(getInstallDirPath() + Constants.QUOTE_MARK);
-        res.append(Constants.NEWLINE);
-        // create other directories.
-        res.append(osInstallScriptCreateDir());
-        // echo preparing for copying of settings and scripts
-        res.append(ScriptConstants.ECHO_PREPARING_FOR_COPY);
-        res.append(Constants.NEWLINE);
-        // For overriding jmxremote.password give user all rights.
-        // ssh machine: "if [ -e conf/jmxremote.password ];
-        // then chmod u+rwx conf/jmxremote.password; fi; "
-        res.append(ScriptConstants.SSH + Constants.SPACE);
-        res.append(machineUserLogin());
-        res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.SPACE + ScriptConstants.LINUX_HOME_DIR
-                + Constants.SEMICOLON + Constants.SPACE + ScriptConstants.LINUX_IF_EXIST + Constants.SPACE);
-        res.append(getConfDirPath());
-        res.append(Constants.JMX_PASSWORD_FILE_NAME);
-        res.append(Constants.SPACE + ScriptConstants.LINUX_THEN + Constants.SPACE + ScriptConstants.LINUX_USER_ONLY
-                + Constants.SPACE);
-        res.append(getConfDirPath());
-        res.append(Constants.JMX_PASSWORD_FILE_NAME + Constants.SEMICOLON + Constants.SPACE + ScriptConstants.FI
-                + Constants.SEMICOLON + Constants.SPACE + Constants.QUOTE_MARK);
-        res.append(Constants.NEWLINE);
-        // For overriding jmxremote.access give user all rights.
-        // ssh machine: "if [ -e conf/jmxremote.access ];
-        // then chmod u+rwx conf/jmxremote.access; fi; "
-        res.append(ScriptConstants.SSH + Constants.SPACE);
-        res.append(machineUserLogin());
-        res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.SPACE + ScriptConstants.LINUX_HOME_DIR
-                + Constants.SEMICOLON + Constants.SPACE + ScriptConstants.LINUX_IF_EXIST + Constants.SPACE);
-        res.append(getConfDirPath());
-        res.append(Constants.JMX_ACCESS_FILE_NAME);
-        res.append(Constants.SPACE + ScriptConstants.LINUX_THEN + Constants.SPACE + ScriptConstants.LINUX_USER_ONLY
-                + Constants.SPACE);
-        res.append(getConfDirPath());
-        res.append(Constants.JMX_ACCESS_FILE_NAME + Constants.SEMICOLON + Constants.SPACE + ScriptConstants.FI
-                + Constants.SEMICOLON + Constants.SPACE + Constants.QUOTE_MARK);
-        res.append(Constants.NEWLINE);
-        // echo copying settings and scripts
-        res.append(ScriptConstants.ECHO_COPY_SETTINGS_AND_SCRIPTS);
-        res.append(Constants.NEWLINE);
-        // scp -r kb-test-adm-001.kb.dk/*
-        // dev@kb-test-adm-001.kb.dk:/home/dev/TEST/conf/
-        res.append(ScriptConstants.SCP + Constants.SPACE + ScriptConstants.SCRIPT_REPOSITORY + Constants.SPACE);
-        res.append(name);
-        res.append(Constants.SLASH + Constants.STAR + Constants.SPACE);
-        res.append(machineUserLogin());
-        res.append(Constants.COLON);
-        res.append(getConfDirPath());
-        res.append(Constants.NEWLINE);
-        // INSTALL EXTERNAL JAR FILES.
-        res.append(osInstallExternalJarFiles());
-        // APPLY HARVEST DEFINITION DATABASE!
-        res.append(osInstallDatabase());
-        // APPLY ARCHIVE DATABASE!
-        res.append(osInstallArchiveDatabase());
-        // echo make scripts executable
-        res.append(ScriptConstants.ECHO_MAKE_EXECUTABLE);
-        res.append(Constants.NEWLINE);
-        // Allow only user to be able to deal with these files
-        // (go=-rwx,u=+rwx) = 700.
-        // ssh dev@kb-test-adm-001.kb.dk "chmod 700 /home/dev/TEST/conf/*.sh "
-        res.append(ScriptConstants.SSH + Constants.SPACE);
-        res.append(machineUserLogin());
-        res.append(Constants.SPACE + Constants.QUOTE_MARK + ScriptConstants.LINUX_USER_700 + Constants.SPACE);
-        res.append(getConfDirPath());
-        res.append(Constants.STAR + Constants.SCRIPT_EXTENSION_LINUX + Constants.SPACE + Constants.QUOTE_MARK);
-        res.append(Constants.NEWLINE);
-        // HANDLE JMXREMOTE PASSWORD AND ACCESS FILE.
-        res.append(getJMXremoteFilesCommand());
-        // END OF SCRIPT
-        return res.toString();
+        Map<String, String> env = new HashMap<String, String>();
+        env.put("netarchiveSuiteFileName", netarchiveSuiteFileName);
+        env.put("name", hostname);
+        env.put("machineUserLogin", machineUserLogin());
+        env.put("installDirValue", machineParameters.getInstallDirValue());
+        env.put("environmentName", getEnvironmentName());
+        env.put("osInstallScriptCreateDir", osInstallScriptCreateDir());
+        env.put("osInstallExternalJarFiles", osInstallExternalJarFiles());
+        env.put("osInstallDatabase", osInstallDatabase());
+        env.put("osInstallArchiveDatabase", osInstallArchiveDatabase());
+        env.put("JMXremoteFilesCommand", getJMXremoteFilesCommand());
+        String str = Template.untemplate(osInstallScriptTpl.mainScript, env, true, "\n");
+        return str;
+    }
+
+    protected static final class osKillScriptTpl {
+        protected static final String[] mainScript = {
+            "ssh ${machineUserLogin} \". /etc/profile; ${installDirValue}/${environmentName}/conf/killall.sh\";"
+        };
     }
 
     @Override
     protected String osKillScript() {
-        StringBuilder res = new StringBuilder();
-        res.append(ScriptConstants.SSH + Constants.SPACE);
-        res.append(machineUserLogin());
-        res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.DOT + Constants.SPACE
-                + ScriptConstants.ETC_PROFILE + Constants.SEMICOLON + Constants.SPACE);
-        res.append(getConfDirPath());
-        res.append(Constants.SCRIPT_NAME_KILL_ALL);
-        res.append(scriptExtension);
-        res.append(Constants.QUOTE_MARK + Constants.SEMICOLON);
-        res.append(Constants.NEWLINE);
-        return res.toString();
+        Map<String, String> env = new HashMap<String, String>();
+        env.put("machineUserLogin", machineUserLogin());
+        env.put("environmentName", getEnvironmentName());
+        env.put("installDirValue", machineParameters.getInstallDirValue());
+        String str = Template.untemplate(osKillScriptTpl.mainScript, env, true, "\n");
+        return str;
+    }
+
+    protected static final class osStartScriptTpl {
+        protected static final String[] mainScript = {
+            "ssh ${machineUserLogin} \". /etc/profile;. ~/.bash_profile; ${installDirValue}/${environmentName}/conf/startall.sh; sleep 5; cat ${installDirValue}/${environmentName}/*.log\""
+        };
     }
 
     /**
@@ -208,21 +163,12 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String osStartScript() {
-        StringBuilder res = new StringBuilder();
-        res.append(ScriptConstants.SSH + Constants.SPACE);
-        res.append(machineUserLogin());
-        res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.DOT + Constants.SPACE
-                + ScriptConstants.ETC_PROFILE + Constants.SEMICOLON + Constants.DOT + Constants.SPACE
-                + ScriptConstants.USER_BASH_PROFILE + Constants.SEMICOLON + Constants.SPACE);
-        res.append(getConfDirPath());
-        res.append(Constants.SCRIPT_NAME_START_ALL);
-        res.append(scriptExtension);
-        res.append(Constants.SEMICOLON + Constants.SPACE + ScriptConstants.SLEEP_5 + Constants.SEMICOLON
-                + Constants.SPACE + ScriptConstants.CAT + Constants.SPACE);
-        res.append(getInstallDirPath());
-        res.append(Constants.SLASH + ScriptConstants.STAR_LOG + Constants.QUOTE_MARK);
-        res.append(Constants.NEWLINE);
-        return res.toString();
+        Map<String, String> env = new HashMap<String, String>();
+        env.put("machineUserLogin", machineUserLogin());
+        env.put("environmentName", getEnvironmentName());
+        env.put("installDirValue", machineParameters.getInstallDirValue());
+        String str = Template.untemplate(osStartScriptTpl.mainScript, env, true, "\n");
+        return str;
     }
 
     @Override
@@ -264,7 +210,7 @@ public class LinuxMachine extends Machine {
             PrintWriter killPrinter = new PrintWriter(killAllScript, getTargetEncoding());
             try {
                 killPrinter.println(ScriptConstants.ECHO_KILL_ALL_APPS + Constants.COLON + Constants.SPACE
-                        + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
+                        + Constants.APOSTROPHE + hostname + Constants.APOSTROPHE);
                 killPrinter.println(ScriptConstants.BIN_BASH_COMMENT);
                 killPrinter.println(ScriptConstants.CD + Constants.SPACE + getConfDirPath());
                 // insert path to kill script for all applications
@@ -323,7 +269,7 @@ public class LinuxMachine extends Machine {
                 startPrinter.print(callStartArchiveDatabase());
 
                 startPrinter.println(ScriptConstants.ECHO_START_ALL_APPS + Constants.COLON + Constants.SPACE
-                        + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
+                        + Constants.APOSTROPHE + hostname + Constants.APOSTROPHE);
 
                 // insert path to start script for each applications
                 for (Application app : applications) {

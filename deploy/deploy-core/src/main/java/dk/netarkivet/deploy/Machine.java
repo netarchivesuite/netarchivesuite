@@ -56,7 +56,7 @@ public abstract class Machine {
     /** The list of the application on this machine. */
     protected List<Application> applications;
     /** The name of this machine. */
-    protected String name;
+    protected String hostname;
     /** The operating system on this machine: 'windows' or 'linux'. */
     protected String operatingSystem;
     /** The extension on the script files (specified by operating system). */
@@ -150,7 +150,7 @@ public abstract class Machine {
         // retrieve name
         Attribute at = machineRoot.attribute(Constants.MACHINE_NAME_ATTRIBUTE);
         if (at != null) {
-            name = at.getText().trim();
+            hostname = at.getText().trim();
         } else {
             throw new IllegalState("A Machine instance has no name!");
         }
@@ -179,7 +179,7 @@ public abstract class Machine {
         ArgumentNotValid.checkNotNull(parentDirectory, "File parentDirectory");
 
         // create the directory for this machine
-        machineDirectory = new File(parentDirectory, name);
+        machineDirectory = new File(parentDirectory, hostname);
         FileUtils.createDir(machineDirectory);
 
         //
@@ -467,20 +467,20 @@ public abstract class Machine {
         // if different amount of usernames and passwords => DIE
         if (usernames.size() != passwords.size()) {
             String msg = "Different amount of usernames and passwords in monitor under applications on machine: '"
-                    + name + "'";
+                    + hostname + "'";
             log.warn(msg);
             throw new IllegalState(msg);
         }
 
         // warn if no usernames for monitor.
         if (usernames.size() == 0) {
-            log.warn("No usernames or passwords for monitor on machine: '{}'", name);
+            log.warn("No usernames or passwords for monitor on machine: '{}'", hostname);
         }
 
         // check if the usernames and passwords are the same.
         for (int i = 1; i < usernames.size(); i++) {
             if (!usernames.get(0).equals(usernames.get(i)) || !passwords.get(0).equals(passwords.get(i))) {
-                String msg = "Different usernames or passwords under monitor on the same machine: '" + name + "'";
+                String msg = "Different usernames or passwords under monitor on the same machine: '" + hostname + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
@@ -522,7 +522,7 @@ public abstract class Machine {
         // check if the usernames and passwords are the same.
         for (int i = 1; i < usernames.size(); i++) {
             if (!usernames.get(0).equals(usernames.get(i))) {
-                String msg = "Different usernames for the monitor on the same machine: '" + name + "'";
+                String msg = "Different usernames for the monitor on the same machine: '" + hostname + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
@@ -574,7 +574,7 @@ public abstract class Machine {
         // if different amount of usernames and passwords. DIE
         if (usernames.size() != passwords.size()) {
             String msg = "Different amount of usernames and passwords in heritrix under applications on machine: '"
-                    + name + "'";
+                    + hostname + "'";
             log.warn(msg);
             throw new IllegalState(msg);
         }
@@ -587,7 +587,7 @@ public abstract class Machine {
         // check if the usernames and passwords are the same.
         for (int i = 1; i < usernames.size(); i++) {
             if (!usernames.get(0).equals(usernames.get(i)) || !passwords.get(0).equals(passwords.get(i))) {
-                String msg = "Different usernames or passwords " + "under heritrix on machine: '" + name + "'";
+                String msg = "Different usernames or passwords " + "under heritrix on machine: '" + hostname + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
@@ -628,7 +628,7 @@ public abstract class Machine {
         // check if the usernames and passwords are the same.
         for (int i = 1; i < usernames.size(); i++) {
             if (!usernames.get(0).equals(usernames.get(i))) {
-                String msg = "Different usernames for Heritrix on the same machine: '" + name + "'";
+                String msg = "Different usernames for Heritrix on the same machine: '" + hostname + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
@@ -650,7 +650,7 @@ public abstract class Machine {
      * @return The access through SSH to the machine
      */
     protected String machineUserLogin() {
-        return machineParameters.getMachineUserName().getStringValue().trim() + Constants.AT + name;
+        return machineParameters.getMachineUserName().getStringValue().trim() + Constants.AT + hostname;
     }
 
     /**
