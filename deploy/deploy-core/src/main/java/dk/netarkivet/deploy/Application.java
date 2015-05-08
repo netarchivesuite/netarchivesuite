@@ -225,4 +225,8 @@ public class Application {
         return settings.getLeafValues(path);
     }
 
+    public XmlStructure getSettings() {
+    	return settings;
+    }
+
 }

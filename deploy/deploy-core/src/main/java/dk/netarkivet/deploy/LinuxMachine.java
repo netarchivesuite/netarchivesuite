@@ -26,7 +26,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.dom4j.Element;
 
@@ -39,6 +42,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
 public class LinuxMachine extends Machine {
 
 	public static final String HERITRIX_1_CLASSNAME = "org.archive.crawler.Heritrix";
+
+	protected LinkedHashMap<String, String> bundles = new LinkedHashMap<String, String>();
+	protected LinkedHashMap<String, String> certificates = new LinkedHashMap<String, String>();
 
 	/**
      * The constructor. Starts by initialising the parent abstract class, then sets the operating system dependent
@@ -62,6 +68,65 @@ public class LinuxMachine extends Machine {
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_LINUX;
+
+    	String[] bundlesArr;
+    	String[] certificatesArr;
+        String srcStr;
+        String dstStr;
+    	int idx;
+        for (Application app : applications) {
+        	bundlesArr = app.getSettingsValues(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
+        	certificatesArr = app.getSettingsValues(Constants.SETTINGS_HARVEST_HERITRIX3_CERTIFICATE_LEAF);
+        	if (bundlesArr != null && bundlesArr.length > 0 && certificatesArr != null && certificatesArr.length > 0) {
+        		for (int i=0; i<bundlesArr.length; ++i) {
+        			srcStr = bundlesArr[i];
+        			if (!bundles.containsKey(srcStr)) {
+                        idx = srcStr.lastIndexOf('/');
+                        if (idx != -1) {
+                        	dstStr = srcStr.substring(idx + 1);
+                        } else {
+                        	dstStr = srcStr;
+                        }
+                        dstStr = machineParameters.getInstallDirValue() + "/" + getEnvironmentName() + "/" +  dstStr;
+                        bundles.put(srcStr, dstStr);
+                		System.out.println(srcStr + " -> " + dstStr);
+        			}
+        		}
+        		for (int i=0; i<certificatesArr.length; ++i) {
+        			srcStr = certificatesArr[i];
+        			if (!certificates.containsKey(srcStr)) {
+                        idx = srcStr.lastIndexOf('/');
+                        if (idx != -1) {
+                        	dstStr = srcStr.substring(idx + 1);
+                        } else {
+                        	dstStr = srcStr;
+                        }
+                        dstStr = machineParameters.getInstallDirValue() + "/" + getEnvironmentName() + "/" +  dstStr;
+        				certificates.put(srcStr, dstStr);
+                		System.out.println(srcStr + " -> " + dstStr);
+        			}
+        		}
+        		XmlStructure appSettings = app.getSettings();
+        		Element e;
+        		String tmpStr;
+        		e = appSettings.getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
+        		if (e != null) {
+        			tmpStr = e.getText();
+        			tmpStr = bundles.get(tmpStr);
+        			if (tmpStr != null) {
+        				e.setText(tmpStr);
+        			}
+        		}
+        		e = appSettings.getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_CERTIFICATE_LEAF);
+        		if (e != null) {
+        			tmpStr = e.getText();
+        			tmpStr = certificates.get(tmpStr);
+        			if (tmpStr != null) {
+        				e.setText(tmpStr);
+        			}
+        		}
+        	}
+        }
     }
 
     protected static final class osInstallScriptTpl {
@@ -107,14 +172,48 @@ public class LinuxMachine extends Machine {
             // ssh dev@kb-test-adm-001.kb.dk "chmod 700 /home/dev/TEST/conf/*.sh "
             "ssh ${machineUserLogin} \"chmod 700 ${installDirValue}/${environmentName}/conf/*.sh \"",
             // HANDLE JMXREMOTE PASSWORD AND ACCESS FILE.
-            "${JMXremoteFilesCommand}"
+            "${JMXremoteFilesCommand}",
             // END OF SCRIPT
+            "${heritrix3Files}"
         };
+        //protected static final String scpFile = "scp ${srcFileName} ${machineUserLogin}:${installDirValue}/${environmentName}/${dstFileName}";
+        protected static final String scpFile = "scp ${srcFileName} ${machineUserLogin}:${dstFileName}";
     }
 
     @Override
     protected String osInstallScript() {
-        Map<String, String> env = new HashMap<String, String>();
+    	Map<String, String> env = new HashMap<String, String>();
+    	StringBuilder sb = new StringBuilder();
+        Iterator<Entry<String, String>> iter;
+        String tmpStr;
+        env.put("machineUserLogin", machineUserLogin());
+        //env.put("installDirValue", machineParameters.getInstallDirValue());
+        //env.put("environmentName", getEnvironmentName());
+        iter = bundles.entrySet().iterator();
+        Entry<String, String> entry;
+        while (iter.hasNext()) {
+        	entry = iter.next();
+    		env.put("srcFileName", entry.getKey());
+            env.put("dstFileName", entry.getValue());
+            tmpStr = Template.untemplate(osInstallScriptTpl.scpFile, env, true);
+            if (sb.length() > 0) {
+            	sb.append("\n");
+            }
+            sb.append(tmpStr);
+        }
+        iter = certificates.entrySet().iterator();
+        while (iter.hasNext()) {
+        	entry = iter.next();
+    		env.put("srcFileName", entry.getKey());
+            env.put("dstFileName", entry.getValue());
+            tmpStr = Template.untemplate(osInstallScriptTpl.scpFile, env, true);
+            if (sb.length() > 0) {
+            	sb.append("\n");
+            }
+            sb.append(tmpStr);
+        }
+
+    	env.clear();
         env.put("netarchiveSuiteFileName", netarchiveSuiteFileName);
         env.put("name", hostname);
         env.put("machineUserLogin", machineUserLogin());
@@ -125,6 +224,7 @@ public class LinuxMachine extends Machine {
         env.put("osInstallDatabase", osInstallDatabase());
         env.put("osInstallArchiveDatabase", osInstallArchiveDatabase());
         env.put("JMXremoteFilesCommand", getJMXremoteFilesCommand());
+        env.put("heritrix3Files", sb.toString());
         String str = Template.untemplate(osInstallScriptTpl.mainScript, env, true, "\n");
         return str;
     }
