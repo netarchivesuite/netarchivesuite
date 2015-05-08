@@ -1,6 +1,7 @@
 package dk.netarkivet.common.distribute;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Calendar;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -12,7 +13,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 
-public class FTPConnectionManager {
+public class FTPConnectionManager implements Serializable {
 
 	
 	/** A named logger for this class. */
