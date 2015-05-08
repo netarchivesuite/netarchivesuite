@@ -131,9 +131,9 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             this.ftpUserName = Settings.get(CommonSettings.FTP_USER_NAME);
             this.ftpUserPassword = Settings.get(CommonSettings.FTP_USER_PASSWORD);
         }
-        FTPConnectionManager cm = new FTPConnectionManager(ftpUserName, ftpUserPassword, ftpServerName, ftpServerPort, 
+        this.cm = new FTPConnectionManager(ftpUserName, ftpUserPassword, ftpServerName, ftpServerPort, 
         		Settings.getInt(CommonSettings.FTP_RETRIES_SETTINGS), Settings.getInt(CommonSettings.FTP_DATATIMEOUT_SETTINGS));
-        
+
         if (filesize == 0) {
             if (useChecksums) {
                 checksum = ChecksumCalculator.calculateMd5(file);
@@ -141,8 +141,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 checksum = null;
             }
             ftpFileName = "-";
-        } else {
- 
+        } else { 
         	// A large enough number to make it unlikely that two files are
             // created with the same FTP server name. Already the millisecond
             // datestamp reduces the likelihood, with this even if two
