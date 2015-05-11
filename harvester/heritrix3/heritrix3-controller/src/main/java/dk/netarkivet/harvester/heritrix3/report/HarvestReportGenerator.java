@@ -59,6 +59,10 @@ public class HarvestReportGenerator {
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(HarvestReportGenerator.class);
 
+
+    private static final String BYTE_LIMIT_REACHED_ANNOTATION = "Q:groupMaxAllKb";
+    private static final String OBJECT_LIMIT_REACHED_ANNOTATION = "Q:groupMaxFetchSuccesses";
+
     /**
      * Strings found in the progress-statistics.log, used to devise the default stop reason for domains.
      */
@@ -335,9 +339,9 @@ public class HarvestReportGenerator {
                     }
                 }
                 if (response == Heritrix1Constants.CRAWLURI_S_BLOCKED_BY_QUOTA) {
-                    if (annotation.trim().equals("Q:group-max-all-kb")) {
+                    if (annotation.trim().equals(BYTE_LIMIT_REACHED_ANNOTATION)) {
                         stopReason = StopReason.SIZE_LIMIT;
-                    } else if (annotation.trim().equals("Q:group-max-fetch-successes")) {
+                    } else if (annotation.trim().equals(OBJECT_LIMIT_REACHED_ANNOTATION)) {
                         stopReason = StopReason.OBJECT_LIMIT;
                     }
                 }
