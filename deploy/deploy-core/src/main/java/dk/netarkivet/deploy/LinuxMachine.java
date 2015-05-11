@@ -176,7 +176,6 @@ public class LinuxMachine extends Machine {
             // END OF SCRIPT
             "${heritrix3Files}"
         };
-        //protected static final String scpFile = "scp ${srcFileName} ${machineUserLogin}:${installDirValue}/${environmentName}/${dstFileName}";
         protected static final String scpFile = "scp ${srcFileName} ${machineUserLogin}:${dstFileName}";
     }
 
@@ -187,8 +186,6 @@ public class LinuxMachine extends Machine {
         Iterator<Entry<String, String>> iter;
         String tmpStr;
         env.put("machineUserLogin", machineUserLogin());
-        //env.put("installDirValue", machineParameters.getInstallDirValue());
-        //env.put("environmentName", getEnvironmentName());
         iter = bundles.entrySet().iterator();
         Entry<String, String> entry;
         while (iter.hasNext()) {
