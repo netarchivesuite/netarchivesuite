@@ -225,6 +225,10 @@ public class Application {
         return settings.getLeafValues(path);
     }
 
+    /**
+     * Returns the settings XML subtree for the application.
+     * @return the settings XML subtree for the application
+     */
     public XmlStructure getSettings() {
     	return settings;
     }

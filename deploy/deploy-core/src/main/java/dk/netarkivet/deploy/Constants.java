@@ -181,8 +181,10 @@ public final class Constants {
     static final String[] SETTINGS_HARVEST_SERVERDIR_LEAF = HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR.replace(
             CommonSettings.SETTINGS + ".", "").split("[.]");
 
+    /** The path to the bundle leaf from settings. */
     static final String[] SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF = HarvesterSettings.HERITRIX3_BUNDLE.replace(
             CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The path to the certificate leaf from settings. */
     static final String[] SETTINGS_HARVEST_HERITRIX3_CERTIFICATE_LEAF = HarvesterSettings.HERITRIX3_CERTIFICATE.replace(
             CommonSettings.SETTINGS + ".", "").split("[.]");
 
