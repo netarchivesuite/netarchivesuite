@@ -150,7 +150,8 @@ public class HTTPControllerServer extends CommandResolver {
                 return true;
             }
         } else {
-        	log.debug("This request is not a CommandHostRequest. URI: {}. Ignoring request", request.getURI());
+        	
+        	//log.debug("This request is not a CommandHostRequest. "); //URI: {}. Ignoring request", request.getURI());
         }
         return false;
         
