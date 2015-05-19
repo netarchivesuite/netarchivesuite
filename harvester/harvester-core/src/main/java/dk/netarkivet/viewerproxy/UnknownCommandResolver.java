@@ -23,11 +23,12 @@
 
 package dk.netarkivet.viewerproxy;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.harvester.datamodel.H3HeritrixTemplate;
 
 /**
  * Wrapper for an URIResolver, which gives failures on specific specific URLs, and forwards all others to the wrapped
@@ -36,7 +37,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class UnknownCommandResolver extends CommandResolver {
     /** Logger for this class. */
-    private Log log = LogFactory.getLog(getClass().getName());
+	 private static final Logger log = LoggerFactory.getLogger(H3HeritrixTemplate.class);
 
     /**
      * Make a new UnknownCommandResolver, which gives an error for any command- like URL and forwards other URLs to the

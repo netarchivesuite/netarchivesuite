@@ -26,8 +26,8 @@ package dk.netarkivet.harvester.webinterface;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -53,8 +53,8 @@ public abstract class HarvestChannelAction {
     public final static String SNAPSHOT = "channelIsSnapshot";
     public final static String COMMENTS = "channelComments";
 
-    private static final Log log = LogFactory.getLog(HarvestChannelAction.class);
-
+    //private static final Log log = LogFactory.getLog(HarvestChannelAction.class);
+    protected static final Logger log = LoggerFactory.getLogger(HarvestChannelAction.class);
     /**
      * This method processes the request to determine which action it corresponds to and passes the request along
      * accordingly. Available actions are:

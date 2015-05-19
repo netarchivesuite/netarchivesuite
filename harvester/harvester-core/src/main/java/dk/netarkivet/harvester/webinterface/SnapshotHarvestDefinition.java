@@ -30,8 +30,8 @@ import javax.inject.Provider;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
@@ -55,7 +55,8 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
  * Contains utility methods for supporting GUI for updating snapshot harvests.
  */
 public class SnapshotHarvestDefinition {
-    protected static final Log log = LogFactory.getLog(SnapshotHarvestDefinition.class);
+    //protected static final Log log = LogFactory.getLog(SnapshotHarvestDefinition.class);
+    protected static final Logger log = LoggerFactory.getLogger(SnapshotHarvestDefinition.class);
     private final Provider<HarvestDefinitionDAO> hdDaoProvider;
     private final Provider<JobDAO> jobDaoProvider;
     private final Provider<ExtendedFieldDAO> extendedFieldDAOProvider;

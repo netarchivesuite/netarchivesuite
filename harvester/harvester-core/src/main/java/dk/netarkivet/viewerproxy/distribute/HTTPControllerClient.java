@@ -31,6 +31,9 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspWriter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.I18n;
@@ -58,6 +61,10 @@ public class HTTPControllerClient implements Controller {
     /** The I18n object associated with this class. */
     private static final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
 
+    /** The log. */
+    private static final Logger log = LoggerFactory.getLogger(HTTPControllerClient.class);
+    
+    
     /**
      * Make an HTTP controller client. Commands are sent using redirect on the given http response object. For commands
      * with no output, the page is then forwarded to the response url.
@@ -137,6 +144,7 @@ public class HTTPControllerClient implements Controller {
         ArgumentNotValid.checkNotNullOrEmpty(returnURL, "String returnURL");
         StringBuffer url = new StringBuffer("http://" + CommandResolver.VIEWERPROXY_COMMAND_NAME
                 + HTTPControllerServer.CHANGE_INDEX_COMMAND);
+        log.info("Changing index to index for jobs {}, label {}, returnurl {}, url {}", StringUtils.conjoin(",", jobList), label, returnURL, url.toString());
         try {
             out.println("<html><head><title>");
             out.println(I18N.getString(response.getLocale(), "redirecting"));

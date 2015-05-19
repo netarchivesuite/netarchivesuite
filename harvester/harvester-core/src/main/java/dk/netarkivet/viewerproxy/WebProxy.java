@@ -31,10 +31,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -53,7 +55,8 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
     /** The URI resolver which handles URI lookups. */
     private URIResolver uriResolver;
     /** Logger used for reporting. */
-    private Log log = LogFactory.getLog(getClass().getName());
+    //private Log log = LogFactory.getLog(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(WebProxy.class);
 
     /** The actual web server that we're the link to. */
     private Server jettyServer;
@@ -187,7 +190,7 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
          * Getter for the data output stream.
          *
          * @return An open output stream.
-         * @throws IOFailure if an outprutstream can not be obtained (on invalidated response).
+         * @throws IOFailure if an outputstream can not be obtained (on invalidated response).
          */
         public OutputStream getOutputStream() {
             try {
@@ -214,6 +217,7 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
          * @param reason text string explaining status ie. OK, not found,
          */
         public void setStatus(int statusCode, String reason) {
+        	log.debug("Calling setStatus with statusCode {} and reason {} using deprecated API", statusCode, reason);
             this.status = statusCode;
             // Note: This uses deprecated method.
             // We still use this, because in the proxying we need to set both

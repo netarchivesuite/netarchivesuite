@@ -34,8 +34,8 @@ import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.ARCLookup;
@@ -75,7 +75,7 @@ public class ARCArchiveAccess implements URIResolver {
     private ARCLookup lookup;
 
     /** Logger for this class. */
-    private final Log log = LogFactory.getLog(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(ARCArchiveAccess.class);
 
     /**
      * If the value is true, we will try to lookup w/ ftp instead of http, if we don't get a hit in the index.
@@ -92,6 +92,7 @@ public class ARCArchiveAccess implements URIResolver {
         ArgumentNotValid.checkNotNull(arcRepositoryClient, "ArcRepositoryClient arcRepositoryClient");
         lookup = new ARCLookup(arcRepositoryClient);
         lookup.setTryToLookupUriAsFtp(tryToLookupUriAsFtp);
+        log.info("Constructed instance of ARCArchiveAccess with TryToLookupUriAsFtp: {}", tryToLookupUriAsFtp);
     }
 
     /**
@@ -120,6 +121,7 @@ public class ARCArchiveAccess implements URIResolver {
         URI uri = request.getURI();
         ResultStream content = null;
         InputStream contentStream = null;
+        log.debug("Doing Lookup of URI '{}'", uri);
         try {
             content = lookup.lookup(uri);
             if (content == null) {
