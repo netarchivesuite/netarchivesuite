@@ -30,11 +30,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
@@ -59,7 +59,8 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
     /** Store files in this dir -- might later use a separate setting. */
     private final File dir = new File(FileUtils.getTempDir(), ARC_REPOSITORY_DIR_NAME);
     /** The class logger. */
-    private Log log = LogFactory.getLog(getClass());
+    //private Log log = LogFactory.getLog(getClass());
+    private static final Logger log = LoggerFactory.getLogger(TrivialArcRepositoryClient.class);
 
     /**
      * Constructor for this class. Creates a local directory for the arcrepository.

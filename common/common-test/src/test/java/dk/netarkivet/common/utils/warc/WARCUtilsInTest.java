@@ -24,11 +24,11 @@ package dk.netarkivet.common.utils.warc;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.ArchiveRecordHeader;
-import org.archive.io.warc.WARCConstants;
+import org.archive.format.warc.WARCConstants;
 import org.archive.io.warc.WARCRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -42,8 +42,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
 public class WARCUtilsInTest {
 
     /** Logging output place. */
-    protected static final Log log = LogFactory.getLog(WARCUtilsInTest.class);
-
+    //protected static final Log log = LogFactory.getLog(WARCUtilsInTest.class);
+    protected static final Logger log = LoggerFactory.getLogger(WARCUtilsInTest.class);
+    
     /**
      * Read the contents (payload) of an WARC record into a byte array.
      *

@@ -32,8 +32,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -54,7 +54,8 @@ public class BatchExecuter extends Thread {
     private static final boolean APPEND = true;
 
     /** The log. */
-    private Log log = LogFactory.getLog(BatchExecuter.class);
+    //private Log log = LogFactory.getLog(BatchExecuter.class);
+    protected final Logger log = LoggerFactory.getLogger(BatchExecuter.class);
 
     /** The batchjob to execute. */
     private FileBatchJob batchJob;

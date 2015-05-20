@@ -41,7 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.archive.io.arc.ARCConstants;
+//import org.archive.io.arc.ARCConstants;
+import org.archive.format.arc.ARCConstants;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;

@@ -42,8 +42,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
@@ -67,7 +67,8 @@ import dk.netarkivet.common.webinterface.HTMLUtils;
  */
 public final class BatchGUI {
     /** The log. */
-    private static Log log = LogFactory.getLog(BatchGUI.class);
+    //private static Log log = LogFactory.getLog(BatchGUI.class);
+    protected static final Logger log = LoggerFactory.getLogger(BatchGUI.class);
 
     /** The language translator. */
     private static final I18n I18N = new I18n(dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE);

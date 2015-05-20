@@ -24,12 +24,12 @@ package dk.netarkivet.common.webinterface;
 
 import java.io.File;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -55,7 +55,8 @@ public class GUIWebServer implements CleanupIF {
     /**
      * Logger for this class.
      */
-    private Log log = LogFactory.getLog(getClass().getName());
+    //private Log log = LogFactory.getLog(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(GUIWebServer.class);
 
     /** The lower limit of acceptable HTTP port-numbers. */
     private static final int HTTP_PORT_NUMBER_LOWER_LIMIT = 1025;

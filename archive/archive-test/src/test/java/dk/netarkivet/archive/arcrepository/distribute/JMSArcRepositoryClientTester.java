@@ -46,7 +46,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
-import org.archive.io.arc.ARCConstants;
+import org.archive.format.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 import org.junit.After;

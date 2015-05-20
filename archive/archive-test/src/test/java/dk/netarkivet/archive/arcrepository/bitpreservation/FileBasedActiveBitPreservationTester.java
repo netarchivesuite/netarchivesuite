@@ -48,14 +48,14 @@ import java.util.Map;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
@@ -102,7 +102,8 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 @SuppressWarnings({"unused", "deprecation"})
 public class FileBasedActiveBitPreservationTester {
 
-    private Log log = LogFactory.getLog(getClass().getName());
+    //private Log log = LogFactory.getLog(getClass().getName());
+    private final Logger log = LoggerFactory.getLogger(FileBasedActiveBitPreservationTester.class);
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();
     private ReloadSettings rs = new ReloadSettings();

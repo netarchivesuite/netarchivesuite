@@ -22,8 +22,8 @@
  */
 package dk.netarkivet.archive.webinterface;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservationFactory;
@@ -37,7 +37,8 @@ import dk.netarkivet.common.exceptions.UnknownID;
 public class BitpreservationUpdateThread extends Thread {
 
     /** The log. */
-    private Log log = LogFactory.getLog(BitpreservationUpdateThread.class.getName());
+    //private Log log = LogFactory.getLog(BitpreservationUpdateThread.class.getName());
+    protected static final Logger log = LoggerFactory.getLogger(BitpreservationUpdateThread.class);
 
     /** The ActiveBitPreservation class. */
     private final ActiveBitPreservation preserve;

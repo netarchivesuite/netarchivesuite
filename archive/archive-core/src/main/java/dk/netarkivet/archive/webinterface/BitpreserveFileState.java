@@ -36,8 +36,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservationFactory;
@@ -57,7 +57,8 @@ public class BitpreserveFileState {
     /** Internationalisation object. */
     private static final I18n I18N = new I18n(dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE);
     /** The logger for this class. */
-    private static Log log = LogFactory.getLog(BitpreserveFileState.class);
+    //private static Log log = LogFactory.getLog(BitpreserveFileState.class);
+    protected static final Logger log = LoggerFactory.getLogger(BitpreserveFileState.class);
 
     /**
      * Private constructor to avoid instantiation of this class.

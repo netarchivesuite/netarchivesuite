@@ -52,7 +52,7 @@ public class HTTPControllerServer extends CommandResolver {
      */
     private Controller c;
     /** The log. */
-    private static final Logger log = LoggerFactory.getLogger(HTTPControllerServer.class);
+    private final Logger log = LoggerFactory.getLogger(HTTPControllerServer.class);
 
     /** Command for starting url collection. */
     static final String START_COMMAND = "/startRecordingURIs";
@@ -150,8 +150,11 @@ public class HTTPControllerServer extends CommandResolver {
                 return true;
             }
         } else {
-        	
-        	//log.debug("This request is not a CommandHostRequest. "); //URI: {}. Ignoring request", request.getURI());
+        	if (request != null) {
+        		log.debug("This request is not a CommandHostRequest. Ignoring request for URI {}", request.getURI());
+        	} else {
+        		log.debug("This request is not a CommandHostRequest. Ignoring null request");
+        	}
         }
         return false;
         
