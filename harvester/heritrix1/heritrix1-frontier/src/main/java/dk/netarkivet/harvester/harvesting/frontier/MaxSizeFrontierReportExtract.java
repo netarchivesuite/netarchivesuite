@@ -22,15 +22,15 @@
  */
 package dk.netarkivet.harvester.harvesting.frontier;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 abstract class MaxSizeFrontierReportExtract extends AbstractFrontierReportFilter {
 
     /** The logger to use. */
-    static final Log LOG = LogFactory.getLog(MaxSizeFrontierReportExtract.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MaxSizeFrontierReportExtract.class);
 
     private static final int DEFAULT_SIZE = 200;
 
@@ -39,13 +39,13 @@ abstract class MaxSizeFrontierReportExtract extends AbstractFrontierReportFilter
     @Override
     public void init(String[] args) {
         if (args.length != 1) {
-            throw new ArgumentNotValid(getFilterId() + " expects 1 argument: size");
+            throw new ArgumentNotValid(getFilterId() + " expects only 1 argument, not " + args.length);
         }
         try {
             maxSize = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
             maxSize = DEFAULT_SIZE;
-            LOG.warn("Report size not specified, hence set to default value: " + DEFAULT_SIZE + " !");
+            LOG.warn("Report size not specified, hence set to default value '{}'!", DEFAULT_SIZE);
         }
     }
 

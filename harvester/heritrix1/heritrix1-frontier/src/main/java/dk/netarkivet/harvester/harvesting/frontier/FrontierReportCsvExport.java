@@ -25,8 +25,8 @@ package dk.netarkivet.harvester.harvesting.frontier;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class implementing the export of a frontier report object to a CSV file.
@@ -34,10 +34,12 @@ import org.apache.commons.logging.LogFactory;
 public class FrontierReportCsvExport {
 
     /** The logger for this class. */
-    private static final Log LOG = LogFactory.getLog(FrontierReportCsvExport.class);
+	 private static final Logger LOG = LoggerFactory.getLogger(FrontierReportCsvExport.class);
 
     private static enum FIELD {
-        domainName, currentSize, totalEnqueues, sessionBalance, lastCost, averageCost, lastDequeueTime, wakeTime, totalSpend, totalBudget, errorCount, lastPeekUri, lastQueuedUri;
+        domainName, currentSize, totalEnqueues, sessionBalance, lastCost, averageCost, 
+        lastDequeueTime, wakeTime, 
+        totalSpend, totalBudget, errorCount, lastPeekUri, lastQueuedUri;
 
         private String getterName() {
             return "get" + String.valueOf(name().charAt(0)).toUpperCase() + name().substring(1);
@@ -80,12 +82,12 @@ public class FrontierReportCsvExport {
         }
     }
 
-    ;
+    
 
     /**
      * Outputs the report as CSV, using the given writer and the given field separator. Note that writer is not closed
      * by this method.
-     *
+     * @param report A given InMemoryFrontierReport 
      * @param pw the writer to output to
      * @param separator the field separator.
      */

@@ -23,7 +23,9 @@
 package dk.netarkivet.harvester.harvesting.frontier;
 
 /**
- * Constants used by the frontierpackage.
+ * Constants used by the frontier package. 
+ * Included value is identical to the one in 
+ * harvester-core/src/main/java/dk/netarkivet/harvester/datamodel/Constants.java
  */
 public class Constants {
 

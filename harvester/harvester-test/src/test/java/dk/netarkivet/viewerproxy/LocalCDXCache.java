@@ -32,9 +32,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -72,7 +72,8 @@ public class LocalCDXCache implements JobIndexCache {
     private static final String SUFFIX = "-index.cdx";
 
     private final ViewerArcRepositoryClient arcRepos;
-    private Log log = LogFactory.getLog(LocalCDXCache.class.getName());
+    
+    private final Logger log = LoggerFactory.getLogger(LocalCDXCache.class);
     private static final String WORK_SUFFIX = ".unsorted";
 
     /**
@@ -233,7 +234,7 @@ public class LocalCDXCache implements JobIndexCache {
         /**
          * Is called when batch job is finished. Nothing to do.
          *
-         * @param os ouput stream for returning output from batchjob.
+         * @param os output stream for returning output from batchjob.
          */
         public void finish(OutputStream os) {
         }

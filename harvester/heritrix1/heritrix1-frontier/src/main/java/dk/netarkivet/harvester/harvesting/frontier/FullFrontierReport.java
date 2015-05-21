@@ -31,8 +31,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
@@ -56,7 +56,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * Wraps an Heritrix full frontier report. As these reports can be big in size, this implementation relies on Berkeley
+ * Wraps an Heritrix 1 full frontier report. As these reports can be big in size, this implementation relies on Berkeley
  * DB direct persistence layer to store the report lines, allowing to store the lines partially in memory, and on disk.
  */
 @SuppressWarnings({"serial"})
@@ -165,7 +165,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
         }
 
         /**
-         * Close method should be called explicitely to free underlying resources!
+         * Close method should be called explicitly to free underlying resources!
          */
         public void close() {
             try {
@@ -180,7 +180,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
     private static final String WORKING_DIR = FullFrontierReport.class.getSimpleName();
 
     /** The logger for this class. */
-    private static final Log LOG = LogFactory.getLog(FullFrontierReport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FullFrontierReport.class);
 
     /**
      * The Berkeley DB JE environment.
@@ -416,7 +416,7 @@ public class FullFrontierReport extends AbstractFrontierReport {
         } catch (IOException e) {
             LOG.warn("Failed to close reader", e);
         } catch (Throwable t) {
-            LOG.error(t);
+            LOG.error("",t);
             t.printStackTrace(System.err);
         } finally {
             FileUtils.remove(tmpFile);

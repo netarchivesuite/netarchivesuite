@@ -24,8 +24,8 @@ package dk.netarkivet.harvester.harvesting.frontier;
 
 import java.io.Serializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sleepycat.persist.model.Persistent;
 
@@ -59,7 +59,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class FrontierReportLine implements Serializable, Comparable<FrontierReportLine>, FrontierReportLineOrderKey {
 
     /** The logger for this class. */
-    private static final Log LOG = LogFactory.getLog(FrontierReportLine.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FrontierReportLine.class);
 
     /**
      * Expected size of string array when we split the line token across "\\s+".
