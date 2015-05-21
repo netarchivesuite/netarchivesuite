@@ -31,8 +31,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.slf4j.Logger;
@@ -55,7 +53,6 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
     /** The URI resolver which handles URI lookups. */
     private URIResolver uriResolver;
     /** Logger used for reporting. */
-    //private Log log = LogFactory.getLog(getClass().getName());
     private static final Logger log = LoggerFactory.getLogger(WebProxy.class);
 
     /** The actual web server that we're the link to. */
@@ -69,6 +66,8 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
     private static final String HTML_HEADER = "<html><head><title>" + "Internal Server Error" + "</title><body>";
     /** Inserted after error response to browser. */
     private static final String HTML_FOOTER = "</body></html>";
+    
+    private final int portNo;
 
     /**
      * Initialises a new web proxy, which delegates lookups to the given uri resolver. The WebProxy will start listening
@@ -80,14 +79,14 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
      */
     public WebProxy(URIResolver uriResolver) {
         setURIResolver(uriResolver);
-        int portno = Settings.getInt(CommonSettings.HTTP_PORT_NUMBER);
-        jettyServer = new Server(portno);
+        portNo = Settings.getInt(CommonSettings.HTTP_PORT_NUMBER);
+        jettyServer = new Server(portNo);
         jettyServer.setHandler(this);
-        log.info("Starting viewerproxy jetty on port " + portno);
+        log.info("Starting viewerproxy jetty on port {}", portNo);
         try {
             jettyServer.start();
         } catch (Exception e) {
-            throw new IOFailure("Error while starting jetty server", e);
+            throw new IOFailure("Error while starting jetty server on port " + portNo, e);
         }
     }
 
@@ -160,6 +159,7 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
     /** Shut down this server. */
     public void kill() {
         try {
+        	log.info("Shutting down viewerproxy jetty listening on port {}", portNo);
             jettyServer.stop();
             jettyServer.destroy();
         } catch (Exception ie) {
@@ -237,7 +237,7 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
         }
 
         /**
-         * Get the HTTP status of this repsonse.
+         * Get the HTTP status of this response.
          *
          * @return The HTTP status.
          */
@@ -286,7 +286,7 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
 
         /**
          * We here replace what should be standard API functionality with an apparent kludge. We do this because the
-         * ctor java.net.URI(String s) violates its own documentation. It should encode all "other" characters in the
+         * constructor java.net.URI(String s) violates its own documentation. It should encode all "other" characters in the
          * query part of the URI. These "other" characters include curly brackets, but actually the escaping is never
          * done. Hence we do it here.
          *

@@ -104,6 +104,7 @@ public class ARCArchiveAccess implements URIResolver {
      */
     public void setIndex(File index) {
         lookup.setIndex(index);
+        log.info("ARCArchiveAccess instance now uses indexfile {}", index);
     }
 
     /**
@@ -126,13 +127,14 @@ public class ARCArchiveAccess implements URIResolver {
             content = lookup.lookup(uri);
             if (content == null) {
                 // If the object wasn't found, return an appropriate message.
-                log.debug("Missing URL: '" + uri + "'");
+                log.debug("Missing URL '{}'", uri);
                 createNotFoundResponse(uri, response);
                 return URIResolver.NOT_FOUND;
             }
             contentStream = content.getInputStream();
             // First write the original header.
             if (content.containsHeader()) {
+            	log.debug("Write first the original header");
                 writeHeader(contentStream, response);
             }
             // Now flush the content to the browser.
@@ -142,7 +144,7 @@ public class ARCArchiveAccess implements URIResolver {
                 try {
                     contentStream.close();
                 } catch (IOException e) {
-                    log.debug("Error writing response to browser " + "for '" + uri + "'. Giving up!", e);
+                    log.debug("Error writing response to browser for '{}'. Giving up!", uri, e);
                 }
             }
         }
@@ -160,7 +162,7 @@ public class ARCArchiveAccess implements URIResolver {
             // first write a header telling the browser to expect text/html
             response.setStatus(HTTP_NOTFOUND_VALUE);
             writeHeader(new ByteArrayInputStream((NOTFOUND_HEADER + '\n' + CONTENT_TYPE_STRING).getBytes()), response);
-            // Now flush an errorscreen to the browser
+            // Now flush an error screen to the browser
             OutputStream browserOut = response.getOutputStream();
             browserOut.write((HTML_HEADER + "Can't find URL: " + uri + HTML_FOOTER).getBytes());
             browserOut.flush();
@@ -183,6 +185,7 @@ public class ARCArchiveAccess implements URIResolver {
         // Cannot get chunked output to work, so we must remove
         // any chunked encoding lines
         if (headername.equalsIgnoreCase(TRANSFER_ENCODING_HTTP_HEADER)) {
+        	log.debug("Ignoring headerline: '{}','{}'", headername, headercontents);
             return null;
         }
         return headercontents;
@@ -206,6 +209,7 @@ public class ARCArchiveAccess implements URIResolver {
                     String responsetext = m.group(2);
                     // Note: Always parsable int, due to the regexp, so no reason
                     // to check for parse errors
+                    log.debug("SetStatus '{}':'{}", responsecode, responsetext);
                     response.setStatus(Integer.parseInt(responsecode), responsetext);
                 } else {
                     // try to match header-lines containing colon,
@@ -218,6 +222,7 @@ public class ARCArchiveAccess implements URIResolver {
                         String contents = filterHeader(name, parts[1].trim());
                         if (contents != null) {
                             // filter out unwanted headers
+                        	log.debug("Added header-field '{}' with contents '{}'", name, contents);
                             response.addHeaderField(name, contents);
                         }
                     }
@@ -238,13 +243,16 @@ public class ARCArchiveAccess implements URIResolver {
     private void readPage(InputStream content, OutputStream out) {
         BufferedInputStream page = new BufferedInputStream(content);
         BufferedOutputStream responseOut = new BufferedOutputStream(out);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
         try {
             byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
             int bytesRead;
             while ((bytesRead = page.read(buffer)) != -1) {
-                responseOut.write(buffer, 0, bytesRead);
+            	baos.write(buffer, 0, bytesRead);
+            	responseOut.write(buffer, 0, bytesRead);
             }
             responseOut.flush();
+            log.debug("pagecontents: ", new String(baos.toByteArray(), "UTF-8"));
         } catch (IOException e) {
             throw new IOFailure("Could not read or write data", e);
         }

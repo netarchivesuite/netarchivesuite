@@ -80,8 +80,9 @@ public class ARCLookup {
     }
 
     /**
-     * TODO javadoc
-     *
+     * The setter for the option to search for URIs with ftp instead of http as the scheme. 
+     * Note that The scheme information is absent from the original URI request, when the request arrives here
+     * 
      * @param searchForFtpUri if true, we replace the http schema with ftp and try again, if unsuccessful with http as
      * the schema
      */
@@ -111,9 +112,7 @@ public class ARCLookup {
             }
         }
         try {
-            // IndexReader.open is deprecated in Lucene 4.0
             luceneReader = org.apache.lucene.index.DirectoryReader.open(FSDirectory.open(indexDir));
-            // luceneReader = IndexReader.open(FSDirectory.open(indexDir));
             luceneSearcher = new IndexSearcher(luceneReader);
         } catch (IOException e) {
             throw new IOFailure("Unable to find/open index " + indexDir, e);
@@ -136,6 +135,7 @@ public class ARCLookup {
      */
     public ResultStream lookup(URI uri) {
         ArgumentNotValid.checkNotNull(uri, "uri");
+        log.debug("Doing lookup of {}", uri);
         boolean containsHeader = true;
         // the URI.getSchemeSpecificPart() carries out the url-decoding
         ARCKey key = luceneLookup(uri.getScheme() + ":" + uri.getSchemeSpecificPart());
@@ -163,8 +163,10 @@ public class ARCLookup {
         }
 
         if (key == null) {
+        	log.debug("Lookup failed for uri '{}'");
             return null; // key not found
         } else {
+        	log.debug("Retrieving record {},{} from archive", key.getFile().getName(), key.getOffset());
             final BitarchiveRecord bitarchiveRecord = arcRepositoryClient.get(key.getFile().getName(), key.getOffset());
             if (bitarchiveRecord == null) {
                 String message = "ARC file '" + key.getFile().getName() + "' mentioned in index file was not found by"
@@ -173,6 +175,7 @@ public class ARCLookup {
                 log.debug(message);
                 throw new IOFailure(message);
             }
+            log.debug("Retrieved record {},{} from archive and returning it as ResultStream", key.getFile().getName(), key.getOffset());
             return new ResultStream(bitarchiveRecord.getData(), containsHeader);
         }
     }
@@ -193,19 +196,12 @@ public class ARCLookup {
     }
 
     /**
-     * Lucene Lookup. It now uses the new Lucene API used in release 3.6
+     * Lucene Lookup. 
      *
      * @param uri A URI to look for.
-     * @return The file and offset where that URI can be found, or null if it doesn't exist. TODO Does TermRangeFilter
-     * needs to be modified to memory efficient enough. The the optimizations in the previous used SparseRangeFilter may
-     * or may not relevant for Lucene 3.6+
+     * @return The file and offset where that URI can be found, or null if it doesn't exist. 
      */
     private ARCKey luceneLookUp(String uri) {
-        // SparseRangeFilter + ConstantScoreQuery means we ignore norms,
-        // bitsets, and other memory-eating things we don't need that TermQuery
-        // or RangeFilter would imply.
-        // Query query = new ConstantScoreQuery(new SparseRangeFilter(
-        // DigestIndexer.FIELD_URL, uri, uri, true, true));
         BytesRef uriRef = new BytesRef(uri.getBytes()); // Should we decide which charset?
 
         Query query = new ConstantScoreQuery(new TermRangeFilter(DigestIndexer.FIELD_URL, uriRef, uriRef, true, true));
