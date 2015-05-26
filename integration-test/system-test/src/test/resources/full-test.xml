@@ -1,18 +1,9 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="Full Functional Acceptance Test" verbose="1" >
-  <test name="Full test">
-    <groups>
-      <run>
-        <include name="functest"/>
-      </run>
-    </groups>
-
+<suite name="Full Functional Acceptance Test" verbose="1">
+  <test name="Full test" preserve-order="false">
     <packages>
-      <package name="dk.netarkivet.systemtest.functional.*" />
+      <package name="dk.netarkivet.systemtest.functional" />
     </packages>
   </test>
-  <listeners>
-    <listener class-name="org.jaccept.TestNGListerner" />
-  </listeners>
 </suite>

@@ -71,7 +71,7 @@ public class SystemUtilsTester {
         // Test that some version of the standard libraries are in there
         JARS:
         for (String jar : new String[] {"commons-fileupload.*\\.jar$", "commons-httpclient.*\\.jar$",
-                "commons-logging.*\\.jar$", "dom4j-.*\\.jar$", "jaxen-.*\\.jar$", "jetty-.*\\.jar$", "junit-.*\\.jar$",
+                "dom4j-.*\\.jar$", "jaxen-.*\\.jar$", "jetty-.*\\.jar$", "junit-.*\\.jar$",
                 // Removed as not used in common.
                 // "libidn-.*\\.jar$",
                 // "lucene-core-.*\\.jar$"

@@ -27,8 +27,10 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
+import org.jaccept.TestEventManager;
 import org.jaccept.structure.ExtendedTestCase;
 import org.jaccept.testreport.ReportGenerator;
+import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -100,7 +102,8 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         TestGUIController.waitForGUIToStart(60);
-
+        TestEventManager.getInstance().addFixture("Selecting English as language");
+        driver.findElement(By.linkText("English")).click();
     }
 
     private void setupFixture() {
