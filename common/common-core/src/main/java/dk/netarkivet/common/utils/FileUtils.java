@@ -948,6 +948,11 @@ public class FileUtils {
         File sortTempDir = null;
         if (Settings.getBoolean(CommonSettings.UNIX_SORT_USE_COMMON_TEMP_DIR)) {
             sortTempDir = FileUtils.getTempDir();
+            if (!sortTempDir.isDirectory()) {
+            	log.warn("We should be using commontempdir {} in the sort process, but the directory doesn't exist", 
+            			sortTempDir.getAbsolutePath());
+            	sortTempDir = null;
+            }
         }
         boolean sortLikeCrawllog = true;
         int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir, sortLikeCrawllog);
@@ -977,6 +982,11 @@ public class FileUtils {
         File sortTempDir = null;
         if (Settings.getBoolean(CommonSettings.UNIX_SORT_USE_COMMON_TEMP_DIR)) {
             sortTempDir = FileUtils.getTempDir();
+            if (!sortTempDir.isDirectory()) {
+            	log.warn("We should be using commontempdir {} in the sort process, but the directory doesn't exist", 
+            			sortTempDir.getAbsolutePath());
+            	sortTempDir = null;
+            }
         }
         boolean sortLikeCrawllog = false;
         int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir, sortLikeCrawllog);
@@ -1006,6 +1016,12 @@ public class FileUtils {
         File sortTempDir = null;
         if (Settings.getBoolean(CommonSettings.UNIX_SORT_USE_COMMON_TEMP_DIR)) {
             sortTempDir = FileUtils.getTempDir();
+            if (!sortTempDir.isDirectory()) {
+            	log.warn("We should be using commontempdir {} in the sort process, but the directory doesn't exist", 
+            			sortTempDir.getAbsolutePath());
+            	sortTempDir = null;
+            }
+
         }
         int error = ProcessUtils.runUnixSort(file, toFile, sortTempDir, sortLikeCrawllog);
         if (error != 0) {

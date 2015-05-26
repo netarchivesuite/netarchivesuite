@@ -621,6 +621,8 @@
 					<writeRevisitForIdenticalDigests>false</writeRevisitForIdenticalDigests>
 					<writeRevisitForNotModified>false</writeRevisitForNotModified>
                 </warc>
+                <bundle></bundle>
+                <certificate></certificate> 
             </heritrix>
             <frontier>
                 <!-- 10 minutes -->

@@ -28,7 +28,7 @@ import java.util.TreeSet;
 
 /**
  * Implements a frontier report wrapper that is stored in memory. This implementation is intended for small reports that
- * are the result of the filtering of a full frontier report obtained from Heritrix. This implementation is
+ * are the result of the filtering of a full frontier report obtained from Heritrix 1. This implementation is
  * serializable, so it can be transmitted in a JMS message.
  * <p>
  * The report lines are sorted according to the natural order defined by {@link FrontierReportLine}, e.g. descending

@@ -29,8 +29,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -45,6 +45,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.harvester.HarvesterSettings;
 
+
 /**
  * Wrapper for an URIResolver, which retrieves raw data on given specific URLs, and forwards all others to the wrapped
  * handler. This allows you to get metadata, individual files, and individual records.
@@ -52,7 +53,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 @SuppressWarnings({"serial", "unused"})
 public class GetDataResolver extends CommandResolver {
     /** Logger for this class. */
-    private Log log = LogFactory.getLog(getClass().getName());
+	 private static final Logger log = LoggerFactory.getLogger(GetDataResolver.class);
 
     /** The client for the arc repository. */
     ViewerArcRepositoryClient client;

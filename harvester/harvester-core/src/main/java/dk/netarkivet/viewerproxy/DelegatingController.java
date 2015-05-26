@@ -38,7 +38,7 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.StringUtils;
 
 /**
- * Control of viewer proxy. Delegates URL-methods to a missing URL recorder, and cdx control to a CDXCache instance
+ * Control of viewer proxy. Delegates URL-methods to a missing URL recorder, and cdx control to a JobIndexCache instance
  * combined with an ARCArchiveAccess instance.
  */
 
@@ -48,7 +48,7 @@ public class DelegatingController implements Controller {
      */
     private MissingURIRecorder mur;
     /**
-     * The CDX cache which generates a CDX from a list of jobs on changeIndex command.
+     * The JobIndexCache which generates a CDX from a list of jobs on changeIndex command.
      */
     private JobIndexCache cc;
     /**
@@ -77,13 +77,13 @@ public class DelegatingController implements Controller {
      * Initialise a controller with the relevant instances to control.
      *
      * @param mur The missing URL recorder which handles missing URL collection.
-     * @param cc The CDX cache which generates an index from a list of jobs on changeIndex command.
+     * @param cc The JobIndexCache which generates an index from a list of jobs on changeIndex command.
      * @param aaa The ARCArchiveAccess instance to receive new cdx on changeIndex command.
      * @throws ArgumentNotValid if any argument is null.
      */
     public DelegatingController(MissingURIRecorder mur, JobIndexCache cc, ARCArchiveAccess aaa) {
         ArgumentNotValid.checkNotNull(mur, "MissingURIRecorder mur");
-        ArgumentNotValid.checkNotNull(cc, "CDXCache cc");
+        ArgumentNotValid.checkNotNull(cc, "JobIndexCache cc");
         ArgumentNotValid.checkNotNull(aaa, "ARCArchiveAccess aaa");
         this.mur = mur;
         this.cc = cc;
@@ -122,7 +122,7 @@ public class DelegatingController implements Controller {
 
     /**
      * Change index to use an index based on a list of jobs. Note: Does not check arguments. This is a task for the
-     * mediated classes, ArcArchiveAccess and CDXCache.
+     * mediated classes, ArcArchiveAccess and JobIndexCache.
      *
      * @param jobSet List of jobs to get an index for.
      * @param label The label this index should be known as

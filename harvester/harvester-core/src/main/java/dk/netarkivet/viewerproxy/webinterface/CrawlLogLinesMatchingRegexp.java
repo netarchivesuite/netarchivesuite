@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -48,7 +48,8 @@ import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
 
     /** The logger. */
-    private final Log log = LogFactory.getLog(getClass().getName());
+    //private final Log log = LogFactory.getLog(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(CrawlLogLinesMatchingRegexp.class);
 
     /** Metadata URL for crawl logs. */
     private static final String SETUP_URL_FORMAT = String.format("metadata://%s/crawl/logs/crawl.log",

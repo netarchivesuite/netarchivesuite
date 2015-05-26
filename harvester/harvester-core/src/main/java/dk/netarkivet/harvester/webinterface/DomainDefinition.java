@@ -32,8 +32,8 @@ import java.util.Locale;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -54,7 +54,8 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 @SuppressWarnings("unused")
 public class DomainDefinition {
 
-    private static Log log = LogFactory.getLog(DomainDefinition.class.getName());
+    //private static Log log = LogFactory.getLog(DomainDefinition.class.getName());
+    protected static final Logger log = LoggerFactory.getLogger(DomainDefinition.class);
 
     /** Private constructor to prevent public construction of this class. */
     private DomainDefinition() {

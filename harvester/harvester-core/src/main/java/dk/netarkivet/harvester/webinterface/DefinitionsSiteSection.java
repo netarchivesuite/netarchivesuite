@@ -23,8 +23,8 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
@@ -45,7 +45,8 @@ import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
  */
 public class DefinitionsSiteSection extends SiteSection {
     /** Logger for this class. */
-    private Log log = LogFactory.getLog(getClass().getName());
+    //private Log log = LogFactory.getLog(getClass().getName());
+    protected static final Logger log = LoggerFactory.getLogger(DefinitionsSiteSection.class);
     /** number of pages visible in the left menu. */
     private static final int PAGES_VISIBLE_IN_MENU = 10;
 
@@ -91,7 +92,7 @@ public class DefinitionsSiteSection extends SiteSection {
                     + "' does not exist in the template DAO. Please use the "
                     + HarvestTemplateApplication.class.getName() + " tool to upload this template before"
                     + " loading the Definitions site section in the" + " GUIApplication";
-            log.fatal(message);
+            log.error(message);
             throw new UnknownID(message);
         }
 

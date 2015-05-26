@@ -25,8 +25,8 @@ package dk.netarkivet.harvester.harvesting.controller;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.HarvestingAbort;
@@ -48,7 +48,7 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 public class FrontierReportAnalyzer implements Runnable {
 
     /** The logger to use. */
-    static final Log LOG = LogFactory.getLog(FrontierReportAnalyzer.class);
+    static final Logger LOG = LoggerFactory.getLogger(FrontierReportAnalyzer.class);
     /** The controller used to communicate with the Heritrix instance. */
     private final BnfHeritrixController heritrixController;
     /** The last time this Analyzer was executed. */

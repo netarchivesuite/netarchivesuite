@@ -41,7 +41,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 
 import org.archive.io.ArchiveRecordHeader;
-import org.archive.io.arc.ARCConstants;
+import org.archive.format.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 import org.archive.wayback.core.CaptureSearchResult;

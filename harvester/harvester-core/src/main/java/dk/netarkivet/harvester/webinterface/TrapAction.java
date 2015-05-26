@@ -27,8 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -41,8 +42,8 @@ import dk.netarkivet.common.webinterface.HTMLUtils;
 
 public abstract class TrapAction {
 
-    private static final Log log = LogFactory.getLog(TrapAction.class);
-
+    //private static final Log log = LogFactory.getLog(TrapAction.class);
+    protected static final Logger log = LoggerFactory.getLogger(TrapAction.class);
     /**
      * This method processes the request to determine which action it corresponds to and passes the request along
      * accordingly. If it is a multipart post then it is passed along to a create-or-update instance. Otherwise if no

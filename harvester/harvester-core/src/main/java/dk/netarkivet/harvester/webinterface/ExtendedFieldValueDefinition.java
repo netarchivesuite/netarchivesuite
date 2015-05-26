@@ -27,8 +27,8 @@ import java.util.Iterator;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -43,9 +43,10 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue
 
 @SuppressWarnings({"unused"})
 public class ExtendedFieldValueDefinition {
-    private static Log log = LogFactory.getLog(ExtendedFieldValueDefinition.class.getName());
-
-    /*
+    //private static Log log = LogFactory.getLog(ExtendedFieldValueDefinition.class.getName());
+    
+	static final Logger log = LoggerFactory.getLogger(ExtendedFieldValueDefinition.class);
+    /**
      * Subprocessing of ServletRequest for Extended Fields and update field content
      * 
      * @param context The context of this request

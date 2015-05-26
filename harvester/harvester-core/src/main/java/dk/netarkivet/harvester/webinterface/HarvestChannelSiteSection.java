@@ -23,8 +23,8 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.webinterface.SiteSection;
@@ -38,7 +38,8 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 @SuppressWarnings({"unused"})
 public class HarvestChannelSiteSection extends SiteSection {
     /** Logger for this class. */
-    private Log log = LogFactory.getLog(getClass().getName());
+    //private Log log = LogFactory.getLog(getClass().getName());
+    private static final Logger log = LoggerFactory.getLogger(HarvestChannelSiteSection.class);
     /** number of pages visible in the left menu. */
     private static final int PAGES_VISIBLE_IN_MENU = 2;
 

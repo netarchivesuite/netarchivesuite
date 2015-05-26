@@ -27,8 +27,8 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
@@ -41,7 +41,8 @@ import dk.netarkivet.wayback.WaybackSettings;
  */
 public class IndexAggregator {
     /** The logger for this class. */
-    private Log log = LogFactory.getLog(getClass().getName());
+    //private Log log = LogFactory.getLog(getClass().getName());
+    private final Logger log = LoggerFactory.getLogger(IndexAggregator.class);
 
     /**
      * Generates a sorted CDX index file based on the set of unsorted CDX input files.
@@ -49,7 +50,7 @@ public class IndexAggregator {
      * The operation will not run on a folder which already has a process job running.
      *
      * @param files A list of the files to aggregate
-     * @param outputFile Name of the outputfile. In case of a empty filesNames array no outputFiles will be generated
+     * @param outputFile Name of the output file. In case of a empty filesNames array no outputFiles will be generated
      */
     public void sortAndMergeFiles(File[] files, File outputFile) {
         processFiles(files, outputFile, null);

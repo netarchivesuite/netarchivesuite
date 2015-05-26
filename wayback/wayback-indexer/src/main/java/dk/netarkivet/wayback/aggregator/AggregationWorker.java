@@ -23,7 +23,6 @@
 package dk.netarkivet.wayback.aggregator;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,8 +30,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.CleanupIF;
@@ -50,7 +49,8 @@ import dk.netarkivet.wayback.WaybackSettings;
  */
 public class AggregationWorker implements CleanupIF {
     /** The AggregationWorker logger. */
-    private Log log = LogFactory.getLog(getClass().getName());
+    //private Log log = LogFactory.getLog(getClass().getName());
+    private final Logger log = LoggerFactory.getLogger(AggregationWorker.class);
     /** The singleton instance. */
     private static AggregationWorker instance = null;
     /** The IndexAggregator instance to use for the actual aggregation work. */

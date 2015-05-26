@@ -35,8 +35,8 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -56,8 +56,8 @@ public class TrapCreateOrUpdateAction extends TrapAction {
     /**
      * The logger for this class.
      */
-    private static final Log log = LogFactory.getLog(TrapCreateOrUpdateAction.class);
-
+    //private static final Log log = LogFactory.getLog(TrapCreateOrUpdateAction.class);
+    protected static final Logger log = LoggerFactory.getLogger(TrapCreateOrUpdateAction.class);
     @Override
     protected void doAction(PageContext context, I18n i18n) {
         String name = null;

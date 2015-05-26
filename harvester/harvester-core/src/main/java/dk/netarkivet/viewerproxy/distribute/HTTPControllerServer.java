@@ -30,8 +30,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -51,8 +51,8 @@ public class HTTPControllerServer extends CommandResolver {
      * The controller to call methods on.
      */
     private Controller c;
-    /** Logger for this class. */
-    private Log log = LogFactory.getLog(getClass().getName());
+    /** The log. */
+    private final Logger log = LoggerFactory.getLogger(HTTPControllerServer.class);
 
     /** Command for starting url collection. */
     static final String START_COMMAND = "/startRecordingURIs";
@@ -149,8 +149,15 @@ public class HTTPControllerServer extends CommandResolver {
                 doGetStatus(request, response);
                 return true;
             }
+        } else {
+        	if (request != null) {
+        		log.debug("This request is not a CommandHostRequest. Ignoring request for URI {}", request.getURI());
+        	} else {
+        		log.debug("This request is not a CommandHostRequest. Ignoring null request");
+        	}
         }
         return false;
+        
     }
 
     /**

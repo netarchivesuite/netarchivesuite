@@ -34,7 +34,7 @@ import java.util.HashMap;
 import javax.jms.Message;
 
 import org.archive.io.ArchiveRecord;
-import org.archive.io.arc.ARCConstants;
+import org.archive.format.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 import org.junit.After;

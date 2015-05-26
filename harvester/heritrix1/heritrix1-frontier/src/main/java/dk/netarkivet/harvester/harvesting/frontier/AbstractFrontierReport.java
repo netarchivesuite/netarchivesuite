@@ -27,7 +27,7 @@ import java.io.Serializable;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Base abstract implementation of an Heritrix frontier report wrapper.
+ * Base abstract implementation of an Heritrix 1 frontier report wrapper.
  */
 @SuppressWarnings({"serial"})
 abstract class AbstractFrontierReport implements FrontierReport, Serializable {
@@ -43,7 +43,7 @@ abstract class AbstractFrontierReport implements FrontierReport, Serializable {
     private long timestamp;
 
     /**
-     * Default empty contrcutor.
+     * Default empty constructor.
      */
     AbstractFrontierReport() {
 

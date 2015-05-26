@@ -60,7 +60,6 @@ import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
-import dk.netarkivet.harvester.harvesting.controller.DirectHeritrixController;
 import dk.netarkivet.testutils.TestResourceUtils;
 import dk.netarkivet.testutils.XmlAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
@@ -123,8 +122,7 @@ public class HeritrixLauncherTester {
         File seedsTxt = new File(crawlDir, "seeds.txt");
         FileUtils.copyFile(origOrderXml, orderXml);
         FileUtils.copyFile(origSeeds, seedsTxt);
-        //FIXME assumes H1 HeritrixFiles
-        
+
         HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(crawlDir,
         		new JobInfoTestImpl(Long.parseLong(Heritrix1ControllerTestInfo.ARC_JOB_ID),
                 Long.parseLong(Heritrix1ControllerTestInfo.ARC_HARVEST_ID)));
@@ -187,7 +185,6 @@ public class HeritrixLauncherTester {
     @Test
     public void testStartMissingOrderFile() {
         try {
-        	//FIXME assumes H1 HeritrixFiles
             HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(
             		mtf.newTmpDir(), new JobInfoTestImpl(42L, 42L));
             HeritrixLauncherFactory.getInstance(hf);
@@ -203,7 +200,6 @@ public class HeritrixLauncherTester {
     @Test
     public void testStartMissingSeedsFile() {
         try {
-        	//FIXME assumes H1 HeritrixFiles
             HeritrixFiles hf = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles(WORKING_DIR, new JobInfoTestImpl(42L, 42L));
             hf.getSeedsTxtFile().delete();
             HeritrixLauncherFactory.getInstance(hf);
@@ -274,7 +270,7 @@ public class HeritrixLauncherTester {
             // expected case since a searched node could not be found in the bad
             // XML-order-file!
         } catch (ArgumentNotValid e) {
-            // Expected case since a templatethat is not H1 or H3 throws an exception!
+            // Expected case since a template that is not H1 or H3 throws an exception!
         }
     }
 
@@ -488,58 +484,5 @@ public class HeritrixLauncherTester {
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
                 "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
 
-    }
-
-    /**
-     * A class that closely emulates CrawlController, except it never starts Heritrix.
-     */
-    public static class TestCrawlController extends DirectHeritrixController {
-        private static final long serialVersionUID = 1L;
-        /**
-         * List of crawl status listeners.
-         * <p>
-         * All iterations need to synchronize on this object if they're to avoid concurrent modification exceptions. See
-         * {@link java.util.Collections#synchronizedList(List)}.
-         */
-        private List<CrawlStatusListener> listeners = new ArrayList<CrawlStatusListener>();
-
-        public TestCrawlController(HeritrixFiles files) {
-            super(files);
-        }
-
-        /**
-         * Register for CrawlStatus events.
-         *
-         * @param cl a class implementing the CrawlStatusListener interface
-         * @see CrawlStatusListener
-         */
-        @Override
-        public void addCrawlStatusListener(CrawlStatusListener cl) {
-            synchronized (this.listeners) {
-                this.listeners.add(cl);
-            }
-        }
-
-        /**
-         * Operator requested crawl begin
-         */
-        @Override
-        public void requestCrawlStart() {
-            new Thread() {
-                public void run() {
-                    for (CrawlStatusListener l : listeners) {
-                        l.crawlEnding("Fake over");
-                        l.crawlEnded("Fake all over");
-                    }
-                }
-            }.start();
-        }
-
-        /**
-         * Starting from nothing, set up CrawlController and associated classes to be ready for a first crawl.
-         */
-        public void initialize(SettingsHandler sH) throws InitializationException {}
-        @Override
-        public void requestCrawlStop(String test) {}
     }
 }

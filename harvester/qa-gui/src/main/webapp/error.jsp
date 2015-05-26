@@ -28,8 +28,8 @@ This is the error page for the GUI and is displayed whenever an uncaught
 exception is thrown. The error message is presented unescaped.
 --%>
 <%@ page import="java.io.PrintWriter,
-                 org.apache.commons.logging.Log,
-                 org.apache.commons.logging.LogFactory,
+                 org.slf4j.LoggerFactory,
+                 org.slf4j.Logger,
                  dk.netarkivet.common.Constants,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils"
@@ -41,7 +41,7 @@ exception is thrown. The error message is presented unescaped.
 /><%!
     private static final I18n I18N = new I18n(
             Constants.TRANSLATIONS_BUNDLE);
-    Log log = LogFactory.getLog(getClass().getName());
+    Logger log = LoggerFactory.getLogger(getClass());
 %><%
     String title = I18N.getString(response.getLocale(),
             "pagetitle.error");

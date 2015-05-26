@@ -27,11 +27,12 @@ import java.util.Locale;
 
 import javax.servlet.jsp.JspWriter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.IngestDomainList;
+
 
 /**
  * This class manages a thread of ingesting domains.
@@ -39,7 +40,8 @@ import dk.netarkivet.harvester.datamodel.IngestDomainList;
 
 public class DomainIngester extends Thread {
     /** The log. */
-    Log log = LogFactory.getLog(DomainIngester.class.getName());
+    //Log log = LogFactory.getLog(DomainIngester.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(DomainIngester.class);
     /** Whether or not the ingesting process is finished yet. */
     private boolean done = false;
     /** If an exception is thrown during ingest, it gets stored here. */

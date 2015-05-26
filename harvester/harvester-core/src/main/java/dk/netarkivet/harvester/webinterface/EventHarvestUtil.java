@@ -31,8 +31,8 @@ import java.util.Set;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -47,7 +47,8 @@ import dk.netarkivet.harvester.datamodel.TemplateDAO;
  */
 public final class EventHarvestUtil {
 
-    static final Log log = LogFactory.getLog(EventHarvestUtil.class.getName());
+    //static final Log log = LogFactory.getLog(EventHarvestUtil.class.getName());
+    static final Logger log = LoggerFactory.getLogger(EventHarvestUtil.class);
 
     /**
      * Private Constructor. Instances are not meaningful.

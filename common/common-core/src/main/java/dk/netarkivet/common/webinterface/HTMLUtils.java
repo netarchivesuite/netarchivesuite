@@ -41,8 +41,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -89,7 +89,8 @@ public class HTMLUtils {
             + "</head> <body onload=\"giveFocus()\">\n";
 
     /** Logger for this class. */
-    private static Log log = LogFactory.getLog(HTMLUtils.class.getName());
+    //private static Log log = LogFactory.getLog(HTMLUtils.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(HTMLUtils.class);
     /** Translations for this module. */
     private static final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
 

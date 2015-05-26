@@ -36,7 +36,8 @@ indexLabel: An arbitrary name that will be associated with the created index.
                     dk.netarkivet.viewerproxy.Constants,
                     dk.netarkivet.viewerproxy.Controller,
                     dk.netarkivet.viewerproxy.distribute.HTTPControllerClient,
-                    dk.netarkivet.viewerproxy.webinterface.Parameters, dk.netarkivet.viewerproxy.webinterface.QASiteSection"
+                    dk.netarkivet.viewerproxy.webinterface.Parameters, 
+                    dk.netarkivet.viewerproxy.webinterface.QASiteSection"
             pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
