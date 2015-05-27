@@ -22,6 +22,7 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +110,8 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
             HarvestChannel chan = harvestChannelDao.getByName(channelName);
             isSnapshot = chan.isSnapshot();
         } catch (UnknownID e) {
+        	log.warn("The channel '{}' is unknown by the channels table, wherefore the HarvesterRegistrationRequest is denied. The known channels are ", channelName, 
+        			StringUtils.join(harvestChannelDao.getAll(true), ","));
             isValid = false;
         }
 
@@ -121,5 +124,4 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         log.info("Sent a message to host {} to notify that harvest channel '{}' is {}", msg.getHostname(), channelName, (isValid ? "valid."
                 : "invalid."));
     }
-
 }
