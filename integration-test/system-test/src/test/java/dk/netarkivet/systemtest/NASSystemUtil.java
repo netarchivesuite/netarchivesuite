@@ -42,10 +42,12 @@ public class NASSystemUtil {
                 new Application("kb-test-adm-001", "BitarchiveMonitorApplication", "SBBM", null, "SBN"),
                 new Application("kb-test-adm-001", "HarvestJobManagerApplication", null, null, "KBN"),
                 new Application("kb-test-adm-001", "GUIApplication", null, null, "KBN"),
-                new Application("kb-test-har-003", "HarvestControllerApplication", "kblow001", "LOWPRIORITY", "KBN"),
-                new Application("kb-test-har-004", "HarvestControllerApplication", "kbhigh", "HIGHPRIORITY", "KBN"),
-                new Application("kb-test-har-004", "HarvestControllerApplication", "kblow002", "LOWPRIORITY", "KBN"),
+                new Application("kb-test-har-003", "HarvestControllerApplication", "kblow001_h3", "LOWPRIORITY", "KBN"),
+                new Application("kb-test-har-004", "HarvestControllerApplication", "kbhigh_h3", "HIGHPRIORITY", "KBN"),
+                new Application("kb-test-har-004", "HarvestControllerApplication", "kblow002_h3", "LOWPRIORITY", "KBN"),
+                new Application("sb-test-har-001", "HarvestControllerApplication", "sbhigh_h3", "HIGHPRIORITY", "SBN"),
                 new Application("sb-test-bar-001", "BitarchiveApplication", null, null, "SBN"),
-                new Application("sb-test-har-001", "HarvestControllerApplication", "sbhigh", "HIGHPRIORITY", "SBN")};
+                new Application("kb-test-way-001", "WaybackIndexerApplication", null, null, "KBN")
+        };
     }
 }
