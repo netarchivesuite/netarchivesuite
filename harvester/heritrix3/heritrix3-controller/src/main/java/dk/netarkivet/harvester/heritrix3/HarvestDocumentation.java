@@ -319,12 +319,12 @@ public class HarvestDocumentation {
         	log.warn("The directory {} does not exist", reportsDir.getAbsolutePath());
         }
         
-        // Generate an arcfiles-report.txt if configured to do so.
-        // FIXME This is not possible to extract from the crawl.log (Is this list available in any other way?)
+        // TODO Generate an arcfiles-report.txt if configured to do so for Heritrix3
+        // This is not possible to extract from the heritrix_out.log (Is this list available in any other way?)
         
         boolean genArcFilesReport = Settings.getBoolean(Heritrix3Settings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         if (genArcFilesReport) {
-        	log.warn("Creating the arcfiles-report.txt is not yet implemented for Heritrix3");
+        	log.warn("Creating the arcfiles-report.txt is not currently supported by Heritrix3");
         	/*
             log.debug("Creating an arcfiles-report.txt");
             files.add(new MetadataFile(new ArchiveFilesReportGenerator(crawlDir).generateReport(), harvestID, jobID,

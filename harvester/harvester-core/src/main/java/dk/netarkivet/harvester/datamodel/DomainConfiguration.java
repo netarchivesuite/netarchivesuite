@@ -100,8 +100,8 @@ public class DomainConfiguration implements Named {
      *
      * @param theConfigName theConfigName The name of this configuration
      * @param domainName The name of the domain that this configuration is for
-     * @param history The domainhistory belonging the given domain
-     * @param crawlertraps The domainhistory belonging the given domain
+     * @param history The domainhistory of the given domain
+     * @param crawlertraps The crawlertraps of the given domain
      * @param seedlists Seedlists to use in this configuration
      * @param passwords Passwords to use in this configuration.
      */

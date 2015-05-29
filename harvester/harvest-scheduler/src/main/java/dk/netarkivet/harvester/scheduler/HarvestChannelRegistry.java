@@ -64,6 +64,14 @@ public class HarvestChannelRegistry {
     public synchronized boolean isRegistered(final String channelName) {
         return harvesterChannelRegistry.containsKey(channelName);
     }
+    
+    public synchronized boolean isRegisteredToChannel(final String harvesterInstanceId, final String channelName) {
+    	if (!isRegistered(channelName)){
+    		return false;
+    	} else {
+    		return harvesterChannelRegistry.get(channelName).contains(harvesterInstanceId);
+    	}
+    }
 
     private void logStatus() {
         if (LOG.isInfoEnabled()) {

@@ -400,7 +400,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 //            </list>
 //           </property> -->
 //     </bean>
-    	if (!crawlertraps.isEmpty()) {
+    	if (crawlertraps.isEmpty()) {
     		log.debug("No crawlertraps yet. No insertion is done");
     		return;
     	} else if (!template.contains(CRAWLERTRAPS_PLACEHOLDER)) {	
@@ -409,12 +409,13 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     				crawlertraps);
     		return;
     	} else {
-    		log.info("Inserting {} crawlertraps into the template", crawlertraps);
+    		log.info("Inserting {} crawlertraps into the template", crawlertraps.size());
     		StringBuilder sb = new StringBuilder();
     		for (String trap: crawlertraps) {
     			sb.append("<value>" + trap + "</value>\n");
     		}
-    		sb.append(CRAWLERTRAPS_PLACEHOLDER + "\n");
+    		// Adding the placeholder again to be able to insert crawlertraps multiple times.
+    		sb.append(CRAWLERTRAPS_PLACEHOLDER + "\n"); 
     		String templateNew = template.replace(CRAWLERTRAPS_PLACEHOLDER, sb.toString());
     		this.template = templateNew;
     	}

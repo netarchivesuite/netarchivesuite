@@ -94,6 +94,12 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         ArgumentNotValid.checkNotNull(message, "message");
         log.trace("Received ready message from {} on host {}", message.getApplicationInstanceId(), message.getHostName() );
         HarvestChannel channel = harvestChannelDao.getByName(message.getHarvestChannelName());
+        if (!harvestChannelRegistry.isRegistered(message.getHarvestChannelName())) {
+        	log.info("Reregistering the harvester '{}' to channel '{}'", message.getApplicationInstanceId(),message.getHarvestChannelName()); 
+        	harvestChannelRegistry.register(message.getHarvestChannelName(), message.getApplicationInstanceId());
+        } else if (!harvestChannelRegistry.isRegisteredToChannel(message.getApplicationInstanceId(), message.getHarvestChannelName())) {
+        	harvestChannelRegistry.register(message.getHarvestChannelName(), message.getApplicationInstanceId());
+        };
         jobDispatcher.submitNextNewJob(channel);
     }
 

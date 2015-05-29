@@ -51,12 +51,12 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 /**
  * Utility class for handling update of domain from the domain jsp page.
  */
-@SuppressWarnings("unused")
 public class DomainDefinition {
 
-    //private static Log log = LogFactory.getLog(DomainDefinition.class.getName());
     protected static final Logger log = LoggerFactory.getLogger(DomainDefinition.class);
-
+    
+    protected static final String EDIT_DOMAIN_JSP = "/HarvestDefinition/Definitions-edit-domain.jsp?";
+    
     /** Private constructor to prevent public construction of this class. */
     private DomainDefinition() {
     }
@@ -174,8 +174,11 @@ public class DomainDefinition {
                     trapList.add(trap);
                 }
             }
+            log.debug("Now {} crawlertraps for this domain.", trapList.size());
+        } else {
+        	log.debug("No crawlertraps for this domain.");
         }
-        domain.setCrawlerTraps(trapList, true);
+        domain.setCrawlerTraps(trapList, true); // Note that exception is thrówn if any of the crawlertraps is not a valid regexp
 
         // Update alias information
 
@@ -247,21 +250,22 @@ public class DomainDefinition {
      */
     public static List<String> createDomains(String... domains) {
         DomainDAO ddao = DomainDAO.getInstance();
-        List<String> illegals = new ArrayList<String>();
+        List<String> illegalOrExisting = new ArrayList<String>();
         List<Domain> domainsToCreate = new ArrayList<Domain>();
         for (String domain : domains) {
             if (DomainUtils.isValidDomainName(domain) && !ddao.exists(domain)) {
                 domainsToCreate.add(Domain.getDefaultDomain(domain));
             } else {
                 if (domain.trim().length() > 0) {
-                    illegals.add(domain);
+                    illegalOrExisting.add(domain);
                 }
             }
         }
 
+        log.info("Creating {} new domains", domainsToCreate.size());
         ddao.create(domainsToCreate);
 
-        return illegals;
+        return illegalOrExisting;
     }
 
     /**
@@ -272,7 +276,7 @@ public class DomainDefinition {
      */
     public static String makeDomainLink(String domain) {
         ArgumentNotValid.checkNotNullOrEmpty(domain, "domain");
-        String url = "/HarvestDefinition/Definitions-edit-domain.jsp?" + Constants.DOMAIN_PARAM + "="
+        String url = EDIT_DOMAIN_JSP + Constants.DOMAIN_PARAM + "="
                 + HTMLUtils.encode(domain);
         return "<a href=\"" + url + "\">" + HTMLUtils.escapeHtmlValues(domain) + "</a>";
     }
@@ -288,7 +292,7 @@ public class DomainDefinition {
         boolean showUnusedConfigurationsParam = Boolean.parseBoolean(request
                 .getParameter(Constants.SHOW_UNUSED_CONFIGURATIONS_PARAM));
         boolean showUnusedSeedsParam = Boolean.parseBoolean(request.getParameter(Constants.SHOW_UNUSED_SEEDS_PARAM));
-        StringBuilder urlBuilder = new StringBuilder("/HarvestDefinition/Definitions-edit-domain.jsp?");
+        StringBuilder urlBuilder = new StringBuilder(EDIT_DOMAIN_JSP);
         urlBuilder
                 .append(Constants.DOMAIN_PARAM + "=" + HTMLUtils.encode(request.getParameter(Constants.DOMAIN_PARAM)));
         urlBuilder.append("&" + Constants.SHOW_UNUSED_CONFIGURATIONS_PARAM + "="
@@ -308,7 +312,7 @@ public class DomainDefinition {
         boolean showUnusedConfigurationsParam = Boolean.parseBoolean(request
                 .getParameter(Constants.SHOW_UNUSED_CONFIGURATIONS_PARAM));
         boolean showUnusedSeedsParam = Boolean.parseBoolean(request.getParameter(Constants.SHOW_UNUSED_SEEDS_PARAM));
-        StringBuilder urlBuilder = new StringBuilder("/HarvestDefinition/Definitions-edit-domain.jsp?");
+        StringBuilder urlBuilder = new StringBuilder(EDIT_DOMAIN_JSP);
         urlBuilder
                 .append(Constants.DOMAIN_PARAM + "=" + HTMLUtils.encode(request.getParameter(Constants.DOMAIN_PARAM)));
         urlBuilder.append("&" + Constants.SHOW_UNUSED_CONFIGURATIONS_PARAM + "="
