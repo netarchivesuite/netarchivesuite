@@ -18,14 +18,14 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <slf4j.version>1.7.7</slf4j.version>
     <logback.version>1.0.13</logback.version>
-    <!-- Change to 1.1.5 when released, includes WARC writer fix. -->
     <webarchive-commons.version>1.1.5</webarchive-commons.version>
     <!--heritrix3.version>3.2.0</heritrix3.version-->
     <!-- Islandic special brew of H3. -->
     <heritrix3.version>3.3.0-LBS-2014-03</heritrix3.version>
+    <heritrix3-wrapper.version>1.0.0</heritrix3-wrapper.version>
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
-    <jwat.version>1.0.3-SNAPSHOT</jwat.version>
+    <jwat.version>1.0.3</jwat.version>
   </properties>
 
   <modules>
@@ -235,6 +235,12 @@
         <groupId>org.archive.heritrix</groupId>
         <artifactId>heritrix-contrib</artifactId>
         <version>${heritrix3.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.netarchivesuite</groupId>
+        <artifactId>heritrix3-wrapper</artifactId>
+        <version>${heritrix3-wrapper.version}</version>
       </dependency>
 
       <dependency>
