@@ -250,7 +250,6 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         if (availableSpace > minSpaceRequired) {
             log.info("Starts to listen to new jobs on queue '{}'", jobChannel);
             jmsConnection.setListener(jobChannel, this);
-            log.info("HarvestControllerServer started.");
         } else {
             String pausedMessage = "Not enough available diskspace. Only " + availableSpace + " bytes available."
                     + " Harvester is paused.";

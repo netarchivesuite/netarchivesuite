@@ -324,7 +324,7 @@ public class HarvestDocumentation {
         
         boolean genArcFilesReport = Settings.getBoolean(Heritrix3Settings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         if (genArcFilesReport) {
-        	log.warn("Creating the arcfiles-report.txt is not yet implemented for Heritrix3");
+        	log.debug("Arcfiles-report.txt generation Not currently supported by Heritrix3");
         	/*
             log.debug("Creating an arcfiles-report.txt");
             files.add(new MetadataFile(new ArchiveFilesReportGenerator(crawlDir).generateReport(), harvestID, jobID,
