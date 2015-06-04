@@ -382,17 +382,23 @@ public class HarvestReportGenerator {
     }
     
     /**
-     * 
-     * @return
+     * @return the default stop reason. 
      */
     public StopReason getDefaultStopReason() {
         return defaultStopReason;
     }
     
+    /**
+     * @return the domainStatsMap generated from parsing the crawl-log.
+     */
     public Map<String, DomainStats> getDomainStatsMap() {
     	return this.domainstats;
     }
-
+    
+    /**
+     * @param files A set of Heritrix3 files used to produce a a HarvestReport.
+     * @return a DomainStatsReport for a specific H3 crawl.
+     */
 	public static DomainStatsReport getDomainStatsReport(Heritrix3Files files) {
 		HarvestReportGenerator hrg = new HarvestReportGenerator(files);
 		return new DomainStatsReport(hrg.getDomainStatsMap(), hrg.getDefaultStopReason());

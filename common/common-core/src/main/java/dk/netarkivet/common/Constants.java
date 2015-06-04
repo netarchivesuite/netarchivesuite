@@ -75,7 +75,7 @@ public final class Constants {
     /** Minor version number. */
     public static final int MINORVERSION = 0;
     /** Patch version number. */
-    public static final String PATCHVERSION = "MILESTONE1";
+    public static final String PATCHVERSION = "0";
     /** Current status of code. */
     private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
 

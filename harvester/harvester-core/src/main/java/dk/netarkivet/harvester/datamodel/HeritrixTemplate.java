@@ -13,6 +13,9 @@ import java.util.List;
 import javax.servlet.jsp.JspWriter;
 
 import org.dom4j.DocumentException;
+import org.hibernate.metamodel.relational.Size;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -25,6 +28,8 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
  */
 public abstract class HeritrixTemplate implements Serializable {
 
+	private static final Logger log = LoggerFactory.getLogger(HeritrixTemplate.class);
+	
 	private static final CharSequence H1_SIGNATURE = "<crawl-order xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance"; 
 	//private static final CharSequence H3_SIGNATURE = "xmlns=\"http://www.springframework.org/";
 	private static final CharSequence H3_SIGNATURE = "http://www.springframework.org/";
@@ -141,14 +146,14 @@ public abstract class HeritrixTemplate implements Serializable {
     public void editOrderXMLAddPerDomainCrawlerTraps(DomainConfiguration cfg) {
         List<String> crawlerTraps = cfg.getCrawlertraps();
         String elementName = cfg.getDomainName();
+        log.info("Inserting {} crawlertraps for domain '{}' into the template", crawlerTraps.size(), elementName);
         insertCrawlerTraps(elementName, crawlerTraps);
     }
     
     /**
      * 
      * Updates the diskpath value, archivefile_prefix, seedsfile, and deduplication -information.
-     * FIXME HeritrixFiles could be different from H1 and H. Consider making this an abstract class as well.
-     * @param files
+     * @param files Files associated with a Heritrix1 crawl-job.
      * @throws IOFailure
      */
     /**

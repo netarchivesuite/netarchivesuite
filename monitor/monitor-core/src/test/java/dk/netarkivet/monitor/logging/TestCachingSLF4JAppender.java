@@ -110,7 +110,7 @@ public class TestCachingSLF4JAppender {
         appender.close();
 	}
 
-	public int nthLogIndex(CachingSLF4JAppender appender, int n) {
+	private int nthLogIndex(CachingSLF4JAppender appender, int n) {
 		return (appender.currentIndex - n - 1 + appender.loggingHistorySize) % appender.loggingHistorySize;
 	}
 
