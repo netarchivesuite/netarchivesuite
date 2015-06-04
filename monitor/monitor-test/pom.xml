@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>monitor</artifactId>
-    <version>5.0-SNAPSHOT</version>
+    <version>5.0-RC1</version>
   </parent>
 
   <artifactId>monitor-test</artifactId>
@@ -18,19 +17,19 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>common-core</artifactId>
-      <version>5.0-SNAPSHOT</version>
+      <version>5.0-RC1</version>
     </dependency>
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>harvester-core</artifactId>
-      <version>5.0-SNAPSHOT</version>
+      <version>5.0-RC1</version>
     </dependency>
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>monitor-core</artifactId>
-      <version>5.0-SNAPSHOT</version>
+      <version>5.0-RC1</version>
     </dependency>
 
     <!-- Test dependencies. -->
@@ -50,7 +49,7 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>common-test</artifactId>
-      <version>5.0-SNAPSHOT</version>
+      <version>5.0-RC1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

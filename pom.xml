@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.netarchivesuite</groupId>
   <artifactId>netarchivesuite</artifactId>
-  <version>5.0-SNAPSHOT</version>
+  <version>5.0-RC1</version>
   <packaging>pom</packaging>
 
   <name>NetarchiveSuite</name>
@@ -79,7 +78,7 @@
     <url>https://github.com/netarchivesuite/netarchivesuite</url>
     <connection>scm:git:https://github.com/netarchivesuite/netarchivesuite.git</connection>
     <developerConnection>scm:git:git@github.com:netarchivesuite/netarchivesuite.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>netarchivesuite-5.0-RC1</tag>
   </scm>
 
   <distributionManagement>
@@ -357,7 +356,7 @@
             <dependency>
               <groupId>org.netarchivesuite</groupId>
               <artifactId>build-tools</artifactId>
-              <version>5.0-SNAPSHOT</version>
+              <version>5.0-RC1</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -517,7 +516,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <excludedGroups></excludedGroups>
+              <excludedGroups />
             </configuration>
           </plugin>
         </plugins>
