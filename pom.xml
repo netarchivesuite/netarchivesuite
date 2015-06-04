@@ -318,7 +318,7 @@
 
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.9.1</version>
+          <version>2.10.3</version>
         </plugin>
 
         <plugin>
@@ -329,6 +329,11 @@
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>2.4.1</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.2</version>
         </plugin>
 
         <plugin>
@@ -406,13 +411,13 @@
       </plugin>
 
       <!-- Generate javadoc jar. Note: Java 8 (doclint) check has been disabled. -->
-      <!--plugin>
+      <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <linksource>true</linksource>
-          <quiet>true</quiet-->
+          <quiet>true</quiet>
           <!-- Note: This fails with a JVM older than Java 8 -->
-          <!--additionalparam>-Xdoclint:none</additionalparam>
+          <additionalparam>-Xdoclint:none</additionalparam>
         </configuration>
         <executions>
           <execution>
@@ -423,7 +428,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin-->
+      </plugin>
 
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -470,6 +475,13 @@
               <X-Git-Commits-Count>${git.commitsCount}</X-Git-Commits-Count>
             </manifestEntries>
           </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <autoversionsubmodules>true</autoversionsubmodules>
         </configuration>
       </plugin>
     </plugins>

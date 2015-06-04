@@ -68,6 +68,7 @@ public abstract class XmlBuilder {
 
     /**
      * Creates a default XmlDoc based on the order.xml file on the classpath.
+     * @return The loaded default XmlDoc.
      */
     protected static synchronized Document parseFile(String name) {
         try {

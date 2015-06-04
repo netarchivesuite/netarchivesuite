@@ -54,7 +54,7 @@ public class NodeTraverser {
 
     /** Will create a NodeTraverser for accessing the indicated node. If the current node does
      * exist it will be created.
-     * @param element The tag for the element to make available, eg. <crawl-order>.....
+     * @param element The tag for the element to make available.
      * @param name A optional name attribute to add to the element if created.
      * @return The NodeTraverser reference, which can be used to create further child nodes.
      */
