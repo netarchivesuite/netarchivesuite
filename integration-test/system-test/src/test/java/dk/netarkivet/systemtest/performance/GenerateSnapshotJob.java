@@ -19,6 +19,10 @@ import dk.netarkivet.systemtest.TestLogger;
 * hours for a production load.
 */
 class GenerateSnapshotJob extends GenericWebJob {
+
+    private TestEnvironmentController testEnvironmentController;
+    private AbstractStressTest stressTest;
+
     protected final TestLogger log = new TestLogger(getClass());
 
     String harvestName;
@@ -28,6 +32,8 @@ class GenerateSnapshotJob extends GenericWebJob {
             Long startUpTime,
             Long waitingInterval, Long maxTime, String name) {
         super(stressTest, testController, driver, startUpTime, waitingInterval, maxTime, name);
+        this.testEnvironmentController = testController;
+        this.stressTest = stressTest;
     }
 
     @Override void startJob() {
@@ -74,6 +80,12 @@ class GenerateSnapshotJob extends GenericWebJob {
         final boolean atLeastOneJobGenerated = numberOfJobsGenerated > 0;
         if (!atLeastOneJobGenerated) {
             log.warn("Should have generated at least one job for {} by now.", harvestName);
+        } else {
+            try {
+                testEnvironmentController.runCommand("kb-test-har-003.kb.dk", testEnvironmentController.ENV.getTESTX() + "/conf/killall.sh");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         return atLeastOneJobGenerated;
     }
