@@ -231,7 +231,7 @@ public final class Constants {
 
     // other constants
     /** The amount of seconds to wait for the restart script. */
-    public static final int WAIT_TIME_DURING_RESTART = 5;
+    public static final int WAIT_TIME_DURING_RESTART = 10;
     /** The number of milliseconds on a second. 1000. */
     static final int TIME_SECOND_IN_MILLISECONDS = 1000;
     /** The minimum number of arguments required. */
