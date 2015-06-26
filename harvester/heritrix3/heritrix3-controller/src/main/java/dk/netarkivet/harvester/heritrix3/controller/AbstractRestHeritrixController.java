@@ -33,9 +33,11 @@ import org.netarchivesuite.heritrix3wrapper.unzip.UnzipUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.ProcessUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
@@ -65,6 +67,12 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
 
     /** The port to use for Heritrix GUI, as set in settings.xml. */
     private final int guiPort = Settings.getInt(Heritrix3Settings.HERITRIX_GUI_PORT);
+
+    /**
+     * The shutdownHook that takes care of killing our process. This is removed in cleanup() when the process is shut
+     * down.
+     */
+    private Thread processKillerHook;
  
    /**
      * Create a BnfHeritrixController object.
@@ -152,6 +160,7 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             h3handler = new LaunchResultHandler(outputPrinter, errorPrinter);
             log.info("..using the following environment settings: ");
             h3launcher.start(h3handler);
+            Runtime.getRuntime().addShutdownHook(new HeritrixKiller(h3launcher.process));
             log.info("Heritrix3 launched successfully");
         } catch( Throwable e) {
         	log.debug("Unexpected error while launching H3: ", e);
@@ -267,8 +276,8 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
                 writer.close();
             }
         }
-    }*/
 
+    }*/
 
     /**
      * Get a string that describes the current controller in terms of job ID, harvest ID, and crawldir.
@@ -277,82 +286,9 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
      */
     @Override
     public String toString() {
-        //if (heritrixProcess != null) {
-        //    return "job " + files.getJobID() + " of harvest " + files.getHarvestID() + " in " + files.getCrawlDir()
-        //            + " running process " + heritrixProcess;
-        //} else {
             return "job " + files.getJobID() + " of harvest " + files.getHarvestID() 
             		+ " in " + files.getCrawlDir();
-        //}
     }
-
-    /**
-     * Return true if the Heritrix process has exited, logging the exit value if so.
-     *
-     * @return True if the process has exited.
-     */
-    /*
-    protected boolean processHasExited() {
-        // First check if the process has exited already
-        try {
-            int exitValue = heritrixProcess.exitValue();
-            log.info("Process of {} returned exit code {}", this, exitValue);
-            return true;
-        } catch (IllegalThreadStateException e) {
-            // Not exited yet, that's fine
-        }
-        return false;
-    }
-    */
-
-    /**
-     * Waits for the Heritrix process to exit.
-     */
-    /*
-    protected void waitForHeritrixProcessExit() {
-        final long maxWait = Settings.getLong(CommonSettings.PROCESS_TIMEOUT);
-        final int maxJmxRetries = JMXUtils.getMaxTries();
-        Integer exitValue = ProcessUtils.waitFor(heritrixProcess, maxWait);
-        if (exitValue != null) {
-            log.info("Heritrix process of {} exited with exit code {}", this, exitValue);
-        } else {
-            log.warn("Heritrix process of {} not dead after {} millis, killing it", this, maxWait);
-            heritrixProcess.destroy();
-            exitValue = ProcessUtils.waitFor(heritrixProcess, maxWait);
-            if (exitValue != null) {
-                log.info("Heritrix process of {} exited with exit code {}", this, exitValue);
-            } else {
-                // If it's not dead now, there's little we can do.
-                log.error("Heritrix process of {} not dead after destroy. Exiting harvest controller. "
-                        + "Make sure you kill the runaway Heritrix before you restart.", this);
-                NotificationsFactory
-                        .getInstance()
-                        .notify("Heritrix process of "
-                                + this
-                                + " not dead after destroy. "
-                                + "Exiting harvest controller. Make sure you kill the runaway Heritrix before you restart.",
-                                NotificationType.ERROR);
-                System.exit(1);
-            }
-        }
-        Runtime.getRuntime().removeShutdownHook(processKillerHook);
-        // Wait until all collection threads are dead or until we have
-        // tried JMXUtils.MAX_TRIES times.
-        int attempt = 0;
-        do {
-            boolean anyAlive = false;
-            for (Thread t : collectionThreads) {
-                if (t.isAlive()) {
-                    anyAlive = true;
-                }
-            }
-            if (!anyAlive) {
-                break;
-            }
-            TimeUtils.exponentialBackoffSleep(attempt);
-        } while (attempt++ < maxJmxRetries);
-    }
-    */
 
     /**
      * Return a human-readable description of the job. This will only be visible in the Heritrix GUI.
@@ -370,4 +306,17 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
         return this.files;
     }
 
+    private class HeritrixKiller extends Thread {
+        private static final long DESTROY_SHUTDOWN_MAX_WAIT = 500L;
+        private final Process heritrixProcess;
+
+        public HeritrixKiller(Process heritrixProcess) {
+            this.heritrixProcess = heritrixProcess;
+        }
+
+        @Override
+        public void run() {
+            stopHeritrix();
+        }
+    }
 }
