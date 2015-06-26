@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.heritrix3.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.netarchivesuite.heritrix3wrapper.EngineResult;
@@ -243,20 +244,46 @@ public class HeritrixController extends AbstractRestHeritrixController {
 
     @Override
     public void requestCrawlStop(String reason) {
-    	log.info("Terminating job {}. Reason: {}", this.jobName,  reason);
+    	log.info("Terminating job {}. Reason: {}", this.jobName, reason);
     	JobResult jobResult = h3wrapper.job(jobName);
     	if (jobResult != null) {
     		if (jobResult.job.isRunning) {
     			JobResult result = h3wrapper.terminateJob(this.jobName);
     			if (!result.job.isRunning) {
     				log.warn("Job '{}' terminated", this.jobName);
-    			}
+    			} else {
+                    log.warn("Job '{}' not terminated correctly", this.jobName);
+                }
     		} else {
     			log.warn("Job '{}' not terminated, as it was not running", this.jobName);
     		}
     	} else {
     		log.warn("Job '{}' has maybe already been terminated and/or heritrix3 is no longer running", this.jobName); 
     	}
+    }
+
+    @Override
+    public void stopHeritrix() {
+        log.debug("Stopping Heritrix");
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("pgrep", "-f", jobName);
+            log.info("Looking up heritrix process with. " + processBuilder.command());
+            if (processBuilder.start().exitValue() == 0) {
+                log.info("Heritrix running, requesting heritrix to stop ignoring running job " + jobName);
+                h3wrapper.exitJavaProcess(Arrays.asList(new String[] {jobName}));
+            } else {
+                log.info("Heritrix not running.");
+            }
+            if (processBuilder.start().exitValue() == 0) {
+                log.info("Heritrix still running, pkill'ing heritrix ");
+                ProcessBuilder killerProcessBuilder = new ProcessBuilder("pkill", "-f", jobName);
+                killerProcessBuilder.start();
+            } else {
+                log.info("Heritrix stopped successfully.");
+            }
+        } catch (IOException e) {
+            log.warn("Exception while trying to shutdown heritrix", e);
+        }
     }
 
     /**
