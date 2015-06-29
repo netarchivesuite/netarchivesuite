@@ -27,7 +27,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
-import dk.netarkivet.harvester.datamodel.H3HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 
 /**
@@ -107,9 +106,11 @@ public abstract class HeritrixLauncher {
      * Updates the diskpath value, archivefile_prefix, seedsfile, and deduplication -information.
      * @param files Files associated with a Heritrix1 crawl-job.
      * @throws IOFailure
-     */
-    /**
-     * This method prepares the orderfile used by the Heritrix crawler. </p> 1. alters the orderfile in the
+     *  
+     *
+     * This method prepares the orderfile used by the Heritrix crawler. 
+     * </p> 1. Verify that the template is in fact a H1HeritrixTemplate 
+     * </p> 2. alters the orderfile in the
      * following-way: (overriding whatever is in the orderfile)</br>
      * <ol>
      * <li>sets the disk-path to the outputdir specified in HeritrixFiles.</li>
@@ -119,9 +120,9 @@ public abstract class HeritrixLauncher {
      * <p>
      * <li>if deduplication is enabled, sets the node pointing to index directory for deduplication (see step 3)</li>
      * </ol>
-     * 2. saves the orderfile back to disk</p>
+     * 3. saves the orderfile back to disk</p>
      * <p>
-     * 3. if deduplication is enabled in the order.xml, it writes the absolute path of the lucene index used by the
+     * 4. if deduplication is enabled in the order.xml, it writes the absolute path of the lucene index used by the
      * deduplication processor.
      *
      * @throws IOFailure - When the orderfile could not be saved to disk 
