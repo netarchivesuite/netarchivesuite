@@ -100,7 +100,11 @@ public class JobDBDAO extends JobDAO {
         } else {
             job.setJobID(generateNextID(connection));
         }
-
+        // Set the harvestNamePrefix. Every current implementation depends on the JobID being set before
+        // being initialized.
+        job.setDefaultHarvestNamePrefix();
+        
+        
         if (job.getCreationDate() != null) {
             log.warn("The creation time for the job is already set. This should probably never happen.");
         } else {
