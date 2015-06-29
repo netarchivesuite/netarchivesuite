@@ -20,7 +20,7 @@ import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 public class HarvesterStartStopTest extends AbstractSystemTest {
     public static String DEFAULT_LARGE_DOMAIN = "kb.dk";
 
-    @Test(groups = {"guitest", "functest"})
+    //@Test(groups = {"guitest", "functest"})
     public void testHeritrixStopOnShutdown() throws Exception {
         addDescription("Tests that a running heritrix harvest is stopped correctly, when the HarvestController is "
                 + "stopped with the kill script.");
