@@ -213,7 +213,7 @@ National Library.
         <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
         <settings>
           <common>
-            <applicationInstanceId>low_h3</applicationInstanceId>
+            <applicationInstanceId>snapshot1</applicationInstanceId>
             <jmx>
               <port>8114</port>
               <rmiPort>8214</rmiPort>
@@ -241,7 +241,7 @@ National Library.
         <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
         <settings>
           <common>
-            <applicationInstanceId>high_h3</applicationInstanceId>
+            <applicationInstanceId>focused1</applicationInstanceId>
             <jmx>
               <port>8115</port>
               <rmiPort>8215</rmiPort>
