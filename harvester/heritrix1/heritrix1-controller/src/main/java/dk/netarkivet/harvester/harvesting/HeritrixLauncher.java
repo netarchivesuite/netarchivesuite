@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.harvesting;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
@@ -140,7 +141,7 @@ public abstract class HeritrixLauncher {
     		}
     		files.writeOrderXml(templ);
     	} else {
-    		
+    		throw new IllegalState("The template is not a H1 template!");
     	}
     }
 
