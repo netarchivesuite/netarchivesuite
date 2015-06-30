@@ -51,7 +51,7 @@ import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 @SuppressWarnings({"unused"})
 public abstract class SeleniumTest extends ExtendedTestCase {
     protected TestEnvironmentController testController;
-    protected static TestGUIController TestGUIController;
+    protected static TestGUIController testGUIController;
     private static ReportGenerator reportGenerator;
     protected final TestLogger log = new TestLogger(getClass());
     protected static WebDriver driver;
@@ -63,7 +63,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
 
     @BeforeSuite(alwaysRun = true)
     public void setupTest() {
-        TestGUIController = new TestGUIController(testController);
+        testGUIController = new TestGUIController(testController);
         deployTestSystem();
         initialiseSelenium();
         setupFixture();
@@ -82,7 +82,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
             }
         } else {
             if (System.getProperty("systemtest.redeploy.gui", "false").equals("true")) {
-                TestGUIController.redeployGUI();
+                testGUIController.redeployGUI();
             }
         }
     }
@@ -101,7 +101,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        TestGUIController.waitForGUIToStart(60);
+        testGUIController.waitForGUIToStart(60);
         TestEventManager.getInstance().addFixture("Selecting English as language");
         driver.findElement(By.linkText("English")).click();
     }
@@ -136,12 +136,13 @@ public abstract class SeleniumTest extends ExtendedTestCase {
      */
     public void onFailure(ITestResult result) {
         if (!result.isSuccess()) {
-            log.info("Test failure, dumping screenshot as " + "target/failurescreendumps/" + result.getMethod()
-                    + ".png");
-            File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             try {
+                log.info("Test failure, dumping screenshot as " + "target/failurescreendumps/" + result.getMethod()
+                        + ".png");
+                File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+
                 FileUtils.copyFile(scrFile, new File("failurescreendumps/" + result.getMethod() + ".png"));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.error("Failed to save screendump on error");
             }
         }
