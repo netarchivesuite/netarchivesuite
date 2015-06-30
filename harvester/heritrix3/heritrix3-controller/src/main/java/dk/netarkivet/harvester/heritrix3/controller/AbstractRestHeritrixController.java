@@ -160,7 +160,7 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             h3handler = new LaunchResultHandler(outputPrinter, errorPrinter);
             log.info("..using the following environment settings: ");
             h3launcher.start(h3handler);
-            Runtime.getRuntime().addShutdownHook(new HeritrixKiller(h3launcher.process));
+            Runtime.getRuntime().addShutdownHook(new HeritrixKiller());
             log.info("Heritrix3 launched successfully");
         } catch( Throwable e) {
         	log.debug("Unexpected error while launching H3: ", e);
@@ -307,13 +307,6 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
     }
 
     private class HeritrixKiller extends Thread {
-        private static final long DESTROY_SHUTDOWN_MAX_WAIT = 500L;
-        private final Process heritrixProcess;
-
-        public HeritrixKiller(Process heritrixProcess) {
-            this.heritrixProcess = heritrixProcess;
-        }
-
         @Override
         public void run() {
             stopHeritrix();

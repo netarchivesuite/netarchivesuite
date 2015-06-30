@@ -277,7 +277,10 @@ public class HeritrixController extends AbstractRestHeritrixController {
             if (processBuilder.start().exitValue() == 0) {
                 log.info("Heritrix still running, pkill'ing heritrix ");
                 ProcessBuilder killerProcessBuilder = new ProcessBuilder("pkill", "-f", jobName);
-                killerProcessBuilder.start();
+                int pkillExitValue = killerProcessBuilder.start().exitValue();
+                if ( pkillExitValue != 0) {
+                    log.warn("Non xero exit value )" + pkillExitValue + ") when trying to pkill Heritrix.");
+                }
             } else {
                 log.info("Heritrix stopped successfully.");
             }
