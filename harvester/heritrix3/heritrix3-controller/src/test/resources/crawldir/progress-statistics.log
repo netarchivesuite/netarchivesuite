@@ -1,8 +1,22 @@
-20050506114726 CRAWL RESUMED
-           timestamp  discovered      queued   downloaded       doc/s(avg)  KB/s(avg)   dl-failures   busy-thread   mem-use-KB
-2005-05-06T11:47:46Z         168         139           36         1.8(1.8)       6(6)             0             0       104004
-2005-05-06T11:48:06Z         284         224           71       1.75(1.77)       9(7)             0             2       104004
-20050506114824 CRAWL ENDING - Finished - Maximum number of documents limit hit
-2005-05-06T11:48:26Z         388         303          100       1.45(1.66)    114(43)             0             2       104004
-2005-05-06T11:48:40Z         388         305          101       0.07(1.36)      0(34)             0             0       104004
-20050506114840 CRAWL ENDED - Finished - Maximum number of documents limit hit
+WARC/1.0
+WARC-Type: resource
+WARC-Record-ID: <urn:uuid:d762a9f1-3c90-48d6-b3f0-4bc73f512b98>
+WARC-Date: 2015-05-22T15:12:13Z
+Content-Length: 1292
+Content-Type: text/plain
+WARC-Block-Digest: 089f3d54c06c5c43ba64419435e6b82c0608735b
+WARC-IP-Address: 130.226.228.11
+WARC-Target-URI: metadata://netarkivet.dk/crawl/logs/progress-statistics.log?heritrixVersion=3.3.0-LBS-2014-03&harvestid=2&jobid=2
+WARC-Warcinfo-ID: <urn:uuid:02ecf7bc-038b-410f-9a9e-824c27ddef3d>
+
+           timestamp  discovered      queued   downloaded       doc/s(avg)  KB/s(avg)   dl-failures   busy-thread   mem-use-KB  heap-size-KB   congestion   max-depth   avg-depth
+2015-05-22T15:01:07Z           0           0            0           0(NaN)       0(0)             0             0        47719        104960            0          -1           0
+2015-05-22T15:01:07Z CRAWL RUNNING - Preparing
+2015-05-22T15:01:08Z CRAWL RUNNING - Running
+2015-05-22T15:01:27Z          71          21           50        2.5(2.51)     15(15)             0             1       164437        265728            1          19           7
+2015-05-22T15:01:47Z         107          34           72         1.1(1.8)      8(12)             1             1       209974        265728            1          33          17
+2015-05-22T15:02:07Z         107          13           92          1(1.53)     39(21)             2             1       110958        265728            1          13          13
+2015-05-22T15:02:19Z CRAWL ENDING - Finished
+2015-05-22T15:02:19Z CRAWL EMPTY - Running
+2015-05-22T15:02:21Z         107           0          105       0.93(1.42)     24(21)             2             0       122069        265728          NaN           0           0
+2015-05-22T15:02:21Z CRAWL ENDED - Finished
