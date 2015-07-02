@@ -102,7 +102,7 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
     private void doUpdateFileStatus() {
         WebDriver driver = new FirefoxDriver();
         TestGUIController TestGUIController = new TestGUIController(testController);
-        UpdateFileStatusJob updateFileStatusJob = new UpdateFileStatusJob(this, driver, 0L, 5*MINUTE, 2*HOUR, "Update FileStatus Job");
+        UpdateFileStatusJob updateFileStatusJob = new UpdateFileStatusJob(this, driver, 0L, 5*MINUTE, 4*HOUR, "Update FileStatus Job");
         updateFileStatusJob.run();
     }
 
