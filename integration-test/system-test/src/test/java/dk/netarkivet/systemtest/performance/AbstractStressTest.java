@@ -24,12 +24,21 @@ package dk.netarkivet.systemtest.performance;
 
 import static org.testng.Assert.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.BeforeTest;
 
 import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.environment.DefaultTestEnvironment;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.environment.TestEnvironmentController;
+import dk.netarkivet.systemtest.environment.TestGUIController;
+import dk.netarkivet.systemtest.page.PageHelper;
 
 /**
  * Abstract superclass for the stress tests.
@@ -108,6 +117,39 @@ public abstract class AbstractStressTest extends SeleniumTest {
         String result = testController.runCommand("stat -c %Y " + filepath);
         return Long.parseLong(result.trim()) * 1000L;
     }
+
+    public void replaceDefaultOrderTemplate() {
+        File defaultOrderXml = null;
+        try {
+            defaultOrderXml = File.createTempFile("default", "xml");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            Process p = Runtime.getRuntime().exec("scp test@kb-prod-udv-001.kb.dk:prepared_software/" + testController.ENV.getTESTX() + "/order_templates_dist/default_orderxml.xml "
+                    + defaultOrderXml.getAbsolutePath());
+            p.waitFor();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        String baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
+        PageHelper.initialize(driver, baseUrl);
+        testGUIController.waitForGUIToStart(60);
+        addFixture("Opening initial page " + baseUrl);
+        driver.findElement(By.linkText("Definitions")).click();
+        driver.findElement(By.linkText("Edit Harvest Templates")).click();
+        Select templates = new Select(driver.findElement(By.name("order_xml_to_replace")));
+        templates.selectByValue("default_orderxml");
+        WebElement uploadElement = driver.findElement(By.name("upload_file"));
+        uploadElement.sendKeys(defaultOrderXml.getAbsolutePath());
+        for (WebElement element:driver.findElements(By.name("upload"))) {
+            if (element.getText().contains("Replace")) {
+                element.submit();
+            }
+        }
+    }
+
 
     /**
      * Copying production databases to the relevant test servers.
@@ -271,6 +313,7 @@ public abstract class AbstractStressTest extends SeleniumTest {
                         + "diff -b -B bundleddbs_schema.txt.sort testdbs_schema.txt.sort  > test-bundled-diff",
                 new int[] {0, 1});
     }
+
 
     public void addStep(java.lang.String stimuli, java.lang.String expectedResult) {
         super.addStep(stimuli, expectedResult);

@@ -80,7 +80,8 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
     }
 
     private void doGenerateSnapshot() {
-        WebDriver driver = new FirefoxDriver();
+        driver = new FirefoxDriver();
+        replaceDefaultOrderTemplate();
         String snapshotTimeDividerString = System.getProperty("stresstest.snapshottimedivider", "1");
         Integer snapshotTimeDivider = Integer.parseInt(snapshotTimeDividerString);
         if (snapshotTimeDivider != 1) {
@@ -114,7 +115,7 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
         UpdateChecksumJob updateChecksumJob = new UpdateChecksumJob(
                 this,
                 new FirefoxDriver(),
-                MINUTE,
+                10*MINUTE,
                 5*MINUTE,
                 stepTimeout,
                 "Update Checksum Job"

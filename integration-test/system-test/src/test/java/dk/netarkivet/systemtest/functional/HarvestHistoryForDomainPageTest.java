@@ -296,7 +296,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
                 "</indexClient>", "</indexClient>" + "<webinterface><harvestStatus><defaultPageSize>" + size
                         + "</defaultPageSize></harvestStatus></webinterface>");
 
-        TestGUIController.restartGUI();
+        testGUIController.restartGUI();
     }
 
     @BeforeMethod(alwaysRun = true)
@@ -309,7 +309,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
                             + "conf/kill_GUIApplication.sh; "
                             + "mv conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
                             + " conf/start_GUIApplication.sh; " + "fi");
-            TestGUIController.waitForGUIToStart(10);
+            testGUIController.waitForGUIToStart(10);
         } catch (Exception e) {
             e.printStackTrace();
         }

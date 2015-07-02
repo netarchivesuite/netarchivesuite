@@ -54,8 +54,12 @@ public abstract class LongRunningJob {
      */
     protected boolean run() {
         Long startTime = System.currentTimeMillis();
+        log.debug("Starting Job {}.", name);
         startJob();
+        startWait();
+        log.debug("Waiting to see if Job {} starts after {} seconds.", name, startUpTime/1000L+"");
         sleepWait();
+        log.debug("Checking to see if Job {} has started after {} seconds.", name, startUpTime/1000L+"");
         if (!isStarted()) {
             fail("Job " + name + " failed to start.");
             return false;
@@ -91,6 +95,14 @@ public abstract class LongRunningJob {
             throw new RuntimeException(e);
         }
     }
+
+    private void startWait() {
+            try {
+                Thread.sleep(startUpTime);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
     abstract void startJob();
 

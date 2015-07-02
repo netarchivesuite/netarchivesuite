@@ -49,11 +49,13 @@ class UpdateChecksumJob extends GenericWebJob {
             if (matcher.matches()) {
                 total = matcher.group(1);
                 return true;
+            } else {
+                log.info("Job failed to start. Output from grep was '" + output + "'");
+                return false;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return false;
     }
 
     @Override boolean isFinished() {
