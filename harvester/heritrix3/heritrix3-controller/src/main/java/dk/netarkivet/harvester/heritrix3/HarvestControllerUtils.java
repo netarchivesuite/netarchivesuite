@@ -52,8 +52,11 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 /**
  * This class handles all the things in a single harvest that are not related directly related either to launching
  * Heritrix3 or to handling JMS messages.
+ * 
+ * This is currently code only related to retriving the recoverlog from metadata-file and inserting
+ * it into Heritrix3. Netarchivesuite has not fully implemented this feature yet. 
  */
-public class HarvestController {
+public class HarvestControllerUtils {
 
     /** The instance logger. */
     private static final Logger log = LoggerFactory.getLogger(HarvestJob.class);
@@ -128,7 +131,7 @@ public class HarvestController {
      * @throws ArgumentNotValid If jobid is 0 or negative.
      * @throws IOFailure On trouble generating the cdx
      */
-    public static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
+    private static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob cdxJob = new ArchiveExtractCDXJob(false);
         cdxJob.processOnlyFilesMatching(jobid + "-metadata-[0-9]+\\.(w)?arc(\\.gz)?");

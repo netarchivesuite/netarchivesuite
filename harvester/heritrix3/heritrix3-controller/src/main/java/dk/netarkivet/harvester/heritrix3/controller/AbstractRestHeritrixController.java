@@ -33,11 +33,9 @@ import org.netarchivesuite.heritrix3wrapper.unzip.UnzipUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.ProcessUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
@@ -150,10 +148,6 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             String heritrixOutValue = files.getHeritrixOutput().getAbsolutePath();
             h3launcher.env.put("HERITRIX_OUT", heritrixOutValue);
             log.info(".. and setting HERITRIX_OUT to '{}'", heritrixOutValue);
-            // TODO NEED THIS?
-            //h3launcher.env.put("HERITRIX_HOME", files.getCrawlDir().getAbsolutePath());
-            // TODO NEED THIS?
-            //h3launcher.env.put("JAVA_HOME", ....)	
             
             outputPrinter = new PrintWriter(files.getHeritrixStdoutLog(), "UTF-8");
             errorPrinter = new PrintWriter(files.getHeritrixStderrLog(), "UTF-8");
@@ -240,45 +234,6 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
         return Settings.get(Heritrix3Settings.HERITRIX_ADMIN_PASSWORD);
     }
 
-
-    /**
-     * Write various info on the system we're using into the given file. This info will later get put into metadata for
-     * the crawl.
-     *
-     * @param outputFile A file to write to.
-     * @param builder The ProcessBuilder being used to start the Heritrix process
-     */
-    /*
-    @SuppressWarnings("unchecked")
-    private void writeSystemInfo(File outputFile, ProcessBuilder builder) {
-        PrintWriter writer = null;
-        try {
-            writer = new PrintWriter(new FileWriter(outputFile));
-            writer.println("The Heritrix process is started in the following"
-                    + " environment\n (note that some entries will be" + " changed by the starting JVM):");
-            Map<String, String> env = builder.environment();
-            List<String> keyList = new ArrayList<String>(env.keySet());
-            Collections.sort(keyList);
-            for (String key : keyList) {
-                writer.println(key + "=" + env.get(key));
-            }
-            writer.println("Process properties:");
-            Properties properties = System.getProperties();
-            keyList = new ArrayList<String>((Set) properties.keySet());
-            Collections.sort(keyList);
-            for (String key : keyList) {
-                writer.println(key + "=" + properties.get(key));
-            }
-        } catch (IOException e) {
-            log.warn("Error writing basic properties to output file.", e);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
-        }
-
-    }*/
-
     /**
      * Get a string that describes the current controller in terms of job ID, harvest ID, and crawldir.
      *
@@ -307,7 +262,6 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
     }
 
     private class HeritrixKiller extends Thread {
-        private static final long DESTROY_SHUTDOWN_MAX_WAIT = 500L;
         private final Process heritrixProcess;
 
         public HeritrixKiller(Process heritrixProcess) {
