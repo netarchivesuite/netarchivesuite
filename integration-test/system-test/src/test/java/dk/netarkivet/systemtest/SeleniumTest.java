@@ -140,7 +140,8 @@ public abstract class SeleniumTest extends ExtendedTestCase {
                     + ".png");
             File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             try {
-                FileUtils.copyFile(scrFile, new File("failurescreendumps/" + result.getMethod() + ".png"));
+                FileUtils.forceMkdir(new File("target"));
+                        FileUtils.copyFile(scrFile, new File("target/failurescreendumps/" + result.getMethod() + ".png"));
             } catch (IOException e) {
                 log.error("Failed to save screendump on error");
             }

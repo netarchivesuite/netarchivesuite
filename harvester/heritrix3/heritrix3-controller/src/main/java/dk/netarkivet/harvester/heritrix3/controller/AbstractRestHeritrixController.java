@@ -89,7 +89,6 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
         try {
             log.info("Starting Heritrix for {} in crawldir {}", this, files.getCrawlDir());
             String zipFileStr = files.getHeritrixZip().getAbsolutePath();
-            String cerficatePath = files.getCertificateFile().getAbsolutePath();
 
             heritrixBaseDir = files.getHeritrixBaseDir();
             if (!heritrixBaseDir.isDirectory()) {
@@ -102,8 +101,10 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             log.debug("Unzipping heritrix into the crawldir");
             UnzipUtils.unzip(zipFileStr, 1, heritrixBaseDir.getAbsolutePath());
 
-            log.debug("Copying certificate into heritrix dir");
-            Heritrix3Wrapper.copyFileAs(new File(cerficatePath), heritrixBaseDir, "h3server.jks"); 
+            if (files.getCertificateFile() != null) {
+                log.debug("Copying override keystore into heritrix dir");
+                Heritrix3Wrapper.copyFileAs(files.getCertificateFile(), heritrixBaseDir, "h3server.jks");
+            }
 
             /** The bin/heritrix script should read the following environment-variables:
              * 

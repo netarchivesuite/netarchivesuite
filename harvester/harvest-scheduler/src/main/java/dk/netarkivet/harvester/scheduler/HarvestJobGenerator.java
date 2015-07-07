@@ -164,7 +164,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                     String channelName = chan.getName();
                     if (postponeUnregisteredChannel && !harvestChannelRegistry.isRegistered(channelName)) {
                         log.info("Harvest channel '{}' has not yet been registered by any harvester, hence harvest "
-                                + "definition '{}' ({}) cannot be processed by the job generator for now. Restarting affected Harvestcontrollers will force reregistration.",
+                                + "definition '{}' ({}) cannot be processed by the job generator for now. Restarting "
+                                        + "affected Harvestcontrollers will force reregistration.",
                                 channelName, harvestDefinition.getName(), id);
                         continue;
                     }
