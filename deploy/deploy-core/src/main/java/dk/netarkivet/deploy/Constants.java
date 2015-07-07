@@ -216,6 +216,9 @@ public final class Constants {
     static final String[] COMPLETE_THIS_PHYSICAL_LOCATION_LEAF = CommonSettings.THIS_PHYSICAL_LOCATION.split("[.]");
     /** The path to applicationName from beyond settings. */
     static final String[] COMPLETE_APPLICATION_NAME_LEAF = CommonSettings.APPLICATION_NAME.split("[.]");
+    /** Path to the branch with the Heritrix settings. */
+    static final String[] SETTINGS_HERITRIX_BRANCH = HarvesterSettings.HERITRIX.replace(
+            COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
     /** The path to the jmxUsername under heritrix from settings. */
     static final String[] SETTINGS_HERITRIX_JMX_USERNAME_LEAF = HarvesterSettings.HERITRIX_JMX_USERNAME.replace(
             COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
@@ -431,6 +434,10 @@ public final class Constants {
     public static final String ARG_ARC_DB = "A";
     /** For installing external libraries through deploy. */
     public static final String ARG_JAR_FOLDER = "J";
+    /** Optional definition of a default Heritrix3 bundler zip file. */
+    public static final String ARG_DEFAULT_BUNDLER_ZIP = "B";
+    /** Optional definition of a default Heritrix3 bundler zip file. */
+    public static final String ARG_DEFAULT_HERITRIX3_CERTIFICATE = "H";
     /** Encoding to use for source files. */
     public static final String ARG_SOURCE_ENCODING = "sourceEncoding";
 
@@ -493,6 +500,9 @@ public final class Constants {
      * The error message when the folder with the external jar-library-files does not exist.
      */
     public static final String MSG_ERROR_NO_JAR_FOLDER = "Reference to non-existing external jar-folder.";
+    public static final String MSG_ERROR_NO_BUNDLER_ZIP_FILE = "Reference to non-existing bundler zip file.";
+    public static final String MSG_ERROR_NO_HERITRIX3_CERTIFICATE_FILE = "Reference to non-existing heritrix3 "
+            + "certificate file.";
     /** The error message for wrong deploy-config file extension. */
     public static final String MSG_ERROR_CONFIG_EXTENSION = "Config file must be '.xml'!.\n";
     /** The error message for wrong NetarchiveSuite file extension. */

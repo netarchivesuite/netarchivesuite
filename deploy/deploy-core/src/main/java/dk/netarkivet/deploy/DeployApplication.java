@@ -25,6 +25,7 @@ package dk.netarkivet.deploy;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Optional;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -68,6 +69,7 @@ public final class DeployApplication {
     private static File arcDbFile;
     /** The folder with the external libraries to be deployed. */
     private static File externalJarFolder;
+    private static Optional<File> defaultBundlerZip;
 
     /**
      * Private constructor to disallow instantiation of this class.
@@ -88,9 +90,6 @@ public final class DeployApplication {
      * database. -J [OPTIONAL] For deploying with external jar files. Must be the total path to the directory containing
      * jar-files. These external files will be placed on every machine, and they have to manually be put into the
      * classpath, where they should be used.
-     */
-    /**
-     * @param args
      */
     public static void main(String[] args) {
         try {
@@ -180,9 +179,13 @@ public final class DeployApplication {
             // check the external jar-files library folder.
             initJarFolder(jarFolderName);
 
+            initBundlerZip(Optional.ofNullable(
+                    ap.getCommandLine().getOptionValue(Constants.ARG_DEFAULT_BUNDLER_ZIP)));
+
             // Make the configuration based on the input data
             deployConfig = new DeployConfiguration(deployConfigFile, netarchiveSuiteFile, secPolicyFile,
-                    slf4jConfigFile, outputDir, dbFile, arcDbFile, resetDirectory, externalJarFolder, sourceEncoding);
+                    slf4jConfigFile, outputDir, dbFile, arcDbFile, resetDirectory, externalJarFolder, sourceEncoding,
+                    defaultBundlerZip);
 
             // Write the scripts, directories and everything
             deployConfig.write();
@@ -435,6 +438,26 @@ public final class DeployApplication {
     }
 
     /**
+     * Checks if the default bundler zip file exists if defined.
+     *
+     * @param defaultBundlerZipName The path to the default bundler zip file to use.
+     */
+    public static void initBundlerZip(Optional<String> defaultBundlerZipName) {
+        if (defaultBundlerZipName.isPresent()) {
+            defaultBundlerZip = Optional.of(new File(defaultBundlerZipName.get()));
+
+            if (!defaultBundlerZip.get().exists()) {
+                System.err.print(Constants.MSG_ERROR_NO_BUNDLER_ZIP_FILE);
+                System.out.println();
+                System.out.println("Couldn't find default bundler file: " + defaultBundlerZip.get().getAbsolutePath());
+                System.exit(1);
+            }
+        } else {
+            defaultBundlerZip = Optional.empty();
+        }
+    }
+
+    /**
      * Applies the test arguments.
      * <p>
      * If the test arguments are given correctly, the configuration file is loaded and changed appropriately, then
@@ -520,6 +543,7 @@ public final class DeployApplication {
             options.addOption(Constants.ARG_JAR_FOLDER, HAS_ARG, "[OPTIONAL] Installing the external jar library "
                     + "files within the given folder.");
             options.addOption(Constants.ARG_SOURCE_ENCODING, HAS_ARG, "[OPTIONAL] Encoding to use for source files.");
+            options.addOption(Constants.ARG_DEFAULT_BUNDLER_ZIP, HAS_ARG, "[OPTIONAL] The bundled harvester to use.");
         }
 
         /**

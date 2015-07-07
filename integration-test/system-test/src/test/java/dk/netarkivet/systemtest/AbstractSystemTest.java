@@ -33,6 +33,6 @@ public abstract class AbstractSystemTest extends SeleniumTest {
 
     protected static int getPort() {
         String systemEnvPort = System.getenv("PORT");
-        return Integer.parseInt(systemEnvPort != null ? systemEnvPort : "8079");
+        return Integer.parseInt(systemEnvPort != null ? systemEnvPort : "8071");
     }
 }

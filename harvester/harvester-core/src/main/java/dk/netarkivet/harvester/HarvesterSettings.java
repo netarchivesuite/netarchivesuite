@@ -358,6 +358,12 @@ public class HarvesterSettings {
     public static String WAIT_FOR_REPORT_GENERATION_TIMEOUT = "settings.harvester.harvesting.heritrix.waitForReportGenerationTimeout";
 
     /**
+     * <b>settings.harvester.harvesting.heritrix</b>: <br>
+     * The path to the Heritrix SETTINGS.
+     */
+    public static String HERITRIX = "settings.harvester.harvesting.heritrix";
+
+    /**
      * <b>settings.harvester.harvesting.heritrix.adminName</b>: <br>
      * The name used to access the Heritrix GUI.
      */
@@ -577,8 +583,12 @@ public class HarvesterSettings {
      * <b>settings.harvester.harvesting.heritrix.bundle</b>Points to the Heritrix3 zipfile bundled with 
      * netarchiveSuite classes. Currently no default value
      */   	
-    public static String HERITRIX3_BUNDLE = "settings.harvester.harvesting.heritrix.bundle";
+        public static String HERITRIX3_BUNDLE = "settings.harvester.harvesting.heritrix.bundle";
 
+    /**
+     * <b>settings.harvester.harvesting.heritrix.certificate</b>Points to the jks keystore to use for connection to the
+     * Heritrix3 rest api. If undefined the keystore provided with the heritrix3 bundler is used.
+     */
     public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix.certificate";
 
     public static String HERITRIX3_CERTIFICATE_PASSWORD = "settings.harvester.harvesting.heritrix.certificatePassword";
