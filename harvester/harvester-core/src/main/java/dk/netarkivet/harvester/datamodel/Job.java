@@ -278,79 +278,10 @@ public class Job implements Serializable, JobInfo {
         setMaxJobRunningTime(forceMaxJobRunningTime);
         
         setArchiveFormatInTemplate(Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT));
+        
         status = JobStatus.NEW;
     }
     
-    
-//    /**
-//     * Package private constructor for common initialisation.
-//     *
-//     * @param harvestID the id of the harvestdefinition
-//     * @param cfg the configuration to base the Job on
-//     * @param channel the channel on which the job will be submitted.
-//     * @param forceMaxObjectsPerDomain the maximum number of objects harvested from a domain, overrides individual
-//     * configuration settings. -1 means no limit
-//     * @param forceMaxBytesPerDomain The maximum number of objects harvested from a domain, or -1 for no limit.
-//     * @param forceMaxJobRunningTime The max time in seconds given to the harvester for this job
-//     * @param harvestNum the run number of the harvest definition
-//     * @throws ArgumentNotValid if cfg or priority is null or harvestID is invalid, or if any limit < -1
-//     */
-//    public Job(Long harvestID, DomainConfiguration cfg, HarvestChannel channel,
-//            long forceMaxObjectsPerDomain,
-//            long forceMaxBytesPerDomain, long forceMaxJobRunningTime, int harvestNum) throws ArgumentNotValid {
-//        ArgumentNotValid.checkNotNull(cfg, "cfg");
-//        ArgumentNotValid.checkNotNull(harvestID, "harvestID");
-//        ArgumentNotValid.checkNotNegative(harvestID, "harvestID");
-//        ArgumentNotValid.checkNotNull(channel, "channel");
-//
-//        if (forceMaxObjectsPerDomain < -1) {
-//            String msg = "forceMaxObjectsPerDomain must be either -1 or positive";
-//            log.debug(msg);
-//            throw new ArgumentNotValid(msg);
-//        }
-//        if (forceMaxBytesPerDomain < -1) {
-//            String msg = "forceMaxBytesPerDomain must be either -1 or positive";
-//            log.debug(msg);
-//            throw new ArgumentNotValid(msg);
-//        }
-//
-//        if (forceMaxBytesPerDomain == 0L) {
-//            log.warn("forceMaxBytesPerDomain should probably not be 0.Means 0 bytes downloaded per domain");
-//        }
-//
-//        if (forceMaxObjectsPerDomain == 0L) {
-//            log.warn("forceMaxObjectsPerDomain should probably not be 0.Means 0 objects downloaded per domain");
-//        }
-//
-//        // setup initial members
-//        domainConfigurationMap = new HashMap<>();
-//        origHarvestDefinitionID = harvestID;
-//        orderXMLname = cfg.getOrderXmlName();
-//        orderXMLdoc = TemplateDAO.getInstance().read(cfg.getOrderXmlName());
-//
-//
-//        setHarvestChannel(channel);
-//
-//        long maxObjects = NumberUtils.minInf(forceMaxObjectsPerDomain, cfg.getMaxObjects());
-//        setMaxObjectsPerDomain(maxObjects);
-//        configurationSetsObjectLimit = (maxObjects != forceMaxObjectsPerDomain);
-//
-//        long maxBytes = NumberUtils.minInf(forceMaxBytesPerDomain, cfg.getMaxBytes());
-//        setMaxBytesPerDomain(maxBytes);
-//        configurationSetsByteLimit = (maxBytes != forceMaxBytesPerDomain);
-//
-//        long expectation = cfg.getExpectedNumberOfObjects(forceMaxObjectsPerDomain, forceMaxBytesPerDomain);
-//        maxCountObjects = expectation;
-//        minCountObjects = expectation;
-//        this.harvestNum = harvestNum;
-//
-//        addConfiguration(cfg);
-//
-//        setMaxJobRunningTime(forceMaxJobRunningTime);
-//        setArchiveFormatInTemplate(Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT));
-//        status = JobStatus.NEW;
-//    }
-
     /**
      * Update the order template according to the chosen archive format (arc/warc).
      */
@@ -396,6 +327,7 @@ public class Job implements Serializable, JobInfo {
         this.setSeedList(seedlist);
         this.harvestNum = harvestNum;
         this.continuationOF = continuationOf;
+        
         underConstruction = false;
     }
 
@@ -1107,11 +1039,15 @@ public class Job implements Serializable, JobInfo {
     }
 
     void setDefaultHarvestNamePrefix() {
-        ArchiveFileNaming naming = ArchiveFileNamingFactory.getInstance();
-        log.debug("Applying the default ArchiveFileNaming class '{}'.", naming.getClass().getName());
-        final String prefix = naming.getPrefix(this);
-        setHarvestFilenamePrefix(prefix);
-        log.debug("The harvestPrefix of this job is: {}", prefix);
+    	if (getJobID() != null) {
+    		ArchiveFileNaming naming = ArchiveFileNamingFactory.getInstance();
+    		log.debug("Applying the default ArchiveFileNaming class '{}'.", naming.getClass().getName());
+    		final String prefix = naming.getPrefix(this);
+    		setHarvestFilenamePrefix(prefix);
+    		log.debug("The harvestPrefix of this job is: {}", prefix);
+    	} else {
+    		log.warn("The harvestnamePrefix is not set now, as it depends on the JobID, which is not set yet");
+    	}
     }
 
     /** @return the harvest-audience. */

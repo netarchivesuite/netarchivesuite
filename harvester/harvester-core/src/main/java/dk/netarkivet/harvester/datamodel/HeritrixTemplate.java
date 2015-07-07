@@ -13,7 +13,6 @@ import java.util.List;
 import javax.servlet.jsp.JspWriter;
 
 import org.dom4j.DocumentException;
-import org.hibernate.metamodel.relational.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,42 +149,7 @@ public abstract class HeritrixTemplate implements Serializable {
         insertCrawlerTraps(elementName, crawlerTraps);
     }
     
-    /**
-     * 
-     * Updates the diskpath value, archivefile_prefix, seedsfile, and deduplication -information.
-     * @param files Files associated with a Heritrix1 crawl-job.
-     * @throws IOFailure
-     */
-    /**
-     * This method prepares the orderfile used by the Heritrix crawler. </p> 1. alters the orderfile in the
-     * following-way: (overriding whatever is in the orderfile)</br>
-     * <ol>
-     * <li>sets the disk-path to the outputdir specified in HeritrixFiles.</li>
-     * <li>sets the seedsfile to the seedsfile specified in HeritrixFiles.</li>
-     * <li>sets the prefix of the arcfiles to unique prefix defined in HeritrixFiles</li>
-     * <li>checks that the arcs-file dir is 'arcs' - to ensure that we know where the arc-files are when crawl finishes</li>
-     * <p>
-     * <li>if deduplication is enabled, sets the node pointing to index directory for deduplication (see step 3)</li>
-     * </ol>
-     * 2. saves the orderfile back to disk</p>
-     * <p>
-     * 3. if deduplication is enabled in the order.xml, it writes the absolute path of the lucene index used by the
-     * deduplication processor.
-     *
-     * @throws IOFailure - When the orderfile could not be saved to disk 
-     *                     When a specific element cannot be found in the document. 
-     */
-    public static void makeTemplateReadyForHeritrix1(HeritrixFiles files) throws IOFailure {
-    	HeritrixTemplate templ = HeritrixTemplate.read(files.getOrderXmlFile());
-    	templ.setDiskPath(files.getCrawlDir().getAbsolutePath());
-    	templ.setArchiveFilePrefix(files.getArchiveFilePrefix());
-    	templ.setSeedsFilePath(files.getSeedsTxtFile().getAbsolutePath());
-        if (templ.IsDeduplicationEnabled()) {
-        	templ.setDeduplicationIndexLocation(files.getIndexDir().getAbsolutePath());
-        }
-        files.writeOrderXml(templ);
-    }
-	
+    	
     public abstract void setDeduplicationIndexLocation(String absolutePath);
 	public abstract void setSeedsFilePath(String absolutePath);
 
