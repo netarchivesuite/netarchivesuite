@@ -184,13 +184,13 @@ public class HeritrixController extends AbstractRestHeritrixController {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("pgrep", "-f", jobName);
             log.info("Looking up heritrix process with. " + processBuilder.command());
-            if (processBuilder.start().exitValue() == 0) {
+            if (processBuilder.start().waitFor() == 0) {
                 log.info("Heritrix running, requesting heritrix to stop ignoring running job " + jobName);
                 h3wrapper.exitJavaProcess(Arrays.asList(new String[] {jobName}));
             } else {
                 log.info("Heritrix not running.");
             }
-            if (processBuilder.start().exitValue() == 0) {
+            if (processBuilder.start().waitFor() == 0) {
                 log.info("Heritrix still running, pkill'ing heritrix ");
                 ProcessBuilder killerProcessBuilder = new ProcessBuilder("pkill", "-f", jobName);
                 int pkillExitValue = killerProcessBuilder.start().exitValue();
@@ -202,6 +202,8 @@ public class HeritrixController extends AbstractRestHeritrixController {
             }
         } catch (IOException e) {
             log.warn("Exception while trying to shutdown heritrix", e);
+        } catch (InterruptedException e) {
+            log.debug("stopHeritrix call interupted", e);
         }
     }
 
