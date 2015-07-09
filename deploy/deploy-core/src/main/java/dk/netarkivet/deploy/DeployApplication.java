@@ -543,7 +543,8 @@ public final class DeployApplication {
             options.addOption(Constants.ARG_JAR_FOLDER, HAS_ARG, "[OPTIONAL] Installing the external jar library "
                     + "files within the given folder.");
             options.addOption(Constants.ARG_SOURCE_ENCODING, HAS_ARG, "[OPTIONAL] Encoding to use for source files.");
-            options.addOption(Constants.ARG_DEFAULT_BUNDLER_ZIP, HAS_ARG, "[OPTIONAL] The bundled harvester to use.");
+            options.addOption(Constants.ARG_DEFAULT_BUNDLER_ZIP, HAS_ARG, "[OPTIONAL] The bundled harvester to use. "
+                    + "If not provided here the bundler needs to be provided in the settings for each (H3) harvester");
         }
 
         /**

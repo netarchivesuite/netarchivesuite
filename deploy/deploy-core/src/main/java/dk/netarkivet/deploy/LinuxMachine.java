@@ -79,7 +79,7 @@ public class LinuxMachine extends Machine {
         for (Application app : applications) {
             if (app.isBundledHarvester()) {
                 bundlesArr = app.getSettingsValues(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
-                if ((bundlesArr != null || bundlesArr.length == 0)
+                if ((bundlesArr == null || bundlesArr.length == 0)
                         && deployConfiguration.getDefaultBundlerZip().isPresent()) {
                     bundlesArr = new String[] { deployConfiguration.getDefaultBundlerZip().get().getAbsolutePath() };
                 } else if ((bundlesArr == null || bundlesArr.length == 0)

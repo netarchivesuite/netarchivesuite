@@ -232,7 +232,7 @@ National Library.
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>R_D</jmxPassword>
               </heritrix>
-              <serverDir>harvester3_low</serverDir>
+              <serverDir>harvester_snapshot</serverDir>
             </harvesting>
           </harvester>
         </settings>
@@ -260,7 +260,7 @@ National Library.
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>R_D</jmxPassword>
               </heritrix>
-              <serverDir>harvester3_high</serverDir>
+              <serverDir>harvester_focused</serverDir>
             </harvesting>
           </harvester>
         </settings>
