@@ -425,7 +425,7 @@
                     </map>
                 </newObject>
                 <boolean name="override-logger">false</boolean>
-                <boolean name="seed-redirects-new-seed">false</boolean>
+                <boolean name="seed-redirects-new-seed">true</boolean>
                 <integer name="preference-depth-hops">-1</integer>
 
                 <newObject name="scope-rejected-url-rules" class="org.archive.crawler.deciderules.DecideRuleSequence">
