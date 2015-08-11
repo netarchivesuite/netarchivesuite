@@ -51,7 +51,7 @@ public interface IHeritrixController {
     void beginCrawlStop();
 
     /**
-     * Request that crawling stops. This makes a call to beginCrawlStop(), unless the crawler is already shutting down.
+     * Request that the crawler stops. This makes a call to beginCrawlStop(), unless the crawler is already shutting down.
      * In that case it does nothing.
      *
      * @param reason A human-readable reason the crawl is being stopped.
@@ -127,5 +127,10 @@ public interface IHeritrixController {
      * @return information about the harvest process.
      */
     String getHarvestInformation();
+
+    /**
+     * Stop the heritrix process.
+     */
+    public void stopHeritrix();
 
 }

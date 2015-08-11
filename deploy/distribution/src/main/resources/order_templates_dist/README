@@ -1,0 +1,18 @@
+The templates with extension h1.xml are templates in Heritrix 1 format.
+The rest are templates in heritrix 3 format (Spring based). 
+
+All h3 templates are to considered as a migration from the h1 template.
+
+Only twitter-frontpages_h1.xml has no H3 counterpart, as it is not possible to migrate to H3 in a straight-forward way. 
+
+All templates except for the now obsolete twitter-frontpages template are based on the default_order_xml
+
+
+
+
+
+
+
+
+
+

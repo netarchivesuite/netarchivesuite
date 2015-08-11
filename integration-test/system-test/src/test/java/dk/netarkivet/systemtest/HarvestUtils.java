@@ -23,10 +23,13 @@
 package dk.netarkivet.systemtest;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
@@ -103,5 +106,71 @@ public class HarvestUtils {
         DomainConfigurationPageHelper.gotoDefaultConfigurationPage(DEFAULT_DOMAIN);
         DomainConfigurationPageHelper.setMaxObjects(10);
         DomainConfigurationPageHelper.submitChanges();
+    }
+
+
+    public static void waitForJobStatus(String harvestName, JobStatus jobStatus) {
+        boolean keepWaiting = true;
+        int secondsWaitingForJob = 0;
+        int maxSecondsToWaitForAllHarvests = 60;
+        while (keepWaiting) {
+            System.err.print(".");
+
+            try {
+                Thread.sleep(10000);
+                secondsWaitingForJob = secondsWaitingForJob + 10;
+            } catch (InterruptedException e) {
+            }
+            if (secondsWaitingForJob > maxSecondsToWaitForAllHarvests) {
+                throw new RuntimeException("The job for " + harvestName + " took to long (more that "
+                        + maxSecondsToWaitForAllHarvests + "s) to finish, " + "aborting");
+            }
+
+            PageHelper.reloadSubPage("History/Harveststatus-alljobs.jsp?" +
+                    "JOB_STATUS=" + jobStatus +
+                    "&HARVEST_NAME=&START_DATE=&END_DATE=&JOB_ID_ORDER=ASC&PAGE_SIZE=100&START_PAGE_INDEX=1&upload=Show");
+            if (PageHelper.getWebDriver().getPageSource().contains(harvestName)) {
+                keepWaiting = false;
+            }
+        }
+    }
+
+    public static String findHarvestingHost() {
+        boolean jobIsRunning = false;
+        int secondsBetweenCheckForRunningJob = 10;
+        int maxSecondsTowaitForRunningJob=60;
+        int secondsWaiting = 0;
+        for (secondsWaiting = 0 ; secondsWaiting < maxSecondsTowaitForRunningJob ;  secondsWaiting = secondsWaiting + secondsBetweenCheckForRunningJob) {
+            List<WebElement> runningJobRow = getRunningJobRow();
+            System.err.print(".");
+            if (runningJobRow != null) {
+                return runningJobRow.get(2).getText();
+            }
+            try {
+                Thread.sleep(secondsBetweenCheckForRunningJob);
+            } catch (InterruptedException e) {
+            }
+        }
+        throw new RuntimeException("Running job did't appear for more than "
+                + maxSecondsTowaitForRunningJob + "s, " + "aborting");
+    }
+
+    public enum JobStatus {
+        NEW, SUBMITTED, STARTED, DONE, FAILED, RESUBMITTED, FAILED_REJECTED;
+    }
+
+    public static List<WebElement> getRunningJobRow() {
+        PageHelper.gotoPage(PageHelper.MenuPages.RunningJobs);
+        List<WebElement> rows = PageHelper.getWebDriver().findElements(
+                By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]"));
+        for (WebElement rowElement : rows) {
+            List<WebElement> rowCells = rowElement.findElements(By.xpath("td"));
+            if (rowCells.size() > 1) {
+                if (rowCells.get(1).findElement(By.xpath("Crawler er igang")) != null) {
+                    return rowCells;
+                }
+            }
+        }
+        return null;
     }
 }

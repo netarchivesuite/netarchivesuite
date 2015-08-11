@@ -79,8 +79,10 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Creates an instance in persistent storage of the given job. If the job doesn't have an ID, one is generated for
-     * it.
+     * Creates an instance in persistent storage of the given job. 
+     * If the job doesn't have an ID (which it shouldn't at this point, one is generated for it.
+     * After that the harvestnamePrefix is set. Both existing harvestnameprefix factory-classes depends on
+     * the JobID being set before being called. 
      *
      * @param job a given job to add to persistent storage
      * @throws PermissionDenied If a job already exists in persistent storage with the same id as the given job
@@ -100,7 +102,11 @@ public class JobDBDAO extends JobDAO {
         } else {
             job.setJobID(generateNextID(connection));
         }
-
+        // Set the harvestNamePrefix. Every current implementation depends on the JobID being set before
+        // being initialized.
+        job.setDefaultHarvestNamePrefix();
+        
+        
         if (job.getCreationDate() != null) {
             log.warn("The creation time for the job is already set. This should probably never happen.");
         } else {
@@ -493,9 +499,8 @@ public class JobDBDAO extends JobDAO {
         } finally  {
         	try {
 				statement.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+        	} catch (SQLException e) {
+        		log.warn("Exception thrown when trying to close statement", e);
 			}
         }
     }

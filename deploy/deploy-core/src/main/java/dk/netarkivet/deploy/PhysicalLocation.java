@@ -68,6 +68,7 @@ public class PhysicalLocation {
     private boolean resetDirectory;
     /** The folder for the external jar libraries. */
     private File jarFolder;
+    private final DeployConfiguration deployConfiguration;
 
     /**
      * The physical locations is referring to the position in the real world where the computers are located. One
@@ -87,7 +88,7 @@ public class PhysicalLocation {
      */
     public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, Parameters param,
             String netarchiveSuiteSource, File slf4JConfig, File securityPolicy, File dbFile,
-            File arcdbFile, boolean resetDir, File externalJarFolder) throws ArgumentNotValid {
+            File arcdbFile, boolean resetDir, File externalJarFolder, DeployConfiguration deployConfiguration) throws ArgumentNotValid {
         // test if valid arguments
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element elem (physLocRoot)");
         ArgumentNotValid.checkNotNull(parentSettings, "XmlStructure parentSettings");
@@ -107,6 +108,7 @@ public class PhysicalLocation {
         arcDatabaseFile = arcdbFile;
         resetDirectory = resetDir;
         jarFolder = externalJarFolder;
+        this.deployConfiguration = deployConfiguration;
 
         // retrieve the specific settings for this instance
         Element tmpSet = physLocRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
@@ -158,7 +160,8 @@ public class PhysicalLocation {
                         slf4JConfigFile, securityPolicyFile, databaseFile, arcDatabaseFile, resetDirectory, jarFolder));
             } else {
                 machines.add(new LinuxMachine(e, settings, machineParameters, netarchiveSuiteFileName,
-                        slf4JConfigFile, securityPolicyFile, databaseFile, arcDatabaseFile, resetDirectory, jarFolder));
+                        slf4JConfigFile, securityPolicyFile, databaseFile, arcDatabaseFile, resetDirectory, jarFolder,
+                        deployConfiguration));
             }
         }
     }

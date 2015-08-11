@@ -40,14 +40,12 @@ import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.HarvestHistoryPageHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 
+/** The tests here are run with a low priority, eg. they are run last thereby enabling other tests to run harvests
+ * prior to the tests here. This will prevent the  calls to 'ensureNumberOfHarvestsForDefaultDomain' from having to
+ * run alle the harvests needed here. */
 public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
-    ;
 
-    @BeforeMethod(alwaysRun = true)
-    public void setup(Method method) {
-    }
-
-    @Test(groups = {"guitest", "functest", "slow"})
+    @Test(priority=10, groups = {"guitest", "functest", "slow"})
     public void sortableHistoryTableTest() throws Exception {
         addDescription("Tests that the jobs listed on the 'Harvest History' page for a domain are"
                 + "sortable by clicking on the .");
@@ -145,7 +143,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
         assertColumnIsSorted(8, false);
     }
 
-    @Test(groups = {"guitest", "functest", "slow"})
+    @Test(priority=10, groups = {"guitest", "functest", "slow"})
     public void historyTablePagingTest() throws Exception {
         addDescription("Testes that the paging functionality works correctly " + "for the harvest history");
         addStep("Ensure that at least harvests have finished for the default domain", "");
@@ -210,7 +208,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
         }
     }
 
-    @Test(groups = {"guitest", "functest", "slow"})
+    @Test(priority=10, groups = {"guitest", "functest", "slow"})
     public void historySortedTablePagingTest() throws Exception {
         addDescription("Tests that sorting is maintained when paging through " + "the harvest history");
         addStep("Ensure that at least harvests have finished for the default domain", "");

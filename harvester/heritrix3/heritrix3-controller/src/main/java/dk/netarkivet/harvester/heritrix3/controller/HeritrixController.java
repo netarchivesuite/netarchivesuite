@@ -24,7 +24,7 @@ package dk.netarkivet.harvester.heritrix3.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.Arrays;
 
 import org.netarchivesuite.heritrix3wrapper.EngineResult;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
@@ -59,87 +59,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
     private static final Logger log = LoggerFactory.getLogger(HeritrixController.class);
 
     /**
-     * Enum listing the different job attributes available.
-     */
-//    private static enum CrawlServiceJobAttribute {
-//        /** The time in seconds elapsed since the crawl began. */
-//        CrawlTime,
-//        /** The current download rate in URI/s. */
-//        CurrentDocRate,
-//        /** The current download rate in kB/s. */
-//        CurrentKbRate,
-//        /** The number of URIs discovered by Heritrix. */
-//        DiscoveredCount,
-//        /** The average download rate in URI/s. */
-//        DocRate,
-//        /** The number of URIs downloaded by Heritrix. */
-//        DownloadedCount,
-//        /** A string summarizing the Heritrix frontier. */
-//        FrontierShortReport,
-//        /** The average download rate in kB/s. */
-//        KbRate,
-//        /** The job status (Heritrix status). */
-//        Status,
-//        /** The number of active toe threads. */
-//        ThreadCount;
-//
-//        /**
-//         * Returns the {@link CrawlServiceJobAttribute} enum value matching the given name. Throws {@link UnknownID} if
-//         * no match is found.
-//         *
-//         * @param name the attribute name
-//         * @return the corresponding {@link CrawlServiceJobAttribute} enum value.
-//         */
-//        public static CrawlServiceJobAttribute fromString(String name) {
-//            for (CrawlServiceJobAttribute att : values()) {
-//                if (att.name().equals(name)) {
-//                    return att;
-//                }
-//            }
-//            throw new UnknownID(name + " : unknown CrawlServiceJobAttribute !");
-//        }
-//    }
-
-//    /**
-//     * Enum class defining the general operations available to the Heritrix operator.
-//     */
-//    private static enum CrawlServiceOperation {
-//        /** Adds a new job to an Heritrix instance. */
-//        addJob,
-//        /** Fetches the identifiers of pending jobs. */
-//        pendingJobs,
-//        /** Fetches the identifiers of completed jobs. */
-//        completedJobs,
-//        /** Shuts down an Heritrix instance. */
-//        shutdown,
-//        /** Instructs an Heritrix instance to starts crawling jobs. */
-//        startCrawling,
-//        /** Instructs an Heritrix instance to terminate the current job. */
-//        terminateCurrentJob;
-//    }
-//
-//    /**
-//     * Enum class defining the Job-operations available to the Heritrix operator.
-//     */
-//    private static enum CrawlServiceJobOperation {
-//        /** Fetches the progress statistics string from an Heritrix instance. */
-//        progressStatistics,
-//        /**
-//         * Fetches the progress statistics legend string from an Heritrix instance.
-//         */
-//        progressStatisticsLegend,
-//        /** Fetches the frontier report. */
-//        frontierReport;
-//    }
-
-    /**
-     * Shall we abort, if we lose the connection to Heritrix.
-     */
-    private static final boolean ABORT_IF_CONN_LOST = Settings.getBoolean(Heritrix3Settings.ABORT_IF_CONNECTION_LOST);
-
-    /**
-     * The name that Heritrix gives to the job we ask it to create. This is part of the name of the MBean for that job,
-     * but we can only retrieve the name after the MBean has been created.
+     * The name that Heritrix gives to the job we ask it to create. 
      */
     private String jobName;
 
@@ -168,9 +88,6 @@ public class HeritrixController extends AbstractRestHeritrixController {
     	/////////////////////////////////////////////////////
         // Initialize H3 wrapper 
     	/////////////////////////////////////////////////////
-
-    	//File keystoreFile= null;
-        //String keyStorePassword = null;
 
         h3wrapper = Heritrix3Wrapper.getInstance(getHostName(), getGuiPort(), 
         		null, null, getHeritrixAdminName(), getHeritrixAdminPassword());
@@ -243,20 +160,51 @@ public class HeritrixController extends AbstractRestHeritrixController {
 
     @Override
     public void requestCrawlStop(String reason) {
-    	log.info("Terminating job {}. Reason: {}", this.jobName,  reason);
+    	log.info("Terminating job {}. Reason: {}", this.jobName, reason);
     	JobResult jobResult = h3wrapper.job(jobName);
     	if (jobResult != null) {
     		if (jobResult.job.isRunning) {
     			JobResult result = h3wrapper.terminateJob(this.jobName);
     			if (!result.job.isRunning) {
     				log.warn("Job '{}' terminated", this.jobName);
-    			}
+    			} else {
+                    log.warn("Job '{}' not terminated correctly", this.jobName);
+                }
     		} else {
     			log.warn("Job '{}' not terminated, as it was not running", this.jobName);
     		}
     	} else {
     		log.warn("Job '{}' has maybe already been terminated and/or heritrix3 is no longer running", this.jobName); 
     	}
+    }
+
+    @Override
+    public void stopHeritrix() {
+        log.debug("Stopping Heritrix");
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("pgrep", "-f", jobName);
+            log.info("Looking up heritrix process with. " + processBuilder.command());
+            if (processBuilder.start().waitFor() == 0) {
+                log.info("Heritrix running, requesting heritrix to stop ignoring running job " + jobName);
+                h3wrapper.exitJavaProcess(Arrays.asList(new String[] {jobName}));
+            } else {
+                log.info("Heritrix not running.");
+            }
+            if (processBuilder.start().waitFor() == 0) {
+                log.info("Heritrix still running, pkill'ing heritrix ");
+                ProcessBuilder killerProcessBuilder = new ProcessBuilder("pkill", "-f", jobName);
+                int pkillExitValue = killerProcessBuilder.start().exitValue();
+                if ( pkillExitValue != 0) {
+                    log.warn("Non xero exit value )" + pkillExitValue + ") when trying to pkill Heritrix.");
+                }
+            } else {
+                log.info("Heritrix stopped successfully.");
+            }
+        } catch (IOException e) {
+            log.warn("Exception while trying to shutdown heritrix", e);
+        } catch (InterruptedException e) {
+            log.debug("stopHeritrix call interupted", e);
+        }
     }
 
     /**
@@ -299,7 +247,6 @@ public class HeritrixController extends AbstractRestHeritrixController {
   	        if (result == null || (result.status != ResultStatus.RESPONSE_EXCEPTION && result.status != ResultStatus.OFFLINE)) {
   	        	throw new IOFailure("Heritrix3 could not be shut down");
   	        }
-  	        //h3launcher.process.destroy(); // TODO Should we catch something here
       	} catch (Throwable e) {
       		throw new IOFailure("Unknown error during communication with heritrix3", e);
       	}

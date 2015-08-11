@@ -66,7 +66,6 @@ public class HarvestJob {
     /**
      * Creates the actual HeritrixLauncher instance and runs it, after the various setup files have been written.
      *
-     * @param files Description of files involved in running Heritrix3. Not Null.
      * @throws ArgumentNotValid if an argument isn't valid.
      */
     public void runHarvest() throws ArgumentNotValid {

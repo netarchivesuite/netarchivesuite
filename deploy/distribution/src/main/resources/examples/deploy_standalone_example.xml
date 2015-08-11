@@ -31,12 +31,13 @@ National Library.
         one machine scenario. Kind of running 'quickstart' on another machine. 
         Uses HTTP as file transport agent. Requires the availability of 
         port 7676: JMS broker
-        port 8040-8048 for the http filetransport servers serving the HTTPRemoteFile;         
+        port 8040-8050 for the http filetransport servers serving the HTTPRemoteFile;         
         port 8070 for the viewerproxy.
         port 8074 for the GUIApplication webinterface
-        port 8090-8093 for the Heritrix GUI 
-        port 8110-8119: JMX ports
-        port 8210-8219: RMI ports
+        port 8090-8093 for the Heritrix1 GUI 
+        port 8094-8097 for the Heritrix3 GUI 
+        port 8110-8120: JMX ports
+        port 8210-8220: RMI ports
         port 8120-8121: databases
 
         Does not include a checksum replica w/ a ChecksumFileApplication
@@ -208,11 +209,11 @@ National Library.
           </archive>
         </settings>
       </applicationName>
-      <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
-        <deployClassPath>lib/netarchivesuite-heritrix1-controller.jar</deployClassPath>
+      <applicationName name="dk.netarkivet.harvester.heritrix3.HarvestControllerApplication">
+        <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
         <settings>
           <common>
-            <applicationInstanceId>snapshot</applicationInstanceId>
+            <applicationInstanceId>snapshot1</applicationInstanceId>
             <jmx>
               <port>8114</port>
               <rmiPort>8214</rmiPort>
@@ -236,11 +237,11 @@ National Library.
           </harvester>
         </settings>
       </applicationName>
-      <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
-        <deployClassPath>lib/netarchivesuite-heritrix1-controller.jar</deployClassPath>
+      <applicationName name="dk.netarkivet.harvester.heritrix3.HarvestControllerApplication">
+        <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
         <settings>
           <common>
-            <applicationInstanceId>focused</applicationInstanceId>
+            <applicationInstanceId>focused1</applicationInstanceId>
             <jmx>
               <port>8115</port>
               <rmiPort>8215</rmiPort>

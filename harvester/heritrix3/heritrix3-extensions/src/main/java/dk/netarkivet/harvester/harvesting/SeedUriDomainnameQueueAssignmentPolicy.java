@@ -38,7 +38,7 @@ import dk.netarkivet.common.utils.DomainUtils;
 /**
  * This is a modified version of the {@link DomainnameQueueAssignmentPolicy}
  * where domainname returned is the domainname of the candidateURI
- * except where the domainname of the SeedURI is a different one. 
+ * except where the the SeedURI belongs to a different domain. 
  * 
  * 
  * Using the domain as the queue-name.
@@ -77,8 +77,6 @@ public class SeedUriDomainnameQueueAssignmentPolicy
         
         boolean ignoreSourceSeed =
                 cauri != null &&
-                //cauri.getCandidateURIString().startsWith("dns");
-                //TODO verify this refactoring
         		cauri.getCanonicalString().startsWith("dns");
         try {
             // Since getClassKey has no contract, we must encapsulate it from
@@ -123,9 +121,6 @@ public class SeedUriDomainnameQueueAssignmentPolicy
     private String getCandidateFromSource(CrawlURI cauri) {
         String sourceCandidate = null;  
         try {
-            //sourceCandidate = cauri.getString(CoreAttributeConstants.A_SOURCE_TAG);
-        	//TODO verify if this does the check
-        	//maybe it doesn't throw an exception, but returns null or "" if it isn't set
         	sourceCandidate = cauri.getSourceTag(); 
         } catch (NoSuchElementException e) {
             log.warn("source-tag-seeds not set in Heritrix template!");

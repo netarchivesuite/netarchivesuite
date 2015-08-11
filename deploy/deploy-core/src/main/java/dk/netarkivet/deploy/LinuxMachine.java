@@ -43,7 +43,7 @@ public class LinuxMachine extends Machine {
 
 	public static final String HERITRIX_1_CLASSNAME = "org.archive.crawler.Heritrix";
 
-	protected LinkedHashMap<String, String> bundles = new LinkedHashMap<String, String>();
+	protected LinkedHashMap<String, String> bundles = new LinkedHashMap<>();
 	protected LinkedHashMap<String, String> certificates = new LinkedHashMap<String, String>();
 
 	/**
@@ -59,10 +59,12 @@ public class LinuxMachine extends Machine {
      * @param arcdbFile The name of the archive file.
      * @param resetDir Whether the temporary directory should be reset.
      * @param externalJarFolder The folder containing the external jar library files.
+     * @param deployConfiguration The general deployment configuration.
      */
     public LinuxMachine(Element subTreeRoot, XmlStructure parentSettings, Parameters param,
             String netarchiveSuiteSource, File slf4JConfig, File securityPolicy, File dbFile,
-            File arcdbFile, boolean resetDir, File externalJarFolder) {
+            File arcdbFile, boolean resetDir, File externalJarFolder,
+            DeployConfiguration deployConfiguration) {
         super(subTreeRoot, parentSettings, param, netarchiveSuiteSource, slf4JConfig, securityPolicy, dbFile,
                 arcdbFile, resetDir, externalJarFolder);
         // set operating system
@@ -75,57 +77,67 @@ public class LinuxMachine extends Machine {
         String dstStr;
     	int idx;
         for (Application app : applications) {
-        	bundlesArr = app.getSettingsValues(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
-        	certificatesArr = app.getSettingsValues(Constants.SETTINGS_HARVEST_HERITRIX3_CERTIFICATE_LEAF);
-        	if (bundlesArr != null && bundlesArr.length > 0 && certificatesArr != null && certificatesArr.length > 0) {
-        		for (int i=0; i<bundlesArr.length; ++i) {
-        			srcStr = bundlesArr[i];
-        			if (!bundles.containsKey(srcStr)) {
-                        idx = srcStr.lastIndexOf('/');
-                        if (idx != -1) {
-                        	dstStr = srcStr.substring(idx + 1);
-                        } else {
-                        	dstStr = srcStr;
+            if (app.isBundledHarvester()) {
+                bundlesArr = app.getSettingsValues(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
+                if ((bundlesArr == null || bundlesArr.length == 0)
+                        && deployConfiguration.getDefaultBundlerZip().isPresent()) {
+                    bundlesArr = new String[] { deployConfiguration.getDefaultBundlerZip().get().getAbsolutePath() };
+                } else if ((bundlesArr == null || bundlesArr.length == 0)
+                        && !deployConfiguration.getDefaultBundlerZip().isPresent()) {
+                    throw new IllegalArgumentException("A Heritrix bundler needs to be defined for H3 controllers, "
+                            + "either directly in the deploy configuration or from the command line with the -B option.");
+                }
+                certificatesArr = app.getSettingsValues(Constants.SETTINGS_HARVEST_HERITRIX3_CERTIFICATE_LEAF);
+                if (bundlesArr != null && bundlesArr.length > 0 && certificatesArr != null) {
+                    for (int i = 0; i < bundlesArr.length; ++i) {
+                        srcStr = bundlesArr[i];
+                        if (!bundles.containsKey(srcStr)) {
+                            idx = srcStr.lastIndexOf('/');
+                            if (idx != -1) {
+                                dstStr = srcStr.substring(idx + 1);
+                            } else {
+                                dstStr = srcStr;
+                            }
+                            dstStr = machineParameters.getInstallDirValue() + "/" + getEnvironmentName() + "/" + dstStr;
+                            bundles.put(srcStr, dstStr);
+                            System.out.println(srcStr + " -> " + dstStr);
                         }
-                        dstStr = machineParameters.getInstallDirValue() + "/" + getEnvironmentName() + "/" +  dstStr;
-                        bundles.put(srcStr, dstStr);
-                		System.out.println(srcStr + " -> " + dstStr);
-        			}
-        		}
-        		for (int i=0; i<certificatesArr.length; ++i) {
-        			srcStr = certificatesArr[i];
-        			if (!certificates.containsKey(srcStr)) {
-                        idx = srcStr.lastIndexOf('/');
-                        if (idx != -1) {
-                        	dstStr = srcStr.substring(idx + 1);
-                        } else {
-                        	dstStr = srcStr;
+                    }
+                    for (int i = 0; i < certificatesArr.length; ++i) {
+                        srcStr = certificatesArr[i];
+                        if (!certificates.containsKey(srcStr)) {
+                            idx = srcStr.lastIndexOf('/');
+                            if (idx != -1) {
+                                dstStr = srcStr.substring(idx + 1);
+                            } else {
+                                dstStr = srcStr;
+                            }
+                            dstStr = machineParameters.getInstallDirValue() + "/" + getEnvironmentName() + "/" + dstStr;
+                            certificates.put(srcStr, dstStr);
+                            System.out.println(srcStr + " -> " + dstStr);
                         }
-                        dstStr = machineParameters.getInstallDirValue() + "/" + getEnvironmentName() + "/" +  dstStr;
-        				certificates.put(srcStr, dstStr);
-                		System.out.println(srcStr + " -> " + dstStr);
-        			}
-        		}
-        		XmlStructure appSettings = app.getSettings();
-        		Element e;
-        		String tmpStr;
-        		e = appSettings.getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
-        		if (e != null) {
-        			tmpStr = e.getText();
-        			tmpStr = bundles.get(tmpStr);
-        			if (tmpStr != null) {
-        				e.setText(tmpStr);
-        			}
-        		}
-        		e = appSettings.getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_CERTIFICATE_LEAF);
-        		if (e != null) {
-        			tmpStr = e.getText();
-        			tmpStr = certificates.get(tmpStr);
-        			if (tmpStr != null) {
-        				e.setText(tmpStr);
-        			}
-        		}
-        	}
+                    }
+                    XmlStructure appSettings = app.getSettings();
+                    Element heritrixBundleElement =
+                            appSettings.getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
+                    if (heritrixBundleElement == null) {
+                        appSettings.getSubChild(Constants.SETTINGS_HERITRIX_BRANCH).addElement("bundle");
+                        heritrixBundleElement =
+                                appSettings.getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
+                        heritrixBundleElement.setText((String)bundles.values().toArray()[0]);
+                    } else {
+                        heritrixBundleElement.setText(bundles.get(heritrixBundleElement.getText()));
+                    }
+                    Element h3KeystoreElement = appSettings
+                            .getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_CERTIFICATE_LEAF);
+                    if (h3KeystoreElement != null) {
+                        String h3KeystoreName = certificates.get(h3KeystoreElement.getText());
+                        if (h3KeystoreName != null) {
+                            h3KeystoreElement.setText(h3KeystoreName);
+                        }
+                    }
+                }
+            }
         }
     }
 

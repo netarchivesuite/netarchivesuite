@@ -48,6 +48,9 @@ public final class ScriptConstants {
     static final String BIN_BASH_COMMENT = "#!/bin/bash";
     /** The call for running a batch script from another batch script. */
     static final String OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE = "\"C:\\Program Files\\Bitvise WinSSHD\\bvRun\" -brj -new -cmd=";
+    /** The call to the wait.vbs script that waits 10 seconds. */
+    static final String OPERATING_SYSTEM_WINDOWS_10_SECONDS_WAIT = ScriptConstants.CSCRIPT + Constants.SPACE 
+    		+ Constants.SCRIPT_NAME_WAIT + Constants.EXTENSION_VBS_FILES;	
     /** Ddk.netarkivet.settings.file=. */
     static final String OPTION_SETTINGS = "Ddk.netarkivet.settings.file=";
     /** Ddk.netarkivet.settings.file=\"\". */

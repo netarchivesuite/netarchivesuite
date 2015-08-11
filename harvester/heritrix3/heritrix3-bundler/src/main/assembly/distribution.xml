@@ -62,8 +62,6 @@
                 <exclude>org.hibernate:*:jar</exclude>
                 <exclude>antlr:antlr:jar</exclude>
                 <exclude>commons-collections:commons-collections:jar</exclude>
-                <exclude>javax.transaction:jta:jar</exclude>
-                <exclude>c3p0:c3p0:jar</exclude>
                 <!-- jetty -->
                 <exclude>org.eclipse.jetty:*:jar</exclude>
                 <exclude>org.eclipse.jetty.websocket:*:jar</exclude>
@@ -94,4 +92,11 @@
             <outputDirectory>/heritrix-3.3.0-LBS-2014-03/lib/</outputDirectory>
         </dependencySet>
     </dependencySets>
+
+    <fileSets>
+        <fileSet>
+            <directory>${basedir}/src/main/resources/</directory>
+            <outputDirectory>/heritrix-3.3.0-LBS-2014-03</outputDirectory>
+        </fileSet>
+    </fileSets>
 </assembly>

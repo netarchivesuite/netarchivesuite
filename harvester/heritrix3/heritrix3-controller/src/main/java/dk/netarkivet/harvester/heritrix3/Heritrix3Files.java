@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
@@ -183,8 +184,13 @@ public class Heritrix3Files {
 	}	
 
 	private void setCertificateFile() {
-		h3CerticateFile = Settings.getFile(Heritrix3Settings.HERITRIX3_CERTIFICATE);
-		if (!h3CerticateFile.isFile()) {
+		try {
+			h3CerticateFile = Settings.getFile(Heritrix3Settings.HERITRIX3_CERTIFICATE);
+		} catch (UnknownID unknownID) {
+			LOG.debug("No heritrix3 certificate defined in settings, using default");
+			return;
+		}
+		if (h3CerticateFile != null && !h3CerticateFile.isFile()) {
 			throw new IOFailure("The path to the heritrix3 certificate '" 
 					+  h3CerticateFile.getAbsolutePath() + "' does not represent a proper file");
 		}
