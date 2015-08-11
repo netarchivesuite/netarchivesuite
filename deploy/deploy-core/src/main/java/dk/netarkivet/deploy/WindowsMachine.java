@@ -629,7 +629,7 @@ public class WindowsMachine extends Machine {
                 "Set WshShell= CreateObject(\"WScript.Shell\")",
                 "javahome = WshShell.ExpandEnvironmentStrings(\"%JAVA_HOME%\")",
                 "WScript.Echo \"JAVA_HOME=\" & javahome",
-                "If javahome = \"\" Then",
+                "If javahome = \"%JAVA_HOME%\" Then",
                 "  java = \"java\"",
                 "Else",
                 "  java = javahome & \"\\bin\\java\"",
