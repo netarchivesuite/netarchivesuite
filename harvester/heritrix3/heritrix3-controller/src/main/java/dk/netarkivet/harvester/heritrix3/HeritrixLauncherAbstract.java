@@ -111,14 +111,14 @@ public abstract class HeritrixLauncherAbstract {
 
     /**
      * Updates the archivefile_prefix, and location of the deduplication index if needed.
-     * @param files
-     * @throws IOFailure
+     * @param files a set of files associated with a Heritrix3 job
+     * @throws IOFailure 
      */
     /**
      * This method prepares the crawler-beans.cxml file used by the Heritrix3 crawler. </p> 1. alters the crawler-beans.cxml in the
      * following-way: (overriding whatever is in the crawler-beans.cxml)</br>
      * <ol>
-     * <li>sets the prefix of the arcfiles to unique prefix defined in Heritrix3Files</li>
+     * <li>sets the prefix of the archive files to the unique prefix defined in Heritrix3Files</li>
      * <p>
      * <li>if deduplication is enabled, sets the node pointing to index directory for deduplication (see step 3)</li>
      * </ol>
@@ -128,15 +128,13 @@ public abstract class HeritrixLauncherAbstract {
      * deduplication processor.
      *
      * @throws IOFailure - When the orderfile could not be saved to disk 
-     *                     When a specific element cannot be found in the document. 
+     * @throws IllegalState - When the orderfile is not a H3 template                  
      */
     public static void makeTemplateReadyForHeritrix3(Heritrix3Files files) throws IOFailure {    	
     	HeritrixTemplate templ = HeritrixTemplate.read(files.getOrderXmlFile());
     	if (templ instanceof H3HeritrixTemplate) {
     		H3HeritrixTemplate template = (H3HeritrixTemplate) templ;
-    		//templ.setDiskPath(files.getCrawlDir().getAbsolutePath()); NOP
     		template.setArchiveFilePrefix(files.getArchiveFilePrefix());
-    		//template.setSeedsFilePath(files.getSeedsTxtFile().getAbsolutePath()); NOP
 
     		if (template.IsDeduplicationEnabled()) {
     			template.setDeduplicationIndexLocation(files.getIndexDir().getAbsolutePath());

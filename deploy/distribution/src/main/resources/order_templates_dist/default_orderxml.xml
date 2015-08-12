@@ -124,7 +124,9 @@ fetchHttp.maxFetchKBSec=0
 fetchHttp.maxLengthBytes=0
 fetchHttp.ignoreCookies=false
 fetchHttp.sslTrustLevel=OPEN
-fetchHttp.defaultEncoding=ISO-8859-1
+
+#fetchHttp.defaultEncoding=ISO-8859-1
+fetchHttp.defaultEncoding=UTF-8
 fetchHttp.digestContent=true
 fetchHttp.digestAlgorithm=sha1
 fetchHttp.sendIfModifiedSince=true
@@ -157,6 +159,12 @@ statisticsTracker.intervalSeconds=20
 ## Quotaenforcing
 quotaenforcer.groupMaxFetchSuccesses=%{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER}
 quotaenforcer.groupMaxAllKb=%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}
+
+## sample overrides of the warcwriter
+warcWriter.template=${prefix}-${timestamp17}-${serialno}-ciblee_2015_${heritrix.hostname}
+warcWriter.writeRequests=false
+warcWriter.writeMetadata=false
+warcWriter.poolMaxActive=3
 
 loggerModule.path=logs
 
