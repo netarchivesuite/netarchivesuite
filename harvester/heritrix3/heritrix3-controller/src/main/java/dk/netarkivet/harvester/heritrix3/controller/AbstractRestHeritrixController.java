@@ -66,8 +66,14 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
     /** The port to use for Heritrix GUI, as set in settings.xml. */
     private final int guiPort = Settings.getInt(Heritrix3Settings.HERITRIX_GUI_PORT);
 
+    /**
+     * The shutdownHook that takes care of killing our process. This is removed in cleanup() when the process is shut
+     * down.
+     */
+    private Thread processKillerHook;
+ 
    /**
-     * Create a AbstractRestHeritrixController object.
+     * Create a BnfHeritrixController object.
      *
      * @param files Files that are used to set up Heritrix.
      */
@@ -77,6 +83,7 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
         SystemUtils.checkPortNotUsed(guiPort);
         
         hostName = SystemUtils.getLocalHostName();
+        //hostName = SystemUtils.getLocalIP();
         try {
             log.info("Starting Heritrix for {} in crawldir {}", this, files.getCrawlDir());
             String zipFileStr = files.getHeritrixZip().getAbsolutePath();
@@ -116,6 +123,7 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             String[] cmd = {
                     "./bin/heritrix",
                     "-b",
+                    //getHostName(),
                     hostName,
                     "-p ",
                     Integer.toString(guiPort),
@@ -135,8 +143,7 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             if ((jvmOptsStr != null) && (!jvmOptsStr.isEmpty())) {
             	javaOpts = " " + jvmOptsStr;
             }
-            String javaOptsValue = "-Xmx" + Settings.get(Heritrix3Settings.HERITRIX_HEAP_SIZE) + javaOpts + getSettingsProperty();
-            
+            String javaOptsValue = "-Xmx" + Settings.get(Heritrix3Settings.HERITRIX_HEAP_SIZE) + " " + javaOpts;
             h3launcher.env.put("JAVA_OPTS", javaOptsValue);
             log.info(".. and setting JAVA_OPTS to '{}'", javaOptsValue);
             String heritrixOutValue = files.getHeritrixOutput().getAbsolutePath();
@@ -146,45 +153,16 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             outputPrinter = new PrintWriter(files.getHeritrixStdoutLog(), "UTF-8");
             errorPrinter = new PrintWriter(files.getHeritrixStderrLog(), "UTF-8");
             h3handler = new LaunchResultHandler(outputPrinter, errorPrinter);
-            //log.info("..using the following environment settings: ");
+            log.info("..using the following environment settings: ");
             h3launcher.start(h3handler);
             Runtime.getRuntime().addShutdownHook(new HeritrixKiller());
             log.info("Heritrix3 launched successfully");
         } catch( Throwable e) {
-        	String errMsg = "Unexpected error while launching H3: ";
-        	log.debug(errMsg, e);
-        	throw new IOFailure(errMsg, e);
+        	log.debug("Unexpected error while launching H3: ", e);
+        	throw new IOFailure("Unexpected error while launching H3: ", e);
         }
     }
-    
-    /**
-     * @return the Settingsproperty for heritrix3
-     */
-    private static String getSettingsProperty() {
-    	StringBuilder settingProperty = new StringBuilder();
-    	for (File file : Settings.getSettingsFiles()) {
-    		settingProperty.append(File.pathSeparator);
 
-    		String absolutePath = file.getAbsolutePath();
-    		// check that the settings files not only exist but
-    		// are readable
-    		boolean readable = new File(absolutePath).canRead();
-    		if (!readable) {
-    			final String errMsg = "The file '" + absolutePath
-    					+ "' is missing. ";
-    			log.warn(errMsg);
-    			throw new IOFailure("Failed to read file '" + absolutePath
-    					+ "'");
-    		}
-    		settingProperty.append(absolutePath);
-    	}
-    	if (settingProperty.length() > 0) {
-    		// delete last path-separator
-    		settingProperty.deleteCharAt(0);
-    	}
-    	return "-Ddk.netarkivet.settings.file=" + settingProperty;
-    }
-    
     public static class LaunchResultHandler implements LaunchResultHandlerAbstract {
     	protected Semaphore semaphore = new Semaphore(-2);
         protected PrintWriter outputPrinter;
