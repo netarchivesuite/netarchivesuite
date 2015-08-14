@@ -143,7 +143,7 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             if ((jvmOptsStr != null) && (!jvmOptsStr.isEmpty())) {
             	javaOpts = " " + jvmOptsStr;
             }
-            String javaOptsValue = "-Xmx" + Settings.get(Heritrix3Settings.HERITRIX_HEAP_SIZE) + javaOpts; 
+            String javaOptsValue = "-Xmx" + Settings.get(Heritrix3Settings.HERITRIX_HEAP_SIZE) + " " + javaOpts;
             h3launcher.env.put("JAVA_OPTS", javaOptsValue);
             log.info(".. and setting JAVA_OPTS to '{}'", javaOptsValue);
             String heritrixOutValue = files.getHeritrixOutput().getAbsolutePath();
