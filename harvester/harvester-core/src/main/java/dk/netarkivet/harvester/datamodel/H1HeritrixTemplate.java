@@ -695,7 +695,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
             return;
         }
         
-		System.out.println("Calling insertCrawlerTraps(String elementName, List<String> crawlerTraps) ");
+		//System.out.println("Calling insertCrawlerTraps(String elementName, List<String> crawlerTraps) ");
         // Get the node to update
         // If there is an acceptIfPrerequisite decideRule in the template, crawler traps should be
         // placed before (cf. issue NAS-2205)
