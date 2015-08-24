@@ -224,13 +224,13 @@ public class TestEnvironmentController {
             } else {
                 sshTunneling = "";
             }
-
+            String setDeployConfCommand = "true";
             String setTimestampCommand = "true";
             if (ENV.getTimestamp() != null) {
-                setTimestampCommand = "export TIMESTAMP=" + ENV.getTimestamp();
+                setTimestampCommand = "export VERSION=" + ENV.getTimestamp();
             }
             if (ENV.getDeployConfig() != null) {
-                setTimestampCommand = "export DEPLOYCONF=" + ENV.getDeployConfig();
+                setDeployConfCommand = "export DEPLOYCONF=" + ENV.getDeployConfig();
             }
             String setPortCommand = "export PORT=" + ENV.getGuiPort();
             String setMailReceiversCommand = "export MAILRECEIVERS=" + ENV.getMailreceivers();
@@ -238,7 +238,7 @@ public class TestEnvironmentController {
             String setPathCommand = "source /etc/bashrc;source /etc/profile;source ~/.bash_profile";
 
             environmentSetup = setPathCommand + ";" + setTimestampCommand + ";" + setPortCommand + ";"
-                    + setMailReceiversCommand + ";" + setTestCommand + ";";
+                    + setMailReceiversCommand + ";" + setTestCommand + ";" + setDeployConfCommand + ";";
             this.command = command;
             this.quotes = quotes;
         }

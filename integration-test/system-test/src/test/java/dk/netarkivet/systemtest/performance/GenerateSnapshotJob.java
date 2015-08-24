@@ -79,20 +79,13 @@ class GenerateSnapshotJob extends GenericWebJob {
     }
 
     /**
-     * Looks for a log statement like "Created 212 jobs for harvest hgj8hy".
+     * Looks for a non-empty field in the "End Time" field of the harvest status.
      * @return
      */
     @Override boolean isFinished() {
-        //The [^<>]* in the following regexp ensure that we match within a single html element.
-        Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs([^<>]*)[(]" + harvestName + "[)].*", Pattern.DOTALL);
-        gotoHarvestJobManagerLog();
-        Matcher m = finished.matcher(driver.getPageSource());
-        if (m.matches()) {
-            report = "Snapshot generation finished with " + m.group(1) + " jobs generated for " + harvestName;
-            return true;
-        } else {
-            return false;
-        }
+        gotoHarvestStatusPage();
+        WebElement endTimeElement = driver.findElement(By.xpath("//tr[@class='row0']/td[3]"));
+        return ("" + endTimeElement.getText()).trim().length() > 4;
     }
 
     @Override String getProgress() {
@@ -113,6 +106,23 @@ class GenerateSnapshotJob extends GenericWebJob {
             }
         }
         requiredLink.click();
+    }
+
+    private void gotoHarvestStatusPage() {
+        driver.findElement(By.linkText("Definitions")).click();
+        driver.findElement(By.linkText("Snapshot Harvests")).click();
+        List<WebElement> historyLinks = driver.findElements(By.linkText("History"));
+        WebElement requiredLink = null;
+        for (WebElement historyLink: historyLinks) {
+            if (historyLink.getAttribute("href").contains(harvestName)) {
+                requiredLink = historyLink;
+            }
+        }
+        if (requiredLink != null) {
+            requiredLink.click();
+        } else {
+            throw new RuntimeException("Could not find harvest status for " + harvestName);
+        }
     }
 
     /**
