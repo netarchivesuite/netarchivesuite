@@ -216,7 +216,7 @@ public abstract class AbstractStressTest extends SeleniumTest {
     protected void upgradeHarvestDatabase() throws Exception {
         testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "export CLASSPATH="
                 + "./lib/netarchivesuite-harvest-scheduler.jar:./lib/netarchivesuite-monitor-core.jar:$CLASSPATH;java "
-                + "-Xmx1536m -cp './lib/*' -Ddk.netarkivet.settings.file=./conf/settings_GUIApplication.xml "
+                + "-Xmx1536m -Ddk.netarkivet.settings.file=./conf/settings_GUIApplication.xml "
                 + "-Dlogback.configurationFile=./conf/logback_GUIApplication.xml "
                 + "dk.netarkivet.harvester.tools.HarvestdatabaseUpdateApplication "
                 + "< /dev/null > start_harvestdatabaseUpdateApplication.log 2>&1 ");
