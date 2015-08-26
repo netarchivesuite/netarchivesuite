@@ -85,7 +85,13 @@ class GenerateSnapshotJob extends GenericWebJob {
     @Override boolean isFinished() {
         gotoHarvestStatusPage();
         WebElement endTimeElement = driver.findElement(By.xpath("//tr[@class='row0']/td[3]"));
-        return ("" + endTimeElement.getText()).trim().length() > 4;
+        String endTime =  "" + endTimeElement.getText().trim();
+        if (endTime.length() > 4) {
+            log.debug("Found end time " + endTime + " for job " + harvestName + ".");
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override String getProgress() {
