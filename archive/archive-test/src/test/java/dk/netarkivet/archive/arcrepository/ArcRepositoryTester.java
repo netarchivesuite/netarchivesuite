@@ -258,7 +258,7 @@ public class ArcRepositoryTester {
      *
      * @throws Exception if exception is thrown
      */
-    @Test
+    //@Test FIXME TEST DISABLED
     public void DISABLED_testOnBatchReply() throws Exception {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         ArcRepository a = ArcRepository.getInstance();
@@ -385,7 +385,7 @@ public class ArcRepositoryTester {
         assertEquals("number of messages on queue AllBa", 1, listener.getNumReceived());
     }
 
-    @Test
+    //@Test FIXME test disabled
     public void DSIABLED_testChecksumCalls() throws Exception {
         ArcRepository.getInstance().cleanup();
         Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
