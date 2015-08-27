@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
@@ -83,15 +84,21 @@ class GenerateSnapshotJob extends GenericWebJob {
      * @return
      */
     @Override boolean isFinished() {
-        //The [^<>]* in the following regexp ensure that we match within a single html element.
-        Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs([^<>]*)[(]" + harvestName + "[)].*", Pattern.DOTALL);
-        gotoHarvestJobManagerLog();
-        Matcher m = finished.matcher(driver.getPageSource());
-        if (m.matches()) {
-            report = "Snapshot generation finished with " + m.group(1) + " jobs generated for " + harvestName;
-            return true;
-        } else {
-            return false;
+        try {
+            String output = stressTest.testController.runCommand(TestEnvironment.JOB_ADMIN_SERVER,
+                    "grep 'Created' ${HOME}/" + AbstractStressTest.ENV.getTESTX() + "/log/HarvestJobManager*",
+                    new int[] {0, 1});
+            Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs([^<>]*)[(]" + harvestName + "[)].*",
+                    Pattern.DOTALL);
+            final Matcher matcher = finished.matcher(output);
+            if (matcher.matches()) {
+                report = "Snapshot generation finished with " + matcher.group(1) + " jobs generated for " + harvestName;
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
