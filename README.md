@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/netarchivesuite/netarchivesuite.svg)](https://travis-ci.org/netarchivesuite/netarchivesuite)
 Introduction
 ===========
 
