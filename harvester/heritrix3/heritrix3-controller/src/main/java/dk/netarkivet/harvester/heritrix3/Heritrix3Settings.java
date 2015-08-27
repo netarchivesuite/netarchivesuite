@@ -206,9 +206,6 @@ public class Heritrix3Settings {
     /**
      * <b>settings.harvester.harvesting.serverDir</b>: <br>
      * Each job gets a subdir of this dir. Job data is written and Heritrix writes to that subdir.
-     * TODO verify, if this is OK for Heritrix3 as well as Heritrix1
-     * NOTE THAT the jobsdir in Heritrix3 consists of ???????? 
-     * 
      */
     public static String HARVEST_CONTROLLER_SERVERDIR = "settings.harvester.harvesting.serverDir";
 

@@ -37,7 +37,7 @@ import dk.netarkivet.systemtest.HarvestUtils;
  * Will also log webpage interactions.
  */
 public class SelectiveHarvestPageHelper {
-    public static void createSelectiveHarvest(String name, String comments, String[] domains) {
+    public static void createSelectiveHarvest(String name, String comments, String... domains) {
         TestEventManager.getInstance().addStimuli("Creating harvest " + name);
         WebDriver driver = PageHelper.getWebDriver();
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
@@ -111,5 +111,4 @@ public class SelectiveHarvestPageHelper {
             tr_collection.get(1).findElement(By.linkText("Deactivate")).click();
         }
     }
-
 }

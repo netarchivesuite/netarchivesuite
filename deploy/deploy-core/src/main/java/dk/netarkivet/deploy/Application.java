@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
@@ -231,6 +232,20 @@ public class Application {
      */
     public XmlStructure getSettings() {
     	return settings;
+    }
+
+    /**
+     * Detects whether this is a Harvester app, which requires a harvester bundle to be deployed.
+     * @return <code>true if the is a harvester requiring a harvester bundle, else <code>false</code>.</code>
+     */
+    public boolean isBundledHarvester() {
+        List<Element> classPaths = getMachineParameters().getClassPaths();
+        for (Element classPathElement : classPaths) {
+            if (classPathElement.getText().contains("heritrix3")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

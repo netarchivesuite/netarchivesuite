@@ -60,7 +60,7 @@ public class FullHarvest extends HarvestDefinition {
     private boolean indexReady;
 
     private final Provider<HarvestDefinitionDAO> hdDaoProvider;
-    private final Provider<JobDAO> jobDaoProvider;
+    private final Provider<JobDAO> jobDaoProvider; // Not used
     private final Provider<DomainDAO> domainDAOProvider;
 
     /**
@@ -102,7 +102,7 @@ public class FullHarvest extends HarvestDefinition {
      */
     public HarvestDefinition getPreviousHarvestDefinition() {
         if (previousHarvestDefinitionOid != null) {
-            return HarvestDefinitionDAO.getInstance().read(previousHarvestDefinitionOid);
+            return hdDaoProvider.get().read(previousHarvestDefinitionOid);
         }
         return null;
     }
@@ -157,12 +157,12 @@ public class FullHarvest extends HarvestDefinition {
     public Iterator<DomainConfiguration> getDomainConfigurations() {
         if (previousHarvestDefinitionOid == null) {
             // The first snapshot harvest
-            HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
-            return hdDao.getSnapShotConfigurations();
+            //HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
+            return hdDaoProvider.get().getSnapShotConfigurations();
         }
 
-        // An iterative snapshop harvest
-        final DomainDAO dao = DomainDAO.getInstance();
+        // An iterative snapshot harvest
+        final DomainDAO dao = domainDAOProvider.get();
         // Get what has been harvested
         Iterator<HarvestInfo> i = dao.getHarvestInfoBasedOnPreviousHarvestDefinition(getPreviousHarvestDefinition());
         //
@@ -289,7 +289,7 @@ public class FullHarvest extends HarvestDefinition {
 
     /**
      * Is index ready. Used to check, whether or a FullHarvest is ready for scheduling. The scheduling requires, that
-     * the deduplication index used by the jobs in the FullHarvest, has allready been prepared by the IndexServer.
+     * the deduplication index used by the jobs in the FullHarvest, has already been prepared by the IndexServer.
      *
      * @return true, if the deduplication index is ready. Otherwise false.
      */

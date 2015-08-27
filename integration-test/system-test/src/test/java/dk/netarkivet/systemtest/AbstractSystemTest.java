@@ -13,7 +13,7 @@ public abstract class AbstractSystemTest extends SeleniumTest {
             getTestX(),
             null,
             null,
-            8071,
+            getPort(),
             TestEnvironment.JOB_ADMIN_SERVER,
             null
     );
@@ -27,6 +27,12 @@ public abstract class AbstractSystemTest extends SeleniumTest {
      * Identifies the test on the test system. More concrete this value will be used for the test environment variable.
      */
     protected static String getTestX() {
-        return System.getProperty("deployable.postfix", "SystemTest");
+        String systemEnvTestX = System.getenv("TESTX");
+        return systemEnvTestX != null ? systemEnvTestX : "SystemTest";
+    }
+
+    protected static int getPort() {
+        String systemEnvPort = System.getenv("PORT");
+        return Integer.parseInt(systemEnvPort != null ? systemEnvPort : "8071");
     }
 }

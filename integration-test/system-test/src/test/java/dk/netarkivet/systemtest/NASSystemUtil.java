@@ -47,7 +47,8 @@ public class NASSystemUtil {
                 new Application("kb-test-har-004", "HarvestControllerApplication", "kblow002_h3", "LOWPRIORITY", "KBN"),
                 new Application("sb-test-har-001", "HarvestControllerApplication", "sbhigh_h3", "HIGHPRIORITY", "SBN"),
                 new Application("sb-test-bar-001", "BitarchiveApplication", null, null, "SBN"),
-                new Application("kb-test-way-001", "WaybackIndexerApplication", null, null, "KBN")
+                new Application("kb-test-way-001", "WaybackIndexerApplication", null, null, "KBN"),
+                new Application("kb-test-way-001", "AggregatorApplication", null, null, "KBN"),
         };
     }
 }

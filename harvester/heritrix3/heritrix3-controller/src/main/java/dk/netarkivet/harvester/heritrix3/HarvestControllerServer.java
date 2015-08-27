@@ -115,9 +115,6 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     /** Jobs are fetched from this queue. */
     private ChannelID jobChannel;
 
-    /** The max time to wait for the hosts-report.txt to be available (in secs). */
-    private static final int WAIT_FOR_HOSTS_REPORT_TIMEOUT_SECS = 30;
-    
     /** the serverdir, where the harvesting takes place. */
     private final File serverDir;
 

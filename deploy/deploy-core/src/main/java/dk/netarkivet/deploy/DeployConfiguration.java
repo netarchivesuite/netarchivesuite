@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.dom4j.Element;
 
@@ -64,6 +65,7 @@ public class DeployConfiguration {
     private boolean resetDirectory;
     /** The folder containing the external jar library files. */
     private File jarFolder;
+    private final Optional<File> defaultBundlerZip;
 
     /**
      * Constructor. Initialise everything.
@@ -80,9 +82,19 @@ public class DeployConfiguration {
      * @throws ArgumentNotValid If one of the following arguments is null: deployConfigFileName netarchiveSuiteFileName,
      * secPolicyFileName, logPropFileName.
      */
-    public DeployConfiguration(File deployConfigFileName, File netarchiveSuiteFileName, File secPolicyFileName,
-            File slf4jConfigFileName, String outputDirName, File dbFileName, File arcdbFileName,
-            boolean resetDir, File externalJarFolder, String sourceEncoding) throws ArgumentNotValid {
+    public DeployConfiguration(
+            File deployConfigFileName,
+            File netarchiveSuiteFileName,
+            File secPolicyFileName,
+            File slf4jConfigFileName,
+            String outputDirName,
+            File dbFileName,
+            File arcdbFileName,
+            boolean resetDir,
+            File externalJarFolder,
+            String sourceEncoding,
+            Optional<File> defaultBundlerZip)
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(deployConfigFileName, "No config file");
         ArgumentNotValid.checkNotNull(netarchiveSuiteFileName, "No installation file");
         ArgumentNotValid.checkNotNull(secPolicyFileName, "No security file");
@@ -96,6 +108,7 @@ public class DeployConfiguration {
         arcDatabaseFileName = arcdbFileName;
         resetDirectory = resetDir;
         jarFolder = externalJarFolder;
+        this.defaultBundlerZip = defaultBundlerZip;
 
         // get configuration tree, settings and parameters
         config = new XmlStructure(deployConfigFile, sourceEncoding);
@@ -136,7 +149,8 @@ public class DeployConfiguration {
         // get all physical locations into the list
         for (Element elem : physList) {
             physLocs.add(new PhysicalLocation(elem, settings, machineParam, netarchiveSuiteFile.getName(),
-                    slf4jConfigFile, secPolicyFile, databaseFileName, arcDatabaseFileName, resetDirectory, jarFolder));
+                    slf4jConfigFile, secPolicyFile, databaseFileName, arcDatabaseFileName, resetDirectory, jarFolder,
+                    this));
         }
     }
 
@@ -199,4 +213,10 @@ public class DeployConfiguration {
         }
     }
 
+    /**
+     * @return The default harvester bundler zip file to use deploy to the relevant harvesters.
+     */
+    public Optional<File> getDefaultBundlerZip() {
+        return defaultBundlerZip;
+    }
 }

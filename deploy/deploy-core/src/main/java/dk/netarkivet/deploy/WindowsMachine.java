@@ -374,7 +374,10 @@ public class WindowsMachine extends Machine {
                     killPrinter.print(Constants.QUOTE_MARK);
                     killPrinter.println();
                 }
-            } finally {
+                // Add 10 seconds timeout to allow the shutdown to complete before exiting the ssh connection
+                killPrinter.print(ScriptConstants.OPERATING_SYSTEM_WINDOWS_10_SECONDS_WAIT);
+                killPrinter.println();
+		    } finally {
                 // close script
                 killPrinter.close();
             }
@@ -414,7 +417,10 @@ public class WindowsMachine extends Machine {
                     startPrinter.print(Constants.QUOTE_MARK);
                     startPrinter.println();
                 }
-            } finally {
+                // Add 10 seconds timeout to allow the Starting to complete before exiting the ssh connection
+                startPrinter.print(ScriptConstants.OPERATING_SYSTEM_WINDOWS_10_SECONDS_WAIT);
+                startPrinter.println();
+		    } finally {
                 // close script
                 startPrinter.close();
             }
@@ -629,7 +635,7 @@ public class WindowsMachine extends Machine {
                 "Set WshShell= CreateObject(\"WScript.Shell\")",
                 "javahome = WshShell.ExpandEnvironmentStrings(\"%JAVA_HOME%\")",
                 "WScript.Echo \"JAVA_HOME=\" & javahome",
-                "If javahome = \"\" Then",
+                "If javahome = \"%JAVA_HOME%\" Then",
                 "  java = \"java\"",
                 "Else",
                 "  java = javahome & \"\\bin\\java\"",

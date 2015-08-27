@@ -37,14 +37,22 @@
 ###
 
 metadata.jobName=default_orderxml
-metadata.description=Default Profile
+metadata.description=Default Profile 
 metadata.operator=Admin
 metadata.userAgentTemplate=Mozilla/5.0 (compatible; heritrix/3.3.0 +@OPERATOR_CONTACT_URL@)
 ## Edit the two following lines to match your setup.
 metadata.operatorContactUrl=http://netarkivet.dk/webcrawler/
 metadata.operatorFrom=info@netarkivet.dk
 
-loggerModule.path=logs
+## Replace YOUR_ORGANIZATION with the name of your organization
+metadata.organization=YOUR_ORGANIZATION
+
+## This field is not available in the CrawlMetadata class bundled with heritrix
+## So we extended the class to add this field.
+metadata.date=20080118111217
+
+## Select robots policy here (one of: ignore, obey, custom)
+metadata.robotsPolicyName=ignore
 
 crawlLimiter.maxBytesDownload=0
 crawlLimiter.maxDocumentsDownload=0
@@ -55,6 +63,7 @@ crawlController.maxToeThreads=50
 crawlController.recorderOutBufferBytes=4096
 crawlController.recorderInBufferBytes=65536
 crawlController.pauseAtStart=false
+crawlController.runWhileEmpty=false
 crawlController.scratchDir=scratch
 
 ## org.archive.bdb.BdbModule overrides
@@ -62,7 +71,8 @@ bdb.dir=state
 bdb.cachePercent=40
 
 ## seeds properties
-seeds.sourceTagSeeds=false
+## no source-report.txt if this is false
+seeds.sourceTagSeeds=true
 
 ## Override properties for org.archive.modules.deciderules.TooManyHopsDecideRule
 scope.rules[2].maxHops=25
@@ -114,7 +124,9 @@ fetchHttp.maxFetchKBSec=0
 fetchHttp.maxLengthBytes=0
 fetchHttp.ignoreCookies=false
 fetchHttp.sslTrustLevel=OPEN
-fetchHttp.defaultEncoding=ISO-8859-1
+
+#fetchHttp.defaultEncoding=ISO-8859-1
+fetchHttp.defaultEncoding=UTF-8
 fetchHttp.digestContent=true
 fetchHttp.digestAlgorithm=sha1
 fetchHttp.sendIfModifiedSince=true
@@ -122,6 +134,11 @@ fetchHttp.sendIfNoneMatch=true
 fetchHttp.sendConnectionClose=true
 fetchHttp.sendReferer=true
 fetchHttp.sendRange=false
+
+## Accept headers for HTTP fetching
+fetchHttp.acceptHeaders[0]=Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+
+
 extractorHttp.enabled=true
 extractorHtml.enabled=true
 extractorHtml.extractJavascript=true
@@ -133,8 +150,23 @@ extractorCss.enabled=true
 extractorJs.enabled=true
 extractorSwf.enabled=true
 
-candidates.seedsRedirectNewSeeds=false
+# allow redirected seeds to be accepted as seeds
+# In H1, this property belonged to the LinkScoper object, in H3, it is part of the CandidatesProcessor object
+candidates.seedsRedirectNewSeeds=true
+
 statisticsTracker.intervalSeconds=20
+
+## Quotaenforcing
+quotaenforcer.groupMaxFetchSuccesses=%{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER}
+quotaenforcer.groupMaxAllKb=%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}
+
+## sample overrides of the warcwriter
+warcWriter.template=${prefix}-${timestamp17}-${serialno}-ciblee_2015_${heritrix.hostname}
+warcWriter.writeRequests=false
+warcWriter.writeMetadata=false
+warcWriter.poolMaxActive=3
+
+loggerModule.path=logs
 
    </value>
   </property>
@@ -149,12 +181,14 @@ statisticsTracker.intervalSeconds=20
   </property>
  </bean>
 
- <!-- CRAWL METADATA: including identification of crawler/operator -->
- <bean id="metadata" class="org.archive.modules.CrawlMetadata" autowire="byName">
+ <!-- CRAWL METADATA: including identification of crawler/operator 
+    Using NetarchiveSuites own extended version of the org.archive.modules.CrawlMetadata
+ -->
+ <bean id="metadata" class="dk.netarkivet.harvester.harvesting.NasCrawlMetadata" autowire="byName">
        <property name="operatorContactUrl" value="[see override above]"/>
        <property name="jobName" value="[see override above]"/>
        <property name="description" value="[see override above]"/>
-       <property name="robotsPolicyName" value="ignore"/>
+  <!-- <property name="robotsPolicyName" value="ignore"/> -->
   <!-- <property name="operator" value=""/> -->
   <!-- <property name="operatorFrom" value=""/> -->
   <!-- <property name="organization" value=""/> -->
@@ -208,6 +242,7 @@ statisticsTracker.intervalSeconds=20
     </bean>
     <!-- ...and REJECT those from a configurable (initially empty) set of URI regexes... -->
     <bean class="org.archive.modules.deciderules.MatchesListRegexDecideRule">
+     <property name="decision" value="REJECT"/>
      <property name="listLogicalOr" value="true" />
      <property name="regexList">
            <list>
@@ -369,6 +404,21 @@ statisticsTracker.intervalSeconds=20
  </bean>
  <bean id="fetchHttp" class="org.archive.modules.fetcher.FetchHTTP">
  </bean>
+<!-- DUMMY username and password set for the FTP fetcher. 
+ should probably be configured using overlays to allow different username/passwords for
+different sites. 
+-->
+ <bean id="fetchFtp" class="org.archive.modules.fetcher.FetchFTP">	
+	<property name="username" value="USERNAME"/>
+	<property name="password" value="PASSWORD"/>
+	<property name="extractFromDirs" value="true"/>
+	<property name="extractParent" value="true"/>
+	<property name="maxLengthBytes" value="0"/>
+	<property name="maxFetchKBSec" value="0"/>
+	<property name="timeoutSeconds" value="1200"/>
+     
+ </bean>
+ 
  <bean id="extractorHttp" class="org.archive.modules.extractor.ExtractorHTTP">
  </bean>
  <bean id="extractorHtml" class="org.archive.modules.extractor.ExtractorHTML">
@@ -397,6 +447,8 @@ statisticsTracker.intervalSeconds=20
     <ref bean="fetchDns"/>
     <!-- ...fetch if HTTP URI... -->
     <ref bean="fetchHttp"/>
+    <!-- ...fetch if FTP URI... -->	
+    <ref bean="fetchFtp"/> 
     <!-- ...extract oulinks from HTTP headers... -->
     <ref bean="extractorHttp"/>
     <!-- ...extract oulinks from HTML content... -->
@@ -446,10 +498,11 @@ statisticsTracker.intervalSeconds=20
     <!-- remove the reference below, and the DeDuplicator bean itself to disable Deduplication -->
     <ref bean="DeDuplicator"/>
 
-    <!-- Here the reference to the (w)arcWriter bean is inserted -->	
+    <!-- Here the reference to the (w)arcWriter bean is inserted during job-generation -->	
 
     %{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}
  
+    <!-- This bean is required to report back the number of bytes harvested for each domain.  -->
     <bean id="ContentSizeAnnotationPostProcessor"  class="dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor"/>
 
     <!-- ...send each outlink candidate URI to CandidatesChain, 
@@ -542,12 +595,10 @@ default H3 policy is org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPo
   <property name="hostMaxSuccessKb" value="-1"></property>
   <property name="hostMaxFetchResponses" value="-1"></property>
   <property name="hostMaxAllKb" value="-1"></property>
-
-  <property name="groupMaxFetchSuccesses" value="%{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER}">
-  </property>
+  <property name="groupMaxFetchSuccesses" value="-1"></property>
   <property name="groupMaxSuccessKb" value="-1"></property>
   <property name="groupMaxFetchResponses" value="-1"></property>
-  <property name="groupMaxAllKb" value="%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}"></property> 
+  <property name="groupMaxAllKb" value="-1"></property>
  </bean>
 
  <!-- 
@@ -592,5 +643,19 @@ default H3 policy is org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPo
  <bean id="configPathConfigurer" 
    class="org.archive.spring.ConfigPathConfigurer">
  </bean>
+
+<!-- A processor to enforce runtime limits on crawls if wanted 
+The operations available is Pause, Terminate, Block_Uris
+
+TODO: CHECK, if this bean can coexist with the crawlLimitenforcer
+-->
+<!--
+<bean id="runtimeLimitEnforcer" class="org.archive.crawler.prefetch.RuntimeLimitEnforcer">
+<property name="runtimeSeconds" value="82800"/>
+<property name="operation" value="Terminate"/>
+</bean>
+-->
+
+
 
 </beans>

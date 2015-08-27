@@ -4,9 +4,10 @@
 # $1 = The NetarchiveSuite package file
 # $2 = The configuration file for deployment
 # $3 = The directory to deploy from
-
+# $4 = The Heritrix3 bundle zip to use
 # (1) setting up directory and variables.
-if [ "$#" -ne 3 ]; then 
+
+if [ "$#" -ne 4 ]; then 
     echo "Usage:"
     echo "\$ bash RunNetarchiveSuite.sh NetarchiveSuite.zip deploy.xml USER\n";
     echo "\tNetarchiveSuite.zip - Release zip of NetarchiveSuite."
@@ -14,6 +15,7 @@ if [ "$#" -ne 3 ]; then
     echo "\t\tNetArchiveSuite."
     echo "\tUSER - RunNetArchiveSuite.sh creates a USER directory, where "
     echo "\t\tinstallation is placed.\n "
+    echo "\tH3BUNDLER - The Heritrix3 bundle zip to use"
     exit 0;
 fi;
 echo RETRIEVING AND TESTING VARIABLES
@@ -21,6 +23,7 @@ echo RETRIEVING AND TESTING VARIABLES
 NETARCHIVESUITE=$1
 CONFIG=$2
 BASEDIR=$3
+H3BUNDLE=$4
 
 # (2) create directory
 echo CREATING/CLEANING DIRECTORY $BASEDIR
@@ -34,12 +37,13 @@ unzip -q $NETARCHIVESUITE -d $BASEDIR
 # (4) copy elements to directory and go there
 echo COPYING FILES TO $BASEDIR
 cp $NETARCHIVESUITE -d $BASEDIR
+cp $H3BUNDLE -d $BASEDIR
 cp $CONFIG -d $BASEDIR
 cd $BASEDIR
 
 # (3) Run deploy
 echo DEPLOYING $CONFIG
-java -classpath lib/netarchivesuite-deploy-core.jar dk.netarkivet.deploy.DeployApplication -C$CONFIG -Z$NETARCHIVESUITE -L./examples/logback_template.xml -S./examples/security_template.policy -O. -Eyes
+java -classpath lib/netarchivesuite-deploy-core.jar dk.netarkivet.deploy.DeployApplication -C$CONFIG -Z$NETARCHIVESUITE -L./examples/logback_template.xml -S./examples/security_template.policy -O. -Eyes -B$H3BUNDLE
 
 # (4) Make script files executable
 echo MAKING FILES EXECUTABLE
