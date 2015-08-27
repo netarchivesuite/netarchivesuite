@@ -8,9 +8,8 @@ script: mvn test -B -fae
 # whitelist
 branches:
   only:
-#    - master
-#    - stable
      - travisbuild
+     - master
 
 #before_install:
 #  -   mvn install:install-file -Dfile=sb-nexus/mg4j-1.0.1.jar -DpomFile=sb-nexus/mg4j-1.0.1.pom
