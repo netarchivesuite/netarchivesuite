@@ -5,6 +5,14 @@ jdk:
 
 script: mvn test -B -fae
 
+sudo: false
+
+cache:
+  directories:
+     - $HOME/.m2
+
+
+
 # whitelist
 branches:
   only:
