@@ -107,17 +107,19 @@ public class Bitrepository {
     /**
      * Constructor for the BitRepository class.
      * @param configDir A Bitrepository settingsdirectory
-     *  
-     * @throws ArgumentCheck if configFile is null or
+     * @param bitmagKeyFile (optional, we hope) 
+     * @throws ArgumentNotValid if configFile is null
      */
     public Bitrepository(File configDir, File bitmagKeyfile) {
-        //ArgumentCheck.checkExistsNormalFile(configDir, "File configDir");
-	//ArgumentCheck.checkExistsNormalFile(bitmagKeyfile, "File bitmagKeyfile");
+    	ArgumentNotValid.checkExistsDirectory(configDir, "File configDir");
+	    //ArgumentNotValid.checkExistsNormalFile(bitmagKeyfile, "File bitmagKeyfile");
         componentId = BitrepositoryUtils.generateComponentID();
-	this.settingsDir = configDir;
+        this.settingsDir = configDir;
         this.privateKeyFile = bitmagKeyfile;
         initBitmagSettings();
-        initBitmagSecurityManager(); // Is this mandatory?
+        if (bitmagKeyfile != null){
+        		initBitmagSecurityManager(); // Is this mandatory?
+        }
         bitMagMessageBus = ProtocolComponentFactory.getInstance().getMessageBus(
                 bitmagSettings, bitMagSecurityManager); // Is bitMagSecurityManager mandatory?
         initBitMagClients();
@@ -364,11 +366,12 @@ public class Bitrepository {
         MessageAuthenticator authenticator = new BasicMessageAuthenticator(permissionStore);
         MessageSigner signer = new BasicMessageSigner();
         OperationAuthorizor authorizer = new BasicOperationAuthorizor(permissionStore);
-
+        if (getPrivateKeyFile() != null) {
         bitMagSecurityManager = new BasicSecurityManager(bitmagSettings.getRepositorySettings(),
                 getPrivateKeyFile().getAbsolutePath(),
                 authenticator, signer, authorizer, permissionStore,
                 bitmagSettings.getComponentID());
+        }
     }
 
     private File getPrivateKeyFile() {

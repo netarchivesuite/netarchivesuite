@@ -12,7 +12,7 @@
 
   <name>NetarchiveSuite - common - core</name>
   <properties>
-  <bitrepository.version>1.3.0.2</bitrepository.version>
+  <bitrepository.version>1.4</bitrepository.version>
   </properties>
 
 <dependencies>
