@@ -68,14 +68,10 @@ public final class Constants {
     /** Extension of XML file names. */
     public static final String XML_EXTENSION = ".xml";
 
-    // It is QA's responsibility to update the following parameters on all
-    // release and codefreeze actions
-    /** Major version number. */
-    public static final int MAJORVERSION = 5;
-    /** Minor version number. */
-    public static final int MINORVERSION = 0;
-    /** Patch version number. */
-    public static final String PATCHVERSION = "0";
+    // Version string. */
+    private static String version;
+
+    // It is QA's responsibility to update the following parameter on all release and codefreeze actions.
     /** Current status of code. */
     private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
 
@@ -116,21 +112,21 @@ public final class Constants {
      * @return A string telling current version and status of code.
      */
     public static String getVersionString() {
-        if (BUILDSTATUS.equals(CodeStatus.RELEASE)) {
-            return "Version: " + MAJORVERSION + "." + MINORVERSION + "." + PATCHVERSION + " status " + BUILDSTATUS;
-        } else {
-            String version = "Version: " + MAJORVERSION + "." + MINORVERSION + "." + PATCHVERSION + " status "
-                    + BUILDSTATUS;
+        if (version == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Version: ");
+            sb.append(Constants.class.getPackage().getSpecificationVersion());
             String implementationVersion = Constants.class.getPackage().getImplementationVersion();
-            if (implementationVersion != null) {
-            	if (implementationVersion.length() != 40) {
-                    version += " (r" + implementationVersion + ")";
-            	} else {
-                    version += " (<a href=\"https://github.com/netarchivesuite/netarchivesuite/commit/" + implementationVersion + "\">" + implementationVersion.substring(0, 10) + "</a>)";
-            	}
-            }
-            return version;
+            sb.append(" (<a href=\"https://github.com/netarchivesuite/netarchivesuite/commit/");
+            sb.append(implementationVersion);
+            sb.append("\">");
+            sb.append(implementationVersion.substring(0, 10));
+            sb.append("</a>)");
+            sb.append(" status ");
+            sb.append(BUILDSTATUS);
+            version = sb.toString();
         }
+        return version;
     }
 
     /**
@@ -169,7 +165,7 @@ public final class Constants {
     /** The current website for the NetarchiveSuite project. */
     public static final String PROJECT_WEBSITE = "https://sbforge.org/display/NAS";
 
-	public static String getHeritrix3VersionString() {
-		return "3.3.0-LBS-2014-03"; 
-	}
+    public static String getHeritrix3VersionString() {
+        return "3.3.0-LBS-2014-03"; 
+    }
 }
