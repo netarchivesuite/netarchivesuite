@@ -53,27 +53,11 @@ public final class Constants {
     /** The mimetype for a list of CDX entries. */
     public static final String CDX_MIME_TYPE = "application/x-cdx";
 
-    /** Possible states of code. */
-    private static enum CodeStatus {
-        /** Released code. */
-        RELEASE,
-        /** Code is under codefreeze. The code is a release candidate. */
-        CODEFREEZE,
-        /**
-         * The code is not production ready. Although it usually compiles, all code has not necessarily been tested.
-         */
-        UNSTABLE
-    }
-
     /** Extension of XML file names. */
     public static final String XML_EXTENSION = ".xml";
 
     // Version string. */
     private static String version;
-
-    // It is QA's responsibility to update the following parameter on all release and codefreeze actions.
-    /** Current status of code. */
-    private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
 
     /** Current version of Heritrix used by netarkivet-code. */
     private static final String HERITRIX_VERSION = "1.14.4";
@@ -117,13 +101,13 @@ public final class Constants {
             sb.append("Version: ");
             sb.append(Constants.class.getPackage().getSpecificationVersion());
             String implementationVersion = Constants.class.getPackage().getImplementationVersion();
-            sb.append(" (<a href=\"https://github.com/netarchivesuite/netarchivesuite/commit/");
-            sb.append(implementationVersion);
-            sb.append("\">");
-            sb.append(implementationVersion.substring(0, 10));
-            sb.append("</a>)");
-            sb.append(" status ");
-            sb.append(BUILDSTATUS);
+            if (implementationVersion != null && implementationVersion.length() == 40) {
+                sb.append(" (<a href=\"https://github.com/netarchivesuite/netarchivesuite/commit/");
+                sb.append(implementationVersion);
+                sb.append("\">");
+                sb.append(implementationVersion.substring(0, 10));
+                sb.append("</a>)");
+            }
             version = sb.toString();
         }
         return version;
