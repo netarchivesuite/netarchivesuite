@@ -60,8 +60,8 @@ import org.archive.util.UriUtils;
  * @contributor gojomo
  * 
  * 
- * This class is a modification of the org.archive.modules.extractor.ExtractorJS class
- * created by Kristinn Sigurdsson.
+ * This class is a modification by Kristinn Sigurdsson of the org.archive.modules.extractor.ExtractorJS 
+ * class that enables you to reject some false positives found by the original ExtractorJS.
  */
 public class IcelandicExtractorJS extends org.archive.modules.extractor.ExtractorJS {
 
