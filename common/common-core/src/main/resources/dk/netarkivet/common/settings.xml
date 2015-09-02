@@ -128,6 +128,14 @@ National Library.
 
         </webinterface>
         <topLevelDomains>
+<!-- new TLDs from https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains#ICANN-era_generic_top-level_domains
+-->
+             <tld>cheap</tld>
+             <tld>club</tld>
+             <tld>wtf</tld>
+
+<!-- old TLDs, mostly country-based -->
+
             <tld>ac</tld>
             <tld>ad</tld>
             <tld>ae</tld>
