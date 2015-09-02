@@ -58,6 +58,10 @@ import org.archive.util.UriUtils;
  * browser engines. 
  * 
  * @contributor gojomo
+ * 
+ * 
+ * This class is a modification of the org.archive.modules.extractor.ExtractorJS class
+ * created by Kristinn Sigurdsson.
  */
 public class IcelandicExtractorJS extends org.archive.modules.extractor.ExtractorJS {
 
