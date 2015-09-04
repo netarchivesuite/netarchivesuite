@@ -82,15 +82,15 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
     }
 
-    private static final String ARCREPOSITORY_TEMPDIR = "settings.common.arcrepositoryClient.tempdir";    
+    private static final String ARCREPOSITORY_TEMPDIR = "settings.common.arcrepositoryClient.bitrepository.tempdir";    
 
-    private static final String BITREPOSITORY_SETTINGS_DIR = "settings.common.arcrepositoryClient.bitrepositorySettingsDir";
+    private static final String BITREPOSITORY_SETTINGS_DIR = "settings.common.arcrepositoryClient.bitrepository.settingsDir";
      
-    private static final String BITREPOSITORY_KEYFILE = "settings.common.arcrepositoryClient.keyfile"; //TODO necessary? optional so we don't force the user to use credentials.
+    private static final String BITREPOSITORY_KEYFILE = "settings.common.arcrepositoryClient.bitrepository.keyfile"; //TODO necessary? optional so we don't force the user to use credentials.
 
-    private static final String BITREPOSITORY_STORE_MAX_PILLAR_FAILURES = "settings.common.arcrepositoryClient.storeMaxPillarFailures"; //TODO necessary?
+    private static final String BITREPOSITORY_STORE_MAX_PILLAR_FAILURES = "settings.common.arcrepositoryClient.bitrepository.storeMaxPillarFailures"; //TODO necessary?
     
-    private static final String BITREPOSITORY_COLLECTIONID =  "settings.common.arcrepositoryClient.collectionid"; 
+    private static final String BITREPOSITORY_COLLECTIONID =  "settings.common.arcrepositoryClient.bitrepository.collectionid"; 
 
 
     /** Create a new BitmagArcRepositoryClient based on current settings. */
