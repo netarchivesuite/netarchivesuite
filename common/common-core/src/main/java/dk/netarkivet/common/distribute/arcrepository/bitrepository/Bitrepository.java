@@ -102,18 +102,20 @@ public class Bitrepository {
     private MessageBus bitMagMessageBus;
 
     /** The maximum number of failing pillars. Default is 0. */
-    private int maxNumberOfFailingPillars = 0; //Settings.getInt...
+    private final int maxNumberOfFailingPillars;
 
     /**
      * Constructor for the BitRepository class.
      * @param configDir A Bitrepository settingsdirectory
+     * @param maxStoreFailures Max number of acceptable store failures
      * @param bitmagKeyFile (optional, we hope) 
      * @throws ArgumentNotValid if configFile is null
      */
-    public Bitrepository(File configDir, File bitmagKeyfile) {
+    public Bitrepository(File configDir, File bitmagKeyfile, int maxStoreFailures) {
     	ArgumentNotValid.checkExistsDirectory(configDir, "File configDir");
 	    //ArgumentNotValid.checkExistsNormalFile(bitmagKeyfile, "File bitmagKeyfile");
         componentId = BitrepositoryUtils.generateComponentID();
+        maxNumberOfFailingPillars = maxStoreFailures;
         this.settingsDir = configDir;
         this.privateKeyFile = bitmagKeyfile;
         initBitmagSettings();
@@ -418,7 +420,7 @@ public class Bitrepository {
     /**
      * Helper method for computing the clientTimeout. The clientTimeout is the identificationTimeout
      * plus the OperationTimeout.
-     * @param bitmagSettings The bitmagsettingg
+     * @param bitmagSettings The bitmagsetting
      * @return the clientTimeout
      */
     private long getClientTimeout(Settings bitmagSettings) {
@@ -451,4 +453,28 @@ public class Bitrepository {
     public ChecksumSpecTYPE getDefaultChecksum() {
         return ChecksumUtils.getDefault(bitmagSettings);
     }
+    
+    //FIXME can this method be made to work?
+    public List<String> getFileIds(String regex, String collectionID) {
+    	
+    	OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
+
+        output.debug("Instantiation GetFileID outputFormatter.");
+        // TODO: change to non pagingClient
+        GetFileIDsOutputFormatter outputFormatter = new GetFileIDsInfoFormatter(output);
+
+        long timeout = getClientTimeout(bitmagSettings);
+
+        output.debug("Instantiation GetFileID paging client.");
+        PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
+                bitMagGetFileIDsClient, timeout, outputFormatter, output);
+
+        Boolean success = pagingClient.getFileIDs(collectionID, "packageId",
+                getCollectionPillars(collectionID));
+    	return null;
+    }
+    
+    
+    
+    
 }

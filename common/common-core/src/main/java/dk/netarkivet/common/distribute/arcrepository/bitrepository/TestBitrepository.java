@@ -17,9 +17,10 @@ public class TestBitrepository {
 			 
 			 File configDir = new File("/home/svc/bitrepository-quickstart/commandline/conf");
 			 //File bitmagKeyfile = new File(configDir, "client-certificate.pem");
-			 Bitrepository bitrep = new Bitrepository(configDir, null);
+			 Bitrepository bitrep = new Bitrepository(configDir, null, 1);
 			 bitrep.shutdown();
 			 
+			 BitmagArcRepositoryClient client = new BitmagArcRepositoryClient();
 			 
 			}
 

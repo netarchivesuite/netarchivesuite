@@ -40,7 +40,7 @@ National Library.
         <settingsDir></settingsDir>
         <storeMaxPillarFailures>1</storeMaxPillarFailures>
         <tempdir>arcrepositoryTemp</tempdir>
-		<collectionID></collectionID>
+		<collectionID>dvds</collectionID>
 		</bitrepository>
         </arcrepositoryClient>
     </common>

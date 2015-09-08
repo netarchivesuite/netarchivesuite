@@ -3,7 +3,7 @@ package dk.netarkivet.common.distribute.arcrepository.bitrepository;
 import java.io.File;
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 
-public class TestBitrepository2 {
+public class BitrepositoryTest3 {
 
 	// FIXME kan kun køres hvis xmlParserAPIs-2.6.2.jar (fra 2003) ikke findes i classpath (skal bruge xercesImpl-2.9.1.jar istedet)
 	// Jf. http://stackoverflow.com/questions/20473689/org-xml-sax-saxnotrecognizedexception-feature-http-javax-xml-xmlconstants-fe
@@ -20,11 +20,7 @@ public class TestBitrepository2 {
 			 Bitrepository bitrep = new Bitrepository(configDir, null, 1);
 			 bitrep.shutdown();
 			 
-			 
-			 
 			 BitmagArcRepositoryClient client = new BitmagArcRepositoryClient();
 			 
-			 
 			}
-
-	}
+}

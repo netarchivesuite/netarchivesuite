@@ -7,7 +7,7 @@ public class TestBitrepository {
 	public static void main(String[] args) {
 	 File configDir = new File("/home/svc/bitmag-releasetest-conf");
 	 File bitmagKeyfile = new File(configDir, "client-certificate.pem");
-	 Bitrepository bitrep = new Bitrepository(configDir, bitmagKeyfile);
+	 Bitrepository bitrep = new Bitrepository(configDir, bitmagKeyfile, 1);
 	 bitrep.shutdown();  
 
 	}
