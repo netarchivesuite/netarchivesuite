@@ -58,6 +58,10 @@ import org.archive.util.UriUtils;
  * browser engines. 
  * 
  * @contributor gojomo
+ * 
+ * 
+ * This class is a modification by Kristinn Sigurdsson of the org.archive.modules.extractor.ExtractorJS 
+ * class that enables you to reject some false positives found by the original ExtractorJS.
  */
 public class IcelandicExtractorJS extends org.archive.modules.extractor.ExtractorJS {
 
