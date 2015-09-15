@@ -301,8 +301,8 @@ public class Bitrepository {
 
         output.debug("Instantiation GetFileID outputFormatter.");
         // TODO: change to non pagingClient
-        GetFileIDsOutputFormatter outputFormatter = new GetFileIDsInfoFormatter(output);
-
+        GetFileIDsInfoFormatter outputFormatter = new GetFileIDsInfoFormatter(output);
+        	
         long timeout = getClientTimeout(bitmagSettings);
 
         output.debug("Instantiation GetFileID paging client.");
@@ -461,17 +461,16 @@ public class Bitrepository {
 
         output.debug("Instantiation GetFileID outputFormatter.");
         // TODO: change to non pagingClient
-        GetFileIDsOutputFormatter outputFormatter = new GetFileIDsInfoFormatter(output);
+        GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
 
         long timeout = getClientTimeout(bitmagSettings);
 
         output.debug("Instantiation GetFileID paging client.");
         PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
-
         Boolean success = pagingClient.getFileIDs(collectionID, "packageId",
                 getCollectionPillars(collectionID));
-    	return null;
+    	return outputFormatter.getFoundIds();
     }
     
     
