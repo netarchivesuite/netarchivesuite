@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>integration-test</artifactId>
-    <version>5.0-RC3-SNAPSHOT</version>
+    <version>5.0</version>
   </parent>
 
   <artifactId>system-test</artifactId>
