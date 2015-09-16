@@ -88,14 +88,17 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     private static final String BITREPOSITORY_STORE_MAX_PILLAR_FAILURES = "settings.common.arcrepositoryClient.bitrepository.storeMaxPillarFailures"; //TODO necessary?
     
     private static final String BITREPOSITORY_COLLECTIONID =  "settings.common.arcrepositoryClient.bitrepository.collectionID";
-
+    
+    private static final String BITREPOSITORY_USEPILLAR =  "settings.common.arcrepositoryClient.bitrepository.usepillar";
 	private final String collectionId;
 
 	private File tempdir;
 
 	private int maxStoreFailures;
 
-	private Bitrepository bitrep; 
+	private Bitrepository bitrep;
+
+	private String usepillar; 
 
 
     /** Create a new BitmagArcRepositoryClient based on current settings. */
@@ -105,8 +108,9 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     	this.collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
     	this.tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
     	this.maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
+    	this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
     	// Initialize connection to the bitrepository
-    	this.bitrep = new Bitrepository(configDir, keyfile, maxStoreFailures);
+    	this.bitrep = new Bitrepository(configDir, keyfile, maxStoreFailures, usepillar);
     }
 
     @Override
@@ -135,7 +139,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
         	if (!uploadSuccessful) {
         		throw new IOFailure("Upload to collection '" + collectionId + "' of file '" + file.getName()  + "' failed.");
         	}  else {
-        		log.info("Upload to collection '{}' of file '{}' was successfull", collectionId, file.getName());
+        		log.info("Upload to collection '{}' of file '{}' was successful", collectionId, file.getName());
         	}
         }
     }
@@ -227,12 +231,15 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
             IOFailure {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-	//FIXME
-	// Use this pattern to request the fileIds to match this pattern
-	// and then fetch the matching files to local storage
-	//Pattern filenamePattern = job.getFilenamePattern;
+        //FIXME
+        // Use this pattern to request the fileIds to match this pattern
+        // and then fetch the matching files to local storage
+        //Pattern filenamePattern = job.getFilenamePattern;
+        
+        log.info("pattern: " + job.getFilenamePattern().pattern());
+        System.out.println("pattern: " + job.getFilenamePattern().pattern());
 
-
+        
         OutputStream os = null;
         File resultFile;
         try {
@@ -375,5 +382,10 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     public String getChecksum(String replicaId, String filename) throws ArgumentNotValid {
        throw new NotImplementedException("getChecksum is not implemented here");
     }
+    
+    public Bitrepository getBitrepository() {
+    	return this.bitrep;
+    }
+    
 
 }

@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.jms.JMSException;
 import dk.netarkivet.common.exceptions.*;
@@ -35,7 +33,6 @@ import org.bitrepository.commandline.eventhandler.GetFileEventHandler;
 import org.bitrepository.commandline.output.DefaultOutputHandler;
 import org.bitrepository.commandline.output.OutputHandler;
 import org.bitrepository.commandline.outputformatter.GetFileIDsInfoFormatter;
-import org.bitrepository.commandline.outputformatter.GetFileIDsOutputFormatter;
 import org.bitrepository.common.exceptions.OperationFailedException;
 import org.bitrepository.common.settings.Settings;
 import org.bitrepository.common.settings.SettingsProvider;
@@ -59,6 +56,8 @@ import org.bitrepository.protocol.security.PermissionStore;
 import org.bitrepository.protocol.security.SecurityManager;
 import org.bitrepository.settings.repositorysettings.ClientSettings;
 import org.bitrepository.settings.repositorysettings.Collection;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -68,7 +67,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class Bitrepository {
 
     /** Logging mechanism. */
-    private static final Logger logger = Logger.getLogger(Bitrepository.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(Bitrepository.class.getName());
 
     /** The archive settings directory needed to upload to
      * a bitmag style repository */
@@ -104,18 +103,26 @@ public class Bitrepository {
     /** The maximum number of failing pillars. Default is 0. */
     private final int maxNumberOfFailingPillars;
 
+    /** Which pillar to get from. */
+    private String usepillar;
+    
+    private List<String> usepillarListOnly;
+    
     /**
      * Constructor for the BitRepository class.
      * @param configDir A Bitrepository settingsdirectory
      * @param maxStoreFailures Max number of acceptable store failures
-     * @param bitmagKeyFile (optional, we hope) 
+     * @param usepillar The pillar to use 
+     * @param bitmagKeyFile Optional certificate filename relative to configDir
      * @throws ArgumentNotValid if configFile is null
      */
-    public Bitrepository(File configDir, File bitmagKeyfile, int maxStoreFailures) {
+    public Bitrepository(File configDir, File bitmagKeyfile, int maxStoreFailures, String usepillar) {
     	ArgumentNotValid.checkExistsDirectory(configDir, "File configDir");
-	    //ArgumentNotValid.checkExistsNormalFile(bitmagKeyfile, "File bitmagKeyfile");
         componentId = BitrepositoryUtils.generateComponentID();
         maxNumberOfFailingPillars = maxStoreFailures;
+        this.usepillar = usepillar;
+        usepillarListOnly = new ArrayList<String>();
+        usepillarListOnly.add(usepillar);
         this.settingsDir = configDir;
         this.privateKeyFile = bitmagKeyfile;
         initBitmagSettings();
@@ -128,7 +135,7 @@ public class Bitrepository {
     }
 
     /**
-     * Initialization of the various bitmag client.
+     * Initialization of the various bitrepository client.
      */
     private void initBitMagClients() {
         bitMagPutClient = ModifyComponentFactory.getInstance().retrievePutClient(
@@ -151,7 +158,7 @@ public class Bitrepository {
         //ArgumentCheck.checkExistsNormalFile(file, "File file");
         // Does collection exists? If not return false
         if (getCollectionPillars(collectionId).isEmpty()) {
-            logger.warning("The given collection Id does not exist");
+            logger.warn("The given collection Id does not exist");
             return false;
         }
         boolean success = false;
@@ -161,12 +168,10 @@ public class Bitrepository {
                 success = true;
                 logger.info("File '" + file.getAbsolutePath() + "' uploaded successfully. ");
             } else {
-                logger.warning("Upload of file '" + file.getAbsolutePath()
-                        + "' failed with event-type '" + finalEvent + "'.");
+                logger.warn("Upload of file '{}' failed with event-type '{}'.", file.getAbsolutePath(), finalEvent);
             }
         } catch (Exception e) {
-            logger.warning("Unexpected error while storing file '"
-                    + file.getAbsolutePath() + "': " + e);
+            logger.warn("Unexpected error while storing file '{}'", file.getAbsolutePath(), e);
             success = false;
         }
         return success;
@@ -201,7 +206,7 @@ public class Bitrepository {
             bpfc.putFile(collectionID, url, fileId, packageFile.length(), validationChecksum, requestChecksum,
                     putFileEventHandler, putFileMessage);
         } catch (OperationFailedException e) {
-            logger.log(Level.WARNING, "The putFile Operation was not a complete success (" + putFileMessage + ")."
+            logger.warn("The putFile Operation was not a complete success (" + putFileMessage + ")."
                     + " Checksum whether we accept anyway.", e);
             if(putFileEventHandler.hasFailed()) {
                 return OperationEventType.FAILED;
@@ -240,7 +245,10 @@ public class Bitrepository {
         String auditTrailInformation = "Retrieving package '" + fileId + "' from collection '" + collectionId + "'";
         bitMagGetClient.getFileFromFastestPillar(collectionId, fileId, filePart, fileUrl, eventHandler,
                 auditTrailInformation);
-
+        
+        //TODO get from specific pillar instead of fastest pillar?
+        //bitMagGetClient.getFileFromSpecificPillar(collectionID, fileId, filePart, uploadUrl, pillarId, eventHandler, auditTrailInformation);
+        
         OperationEvent finalEvent = eventHandler.getFinish();
         if(finalEvent.getEventType() == OperationEventType.COMPLETE) {
             File result = null;
@@ -289,11 +297,11 @@ public class Bitrepository {
      * @return true, if a package with the given ID exists within the given collection. Otherwise returns false
      */
     public boolean existsInCollection(String packageId, String collectionID) {
-        //ArgumentCheck.checkNotNullOrEmpty(packageId, "String packageId");
-        //ArgumentCheck.checkNotNullOrEmpty(collectionID, "String collectionId");
+    	ArgumentNotValid.checkNotNullOrEmpty(packageId, "String packageId");
+    	ArgumentNotValid.checkNotNullOrEmpty(collectionID, "String collectionId");
         // Does collection exists? If not return false
         if (getCollectionPillars(collectionID).isEmpty()) {
-            logger.warning("The given collection Id does not exist");
+            logger.warn("The given collection Id does not exist");
             return false;
         }
 
@@ -308,7 +316,7 @@ public class Bitrepository {
         output.debug("Instantiation GetFileID paging client.");
         PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
-
+        
         Boolean success = pagingClient.getFileIDs(collectionID, packageId,
                 getCollectionPillars(collectionID));
         return success;
@@ -323,7 +331,8 @@ public class Bitrepository {
      */
     public Map<String, ChecksumsCompletePillarEvent> getChecksums(String packageID, String collectionID) 
             throws IOFailure {
-        //ArgumentCheck.checkNotNullOrEmpty(collectionID, "String collectionId");
+    	ArgumentNotValid.checkNotNullOrEmpty(collectionID, "String collectionId");
+       
         //If packageID = null, checksum is requested for all files in the collection.
         if (packageID != null) {
             logger.info("Collecting checksums for package '" + packageID + "' in collection '" + collectionID + "'");
@@ -344,10 +353,10 @@ public class Bitrepository {
         int results = eventhandler.getResults().size();
 
         if (failures > 0) {
-            logger.warning("Got back " + eventhandler.getFailures().size() + " failures");
+            logger.warn("Got back {} failures",  eventhandler.getFailures().size());
         }
         if (results > 0) {
-            logger.info("Got back " + eventhandler.getResults().size() + " successful responses");
+            logger.info("Got back {} successful responses", eventhandler.getResults().size());
         }
 
         Map<String, ChecksumsCompletePillarEvent> resultsMap = new HashMap<String,
@@ -403,7 +412,7 @@ public class Bitrepository {
             try {
                 bitMagMessageBus.close();
             } catch (JMSException e) {
-                logger.warning("JMSException caught during shutdown of messagebus " + e);
+                logger.warn("JMSException caught during shutdown of messagebus " + e);
             }
         }
     }
@@ -413,7 +422,7 @@ public class Bitrepository {
      * @param collectionID The ID of a specific collection.
      * @return the list of pillars preserving the collection with the given ID.
      */
-    private List<String> getCollectionPillars(String collectionID) {
+    public List<String> getCollectionPillars(String collectionID) {
         return SettingsUtils.getPillarIDsForCollection(collectionID);
     }
 
@@ -454,8 +463,7 @@ public class Bitrepository {
         return ChecksumUtils.getDefault(bitmagSettings);
     }
     
-    //FIXME can this method be made to work?
-    public List<String> getFileIds(String regex, String collectionID) {
+    public List<String> getFileIds(String collectionID) {
     	
     	OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
 
@@ -464,16 +472,18 @@ public class Bitrepository {
         GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
 
         long timeout = getClientTimeout(bitmagSettings);
-
+        List<String> usepillarListOnly = new ArrayList<String>();
+        usepillarListOnly.add(usepillar);
         output.debug("Instantiation GetFileID paging client.");
         PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
-        Boolean success = pagingClient.getFileIDs(collectionID, "packageId",
-                getCollectionPillars(collectionID));
-    	return outputFormatter.getFoundIds();
+        Boolean success = pagingClient.getFileIDs(collectionID, null,
+                usepillarListOnly);
+        if (success) {
+        	return outputFormatter.getFoundIds();
+        } else {
+        	return null;
+        }
     }
-    
-    
-    
     
 }

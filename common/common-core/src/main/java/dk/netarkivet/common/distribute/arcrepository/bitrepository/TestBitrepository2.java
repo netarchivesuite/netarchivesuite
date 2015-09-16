@@ -17,7 +17,7 @@ public class TestBitrepository2 {
 			 
 			 File configDir = new File("/home/svc/bitrepository-quickstart/commandline/conf");
 			 //File bitmagKeyfile = new File(configDir, "client-certificate.pem");
-			 Bitrepository bitrep = new Bitrepository(configDir, null, 1);
+			 Bitrepository bitrep = new Bitrepository(configDir, null, 1, "kbpillar-test-linux");
 			 bitrep.shutdown();
 			 
 			 

@@ -22,83 +22,14 @@
 <groupId>org.bitrepository.reference</groupId>
 <artifactId>bitrepository-core</artifactId>
 <version>${bitrepository.version}</version>
-<!-- <exclusions>
-        <exclusion>
-            <groupId>*</groupId>
-            <artifactId>*</artifactId>
-        </exclusion>
-    </exclusions>
--->
+
 </dependency>
 <dependency>
 <groupId>org.bitrepository.reference</groupId>
 <artifactId>bitrepository-client</artifactId>
 <version>${bitrepository.version}</version>
-<!-- <exclusions>
-        <exclusion>
-            <groupId>*</groupId>
-            <artifactId>*</artifactId>
-        </exclusion>
-    </exclusions>
--->
+
 </dependency>
-<!--
-<dependency>
-<groupId>org.bitrepository</groupId>
-<artifactId>message-xml-java</artifactId>
-<version>28</version>
-<exclusions>
-        <exclusion>
-            <groupId>*</groupId>
-            <artifactId>*</artifactId>
-        </exclusion>
-    </exclusions>
-</dependency>
-<dependency>
-<groupId>org.bitrepository</groupId>
-<artifactId>message-xml-xsd</artifactId>
-<version>28</version>
-<exclusions>
-        <exclusion>
-            <groupId>*</groupId>
-            <artifactId>*</artifactId>
-        </exclusion>
-    </exclusions>
-</dependency>
-<dependency>
-<groupId>org.jvnet.jaxb2_commons</groupId>
-<artifactId>jaxb2-basics-runtime</artifactId>
-<version>0.6.0</version>
-<exclusions>
-        <exclusion>
-            <groupId>*</groupId>
-            <artifactId>*</artifactId>
-        </exclusion>
-    </exclusions>
-</dependency>
-<dependency>
-<groupId>org.bitrepository.repository-settings</groupId>
-<artifactId>repository-settings-java</artifactId>
-<version>11</version>
-<exclusions>
-        <exclusion>
-            <groupId>*</groupId>
-            <artifactId>*</artifactId>
-        </exclusion>
-    </exclusions>
-</dependency>
-<dependency>
-<groupId>org.bitrepository.repository-settings</groupId>
-<artifactId>repository-settings-xsd</artifactId>
-<version>11</version>
-<exclusions>
-        <exclusion>
-            <groupId>*</groupId>
-            <artifactId>*</artifactId>
-        </exclusion>
-    </exclusions>
-</dependency>
--->
 
 <!-- bitrepository settings complete -->
 
@@ -138,8 +69,13 @@
 	<artifactId>xercesImpl</artifactId>
 	</exclusion>
       </exclusions>
-
-    </dependency>
+     </dependency>
+  
+  <dependency>
+<groupId>xalan</groupId>
+<artifactId>xalan</artifactId>
+<version>2.7.1</version>
+</dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
@@ -161,7 +97,7 @@
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>1.3</version>
+      <version>1.9</version>
     </dependency>
 
     <dependency>

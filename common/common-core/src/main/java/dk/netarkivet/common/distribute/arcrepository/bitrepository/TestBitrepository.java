@@ -3,24 +3,53 @@ package dk.netarkivet.common.distribute.arcrepository.bitrepository;
 import java.io.File;
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 
-public class TestBitrepository {
+/**
+ * 
+ * netarkiv-pillars:
+   checksum2
+   sbdisk1
+ *
+ */
 
-	// FIXME kan kun køres hvis xmlParserAPIs-2.6.2.jar (fra 2003) ikke findes i classpath (skal bruge xercesImpl-2.9.1.jar istedet)
-	// Jf. http://stackoverflow.com/questions/20473689/org-xml-sax-saxnotrecognizedexception-feature-http-javax-xml-xmlconstants-fe
+
+public class TestBitrepository {
 	
 	public static void main(String[] args) {
 
-			 //File configDir = new File("/home/svc/bitmag-releasetest-conf");
-			 //File bitmagKeyfile = new File(configDir, "client-certificate.pem");
-			 //Bitrepository bitrep = new Bitrepository(configDir, bitmagKeyfile);
+			 File configDir = new File("/home/svc/bitmag-releasetest-conf");
+			 File bitmagKeyfile = new File(configDir, "client-certificate.pem");
+			 Bitrepository bitrep = new Bitrepository(configDir, bitmagKeyfile, 1, "sbdisk1");
+			 for (String col: bitrep.getKnownCollections()) {
+				 System.out.println(col);
+			 }
+			 
+			 for ( String pillar: bitrep.getCollectionPillars("netarkiv")) {
+				 System.out.println(pillar);
+			 }
+			 System.out.println();
+			 System.out.println("netarkiv-pillars:");
+			 for (String col: bitrep.getCollectionPillars("netarkiv")) {
+				 System.out.println(col);
+			 }
+			 
+			 System.out.println("netarkiv-ids:");
+			 for (String id: bitrep.getFileIds("netarkiv")) {
+				 System.out.println(id);
+			 }
+			 
+			 
 			 //bitrep.shutdown();
 			 
+		/*
 			 File configDir = new File("/home/svc/bitrepository-quickstart/commandline/conf");
 			 //File bitmagKeyfile = new File(configDir, "client-certificate.pem");
-			 Bitrepository bitrep = new Bitrepository(configDir, null, 1);
+			 Bitrepository bitrep = new Bitrepository(configDir, null, 1, "kbpillar-test-linux");
 			 bitrep.shutdown();
+		*/ 
+			 //BitmagArcRepositoryClient client = new BitmagArcRepositoryClient();
 			 
-			 BitmagArcRepositoryClient client = new BitmagArcRepositoryClient();
+			 
+			 bitrep.shutdown();
 			 
 			}
 
