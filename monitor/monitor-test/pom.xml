@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>monitor</artifactId>
-    <version>5.0</version>
+    <version>5.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>monitor-test</artifactId>
@@ -17,19 +17,19 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>common-core</artifactId>
-      <version>5.0</version>
+      <version>5.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>harvester-core</artifactId>
-      <version>5.0</version>
+      <version>5.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>monitor-core</artifactId>
-      <version>5.0</version>
+      <version>5.1-SNAPSHOT</version>
     </dependency>
 
     <!-- Test dependencies. -->
@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>common-test</artifactId>
-      <version>5.0</version>
+      <version>5.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
