@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jms.JMSException;
+
 import dk.netarkivet.common.exceptions.*;
 
 import org.bitrepository.access.AccessComponentFactory;
@@ -32,7 +33,7 @@ import org.bitrepository.commandline.eventhandler.CompleteEventAwaiter;
 import org.bitrepository.commandline.eventhandler.GetFileEventHandler;
 import org.bitrepository.commandline.output.DefaultOutputHandler;
 import org.bitrepository.commandline.output.OutputHandler;
-import org.bitrepository.commandline.outputformatter.GetFileIDsInfoFormatter;
+import org.bitrepository.commandline.outputformatter.GetFileIDsOutputFormatter;
 import org.bitrepository.common.exceptions.OperationFailedException;
 import org.bitrepository.common.settings.Settings;
 import org.bitrepository.common.settings.SettingsProvider;
@@ -113,10 +114,10 @@ public class Bitrepository {
      * @param configDir A Bitrepository settingsdirectory
      * @param maxStoreFailures Max number of acceptable store failures
      * @param usepillar The pillar to use 
-     * @param bitmagKeyFile Optional certificate filename relative to configDir
+     * @param bitmagKeyFilename Optional certificate filename relative to configDir
      * @throws ArgumentNotValid if configFile is null
      */
-    public Bitrepository(File configDir, File bitmagKeyfile, int maxStoreFailures, String usepillar) {
+    public Bitrepository(File configDir, String bitmagKeyFilename, int maxStoreFailures, String usepillar) {
     	ArgumentNotValid.checkExistsDirectory(configDir, "File configDir");
         componentId = BitrepositoryUtils.generateComponentID();
         maxNumberOfFailingPillars = maxStoreFailures;
@@ -124,11 +125,15 @@ public class Bitrepository {
         usepillarListOnly = new ArrayList<String>();
         usepillarListOnly.add(usepillar);
         this.settingsDir = configDir;
-        this.privateKeyFile = bitmagKeyfile;
-        initBitmagSettings();
-        if (bitmagKeyfile != null){
-        		initBitmagSecurityManager(); // Is this mandatory?
+        if (bitmagKeyFilename == null){
+        	this.privateKeyFile = new File(configDir, "dummy-certificate.pem"); // This file should never exist
+        } else {
+        	this.privateKeyFile = new File(configDir, bitmagKeyFilename);
         }
+        
+        initBitmagSettings();
+        initBitmagSecurityManager(); // Mandatory,even if we point to a nonexisting file dummy-certificate.pem
+        
         bitMagMessageBus = ProtocolComponentFactory.getInstance().getMessageBus(
                 bitmagSettings, bitMagSecurityManager); // Is bitMagSecurityManager mandatory?
         initBitMagClients();
@@ -242,12 +247,12 @@ public class Bitrepository {
         // Note that this eventHandler is blocking
         CompleteEventAwaiter eventHandler = new GetFileEventHandler(this.bitmagSettings, output);
         output.debug("Initiating the GetFile conversation.");
-        String auditTrailInformation = "Retrieving package '" + fileId + "' from collection '" + collectionId + "'";
-        bitMagGetClient.getFileFromFastestPillar(collectionId, fileId, filePart, fileUrl, eventHandler,
-                auditTrailInformation);
+        String auditTrailInformation = "Retrieving package '" + fileId + "' from collection '" + collectionId + "' using pillar '" + usepillar + "'";
+        logger.info(auditTrailInformation);
+        //bitMagGetClient.getFileFromFastestPillar(collectionId, fileId, filePart, fileUrl, eventHandler,
+        //        auditTrailInformation);
         
-        //TODO get from specific pillar instead of fastest pillar?
-        //bitMagGetClient.getFileFromSpecificPillar(collectionID, fileId, filePart, uploadUrl, pillarId, eventHandler, auditTrailInformation);
+        bitMagGetClient.getFileFromSpecificPillar(collectionId, fileId, filePart, fileUrl, usepillar, eventHandler, auditTrailInformation);
         
         OperationEvent finalEvent = eventHandler.getFinish();
         if(finalEvent.getEventType() == OperationEventType.COMPLETE) {
@@ -307,13 +312,12 @@ public class Bitrepository {
 
         OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
 
-        output.debug("Instantiation GetFileID outputFormatter.");
-        // TODO: change to non pagingClient
-        GetFileIDsInfoFormatter outputFormatter = new GetFileIDsInfoFormatter(output);
-        	
+        //output.debug("Instantiation GetFileID outputFormatter.");
+        //GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
+        GetFileIDsOutputFormatter outputFormatter = new GetFileIDsNoFormatter(output);
         long timeout = getClientTimeout(bitmagSettings);
 
-        output.debug("Instantiation GetFileID paging client.");
+        //output.debug("Instantiation GetFileID paging client.");
         PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
         
@@ -373,16 +377,15 @@ public class Bitrepository {
      * Initialize the BITMAG security manager.
      */
     private void initBitmagSecurityManager() {
-        PermissionStore permissionStore = new PermissionStore();
-        MessageAuthenticator authenticator = new BasicMessageAuthenticator(permissionStore);
-        MessageSigner signer = new BasicMessageSigner();
-        OperationAuthorizor authorizer = new BasicOperationAuthorizor(permissionStore);
-        if (getPrivateKeyFile() != null) {
-        bitMagSecurityManager = new BasicSecurityManager(bitmagSettings.getRepositorySettings(),
-                getPrivateKeyFile().getAbsolutePath(),
-                authenticator, signer, authorizer, permissionStore,
-                bitmagSettings.getComponentID());
-        }
+    	PermissionStore permissionStore = new PermissionStore();
+    	MessageAuthenticator authenticator = new BasicMessageAuthenticator(permissionStore);
+    	MessageSigner signer = new BasicMessageSigner();
+    	OperationAuthorizor authorizer = new BasicOperationAuthorizor(permissionStore);
+
+    	bitMagSecurityManager = new BasicSecurityManager(bitmagSettings.getRepositorySettings(),
+    			getPrivateKeyFile().getAbsolutePath(),
+    			authenticator, signer, authorizer, permissionStore,
+    			bitmagSettings.getComponentID());
     }
 
     private File getPrivateKeyFile() {
@@ -466,15 +469,13 @@ public class Bitrepository {
     public List<String> getFileIds(String collectionID) {
     	
     	OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
-
-        output.debug("Instantiation GetFileID outputFormatter.");
-        // TODO: change to non pagingClient
+        //output.debug("Instantiation GetFileID outputFormatter.");
         GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
 
         long timeout = getClientTimeout(bitmagSettings);
         List<String> usepillarListOnly = new ArrayList<String>();
         usepillarListOnly.add(usepillar);
-        output.debug("Instantiation GetFileID paging client.");
+        //output.debug("Instantiation GetFileID paging client.");
         PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
         Boolean success = pagingClient.getFileIDs(collectionID, null,

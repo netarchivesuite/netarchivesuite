@@ -36,11 +36,15 @@ National Library.
     <common>
         <arcrepositoryClient>
         <bitrepository>
-        <keyfile></keyfile>
+        <!-- if not set, use of certificates is disabled. If the keyfilename does not exist
+        	use of certificates is disabled as well.
+         -->
+        <keyfilename></keyfilename>
         <settingsDir></settingsDir>
         <storeMaxPillarFailures>1</storeMaxPillarFailures>
         <tempdir>arcrepositoryTemp</tempdir>
 		<collectionID>dvds</collectionID>
+		<usepillar></usepillar>
 		</bitrepository>
         </arcrepositoryClient>
     </common>

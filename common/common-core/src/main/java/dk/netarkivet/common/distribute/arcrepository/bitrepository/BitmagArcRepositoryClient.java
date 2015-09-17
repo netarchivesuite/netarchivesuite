@@ -25,12 +25,10 @@ package dk.netarkivet.common.distribute.arcrepository.bitrepository;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
@@ -83,9 +81,10 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
 
     private static final String BITREPOSITORY_SETTINGS_DIR = "settings.common.arcrepositoryClient.bitrepository.settingsDir";
      
-    private static final String BITREPOSITORY_KEYFILE = "settings.common.arcrepositoryClient.bitrepository.keyfile"; //TODO necessary? optional so we don't force the user to use credentials.
+    // optional so we don't force the user to use credentials.
+    private static final String BITREPOSITORY_KEYFILENAME = "settings.common.arcrepositoryClient.bitrepository.keyfilename"; 
 
-    private static final String BITREPOSITORY_STORE_MAX_PILLAR_FAILURES = "settings.common.arcrepositoryClient.bitrepository.storeMaxPillarFailures"; //TODO necessary?
+    private static final String BITREPOSITORY_STORE_MAX_PILLAR_FAILURES = "settings.common.arcrepositoryClient.bitrepository.storeMaxPillarFailures";
     
     private static final String BITREPOSITORY_COLLECTIONID =  "settings.common.arcrepositoryClient.bitrepository.collectionID";
     
@@ -104,13 +103,13 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     /** Create a new BitmagArcRepositoryClient based on current settings. */
     public BitmagArcRepositoryClient() {
     	File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
-    	File keyfile = Settings.getFile(BITREPOSITORY_KEYFILE);
+    	String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
     	this.collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
     	this.tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
     	this.maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
     	this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
     	// Initialize connection to the bitrepository
-    	this.bitrep = new Bitrepository(configDir, keyfile, maxStoreFailures, usepillar);
+    	this.bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
     }
 
     @Override
@@ -220,7 +219,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
      * processing and the finish() method will be called afterwards. The process() method will be called with each File
      * entry. An optional function postProcess() allows handling the combined results of the batchjob, e.g. summing the
      * results, sorting, etc.
-     * @param replicaId The archive to execute the job on.
+     * @param replicaId The archive to execute the job on. Argument Ignored replaced by usepillar (or reuse replicaId for bitmaguse)
      * @param args The arguments for the batchjob. This can be null.
      * @return The status of the batch job after it ended.
      * @throws ArgumentNotValid If the job is null or the replicaId is either null or the empty string.
@@ -228,57 +227,55 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
      */
     @Override
     public BatchStatus batch(final FileBatchJob job, String replicaId, String... args) throws ArgumentNotValid,
-            IOFailure {
-        ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
-        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-        //FIXME
-        // Use this pattern to request the fileIds to match this pattern
-        // and then fetch the matching files to local storage
-        //Pattern filenamePattern = job.getFilenamePattern;
-        
-        log.info("pattern: " + job.getFilenamePattern().pattern());
-        System.out.println("pattern: " + job.getFilenamePattern().pattern());
+    IOFailure {
+    	ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
+    	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
 
-        
-        OutputStream os = null;
-        File resultFile;
-        try {
-            resultFile = File.createTempFile("batch", replicaId, FileUtils.getTempDir());
-            os = new FileOutputStream(resultFile);
+    	// Deduce the remote file to run the batchjob on from the job.getFilenamePattern()
+    	// e.g. "22-metadata-[0-9]+.(w)?arc" => 22-metadata-1.warc 
+    	log.info("Trying to deducing requested file to run batch on from pattern {}", job.getFilenamePattern().pattern());
+
+    	String patternAsString = job.getFilenamePattern().pattern();
+    	if (!patternAsString.contains("metadata-")) {
+    		log.warn("deducing requested file to run batch on from pattern {} failed. Is not a metadata file", job.getFilenamePattern().pattern());
+    		return null;
+    	} else {
+    		// With 22-metadata-[0-9]+.(w)?arc 
+    		// nameparts will be ["22", "metadata", "[0", "9]+.(w)?arc"]
+    		String nameParts[] = patternAsString.split("-");
+    		String nameToFetch = nameParts[0] + "-metadata-1.warc";
             List<File> files = new ArrayList<File>();
-            final FilenameFilter filenameFilter = new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    Pattern filenamePattern = job.getFilenamePattern();
-                    return new File(dir, name).isFile()
-                            && (filenamePattern == null || filenamePattern.matcher(name).matches());
-                }
-            };
-/*
-            for (File dir : storageDirs) {
-                File[] filesInDir = dir.listFiles(filenameFilter);
-                if (filesInDir != null) {
-                    files.addAll(Arrays.asList(filesInDir));
-                }
-            }
-*/
-	    
-            BatchLocalFiles batcher = new BatchLocalFiles(files.toArray(new File[files.size()]));
-            batcher.run(job, os);
-        } catch (IOException e) {
-            throw new IOFailure("Cannot perform batch '" + job + "'", e);
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    log.warn("Error closing batch output stream '{}'", os, e);
-                }
-            }
-        }
-        return new BatchStatus(replicaId, job.getFilesFailed(), job.getNoOfFilesProcessed(), new FileRemoteFile(
-                resultFile), job.getExceptions());
-    }
+            
+		if (!bitrep.existsInCollection(nameToFetch, collectionId)) {
+        		log.warn("The file '{}' is not in collection '{}'.", nameToFetch, collectionId);
+		} else {
+    		File workFile = bitrep.getFile(nameToFetch, this.collectionId, null);
+    		files.add(workFile);
+		}
 
+    		OutputStream os = null;
+    		File resultFile;
+    		try {
+    			resultFile = File.createTempFile("batch", replicaId, FileUtils.getTempDir());
+    			os = new FileOutputStream(resultFile);
+    			
+    			BatchLocalFiles batcher = new BatchLocalFiles(files.toArray(new File[files.size()]));
+    			batcher.run(job, os);
+    		} catch (IOException e) {
+    			throw new IOFailure("Cannot perform batch '" + job + "'", e);
+    		} finally {
+    			if (os != null) {
+    				try {
+    					os.close();
+    				} catch (IOException e) {
+    					log.warn("Error closing batch output stream '{}'", os, e);
+    				}
+    			}
+    		}
+    		return new BatchStatus(replicaId, job.getFilesFailed(), job.getNoOfFilesProcessed(), new FileRemoteFile(
+    				resultFile), job.getExceptions());
+    	}
+    }
 
 /////////////////// The rest of the API is not implemented for the bitrepository system ///////////////////////////
 

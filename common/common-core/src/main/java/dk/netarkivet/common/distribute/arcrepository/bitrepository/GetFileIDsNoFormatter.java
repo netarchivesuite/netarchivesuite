@@ -1,19 +1,13 @@
 package dk.netarkivet.common.distribute.arcrepository.bitrepository;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
-
 import org.bitrepository.commandline.output.OutputHandler;
 import org.bitrepository.commandline.outputformatter.GetFileIDsOutputFormatter;
 import org.bitrepository.commandline.resultmodel.FileIDsResult;
 
-public class GetFileIDsListFormatter implements GetFileIDsOutputFormatter {
+public class GetFileIDsNoFormatter implements GetFileIDsOutputFormatter {
 	
-	List<String> result = new ArrayList<String>();
-	
-	public GetFileIDsListFormatter(OutputHandler outputHandler) {
+	public GetFileIDsNoFormatter(OutputHandler outputHandler) {
     }
 	
 	@Override
@@ -22,11 +16,5 @@ public class GetFileIDsListFormatter implements GetFileIDsOutputFormatter {
 
 	@Override
 	public void formatResult(Collection<FileIDsResult> results) {
-		for (FileIDsResult a: results) {
-			result.add(a.getID());
-		}
-	}
-	public List<String> getFoundIds() {
-		return result;
 	}	
 }
