@@ -108,6 +108,9 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     	this.tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
     	this.maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
     	this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
+    	tempdir.mkdirs();
+    	log.info("Storing tempfiles in folder {}", tempdir);
+    	
     	// Initialize connection to the bitrepository
     	this.bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
     }
@@ -234,7 +237,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     	// Deduce the remote file to run the batchjob on from the job.getFilenamePattern()
     	// e.g. "22-metadata-[0-9]+.(w)?arc" => 22-metadata-1.warc 
     	log.info("Trying to deducing requested file to run batch on from pattern {}", job.getFilenamePattern().pattern());
-
+    	
     	String patternAsString = job.getFilenamePattern().pattern();
     	if (!patternAsString.contains("metadata-")) {
     		log.warn("deducing requested file to run batch on from pattern {} failed. Is not a metadata file", job.getFilenamePattern().pattern());
@@ -244,13 +247,14 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     		// nameparts will be ["22", "metadata", "[0", "9]+.(w)?arc"]
     		String nameParts[] = patternAsString.split("-");
     		String nameToFetch = nameParts[0] + "-metadata-1.warc";
-            List<File> files = new ArrayList<File>();
-            
+            List<File> files = new ArrayList<File>();    
 		if (!bitrep.existsInCollection(nameToFetch, collectionId)) {
         		log.warn("The file '{}' is not in collection '{}'.", nameToFetch, collectionId);
 		} else {
-    		File workFile = bitrep.getFile(nameToFetch, this.collectionId, null);
-    		files.add(workFile);
+    		File tmpFile = bitrep.getFile(nameToFetch, this.collectionId, null);
+    		File workFile = new File(tempdir, nameToFetch);
+    		FileUtils.moveFile(tmpFile, workFile);
+    	    files.add(workFile);
 		}
 
     		OutputStream os = null;

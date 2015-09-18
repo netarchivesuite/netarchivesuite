@@ -32,15 +32,19 @@ public class TestBitrepository {
 			 System.out.println("pillar " + i + ": " + pillar);
 		 }
 		 
-		 if (bitrep.existsInCollection("47-metadata-1.warc", "books")){
-			 System.out.println("47-metadata-1.warc found in collection books");
+		 if (bitrep.existsInCollection("70-metadata-1.warc", "books")){
+			 System.out.println("70-metadata-1.warc found in collection books");
+			 File f = bitrep.getFile("70-metadata-1.warc", "books", null);
+			 System.out.println("file fetched = " + f.getAbsolutePath());
 		 } else {
-			 System.out.println("47-metadata-1.warc NOT found in collection books");
+			 System.out.println("70-metadata-1.warc NOT found in collection books");
 		 } 
+		 /*
 		 System.out.println("books-ids:");
 		 for (String id: bitrep.getFileIds("books")) {
 			 System.out.println(id);
 		 }
+		 */
 		 
 		 
 		 
