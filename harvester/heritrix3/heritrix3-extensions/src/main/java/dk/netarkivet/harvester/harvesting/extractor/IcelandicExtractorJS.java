@@ -71,7 +71,7 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
         Logger.getLogger("org.archive.crawler.extractor.ExtractorJS");
 
     /**
-     * The list of regular expressions to evalute potential relative url against, rejecting any that match
+     * The list of regular expressions to evaluate potential relative url against, rejecting any that match
      */
     {
         setRejectRelativeMatchingRegexList(new ArrayList<Pattern>());
@@ -119,9 +119,11 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
     protected boolean shouldExtract(CrawlURI uri) {
         
         // special-cases, for when we know our current JS extractor does poorly.
-        // TODO: remove this test when JS extractor is improved 
+        // TODO: remove this test when JS extractor is improved
+    	LOGGER.info("deciding whether to attempt extraction on url: " + uri + "(contentype: " +  uri.getContentType() + ")");
         for (String s: EXTRACTOR_URI_EXCEPTIONS) {
             if (uri.toString().equals(s))
+            	LOGGER.info("url matches " + s + ": rejected for extraction");
                 return false;
         }
         
@@ -132,27 +134,38 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
 
         // If the content-type indicates js, we should process it.
         if (contentType.indexOf("javascript") >= 0) {
+        	LOGGER.info("Content-type matches 'javascript'. accepted for extraction");
             return true;
         }
         if (contentType.indexOf("jscript") >= 0) {
+        	LOGGER.info("Content-type matches 'jscript'. accepted for extraction");
             return true;
         }
         if (contentType.indexOf("ecmascript") >= 0) {
+        	LOGGER.info("Content-type matches 'ecmascript'. accepted for extraction");
             return true;
         }
         
         // If the filename indicates js, we should process it.
         if (uri.toString().toLowerCase().endsWith(".js")) {
+        	LOGGER.info("url ends with '.js': accepted for extraction");
             return true;
         }
         
         // If the viaContext indicates a script, we should process it.
         LinkContext context = uri.getViaContext();
         if (context == null) {
+        	LOGGER.info("No linkContext rejected for extraction");
             return false;
         }
         String s = context.toString().toLowerCase();
-        return s.startsWith("script");
+        if (s.startsWith("script")) {
+        	LOGGER.info("The linkContext starts with script. Accepted for extraction. The full linkcontext is: " + s);
+        	return true;
+        } else {
+        	LOGGER.info("The linkContext does not start with script. rejected for extraction. The full linkcontext is: " + s);
+        	return false;
+        }
     }
     
     @Override
@@ -176,6 +189,7 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
 
     public long considerStrings(Extractor ext, 
             CrawlURI curi, CharSequence cs, boolean handlingJSFile) {
+    	LOGGER.info("Extracting links for curi '" + curi + "'. handlingJSFile is " + handlingJSFile);
         long foundLinks = 0;
         Matcher strings =
             TextUtils.getMatcher(JAVASCRIPT_STRING_EXTRACTOR, cs);
@@ -187,18 +201,25 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
                 TextUtils.getMatcher(STRING_URI_DETECTOR, subsequence);
             if(uri.matches()) {
                 String string = uri.group();
+                LOGGER.info("Found tentative link: " + string);
                 boolean falsePositive = false;
                 try {
                     string = StringEscapeUtils.unescapeJavaScript(string);
                 } catch (NestableRuntimeException e) {
                     LOGGER.log(Level.WARNING, "problem unescaping some javascript", e);
                 }
+                LOGGER.info("Unescaping javascript gives us: " + string);
+                
                 string = UriUtils.speculativeFixup(string, curi.getUURI());
+                
+                LOGGER.info("Doing speculativeFixup on string gives us: " + string);
+                
                 
                 // Filter out some bad false positives (should really fix regexp for URI detection) 
                 if (string.contains("/.") || string.contains("@") || string.length() > 150) {
                 	// While legal in URIs, these are rare and usually an indication of a false positive
                 	// in the speculative extraction.
+                	LOGGER.info("string marked as a falsepositive!");
                 	falsePositive = true;
                 }
                 
@@ -213,8 +234,10 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
 	                try {
 	                    int max = ext.getExtractorParameters().getMaxOutlinks();
 	                    if (handlingJSFile) {
+	                    	LOGGER.info("Calling addRelativeToVia that adds '" + string + "' as acceptable new link");
 	                        addRelativeToVia(curi, max, string, JS_MISC, SPECULATIVE);
 	                    } else {
+	                    	LOGGER.info("Calling addRelativeToBase that adds '" + string + "' as acceptable new link");
 	                        addRelativeToBase(curi, max, string, JS_MISC, SPECULATIVE);
 	                    }
 	                } catch (URIException e) {
@@ -229,26 +252,32 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
             startIndex = strings.end(2);
         }
         TextUtils.recycleMatcher(strings);
+        LOGGER.info("Found '" + foundLinks + "' links");
         return foundLinks;
     }
     
     private boolean shouldIgnorePossibleRelativeLink(String str) {
+    	LOGGER.info("examining PossibleRelativeLinkToIgnore: " + str);
         if (str.matches("^[a-zA-Z]://.*$")) {
             // Absolute path. Assume it is ok.
+        	LOGGER.info("Considered OK, as '" + str + "' matches '^[a-zA-Z]://.*$'");
             return false;
         }
         
         List<Pattern> regexes = getRejectRelativeMatchingRegexList();
         if(regexes.size()==0){
+        	LOGGER.info("Considered OK, as RejectRelativeMatchingRegexList is empty");
             return false;
         }
 
         for (Pattern p: regexes) {
             boolean matches = p.matcher(str).matches();
             if(matches){
+            	LOGGER.info("Considered BAD, as '" + str + "' matches '" + p.pattern() + "'");
                 return true;
             } 
         }
+        LOGGER.info("Considered OK link: " +  str);
         return false;
     }
     
