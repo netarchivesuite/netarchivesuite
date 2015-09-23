@@ -79,6 +79,7 @@ public class ExtractorXML extends ContentExtractor {
                         .matches("(?i)application/vnd.openxmlformats.*"))
                 || curi.toString().toLowerCase().endsWith(".rss")
                 || curi.toString().toLowerCase().endsWith(".xml")) {
+        	logger.info("ExtractorXML.shouldExtract: mimetype(" + mimeType + ") and curi (" + curi + ") suggests xml file to extract");
             return true;
         }
         
@@ -87,9 +88,10 @@ public class ExtractorXML extends ContentExtractor {
         String contentStartingChunk = curi.getRecorder().getContentReplayPrefixString(400);
         if (contentStartingChunk.matches("(?is)[\\ufeff]?<\\?xml\\s.*")
                 && !contentStartingChunk.matches("(?is).*(?:<!doctype\\s+html|<html[>\\s]).*")) {
+        	logger.info("ExtractorXML.shouldExtract: contentPrefix matches '(?is)[\\ufeff]?<\\?xml\\s.*' and not '(?is).*(?:<!doctype\\s+html|<html[>\\s]).*' suggests xml file to extract. curi = (" + curi + ")");
             return true;
         }
-        
+        logger.info("ExtractorXML.shouldExtract: mimetype(" + mimeType + ") and curi (" + curi + ") DOES NOT suggest xml file to extract");
         return false;
     }
     
@@ -150,16 +152,20 @@ public class ExtractorXML extends ContentExtractor {
     public static long processXml(Extractor ext, 
             CrawlURI curi, CharSequence cs) {
         long foundLinks = 0;
+        logger.info("ExtractorXML.processXml: Finding xml-outlinks on behalf of extractor '" + ext.getBeanName() + "' for curi (" + curi + ") ");
         Matcher matcher = XML_URI_EXTRACTOR.matcher(cs);
         while (matcher.find()) {
             String xmlUri = StringEscapeUtils.unescapeXml(matcher.group(1));
+            logger.info("ExtractorXML.processXml: Found candidate uri '" + xmlUri + "' for curi (" + curi + ") ");
             if (UriUtils.isVeryLikelyUri(xmlUri)) {
+            	logger.info("ExtractorXML.processXml: candidate uri '" + xmlUri + "' for curi (" + curi + ") considerered a very likely URI  ");
                 foundLinks++;
                 try {
                     // treat as speculative, as whether context really 
                     // intends to create a followable/fetchable URI is
                     // unknown
                     int max = ext.getExtractorParameters().getMaxOutlinks();
+                    logger.info("ExtractorXML.processXml: adding candidate uri '" + xmlUri + "' for curi (" + curi + ") as a link relative to base  ");
                     addRelativeToBase(curi, max, xmlUri, 
                             LinkContext.SPECULATIVE_MISC, Hop.SPECULATIVE); 
                 } catch (URIException e) {
@@ -169,6 +175,7 @@ public class ExtractorXML extends ContentExtractor {
                 }
             }
         }
+        logger.info("ExtractorXML.processXml: Found '" + foundLinks + "' xml-outlinks on behalf of extractor '" + ext.getBeanName() + "' for curi (" + curi + ") ");
         return foundLinks;
     }
     

@@ -18,6 +18,8 @@
  */
 package org.archive.modules.extractor;
 
+import java.util.logging.Logger;
+
 import org.archive.modules.CrawlURI;
 
 /** 
@@ -33,6 +35,9 @@ public class TrapSuppressExtractor extends ContentExtractor  {
 
     /** ALIst attribute key for carrying-forward content-digest from 'via'*/
     public static String A_VIA_DIGEST = "via-digest";
+    
+    private static Logger logger =
+            Logger.getLogger("org.archive.modules.extractor.TrapSuppressExtractor");
     
     protected long numberOfCURIsHandled = 0;
     protected long numberOfCURIsSuppressed = 0;
@@ -62,6 +67,7 @@ public class TrapSuppressExtractor extends ContentExtractor  {
             if(currentDigest.equals(viaDigest)) {
                 curi.getAnnotations().add("trapSuppressExtractor");
                 numberOfCURIsSuppressed++;
+                logger.info("mark curi '" + curi + "'as already-extracted -- suppressing further extraction");
                 // mark as already-extracted -- suppressing further extraction
                 return true;
             }
@@ -69,6 +75,7 @@ public class TrapSuppressExtractor extends ContentExtractor  {
             // inherited
             curi.getData().put(A_VIA_DIGEST, currentDigest);
         }
+        logger.info("curi '" + curi + "' ready for further extraction, as digest of curi is not equal to digest of source linking to curi");
         return false; 
     }
 }

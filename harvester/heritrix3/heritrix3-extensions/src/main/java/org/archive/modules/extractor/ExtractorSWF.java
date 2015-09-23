@@ -76,17 +76,21 @@ public class ExtractorSWF extends ContentExtractor {
     public ExtractorSWF() {
     }
 
-    
     @Override
     protected boolean shouldExtract(CrawlURI uri) {
         String contentType = uri.getContentType();
         if (contentType == null) {
+        	logger.info("Don't extract curi '" + uri + "' as contenttype is null");
             return false;
         }
         if ((contentType.toLowerCase().indexOf("x-shockwave-flash") < 0)
                 && (!uri.toString().toLowerCase().endsWith(".swf"))) {
+        	logger.info("Don't extract curi '" + uri + "' as contenttype '" 
+                + contentType + "' does not match 'x-shockwave-flash' and curi does not end with 'swf'");
             return false;
         }
+        logger.info("curi '" + uri + "' with contenttype '" 
+        		+ contentType + "' accepted for extraction");
         return true;
     }
 
@@ -98,6 +102,8 @@ public class ExtractorSWF extends ContentExtractor {
         try {
             documentStream = curi.getRecorder().getContentReplayInputStream();
             if (documentStream == null) {
+            	logger.info("No documentStream found. Let's  try other extractors on curi " 
+            			+ curi);
                 return false;
             }
 
@@ -114,6 +120,7 @@ public class ExtractorSWF extends ContentExtractor {
             reader.readFile();
             numberOfLinksExtracted.addAndGet(curiAction.getLinkCount());
             logger.fine(curi + " has " + curiAction.getLinkCount() + " links.");
+            logger.info("Uri '" + curi + "' has " + curiAction.getLinkCount() + " links.");
         } catch (IOException e) {
             curi.getNonFatalFailures().add(e);
         } finally {
@@ -126,6 +133,7 @@ public class ExtractorSWF extends ContentExtractor {
 
 
         // Set flag to indicate that link extraction is completed.
+        logger.info("Extraction considered done on curi " + curi);
         return true;
     }
 
@@ -330,14 +338,22 @@ public class ExtractorSWF extends ContentExtractor {
         throws IOException {
             if (url.startsWith(JSSTRING)) {
                 if (getExtractorJS() != null) {
+                	logger.info("Looking after links in string '" 
+                			+ url +"' (curi=" +  curi + ")");
                     linkCount += getExtractorJS().considerStrings(ext, curi, url);
                 }
             } else {
                 int max = ext.getExtractorParameters().getMaxOutlinks();
+                logger.info("addRelativeToVia link '" + url + "' curi=" +  curi + ")" );
                 CrawlURI relToVia = addRelativeToVia(curi, max, url,
                         LinkContext.EMBED_MISC, Hop.EMBED);
+                logger.info("AddRelativeToVia method call resulted in link '" 
+                        + relToVia + "' curi=" +  curi + ")" );
+                logger.info("AddRelativeToBase link '" + url + "' curi=" +  curi + ")" );
                 CrawlURI relToBase = addRelativeToBase(curi, max, url,
                         LinkContext.EMBED_MISC, Hop.EMBED);
+                logger.info("AddRelativeToBase method call resulted in link '" 
+                        + relToBase + "' curi=" +  curi + ")");
                 addAnnotations(relToVia, relToBase);
                 linkCount++;
             }
@@ -361,10 +377,15 @@ public class ExtractorSWF extends ContentExtractor {
         public void considerStringAsUri(String str) throws IOException {
             if (UriUtils.isVeryLikelyUri(str)) {
                 int max = ext.getExtractorParameters().getMaxOutlinks();
+            
                 CrawlURI relToVia = addRelativeToVia(curi, max, str,
                         LinkContext.SPECULATIVE_MISC, Hop.SPECULATIVE);
+                logger.info("Added addRelativeToVia link '" 
+                        + relToVia + "' curi=" +  curi + ")" );
                 CrawlURI relToBase = addRelativeToBase(curi, max, str,
                         LinkContext.SPECULATIVE_MISC, Hop.SPECULATIVE);
+                logger.info("Added  addRelativeToBase link '" 
+                        + relToBase + "' curi=" +  curi + ")" );
                 addAnnotations(relToVia, relToBase);
                 linkCount++;
             }

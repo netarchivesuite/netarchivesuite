@@ -123,7 +123,7 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
     	LOGGER.info("deciding whether to attempt extraction on url: " + uri + "(contentype: " +  uri.getContentType() + ")");
         for (String s: EXTRACTOR_URI_EXCEPTIONS) {
             if (uri.toString().equals(s))
-            	LOGGER.info("url matches " + s + ": rejected for extraction");
+            	LOGGER.info("Url matches " + s + ": rejected for extraction");
                 return false;
         }
         
@@ -145,10 +145,15 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
         	LOGGER.info("Content-type matches 'ecmascript'. accepted for extraction");
             return true;
         }
+        // Was this intentionally eliminated from IcelandicExtractorJS?
+        if (contentType.startsWith("application/json")) {
+        	LOGGER.info("Content-type matches 'application/json'. accepted for extraction");
+            return true;
+        }
         
         // If the filename indicates js, we should process it.
         if (uri.toString().toLowerCase().endsWith(".js")) {
-        	LOGGER.info("url ends with '.js': accepted for extraction");
+        	LOGGER.info("Url ends with '.js': accepted for extraction");
             return true;
         }
         
@@ -177,7 +182,7 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
             try {
                 numberOfLinksExtracted.getAndAdd(considerStrings(this, curi, cs, true));
             } catch (StackOverflowError e) {
-                DevUtils.warnHandle(e, "ExtractorJS StackOverflowError");
+                DevUtils.warnHandle(e, "IcelandicExtractorJS  StackOverflowError");
             }
             // Set flag to indicate that link extraction is completed.
             return true;
@@ -219,7 +224,7 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
                 if (string.contains("/.") || string.contains("@") || string.length() > 150) {
                 	// While legal in URIs, these are rare and usually an indication of a false positive
                 	// in the speculative extraction.
-                	LOGGER.info("string marked as a falsepositive!");
+                	LOGGER.info("String '" + string + "' marked as a falsepositive!");
                 	falsePositive = true;
                 }
                 
@@ -252,12 +257,12 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
             startIndex = strings.end(2);
         }
         TextUtils.recycleMatcher(strings);
-        LOGGER.info("Found '" + foundLinks + "' links");
+        LOGGER.info("Found '" + foundLinks + "' links for curi: '" + curi + "'");
         return foundLinks;
     }
     
     private boolean shouldIgnorePossibleRelativeLink(String str) {
-    	LOGGER.info("examining PossibleRelativeLinkToIgnore: " + str);
+    	LOGGER.info("Examining PossibleRelativeLinkToIgnore: " + str);
         if (str.matches("^[a-zA-Z]://.*$")) {
             // Absolute path. Assume it is ok.
         	LOGGER.info("Considered OK, as '" + str + "' matches '^[a-zA-Z]://.*$'");

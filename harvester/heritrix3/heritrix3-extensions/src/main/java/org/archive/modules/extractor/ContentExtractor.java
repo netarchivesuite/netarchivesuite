@@ -18,6 +18,8 @@
  */
 package org.archive.modules.extractor;
 
+import java.util.logging.Logger;
+
 import org.archive.modules.CrawlURI;
 import org.archive.modules.fetcher.FetchStatusCodes;
 
@@ -29,13 +31,17 @@ import org.archive.modules.fetcher.FetchStatusCodes;
  */
 public abstract class ContentExtractor extends Extractor {
 
+	private static Logger logger =
+            Logger.getLogger("org.archive.modules.extractor.ContentExtractor");
 
     /**
      * Extracts links 
      */
     final protected void extract(CrawlURI uri) {
+    	logger.info("ContentExtractor.extract: Beginning extracting links from curi " + uri);
         boolean finished = innerExtract(uri);
         if (finished) {
+        	logger.info("ContentExtractor.extract: Finished extracting links from curi " + uri );
             uri.linkExtractorFinished();
         }
     }
@@ -65,18 +71,23 @@ public abstract class ContentExtractor extends Extractor {
     final protected boolean shouldProcess(CrawlURI uri) {
         if (!getExtractorParameters().getExtractIndependently()
                 && uri.hasBeenLinkExtracted()) {
+        	logger.info("ContentExtractor.shouldProcess: no, as curi '" + uri + "' has already been linkextracted and extractIndependently is set to false"); 
             return false;
         }
         if (uri.getContentLength() <= 0) {
+        	logger.info("ContentExtractor.shouldProcess: no, as contentLength of curi '" + uri + "' is 0"); 
             return false;
         }
         if (!getExtractorParameters().getExtract404s() 
                 && uri.getFetchStatus()==FetchStatusCodes.S_NOT_FOUND) {
+        	logger.info("ContentExtractor.shouldProcess: no, as curi '" + uri + "' returned 404 during fetch and Extract404s is set to false"); 
             return false; 
         }
         if (!shouldExtract(uri)) {
+        	logger.info("ContentExtractor.shouldProcess: no, as shouldExtract for curi '" + uri + "' returned false");
             return false;
         }
+        logger.info("ContentExtractor.shouldProcess: yes for curi '" + uri + "'");
         return true;
     }
 

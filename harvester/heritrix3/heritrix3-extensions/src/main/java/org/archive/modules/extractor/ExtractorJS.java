@@ -78,38 +78,50 @@ public class ExtractorJS extends ContentExtractor {
     protected boolean shouldExtract(CrawlURI uri) {
         String contentType = uri.getContentType();
         if (contentType == null) {
+        	LOGGER.info("ExtractorJS.shouldExtract: Content-type is null. rejected for extraction");
             return false;
         }
 
         // If the content-type indicates js, we should process it.
         if (contentType.indexOf("javascript") >= 0) {
+        	LOGGER.info("Content-type matches 'javascript'. accepted for extraction");
             return true;
         }
         if (contentType.indexOf("jscript") >= 0) {
+        	LOGGER.info("Content-type matches 'jscript'. accepted for extraction");
             return true;
         }
         if (contentType.indexOf("ecmascript") >= 0) {
+        	LOGGER.info("Content-type matches 'ec,ascript'. accepted for extraction");
             return true;
         }
 
         if (contentType.startsWith("application/json")) {
+        	LOGGER.info("Content-type matches 'application/json'. accepted for extraction");
             return true;
         }
         
         // If the filename indicates js, we should process it.
         if (uri.toString().toLowerCase().endsWith(".js")) {
+        	LOGGER.info("Url ends with '.js': accepted for extraction");
             return true;
         }
         
         // If the viaContext indicates a script, we should process it.
         LinkContext context = uri.getViaContext();
         if (context == null) {
+        	LOGGER.info("No linkContext - rejected for extraction");
             return false;
         }
         String s = context.toString().toLowerCase();
-        return s.startsWith("script");
+        if (s.startsWith("script")) {
+        	LOGGER.info("The linkContext starts with 'script'. Accepted for extraction. The full linkcontext is: " + s);
+        	return true;
+        } else {
+        	LOGGER.info("The linkContext does not start with 'script'. rejected for extraction. The full linkcontext is: " + s);
+        	return false;
+        }
     }
-    
 
     @Override
     protected boolean innerExtract(CrawlURI curi) {
@@ -152,6 +164,8 @@ public class ExtractorJS extends ContentExtractor {
             		cs.subSequence(strings.start(2), strings.end(2));
             
             if (UriUtils.isPossibleUri(subsequence)) {
+            	LOGGER.info("Found possibleURIcandidate url '" +  subsequence 
+            			+ "' (curi = " + curi + ")");
                 if (considerString(ext, curi, handlingJSFile, subsequence.toString())) {
                     foundLinks++;
                 }
@@ -166,21 +180,33 @@ public class ExtractorJS extends ContentExtractor {
 
     protected boolean considerString(Extractor ext, CrawlURI curi,
             boolean handlingJSFile, String candidate) {
+    	LOGGER.info("Considering candidate url '" +  candidate 
+    			+ "' (curi = " + curi + ")");
         try {
             candidate = StringEscapeUtils.unescapeJavaScript(candidate);
+            LOGGER.info("Candidate url after unescapingJavaScript '" + candidate 
+        			+ "' (curi = " + curi+ ")");
+            
         } catch (NestableRuntimeException e) {
             LOGGER.log(Level.WARNING, "problem unescaping some javascript", e);
         }
+        
         candidate = UriUtils.speculativeFixup(candidate, curi.getUURI());
+        LOGGER.info("ExtractorJS.considerString: candidate url after speculativeFixup '" + candidate 
+    			+ "' (curi = " + curi+ ")");
 
         if (UriUtils.isVeryLikelyUri(candidate)) {
+        	LOGGER.info("ExtractorJS.considerString: candidate url  '" + candidate 
+        			+ "' considered veryLikelyURI (curi = " + curi + ")");
             try {
                 int max = ext.getExtractorParameters().getMaxOutlinks();
                 if (handlingJSFile) {
-                    addRelativeToVia(curi, max, candidate, JS_MISC, 
+                	LOGGER.info("ExtractorJS.considerString: Calling addRelativeToVia that adds '" + candidate + "' as acceptable new link");
+                	addRelativeToVia(curi, max, candidate, JS_MISC, 
                             SPECULATIVE);
                     return true;
                 } else {
+                	LOGGER.info("ExtractorJS.considerString: Calling addRelativeToBase that adds '" + candidate + "' as acceptable new link");
                     addRelativeToBase(curi, max, candidate, JS_MISC, 
                             SPECULATIVE);
                     return true;

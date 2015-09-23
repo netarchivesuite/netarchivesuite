@@ -19,6 +19,8 @@
 
 package org.archive.modules.extractor;
 
+import java.util.logging.Logger;
+
 import org.apache.commons.httpclient.URIException;
 import org.archive.modules.CrawlURI;
 import org.archive.modules.CrawlURI.FetchType;
@@ -35,6 +37,9 @@ public class ExtractorHTTP extends Extractor {
     @SuppressWarnings("unused")
     private static final long serialVersionUID = 3L;
 
+    private static Logger logger =
+            Logger.getLogger("org.archive.modules.extractor.ExtractorHTTP");
+    
     public ExtractorHTTP() {
     }
 
@@ -61,14 +66,17 @@ public class ExtractorHTTP extends Extractor {
     @Override
     protected void extract(CrawlURI curi) {
         // discover headers if present
+    	
         addHeaderLink(curi, "Location");
         addHeaderLink(curi, "Content-Location");
 
         addRefreshHeaderLink(curi, "Refresh");
 
         // try /favicon.ico for every HTTP(S) URI
+        logger.info("Added /favicon.ico from curi '" + curi + "'");
         addOutlink(curi, "/favicon.ico", LinkContext.INFERRED_MISC, Hop.INFERRED);
         if(getInferRootPage()) {
+        	logger.info("Added '/' from curi '" + curi + "'");
             addOutlink(curi, "/", LinkContext.INFERRED_MISC, Hop.INFERRED);
         }
     }
@@ -96,6 +104,7 @@ public class ExtractorHTTP extends Extractor {
         try {
             UURI dest = UURIFactory.getInstance(curi.getUURI(), url);
             LinkContext lc = HTMLLinkContext.get(headerName+":");
+            logger.info("Added link from curi '" + curi + "' to '" + dest + "' using header key '" + headerName + "' ");
             addOutlink(curi, dest.toString(), lc, Hop.REFER);
             numberOfLinksExtracted.incrementAndGet();
         } catch (URIException e) {

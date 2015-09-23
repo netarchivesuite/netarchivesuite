@@ -64,71 +64,79 @@ public class ExtractorPDF extends ContentExtractor {
     @Override
     protected boolean shouldExtract(CrawlURI uri) {
         long max = getMaxSizeToParse();
-        if (uri.getRecorder().getRecordedInput().getSize() > max) {
+        long recordedSize = uri.getRecorder().getRecordedInput().getSize();
+        if (recordedSize > max) {
+        	LOGGER.info("Uri '" + uri + "'  rejected for extraction, as recordedSize '" + recordedSize + "' exceeds max size: " + max); 
             return false;
         }
-
         String ct = uri.getContentType();
-        return (ct != null) && (ct.startsWith("application/pdf"));
+        if ((ct != null) && (ct.startsWith("application/pdf"))) {
+        	LOGGER.info("Uri '" + uri + "'  accepted for extraction, as contentType begins with 'application/pdf'");
+        	return true;
+        } else {
+        	LOGGER.info("Uri '" + uri + "'  rejected for extraction, as contentType doesn't begin with 'application/pdf': " + ct); 
+        	return false;
+        }
     }
     
     
     protected boolean innerExtract(CrawlURI curi){
-        File tempFile;
+    	File tempFile;
 
-        int sn;
-	Thread thread = Thread.currentThread();
-        if (thread instanceof SinkHandlerLogThread) {
-            sn = ((SinkHandlerLogThread)thread).getSerialNumber();
-        } else {
-            sn = System.identityHashCode(thread);
-        }
-        try {
-            tempFile = File.createTempFile("tt" + sn , "tmp.pdf");
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
+    	int sn;
+    	Thread thread = Thread.currentThread();
+    	if (thread instanceof SinkHandlerLogThread) {
+    		sn = ((SinkHandlerLogThread)thread).getSerialNumber();
+    	} else {
+    		sn = System.identityHashCode(thread);
+    	}
+    	try {
+    		tempFile = File.createTempFile("tt" + sn , "tmp.pdf");
+    	} catch (IOException ioe) {
+    		throw new RuntimeException(ioe);
+    	}
 
-        PDFParser parser;
-        ArrayList<String> uris;
-        try {
-            curi.getRecorder().copyContentBodyTo(tempFile);
-            parser = new PDFParser(tempFile.getAbsolutePath());
-            uris = parser.extractURIs();
-        } catch (IOException e) {
-            curi.getNonFatalFailures().add(e);
-            return false;
-        } catch (RuntimeException e) {
-            // Truncated/corrupt  PDFs may generate ClassCast exceptions, or
-            // other problems
-            curi.getNonFatalFailures().add(e);
-            return false;
-        } finally {
-            FileUtils.deleteSoonerOrLater(tempFile);
-        }
-        
-        if (uris == null) {
-            return true;
-        }
+    	PDFParser parser;
+    	ArrayList<String> uris;
+    	try {
+    		curi.getRecorder().copyContentBodyTo(tempFile);
+    		parser = new PDFParser(tempFile.getAbsolutePath());
+    		uris = parser.extractURIs();
+    	} catch (IOException e) {
+    		curi.getNonFatalFailures().add(e);
+    		return false;
+    	} catch (RuntimeException e) {
+    		// Truncated/corrupt  PDFs may generate ClassCast exceptions, or
+    		// other problems
+    		curi.getNonFatalFailures().add(e);
+    		return false;
+    	} finally {
+    		FileUtils.deleteSoonerOrLater(tempFile);
+    	}
 
-        for (String uri: uris) {
-            try {
-                UURI src = curi.getUURI();
-                UURI dest = UURIFactory.getInstance(uri);
-                LinkContext lc = LinkContext.NAVLINK_MISC;
-                Hop hop = Hop.NAVLINK;
-                addOutlink(curi, dest, lc, hop);
-            } catch (URIException e1) {
-                // There may not be a controller (e.g. If we're being run
-                // by the extractor tool).
-                logUriError(e1, curi.getUURI(), uri);
-            }
-        }
-        
-        numberOfLinksExtracted.addAndGet(uris.size());
+    	if (uris == null) {
+    		return true;
+    	}
+    	LOGGER.info("Found " + uris.size() + " links found in content of uri '" + curi + "'."); 
+    	for (String uri: uris) {
+    		try {
+    			UURI src = curi.getUURI();
+    			UURI dest = UURIFactory.getInstance(uri);
+    			LinkContext lc = LinkContext.NAVLINK_MISC;
+    			Hop hop = Hop.NAVLINK;
+    			LOGGER.info("Creating outlink '" + dest + "' found in content of uri '" + curi + "'.");
+    			addOutlink(curi, dest, lc, hop);
+    		} catch (URIException e1) {
+    			// There may not be a controller (e.g. If we're being run
+    					// by the extractor tool).
+    			logUriError(e1, curi.getUURI(), uri);
+    		}
+    	}
 
-        LOGGER.fine(curi+" has "+uris.size()+" links.");
-        // Set flag to indicate that link extraction is completed.
-        return true;
+    	numberOfLinksExtracted.addAndGet(uris.size());
+
+    	LOGGER.fine(curi+" has "+uris.size()+" links.");
+    	// Set flag to indicate that link extraction is completed.
+    	return true;
     }
 }
