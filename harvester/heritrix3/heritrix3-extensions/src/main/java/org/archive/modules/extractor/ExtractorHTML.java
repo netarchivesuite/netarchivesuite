@@ -651,7 +651,7 @@ public class ExtractorHTML extends ContentExtractor implements InitializingBean 
             if (logger.isLoggable(Level.FINEST)) {
                 logger.finest("link: " + value.toString() + " from " + curi);
             }
-            logger.info("ExtractorHTML.processLink: (curi=" + curi + ") adding new link: " + value);
+            logger.info("(curi=" + curi + ") adding new link: " + value);
             addLinkFromString(curi, value, context, Hop.NAVLINK);
             numberOfLinksExtracted.incrementAndGet();
         }
@@ -666,7 +666,7 @@ public class ExtractorHTML extends ContentExtractor implements InitializingBean 
             // ReplayCharSequence.
             HTMLLinkContext hc = HTMLLinkContext.get(context.toString());
             int max = getExtractorParameters().getMaxOutlinks();
-            logger.info("ExtractorHTML.addLinkFromString: In Curi '" + curi + "' found relative link: " + uri);
+            logger.info("In Curi '" + curi + "' found relative link: " + uri);
             addRelativeToBase(curi, max, uri.toString(), hc, hop);
         } catch (URIException e) {
             logUriError(e, curi.getUURI(), uri);
@@ -684,7 +684,7 @@ public class ExtractorHTML extends ContentExtractor implements InitializingBean 
             logger.finest("embed (" + hop.getHopChar() + "): " + value.toString() +
                 " from " + curi);
         }
-        logger.finest("ExtractorHTML.processEmbed: Found link (" + value.toString() + ") " +
+        logger.finest("Found link (" + value.toString() + ") " +
                 " from " + curi);
         addLinkFromString(curi,
             (value instanceof String)?
@@ -700,7 +700,7 @@ public class ExtractorHTML extends ContentExtractor implements InitializingBean 
                 // HTML was not expected (eg a GIF was expected) so ignore
                 // (as if a soft 404)
                 if (!isHtmlExpectedHere(uri)) {
-                	logger.info("ExtractorHTML.ShouldExtract is false for curi '" + uri + "' as html is not expected here");
+                	logger.info("ShouldExtract is false for curi '" + uri + "' as html is not expected here");
                     return false;
                 }
             } catch (URIException e) {
@@ -708,7 +708,7 @@ public class ExtractorHTML extends ContentExtractor implements InitializingBean 
                 // assume it's okay to extract
             }
         } else {
-        	logger.info("ExtractorHTML - IgnoreUnexpectedHtml is false");
+        	logger.info("IgnoreUnexpectedHtml is false");
         }
 
         String mime = uri.getContentType().toLowerCase();
@@ -717,16 +717,16 @@ public class ExtractorHTML extends ContentExtractor implements InitializingBean 
                 || mime.startsWith("text/vnd.wap.wml")
                 || mime.startsWith("application/vnd.wap.wml")
                 || mime.startsWith("application/vnd.wap.xhtml")) {
-        	logger.info("ExtractorHTML.ShouldExtract is true for curi '" + uri + "' as contenttype is " + mime);
+        	logger.info("ShouldExtract is true for curi '" + uri + "' as contenttype is " + mime);
             return true;
         }
 
         String contentPrefixLC = uri.getRecorder().getContentReplayPrefixString(1000).toLowerCase();
         if (contentPrefixLC.contains("<html") || contentPrefixLC.contains("<!doctype html")) {
-        	logger.info("ExtractorHTML.ShouldExtract is true for curi '" + uri + "' with contenttype '" + mime + "' as content contains '<html>' OR '<!doctype html'");
+        	logger.info("ShouldExtract is true for curi '" + uri + "' with contenttype '" + mime + "' as content contains '<html>' OR '<!doctype html'");
             return true;
         }
-        logger.info("ExtractorHTML.ShouldExtract is false for curi '" + uri + "' with contenttype='" + mime + "'");
+        logger.info("ShouldExtract is false for curi '" + uri + "' with contenttype='" + mime + "'");
         return false;
     }
 
@@ -818,7 +818,7 @@ public class ExtractorHTML extends ContentExtractor implements InitializingBean 
      * of this extractors' lifetime.
      */
     protected void extract(CrawlURI curi, CharSequence cs) {
-    	logger.info("ExtractorHTML.extract beginning url exstraction for curi " + curi);
+    	logger.info("Beginning url exstraction for curi " + curi);
         Matcher tags = TextUtils.getMatcher(relevantTagPattern,cs);
         while(tags.find()) {
             if(Thread.interrupted()){
@@ -985,7 +985,7 @@ public class ExtractorHTML extends ContentExtractor implements InitializingBean 
                 String refreshUri = content.substring(urlIndex);
                 try {
                     int max = getExtractorParameters().getMaxOutlinks();
-                    logger.info("ExtractorHTML.processMeta: On curi '" +  curi + "' found  link: " + refreshUri);
+                    logger.info("On curi '" +  curi + "' found  link: " + refreshUri);
                     addRelativeToBase(curi, max, refreshUri, 
                             HTMLLinkContext.META, Hop.REFER);
                 } catch (URIException e) {
@@ -998,7 +998,7 @@ public class ExtractorHTML extends ContentExtractor implements InitializingBean 
             try {
                 if (UriUtils.isVeryLikelyUri(content)) {
                     int max = getExtractorParameters().getMaxOutlinks();
-                    logger.info("ExtractorHTML.processMeta: On curi '" +  curi + "' found  VeryLikelyUri: " + content);
+                    logger.info("On curi '" +  curi + "' found  VeryLikelyUri: " + content);
                     addRelativeToBase(curi, max, content, 
                             HTMLLinkContext.META, Hop.SPECULATIVE);                    
                 }
@@ -1020,12 +1020,12 @@ public class ExtractorHTML extends ContentExtractor implements InitializingBean 
     protected void processStyle(CrawlURI curi, CharSequence sequence,
             int endOfOpenTag) {
         // First, get attributes of script-open tag as per any other tag.
-    	logger.info("ExtractorHTML.processStyle: calling processGeneralTag()");
+    	logger.info("Calling processGeneralTag()");
         processGeneralTag(curi, sequence.subSequence(0,6),
             sequence.subSequence(0,endOfOpenTag));
 
         // then, parse for URIs
-        logger.info("ExtractorHTML.processStyle: calling ExtractorCSS.processStyleCode for sequence: " 
+        logger.info("Calling ExtractorCSS.processStyleCode for sequence: " 
         		+ sequence.subSequence(endOfOpenTag,sequence.length()));
         numberOfLinksExtracted.addAndGet(ExtractorCSS.processStyleCode(
                 this,

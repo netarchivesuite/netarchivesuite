@@ -182,9 +182,13 @@ public class ExtractorJS extends ContentExtractor {
             boolean handlingJSFile, String candidate) {
     	LOGGER.info("Considering candidate url '" +  candidate 
     			+ "' (curi = " + curi + ")");
+    	String bean = null;
+    	if (ext != null){
+    		bean = ext.getBeanName();
+    	}
         try {
             candidate = StringEscapeUtils.unescapeJavaScript(candidate);
-            LOGGER.info("Candidate url after unescapingJavaScript '" + candidate 
+            LOGGER.info("(on behalf of " + bean + ")Candidate url after unescapingJavaScript '" + candidate 
         			+ "' (curi = " + curi+ ")");
             
         } catch (NestableRuntimeException e) {
@@ -192,21 +196,21 @@ public class ExtractorJS extends ContentExtractor {
         }
         
         candidate = UriUtils.speculativeFixup(candidate, curi.getUURI());
-        LOGGER.info("ExtractorJS.considerString: candidate url after speculativeFixup '" + candidate 
+        LOGGER.info("(on behalf of " + bean + ")candidate url after speculativeFixup '" + candidate 
     			+ "' (curi = " + curi+ ")");
 
         if (UriUtils.isVeryLikelyUri(candidate)) {
-        	LOGGER.info("ExtractorJS.considerString: candidate url  '" + candidate 
+        	LOGGER.info("(on behalf of " + bean + ")candidate url  '" + candidate 
         			+ "' considered veryLikelyURI (curi = " + curi + ")");
             try {
                 int max = ext.getExtractorParameters().getMaxOutlinks();
                 if (handlingJSFile) {
-                	LOGGER.info("ExtractorJS.considerString: Calling addRelativeToVia that adds '" + candidate + "' as acceptable new link");
+                	LOGGER.info("(on behalf of " + bean + ")Calling addRelativeToVia that adds '" + candidate + "' as acceptable new link");
                 	addRelativeToVia(curi, max, candidate, JS_MISC, 
                             SPECULATIVE);
                     return true;
                 } else {
-                	LOGGER.info("ExtractorJS.considerString: Calling addRelativeToBase that adds '" + candidate + "' as acceptable new link");
+                	LOGGER.info("(on behalf of " + bean + ")Calling addRelativeToBase that adds '" + candidate + "' as acceptable new link");
                     addRelativeToBase(curi, max, candidate, JS_MISC, 
                             SPECULATIVE);
                     return true;

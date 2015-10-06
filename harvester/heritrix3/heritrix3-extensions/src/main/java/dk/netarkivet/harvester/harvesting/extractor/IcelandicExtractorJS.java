@@ -194,7 +194,12 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
 
     public long considerStrings(Extractor ext, 
             CrawlURI curi, CharSequence cs, boolean handlingJSFile) {
-    	LOGGER.info("Extracting links for curi '" + curi + "'. handlingJSFile is " + handlingJSFile);
+    	String bean = null;
+    	if (ext!=null){
+    		bean = ext.getBeanName();
+    	}
+    	LOGGER.info("(on behalf of " + bean + ")Extracting links for curi '" + curi + "'. handlingJSFile is " + handlingJSFile
+    			+ "; sequence being parsed: " + cs);
         long foundLinks = 0;
         Matcher strings =
             TextUtils.getMatcher(JAVASCRIPT_STRING_EXTRACTOR, cs);
@@ -206,25 +211,25 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
                 TextUtils.getMatcher(STRING_URI_DETECTOR, subsequence);
             if(uri.matches()) {
                 String string = uri.group();
-                LOGGER.info("Found tentative link: " + string);
+                LOGGER.info("(on behalf of " + bean + ")Found tentative link: " + string);
                 boolean falsePositive = false;
                 try {
                     string = StringEscapeUtils.unescapeJavaScript(string);
                 } catch (NestableRuntimeException e) {
                     LOGGER.log(Level.WARNING, "problem unescaping some javascript", e);
                 }
-                LOGGER.info("Unescaping javascript gives us: " + string);
+                LOGGER.info("(on behalf of " + bean + ")Unescaping javascript gives us: " + string);
                 
                 string = UriUtils.speculativeFixup(string, curi.getUURI());
                 
-                LOGGER.info("Doing speculativeFixup on string gives us: " + string);
+                LOGGER.info("(on behalf of " + bean + ")Doing speculativeFixup on string gives us: " + string);
                 
                 
                 // Filter out some bad false positives (should really fix regexp for URI detection) 
                 if (string.contains("/.") || string.contains("@") || string.length() > 150) {
                 	// While legal in URIs, these are rare and usually an indication of a false positive
                 	// in the speculative extraction.
-                	LOGGER.info("String '" + string + "' marked as a falsepositive!");
+                	LOGGER.info("(on behalf of " + bean + ")String '" + string + "' marked as a falsepositive!");
                 	falsePositive = true;
                 }
                 
@@ -239,10 +244,10 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
 	                try {
 	                    int max = ext.getExtractorParameters().getMaxOutlinks();
 	                    if (handlingJSFile) {
-	                    	LOGGER.info("Calling addRelativeToVia that adds '" + string + "' as acceptable new link");
+	                    	LOGGER.info("(on behalf of " + bean + ")Calling addRelativeToVia that adds '" + string + "' as acceptable new link");
 	                        addRelativeToVia(curi, max, string, JS_MISC, SPECULATIVE);
 	                    } else {
-	                    	LOGGER.info("Calling addRelativeToBase that adds '" + string + "' as acceptable new link");
+	                    	LOGGER.info("(on behalf of " + bean + ")Calling addRelativeToBase that adds '" + string + "' as acceptable new link");
 	                        addRelativeToBase(curi, max, string, JS_MISC, SPECULATIVE);
 	                    }
 	                } catch (URIException e) {

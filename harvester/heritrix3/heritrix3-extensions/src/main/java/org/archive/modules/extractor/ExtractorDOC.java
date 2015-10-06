@@ -114,6 +114,7 @@ public class ExtractorDOC extends ContentExtractor {
         try {
             UURI dest = UURIFactory.getInstance(curi.getUURI(), hyperlink);
             LinkContext lc = LinkContext.NAVLINK_MISC;
+            logger.info("Adding outlink '" + hyperlink + "' from curi '" + curi + "'");
             addOutlink(curi, hyperlink, lc, Hop.NAVLINK);
         } catch (URIException e1) {
             logUriError(e1, curi.getUURI(), hyperlink);

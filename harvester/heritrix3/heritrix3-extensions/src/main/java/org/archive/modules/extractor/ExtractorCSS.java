@@ -128,18 +128,23 @@ public class ExtractorCSS extends ContentExtractor {
         long foundLinks = 0;
         Matcher uris = null;
         String cssUri;
+        String bean = null;
+        if (ext != null) {
+        	bean = ext.getBeanName();
+        } 
+
         try {
             uris = TextUtils.getMatcher(CSS_URI_EXTRACTOR, cs);
             while (uris.find()) {
                 cssUri = uris.group(2);
-                logger.info("In curi '" + curi + "' found potential cssuri '" +  cssUri + "'");
+                logger.info("(on behalf of extractor " + bean + ") In curi '" + curi + "' found potential cssuri '" +  cssUri + "'");
                 // TODO: Escape more HTML Entities.
                 cssUri = TextUtils.replaceAll(ESCAPED_AMP, cssUri, "&");
-                logger.info("cssuri '" +  cssUri + "' after replacing '&amp' with '&'");
+                logger.info("(on behalf of extractor " + bean + ")cssuri '" +  cssUri + "' after replacing '&amp' with '&'");
                 // Remove backslashes when used as escape character in CSS URL
                 cssUri = TextUtils.replaceAll(CSS_BACKSLASH_ESCAPE, cssUri,
                         "$1");
-                logger.info("cssuri '" +  cssUri + "' after adding backslashes escapes");
+                logger.info("(on behalf of extractor " + bean + ") cssuri '" +  cssUri + "' after adding backslashes escapes");
                 foundLinks++;
                 int max = ext.getExtractorParameters().getMaxOutlinks();
                 try {
@@ -154,7 +159,7 @@ public class ExtractorCSS extends ContentExtractor {
         } finally {
             TextUtils.recycleMatcher(uris);
         }
-        logger.info("ExtractorCSS extracted " + foundLinks + " links found curi " +  curi); 
+        logger.info("(on behalf of extractor " + bean + ") ExtractorCSS extracted " + foundLinks + " links found curi " +  curi); 
         return foundLinks;
     }
 }
