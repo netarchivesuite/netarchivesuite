@@ -88,7 +88,7 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
         }
         TestGUIController TestGUIController = new TestGUIController(testController);
         LongRunningJob snapshotJob = new GenerateSnapshotJob(this, testController, driver,
-                HOUR/snapshotTimeDivider, 30*MINUTE/snapshotTimeDivider, 20*HOUR/snapshotTimeDivider, "SnapshotGenerationJob"
+                2*HOUR/snapshotTimeDivider, 30*MINUTE/snapshotTimeDivider, 20*HOUR/snapshotTimeDivider, "SnapshotGenerationJob"
                 );
         snapshotJob.run();
     }

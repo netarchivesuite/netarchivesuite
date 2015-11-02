@@ -44,7 +44,7 @@ public abstract class AbstractStressTest extends SeleniumTest {
 
     final static TestEnvironment ENV = new DefaultTestEnvironment(
             "Stresstest",
-            "foo@bar.dk",
+            "csr@statsbiblioteket.dk",
             "SystemTest",
             8073,
             TestEnvironment.JOB_ADMIN_SERVER,

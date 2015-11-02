@@ -55,7 +55,7 @@ public abstract class LongRunningJob {
     protected boolean run() {
         Long startTime = System.currentTimeMillis();
         startJob();
-        sleepWait();
+        startWait();
         if (!isStarted()) {
             fail("Job " + name + " failed to start.");
             return false;
@@ -83,6 +83,14 @@ public abstract class LongRunningJob {
                         + getProgress());
         return true;
     }
+
+    private void startWait() {
+            try {
+                Thread.sleep(startUpTime);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
     private void sleepWait() {
         try {
