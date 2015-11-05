@@ -53,6 +53,8 @@ no parameters.
 
 %>
 
+Hello World
+
 <h3 class="page_heading"><fmt:message key="pagetitle;edit.harvest.templates"/></h3>
 
 <form method="post" action="Definitions-download-harvest-template.jsp">
