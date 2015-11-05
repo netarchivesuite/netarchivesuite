@@ -50,7 +50,7 @@ no parameters.
         HeritrixTemplate heritrixTemplate = dao.read(flipactive);
         heritrixTemplate.setIsActive(!heritrixTemplate.isActive());
         dao.update(flipactive, heritrixTemplate);
-        response.sendRedirect("Definitions-selective-harvests.jsp");
+        response.sendRedirect("Definitions-edit-harvest-templates.jsp");
         return;
     }
 
