@@ -130,6 +130,17 @@ public class TemplateDBDAO extends TemplateDAO {
         }
     }
 
+    @Override
+    public synchronized Iterator<String> getAll(boolean active) {
+        Connection c = HarvestDBConnection.get();
+        try {
+            List<String> names = DBUtils.selectStringList(c, "SELECT name FROM ordertemplates WHERE isActive=? ORDER BY name ", active);
+            return names.iterator();
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
+
     /**
      * Return true if the database contains a template with the given name.
      *
