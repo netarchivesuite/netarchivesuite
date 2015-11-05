@@ -37,6 +37,8 @@ no parameters.
           pageEncoding="UTF-8"
 %>
 <%@ page import="dk.netarkivet.harvester.datamodel.HeritrixTemplate" %>
+<%@ page import="dk.netarkivet.common.utils.Settings" %>
+<%@ page import="dk.netarkivet.harvester.HarvesterSettings" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
@@ -128,6 +130,8 @@ no parameters.
                     linkText = "Activate";
                 }
                 String formId = templateWithActivity.name + "flip";
+                boolean isDefaultOrder = Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML).equals(templateWithActivity.name);
+                //TODO Do something clever so the default template cannot be deactivated!!!
             %>
             <form
                     id="<%=formId%>"
