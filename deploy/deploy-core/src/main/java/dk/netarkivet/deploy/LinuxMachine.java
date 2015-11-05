@@ -1668,12 +1668,12 @@ public class LinuxMachine extends Machine {
 
     private String getHarvestServerClasspath() {
         return getDefaultMachineClasspath() +
-                getInstallDirPath() + Constants.SLASH + "netarchivesuite-harvest-scheduler.jar" + Constants.COLON;
+                getInstallDirPath() + Constants.SLASH + "lib/netarchivesuite-harvest-scheduler.jar" + Constants.COLON;
     }
 
     private String getHarvesterCoreClasspath() {
         return getDefaultMachineClasspath() +
-                getInstallDirPath() + Constants.SLASH + "netarchivesuite-harvester-core.jar" + Constants.COLON;
+                getInstallDirPath() + Constants.SLASH + "lib/netarchivesuite-harvester-core.jar" + Constants.COLON;
     }
 
 
