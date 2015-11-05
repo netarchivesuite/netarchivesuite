@@ -1632,7 +1632,7 @@ public class LinuxMachine extends Machine {
                 // < /dev/null >> start_external_harvest_database.log 2>&1 &
 
                 updateDBPrint.print(ScriptConstants.EXPORT_CLASSPATH);
-                updateDBPrint.print(getHarvestServerClasspath() + ScriptConstants.NEWLINE);
+                updateDBPrint.print(getHarvestServerClasspath() + getHarvesterCoreClasspath() + ScriptConstants.NEWLINE);
 
                 updateDBPrint.print(ScriptConstants.JAVA + Constants.SPACE + "-" + ScriptConstants.OPTION_SETTINGS
                         + getConfDirPath() + updateHarvestDBSettingsFile.getName() + Constants.SPACE);
@@ -1670,6 +1670,12 @@ public class LinuxMachine extends Machine {
         return getDefaultMachineClasspath() +
                 getInstallDirPath() + Constants.SLASH + "netarchivesuite-harvest-scheduler.jar" + Constants.COLON;
     }
+
+    private String getHarvesterCoreClasspath() {
+        return getDefaultMachineClasspath() +
+                getInstallDirPath() + Constants.SLASH + "netarchivesuite-harvester-core.jar" + Constants.COLON;
+    }
+
 
     @Override
     protected String getLibDirPath() {
