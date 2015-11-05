@@ -54,14 +54,6 @@ no parameters.
         return;
     }
 
-
-    HTMLUtils.generateHeader(
-            pageContext);
-    List<String> templateNameList = new ArrayList<String>();
-    Iterator<String> templates = dao.getAll();
-    while (templates.hasNext()) {
-        templateNameList.add(templates.next());
-    }
     class TemplateWithActivity{
         public String name;
         public boolean isActive;
@@ -71,13 +63,22 @@ no parameters.
             this.isActive = isActive;
         }
     }
+    HTMLUtils.generateHeader(
+            pageContext);
     List<TemplateWithActivity> templateList = new ArrayList<TemplateWithActivity>();
-    for (String templateName: templateNameList) {
-        HeritrixTemplate heritrixTemplate = dao.read(templateName);
-        templateList.add(new TemplateWithActivity(templateName, heritrixTemplate.isActive()));
+    Iterator<String> templates = dao.getAll(true);
+    while (templates.hasNext()) {
+        String name = templates.next();
+        templateList.add(new TemplateWithActivity(name, true));
     }
-    //TODO replace with a more efficient DAO method that just returns the name/isActive pair
+    templates = dao.getAll(false);
+    while (templates.hasNext()) {
+        String name = templates.next();
+        templateList.add(new TemplateWithActivity(name, false));
+    }
 %>
+<h3 class="page_heading"><fmt:message key="pagetitle;edit.harvest.templates"/></h3>
+
 <table>
     <%
         for (TemplateWithActivity templateWithActivity: templateList) {
@@ -146,61 +147,8 @@ no parameters.
 </table>
 
 
-<h3 class="page_heading"><fmt:message key="pagetitle;edit.harvest.templates"/></h3>
-
-<form method="post" action="Definitions-download-harvest-template.jsp">
-    <h4><fmt:message key="download"/></h4><fmt:message key="harvestdefinition.templates.select"/><br />
-    <select name="order_xml_to_download">
-<%
-    for (String template : templateNameList) {
-        out.println("<option value=\"" + HTMLUtils.escapeHtmlValues(template)
-                    + "\">" + HTMLUtils.escapeHtmlValues(template)
-                            + "</option>");
-    }
-%>
-    </select>
-    <select name="requestedContentType">
-<%
-     String[] contentTypes = { "text/plain", "text/xml",
-             "binary/octet-stream" };
-    String[] contentDescriptions = {
-    	I18N.getString(response.getLocale(), "harvestdefinition.templates.show.as.text"),
-    	I18N.getString(response.getLocale(), "harvestdefinition.templates.show.as.xml"),
-        I18N.getString(response.getLocale(), "harvestdefinition.templates.save.to.disk")
-        };
-     for (int i = 0;
-          i < Math.min(contentTypes.length, contentDescriptions.length); i++) {
-         out.println("<option value=\""
-                     + HTMLUtils.escapeHtmlValues(contentTypes[i])
-                     + "\">"
-                     + HTMLUtils.escapeHtmlValues(contentDescriptions[i])
-                     + "</option>");
-      }
-%>
-  </select>
-    <input type="submit" name="download" value=<fmt:message key="harvestdefinition.templates.retrieve"/> />
-</form>
-<br />
 <hr/>
 <h4><fmt:message key="upload"/></h4>
-
-<form method="post" action="Definitions-upload-harvest-template.jsp"
-      enctype="multipart/form-data">
-    <fmt:message key="harvestdefinition.templates.upload.to.replace"/><br />
-    <select name="order_xml_to_replace">
-<%
-    for (String template : templateNameList) {
-        out.println("<option value=\"" + HTMLUtils.escapeHtmlValues(template)
-                    + "\">" + HTMLUtils.escapeHtmlValues(template)
-                    + "</option>");
-     }
-%>
-    </select>
-    <input type="file" name="upload_file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" /><br/>
-    <input type="submit" name="upload"
-           value="<fmt:message key="harvestdefinition.templates.upload.replace"/>"/>
-</form>
-<br/>
 
 <form method="post" action="Definitions-upload-harvest-template.jsp"
       enctype="multipart/form-data">
