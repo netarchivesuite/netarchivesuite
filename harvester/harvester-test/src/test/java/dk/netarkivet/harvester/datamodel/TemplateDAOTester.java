@@ -23,6 +23,7 @@
 package dk.netarkivet.harvester.datamodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -118,10 +119,13 @@ public class TemplateDAOTester extends DataModelTestCase {
 
         doc.getRootElement().addAttribute("foo", "bar");
         HeritrixTemplate temp = new H1HeritrixTemplate(doc);
+        temp.setIsActive(false);
         dao.update(defaultOrderXmlName, temp);
-        Document doc2 = ((H1HeritrixTemplate)dao.read(defaultOrderXmlName)).getTemplate();
+        HeritrixTemplate readTemplate = dao.read(defaultOrderXmlName);
+        Document doc2 = ((H1HeritrixTemplate) readTemplate).getTemplate();
         assertNotNull("Template should now have foo element", doc2.getRootElement().attribute("foo"));
         assertEquals("Foo element should be bar", "bar", doc2.getRootElement().attribute("foo").getStringValue());
+        assertFalse("New version of template object should be inactive.", readTemplate.isActive());
     }
 
     /**
