@@ -76,8 +76,7 @@ no parameters.
         <td><%=templateWithActivity.name%></td>
         <td>
             <form method="post" action="Definitions-download-harvest-template.jsp">
-                <h4><fmt:message key="download"/></h4><fmt:message key="harvestdefinition.templates.select"/>
-                <input name="order_xml_to_download" value="<%=templateWithActivity.name%>" />
+                <input name="order_xml_to_download" value="<%=templateWithActivity.name%>" type="hidden"/>
                 <select name="requestedContentType">
                     <%
                         String[] contentTypes = { "text/plain", "text/xml",
@@ -103,8 +102,7 @@ no parameters.
         <td>
             <form method="post" action="Definitions-upload-harvest-template.jsp"
                   enctype="multipart/form-data">
-                <fmt:message key="harvestdefinition.templates.upload.to.replace"/><br />
-                <input name="order_xml_to_replace" value="<%=templateWithActivity.name%>" />
+                <input name="order_xml_to_replace" value="<%=templateWithActivity.name%>" type="hidden"/>
                 <input type="file" name="upload_file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" />
                 <input type="submit" name="upload"
                        value="<fmt:message key="harvestdefinition.templates.upload.replace"/>"/>
@@ -114,11 +112,11 @@ no parameters.
             <%
                 if (templateWithActivity.isActive) {
             %>
-            Active
+            Active - Deactivate
             <%
             } else {
             %>
-            Inactive
+            Inactive - Activate
             <%
                 }
             %>
