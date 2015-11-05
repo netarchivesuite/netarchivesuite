@@ -44,9 +44,19 @@ no parameters.
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
+    TemplateDAO dao = TemplateDAO.getInstance();
+    String flipactive = request.getParameter(Constants.FLIPACTIVE_PARAM);
+    if (flipactive != null)  {
+        HeritrixTemplate heritrixTemplate = dao.read(flipactive);
+        heritrixTemplate.setIsActive(!heritrixTemplate.isActive());
+        dao.update(flipactive, heritrixTemplate);
+        response.sendRedirect("Definitions-selective-harvests.jsp");
+        return;
+    }
+
+
     HTMLUtils.generateHeader(
             pageContext);
-    TemplateDAO dao = TemplateDAO.getInstance();
     List<String> templateNameList = new ArrayList<String>();
     Iterator<String> templates = dao.getAll();
     while (templates.hasNext()) {
@@ -110,16 +120,24 @@ no parameters.
         </td>
         <td>
             <%
+                String linkText;
                 if (templateWithActivity.isActive) {
-            %>
-            Active - Deactivate
-            <%
-            } else {
-            %>
-            Inactive - Activate
-            <%
+                    linkText= "Deactivate";
+                } else {
+                    linkText = "Activate";
                 }
+                String formId = templateWithActivity.name + "flip";
             %>
+            <form
+                    id="<%=formId%>"
+                    action="Definitions-edit-harvest-templates.jsp"
+                    method="post"
+                    ><input
+                    type="hidden"
+                    name="flipactive"
+                    value="<%=templateWithActivity.name%>"
+                    /><a href="" onclick="document.getElementById('<%=formId%>').submit(); return false;"><%=linkText%></a>
+            </form>
         </td>
     </tr>
     <%
