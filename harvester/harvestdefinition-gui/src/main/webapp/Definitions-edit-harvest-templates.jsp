@@ -35,7 +35,9 @@ no parameters.
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.datamodel.TemplateDAO"
           pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%>
+<%@ page import="dk.netarkivet.harvester.datamodel.HeritrixTemplate" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N
@@ -45,15 +47,88 @@ no parameters.
     HTMLUtils.generateHeader(
             pageContext);
     TemplateDAO dao = TemplateDAO.getInstance();
-    List<String> templateList = new ArrayList<String>();
+    List<String> templateNameList = new ArrayList<String>();
     Iterator<String> templates = dao.getAll();
     while (templates.hasNext()) {
-        templateList.add(templates.next());
+        templateNameList.add(templates.next());
     }
+    class TemplateWithActivity{
+        public String name;
+        public boolean isActive;
 
+        public TemplateWithActivity(String name, boolean isActive) {
+            this.name = name;
+            this.isActive = isActive;
+        }
+    }
+    List<TemplateWithActivity> templateList = new ArrayList<TemplateWithActivity>();
+    for (String templateName: templateNameList) {
+        HeritrixTemplate heritrixTemplate = dao.read(templateName);
+        templateList.add(new TemplateWithActivity(templateName, heritrixTemplate.isActive()));
+    }
+    //TODO replace with a more efficient DAO method that just returns the name/isActive pair
 %>
+<table>
+    <%
+        for (TemplateWithActivity templateWithActivity: templateList) {
+    %>
+    <tr>
+        <td><%=templateWithActivity.name%></td>
+        <td>
+            <form method="post" action="Definitions-download-harvest-template.jsp">
+                <h4><fmt:message key="download"/></h4><fmt:message key="harvestdefinition.templates.select"/>
+                <input name="order_xml_to_download" value="<%=templateWithActivity.name%>" />
+                <select name="requestedContentType">
+                    <%
+                        String[] contentTypes = { "text/plain", "text/xml",
+                                "binary/octet-stream" };
+                        String[] contentDescriptions = {
+                                I18N.getString(response.getLocale(), "harvestdefinition.templates.show.as.text"),
+                                I18N.getString(response.getLocale(), "harvestdefinition.templates.show.as.xml"),
+                                I18N.getString(response.getLocale(), "harvestdefinition.templates.save.to.disk")
+                        };
+                        for (int i = 0;
+                             i < Math.min(contentTypes.length, contentDescriptions.length); i++) {
+                            out.println("<option value=\""
+                                    + HTMLUtils.escapeHtmlValues(contentTypes[i])
+                                    + "\">"
+                                    + HTMLUtils.escapeHtmlValues(contentDescriptions[i])
+                                    + "</option>");
+                        }
+                    %>
+                </select>
+                <input type="submit" name="download" value=<fmt:message key="harvestdefinition.templates.retrieve"/> />
+            </form>
+        </td>
+        <td>
+            <form method="post" action="Definitions-upload-harvest-template.jsp"
+                  enctype="multipart/form-data">
+                <fmt:message key="harvestdefinition.templates.upload.to.replace"/><br />
+                <input name="order_xml_to_replace" value="<%=templateWithActivity.name%>" />
+                <input type="file" name="upload_file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" />
+                <input type="submit" name="upload"
+                       value="<fmt:message key="harvestdefinition.templates.upload.replace"/>"/>
+            </form>
+        </td>
+        <td>
+            <%
+                if (templateWithActivity.isActive) {
+            %>
+            Active
+            <%
+            } else {
+            %>
+            Inactive
+            <%
+                }
+            %>
+        </td>
+    </tr>
+    <%
+        }
+    %>
+</table>
 
-Hello World
 
 <h3 class="page_heading"><fmt:message key="pagetitle;edit.harvest.templates"/></h3>
 
@@ -61,7 +136,7 @@ Hello World
     <h4><fmt:message key="download"/></h4><fmt:message key="harvestdefinition.templates.select"/><br />
     <select name="order_xml_to_download">
 <%
-    for (String template : templateList) {
+    for (String template : templateNameList) {
         out.println("<option value=\"" + HTMLUtils.escapeHtmlValues(template)
                     + "\">" + HTMLUtils.escapeHtmlValues(template)
                             + "</option>");
@@ -98,7 +173,7 @@ Hello World
     <fmt:message key="harvestdefinition.templates.upload.to.replace"/><br />
     <select name="order_xml_to_replace">
 <%
-    for (String template : templateList) {
+    for (String template : templateNameList) {
         out.println("<option value=\"" + HTMLUtils.escapeHtmlValues(template)
                     + "\">" + HTMLUtils.escapeHtmlValues(template)
                     + "</option>");
