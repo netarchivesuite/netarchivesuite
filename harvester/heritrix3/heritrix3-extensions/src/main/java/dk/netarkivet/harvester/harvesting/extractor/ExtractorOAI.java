@@ -66,11 +66,18 @@ import org.archive.util.TextUtils;
 public class ExtractorOAI extends ContentExtractor {
 
     /**
-     * Regular expression matching the resumptionToken.
+     * Regular expression matching the simple resumptionToken like this.
+     * <resumptionToken>oai_dc/421315/56151148/100/0/292/x/x/x</resumptionToken>
      */
-    private static final String RESUMPTION_TOKEN_MATCH
-        = "(?i)<resumptionToken>\\s*(.*)\\s*</resumptionToken>";
+    public static final String SIMPLE_RESUMPTION_TOKEN_MATCH = "(?i)<resumptionToken>\\s*(.*)\\s*</resumptionToken>";
 
+    /**
+     * Regular expression matching the extended resumptionToken with attributes like this. <resumptionToken cursor="0"
+     * completeListSize="421315">oai_dc/421315/56151148/100/0/292/x/x/x</resumptionToken> This is seen in OAI targets
+     * used by PURE.
+     */
+    public static final String EXTENDED_RESUMPTION_TOKEN_MATCH = "(?i)<resumptionToken\\s*cursor=\"[0-9]+\"\\s*completeListSize=\"[0-9]+\">\\s*(.*)\\s*</resumptionToken>";
+       
      /** The class logger. */
     final Log log = LogFactory.getLog(getClass());
 
@@ -99,21 +106,6 @@ public class ExtractorOAI extends ContentExtractor {
      */
     @Override
 	protected boolean innerExtract(CrawlURI curi) {
-    	// I believe this is handled by the ShouldProcess method
-        // FIXME: code needs refactoring to work again
-        //if (!isHttpTransactionContentToProcess(curi)) {
-        //    return;
-        //}
-    	
-        String mimeType = curi.getContentType();
-        if (mimeType == null) {
-            return false;
-        }
-        if ((mimeType.toLowerCase().indexOf("xml") < 0)
-            && (!curi.toString().toLowerCase().endsWith(".rss"))
-            && (!curi.toString().toLowerCase().endsWith(".xml"))) {
-            return false;
-        }
         try {
             String query = curi.getUURI().getQuery();
             if (!query.contains("verb=ListRecords")) { //Not an OAI-PMH document
@@ -151,22 +143,30 @@ public class ExtractorOAI extends ContentExtractor {
                 }
             }
         }
-        return true;
+        // TODO Should always be false
+        return false;
     }
 
     /**
      * Searches for resumption token and adds link if it is found. Returns true
      * iff a link is added.
      * @param curi the CrawlURI.
-     * @param cs the character sequency in which to search.
+     * @param cs the character sequence in which to search.
      * @return true iff a resumptionToken is found and a link added.
      */
     public boolean processXml(CrawlURI curi, CharSequence cs) {
-        Matcher m = TextUtils.getMatcher(RESUMPTION_TOKEN_MATCH, cs);
-        
+        Matcher m = TextUtils.getMatcher(SIMPLE_RESUMPTION_TOKEN_MATCH, cs);
+        Matcher mPure = TextUtils.getMatcher(EXTENDED_RESUMPTION_TOKEN_MATCH, cs);
+        boolean matchesPure = mPure.find();
         boolean matches = m.find();
+        String token = null;
         if (matches) {
-            String token = m.group(1);
+            token = m.group(1);
+        } else if (matchesPure) {
+            token = mPure.group(1);
+        }
+        
+        if (token != null) {
             UURI oldUri = curi.getUURI();
             try {
                 final String newQueryPart = "verb=ListRecords&resumptionToken="
@@ -174,6 +174,7 @@ public class ExtractorOAI extends ContentExtractor {
                 URI newUri = new URI(oldUri.getScheme(), oldUri.getAuthority(),
                                      oldUri.getPath(),
                                      newQueryPart, oldUri.getFragment());
+                
                 // FIXME needs refactoring to
                 //curi.createAndAddLink(newUri.toString(), Link.NAVLINK_MISC,
                 //                      Link.NAVLINK_HOP);
@@ -183,13 +184,16 @@ public class ExtractorOAI extends ContentExtractor {
                 //Link.add(uri, max, newUri, context, hop);
                 //This code beneath refactored by looking at ExtractorCSS code in Heritrix-3.2.0 src.
                 // FIXME
-                add(curi, 10, newUri.toString(), LinkContext.NAVLINK_MISC, Hop.NAVLINK);
+                log.info("Found resumption link: " + newUri);
+                add(curi, 10000, newUri.toString(), LinkContext.NAVLINK_MISC, Hop.NAVLINK);
                 //LinkContext.add(curi, 10, newUri.toString(), LinkContext.NAVLINK_MISC, Hop.NAVLINK);
             } catch (URISyntaxException e) {
                 log.error(e);
             } catch (URIException e) {
                 log.error(e);
             }
+        } else {
+        	log.info("No resumption tokens found for url " + curi.getCanonicalString());
         }
         TextUtils.recycleMatcher(m);
         return matches;
@@ -202,18 +206,26 @@ public class ExtractorOAI extends ContentExtractor {
     @Override
     public String report() {
         StringBuffer ret = new StringBuffer();
-        ret.append("Processor: org.archive.crawler.extractor.ExtractorHTML\n");
-        ret.append("  Function:          Link extraction on HTML documents\n");
+        ret.append("Processor: dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI\n");
+        ret.append("  Function:          Link extraction on OAI XML documents\n");
         ret.append("  CrawlURIs handled: " + this.numberOfCURIsHandled + "\n");
-        ret.append("  Links extracted:   " + this.numberOfLinksExtracted
-                + "\n\n");
+        ret.append("  Links extracted:   " + this.numberOfLinksExtracted + "\n\n");
         return ret.toString();
     }
 
     @Override
     protected boolean shouldExtract(CrawlURI curi) {
-        return curi.isHttpTransaction();
+        //curi.isHttpTransaction();
+        String mimeType = curi.getContentType();
+        if (mimeType == null) {
+            return false;
+        }
+        if ((mimeType.toLowerCase().indexOf("xml") < 0)
+            && (!curi.toString().toLowerCase().endsWith(".rss"))
+            && (!curi.toString().toLowerCase().endsWith(".xml"))) {
+            return false;
+        }
+        return true;
 
-    }
-
+    }    
 }
