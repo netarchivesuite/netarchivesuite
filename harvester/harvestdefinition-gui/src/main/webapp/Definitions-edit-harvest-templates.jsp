@@ -71,7 +71,12 @@ no parameters.
     Iterator<String> templates = dao.getAll(true);
     while (templates.hasNext()) {
         String name = templates.next();
-        templateList.add(new TemplateWithActivity(name, true));
+        boolean isDefaultOrder = Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML).equals(name);
+        if (isDefaultOrder) {
+            templateList.add(0, new TemplateWithActivity(name, true));
+        } else {
+            templateList.add(new TemplateWithActivity(name, true));
+        }
     }
     templates = dao.getAll(false);
     while (templates.hasNext()) {
@@ -100,8 +105,14 @@ no parameters.
 </script>
 <h3 class="page_heading"><fmt:message key="pagetitle;edit.harvest.templates"/></h3>
 <button id="hide" onclick="hideInactive();">Hide Inactive</button><button id="show" onclick="showInactive();">Show Inactive</button> </br>
-<table>
+<table id="templates">
+    <style>
+        table[id="templates"] tr.dark td {padding: 3px; background-color: #c4b8c0}
+        table[id="templates"] tr.light td {padding: 3px; background-color: #b4a8b0}
+        table[id="templates"] td a {color: black}
+    </style>
     <%
+        int rowNumber = 0;
         for (TemplateWithActivity templateWithActivity: templateList) {
             String rowClass;
             if (templateWithActivity.isActive) {
@@ -109,6 +120,12 @@ no parameters.
             } else {
                 rowClass = "inactive";
             }
+            if (rowNumber%6 < 3) {
+                rowClass += " light";
+            } else {
+                rowClass += " dark";
+            }
+            rowNumber++;
     %>
     <tr class="<%=rowClass%>">
         <td><%=templateWithActivity.name%></td>
@@ -156,6 +173,9 @@ no parameters.
                 }
                 String formId = templateWithActivity.name + "flip";
                 boolean isDefaultOrder = Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML).equals(templateWithActivity.name);
+                if (isDefaultOrder) {
+                    linkText = "Default Template";
+                }
                 //TODO Do something clever so the default template cannot be deactivated!!!
             %>
             <form
@@ -166,7 +186,18 @@ no parameters.
                     type="hidden"
                     name="flipactive"
                     value="<%=templateWithActivity.name%>"
-                    /><a href="" onclick="document.getElementById('<%=formId%>').submit(); return false;"><%=linkText%></a>
+                    />
+                <%
+                    if (!isDefaultOrder) {
+                %>
+                <a href="" onclick="document.getElementById('<%=formId%>').submit(); return false;"><%=linkText%></a>
+                <%
+                    } else {
+                %>
+                <a href=""><%=linkText%></a>
+                <%
+                    }
+                %>
             </form>
         </td>
     </tr>
@@ -183,7 +214,7 @@ no parameters.
       enctype="multipart/form-data">
     <fmt:message key="harvestdefinition.templates.upload.to.create"/><br />
  <fmt:message key="harvestdefinition.templates.upload.template.name"/> <input name="order_xml_to_upload" size="<%=Constants.TEMPLATE_NAME_WIDTH %>" value="">
-<fmt:message key="prompt;harvestdefinition.templates.upload.select.file"/><input type="file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" name="upload_file"/><br/>
+<fmt:message key="prompt;harvestdefinition.templates.upload.select.file"/><input type="file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" name="upload_file"/>
 <input type="submit" name="upload"
        value="<fmt:message key="harvestdefinition.templates.upload.create"/>"/>
 </form>
