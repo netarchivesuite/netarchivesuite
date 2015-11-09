@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Set;
 
 
+
+import javax.el.ELContext;
 //import javax.el.ELContext;
 //import javax.servlet.AsyncContext;
 //import javax.servlet.DispatcherType;
@@ -763,6 +765,12 @@ public class WebinterfaceTestCase {
             // Settings | File Templates.
         }
         */
+
+		@Override
+		public ELContext getELContext() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     public static PageContext getDummyPageContext(final Locale l, final ServletRequest request) {
@@ -923,6 +931,12 @@ public class WebinterfaceTestCase {
                 return null;
             }
  */
+
+			@Override
+			public ELContext getELContext() {
+				// TODO Auto-generated method stub
+				return null;
+			}
         };
     }
 }
