@@ -79,13 +79,38 @@ no parameters.
         templateList.add(new TemplateWithActivity(name, false));
     }
 %>
+<script type="text/javascript">
+    window.onload = hideInactive
+    function hideInactive() {
+        var inactiveRows = document.getElementsByClassName("inactive");
+        for (i = 0; i < inactiveRows.length; ++i) {
+            inactiveRows[i].style.display = 'none';
+        }
+        document.getElementById('hide').style.display = 'none';
+        document.getElementById('show').style.display = 'inline';
+    }
+    function showInactive() {
+        var inactiveRows = document.getElementsByClassName("inactive");
+        for (i = 0; i < inactiveRows.length; ++i) {
+             inactiveRows[i].style.display = 'table-row';
+        }
+        document.getElementById('hide').style.display = 'inline';
+        document.getElementById('show').style.display = 'none';
+    }
+</script>
 <h3 class="page_heading"><fmt:message key="pagetitle;edit.harvest.templates"/></h3>
-
+<button id="hide" onclick="hideInactive();">Hide Inactive</button><button id="show" onclick="showInactive();">Show Inactive</button> </br>
 <table>
     <%
         for (TemplateWithActivity templateWithActivity: templateList) {
+            String rowClass;
+            if (templateWithActivity.isActive) {
+                rowClass = "active";
+            } else {
+                rowClass = "inactive";
+            }
     %>
-    <tr>
+    <tr class="<%=rowClass%>">
         <td><%=templateWithActivity.name%></td>
         <td>
             <form method="post" action="Definitions-download-harvest-template.jsp">
