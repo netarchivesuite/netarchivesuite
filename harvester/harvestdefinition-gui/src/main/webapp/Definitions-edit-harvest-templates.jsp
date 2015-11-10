@@ -104,7 +104,7 @@ no parameters.
     }
 </script>
 <h3 class="page_heading"><fmt:message key="pagetitle;edit.harvest.templates"/></h3>
-<button id="hide" onclick="hideInactive();">Hide Inactive</button><button id="show" onclick="showInactive();">Show Inactive</button> </br>
+<button id="hide" onclick="hideInactive();"><fmt:message key="harvestdefinition.templates.hide.inactive"/></button><button id="show" onclick="showInactive();"><fmt:message key="harvestdefinition.templates.show.inactive"/></button> </br>
 <table id="templates">
     <style>
         table[id="templates"] tr.dark td {padding: 3px; background-color: #c4b8c0}
@@ -167,16 +167,15 @@ no parameters.
             <%
                 String linkText;
                 if (templateWithActivity.isActive) {
-                    linkText= "Deactivate";
+                    linkText= I18N.getString(response.getLocale(), "deactivate");
                 } else {
-                    linkText = "Activate";
+                    linkText = I18N.getString(response.getLocale(), "activate");
                 }
                 String formId = templateWithActivity.name + "flip";
                 boolean isDefaultOrder = Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML).equals(templateWithActivity.name);
                 if (isDefaultOrder) {
-                    linkText = "Default Template";
+                    linkText = I18N.getString(response.getLocale(), "harvestdefinition.templates.default.template");
                 }
-                //TODO Do something clever so the default template cannot be deactivated!!!
             %>
             <form
                     id="<%=formId%>"
