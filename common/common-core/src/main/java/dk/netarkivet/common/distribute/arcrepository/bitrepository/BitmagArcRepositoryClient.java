@@ -45,7 +45,6 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -120,17 +119,15 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     }
 
     /**
-     * Store the given file in the ArcRepository. After storing, the file is deleted.
+     * Store the given file in the repository. After storing, the file is deleted.
      *
      * @param file A file to be stored. Must exist.
      * @throws IOFailure thrown if store is unsuccessful, or failed to clean up files after the store operation.
-     * @throws IllegalState if file already exists.
      * @throws ArgumentNotValid if file parameter is null or file is not an existing file.
      */
     @Override
     public void store(File file) throws IOFailure, ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(file, "File file");
-        ArgumentNotValid.checkTrue(file.exists(), "File '" + file + "' does not exist");
+        ArgumentNotValid.checkExistsNormalFile(file, "File '" + file + "' does not exist");
         // Check if file already exists
         if (bitrep.existsInCollection(file.getName(), collectionId)) {
         	log.warn("The file '{}' is already in collection '{}'", file.getName(), collectionId);
@@ -147,7 +144,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     }
 
     /**
-     * Gets a single ARC record out of the ArcRepository.
+     * Gets a single (W)ARC record out of the repository.
      *
      * @param arcfile The name of a file containing the desired record.
      * @param index The offset of the desired record in the file
@@ -159,6 +156,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "String arcfile");
         ArgumentNotValid.checkNotNegative(index, "long index");
+        
         if (!bitrep.existsInCollection(arcfile, collectionId)) {
         	log.warn("The file '{}' is not in collection '{}'. Returning null BitarchiveRecord", arcfile, collectionId);
         	return null;
@@ -192,7 +190,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     }
 
     /**
-     * Retrieves a file from an ArcRepository and places it in a local file.
+     * Retrieves a file from a repository and places it in a local file.
      *
      * @param arcfilename Name of the arcfile to retrieve.
      * @param replica The bitarchive to retrieve the data from. (Note argument is ignored)
@@ -222,17 +220,16 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
      * processing and the finish() method will be called afterwards. The process() method will be called with each File
      * entry. An optional function postProcess() allows handling the combined results of the batchjob, e.g. summing the
      * results, sorting, etc.
-     * @param replicaId The archive to execute the job on. Argument Ignored replaced by usepillar (or reuse replicaId for bitmaguse)
+     * @param replicaId The archive to execute the job on. Argument Ignored: replaced by usepillar.
      * @param args The arguments for the batchjob. This can be null.
      * @return The status of the batch job after it ended.
-     * @throws ArgumentNotValid If the job is null or the replicaId is either null or the empty string.
+     * @throws ArgumentNotValid If the job is null
      * @throws IOFailure If a problem occurs during processing the batchjob.
      */
     @Override
     public BatchStatus batch(final FileBatchJob job, String replicaId, String... args) throws ArgumentNotValid,
     IOFailure {
     	ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
-    	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
 
     	// Deduce the remote file to run the batchjob on from the job.getFilenamePattern()
     	// e.g. "22-metadata-[0-9]+.(w)?arc" => 22-metadata-1.warc 

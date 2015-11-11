@@ -1,3 +1,25 @@
+/*
+ * #%L
+ * Netarchivesuite - common
+ * %%
+ * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ *             the National Library of France and the Austrian National Library.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
 package dk.netarkivet.common.distribute.arcrepository.bitrepository;
 
 import java.io.File;
@@ -11,8 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jms.JMSException;
-
-import dk.netarkivet.common.exceptions.*;
 
 import org.bitrepository.access.AccessComponentFactory;
 import org.bitrepository.access.getchecksums.BlockingGetChecksumsClient;
@@ -61,6 +81,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * The class for interacting with the BitRepository, e.g. put files, get files, etc.
@@ -160,7 +181,7 @@ public class Bitrepository {
      * @return true if the upload succeeded, false otherwise.
      */
     public boolean uploadFile(final File file, final String collectionId) {
-        //ArgumentCheck.checkExistsNormalFile(file, "File file");
+        ArgumentNotValid.checkExistsNormalFile(file, "File file");
         // Does collection exists? If not return false
         if (getCollectionPillars(collectionId).isEmpty()) {
             logger.warn("The given collection Id does not exist");
@@ -236,8 +257,8 @@ public class Bitrepository {
      */
     public File getFile(final String fileId, final String collectionId, final FilePart filePart) 
             throws IOFailure{
-        //ArgumentCheck.checkNotNullOrEmpty(fileId, "String fileId");
-        //ArgumentCheck.checkNotNullOrEmpty(collectionId, "String collectionId");
+        ArgumentNotValid.checkNotNullOrEmpty(fileId, "String fileId");
+        ArgumentNotValid.checkNotNullOrEmpty(collectionId, "String collectionId");
         // Does collection exists? If not throw exception
         if (getCollectionPillars(collectionId).isEmpty()) {
             throw new IOFailure("The given collection Id does not exist");
@@ -312,12 +333,10 @@ public class Bitrepository {
 
         OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
 
-        //output.debug("Instantiation GetFileID outputFormatter.");
         //GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
         GetFileIDsOutputFormatter outputFormatter = new GetFileIDsNoFormatter(output);
         long timeout = getClientTimeout(bitmagSettings);
 
-        //output.debug("Instantiation GetFileID paging client.");
         PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
         
@@ -469,13 +488,11 @@ public class Bitrepository {
     public List<String> getFileIds(String collectionID) {
     	
     	OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
-        //output.debug("Instantiation GetFileID outputFormatter.");
         GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
 
         long timeout = getClientTimeout(bitmagSettings);
         List<String> usepillarListOnly = new ArrayList<String>();
         usepillarListOnly.add(usepillar);
-        //output.debug("Instantiation GetFileID paging client.");
         PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
         Boolean success = pagingClient.getFileIDs(collectionID, null,

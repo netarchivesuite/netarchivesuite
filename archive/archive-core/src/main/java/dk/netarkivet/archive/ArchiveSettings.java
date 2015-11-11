@@ -106,7 +106,7 @@ public class ArchiveSettings {
      * Credentials to enter in the GUI for "deleting" ARC files in this bit archive.
      */
     public static String ENVIRONMENT_THIS_CREDENTIALS = "settings.archive.bitarchive.thisCredentials";
-
+    
     /**
      * <b>settings.archive.bitpreservation.baseDir</b>: <br>
      * Absolute or relative path to dir containing results of file-list-batch-jobs and checksumming batch jobs for bit
@@ -293,4 +293,29 @@ public class ArchiveSettings {
      * to set a timelimit to the batchjob for the GetChecksumMessage.
      */
     public static String SINGLE_CHECKSUM_TIMEOUT = "settings.archive.bitarchive.singleChecksumTimeout";
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////// necessary changes to ease the migration to the bitrepository system as archive ////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * <b>settings.archive.bitarchive.fileDirectoryName</b>: <br>
+     * The name of the subdirectory in baseFileDir where the archived files are placed.
+     */
+    public static String FILE_DIRECTORY_NAME = "settings.archive.bitarchive.fileDirectoryName";
+    
+    /**
+     * <b>settings.archive.bitarchive.fileDirectoryListing</b>: <br> (optional)
+     * The name of the file in baseFileDir where an inventory of the archived files are placed. 
+     * Replaces the use of the archivedFiles and archivedTime , introduced to optimize getFile and getRecord operations
+     */
+    public static String FILE_DIRECTORY_FILE_LISTING = "settings.archive.bitarchive.fileDirectoryListing";
+    
+    /**
+     * <b>settings.archive.bitarchive.readonlyArchiveMode</b>: <br> 
+     * Is the bitarchiveServer to be readOnly? If yes, we don't listen to the upload queue 
+     * Necessary, when the upload happens by other means than the ArcrepositoryClient.store method.
+     */
+    public static String READONLY_ARCHIVE_MODE = "settings.archive.bitarchive.readonlyArchiveMode";
+    
 }
