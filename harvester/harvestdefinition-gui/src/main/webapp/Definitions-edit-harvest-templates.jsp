@@ -71,7 +71,12 @@ no parameters.
     Iterator<String> templates = dao.getAll(true);
     while (templates.hasNext()) {
         String name = templates.next();
-        templateList.add(new TemplateWithActivity(name, true));
+        boolean isDefaultOrder = Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML).equals(name);
+        if (isDefaultOrder) {
+            templateList.add(0, new TemplateWithActivity(name, true));
+        } else {
+            templateList.add(new TemplateWithActivity(name, true));
+        }
     }
     templates = dao.getAll(false);
     while (templates.hasNext()) {
@@ -79,13 +84,50 @@ no parameters.
         templateList.add(new TemplateWithActivity(name, false));
     }
 %>
+<script type="text/javascript">
+    window.onload = hideInactive
+    function hideInactive() {
+        var inactiveRows = document.getElementsByClassName("inactive");
+        for (i = 0; i < inactiveRows.length; ++i) {
+            inactiveRows[i].style.display = 'none';
+        }
+        document.getElementById('hide').style.display = 'none';
+        document.getElementById('show').style.display = 'inline';
+    }
+    function showInactive() {
+        var inactiveRows = document.getElementsByClassName("inactive");
+        for (i = 0; i < inactiveRows.length; ++i) {
+             inactiveRows[i].style.display = 'table-row';
+        }
+        document.getElementById('hide').style.display = 'inline';
+        document.getElementById('show').style.display = 'none';
+    }
+</script>
 <h3 class="page_heading"><fmt:message key="pagetitle;edit.harvest.templates"/></h3>
-
-<table>
+<button id="hide" onclick="hideInactive();"><fmt:message key="harvestdefinition.templates.hide.inactive"/></button><button id="show" onclick="showInactive();"><fmt:message key="harvestdefinition.templates.show.inactive"/></button> </br>
+<table id="templates">
+    <style>
+        table[id="templates"] tr.dark td {padding: 3px; background-color: #c4b8c0}
+        table[id="templates"] tr.light td {padding: 3px; background-color: #b4a8b0}
+        table[id="templates"] td a {color: black}
+    </style>
     <%
+        int rowNumber = 0;
         for (TemplateWithActivity templateWithActivity: templateList) {
+            String rowClass;
+            if (templateWithActivity.isActive) {
+                rowClass = "active";
+            } else {
+                rowClass = "inactive";
+            }
+            if (rowNumber%6 < 3) {
+                rowClass += " light";
+            } else {
+                rowClass += " dark";
+            }
+            rowNumber++;
     %>
-    <tr>
+    <tr class="<%=rowClass%>">
         <td><%=templateWithActivity.name%></td>
         <td>
             <form method="post" action="Definitions-download-harvest-template.jsp">
@@ -125,13 +167,15 @@ no parameters.
             <%
                 String linkText;
                 if (templateWithActivity.isActive) {
-                    linkText= "Deactivate";
+                    linkText= I18N.getString(response.getLocale(), "deactivate");
                 } else {
-                    linkText = "Activate";
+                    linkText = I18N.getString(response.getLocale(), "activate");
                 }
                 String formId = templateWithActivity.name + "flip";
                 boolean isDefaultOrder = Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML).equals(templateWithActivity.name);
-                //TODO Do something clever so the default template cannot be deactivated!!!
+                if (isDefaultOrder) {
+                    linkText = I18N.getString(response.getLocale(), "harvestdefinition.templates.default.template");
+                }
             %>
             <form
                     id="<%=formId%>"
@@ -141,7 +185,18 @@ no parameters.
                     type="hidden"
                     name="flipactive"
                     value="<%=templateWithActivity.name%>"
-                    /><a href="" onclick="document.getElementById('<%=formId%>').submit(); return false;"><%=linkText%></a>
+                    />
+                <%
+                    if (!isDefaultOrder) {
+                %>
+                <a href="" onclick="document.getElementById('<%=formId%>').submit(); return false;"><%=linkText%></a>
+                <%
+                    } else {
+                %>
+                <a href=""><%=linkText%></a>
+                <%
+                    }
+                %>
             </form>
         </td>
     </tr>
@@ -158,7 +213,7 @@ no parameters.
       enctype="multipart/form-data">
     <fmt:message key="harvestdefinition.templates.upload.to.create"/><br />
  <fmt:message key="harvestdefinition.templates.upload.template.name"/> <input name="order_xml_to_upload" size="<%=Constants.TEMPLATE_NAME_WIDTH %>" value="">
-<fmt:message key="prompt;harvestdefinition.templates.upload.select.file"/><input type="file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" name="upload_file"/><br/>
+<fmt:message key="prompt;harvestdefinition.templates.upload.select.file"/><input type="file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" name="upload_file"/>
 <input type="submit" name="upload"
        value="<fmt:message key="harvestdefinition.templates.upload.create"/>"/>
 </form>
