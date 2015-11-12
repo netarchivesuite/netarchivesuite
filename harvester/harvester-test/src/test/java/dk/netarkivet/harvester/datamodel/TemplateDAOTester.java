@@ -76,8 +76,19 @@ public class TemplateDAOTester extends DataModelTestCase {
         HeritrixTemplate heritrixTemplate = dao.read(templateName);
         heritrixTemplate.setIsActive(!heritrixTemplate.isActive());
         dao.update(templateName, heritrixTemplate);
-        assertEquals("Expect 1 inactive template now.", 1, dao.getAll(false));
-        assertEquals("Expect number of active templates to have decreased by 1.", total-1, dao.getAll(true));
+        assertEquals("Expect 1 inactive template now.", 1, getCount(dao, false));
+
+        assertEquals("Expect number of active templates to have decreased by 1.", total-1, getCount(dao, true));
+    }
+
+    private int getCount(TemplateDAO dao, boolean isActive) {
+        final Iterator<String> all = dao.getAll(isActive);
+        int count = 0;
+        while (all.hasNext()) {
+            all.next();
+            count++;
+        }
+        return count;
     }
 
     @Category(SlowTest.class)
