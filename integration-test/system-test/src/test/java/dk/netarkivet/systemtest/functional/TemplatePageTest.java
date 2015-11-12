@@ -97,7 +97,7 @@ public class TemplatePageTest extends AbstractSystemTest {
         PageHelper.gotoPage(PageHelper.MenuPages.EditHarvestTemplates);
         defaultOrderRow =  driver.findElement(By.id("default_orderxmlflip")).findElement(
                                By.xpath("parent::*")).findElement(By.xpath("parent::*"));
-        String fileToUpload = "harvester/harvester-core/src/test/resources/heritrix3/h3-templates/default_orderxml_h3_withdedup.cxml";
+        String fileToUpload = "ws/harvester/harvester-core/src/test/resources/heritrix3/h3-templates/default_orderxml_h3_withdedup.cxml";
         File file = new File(fileToUpload);
         assertTrue(file.exists(), "No such file: "  + file.getAbsolutePath());
         defaultOrderRow.findElement(By.name("upload_file")).sendKeys("harvester/harvester-core/src/test/resources/heritrix3/h3-templates/default_orderxml_h3_withdedup.cxml");
