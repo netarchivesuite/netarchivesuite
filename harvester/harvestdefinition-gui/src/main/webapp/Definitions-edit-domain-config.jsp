@@ -177,7 +177,7 @@ Display all the form information for this domain
                 <td><select name="<%=Constants.ORDER_XML_NAME_PARAM%>">
                     <%
                         Iterator<String> templates =
-                                TemplateDAO.getInstance().getAll();
+                                TemplateDAO.getInstance().getAll(true);
                         while (templates.hasNext()) {
                             String selected = "";
                             String template = templates.next();

@@ -77,7 +77,7 @@ public class TemplateDBDAO extends TemplateDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement("SELECT orderxml FROM ordertemplates WHERE name = ?");
+            s = c.prepareStatement("SELECT orderxml, isActive FROM ordertemplates WHERE name = ?");
             s.setString(1, orderXmlName);
             ResultSet res = s.executeQuery();
             if (!res.next()) {
@@ -94,7 +94,9 @@ public class TemplateDBDAO extends TemplateDAO {
                 orderTemplateReader = new StringReader(string);
             } 
             System.out.println("Calling HeritrixTemplate.read() w/ arg:" + orderTemplateReader);
-            return HeritrixTemplate.read(orderTemplateReader);
+            HeritrixTemplate heritrixTemplate = HeritrixTemplate.read(orderTemplateReader);
+            heritrixTemplate.setIsActive(res.getBoolean(2));
+            return heritrixTemplate;
         } catch (SQLException e) {
             final String message = "SQL error finding order.xml for " + orderXmlName + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e);
@@ -122,6 +124,17 @@ public class TemplateDBDAO extends TemplateDAO {
         Connection c = HarvestDBConnection.get();
         try {
             List<String> names = DBUtils.selectStringList(c, "SELECT name FROM ordertemplates ORDER BY name");
+            return names.iterator();
+        } finally {
+            HarvestDBConnection.release(c);
+        }
+    }
+
+    @Override
+    public synchronized Iterator<String> getAll(boolean active) {
+        Connection c = HarvestDBConnection.get();
+        try {
+            List<String> names = DBUtils.selectStringList(c, "SELECT name FROM ordertemplates WHERE isActive=? ORDER BY name ", active);
             return names.iterator();
         } finally {
             HarvestDBConnection.release(c);
@@ -176,9 +189,10 @@ public class TemplateDBDAO extends TemplateDAO {
                 throw new PermissionDenied("An order template called " + orderXmlName + " already exists");
             }
 
-            s = c.prepareStatement("INSERT INTO ordertemplates " + "( name, orderxml ) VALUES ( ?, ? )");
+            s = c.prepareStatement("INSERT INTO ordertemplates " + "( name, orderxml, isActive ) VALUES ( ?, ?, ? )");
             DBUtils.setStringMaxLength(s, 1, orderXmlName, Constants.MAX_NAME_SIZE, orderXmlName, "length");
             DBUtils.setClobMaxLength(s, 2, orderXml.getXML(), Constants.MAX_ORDERXML_SIZE, "size", orderXmlName);
+            s.setBoolean(3, orderXml.isActive());
             s.executeUpdate();
         } catch (SQLException e) {
             throw new IOFailure("SQL error creating template " + orderXmlName + "\n"
@@ -208,9 +222,10 @@ public class TemplateDBDAO extends TemplateDAO {
                 throw new PermissionDenied("No order template called " + orderXmlName + " exists");
             }
 
-            s = c.prepareStatement("UPDATE ordertemplates SET orderxml = ? WHERE name = ?");
+            s = c.prepareStatement("UPDATE ordertemplates SET orderxml = ?, isActive= ? WHERE name = ?");
             DBUtils.setClobMaxLength(s, 1, orderXml.getXML(), Constants.MAX_ORDERXML_SIZE, "size", orderXmlName);
-            s.setString(2, orderXmlName);
+            s.setBoolean(2, orderXml.isActive());
+            s.setString(3, orderXmlName);
             s.executeUpdate();
         } catch (SQLException e) {
             throw new IOFailure("SQL error updating template " + orderXmlName + "\n"

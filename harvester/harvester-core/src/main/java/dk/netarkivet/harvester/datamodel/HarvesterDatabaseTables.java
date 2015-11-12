@@ -237,7 +237,7 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about Heritrix templates. */
     ORDERTEMPLATES {
         static final String NAME = "ordertemplates";
-        static final int REQUIRED_VERSION = 1;
+        static final int REQUIRED_VERSION = 2;
 
         @Override
         public int getRequiredVersion() {

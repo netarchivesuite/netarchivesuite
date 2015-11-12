@@ -35,85 +35,185 @@ no parameters.
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.datamodel.TemplateDAO"
           pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%>
+<%@ page import="dk.netarkivet.harvester.datamodel.HeritrixTemplate" %>
+<%@ page import="dk.netarkivet.common.utils.Settings" %>
+<%@ page import="dk.netarkivet.harvester.HarvesterSettings" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
+    TemplateDAO dao = TemplateDAO.getInstance();
+    String flipactive = request.getParameter(Constants.FLIPACTIVE_PARAM);
+    if (flipactive != null)  {
+        HeritrixTemplate heritrixTemplate = dao.read(flipactive);
+        heritrixTemplate.setIsActive(!heritrixTemplate.isActive());
+        dao.update(flipactive, heritrixTemplate);
+        response.sendRedirect("Definitions-edit-harvest-templates.jsp");
+        return;
+    }
+
+    class TemplateWithActivity{
+        public String name;
+        public boolean isActive;
+
+        public TemplateWithActivity(String name, boolean isActive) {
+            this.name = name;
+            this.isActive = isActive;
+        }
+    }
     HTMLUtils.generateHeader(
             pageContext);
-    TemplateDAO dao = TemplateDAO.getInstance();
-    List<String> templateList = new ArrayList<String>();
-    Iterator<String> templates = dao.getAll();
+    List<TemplateWithActivity> templateList = new ArrayList<TemplateWithActivity>();
+    Iterator<String> templates = dao.getAll(true);
     while (templates.hasNext()) {
-        templateList.add(templates.next());
+        String name = templates.next();
+        boolean isDefaultOrder = Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML).equals(name);
+        if (isDefaultOrder) {
+            templateList.add(0, new TemplateWithActivity(name, true));
+        } else {
+            templateList.add(new TemplateWithActivity(name, true));
+        }
     }
-
+    templates = dao.getAll(false);
+    while (templates.hasNext()) {
+        String name = templates.next();
+        templateList.add(new TemplateWithActivity(name, false));
+    }
 %>
-
+<script type="text/javascript">
+    window.onload = hideInactive
+    function hideInactive() {
+        var inactiveRows = document.getElementsByClassName("inactive");
+        for (i = 0; i < inactiveRows.length; ++i) {
+            inactiveRows[i].style.display = 'none';
+        }
+        document.getElementById('hide').style.display = 'none';
+        document.getElementById('show').style.display = 'inline';
+    }
+    function showInactive() {
+        var inactiveRows = document.getElementsByClassName("inactive");
+        for (i = 0; i < inactiveRows.length; ++i) {
+             inactiveRows[i].style.display = 'table-row';
+        }
+        document.getElementById('hide').style.display = 'inline';
+        document.getElementById('show').style.display = 'none';
+    }
+</script>
 <h3 class="page_heading"><fmt:message key="pagetitle;edit.harvest.templates"/></h3>
+<button id="hide" onclick="hideInactive();"><fmt:message key="harvestdefinition.templates.hide.inactive"/></button><button id="show" onclick="showInactive();"><fmt:message key="harvestdefinition.templates.show.inactive"/></button> </br>
+<table id="templates">
+    <style>
+        table[id="templates"] tr.dark td {padding: 3px; background-color: #c4b8c0}
+        table[id="templates"] tr.light td {padding: 3px; background-color: #b4a8b0}
+        table[id="templates"] td a {color: black}
+    </style>
+    <%
+        int rowNumber = 0;
+        for (TemplateWithActivity templateWithActivity: templateList) {
+            String rowClass;
+            if (templateWithActivity.isActive) {
+                rowClass = "active";
+            } else {
+                rowClass = "inactive";
+            }
+            if (rowNumber%6 < 3) {
+                rowClass += " light";
+            } else {
+                rowClass += " dark";
+            }
+            rowNumber++;
+    %>
+    <tr class="<%=rowClass%>">
+        <td><%=templateWithActivity.name%></td>
+        <td>
+            <form method="post" action="Definitions-download-harvest-template.jsp">
+                <input name="order_xml_to_download" value="<%=templateWithActivity.name%>" type="hidden"/>
+                <select name="requestedContentType">
+                    <%
+                        String[] contentTypes = { "text/plain", "text/xml",
+                                "binary/octet-stream" };
+                        String[] contentDescriptions = {
+                                I18N.getString(response.getLocale(), "harvestdefinition.templates.show.as.text"),
+                                I18N.getString(response.getLocale(), "harvestdefinition.templates.show.as.xml"),
+                                I18N.getString(response.getLocale(), "harvestdefinition.templates.save.to.disk")
+                        };
+                        for (int i = 0;
+                             i < Math.min(contentTypes.length, contentDescriptions.length); i++) {
+                            out.println("<option value=\""
+                                    + HTMLUtils.escapeHtmlValues(contentTypes[i])
+                                    + "\">"
+                                    + HTMLUtils.escapeHtmlValues(contentDescriptions[i])
+                                    + "</option>");
+                        }
+                    %>
+                </select>
+                <input type="submit" name="download" value=<fmt:message key="harvestdefinition.templates.retrieve"/> />
+            </form>
+        </td>
+        <td>
+            <form method="post" action="Definitions-upload-harvest-template.jsp"
+                  enctype="multipart/form-data">
+                <input name="order_xml_to_replace" value="<%=templateWithActivity.name%>" type="hidden"/>
+                <input type="file" name="upload_file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" />
+                <input type="submit" name="upload"
+                       value="<fmt:message key="harvestdefinition.templates.upload.replace"/>"/>
+            </form>
+        </td>
+        <td>
+            <%
+                String linkText;
+                if (templateWithActivity.isActive) {
+                    linkText= I18N.getString(response.getLocale(), "deactivate");
+                } else {
+                    linkText = I18N.getString(response.getLocale(), "activate");
+                }
+                String formId = templateWithActivity.name + "flip";
+                boolean isDefaultOrder = Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML).equals(templateWithActivity.name);
+                if (isDefaultOrder) {
+                    linkText = I18N.getString(response.getLocale(), "harvestdefinition.templates.default.template");
+                }
+            %>
+            <form
+                    id="<%=formId%>"
+                    action="Definitions-edit-harvest-templates.jsp"
+                    method="post"
+                    ><input
+                    type="hidden"
+                    name="flipactive"
+                    value="<%=templateWithActivity.name%>"
+                    />
+                <%
+                    if (!isDefaultOrder) {
+                %>
+                <a href="" onclick="document.getElementById('<%=formId%>').submit(); return false;"><%=linkText%></a>
+                <%
+                    } else {
+                %>
+                <a href=""><%=linkText%></a>
+                <%
+                    }
+                %>
+            </form>
+        </td>
+    </tr>
+    <%
+        }
+    %>
+</table>
 
-<form method="post" action="Definitions-download-harvest-template.jsp">
-    <h4><fmt:message key="download"/></h4><fmt:message key="harvestdefinition.templates.select"/><br />
-    <select name="order_xml_to_download">
-<%
-    for (String template : templateList) {
-        out.println("<option value=\"" + HTMLUtils.escapeHtmlValues(template)
-                    + "\">" + HTMLUtils.escapeHtmlValues(template)
-                            + "</option>");
-    }
-%>
-    </select>
-    <select name="requestedContentType">
-<%
-     String[] contentTypes = { "text/plain", "text/xml",
-             "binary/octet-stream" };
-    String[] contentDescriptions = {
-    	I18N.getString(response.getLocale(), "harvestdefinition.templates.show.as.text"),
-    	I18N.getString(response.getLocale(), "harvestdefinition.templates.show.as.xml"),
-        I18N.getString(response.getLocale(), "harvestdefinition.templates.save.to.disk")
-        };
-     for (int i = 0;
-          i < Math.min(contentTypes.length, contentDescriptions.length); i++) {
-         out.println("<option value=\""
-                     + HTMLUtils.escapeHtmlValues(contentTypes[i])
-                     + "\">"
-                     + HTMLUtils.escapeHtmlValues(contentDescriptions[i])
-                     + "</option>");
-      }
-%>
-  </select>
-    <input type="submit" name="download" value=<fmt:message key="harvestdefinition.templates.retrieve"/> />
-</form>
-<br />
+
 <hr/>
 <h4><fmt:message key="upload"/></h4>
 
 <form method="post" action="Definitions-upload-harvest-template.jsp"
       enctype="multipart/form-data">
-    <fmt:message key="harvestdefinition.templates.upload.to.replace"/><br />
-    <select name="order_xml_to_replace">
-<%
-    for (String template : templateList) {
-        out.println("<option value=\"" + HTMLUtils.escapeHtmlValues(template)
-                    + "\">" + HTMLUtils.escapeHtmlValues(template)
-                    + "</option>");
-     }
-%>
-    </select>
-    <input type="file" name="upload_file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" /><br/>
-    <input type="submit" name="upload"
-           value="<fmt:message key="harvestdefinition.templates.upload.replace"/>"/>
-</form>
-<br/>
-
-<form method="post" action="Definitions-upload-harvest-template.jsp"
-      enctype="multipart/form-data">
     <fmt:message key="harvestdefinition.templates.upload.to.create"/><br />
  <fmt:message key="harvestdefinition.templates.upload.template.name"/> <input name="order_xml_to_upload" size="<%=Constants.TEMPLATE_NAME_WIDTH %>" value="">
-<fmt:message key="prompt;harvestdefinition.templates.upload.select.file"/><input type="file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" name="upload_file"/><br/>
+<fmt:message key="prompt;harvestdefinition.templates.upload.select.file"/><input type="file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" name="upload_file"/>
 <input type="submit" name="upload"
        value="<fmt:message key="harvestdefinition.templates.upload.create"/>"/>
 </form>

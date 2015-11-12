@@ -345,4 +345,10 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
     }
 
+
+    @Override protected void migrateOrderTemplatesTablev1tov2() {
+        String[] sqlStatements = {"ALTER TABLE ordertemplates ADD COLUMN isActive BOOL NOT NULL DEFAULT TRUE"};
+        HarvestDBConnection.updateTable(HarvesterDatabaseTables.ORDERTEMPLATES.getTablename(), 2, sqlStatements);
+    }
+
 }

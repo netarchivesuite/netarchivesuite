@@ -77,7 +77,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'schedules', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'ordertemplates', 1);
+    VALUES ( 'ordertemplates', 2);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'jobs', 10);
 INSERT INTO schemaversions ( tablename, version )
@@ -340,7 +340,8 @@ GRANT USAGE ON SEQUENCE schedules_id_seq TO netarchivesuite;
 CREATE TABLE ordertemplates (
     template_id bigint NOT NULL PRIMARY KEY,
     name varchar(300) NOT NULL UNIQUE,
-    orderxml text NOT NULL
+    orderxml text NOT NULL,
+    isActive bool NOT NULL DEFAULT TRUE
 );
 
 CREATE SEQUENCE ordertemplates_id_seq OWNED BY ordertemplates.template_id;

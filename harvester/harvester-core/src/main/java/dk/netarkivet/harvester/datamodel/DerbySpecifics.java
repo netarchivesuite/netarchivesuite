@@ -390,4 +390,10 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
     }
 
+    @Override protected void migrateOrderTemplatesTablev1tov2() {
+        String tableName = HarvesterDatabaseTables.ORDERTEMPLATES.getTablename();
+        String[] sqlStatements = {"ALTER TABLE " + tableName + " ADD COLUMN isActive BOOLEAN NOT NULL DEFAULT TRUE"};
+        HarvestDBConnection.updateTable(tableName, 2, sqlStatements);
+    }
+
 }

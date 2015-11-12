@@ -35,6 +35,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -96,8 +97,22 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         return "all_test.sh";
     }
 
-    private void initialiseSelenium() {
-        driver = new FirefoxDriver();
+    private void initialiseSelenium(){
+        FirefoxProfile fxProfile = new FirefoxProfile();
+            fxProfile.setPreference("browser.download.folderList",2);
+            fxProfile.setPreference("browser.download.manager.showWhenStarting",false);
+        try {
+            fxProfile.setPreference("browser.download.dir",(File.createTempFile("aaaa","bbbb")).getParentFile().getAbsolutePath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        fxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk","text/csv");
+        fxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk","text/xml");
+        fxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk","binary/octet-stream");
+
+
+
+        driver = new FirefoxDriver(fxProfile);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
