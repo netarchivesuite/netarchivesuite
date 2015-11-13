@@ -543,6 +543,9 @@ public class LinuxMachine extends Machine {
     protected void createApplicationStartScripts(File directory) throws IOFailure {
         // go through all applications and create their start script
         for (Application app : applications) {
+            if (app.getTotalName().contains("GUI")) {
+                 createHarvestDatabaseUpdateScript(directory, true);
+            }
             File appStartScript = new File(directory, Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification()
                     + scriptExtension);
             try {
@@ -1600,10 +1603,10 @@ public class LinuxMachine extends Machine {
     }
 
     @Override
-    protected void createHarvestDatabaseUpdateScript(File dir) {
+    protected void createHarvestDatabaseUpdateScript(File dir, boolean forceCreate) {
         // Ignore if no harvest database directory has been defined or this isn't a harvest server app.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
-        if (dbDir.isEmpty()) {
+        if (dbDir.isEmpty() && !forceCreate) {
             return;
         }
 

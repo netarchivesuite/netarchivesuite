@@ -196,7 +196,7 @@ public abstract class Machine {
         createOSLocalStartAllScript(machineDirectory);
         createHarvestDatabaseStartScript(machineDirectory);
         createArchiveDatabaseStartScript(machineDirectory);
-        createHarvestDatabaseUpdateScript(machineDirectory);
+        createHarvestDatabaseUpdateScript(machineDirectory, false);
         // create restart script
         createRestartScript(machineDirectory);
         // copy the security policy file
@@ -871,8 +871,9 @@ public abstract class Machine {
      * create a harvestDatabaseUpdatescript in the given machineDirectory.
      *
      * @param machineDirectory a given MachineDirectory.
+     * @param forceCreate
      */
-    protected abstract void createHarvestDatabaseUpdateScript(File machineDirectory);
+    protected abstract void createHarvestDatabaseUpdateScript(File machineDirectory, boolean forceCreate);
 
     protected String getTargetEncoding() {
         return targetEncoding;
