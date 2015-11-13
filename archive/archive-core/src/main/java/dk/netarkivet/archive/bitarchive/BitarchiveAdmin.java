@@ -280,20 +280,31 @@ public final class BitarchiveAdmin {
          * Check, that arcFilePath (now known to be TEMPORARY_DIRECTORY_NAME) resides in a recognised Bitarchive
          * Directory.
          */
-        File archivedir = arcFilePath.getParentFile();
-        if (archivedir == null || !isBitarchiveDirectory(archivedir)) {
+        File basedir = arcFilePath.getParentFile();
+        if (basedir == null || !isBitarchiveDirectory(basedir)) {
             throw new IOFailure("Location '" + tempLocation + "' is not in " + "recognised archive directory.");
         }
         /**
          * Move File tempLocation to new location: storageFile
          */
-        File storagePath = new File(archivedir, Constants.FILE_DIRECTORY_NAME);
+        File storagePath = new File(basedir, Constants.FILE_DIRECTORY_NAME);
         File storageFile = new File(storagePath, arcFileName);
         if (!tempLocation.renameTo(storageFile)) {
             throw new IOFailure("Could not move '" + tempLocation.getPath() + "' to '" + storageFile.getPath() + "'");
         }
         // Update the filelist for the directory with this new file.
-        updateFileList(archivedir);
+        final File canonicalFile;
+        try {
+            canonicalFile = basedir.getCanonicalFile();
+        } catch (IOException e) {
+            throw new IOFailure("Could not find canonical file for " + basedir.getAbsolutePath());
+        }
+        final List<String> fileList = archivedFiles.get(canonicalFile);
+        if (fileList == null) {
+            throw new UnknownID("The directory " + basedir.getAbsolutePath() + " was not found in the map of known directories and files.");
+        }
+        fileList.add(arcFileName);
+        archiveTime.put(canonicalFile, storagePath.lastModified());
         return storageFile;
     }
 

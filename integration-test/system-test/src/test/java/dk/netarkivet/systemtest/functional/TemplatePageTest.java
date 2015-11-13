@@ -97,8 +97,10 @@ public class TemplatePageTest extends AbstractSystemTest {
         PageHelper.gotoPage(PageHelper.MenuPages.EditHarvestTemplates);
         defaultOrderRow =  driver.findElement(By.id("default_orderxmlflip")).findElement(
                                By.xpath("parent::*")).findElement(By.xpath("parent::*"));
-        defaultOrderRow.findElement(By.name("upload_file")).sendKeys(downloadedFile.getAbsolutePath());
-
+        String fileToUpload = "src/test/resources/default_orderxml.cxml";
+        File file = new File(fileToUpload);
+        assertTrue(file.exists(), "No such file: "  + file.getAbsolutePath());
+        defaultOrderRow.findElement(By.name("upload_file")).sendKeys(file.getAbsolutePath());
         addStep("Click the upload button.",
                 "The text 'The harvest template 'default_orderxml' has been updated' should be displayed");
         defaultOrderRow.findElement(By.name("upload")).click();
