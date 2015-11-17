@@ -154,7 +154,7 @@ National Library.
                 <archiveFilesReport>
                 	<generate>true</generate>
                 	<fileName>archivefiles-report.txt</fileName>
-                	<fileHeader>[ARCHIVEFILE] [Opened] [Closed] [Size]</fileHeader>
+                	<fileHeader>[ARCHIVEFILE] [Closed] [Size]</fileHeader>
                 </archiveFilesReport>
                 <metadataFormat>warc</metadataFormat>
             </metadata>

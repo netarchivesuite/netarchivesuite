@@ -497,7 +497,7 @@ public class HarvesterSettings {
     /**
      * <b>settings.harvester.harvesting.metadata.archiveFilesReportName</b> If
      * {@link #METADATA_GENERATE_ARCHIVE_FILES_REPORT} is set to true, sets the header of the generated report file.
-     * This setting should generally be left to its default value, which is '[ARCHIVEFILE] [Opened] [Closed] [Size]'.
+     * This setting should generally be left to its default value, which is '[ARCHIVEFILE] [Closed] [Size]'.
      *
      * @see HarvestDocumentation#documentHarvest(dk.netarkivet.harvester.harvesting.IngestableFiles)
      */
