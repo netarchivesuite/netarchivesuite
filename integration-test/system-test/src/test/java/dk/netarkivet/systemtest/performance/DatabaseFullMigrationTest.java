@@ -45,7 +45,7 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
         doUpdateFileStatus();
     }
 
-    @Test
+    @Test ( enabled = false )
     public void testUpdateChecksumStatus() {
         addDescription("Test updating checksum status for all files in one checksum-replica. This takes about four hours to run in a full production load.");
         doUpdateChecksumAndFileStatus();
