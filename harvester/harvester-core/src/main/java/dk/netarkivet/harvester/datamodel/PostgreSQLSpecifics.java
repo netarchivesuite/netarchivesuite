@@ -347,8 +347,9 @@ public class PostgreSQLSpecifics extends DBSpecifics {
 
 
     @Override protected void migrateOrderTemplatesTablev1tov2() {
-        String[] sqlStatements = {"ALTER TABLE ordertemplates ADD COLUMN isActive BOOL NOT NULL DEFAULT TRUE"};
-        HarvestDBConnection.updateTable(HarvesterDatabaseTables.ORDERTEMPLATES.getTablename(), 2, sqlStatements);
+        final String tablename = HarvesterDatabaseTables.ORDERTEMPLATES.getTablename();
+        String[] sqlStatements = {"ALTER TABLE " + tablename + " ADD COLUMN isActive BOOL NOT NULL DEFAULT TRUE"};
+        HarvestDBConnection.updateTable(tablename, 2, sqlStatements);
     }
 
 }
