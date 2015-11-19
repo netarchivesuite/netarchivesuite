@@ -215,6 +215,14 @@ public class CommonSettings {
     public static String WEBINTERFACE_SETTINGS = "settings.common.webinterface";
 
     /**
+     * <b>settings.common.webinterface.hideInactiveTemplates</b>;<br/>
+     * Boolean valued String. If true, inactive harvest templates are entirely hidden in the GUI - it will be impossible
+     * to see them or change their state to "active". If false, the GUI will include functionality to change the
+     * status of template from inactive to active and vice-versa.
+     */
+    public static String HIDE_INACTIVE_TEMPLATES = "settings.common.webinterface.hideInactiveTemplates";
+
+    /**
      * settings.common.webinterface.<b>language</b>: <br>
      * The entire language setting structure under the webinterface setting. Is repeated for each language
      */

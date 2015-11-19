@@ -39,6 +39,7 @@ no parameters.
 <%@ page import="dk.netarkivet.harvester.datamodel.HeritrixTemplate" %>
 <%@ page import="dk.netarkivet.common.utils.Settings" %>
 <%@ page import="dk.netarkivet.harvester.HarvesterSettings" %>
+<%@ page import="dk.netarkivet.common.CommonSettings" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
@@ -47,8 +48,9 @@ no parameters.
 %><%
     HTMLUtils.setUTF8(request);
     TemplateDAO dao = TemplateDAO.getInstance();
+    boolean hideInactive =  Settings.getBoolean(CommonSettings.HIDE_INACTIVE_TEMPLATES);
     String flipactive = request.getParameter(Constants.FLIPACTIVE_PARAM);
-    if (flipactive != null)  {
+    if (flipactive != null && !hideInactive)  {
         HeritrixTemplate heritrixTemplate = dao.read(flipactive);
         heritrixTemplate.setIsActive(!heritrixTemplate.isActive());
         dao.update(flipactive, heritrixTemplate);
@@ -78,10 +80,12 @@ no parameters.
             templateList.add(new TemplateWithActivity(name, true));
         }
     }
-    templates = dao.getAll(false);
-    while (templates.hasNext()) {
-        String name = templates.next();
-        templateList.add(new TemplateWithActivity(name, false));
+    if (!hideInactive) {
+        templates = dao.getAll(false);
+        while (templates.hasNext()) {
+            String name = templates.next();
+            templateList.add(new TemplateWithActivity(name, false));
+        }
     }
 %>
 <script type="text/javascript">
@@ -104,7 +108,9 @@ no parameters.
     }
 </script>
 <h3 class="page_heading"><fmt:message key="pagetitle;edit.harvest.templates"/></h3>
+<% if (!hideInactive) { %>
 <button id="hide" onclick="hideInactive();"><fmt:message key="harvestdefinition.templates.hide.inactive"/></button><button id="show" onclick="showInactive();"><fmt:message key="harvestdefinition.templates.show.inactive"/></button> </br>
+<%}%>
 <table id="templates">
     <style>
         table[id="templates"] tr.dark td {padding: 3px; background-color: #c4b8c0}
@@ -163,6 +169,9 @@ no parameters.
                        value="<fmt:message key="harvestdefinition.templates.upload.replace"/>"/>
             </form>
         </td>
+        <%
+            if (!hideInactive) {
+        %>
         <td>
             <%
                 String linkText;
@@ -199,6 +208,9 @@ no parameters.
                 %>
             </form>
         </td>
+        <%
+            }
+        %>
     </tr>
     <%
         }
