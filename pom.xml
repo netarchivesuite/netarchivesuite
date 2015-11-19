@@ -25,6 +25,7 @@
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
     <jwat.version>1.0.3</jwat.version>
+    <derby.version>10.12.1.1</derby.version>
   </properties>
 
   <modules>
