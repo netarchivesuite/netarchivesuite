@@ -24,10 +24,14 @@ package dk.netarkivet.common.webinterface;
 
 import java.io.File;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.webapp.WebAppContext;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.handler.DefaultHandler;
+import org.mortbay.jetty.handler.HandlerList;
+import org.mortbay.jetty.webapp.WebAppContext;
+//import org.eclipse.jetty.server.Server;
+//import org.eclipse.jetty.server.handler.DefaultHandler;
+//import org.eclipse.jetty.server.handler.HandlerList;
+//import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
