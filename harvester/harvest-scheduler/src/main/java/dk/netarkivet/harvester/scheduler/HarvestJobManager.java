@@ -71,7 +71,7 @@ public class HarvestJobManager extends LifeCycleComponent {
         super.shutdown();
         HarvestDBConnection.cleanup();
     }
-
+/* Requires java 8
     public static Provider<JMSConnection> getJMSConnectionProvider() {
         return () -> JMSConnectionFactory.getInstance();
     }
@@ -84,4 +84,43 @@ public class HarvestJobManager extends LifeCycleComponent {
     public static Provider<Notifications> getNotificationsProvider() {
         return () -> NotificationsFactory.getInstance();
     }
+    */
+    public static Provider<JMSConnection> getJMSConnectionProvider() {
+    	return new Provider<JMSConnection>() {
+
+			@Override
+			public JMSConnection get() {
+				// TODO Auto-generated method stub
+				return JMSConnectionFactory.getInstance();
+			}};
+    }
+    public static Provider<JobDAO> getJobDAOProvider() {
+    	return new Provider<JobDAO>() {
+
+			@Override
+			public JobDAO get() {
+				// TODO Auto-generated method stub
+				return JobDAO.getInstance();
+			}};
+    }
+    public static Provider<HarvestDefinitionDAO> getHarvestDefinitionDAOProvider() {
+    	return new Provider<HarvestDefinitionDAO>() {
+
+			@Override
+			public HarvestDefinitionDAO get() {
+				// TODO Auto-generated method stub
+				return HarvestDefinitionDAO.getInstance();
+			}};
+    }
+    public static Provider<Notifications> getNotificationsProvider() {
+    	return new Provider<Notifications>() {
+
+			@Override
+			public Notifications get() {
+				// TODO Auto-generated method stub
+				return NotificationsFactory.getInstance();
+			}};
+    }
+    
+    
 }

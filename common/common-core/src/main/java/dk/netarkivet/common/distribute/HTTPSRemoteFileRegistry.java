@@ -36,15 +36,16 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManagerFactory;
-
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.security.SslSocketConnector;
 import org.apache.commons.io.IOUtils;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.SecureRequestCustomizer;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
+//import org.eclipse.jetty.server.HttpConfiguration;
+//import org.eclipse.jetty.server.HttpConnectionFactory;
+//import org.eclipse.jetty.server.SecureRequestCustomizer;
+//import org.eclipse.jetty.server.Server;
+//import org.eclipse.jetty.server.ServerConnector;
+//import org.eclipse.jetty.server.SslConnectionFactory;
+//import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
@@ -133,8 +134,8 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
      * Start the server, including a handler that responds with registered files, removes registered files on request,
      * and gives 404 otherwise. Connection to this web host only possible with the shared certificate.
      */
-    @Override
-    protected void startServer() {
+    protected void startServerOld() {
+    	/*
         server = new Server();
 
         SslContextFactory sslContextFactory = new SslContextFactory();
@@ -162,8 +163,31 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
             server.start();
         } catch (Exception e) {
             throw new IOFailure("Cannot start HTTPSRemoteFile registry", e);
-        }
+        } */
     }
+    
+    protected void startServer() {
+    	server = new Server();
+    	//This sets up a secure connector
+    	SslSocketConnector connector = new SslSocketConnector();
+    	connector.setKeystore(KEYSTORE_PATH);
+    	connector.setPassword(KEYSTORE_PASSWORD);
+    	connector.setKeyPassword(KEY_PASSWORD);
+    	connector.setTruststore(KEYSTORE_PATH);
+    	connector.setTrustPassword(KEYSTORE_PASSWORD);
+    	connector.setNeedClientAuth(true);
+    	connector.setPort(port);
+    	//This initialises the server.
+    	server.addConnector(connector);
+    	server.addHandler(new HTTPRemoteFileRegistryHandler());
+    	try {
+    	server.start();
+    	} catch (Exception e) {
+    	throw new IOFailure("Cannot start HTTPSRemoteFile registry", e);
+    	}
+    	}
+    
+    
 
     /**
      * Open a connection to an URL in this registry. Thus opens SSL connections using the certificate above.

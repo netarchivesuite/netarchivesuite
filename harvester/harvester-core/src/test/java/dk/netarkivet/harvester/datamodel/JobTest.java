@@ -94,7 +94,7 @@ public class JobTest {
         SeedList seedList = new SeedList("pølse.dk", asList(new String[] {seed1, seed2, seed3}));
         DomainConfiguration domainConfiguration = new DomainConfiguration(
                 "pølse.dk", "pølse.dk", new DomainHistory(),
-                new ArrayList<>(), asList(new SeedList[] {seedList}), new ArrayList<>());
+                new ArrayList<String>(), asList(new SeedList[] {seedList}), new ArrayList<Password>());
         Job job = createDefaultJob(domainConfiguration);
 
         Set<String> internationalizedSeeds = Sets.newSet(

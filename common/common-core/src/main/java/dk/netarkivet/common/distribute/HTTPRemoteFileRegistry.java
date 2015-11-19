@@ -36,10 +36,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.mortbay.jetty.Request;
+import org.mortbay.jetty.Server;
+/*
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+*/
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +119,8 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
      */
     protected void startServer() {
         server = new Server();
-        ServerConnector connector = new ServerConnector(server);
+        //ServerConnector connector = new ServerConnector(server);
+        SocketConnector connector = new SocketConnector();
         connector.setPort(port);
         server.addConnector(connector);
         server.setHandler(new HTTPRemoteFileRegistryHandler());
@@ -253,8 +260,10 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
          * HttpServletResponse), HttpServletResponse, int)
          */
         @Override
-        public void handle(String string, Request baseRequest, HttpServletRequest httpServletRequest,
-                HttpServletResponse httpServletResponse) throws IOException, ServletException {
+        public void handle(String string, 
+        		//Request baseRequest, 
+        		HttpServletRequest httpServletRequest,
+                HttpServletResponse httpServletResponse, int i) throws IOException, ServletException {
             // since this is a jetty handle method, we know it is a Jetty
             // request object.
             Request request = ((Request) httpServletRequest);
@@ -282,6 +291,15 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
                 }
             }
         }
+
+        
+		/*
+		public void handle(String arg0, HttpServletRequest arg1,
+				HttpServletResponse arg2, int arg3) throws IOException,
+				ServletException {
+			// TODO Auto-generated method stub
+			
+		}*/
     }
 
 }
