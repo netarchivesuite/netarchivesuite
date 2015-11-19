@@ -52,7 +52,7 @@ no parameters.
     String flipactive = request.getParameter(Constants.FLIPACTIVE_PARAM);
     if (flipactive != null && !hideInactive)  {
         HeritrixTemplate heritrixTemplate = dao.read(flipactive);
-        heritrixTemplate.setIsActive(!heritrixTemplate.isActive());
+        heritrixTemplate.setIsActive(!heritrixTemplate.isActive());   //ie just flip the current state
         dao.update(flipactive, heritrixTemplate);
         response.sendRedirect("Definitions-edit-harvest-templates.jsp");
         return;
