@@ -37,7 +37,8 @@ class GenerateSnapshotJob extends GenericWebJob {
                 "Expect to create a snapshot harvest definition.");
         driver.findElement(By.linkText("Definitions")).click();
         driver.findElement(By.linkText("Snapshot Harvests")).click();
-        driver.findElement(By.partialLinkText("Create new")).click();
+        final WebElement element = driver.findElement(By.partialLinkText("Create new"));
+        element.click();
         List<WebElement> inputs = driver.findElements(By.tagName("input"));
         WebElement submit = null;
         for (WebElement input: inputs) {
@@ -53,6 +54,10 @@ class GenerateSnapshotJob extends GenericWebJob {
                 input.clear();
                 input.sendKeys("100000");
             }
+        }
+        if (submit == null) {
+            throw new RuntimeException("Failed to find submit button for the snapshot job on the relevat page. The GUI application"
+                    + " has probably died.");
         }
         submit.submit();
         stressTest.addStep("Activate harvest", "Expect to generate a substantial number of jobs.");
