@@ -70,14 +70,17 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
 %><%
     HTMLUtils.setUTF8(request);
 
+    HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
+    //JobDAO jobDAO = JobDAO.getInstance();
+
     Provider<HarvestDefinitionDAO> hdDaoProvider = new Provider<HarvestDefinitionDAO>() {
-        @Override public HarvestDefinitionDAO get() {
+        public HarvestDefinitionDAO get() {
             return HarvestDefinitionDAO.getInstance();
         }
     };
 
     Provider<JobDAO> jobDaoProvider = new Provider<JobDAO>() {
-        @Override public JobDAO get() {
+        public JobDAO get() {
             return JobDAO.getInstance();
         }
     };
@@ -100,7 +103,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
     String harvestName = request.getParameter(Constants.HARVEST_PARAM);
     SparseFullHarvest hd = null;
     if (harvestName != null) {
-        hd = hdDaoProvider.get().getSparseFullHarvest(harvestName);
+        hd = hdDAO.getSparseFullHarvest(harvestName);
         if (hd == null) {
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                     "errormsg;harvest.0.does.not.exist", harvestName);
@@ -224,7 +227,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
         <%
             int rowcount = 0;
             for (SparseFullHarvest oldHarvest
-                    : hdDaoProvider.get().getAllSparseFullHarvestDefinitions()) {
+                    : hdDAO.getAllSparseFullHarvestDefinitions()) {
                 if (oldHarvest.getName().equals(harvestName)) {
                     continue;
                 }
