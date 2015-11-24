@@ -71,13 +71,13 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
     HTMLUtils.setUTF8(request);
 
     Provider<HarvestDefinitionDAO> hdDaoProvider = new Provider<HarvestDefinitionDAO>() {
-        @Override public HarvestDefinitionDAO get() {
+ 	public HarvestDefinitionDAO get() {
             return HarvestDefinitionDAO.getInstance();
         }
     };
 
     Provider<JobDAO> jobDaoProvider = new Provider<JobDAO>() {
-        @Override public JobDAO get() {
+        public JobDAO get() {
             return JobDAO.getInstance();
         }
     };
