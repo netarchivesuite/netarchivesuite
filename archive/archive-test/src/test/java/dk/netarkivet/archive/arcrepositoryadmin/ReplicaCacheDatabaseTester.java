@@ -36,12 +36,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.apache.commons.collections.IteratorUtils;
-
 
 import org.junit.After;
 import org.junit.Before;
@@ -61,7 +56,13 @@ import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-
+/*
+IMPORTS removed as part of removing JDK 8 stuff
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+*/
 public class ReplicaCacheDatabaseTester {
 
     private ReloadSettings rs = new ReloadSettings();

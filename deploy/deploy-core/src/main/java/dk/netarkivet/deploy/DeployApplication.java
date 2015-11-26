@@ -25,7 +25,7 @@ package dk.netarkivet.deploy;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Optional;
+
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -35,6 +35,10 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 import dk.netarkivet.common.utils.Settings;
+
+// JDK8-import
+//import java.util.Optional;
+
 
 /**
  * The application that is run to generate install and start/stop scripts for all physical locations, machines and
@@ -69,8 +73,9 @@ public final class DeployApplication {
     private static File arcDbFile;
     /** The folder with the external libraries to be deployed. */
     private static File externalJarFolder;
-    private static Optional<File> defaultBundlerZip;
-
+    
+    //private static Optional<File> defaultBundlerZip;
+    private static File defaultBundlerZip;
     /**
      * Private constructor to disallow instantiation of this class.
      */
@@ -179,8 +184,9 @@ public final class DeployApplication {
             // check the external jar-files library folder.
             initJarFolder(jarFolderName);
 
-            initBundlerZip(Optional.ofNullable(
-                    ap.getCommandLine().getOptionValue(Constants.ARG_DEFAULT_BUNDLER_ZIP)));
+            //initBundlerZip(Optional.ofNullable(
+            //        ap.getCommandLine().getOptionValue(Constants.ARG_DEFAULT_BUNDLER_ZIP)));
+            initBundlerZip(ap.getCommandLine().getOptionValue(Constants.ARG_DEFAULT_BUNDLER_ZIP));
 
             // Make the configuration based on the input data
             deployConfig = new DeployConfiguration(deployConfigFile, netarchiveSuiteFile, secPolicyFile,
@@ -442,18 +448,18 @@ public final class DeployApplication {
      *
      * @param defaultBundlerZipName The path to the default bundler zip file to use.
      */
-    public static void initBundlerZip(Optional<String> defaultBundlerZipName) {
-        if (defaultBundlerZipName.isPresent()) {
-            defaultBundlerZip = Optional.of(new File(defaultBundlerZipName.get()));
+    public static void initBundlerZip(String defaultBundlerZipName) {
+        if (defaultBundlerZipName != null) {
+            defaultBundlerZip = new File(defaultBundlerZipName);
 
-            if (!defaultBundlerZip.get().exists()) {
+            if (!defaultBundlerZip.exists()) {
                 System.err.print(Constants.MSG_ERROR_NO_BUNDLER_ZIP_FILE);
                 System.out.println();
-                System.out.println("Couldn't find default bundler file: " + defaultBundlerZip.get().getAbsolutePath());
+                System.out.println("Couldn't find the default bundler file: " + defaultBundlerZip.getAbsolutePath());
                 System.exit(1);
             }
         } else {
-            defaultBundlerZip = Optional.empty();
+            defaultBundlerZip = null;
         }
     }
 
