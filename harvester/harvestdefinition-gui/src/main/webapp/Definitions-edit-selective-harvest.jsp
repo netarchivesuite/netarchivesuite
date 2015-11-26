@@ -242,7 +242,7 @@ setupNextdateCalendar();
 
 function submitNextDate() {
   var nextDate = document.getElementById("<%=Constants.NEXTDATE_PARAM%>").value;
-  document.location.href="<%=pageContext.getServletContext().getContextPath()%>"
+  document.location.href="<%=request.getContextPath()%>"
     + "/Definitions-edit-selective-harvest.jsp?"
     + "<%=Constants.NEXTDATE_SUBMIT%>=true"
     + "&<%=Constants.NEXTDATE_PARAM%>=" + nextDate

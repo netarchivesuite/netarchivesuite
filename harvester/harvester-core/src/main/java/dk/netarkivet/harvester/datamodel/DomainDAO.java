@@ -333,4 +333,7 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
      */
     public abstract List<Long> findUsedConfigurations(Long domainID);
 
+	public abstract void renameConfig(Domain domain, DomainConfiguration domainConf, String configOldName);
+
+	public abstract String getDefaultDomainConfigurationName(String domainName);
 }
