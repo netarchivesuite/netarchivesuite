@@ -378,6 +378,15 @@ public class CommonSettings {
     public static String DB_POOL_IDLE_CONN_TEST_QUERY = "settings.common.database.pool.idleConnTestQuery";
 
     /**
+     * <b>settings.common.database.pool.maxConnectionAge</b>: <br>
+     * The maxConnectionAge in seconds for each connection in the pool.
+     * The default is one hour (3600 seconds)
+     *
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#maxConnectionAge"/>
+     */
+    public static String DB_POOL_MAX_CONNECTION_AGE = "settings.common.database.pool.maxConnectionAge";
+    
+    /**
      * The username for login to the harvest database.
      */
     public static String DB_USERNAME = "settings.common.database.username";

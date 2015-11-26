@@ -245,6 +245,7 @@ public final class HarvestDBConnection {
         dataSource.setMinPoolSize(Settings.getInt(CommonSettings.DB_POOL_MIN_SIZE));
         dataSource.setMaxPoolSize(Settings.getInt(CommonSettings.DB_POOL_MAX_SIZE));
         dataSource.setAcquireIncrement(Settings.getInt(CommonSettings.DB_POOL_ACQ_INC));
+        dataSource.setMaxConnectionAge(Settings.getInt(CommonSettings.DB_POOL_MAX_CONNECTION_AGE));
 
         // Configure idle connection testing
         int testPeriod = Settings.getInt(CommonSettings.DB_POOL_IDLE_CONN_TEST_PERIOD);
