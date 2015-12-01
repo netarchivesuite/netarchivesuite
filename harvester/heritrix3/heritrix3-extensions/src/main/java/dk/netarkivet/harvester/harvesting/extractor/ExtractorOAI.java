@@ -117,8 +117,6 @@ public class ExtractorOAI extends ContentExtractor {
         this.numberOfCURIsHandled++;
         ReplayCharSequence cs = null;
         try {
-            //TODO refactoring needs verification
-            //cs = curi.getHttpRecorder().getReplayCharSequence();
         	cs = curi.getRecorder().getContentReplayCharSequence();            
         } catch (IOException e) {
             log.error("Failed getting ReplayCharSequence: " + e.getMessage());
@@ -143,7 +141,6 @@ public class ExtractorOAI extends ContentExtractor {
                 }
             }
         }
-        // TODO Should always be false
         return false;
     }
 
@@ -175,18 +172,8 @@ public class ExtractorOAI extends ContentExtractor {
                                      oldUri.getPath(),
                                      newQueryPart, oldUri.getFragment());
                 
-                // FIXME needs refactoring to
-                //curi.createAndAddLink(newUri.toString(), Link.NAVLINK_MISC,
-                //                      Link.NAVLINK_HOP);
-                // PROBABLY USE one of 
-                //curi.createCrawlURI(baseUURI, link)
-                //curi.createCrawlURI(baseUURI, link, scheduling, seed)
-                //Link.add(uri, max, newUri, context, hop);
-                //This code beneath refactored by looking at ExtractorCSS code in Heritrix-3.2.0 src.
-                // FIXME
                 log.info("Found resumption link: " + newUri);
                 add(curi, 10000, newUri.toString(), LinkContext.NAVLINK_MISC, Hop.NAVLINK);
-                //LinkContext.add(curi, 10, newUri.toString(), LinkContext.NAVLINK_MISC, Hop.NAVLINK);
             } catch (URISyntaxException e) {
                 log.error(e);
             } catch (URIException e) {

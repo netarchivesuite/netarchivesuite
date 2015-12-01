@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+//import java.util.Optional;
 
 import org.dom4j.Element;
 
@@ -65,7 +65,8 @@ public class DeployConfiguration {
     private boolean resetDirectory;
     /** The folder containing the external jar library files. */
     private File jarFolder;
-    private final Optional<File> defaultBundlerZip;
+    //private final Optional<File> defaultBundlerZip;
+    private final File defaultBundlerZip;
 
     /**
      * Constructor. Initialise everything.
@@ -93,7 +94,8 @@ public class DeployConfiguration {
             boolean resetDir,
             File externalJarFolder,
             String sourceEncoding,
-            Optional<File> defaultBundlerZip)
+            //Optional<File defaultBundlerZip
+            File defaultBundlerZip)
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(deployConfigFileName, "No config file");
         ArgumentNotValid.checkNotNull(netarchiveSuiteFileName, "No installation file");
@@ -216,7 +218,10 @@ public class DeployConfiguration {
     /**
      * @return The default harvester bundler zip file to use deploy to the relevant harvesters.
      */
-    public Optional<File> getDefaultBundlerZip() {
+    //public Optional<File> getDefaultBundlerZip() {
+    //    return defaultBundlerZip;
+    //}
+    public File getDefaultBundlerZip() {
         return defaultBundlerZip;
     }
 }

@@ -140,8 +140,8 @@ public class H3LaunchTest {
 		Heritrix3Wrapper h3wrapper;
 		EngineResult engineResult;
 		JobResult jobResult;
-		PrintWriter outputPrinter;
-		PrintWriter errorPrinter;
+		final PrintWriter outputPrinter;
+		final PrintWriter errorPrinter;
 		try {
 			UnzipUtils.unzip(zipFileStr, unpackDirStr);
 			File basedir = new File(basedirStr);

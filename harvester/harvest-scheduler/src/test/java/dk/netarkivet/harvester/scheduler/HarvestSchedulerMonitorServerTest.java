@@ -57,21 +57,55 @@ import dk.netarkivet.harvester.harvesting.report.HarvestReport;
 import dk.netarkivet.testutils.LogbackRecorder;
 
 public class HarvestSchedulerMonitorServerTest {
+    
     private final JMSConnection jmsConnectionMock = mock(JMSConnection.class);
-    private final Provider<JMSConnection> jmsConnectionProvider = () -> jmsConnectionMock;
+    //private final Provider<JMSConnection> jmsConnectionProvider = () -> jmsConnectionMock;
+    private final Provider<JMSConnection> jmsConnectionProvider = new Provider<JMSConnection>() {
 
+		@Override
+		public JMSConnection get() {
+			return jmsConnectionMock;
+		}
+    	
+    };
+    
     private JobDAO jobDAOMock = mock(JobDAO.class);
-    private final Provider<JobDAO> jobDAOProvider = () -> jobDAOMock;
+    //private final Provider<JobDAO> jobDAOProvider = () -> jobDAOMock;
+    private final Provider<JobDAO> jobDAOProvider = new Provider<JobDAO>() {
+
+		@Override
+		public JobDAO get() {
+			return jobDAOMock;
+		}
+    	
+    };
 
     private final HarvestDefinitionDAO harvestDefinitionDAOMock = mock(HarvestDefinitionDAO.class);
-    private final Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = () -> harvestDefinitionDAOMock;
+    //private final Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = () -> harvestDefinitionDAOMock;
+    private final Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = new Provider<HarvestDefinitionDAO>(){
+
+		@Override
+		public HarvestDefinitionDAO get() {
+			return harvestDefinitionDAOMock;
+		}
+    	
+    };
 
     private final Notifications notificationsMock = mock(Notifications.class);
-    private final Provider<Notifications> notificationsProvider = () -> notificationsMock;
+    //private final Provider<Notifications> notificationsProvider = () -> notificationsMock;
+    private final Provider<Notifications> notificationsProvider = new Provider<Notifications>() {
 
+		@Override
+		public Notifications get() {
+			return notificationsMock;
+		}
+    	
+    };
     private final HarvestSchedulerMonitorServer harvestStatusMonitor = new HarvestSchedulerMonitorServer(
             jmsConnectionProvider, jobDAOProvider, harvestDefinitionDAOProvider, notificationsProvider
-    );
+    ); 
+    
+    
 
     private LogbackRecorder logRecorder;
     private JobStub job1;
@@ -290,25 +324,28 @@ public class HarvestSchedulerMonitorServerTest {
      */
     @Test
     public void testDomainHarvestReportPostProcessing() {
-        List<JobStatus> crawlMessageStatusesToTest = Arrays.asList(new JobStatus[]
-                {JobStatus.DONE, JobStatus.FAILED});
+    	List<JobStatus> crawlMessageStatusesToTest = Arrays.asList(new JobStatus[]
+    			{JobStatus.DONE, JobStatus.FAILED});
 
-        crawlMessageStatusesToTest.forEach((status) -> {
-            job1.setStatus(JobStatus.STARTED);
-            HarvestReport harvestReport = mock(HarvestReport.class);
-            CrawlStatusMessage crawlStatusMessage = mock(CrawlStatusMessage.class);
-            when(crawlStatusMessage.getJobID()).thenReturn(job1.getJobID());
-            when(crawlStatusMessage.getStatusCode()).thenReturn(status);
-            when(crawlStatusMessage.getDomainHarvestReport()).thenReturn(harvestReport);
+    	//crawlMessageStatusesToTest.forEach((status) -> { // java 8 required
+    	for (JobStatus status: crawlMessageStatusesToTest) {
+    		job1.setStatus(JobStatus.STARTED);
+    		HarvestReport harvestReport = mock(HarvestReport.class);
+    		CrawlStatusMessage crawlStatusMessage = mock(CrawlStatusMessage.class);
+    		when(crawlStatusMessage.getJobID()).thenReturn(job1.getJobID());
+    		when(crawlStatusMessage.getStatusCode()).thenReturn(status);
+    		when(crawlStatusMessage.getDomainHarvestReport()).thenReturn(harvestReport);
 
-            harvestStatusMonitor.start();
-            harvestStatusMonitor.visit(crawlStatusMessage);
+    		harvestStatusMonitor.start();
+    		harvestStatusMonitor.visit(crawlStatusMessage);
 
-            ArgumentCaptor<Job> jobArgumentCaptor = ArgumentCaptor.forClass(Job.class);
-            verify(harvestReport).postProcess(jobArgumentCaptor.capture());
-            assertEquals(job1.getJobID(), jobArgumentCaptor.getValue().getJobID());
-        });
+    		ArgumentCaptor<Job> jobArgumentCaptor = ArgumentCaptor.forClass(Job.class);
+    		verify(harvestReport).postProcess(jobArgumentCaptor.capture());
+    		assertEquals(job1.getJobID(), jobArgumentCaptor.getValue().getJobID());
+    	}
+    	//});
     }
+
 
     /**
      * The following tests validate that the related job is updated with error details for jobs in state

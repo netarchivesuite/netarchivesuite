@@ -392,8 +392,10 @@ public class FileBasedActiveBitPreservationTester {
 
         // Check that wrong counts are caught
         File unsortedFile = new File(TestInfo.WORKING_DIR, "test_file_list_output/filelistOutput/unsorted.txt");
-        MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptyList(),
-                17, RemoteFileFactory.getMovefileInstance(unsortedFile), new ArrayList<>(0));
+        MockupArcRepositoryClient.getInstance().overrideBatch 
+        	= new BatchStatus("AP1", Collections.<File>emptyList(),
+                17, RemoteFileFactory.getMovefileInstance(unsortedFile), new ArrayList(0));
+        
         runFilelistJob.invoke(abp, replica);
 
         abp.close();
