@@ -99,9 +99,13 @@ public class SnapshotHarvestDefinition {
 
         HTMLUtils.forwardOnEmptyParameter(context, Constants.HARVEST_PARAM);
 
+        String oldname = request.getParameter(Constants.HARVEST_OLD_PARAM);
+        if (oldname == null) {
+        	oldname = "";
+        }
         String name = request.getParameter(Constants.HARVEST_PARAM);
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
-
+        
         long objectLimit = HTMLUtils.parseOptionalLong(context, Constants.DOMAIN_OBJECTLIMIT_PARAM,
                 dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS);
         long byteLimit = HTMLUtils.parseOptionalLong(context, Constants.DOMAIN_BYTELIMIT_PARAM,
@@ -129,7 +133,18 @@ public class SnapshotHarvestDefinition {
             hd.setActive(false);
             hdDaoProvider.get().create(hd);
         } else {
-            hd = (FullHarvest) hdDaoProvider.get().getHarvestDefinition(name);
+        	if (oldname.equals(name)) { // name is unchanged
+        		hd = (FullHarvest) hdDaoProvider.get().getHarvestDefinition(name);
+        	} else {
+        		// test that the name does not exist already
+        		if (hdDaoProvider.get().exists(name)) {
+        			HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvest.definition.0.already.exists", name);
+                    throw new ForwardedToErrorPage("Harvest definition '" + name + "' already exists");
+        		} else {
+        			hd = (FullHarvest) hdDaoProvider.get().getHarvestDefinition(oldname);
+        			hd.setName(name);
+        		}
+        	}
             if (hd == null) {
                 HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvest.0.does.not.exist", name);
                 throw new UnknownID("Harvest definition '" + name + "' doesn't exist!");
@@ -142,8 +157,8 @@ public class SnapshotHarvestDefinition {
                                 + HTMLUtils.encodeAndEscapeHTML(name) + "\">", "</a>");
 
                 throw new ForwardedToErrorPage("Harvest definition '" + name + "' has changed");
-            }
-
+            } 
+            
             // MaxBytes is set to
             // dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES
             // if parameter snapshot_byte_Limit is not defined
@@ -164,6 +179,7 @@ public class SnapshotHarvestDefinition {
             hdDaoProvider.get().update(hd);
         }
     }
+    
 
     /**
      * Flip the active status of a harvestdefinition named in the "flipactive" parameter.

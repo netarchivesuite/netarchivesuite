@@ -65,6 +65,8 @@ public class Constants {
 
     public static final String HARVEST_PARAM = "harvestname";
 
+    public static final String HARVEST_OLD_PARAM = "harvestoldname";
+
     public static final String HARVEST_ID = "harvestid";
 
     public static final String COLUMN_PARAM = "column";
