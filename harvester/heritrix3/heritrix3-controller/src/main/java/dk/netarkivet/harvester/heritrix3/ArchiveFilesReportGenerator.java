@@ -22,27 +22,27 @@ import dk.netarkivet.common.utils.Settings;
 */
 class ArchiveFilesReportGenerator {
 
-    private static final SimpleDateFormat ISO_8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	private static final SimpleDateFormat ISO_8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-    /**
-     * The name of the report file. It will be generated in the crawl directory.
-     */
-    public static final String REPORT_FILE_NAME = Settings.get(Heritrix3Settings.METADATA_ARCHIVE_FILES_REPORT_NAME);
+	/**
+	 * The name of the report file. It will be generated in the crawl directory.
+	 */
+	public static final String REPORT_FILE_NAME = Settings.get(Heritrix3Settings.METADATA_ARCHIVE_FILES_REPORT_NAME);
 
-    /**
-     * The header line of the report file.
-     */
-    public static final String REPORT_FILE_HEADER = Settings
-            .get(Heritrix3Settings.METADATA_ARCHIVE_FILES_REPORT_HEADER);
+	/**
+	 * The header line of the report file.
+	 */
+	public static final String REPORT_FILE_HEADER = Settings
+			.get(Heritrix3Settings.METADATA_ARCHIVE_FILES_REPORT_HEADER);
 
-    private IngestableFiles ingestablefiles;
+	private IngestableFiles ingestablefiles;
 
-    /**
-     * Builds a ARC files report generator, given the Ingestable files object.
-     *
-     * @param ingestableFiles files belonging to a Heritrix harvest
-     */
-    
+	/**
+	 * Builds a ARC files report generator, given the Ingestable files object.
+	 *
+	 * @param ingestableFiles files belonging to a Heritrix harvest
+	 */
+
 	public ArchiveFilesReportGenerator(IngestableFiles ingestableFiles) {
 		this.ingestablefiles = ingestableFiles;
 	}   
