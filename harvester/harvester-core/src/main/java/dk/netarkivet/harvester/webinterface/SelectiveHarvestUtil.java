@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.DomainUtils;
@@ -151,7 +152,11 @@ public final class SelectiveHarvestUtil {
         ServletRequest request = context.getRequest();
         HTMLUtils.forwardOnEmptyParameter(context, Constants.HARVEST_PARAM, Constants.SCHEDULE_PARAM);
         String name = request.getParameter(Constants.HARVEST_PARAM);
-
+        String oldname = request.getParameter(Constants.HARVEST_OLD_PARAM);
+        if (oldname == null) {
+        	oldname = "";
+        }
+        
         HTMLUtils.forwardOnMissingParameter(context, Constants.COMMENTS_PARAM, Constants.DOMAINLIST_PARAM,
                 Constants.AUDIENCE_PARAM);
         String scheduleName = request.getParameter(Constants.SCHEDULE_PARAM);
@@ -180,8 +185,18 @@ public final class SelectiveHarvestUtil {
             return hdd;
         } else {
             long edition = HTMLUtils.parseOptionalLong(context, Constants.EDITION_PARAM, Constants.NO_EDITION);
-
-            PartialHarvest hdd = (PartialHarvest) hddao.getHarvestDefinition(name);
+            PartialHarvest hdd;
+            if (oldname.equals(name)) {
+            	hdd = (PartialHarvest) hddao.getHarvestDefinition(name);
+            } else {
+            	if (hddao.exists(name)) {
+            		HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvest.definition.0.already.exists", name);
+                    throw new ForwardedToErrorPage("A harvest definition " + "called '" + name + "' already exists");
+            	} else {
+            		hdd = (PartialHarvest) hddao.getHarvestDefinition(oldname);
+            		hdd.setName(name);
+            	}
+            }
             if (hdd.getEdition() != edition) {
                 HTMLUtils.forwardWithRawErrorMessage(context, i18n, "errormsg;harvest.definition.changed.0.retry.1",
                         "<br/><a href=\"Definitions-edit-selective-harvest.jsp?" + Constants.HARVEST_PARAM + "="
