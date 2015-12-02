@@ -69,13 +69,6 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
-/*
-    Provider<HarvestDefinitionDAO> hdDaoProvider = new Provider<HarvestDefinitionDAO>() {
- 	public HarvestDefinitionDAO get() {
-            return HarvestDefinitionDAO.getInstance();
-        }
-    };
-*/
     try {
         SnapshotHarvestDefinition snapshotHarvestDefinition = SnapshotHarvestDefinition.
                 createSnapshotHarvestDefinitionWithDefaultDAOs();
@@ -122,9 +115,10 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
         <input type="hidden" name="<%=Constants.CREATENEW_PARAM%>" value="1" />
   <% } else { %>
     <input type="hidden" name="<%= Constants.EDITION_PARAM %>"
-           value="<%= hd.getEdition() %>"/>
+           value="<%= hd.getEdition() %>"/>              
   <% } %>
     <input type="hidden" name="<%= Constants.UPDATE_PARAM %>" value="1"/>
+    <input type="hidden" name="<%= Constants.HARVEST_OLD_PARAM %>" value="<%=harvestName%>"/>
     
     <table>
         <tr>
@@ -137,8 +131,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
               </span>
           <% } else { %>
                 <input type="text" name="<%= Constants.HARVEST_PARAM %>"
-                     value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"
-                     readonly="readonly"/>
+                     value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"/>
           <% } %>
             </td>
         </tr>

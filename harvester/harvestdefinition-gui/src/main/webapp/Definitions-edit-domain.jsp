@@ -283,8 +283,8 @@ Display all the form information for this domain
                 String rowClass = HTMLUtils.getRowClass(rowcount++);
                 String listName = sl.getName();
                 String editLink = "Definitions-edit-domain-seedlist.jsp?"
-                        + Constants.EDIT_URLLIST_PARAM + "=1&"
-                        + Constants.URLLIST_NAME_PARAM + "="
+                        + Constants.EDIT_SEEDLIST_PARAM + "=1&"
+                        + Constants.SEEDLIST_NAME_PARAM + "="
                         + HTMLUtils.encode(listName) + "&"
                         + Constants.DOMAIN_PARAM + "="
                         + HTMLUtils.encode(domainName);
@@ -302,7 +302,7 @@ Display all the form information for this domain
         <%
             }
             String newSeedLink = "Definitions-edit-domain-seedlist.jsp?"
-                    + Constants.EDIT_URLLIST_PARAM + "=1&"
+                    + Constants.EDIT_SEEDLIST_PARAM + "=1&"
                     + Constants.DOMAIN_PARAM + "="
                     + HTMLUtils.encode(domainName);
         %>

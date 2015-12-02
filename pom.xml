@@ -417,7 +417,8 @@
           <linksource>true</linksource>
           <quiet>true</quiet>
           <!-- Note: This fails with a JVM older than Java 8 -->
-          <additionalparam>-Xdoclint:none</additionalparam>
+          <!-- <additionalparam>-Xdoclint:none</additionalparam> --> 
+          <additionalparam>${javadoc.doclint.none}</additionalparam>
         </configuration>
         <executions>
           <execution>
@@ -523,5 +524,14 @@
         </plugins>
       </build>
     </profile>
+	<profile>
+            <id>java8-disable-strict-javadoc</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
+            </properties>
+        </profile>
   </profiles>
 </project>

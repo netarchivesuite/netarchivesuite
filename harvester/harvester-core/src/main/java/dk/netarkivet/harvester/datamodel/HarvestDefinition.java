@@ -392,5 +392,12 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
     protected int getExtendedFieldType() {
         return ExtendedFieldTypes.HARVESTDEFINITION;
     }
-
+    
+    /**
+     * Change the name of the Harvestdefinition to newName. 
+     * @param newName The new name of the Harvestdefinition
+     */
+    public void setName(String newName) {
+    	this.harvestDefName = newName;
+    }
 }

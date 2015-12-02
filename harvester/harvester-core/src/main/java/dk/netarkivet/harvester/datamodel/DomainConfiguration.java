@@ -560,4 +560,12 @@ public class DomainConfiguration implements Named {
         this.domainhistory = newDomainhistory;
     }
 
+    /**
+     * Change the name of configuration to the given configName.
+     * @param configName a new name for this configuration.
+     */
+	public void setName(String configName) {
+		this.configName = configName;
+	}
+
 }

@@ -27,6 +27,7 @@ import static dk.netarkivet.systemtest.page.DomainWebTestHelper.HIDE_UNUSED_SEED
 import static dk.netarkivet.systemtest.page.DomainWebTestHelper.SHOW_UNUSED_CONFIGURATIONS_LINK;
 import static dk.netarkivet.systemtest.page.DomainWebTestHelper.SHOW_UNUSED_SEED_LISTS_LINK;
 
+
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -42,7 +43,6 @@ import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.NASAssert;
-import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
@@ -197,7 +197,7 @@ public class DomainsPageTest extends AbstractSystemTest {
                 "The seed list should now be listed");
         List<WebElement> configurationRows = readConfigurationTableRows(driver);
         configurationRows.get(0).findElement(By.linkText("Edit")).click();
-        Select seedListSelect = new Select(driver.findElement(By.name("urlListList")));
+        Select seedListSelect = new Select(driver.findElement(By.name("seedListList")));
         seedListSelect.selectByVisibleText(seedList1ID);
         driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
         seedListRows = readSeedListTableRows(driver);
@@ -208,7 +208,7 @@ public class DomainsPageTest extends AbstractSystemTest {
                 "Only the new seed list should now be listed");
         configurationRows = readConfigurationTableRows(driver);
         configurationRows.get(0).findElement(By.linkText("Edit")).click();
-        seedListSelect = new Select(driver.findElement(By.name("urlListList")));
+        seedListSelect = new Select(driver.findElement(By.name("seedlListList")));
         seedListSelect.deselectByVisibleText("defaultseeds");
         driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
         seedListRows = readSeedListTableRows(driver);
