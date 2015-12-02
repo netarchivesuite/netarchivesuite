@@ -297,7 +297,7 @@ public final class BitarchiveAdmin {
         try {
             canonicalFile = basedir.getCanonicalFile();
         } catch (IOException e) {
-            throw new IOFailure("Could not find canonical file for " + basedir.getAbsolutePath());
+            throw new IOFailure("Could not find canonical file for " + basedir.getAbsolutePath(), e);
         }
         final List<String> fileList = archivedFiles.get(canonicalFile);
         if (fileList == null) {
