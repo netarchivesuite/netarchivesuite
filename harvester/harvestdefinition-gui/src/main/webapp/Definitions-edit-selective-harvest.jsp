@@ -161,7 +161,7 @@ DomainConfigurations are posted as pairs
        hdd.getEdition() %>"/>
 <%  } %>
 <input type="hidden" name="<%= Constants.UPDATE_PARAM %>" value="1"/>
-<input type="hidden" name="<%= Constants.HARVEST_OLD_PARAM %>" value="<%=harvestName %>"/>
+<input type="hidden" name="<%= Constants.HARVEST_OLD_PARAM %>" value="<%=HTMLUtils.escapeHtmlValues(harvestName %>"/>
 
 <h4><fmt:message key="prompt;harvest.name"/>
     <%
@@ -171,9 +171,7 @@ DomainConfigurations are posted as pairs
             out.print("<input type=\"text\" name=\"" + Constants.HARVEST_PARAM
                       + "\" value=\""
                       + HTMLUtils.escapeHtmlValues(harvestName)
-                      + "\" size=\"60\""
-                      //+ " readonly=\"readonly\" 
-                      + "/>  \n");
+                      + "\" size=\"60\" /> \n");
         } else {
             out.print("<span id=\"focusElement\"><input type=\"text\" name=\""
                       + Constants.HARVEST_PARAM + "\" size=\"60\"/></span>\n");

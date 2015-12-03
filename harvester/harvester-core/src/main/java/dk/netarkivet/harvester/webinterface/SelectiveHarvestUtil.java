@@ -154,9 +154,9 @@ public final class SelectiveHarvestUtil {
         String name = request.getParameter(Constants.HARVEST_PARAM);
         String oldname = request.getParameter(Constants.HARVEST_OLD_PARAM);
         if (oldname == null) {
-        	oldname = "";
+            oldname = "";
         }
-        
+
         HTMLUtils.forwardOnMissingParameter(context, Constants.COMMENTS_PARAM, Constants.DOMAINLIST_PARAM,
                 Constants.AUDIENCE_PARAM);
         String scheduleName = request.getParameter(Constants.SCHEDULE_PARAM);
@@ -187,15 +187,15 @@ public final class SelectiveHarvestUtil {
             long edition = HTMLUtils.parseOptionalLong(context, Constants.EDITION_PARAM, Constants.NO_EDITION);
             PartialHarvest hdd;
             if (oldname.equals(name)) {
-            	hdd = (PartialHarvest) hddao.getHarvestDefinition(name);
+                hdd = (PartialHarvest) hddao.getHarvestDefinition(name);
             } else {
-            	if (hddao.exists(name)) {
-            		HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvest.definition.0.already.exists", name);
+                if (hddao.exists(name)) {
+                    HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvest.definition.0.already.exists", name);
                     throw new ForwardedToErrorPage("A harvest definition " + "called '" + name + "' already exists");
-            	} else {
-            		hdd = (PartialHarvest) hddao.getHarvestDefinition(oldname);
-            		hdd.setName(name);
-            	}
+                } else {
+                    hdd = (PartialHarvest) hddao.getHarvestDefinition(oldname);
+                    hdd.setName(name);
+                }
             }
             if (hdd.getEdition() != edition) {
                 HTMLUtils.forwardWithRawErrorMessage(context, i18n, "errormsg;harvest.definition.changed.0.retry.1",

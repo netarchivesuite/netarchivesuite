@@ -118,7 +118,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
            value="<%= hd.getEdition() %>"/>              
   <% } %>
     <input type="hidden" name="<%= Constants.UPDATE_PARAM %>" value="1"/>
-    <input type="hidden" name="<%= Constants.HARVEST_OLD_PARAM %>" value="<%=harvestName%>"/>
+    <input type="hidden" name="<%= Constants.HARVEST_OLD_PARAM %>" value="<%=HTMLUtils.escapeHtmlValues(harvestName %>"/>
     
     <table>
         <tr>

@@ -55,13 +55,19 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
  * Contains utility methods for supporting GUI for updating snapshot harvests.
  */
 public class SnapshotHarvestDefinition {
-    //protected static final Log log = LogFactory.getLog(SnapshotHarvestDefinition.class);
     protected static final Logger log = LoggerFactory.getLogger(SnapshotHarvestDefinition.class);
     private final Provider<HarvestDefinitionDAO> hdDaoProvider;
     private final Provider<JobDAO> jobDaoProvider;
     private final Provider<ExtendedFieldDAO> extendedFieldDAOProvider;
     private final Provider<DomainDAO> domainDAOProvider;
 
+    /**
+     * Constructor.
+     * @param hdDaoProvider Provider for HarvestDefinitions
+     * @param jobDaoProvider Provider for Jobs
+     * @param extendedFieldDAOProvider Provider ExtendedFields 
+     * @param domainDAOProvider Provider for Domains
+     */
     public SnapshotHarvestDefinition(Provider<HarvestDefinitionDAO> hdDaoProvider, Provider<JobDAO> jobDaoProvider,
             Provider<ExtendedFieldDAO> extendedFieldDAOProvider, Provider<DomainDAO> domainDAOProvider) {
         this.hdDaoProvider = hdDaoProvider;
@@ -70,6 +76,10 @@ public class SnapshotHarvestDefinition {
         this.domainDAOProvider = domainDAOProvider;
     }
 
+    /**
+     * 
+     * @return a default SnapshotHarvestDefinition
+     */
     public static SnapshotHarvestDefinition createSnapshotHarvestDefinitionWithDefaultDAOs() {
         return new SnapshotHarvestDefinition(DAOProviderFactory.getHarvestDefinitionDAOProvider(),
                 DAOProviderFactory.getJobDAOProvider(), DAOProviderFactory.getExtendedFieldDAOProvider(),
@@ -101,11 +111,11 @@ public class SnapshotHarvestDefinition {
 
         String oldname = request.getParameter(Constants.HARVEST_OLD_PARAM);
         if (oldname == null) {
-        	oldname = "";
+            oldname = "";
         }
         String name = request.getParameter(Constants.HARVEST_PARAM);
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
-        
+
         long objectLimit = HTMLUtils.parseOptionalLong(context, Constants.DOMAIN_OBJECTLIMIT_PARAM,
                 dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS);
         long byteLimit = HTMLUtils.parseOptionalLong(context, Constants.DOMAIN_BYTELIMIT_PARAM,
@@ -133,18 +143,18 @@ public class SnapshotHarvestDefinition {
             hd.setActive(false);
             hdDaoProvider.get().create(hd);
         } else {
-        	if (oldname.equals(name)) { // name is unchanged
-        		hd = (FullHarvest) hdDaoProvider.get().getHarvestDefinition(name);
-        	} else {
-        		// test that the name does not exist already
-        		if (hdDaoProvider.get().exists(name)) {
-        			HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvest.definition.0.already.exists", name);
+            if (oldname.equals(name)) { // name is unchanged
+                hd = (FullHarvest) hdDaoProvider.get().getHarvestDefinition(name);
+            } else {
+                // test that the name does not exist already
+                if (hdDaoProvider.get().exists(name)) {
+                    HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvest.definition.0.already.exists", name);
                     throw new ForwardedToErrorPage("Harvest definition '" + name + "' already exists");
-        		} else {
-        			hd = (FullHarvest) hdDaoProvider.get().getHarvestDefinition(oldname);
-        			hd.setName(name);
-        		}
-        	}
+                } else {
+                    hd = (FullHarvest) hdDaoProvider.get().getHarvestDefinition(oldname);
+                    hd.setName(name);
+                }
+            }
             if (hd == null) {
                 HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvest.0.does.not.exist", name);
                 throw new UnknownID("Harvest definition '" + name + "' doesn't exist!");
@@ -158,7 +168,7 @@ public class SnapshotHarvestDefinition {
 
                 throw new ForwardedToErrorPage("Harvest definition '" + name + "' has changed");
             } 
-            
+
             // MaxBytes is set to
             // dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES
             // if parameter snapshot_byte_Limit is not defined
