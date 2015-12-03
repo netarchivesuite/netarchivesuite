@@ -28,10 +28,6 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.DefaultHandler;
 import org.mortbay.jetty.handler.HandlerList;
 import org.mortbay.jetty.webapp.WebAppContext;
-//import org.eclipse.jetty.server.Server;
-//import org.eclipse.jetty.server.handler.DefaultHandler;
-//import org.eclipse.jetty.server.handler.HandlerList;
-//import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +55,6 @@ public class GUIWebServer implements CleanupIF {
     /**
      * Logger for this class.
      */
-    //private Log log = LogFactory.getLog(getClass().getName());
     private static final Logger log = LoggerFactory.getLogger(GUIWebServer.class);
 
     /** The lower limit of acceptable HTTP port-numbers. */
@@ -170,7 +165,7 @@ public class GUIWebServer implements CleanupIF {
     }
 
     /**
-     * Starts the jsp web server.
+     * Starts the jetty web server.
      *
      * @throws IOFailure if the server for any reason cannot be started.
      */

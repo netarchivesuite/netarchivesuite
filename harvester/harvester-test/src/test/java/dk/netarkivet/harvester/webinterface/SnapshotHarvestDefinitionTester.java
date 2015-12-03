@@ -64,10 +64,10 @@ public class SnapshotHarvestDefinitionTester {
     
     //private Provider<DomainDAO> domainDAOProvider = () -> domainDAOMock; JAVA 8 syntax required
     private Provider<DomainDAO> domainDAOProvider = new Provider<DomainDAO>() {
-		@Override
-		public DomainDAO get() {
-			return domainDAOMock;
-		}
+        @Override
+        public DomainDAO get() {
+            return domainDAOMock;
+        }
     };
     
     
@@ -75,23 +75,21 @@ public class SnapshotHarvestDefinitionTester {
     //private Provider<ExtendedFieldDAO> extendedFieldDAOProvider = () -> extendedFieldMock; JAVA 8 required
     private Provider<ExtendedFieldDAO> extendedFieldDAOProvider = new Provider<ExtendedFieldDAO>() {
 
-		@Override
-		public ExtendedFieldDAO get() {
-			// TODO Auto-generated method stub
-			return extendedFieldMock;
-		}
-    	
+        @Override
+        public ExtendedFieldDAO get() {
+            return extendedFieldMock;
+        }
+
     };
     
     //private Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = () -> harvestDefinitionDAOMock;
     private Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = new Provider<HarvestDefinitionDAO>() {
 
-		@Override
-		public HarvestDefinitionDAO get() {
-			// TODO Auto-generated method stub
-			return harvestDefinitionDAOMock;
-		}
-    	
+        @Override
+        public HarvestDefinitionDAO get() {
+            return harvestDefinitionDAOMock;
+        }
+
     };
     private SnapshotHarvestDefinition snapshotHarvestDefinition = new SnapshotHarvestDefinition(
             harvestDefinitionDAOProvider, jobDAOProvider, extendedFieldDAOProvider, domainDAOProvider);

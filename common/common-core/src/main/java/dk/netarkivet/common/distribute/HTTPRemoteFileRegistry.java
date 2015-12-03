@@ -38,12 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
-/*
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-*/
+
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.handler.AbstractHandler;
 import org.slf4j.Logger;
@@ -261,8 +256,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
          */
         @Override
         public void handle(String string, 
-        		//Request baseRequest, 
-        		HttpServletRequest httpServletRequest,
+                HttpServletRequest httpServletRequest,
                 HttpServletResponse httpServletResponse, int i) throws IOException, ServletException {
             // since this is a jetty handle method, we know it is a Jetty
             // request object.
@@ -291,15 +285,6 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
                 }
             }
         }
-
-        
-		/*
-		public void handle(String arg0, HttpServletRequest arg1,
-				HttpServletResponse arg2, int arg3) throws IOException,
-				ServletException {
-			// TODO Auto-generated method stub
-			
-		}*/
     }
 
 }
