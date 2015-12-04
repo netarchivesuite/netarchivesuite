@@ -1111,12 +1111,6 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
-    /**
-     * Get the name of the default configuration for the given domain.
-     *
-     * @param domainName a name of a domain
-     * @return the name of the default configuration for the given domain.
-     */
     @Override
     public String getDefaultDomainConfigurationName(String domainName) {
         Connection c = HarvestDBConnection.get();
@@ -1565,7 +1559,7 @@ public class DomainDBDAO extends DomainDAO {
     }
 
 	@Override
-	public void renameConfig(Domain domain, DomainConfiguration domainConf,
+	public void renameAndUpdateConfig(Domain domain, DomainConfiguration domainConf,
 			String configOldName) {
 		Connection connection = HarvestDBConnection.get();
 		Long configId = DBUtils.selectLongValue(connection,

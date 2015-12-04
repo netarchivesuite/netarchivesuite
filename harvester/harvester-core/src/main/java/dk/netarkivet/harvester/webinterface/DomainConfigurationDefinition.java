@@ -86,9 +86,9 @@ public class DomainConfigurationDefinition {
         String configName = request.getParameter(Constants.CONFIG_NAME_PARAM).trim();
         String configOldName = request.getParameter(Constants.CONFIG_OLDNAME_PARAM);
         if (configOldName != null) {
-        	configOldName = configOldName.trim();
+            configOldName = configOldName.trim();
         } else {
-        	configOldName = "";
+            configOldName = "";
         }
         String order_xml = request.getParameter(Constants.ORDER_XML_NAME_PARAM).trim();
         String[] urlListList = request.getParameterValues(Constants.SEEDLIST_LIST_PARAM);
@@ -136,39 +136,37 @@ public class DomainConfigurationDefinition {
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
 
         if (!configOldName.isEmpty() && !configOldName.equals(configName)){
-        	// Are we allowed to rename to the new name? or does it already exist?
-        	if (domain.hasConfiguration(configName)) {
-        		HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;configuration.exists.0", configName);
+            // Are we allowed to rename to the new name? or does it already exist?
+            if (domain.hasConfiguration(configName)) {
+                HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;configuration.exists.0", configName);
                 throw new ForwardedToErrorPage("Configuration " + configName + " already exist");
-        	} else {
-        		DomainConfiguration domainConf = domain.getConfiguration(configOldName);
-        		String defaultConfigName = DomainDAO.getInstance().getDefaultDomainConfigurationName(domain.getName());
-        		if (defaultConfigName.equals(configName)){	
-        			HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;cannot.rename.defaultconfiguration.0", configOldName);
+            } else {
+                DomainConfiguration domainConf = domain.getConfiguration(configOldName);
+                String defaultConfigName = DomainDAO.getInstance().getDefaultDomainConfigurationName(domain.getName());
+                if (defaultConfigName.equals(configName)){	
+                    HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;cannot.rename.defaultconfiguration.0", configOldName);
                     throw new ForwardedToErrorPage("Configuration " + configOldName + " cannot be renamed. It is the defaultconfiguration");
-        		} else {
-        	    	List<SeedList> seedlistList = new ArrayList<SeedList>();
-        	    	for (String seedlistName : urlListList) {
-        	    		seedlistList.add(domain.getSeedList(seedlistName));
-        	    	}
-        	    	domainConf.setName(configName);
-        	    	domainConf.setOrderXmlName(order_xml);
-        	    	domainConf.setMaxObjects(maxObjects);
-        	    	domainConf.setMaxBytes(maxBytes);
-        	    	domainConf.setMaxRequestRate(load);
-        	    	domainConf.setSeedLists(domain, seedlistList);
-        	    	if (comments != null) {
-        	    		domainConf.setComments(comments);
-        	    	}
-        	    	DomainDAO.getInstance().renameConfig(domain, domainConf, configOldName);
-        	    	
-        	    	
-        		}
-        	}
+                } else {
+                    List<SeedList> seedlistList = new ArrayList<SeedList>();
+                    for (String seedlistName : urlListList) {
+                        seedlistList.add(domain.getSeedList(seedlistName));
+                    }
+                    domainConf.setName(configName);
+                    domainConf.setOrderXmlName(order_xml);
+                    domainConf.setMaxObjects(maxObjects);
+                    domainConf.setMaxBytes(maxBytes);
+                    domainConf.setMaxRequestRate(load);
+                    domainConf.setSeedLists(domain, seedlistList);
+                    if (comments != null) {
+                        domainConf.setComments(comments);
+                    }
+                    DomainDAO.getInstance().renameAndUpdateConfig(domain, domainConf, configOldName);
+                }
+            }
         } else {
-        	updateDomainConfig(domain, configName, order_xml, load, maxObjects, maxBytes, urlListList, comments);
+            updateDomainConfig(domain, configName, order_xml, load, maxObjects, maxBytes, urlListList, comments);
         }
-}
+    }
 
     /**
      * Given the parsed values, update or create a configuration in the domain.

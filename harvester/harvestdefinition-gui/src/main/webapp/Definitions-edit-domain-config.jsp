@@ -151,8 +151,7 @@ Display all the form information for this domain
     String maxObjects = "";
     String maxBytes = "";
     if (dc != null) {
-        nameString = "value=\"" + HTMLUtils.escapeHtmlValues(configName) + "\""; // Allow for changing the confignames
-             //        + "\" readonly=\"readonly\"";
+        nameString = "value=\"" + HTMLUtils.escapeHtmlValues(configName) + "\"";
         load = "value=\"" + dc.getMaxRequestRate() + "\"";
         maxObjects = "value=\"" +
                      HTMLUtils.localiseLong(dc.getMaxObjects(), pageContext)
