@@ -161,7 +161,7 @@ DomainConfigurations are posted as pairs
        hdd.getEdition() %>"/>
 <%  } %>
 <input type="hidden" name="<%= Constants.UPDATE_PARAM %>" value="1"/>
-<input type="hidden" name="<%= Constants.HARVEST_OLD_PARAM %>" value="<%=HTMLUtils.escapeHtmlValues(harvestName %>"/>
+<input type="hidden" name="<%= Constants.HARVEST_OLD_PARAM %>" value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"/>
 
 <h4><fmt:message key="prompt;harvest.name"/>
     <%
