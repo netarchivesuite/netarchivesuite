@@ -208,7 +208,7 @@ public class DomainsPageTest extends AbstractSystemTest {
                 "Only the new seed list should now be listed");
         configurationRows = readConfigurationTableRows(driver);
         configurationRows.get(0).findElement(By.linkText("Edit")).click();
-        seedListSelect = new Select(driver.findElement(By.name("seedlListList")));
+        seedListSelect = new Select(driver.findElement(By.name("seedListList")));
         seedListSelect.deselectByVisibleText("defaultseeds");
         driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
         seedListRows = readSeedListTableRows(driver);
