@@ -46,21 +46,30 @@ import dk.netarkivet.harvester.datamodel.FullHarvest;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 import dk.netarkivet.testutils.StringAsserts;
 
 /** Unit-test for the SnapshotHarvestDefinition class. */
 public class SnapshotHarvestDefinitionTester {
-    private JobDAO jobDaoMock = mock(JobDAO.class);
-    private Provider<JobDAO> jobDAOProvider = () -> jobDaoMock;
+
     private HarvestDefinitionDAO harvestDefinitionDAOMock = mock(HarvestDefinitionDAO.class);
-    private DomainDAO domainDAOMock = mock(DomainDAO.class);
-    private Provider<DomainDAO> domainDAOProvider = () -> domainDAOMock;
+    private Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = () -> harvestDefinitionDAOMock;
+
+	private JobDAO jobDaoMock = mock(JobDAO.class);
+    private Provider<JobDAO> jobDAOProvider = () -> jobDaoMock;
+
     private ExtendedFieldDAO extendedFieldMock = mock(ExtendedFieldDAO.class);
     private Provider<ExtendedFieldDAO> extendedFieldDAOProvider = () -> extendedFieldMock;
-    private Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = () -> harvestDefinitionDAOMock;
+    
+    private DomainDAO domainDAOMock = mock(DomainDAO.class);
+    private Provider<DomainDAO> domainDAOProvider = () -> domainDAOMock;
+
+    private EAV eavDAOMock = mock(EAV.class);
+    private Provider<EAV> eavDAOProvider = () -> eavDAOMock;
+
     private SnapshotHarvestDefinition snapshotHarvestDefinition = new SnapshotHarvestDefinition(
-            harvestDefinitionDAOProvider, jobDAOProvider, extendedFieldDAOProvider, domainDAOProvider);
+            harvestDefinitionDAOProvider, jobDAOProvider, extendedFieldDAOProvider, domainDAOProvider, eavDAOProvider);
 
     @Test
     public void testProcessRequest() throws Exception {

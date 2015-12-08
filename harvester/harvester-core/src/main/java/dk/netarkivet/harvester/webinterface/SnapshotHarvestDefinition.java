@@ -23,7 +23,9 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Provider;
@@ -32,6 +34,9 @@ import javax.servlet.jsp.PageContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.antiaction.raptor.base.AttributeBase;
+import com.antiaction.raptor.base.AttributeTypeBase;
 
 import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
@@ -49,6 +54,8 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 
 /**
@@ -61,19 +68,21 @@ public class SnapshotHarvestDefinition {
     private final Provider<JobDAO> jobDaoProvider;
     private final Provider<ExtendedFieldDAO> extendedFieldDAOProvider;
     private final Provider<DomainDAO> domainDAOProvider;
+    private final Provider<EAV> eavDAOProvider;
 
     public SnapshotHarvestDefinition(Provider<HarvestDefinitionDAO> hdDaoProvider, Provider<JobDAO> jobDaoProvider,
-            Provider<ExtendedFieldDAO> extendedFieldDAOProvider, Provider<DomainDAO> domainDAOProvider) {
+            Provider<ExtendedFieldDAO> extendedFieldDAOProvider, Provider<DomainDAO> domainDAOProvider, Provider<EAV> eavDAOProvider) {
         this.hdDaoProvider = hdDaoProvider;
         this.jobDaoProvider = jobDaoProvider;
         this.extendedFieldDAOProvider = extendedFieldDAOProvider;
         this.domainDAOProvider = domainDAOProvider;
+        this.eavDAOProvider = eavDAOProvider;
     }
 
     public static SnapshotHarvestDefinition createSnapshotHarvestDefinitionWithDefaultDAOs() {
         return new SnapshotHarvestDefinition(DAOProviderFactory.getHarvestDefinitionDAOProvider(),
                 DAOProviderFactory.getJobDAOProvider(), DAOProviderFactory.getExtendedFieldDAOProvider(),
-                DAOProviderFactory.getDomainDAOProvider());
+                DAOProviderFactory.getDomainDAOProvider(), DAOProviderFactory.getEAVDAOProvider());
     }
 
     /**
@@ -162,6 +171,42 @@ public class SnapshotHarvestDefinition {
             hd.setPreviousHarvestDefinition(oldHarvestId);
             hd.setComments(comments);
             hdDaoProvider.get().update(hd);
+        }
+
+        // EAV
+        try {
+        	long entity_id = hd.getOid();
+            EAV eav = eavDAOProvider.get();
+            List<AttributeAndType> attributesAndTypes = eav.getAttributesAndTypes(EAV.SNAPSHOT_TREE_ID, (int)entity_id);
+            AttributeAndType attributeAndType;
+            AttributeTypeBase attributeType;
+            AttributeBase attribute;
+            for (int i=0; i<attributesAndTypes.size(); ++i) {
+            	attributeAndType = attributesAndTypes.get(i);
+            	attributeType = attributeAndType.attributeType;
+            	attribute = attributeAndType.attribute;
+            	if (attribute == null) {
+                	attribute = attributeType.instanceOf();
+                	attribute.entity_id = (int)entity_id;
+            	}
+            	switch (attributeType.viewtype) {
+            	case 1:
+                	long l = HTMLUtils.parseOptionalLong(context, attributeType.name, (long)attributeType.def_int);
+                	attribute.setInteger((int)l);
+            		break;
+            	case 5:
+                    String paramValue = context.getRequest().getParameter(attributeType.name);
+                    int intVal = 0;
+                    if (paramValue != null && !"0".equals(paramValue)) {
+                    	intVal = 1;
+                    }
+                	attribute.setInteger(intVal);
+            		break;
+            	}
+            	eav.saveAttribute(attribute);
+            }
+        } catch (SQLException e) {
+        	throw new RuntimeException("Unable to store EAV data!", e);
         }
     }
 

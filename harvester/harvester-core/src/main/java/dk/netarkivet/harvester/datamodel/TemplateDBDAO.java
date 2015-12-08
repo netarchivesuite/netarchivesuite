@@ -77,24 +77,24 @@ public class TemplateDBDAO extends TemplateDAO {
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement("SELECT orderxml FROM ordertemplates WHERE name = ?");
+            s = c.prepareStatement("SELECT template_id, orderxml FROM ordertemplates WHERE name = ?");
             s.setString(1, orderXmlName);
             ResultSet res = s.executeQuery();
             if (!res.next()) {
                 throw new UnknownID("Can't find template " + orderXmlName);
             }
             Reader orderTemplateReader = null;
+        	long template_id = res.getLong(1);
             if (DBSpecifics.getInstance().supportsClob()) {
-                Clob clob = res.getClob(1);
-                
+                Clob clob = res.getClob(2);
                 orderTemplateReader = clob.getCharacterStream();
             } else {
-                String string = res.getString(1);
+                String string = res.getString(2);
                 // log.debug("clob=" + string);
                 orderTemplateReader = new StringReader(string);
             } 
             System.out.println("Calling HeritrixTemplate.read() w/ arg:" + orderTemplateReader);
-            return HeritrixTemplate.read(orderTemplateReader);
+            return HeritrixTemplate.read(template_id, orderTemplateReader);
         } catch (SQLException e) {
             final String message = "SQL error finding order.xml for " + orderXmlName + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e);

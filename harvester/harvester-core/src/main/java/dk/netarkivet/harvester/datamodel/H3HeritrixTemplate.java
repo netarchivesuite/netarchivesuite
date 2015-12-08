@@ -37,12 +37,16 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.antiaction.raptor.base.AttributeBase;
+import com.antiaction.raptor.base.AttributeTypeBase;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 
 /**
  * Class encapsulating the Heritrix crawler-beans.cxml file 
@@ -103,8 +107,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
      * @throws ArgumentNotValid if doc is null, or verify is true and doc does not obey the constraints required by our
      * software.
      */
-    public H3HeritrixTemplate(String template) {
+    public H3HeritrixTemplate(long template_id, String template) {
         ArgumentNotValid.checkNotNull(template, "String template");
+        this.template_id = template_id;
         this.template = template;
     }
     
@@ -578,7 +583,64 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		String templateNew = template.replace(METADATA_ITEMS_PLACEHOLDER, sb.toString());
 		this.template = templateNew;
 	}
-	
+
+	@Override
+	public void setAttributes(List<AttributeAndType> attributesAndTypes) {
+		AttributeAndType attributeAndType;
+		AttributeTypeBase attributeType;
+		AttributeBase attribute;
+		Integer intVal = null;
+		String val = null;
+		for (int i=0; i<attributesAndTypes.size(); ++i) {
+			attributeAndType = attributesAndTypes.get(i);
+			attributeType = attributeAndType.attributeType;
+			attribute = attributeAndType.attribute;
+			switch (attributeType.viewtype) {
+			case 1:
+				if (attribute !=  null) {
+					intVal = attribute.getInteger();
+				}
+				if (intVal == null && attributeType.def_int != null) {
+					intVal = attributeType.def_int;
+				}
+				if (intVal != null) {
+					val = intVal.toString();
+				} else {
+					val = "";
+				}
+				break;
+			case 5:
+				if (attribute !=  null) {
+					intVal = attribute.getInteger();
+				}
+				if (intVal == null && attributeType.def_int != null) {
+					intVal = attributeType.def_int;
+				}
+				if (intVal != null && intVal > 0) {
+					val = "true";
+				} else {
+					val = "false";
+				}
+				break;
+			case 6:
+				if (attribute !=  null) {
+					intVal = attribute.getInteger();
+				}
+				if (intVal == null && attributeType.def_int != null) {
+					intVal = attributeType.def_int;
+				}
+				if (intVal != null && intVal > 0) {
+					val = "obey";
+				} else {
+					val = "ignore";
+				}
+				break;
+			}
+			String templateNew = template.replace("%{" + attributeType.name.toUpperCase() + "}", val);
+			this.template = templateNew;
+		}
+	}
+
 	@Override
 	public void writeTemplate(JspWriter out) throws IOFailure {
 		try {

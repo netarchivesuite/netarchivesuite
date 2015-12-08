@@ -5,6 +5,7 @@ import javax.inject.Provider;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 
 public class DAOProviderFactory {
@@ -22,5 +23,9 @@ public class DAOProviderFactory {
 
     public static Provider<ExtendedFieldDAO> getExtendedFieldDAOProvider() {
         return () -> ExtendedFieldDAO.getInstance();
+    }
+
+    public static Provider<EAV> getEAVDAOProvider() {
+    	return () -> EAV.getInstance();
     }
 }

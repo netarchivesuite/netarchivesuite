@@ -51,6 +51,8 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
@@ -851,6 +853,10 @@ public class DomainDBDAO extends DomainDAO {
             dc.setID(domainconfigId);
             d.addConfiguration(dc);
             s1.close();
+
+            // EAV
+            List<AttributeAndType> attributesAndTypes = EAV.getInstance().getAttributesAndTypes(EAV.DOMAIN_TREE_ID, (int)domainconfigId);
+            dc.setAttributesAndTypes(attributesAndTypes);
         }
         if (!d.getAllConfigurations().hasNext()) {
             String message = "Loaded domain " + d + " with no configurations";
@@ -1383,6 +1389,7 @@ public class DomainDBDAO extends DomainDAO {
         PreparedStatement s = null;
         try {
             // Read the configurations now that passwords and seedlists exist
+        	// TODO Seriously? Use a join.
             s = c.prepareStatement("SELECT config_id, " + "configurations.name, " + "comments, "
                     + "ordertemplates.name, " + "maxobjects, " + "maxrate, " + "maxbytes"
                     + " FROM configurations, ordertemplates " + "WHERE domain_id = (SELECT domain_id FROM domains "
@@ -1444,6 +1451,10 @@ public class DomainDBDAO extends DomainDAO {
                 dc.setID(domainconfigId);
                 foundConfigs.add(dc);
                 s2.close();
+
+                // EAV
+                List<AttributeAndType> attributesAndTypes = EAV.getInstance().getAttributesAndTypes(EAV.DOMAIN_TREE_ID, (int)domainconfigId);
+                dc.setAttributesAndTypes(attributesAndTypes);
             } // While
         } catch (SQLException e) {
             throw new IOFailure("Error while fetching DomainConfigration: ", e);

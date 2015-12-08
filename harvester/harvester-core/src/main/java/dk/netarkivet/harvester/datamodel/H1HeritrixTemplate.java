@@ -50,6 +50,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
 
 /**
@@ -294,8 +295,9 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
         this(doc, true);
     }
 
-    public H1HeritrixTemplate(String templateAsString) throws DocumentException {
+    public H1HeritrixTemplate(long template_id, String templateAsString) throws DocumentException {
         ArgumentNotValid.checkNotNull(templateAsString, "String template");
+        this.template_id = template_id;
     	this.template = XmlUtils.documentFromString(templateAsString);
 	}
 
@@ -875,6 +877,11 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 	        metadataItem.addAttribute("name", HARVESTINFO_AUDIENCE);
 	        metadataItem.addText(ajob.getHarvestAudience());
 		} 
+	}
+
+	@Override
+	public void setAttributes(List<AttributeAndType> attributesAndTypes) {
+		// Unsupported for Heritrix 1 templates at this point.
 	}
 
 	@Override
