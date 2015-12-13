@@ -1299,7 +1299,7 @@ public class WindowsMachine extends Machine {
     }
 
     @Override
-    protected void createHarvestDatabaseUpdateScript(File machineDirectory) {
+    protected void createHarvestDatabaseUpdateScript(File machineDirectory, boolean forceCreate) {
         // Ignore if no harvest database directory has been defined.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
         if (dbDir.isEmpty()) {

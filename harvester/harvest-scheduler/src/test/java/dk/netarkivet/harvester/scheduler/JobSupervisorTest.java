@@ -43,7 +43,15 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 public class JobSupervisorTest {
     private JobSupervisor jobSupervisor;
     private JobDAO jobDaoMock = mock(JobDAO.class);
-    private Provider<JobDAO> jobDAOProvider = () -> jobDaoMock;
+    // JAVA 8 required
+    //private Provider<JobDAO> jobDAOProvider = () -> jobDaoMock;
+    private Provider<JobDAO> jobDAOProvider = new Provider<JobDAO>() {
+        @Override
+        public JobDAO get() {
+            return jobDaoMock;
+        }
+
+    };
 
     @Test
     public void testCleanOldJobsMultipleJobs() {

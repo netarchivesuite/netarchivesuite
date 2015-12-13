@@ -68,6 +68,15 @@ public abstract class TemplateDAO implements DAO {
      */
     public abstract Iterator<String> getAll();
 
+
+    /**
+     * Returns an iterator with names of either all active or all inactive order.xml-templates.
+     *
+     * @param active true if active templates are wanted, false otherwise.
+     * @return Iterator<String> with all names of templates (without .xml).
+     */
+    public abstract Iterator<String> getAll(boolean active);
+
     /**
      * Returns an iterator of all templates. Note that this is not the most efficient way of getting all names of
      * templates, for that just use getAll(). Implements the Iterable interface.

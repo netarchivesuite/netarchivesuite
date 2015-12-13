@@ -404,4 +404,10 @@ public class MySQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
     }
 
+    @Override protected void migrateOrderTemplatesTablev1tov2() {
+        String tableName = HarvesterDatabaseTables.ORDERTEMPLATES.getTablename();
+        String[] sqlStatements = {"ALTER TABLE " + tableName + " ADD COLUMN isActive int not null default 1"};
+        HarvestDBConnection.updateTable(tableName, 2, sqlStatements);
+    }
+
 }

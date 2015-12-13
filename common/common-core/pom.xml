@@ -74,6 +74,78 @@
       <version>2.3</version>
     </dependency>
 
+<!--  jetty -->
+
+<dependency>
+<groupId>org.mortbay.jetty</groupId>
+<artifactId>jetty</artifactId>
+<version>6.1.26</version>
+<scope>compile</scope>
+</dependency>
+
+<dependency>
+<groupId>org.mortbay.jetty</groupId>
+<artifactId>jetty-util</artifactId>
+<version>6.1.26</version>
+<scope>compile</scope>
+</dependency>
+<dependency>
+<groupId>org.mortbay.jetty</groupId>
+<artifactId>jetty-sslengine</artifactId>
+<version>6.1.26</version>
+<scope>compile</scope>
+</dependency>
+<dependency>
+<groupId>org.mortbay.jetty</groupId>
+<artifactId>jetty-ajp</artifactId>
+<version>6.1.26</version>
+<scope>compile</scope>
+</dependency>
+
+<dependency>
+	<groupId>org.mortbay.jetty</groupId>
+	<artifactId>servlet-api</artifactId>
+	<version>2.5-20081211</version>
+</dependency>
+<!--
+<dependency>
+	<groupId>org.mortbay.jetty</groupId>
+	<artifactId>servlet-api-2.5</artifactId>
+	<version>6.1.14</version>
+</dependency>
+-->
+<!--
+<dependency>
+         <groupId>javax.servlet.jsp</groupId>
+        <artifactId>jsp-api</artifactId>
+        <version>2.1</version>
+        <scope>compile</scope> 
+    </dependency>
+-->
+<dependency>
+	<groupId>org.mortbay.jetty</groupId>
+	<artifactId>jsp-2.1-glassfish</artifactId>
+	<version>2.1.v20091210</version>
+</dependency>
+<dependency>
+	<groupId>org.mortbay.jetty</groupId>
+	<artifactId>jsp-2.1-jetty</artifactId>
+	<version>6.1.26</version>
+</dependency>
+<!--
+<dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jsp-2.1</artifactId>
+        <version>6.1.14</version>
+      </dependency>
+-->
+<dependency>
+	<groupId>org.mortbay.jetty</groupId>
+	<artifactId>jsp-api-2.1-glassfish</artifactId>
+	<version>2.1.v20091210</version>
+</dependency>
+<!--
+
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
@@ -91,21 +163,31 @@
       <artifactId>jetty-runner</artifactId>
       <version>9.2.2.v20140723</version>
     </dependency>
-
+-->
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <version>1.2.1</version>
     </dependency>
 
-    <!--dependency> <groupId>org.mortbay.jetty</groupId> <artifactId>jsp-2.1-glassfish</artifactId> <version>2.1.v20100127</version> 
-      <exclusions> <exclusion> <groupId>org.eclipse.jdt.core.compiler</groupId> <artifactId>ecj</artifactId> </exclusion> </exclusions> 
-      </dependency -->
+    <!-- dependency for jetty 6.1.26 -->
+<!--    
 
+    <dependency> <groupId>org.mortbay.jetty</groupId> 
+      <artifactId>jsp-2.1-glassfish</artifactId> 
+      <version>2.1.v20100127</version> 
+      <exclusions> 
+      <exclusion> 
+      <groupId>org.eclipse.jdt.core.compiler</groupId> 
+      <artifactId>ecj</artifactId> 
+      </exclusion> 
+      </exclusions> 
+      </dependency> 
+-->
     <dependency>
       <groupId>org.eclipse.jdt.core.compiler</groupId>
       <artifactId>ecj</artifactId>
-      <version>4.4</version>
+      <version>4.4.2</version>
     </dependency>
 
     <dependency>
@@ -187,13 +269,6 @@
       <artifactId>fastutil</artifactId>
       <version>5.0.4</version>
     </dependency>
-
-    <!-- not in Maven Central -->
-    <!--dependency>
-      <groupId>org.archive</groupId>
-      <artifactId>heritrix</artifactId>
-      <version>1.14.4</version>
-    </dependency-->
 
     <dependency>
       <groupId>org.netpreserve.commons</groupId>

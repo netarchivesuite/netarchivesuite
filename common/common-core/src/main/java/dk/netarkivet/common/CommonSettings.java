@@ -215,6 +215,14 @@ public class CommonSettings {
     public static String WEBINTERFACE_SETTINGS = "settings.common.webinterface";
 
     /**
+     * <b>settings.common.webinterface.hideInactiveTemplates</b>;<br/>
+     * Boolean valued String. If true, inactive harvest templates are entirely hidden in the GUI - it will be impossible
+     * to see them or change their state to "active". If false, the GUI will include functionality to change the
+     * status of template from inactive to active and vice-versa.
+     */
+    public static String HIDE_INACTIVE_TEMPLATES = "settings.common.webinterface.hideInactiveTemplates";
+
+    /**
      * settings.common.webinterface.<b>language</b>: <br>
      * The entire language setting structure under the webinterface setting. Is repeated for each language
      */
@@ -369,6 +377,15 @@ public class CommonSettings {
      */
     public static String DB_POOL_IDLE_CONN_TEST_QUERY = "settings.common.database.pool.idleConnTestQuery";
 
+    /**
+     * <b>settings.common.database.pool.maxConnectionAge</b>: <br>
+     * The maxConnectionAge in seconds for each connection in the pool.
+     * The default is one hour (3600 seconds)
+     *
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#maxConnectionAge"/>
+     */
+    public static String DB_POOL_MAX_CONNECTION_AGE = "settings.common.database.pool.maxConnectionAge";
+    
     /**
      * The username for login to the harvest database.
      */

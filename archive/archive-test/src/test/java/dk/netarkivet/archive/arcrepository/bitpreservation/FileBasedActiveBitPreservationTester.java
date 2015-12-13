@@ -88,6 +88,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -392,8 +393,11 @@ public class FileBasedActiveBitPreservationTester {
 
         // Check that wrong counts are caught
         File unsortedFile = new File(TestInfo.WORKING_DIR, "test_file_list_output/filelistOutput/unsorted.txt");
+        // requires Java 8
+        //MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptyList(),
+        //        17, RemoteFileFactory.getMovefileInstance(unsortedFile), new ArrayList<>(0));
         MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptyList(),
-                17, RemoteFileFactory.getMovefileInstance(unsortedFile), new ArrayList<>(0));
+                        17, RemoteFileFactory.getMovefileInstance(unsortedFile), new ArrayList(0));
         runFilelistJob.invoke(abp, replica);
 
         abp.close();

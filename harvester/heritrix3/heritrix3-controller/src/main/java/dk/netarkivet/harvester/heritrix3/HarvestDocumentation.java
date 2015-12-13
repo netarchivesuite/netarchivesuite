@@ -320,16 +320,15 @@ public class HarvestDocumentation {
         }
         
         // Generate an arcfiles-report.txt if configured to do so.
-        // FIXME This is not possible to extract from the crawl.log (Is this list available in any other way?)
+        // This is not possible to extract from the crawl.log, but we will make one from just listing the files harvested by Heritrix3
         
         boolean genArcFilesReport = Settings.getBoolean(Heritrix3Settings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         if (genArcFilesReport) {
-        	log.debug("Arcfiles-report.txt generation Not currently supported by Heritrix3");
-        	/*
+    
             log.debug("Creating an arcfiles-report.txt");
-            files.add(new MetadataFile(new ArchiveFilesReportGenerator(crawlDir).generateReport(), harvestID, jobID,
+            files.add(new MetadataFile(new ArchiveFilesReportGenerator(ingestableFiles).generateReport(), harvestID, jobID,
                     heritrixVersion));
-                    */
+                    
         } else {
             log.debug("Creation of the arcfiles-report.txt has been disabled by the setting '{}'!",
             		Heritrix3Settings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);

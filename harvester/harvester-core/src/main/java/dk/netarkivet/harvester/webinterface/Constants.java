@@ -51,9 +51,9 @@ public class Constants {
 
     public static final String DEFAULT_PARAM = "default";
 
-    public static final String EDIT_URLLIST_PARAM = "editUrlList";
+    public static final String EDIT_SEEDLIST_PARAM = "editSeedList";
 
-    public static final String URLLIST_NAME_PARAM = "urlListName";
+    public static final String SEEDLIST_NAME_PARAM = "seedListName";
 
     public static final String CRAWLERTRAPS_PARAM = "crawlerTraps";
 
@@ -64,6 +64,8 @@ public class Constants {
     public static final String SCHEDULE_PARAM = "schedulename";
 
     public static final String HARVEST_PARAM = "harvestname";
+
+    public static final String HARVEST_OLD_PARAM = "harvestoldname";
 
     public static final String HARVEST_ID = "harvestid";
 
@@ -113,6 +115,8 @@ public class Constants {
     public static final String DOMAIN_PARAM = "name";
 
     public static final String CONFIG_NAME_PARAM = "configName";
+    
+    public static final String CONFIG_OLDNAME_PARAM = "configOldName";
 
     public static final String ORDER_XML_NAME_PARAM = "order_xml";
 
@@ -130,7 +134,7 @@ public class Constants {
 
     public static final String SHOW_UNUSED_SEEDS_PARAM = "showUnusedSeeds";
 
-    public static final String URLLIST_LIST_PARAM = "urlListList";
+    public static final String SEEDLIST_LIST_PARAM = "seedListList";
 
     public static final String JOB_PARAM = "jobID";
 
@@ -271,4 +275,6 @@ public class Constants {
     public static final String DEFAULT_DOMAIN_SEARCH_TYPE = NAME_DOMAIN_SEARCH;
 
     public static final String JOB_ORDERING_BY_STARTDATE_PARAM = "ORDERING_BY_STARTDATE";
+
+	
 }

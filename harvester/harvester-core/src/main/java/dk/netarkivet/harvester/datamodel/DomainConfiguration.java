@@ -565,6 +565,14 @@ public class DomainConfiguration implements Named {
     }
 
     /**
+     * Change the name of configuration to the given configName.
+     * @param configName a new name for this configuration.
+     */
+	public void setName(String configName) {
+		this.configName = configName;
+	}
+
+    /**
      * Get this configurations EAV attributes and attribute types.
      * @return this configurations EAV attributes and attribute types
      */

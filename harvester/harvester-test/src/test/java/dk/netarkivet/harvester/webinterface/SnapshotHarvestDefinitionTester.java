@@ -54,19 +54,52 @@ import dk.netarkivet.testutils.StringAsserts;
 public class SnapshotHarvestDefinitionTester {
 
     private HarvestDefinitionDAO harvestDefinitionDAOMock = mock(HarvestDefinitionDAO.class);
-    private Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = () -> harvestDefinitionDAOMock;
+    // java 8 required
+    //private Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = () -> harvestDefinitionDAOMock;
+    private Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = new Provider<HarvestDefinitionDAO>() {
+        @Override
+        public HarvestDefinitionDAO get() {
+            return harvestDefinitionDAOMock;
+        }
+    };
 
-	private JobDAO jobDaoMock = mock(JobDAO.class);
-    private Provider<JobDAO> jobDAOProvider = () -> jobDaoMock;
+    private JobDAO jobDaoMock = mock(JobDAO.class);
+    // java 8 required
+    //private Provider<JobDAO> jobDAOProvider = () -> jobDaoMock;
+    private Provider<JobDAO> jobDAOProvider = new Provider<JobDAO>() {
+		@Override
+		public JobDAO get() { return jobDaoMock;}
+	};
+
+    private DomainDAO domainDAOMock = mock(DomainDAO.class);
+    // java 8 required
+    //private Provider<DomainDAO> domainDAOProvider = () -> domainDAOMock; JAVA 8 syntax required
+    private Provider<DomainDAO> domainDAOProvider = new Provider<DomainDAO>() {
+        @Override
+        public DomainDAO get() {
+            return domainDAOMock;
+        }
+    };
 
     private ExtendedFieldDAO extendedFieldMock = mock(ExtendedFieldDAO.class);
-    private Provider<ExtendedFieldDAO> extendedFieldDAOProvider = () -> extendedFieldMock;
-    
-    private DomainDAO domainDAOMock = mock(DomainDAO.class);
-    private Provider<DomainDAO> domainDAOProvider = () -> domainDAOMock;
+    // java 8 required
+    //private Provider<ExtendedFieldDAO> extendedFieldDAOProvider = () -> extendedFieldMock; JAVA 8 required
+    private Provider<ExtendedFieldDAO> extendedFieldDAOProvider = new Provider<ExtendedFieldDAO>() {
+        @Override
+        public ExtendedFieldDAO get() {
+            return extendedFieldMock;
+        }
+    };
 
     private EAV eavDAOMock = mock(EAV.class);
-    private Provider<EAV> eavDAOProvider = () -> eavDAOMock;
+    // java 8 required
+    //private Provider<EAV> eavDAOProvider = () -> eavDAOMock;
+    private  Provider<EAV> eavDAOProvider = new Provider<EAV>() {
+    	@Override
+    	public EAV get() {
+    		return eavDAOMock;
+    	}
+    };
 
     private SnapshotHarvestDefinition snapshotHarvestDefinition = new SnapshotHarvestDefinition(
             harvestDefinitionDAOProvider, jobDAOProvider, extendedFieldDAOProvider, domainDAOProvider, eavDAOProvider);

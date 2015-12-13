@@ -62,6 +62,8 @@ passwordList:
                  java.util.List,
                  java.util.Locale,
                  java.util.Set,
+                 org.slf4j.Logger,
+				 org.slf4j.LoggerFactory,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
@@ -74,8 +76,8 @@ passwordList:
                  dk.netarkivet.harvester.webinterface.DomainConfigurationDefinition,
                  dk.netarkivet.harvester.datamodel.eav.EAV,
                  dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType,
-                 com.antiaction.raptor.base.AttributeTypeBase,
-                 com.antiaction.raptor.base.AttributeBase"
+                 com.antiaction.raptor.dao.AttributeTypeBase,
+                 com.antiaction.raptor.dao.AttributeBase"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -135,7 +137,8 @@ Display all the form information for this domain
 <input type="hidden" name="<%=Constants.UPDATE_PARAM%>" value="1"/>
 <input type="hidden" name="<%=Constants.EDITION_PARAM%>"
        value="<%= domain.getEdition() %>"/>
-
+<input type="hidden" name="<%=Constants.CONFIG_OLDNAME_PARAM%>"
+       value="<%=HTMLUtils.escapeHtmlValues(configName) %>"/>
 <div id="configuration">
 
 <%-- table for selecting/editing configurations --%>
@@ -153,8 +156,7 @@ Display all the form information for this domain
     String maxObjects = "";
     String maxBytes = "";
     if (dc != null) {
-        nameString = "value=\"" + HTMLUtils.escapeHtmlValues(configName)
-                     + "\" readonly=\"readonly\"";
+        nameString = "value=\"" + HTMLUtils.escapeHtmlValues(configName) + "\"";
         load = "value=\"" + dc.getMaxRequestRate() + "\"";
         maxObjects = "value=\"" +
                      HTMLUtils.localiseLong(dc.getMaxObjects(), pageContext)
@@ -182,7 +184,7 @@ Display all the form information for this domain
                 <td><select name="<%=Constants.ORDER_XML_NAME_PARAM%>">
                     <%
                         Iterator<String> templates =
-                                TemplateDAO.getInstance().getAll();
+                                TemplateDAO.getInstance().getAll(true);
                         while (templates.hasNext()) {
                             String selected = "";
                             String template = templates.next();
@@ -301,12 +303,12 @@ Display all the form information for this domain
             </tr>
         </table>
     </td>
-    <%-- Second element is also a two-column table containing mulitple-selects for the url-lists and passwords --%>
+    <%-- Second element is also a two-column table containing multiple-selects for the seed-lists and passwords --%>
     <td>
         <table>
             <tr>
                 <td><fmt:message key="seed.list"/> <br/>
-                    <select name="<%=Constants.URLLIST_LIST_PARAM%>" multiple="multiple" size="8">
+                    <select name="<%=Constants.SEEDLIST_LIST_PARAM%>" multiple="multiple" size="8">
                     <%-- list of url list options --%>
                     <%
                         Iterator<SeedList> allSeedListsIt

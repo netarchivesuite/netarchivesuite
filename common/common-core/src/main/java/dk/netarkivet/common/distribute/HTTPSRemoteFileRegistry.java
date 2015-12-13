@@ -36,15 +36,9 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManagerFactory;
-
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.security.SslSocketConnector;
 import org.apache.commons.io.IOUtils;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.SecureRequestCustomizer;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
@@ -83,7 +77,6 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
      */
     private final SSLContext sslContext;
 
-    // FIXME I think this is what they call a constructor...?!
     // This all initialises the ssl context to use the key in the keystore above.
     private HTTPSRemoteFileRegistry() {
         FileInputStream keyStoreInputStream = null;
@@ -128,36 +121,25 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
     protected String getProtocol() {
         return PROTOCOL;
     }
-
+    
     /**
      * Start the server, including a handler that responds with registered files, removes registered files on request,
      * and gives 404 otherwise. Connection to this web host only possible with the shared certificate.
      */
-    @Override
     protected void startServer() {
         server = new Server();
-
-        SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setKeyStorePath(KEYSTORE_PATH);
-        sslContextFactory.setKeyStorePassword(KEYSTORE_PASSWORD);
-        sslContextFactory.setKeyManagerPassword(KEY_PASSWORD);
-        sslContextFactory.setTrustStorePath(KEYSTORE_PATH);
-        sslContextFactory.setTrustStorePassword(KEYSTORE_PASSWORD);
-        sslContextFactory.setNeedClientAuth(true);
-
-        HttpConfiguration http_config = new HttpConfiguration();
-        http_config.setSecureScheme("https");
-        http_config.setSecurePort(port);
-
-        HttpConfiguration https_config = new HttpConfiguration(http_config);
-        https_config.addCustomizer(new SecureRequestCustomizer());
-
-        ServerConnector sslConnector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory,
-                "http/1.1"), new HttpConnectionFactory(https_config));
-        sslConnector.setPort(port);
-
-        server.addConnector(sslConnector);
-        server.setHandler(new HTTPRemoteFileRegistryHandler());
+        //This sets up a secure connector
+        SslSocketConnector connector = new SslSocketConnector();
+        connector.setKeystore(KEYSTORE_PATH);
+        connector.setPassword(KEYSTORE_PASSWORD);
+        connector.setKeyPassword(KEY_PASSWORD);
+        connector.setTruststore(KEYSTORE_PATH);
+        connector.setTrustPassword(KEYSTORE_PASSWORD);
+        connector.setNeedClientAuth(true);
+        connector.setPort(port);
+        //This initialises the server.
+        server.addConnector(connector);
+        server.addHandler(new HTTPRemoteFileRegistryHandler());
         try {
             server.start();
         } catch (Exception e) {

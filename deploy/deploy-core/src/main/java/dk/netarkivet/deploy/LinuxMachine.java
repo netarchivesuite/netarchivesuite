@@ -80,10 +80,10 @@ public class LinuxMachine extends Machine {
             if (app.isBundledHarvester()) {
                 bundlesArr = app.getSettingsValues(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
                 if ((bundlesArr == null || bundlesArr.length == 0)
-                        && deployConfiguration.getDefaultBundlerZip().isPresent()) {
-                    bundlesArr = new String[] { deployConfiguration.getDefaultBundlerZip().get().getAbsolutePath() };
+                        && deployConfiguration.getDefaultBundlerZip() != null) {
+                    bundlesArr = new String[] { deployConfiguration.getDefaultBundlerZip().getAbsolutePath() };
                 } else if ((bundlesArr == null || bundlesArr.length == 0)
-                        && !deployConfiguration.getDefaultBundlerZip().isPresent()) {
+                        && deployConfiguration.getDefaultBundlerZip() == null) {
                     throw new IllegalArgumentException("A Heritrix bundler needs to be defined for H3 controllers, "
                             + "either directly in the deploy configuration or from the command line with the -B option.");
                 }
@@ -543,6 +543,9 @@ public class LinuxMachine extends Machine {
     protected void createApplicationStartScripts(File directory) throws IOFailure {
         // go through all applications and create their start script
         for (Application app : applications) {
+            if (app.getTotalName().contains("GUI")) {
+                 createHarvestDatabaseUpdateScript(directory, true);
+            }
             File appStartScript = new File(directory, Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification()
                     + scriptExtension);
             try {
@@ -1600,10 +1603,10 @@ public class LinuxMachine extends Machine {
     }
 
     @Override
-    protected void createHarvestDatabaseUpdateScript(File dir) {
+    protected void createHarvestDatabaseUpdateScript(File dir, boolean forceCreate) {
         // Ignore if no harvest database directory has been defined or this isn't a harvest server app.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
-        if (dbDir.isEmpty()) {
+        if (dbDir.isEmpty() && !forceCreate) {
             return;
         }
 
@@ -1632,7 +1635,7 @@ public class LinuxMachine extends Machine {
                 // < /dev/null >> start_external_harvest_database.log 2>&1 &
 
                 updateDBPrint.print(ScriptConstants.EXPORT_CLASSPATH);
-                updateDBPrint.print(getHarvestServerClasspath() + ScriptConstants.NEWLINE);
+                updateDBPrint.print(getHarvestServerClasspath() + getHarvesterCoreClasspath() + ScriptConstants.NEWLINE);
 
                 updateDBPrint.print(ScriptConstants.JAVA + Constants.SPACE + "-" + ScriptConstants.OPTION_SETTINGS
                         + getConfDirPath() + updateHarvestDBSettingsFile.getName() + Constants.SPACE);
@@ -1668,8 +1671,14 @@ public class LinuxMachine extends Machine {
 
     private String getHarvestServerClasspath() {
         return getDefaultMachineClasspath() +
-                getInstallDirPath() + Constants.SLASH + "netarchivesuite-harvest-scheduler.jar" + Constants.COLON;
+                getInstallDirPath() + Constants.SLASH + "lib/netarchivesuite-harvest-scheduler.jar" + Constants.COLON;
     }
+
+    private String getHarvesterCoreClasspath() {
+        return getDefaultMachineClasspath() +
+                getInstallDirPath() + Constants.SLASH + "lib/netarchivesuite-harvester-core.jar" + Constants.COLON;
+    }
+
 
     @Override
     protected String getLibDirPath() {

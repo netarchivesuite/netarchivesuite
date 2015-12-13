@@ -47,7 +47,9 @@ will not appear here.
                  dk.netarkivet.monitor.webinterface.JMXSummaryUtils,
                  dk.netarkivet.monitor.webinterface.StatusEntry,
                  java.net.URLEncoder,
-                 java.net.URLDecoder"
+                 java.net.URLDecoder,
+                 org.slf4j.LoggerFactory,
+                 org.slf4j.Logger"
          pageEncoding="UTF-8"
         %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"

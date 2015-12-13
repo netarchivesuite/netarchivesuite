@@ -125,7 +125,7 @@ National Library.
             <harvestStatus>
                 <defaultPageSize>100</defaultPageSize>
             </harvestStatus>
-
+            <hideInactiveTemplates>false</hideInactiveTemplates>
         </webinterface>
         <topLevelDomains>
 <!-- new TLDs from https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains#ICANN-era_generic_top-level_domains
@@ -468,6 +468,7 @@ National Library.
                 <idleConnTestPeriod>0</idleConnTestPeriod>
                 <idleConnTestQuery></idleConnTestQuery>
                 <idleConnTestOnCheckin>false</idleConnTestOnCheckin>
+                <maxConnectionAge>3600</maxConnectionAge>
             </pool>
         </database>
         <repository>

@@ -13,8 +13,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- maven-java-formatter-plugin -->
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
     <slf4j.version>1.7.7</slf4j.version>
     <logback.version>1.0.13</logback.version>
     <webarchive-commons.version>1.1.5</webarchive-commons.version>
@@ -25,6 +25,7 @@
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
     <jwat.version>1.0.3</jwat.version>
+    <derby.version>10.12.1.1</derby.version>
   </properties>
 
   <modules>
@@ -130,6 +131,30 @@
 
   <dependencyManagement>
     <dependencies>
+
+     <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbyclient</artifactId>
+      <version>${derby.version}</version>
+     </dependency>
+
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>${derby.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbytools</artifactId>
+      <version>${derby.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbynet</artifactId>
+      <version>${derby.version}</version>
+    </dependency>
+
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
@@ -416,7 +441,8 @@
           <linksource>true</linksource>
           <quiet>true</quiet>
           <!-- Note: This fails with a JVM older than Java 8 -->
-          <additionalparam>-Xdoclint:none</additionalparam>
+          <!-- <additionalparam>-Xdoclint:none</additionalparam> --> 
+          <additionalparam>${javadoc.doclint.none}</additionalparam>
         </configuration>
         <executions>
           <execution>
@@ -522,5 +548,14 @@
         </plugins>
       </build>
     </profile>
+	<profile>
+            <id>java8-disable-strict-javadoc</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
+            </properties>
+        </profile>
   </profiles>
 </project>

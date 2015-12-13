@@ -26,7 +26,10 @@ import static dk.netarkivet.systemtest.page.DomainWebTestHelper.HIDE_UNUSED_CONF
 import static dk.netarkivet.systemtest.page.DomainWebTestHelper.HIDE_UNUSED_SEED_LISTS_LINK;
 import static dk.netarkivet.systemtest.page.DomainWebTestHelper.SHOW_UNUSED_CONFIGURATIONS_LINK;
 import static dk.netarkivet.systemtest.page.DomainWebTestHelper.SHOW_UNUSED_SEED_LISTS_LINK;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -59,20 +62,51 @@ public class TemplatePageTest extends AbstractSystemTest {
         addDescription("Tests that harvest tempplates can be updated.");
         addStep("Goto the template page", "The template page should load");
         PageHelper.gotoPage(PageHelper.MenuPages.EditHarvestTemplates);
-        NASAssert.assertTrue(driver.getPageSource().contains("Edit Harvest Templates"),
+        assertTrue(driver.getPageSource().contains("Edit Harvest Templates"),
                 "Template page not loaded correctly");
 
-        addStep("Select the 'default_orderxml' in the Replace... drop down", "");
-        new Select(driver.findElement(By.name("order_xml_to_replace"))).selectByVisibleText("default_orderxml");
+        addStep("Deactivate default_obeyrobots template", "");
+        WebElement flipForm = driver.findElement(By.id("default_obeyrobotsflip"));
+        flipForm.findElement(By.tagName("a")).click();
+        flipForm = driver.findElement(By.id("default_obeyrobotsflip"));
+        assertFalse(flipForm.findElement(By.xpath("parent::*")).findElement(By.xpath("parent::*")).isDisplayed(),
+                "Ancestral row should be hidden.");
+        addStep("Show inactive templates", "");
+        driver.findElement(By.id("show")).click();
+        flipForm = driver.findElement(By.id("default_obeyrobotsflip"));
+        assertTrue(flipForm.findElement(By.xpath("parent::*")).findElement(By.xpath("parent::*")).isDisplayed(),
+                "Ancestral row should be visible.");
+        addStep("Reactivate default_obeyrobots", "");
+        flipForm = driver.findElement(By.id("default_obeyrobotsflip"));
+        flipForm.findElement(By.tagName("a")).click();
+        flipForm = driver.findElement(By.id("default_obeyrobotsflip"));
+        assertTrue(flipForm.findElement(By.xpath("parent::*")).findElement(By.xpath("parent::*")).isDisplayed(),
+                        "Ancestral row should be visible.");
 
-        addStep("Select the 'default_orderxml' in the Replace... drop down", "");
-        Path currentRelativePath = Paths.get("");
-        String s = currentRelativePath.toAbsolutePath().toString();
-        driver.findElement(By.name("upload_file")).sendKeys(s + "/../../deploy/distribution/src/main/resources/order_templates_dist/default_orderxml.xml");
+        addStep("Replace 'default_orderxml' ", "");
 
-        addStep("Click the upload button.", "The text 'The harvest template 'default_orderxml' has been updated' should be displayed");
-        driver.findElement(By.name("upload")).click();
+        WebElement defaultOrderRow =  driver.findElement(By.id("default_orderxmlflip")).findElement(
+                        By.xpath("parent::*")).findElement(By.xpath("parent::*"));
+        new Select(defaultOrderRow.findElement(By.name("requestedContentType"))).selectByValue("binary/octet-stream");
+        defaultOrderRow.findElement(By.name("download")).click();
+
+        File tempDir = File.createTempFile("ssss","dkdkdkd").getParentFile();
+        File downloadedFile = new File(tempDir, "default_orderxml.xml");
+        assertTrue(downloadedFile.exists(), downloadedFile.getAbsolutePath() + " should exist.");
+
+        PageHelper.gotoPage(PageHelper.MenuPages.EditHarvestTemplates);
+        defaultOrderRow =  driver.findElement(By.id("default_orderxmlflip")).findElement(
+                               By.xpath("parent::*")).findElement(By.xpath("parent::*"));
+        String fileToUpload = "src/test/resources/default_orderxml.cxml";
+        File file = new File(fileToUpload);
+        assertTrue(file.exists(), "No such file: "  + file.getAbsolutePath());
+        defaultOrderRow.findElement(By.name("upload_file")).sendKeys(file.getAbsolutePath());
+        addStep("Click the upload button.",
+                "The text 'The harvest template 'default_orderxml' has been updated' should be displayed");
+        defaultOrderRow.findElement(By.name("upload")).click();
         NASAssert.assertTrue(driver.getPageSource().contains("The harvest template 'default_orderxml' has been updated"),
                 "Template not updated correctly");
     }
+
+
 }

@@ -286,7 +286,7 @@ public class DomainConfigurationTest {
         SeedList seedList = new SeedList("SeedList1", "netarchivesuite.org");
         DomainConfiguration domainConfiguration = new DomainConfiguration(
                 name, name, new DomainHistory(),
-                new ArrayList<>(), Arrays.asList(new SeedList[] {seedList}), new ArrayList<>());
+                new ArrayList<String>(), Arrays.asList(new SeedList[] {seedList}), new ArrayList<Password>());
         domainConfiguration.setOrderXmlName(OrderXmlBuilder.DEFAULT_ORDER_XML_NAME);
         return domainConfiguration;
     }

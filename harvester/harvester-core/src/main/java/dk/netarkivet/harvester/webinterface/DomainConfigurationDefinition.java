@@ -30,8 +30,8 @@ import java.util.List;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import com.antiaction.raptor.base.AttributeBase;
-import com.antiaction.raptor.base.AttributeTypeBase;
+import com.antiaction.raptor.dao.AttributeBase;
+import com.antiaction.raptor.dao.AttributeTypeBase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -51,7 +51,8 @@ import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
  */
 
 public class DomainConfigurationDefinition {
-
+	//private static final Logger log = LoggerFactory.getLogger(DomainConfigurationDefinition.class);
+	
     /**
      * Extracts all required parameters from the request, checks for any inconsistencies, and passes the requisite data
      * to the updateDomain method for processing. The specified domain configuration is then updated and the result
@@ -85,12 +86,18 @@ public class DomainConfigurationDefinition {
             return; // no need to continue
         }
 
-        HTMLUtils.forwardOnEmptyParameter(context, Constants.DOMAIN_PARAM, Constants.CONFIG_NAME_PARAM,
-                Constants.ORDER_XML_NAME_PARAM, Constants.URLLIST_LIST_PARAM);
+        HTMLUtils.forwardOnEmptyParameter(context, Constants.DOMAIN_PARAM, Constants.CONFIG_NAME_PARAM, 
+                Constants.ORDER_XML_NAME_PARAM, Constants.SEEDLIST_LIST_PARAM);
         String name = request.getParameter(Constants.DOMAIN_PARAM).trim();
         String configName = request.getParameter(Constants.CONFIG_NAME_PARAM).trim();
+        String configOldName = request.getParameter(Constants.CONFIG_OLDNAME_PARAM);
+        if (configOldName != null) {
+            configOldName = configOldName.trim();
+        } else {
+            configOldName = "";
+        }
         String order_xml = request.getParameter(Constants.ORDER_XML_NAME_PARAM).trim();
-        String[] urlListList = request.getParameterValues(Constants.URLLIST_LIST_PARAM);
+        String[] urlListList = request.getParameterValues(Constants.SEEDLIST_LIST_PARAM);
 
         if (!DomainDAO.getInstance().exists(name)) {
             HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;unknown.domain.0", name);
@@ -134,7 +141,39 @@ public class DomainConfigurationDefinition {
 
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
 
-        DomainConfiguration domainConf = updateDomain(domain, configName, order_xml, load, maxObjects, maxBytes, urlListList, comments);
+        DomainConfiguration domainConf = null;
+
+        if (!configOldName.isEmpty() && !configOldName.equals(configName)){
+            // Are we allowed to rename to the new name? or does it already exist?
+            if (domain.hasConfiguration(configName)) {
+                HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;configuration.exists.0", configName);
+                throw new ForwardedToErrorPage("Configuration " + configName + " already exist");
+            } else {
+                domainConf = domain.getConfiguration(configOldName);
+                String defaultConfigName = DomainDAO.getInstance().getDefaultDomainConfigurationName(domain.getName());
+                if (defaultConfigName.equals(configName)){	
+                    HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;cannot.rename.defaultconfiguration.0", configOldName);
+                    throw new ForwardedToErrorPage("Configuration " + configOldName + " cannot be renamed. It is the defaultconfiguration");
+                } else {
+                    List<SeedList> seedlistList = new ArrayList<SeedList>();
+                    for (String seedlistName : urlListList) {
+                        seedlistList.add(domain.getSeedList(seedlistName));
+                    }
+                    domainConf.setName(configName);
+                    domainConf.setOrderXmlName(order_xml);
+                    domainConf.setMaxObjects(maxObjects);
+                    domainConf.setMaxBytes(maxBytes);
+                    domainConf.setMaxRequestRate(load);
+                    domainConf.setSeedLists(domain, seedlistList);
+                    if (comments != null) {
+                        domainConf.setComments(comments);
+                    }
+                    DomainDAO.getInstance().renameAndUpdateConfig(domain, domainConf, configOldName);
+                }
+            }
+        } else {
+        	domainConf = updateDomainConfig(domain, configName, order_xml, load, maxObjects, maxBytes, urlListList, comments);
+        }
 
         // EAV
         try {
@@ -158,6 +197,7 @@ public class DomainConfigurationDefinition {
                 	attribute.setInteger((int)l);
             		break;
             	case 5:
+            	case 6:
                     String paramValue = context.getRequest().getParameter(attributeType.name);
                     int intVal = 0;
                     if (paramValue != null && !"0".equals(paramValue)) {
@@ -177,7 +217,7 @@ public class DomainConfigurationDefinition {
      * Given the parsed values, update or create a configuration in the domain.
      *
      * @param domain The domain
-     * @param configName Name of config - if this exists we update, otherwise we create a new.
+     * @param configName Name of config - if this exists we update, otherwise we create a new. 
      * @param orderXml Order-template name
      * @param load Request rate
      * @param maxObjects Max objects
@@ -185,31 +225,29 @@ public class DomainConfigurationDefinition {
      * @param urlListList List of url list names
      * @param comments Comments, or null for none.
      */
-    private static DomainConfiguration updateDomain(Domain domain, String configName, String orderXml, int load, long maxObjects,
+    private static DomainConfiguration updateDomainConfig(Domain domain, String configName, String orderXml, int load, long maxObjects,
             long maxBytes, String[] urlListList, String comments) {
-
-        // Update/create new configuration
-
-        List<SeedList> seedlistList = new ArrayList<SeedList>();
-        for (String seedlistName : urlListList) {
-            seedlistList.add(domain.getSeedList(seedlistName));
-        }
-        DomainConfiguration domainConf;
-        if (domain.hasConfiguration(configName)) {
-            domainConf = domain.getConfiguration(configName);
-        } else { // new DomainConfiguration
-            domainConf = new DomainConfiguration(configName, domain, seedlistList, new ArrayList<Password>());
-            domain.addConfiguration(domainConf);
-        }
-        domainConf.setOrderXmlName(orderXml);
-        domainConf.setMaxObjects(maxObjects);
-        domainConf.setMaxBytes(maxBytes);
-        domainConf.setMaxRequestRate(load);
-        domainConf.setSeedLists(domain, seedlistList);
-        if (comments != null) {
-            domainConf.setComments(comments);
-        }
-        DomainDAO.getInstance().update(domain);
+    	// Update/create new configuration	
+    	List<SeedList> seedlistList = new ArrayList<SeedList>();
+    	for (String seedlistName : urlListList) {
+    		seedlistList.add(domain.getSeedList(seedlistName));
+    	}
+    	DomainConfiguration domainConf;
+    	if (domain.hasConfiguration(configName)) {
+    		domainConf = domain.getConfiguration(configName);
+    	} else { // new DomainConfiguration
+    		domainConf = new DomainConfiguration(configName, domain, seedlistList, new ArrayList<Password>());
+    		domain.addConfiguration(domainConf);
+    	}
+    	domainConf.setOrderXmlName(orderXml);
+    	domainConf.setMaxObjects(maxObjects);
+    	domainConf.setMaxBytes(maxBytes);
+    	domainConf.setMaxRequestRate(load);
+    	domainConf.setSeedLists(domain, seedlistList);
+    	if (comments != null) {
+    		domainConf.setComments(comments);
+    	}
+    	DomainDAO.getInstance().update(domain);
         return domainConf;
     }
 }

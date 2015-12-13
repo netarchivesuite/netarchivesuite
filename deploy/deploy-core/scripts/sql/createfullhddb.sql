@@ -80,7 +80,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'schedules', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'ordertemplates', 1);
+    values ( 'ordertemplates', 2);
 insert into schemaversions ( tablename, version )
     values ( 'jobs', 9);
 insert into schemaversions ( tablename, version )
@@ -394,7 +394,8 @@ create table ordertemplates (
     template_id bigint not null generated always as identity primary key,
                                        -- Unique id for the template
     name varchar(300) not null unique, -- Name of the template
-    orderxml clob(64M) not null        -- The Heritrix order.xml string
+    orderxml clob(64M) not null,        -- The Heritrix order.xml string
+    isActive BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 --***************************************************************************--

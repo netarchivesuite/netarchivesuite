@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.antiaction.raptor.base.AttributeBase;
-import com.antiaction.raptor.base.AttributeTypeBase;
+import com.antiaction.raptor.dao.AttributeBase;
+import com.antiaction.raptor.dao.AttributeTypeBase;
 import com.antiaction.raptor.sql.DBWrapper;
 import com.antiaction.raptor.sql.SqlResult;
 import com.antiaction.raptor.sql.mssql.MSSql;

@@ -151,12 +151,27 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             upgradeDomainsTable(currentVersion, toVersion);
         } else if (tableName.equals(HarvesterDatabaseTables.HARVESTDEFINITIONS.getTablename())) {
             upgradeHarvestdefinitionsTable(currentVersion, toVersion);
+        } else if (tableName.equals(HarvesterDatabaseTables.ORDERTEMPLATES.getTablename())) {
+            upgradeOrderTemplatesTable(currentVersion, toVersion);
         } else if (tableName.equals(HarvesterDatabaseTables.HARVESTCHANNELS.getTablename())) {
             upgradeHarvestchannelTable(currentVersion, toVersion);
             // Add new if else when other tables need to be upgraded
         } else {
             throw new NotImplementedException("No method exists for migrating table '" + tableName + "' to version "
                     + toVersion);
+        }
+    }
+
+    private void upgradeOrderTemplatesTable (int currentVersion, int toVersion) {
+        if (currentVersion == 1 && toVersion == 2 ) {
+            migrateOrderTemplatesTablev1tov2();
+            currentVersion = 2;
+        }
+         // insert new migrations here
+        if (currentVersion != HarvesterDatabaseTables.ORDERTEMPLATES.getRequiredVersion()) {
+            throw new NotImplementedException("No method exists for migrating table '"
+                    + HarvesterDatabaseTables.ORDERTEMPLATES.getTablename() + "' from version " + currentVersion
+                    + " to version " + toVersion);
         }
     }
 
@@ -660,6 +675,11 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * Migrates the 'ExtendedFieldValueTable' from version 1 to version 2 changing the maxlen of content to 30000
      */
     protected abstract void migrateExtendedFieldTableValueV1toV2();
+
+    /**
+     * Migrates the table 'ordertemplates' from version 1 to version 2, adding a boolean 'isActive" flag.
+     */
+    protected abstract void migrateOrderTemplatesTablev1tov2();
 
     /**
      * Update all tables in the enum class {@link HarvesterDatabaseTables} to the required version. There is no attempt

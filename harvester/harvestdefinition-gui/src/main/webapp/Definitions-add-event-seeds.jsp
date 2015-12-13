@@ -225,7 +225,7 @@ the user
             <td>
                 <select name="<%= Constants.ORDER_TEMPLATE_PARAM %>">
                     <% Iterator<String> templates
-                            = TemplateDAO.getInstance().getAll();
+                            = TemplateDAO.getInstance().getAll(true);
                         while (templates.hasNext()) {
                             String template = templates.next();
                             out.println("<option value=\""

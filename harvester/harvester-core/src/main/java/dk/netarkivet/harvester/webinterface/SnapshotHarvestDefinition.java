@@ -35,8 +35,8 @@ import javax.servlet.jsp.PageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.antiaction.raptor.base.AttributeBase;
-import com.antiaction.raptor.base.AttributeTypeBase;
+import com.antiaction.raptor.dao.AttributeBase;
+import com.antiaction.raptor.dao.AttributeTypeBase;
 
 import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
@@ -62,7 +62,6 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
  * Contains utility methods for supporting GUI for updating snapshot harvests.
  */
 public class SnapshotHarvestDefinition {
-    //protected static final Log log = LogFactory.getLog(SnapshotHarvestDefinition.class);
     protected static final Logger log = LoggerFactory.getLogger(SnapshotHarvestDefinition.class);
     private final Provider<HarvestDefinitionDAO> hdDaoProvider;
     private final Provider<JobDAO> jobDaoProvider;
@@ -70,6 +69,13 @@ public class SnapshotHarvestDefinition {
     private final Provider<DomainDAO> domainDAOProvider;
     private final Provider<EAV> eavDAOProvider;
 
+    /**
+     * Constructor.
+     * @param hdDaoProvider Provider for HarvestDefinitions
+     * @param jobDaoProvider Provider for Jobs
+     * @param extendedFieldDAOProvider Provider ExtendedFields 
+     * @param domainDAOProvider Provider for Domains
+     */
     public SnapshotHarvestDefinition(Provider<HarvestDefinitionDAO> hdDaoProvider, Provider<JobDAO> jobDaoProvider,
             Provider<ExtendedFieldDAO> extendedFieldDAOProvider, Provider<DomainDAO> domainDAOProvider, Provider<EAV> eavDAOProvider) {
         this.hdDaoProvider = hdDaoProvider;
@@ -79,6 +85,10 @@ public class SnapshotHarvestDefinition {
         this.eavDAOProvider = eavDAOProvider;
     }
 
+    /**
+     * 
+     * @return a default SnapshotHarvestDefinition
+     */
     public static SnapshotHarvestDefinition createSnapshotHarvestDefinitionWithDefaultDAOs() {
         return new SnapshotHarvestDefinition(DAOProviderFactory.getHarvestDefinitionDAOProvider(),
                 DAOProviderFactory.getJobDAOProvider(), DAOProviderFactory.getExtendedFieldDAOProvider(),
@@ -108,6 +118,10 @@ public class SnapshotHarvestDefinition {
 
         HTMLUtils.forwardOnEmptyParameter(context, Constants.HARVEST_PARAM);
 
+        String oldname = request.getParameter(Constants.HARVEST_OLD_PARAM);
+        if (oldname == null) {
+            oldname = "";
+        }
         String name = request.getParameter(Constants.HARVEST_PARAM);
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
 
@@ -138,7 +152,18 @@ public class SnapshotHarvestDefinition {
             hd.setActive(false);
             hdDaoProvider.get().create(hd);
         } else {
-            hd = (FullHarvest) hdDaoProvider.get().getHarvestDefinition(name);
+            if (oldname.equals(name)) { // name is unchanged
+                hd = (FullHarvest) hdDaoProvider.get().getHarvestDefinition(name);
+            } else {
+                // test that the name does not exist already
+                if (hdDaoProvider.get().exists(name)) {
+                    HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvest.definition.0.already.exists", name);
+                    throw new ForwardedToErrorPage("Harvest definition '" + name + "' already exists");
+                } else {
+                    hd = (FullHarvest) hdDaoProvider.get().getHarvestDefinition(oldname);
+                    hd.setName(name);
+                }
+            }
             if (hd == null) {
                 HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvest.0.does.not.exist", name);
                 throw new UnknownID("Harvest definition '" + name + "' doesn't exist!");
@@ -151,7 +176,7 @@ public class SnapshotHarvestDefinition {
                                 + HTMLUtils.encodeAndEscapeHTML(name) + "\">", "</a>");
 
                 throw new ForwardedToErrorPage("Harvest definition '" + name + "' has changed");
-            }
+            } 
 
             // MaxBytes is set to
             // dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES
@@ -195,6 +220,7 @@ public class SnapshotHarvestDefinition {
                 	attribute.setInteger((int)l);
             		break;
             	case 5:
+            	case 6:
                     String paramValue = context.getRequest().getParameter(attributeType.name);
                     int intVal = 0;
                     if (paramValue != null && !"0".equals(paramValue)) {
@@ -209,6 +235,7 @@ public class SnapshotHarvestDefinition {
         	throw new RuntimeException("Unable to store EAV data!", e);
         }
     }
+    
 
     /**
      * Flip the active status of a harvestdefinition named in the "flipactive" parameter.

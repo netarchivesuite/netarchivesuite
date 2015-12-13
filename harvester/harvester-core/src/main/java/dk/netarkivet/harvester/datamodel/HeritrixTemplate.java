@@ -33,6 +33,11 @@ public abstract class HeritrixTemplate implements Serializable {
 	//private static final CharSequence H3_SIGNATURE = "xmlns=\"http://www.springframework.org/";
 	private static final CharSequence H3_SIGNATURE = "http://www.springframework.org/";
 
+	/**
+	 * Templates for which isActive is false will be hidden in the web-gui by default.
+	 */
+	private boolean isActive = true;
+
 	// Constants for the metadata added to the warcinfo record when using WARC
 
 	protected static final String HARVESTINFO_VERSION_NUMBER = "0.5";
@@ -79,6 +84,13 @@ public abstract class HeritrixTemplate implements Serializable {
 	public abstract void configureQuotaEnforcer(
 			boolean maxObjectsIsSetByQuotaEnforcer, long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain);
 
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setIsActive(boolean isActive) {
+		this.isActive = isActive;
+	}
 
 	// Getter/Setter for MaxBytesPerDomain value
 	public abstract void setMaxBytesPerDomain(Long maxbytesL);

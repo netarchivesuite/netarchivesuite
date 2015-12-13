@@ -37,8 +37,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.antiaction.raptor.base.AttributeBase;
-import com.antiaction.raptor.base.AttributeTypeBase;
+import com.antiaction.raptor.dao.AttributeBase;
+import com.antiaction.raptor.dao.AttributeTypeBase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;

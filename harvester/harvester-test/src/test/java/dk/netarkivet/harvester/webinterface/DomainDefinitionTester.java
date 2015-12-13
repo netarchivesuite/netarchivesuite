@@ -92,9 +92,9 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
         parameterMap.put(Constants.DEFAULT_PARAM, new String[] {"conf2"});
         TestServletRequest request = new TestServletRequest();
-        parameterMap.put("configName", new String[] {"new_config"});
-        parameterMap.put("order_xml", new String[] {"OneLevel-order"});
-        parameterMap.put("urlListList", new String[] {"seeds", "defaultseeds"});
+        parameterMap.put(Constants.CONFIG_NAME_PARAM, new String[] {"new_config"});
+        parameterMap.put(Constants.ORDER_XML_NAME_PARAM, new String[] {"OneLevel-order"});
+        parameterMap.put(Constants.SEEDLIST_LIST_PARAM, new String[] {"seeds", "defaultseeds"});
         parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
         parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {""});
         parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
@@ -157,7 +157,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         TestServletRequest request = new TestServletRequest();
         parameterMap.put("configName", new String[] {"new_config"});
         parameterMap.put("order_xml", new String[] {"OneLevel-order"});
-        parameterMap.put("urlListList", new String[] {"seeds", "defaultseeds"});
+        parameterMap.put("seedListList", new String[] {"seeds", "defaultseeds"});
         parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
         parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {""});
         parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
@@ -202,7 +202,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         parameterMap.put("order_xml", new String[] {conf.getOrderXmlName()});
         parameterMap.put("maxRate", new String[] {"20"});
         parameterMap.put("maxObjects", new String[] {"10"});
-        parameterMap.put("urlListList", new String[] {"seeds"});
+        parameterMap.put("seedListList", new String[] {"seeds"});
         parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -238,8 +238,8 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
         parameterMap.put(Constants.DEFAULT_PARAM, new String[] {"conf2"});
         TestServletRequest request = new TestServletRequest();
-        parameterMap.put("urlListName", new String[] {"seeds"});
-        parameterMap.put("seedList", new String[] {"www.netarkivet.dk\nwww.netarchive.dk"});
+        parameterMap.put(Constants.SEEDLIST_NAME_PARAM, new String[] {"seeds"});
+        parameterMap.put(Constants.SEED_LIST_PARAMETER, new String[] {"www.netarkivet.dk\nwww.netarchive.dk"});
         parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);

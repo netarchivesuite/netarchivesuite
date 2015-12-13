@@ -23,6 +23,7 @@
 package dk.netarkivet.harvester.datamodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -63,6 +64,40 @@ public class TemplateDAOTester extends DataModelTestCase {
         Iterator<String> i = dao.getAll();
         // File[] order_files = TestInfo.BASE_DIR_ORDER_XML_TEMPLATES.listFiles(FileUtils.getXmlFilesFilter());
         StringBuffer sb = new StringBuffer();
+        String templateName = null;
+        int total = 0;
+        while (i.hasNext()) {
+            templateName = i.next();
+            sb.append(templateName + ",");
+            total++;
+        }
+        assertEquals("More or less templates found ", "FullSite-order,Max_20_2-order,OneLevel-order,default_orderxml,",
+                sb.toString());
+        HeritrixTemplate heritrixTemplate = dao.read(templateName);
+        heritrixTemplate.setIsActive(!heritrixTemplate.isActive());
+        dao.update(templateName, heritrixTemplate);
+        assertEquals("Expect 1 inactive template now.", 1, getCount(dao, false));
+
+        assertEquals("Expect number of active templates to have decreased by 1.", total-1, getCount(dao, true));
+    }
+
+    private int getCount(TemplateDAO dao, boolean isActive) {
+        final Iterator<String> all = dao.getAll(isActive);
+        int count = 0;
+        while (all.hasNext()) {
+            all.next();
+            count++;
+        }
+        return count;
+    }
+
+    @Category(SlowTest.class)
+    @Test
+    public void testGetAllWithArg() throws Exception {
+        TemplateDAO dao = TemplateDAO.getInstance();
+        Iterator<String> i = dao.getAll(true);
+        // File[] order_files = TestInfo.BASE_DIR_ORDER_XML_TEMPLATES.listFiles(FileUtils.getXmlFilesFilter());
+        StringBuffer sb = new StringBuffer();
         while (i.hasNext()) {
             String templateName = i.next();
             sb.append(templateName + ",");
@@ -70,6 +105,7 @@ public class TemplateDAOTester extends DataModelTestCase {
         assertEquals("More or less templates found ", "FullSite-order,Max_20_2-order,OneLevel-order,default_orderxml,",
                 sb.toString());
     }
+
 
     @Category(SlowTest.class)
     @Test
@@ -118,10 +154,13 @@ public class TemplateDAOTester extends DataModelTestCase {
 
         doc.getRootElement().addAttribute("foo", "bar");
         HeritrixTemplate temp = new H1HeritrixTemplate(doc);
+        temp.setIsActive(false);
         dao.update(defaultOrderXmlName, temp);
-        Document doc2 = ((H1HeritrixTemplate)dao.read(defaultOrderXmlName)).getTemplate();
+        HeritrixTemplate readTemplate = dao.read(defaultOrderXmlName);
+        Document doc2 = ((H1HeritrixTemplate) readTemplate).getTemplate();
         assertNotNull("Template should now have foo element", doc2.getRootElement().attribute("foo"));
         assertEquals("Foo element should be bar", "bar", doc2.getRootElement().attribute("foo").getStringValue());
+        assertFalse("New version of template object should be inactive.", readTemplate.isActive());
     }
 
     /**

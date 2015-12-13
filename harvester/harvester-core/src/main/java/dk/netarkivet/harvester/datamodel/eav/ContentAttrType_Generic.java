@@ -1,8 +1,8 @@
 package dk.netarkivet.harvester.datamodel.eav;
 
-import com.antiaction.raptor.base.AttributeBase;
-import com.antiaction.raptor.base.AttributeTypeBase;
-import com.antiaction.raptor.base.SecurityEntityBase;
+import com.antiaction.raptor.dao.AttributeBase;
+import com.antiaction.raptor.dao.AttributeTypeBase;
+import com.antiaction.raptor.dao.SecurityEntityBase;
 
 /**
  * Generic EAV attribute type.

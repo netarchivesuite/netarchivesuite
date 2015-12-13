@@ -394,7 +394,9 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         File tempFile = null;
         try {
             tempFile = File.createTempFile("allFilenamesAndChecksums", "tmp", FileUtils.getTempDir());
+            log.debug("Creating temporary file for checksums: " + tempFile.getAbsolutePath());
             dumpDatabaseToFile(tempFile, false);
+            log.debug("Dumped checksums to temporary file: " + tempFile.getAbsolutePath());
         } catch (IOException e) {
             throw new IOFailure(e.toString());
         }
