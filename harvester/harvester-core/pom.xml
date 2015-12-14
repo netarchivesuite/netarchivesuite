@@ -133,7 +133,13 @@
     <dependency>
       <groupId>com.antiaction</groupId>
       <artifactId>raptor-dbl</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+      <version>0.1.0-RC1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
