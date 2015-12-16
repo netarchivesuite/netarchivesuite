@@ -789,5 +789,5 @@ public class DomainDAOTester extends DataModelTestCase {
             dao.create(domain);
         }
         return dao.read(domainName);
-    }
+    }   
 }

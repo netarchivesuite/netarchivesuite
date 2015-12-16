@@ -29,27 +29,27 @@ package dk.netarkivet.harvester.heritrix3.report;
  */
 public class Heritrix1Constants {
 
-    /** Prefix associated with annotations made by this processor. */
-    public static final String CONTENT_SIZE_ANNOTATION_PREFIX = "content-size:";
-
-    // import org.archive.crawler.datamodel.CrawlURI;
-    //public static final int CRAWLURI_S_BLOCKED_BY_QUOTA = CrawlURI.S_BLOCKED_BY_QUOTA;
-    public static final int CRAWLURI_S_BLOCKED_BY_QUOTA = -5003;
-
-    // import org.archive.crawler.deciderules.DecideRuleSequence;
-    //public static final String DECIDERULESEQUENCE_CLASSNAME = DecideRuleSequence.class.getName();
-    public static final String DECIDERULESEQUENCE_CLASSNAME = "org.archive.crawler.deciderules.DecideRuleSequence";
-
-    // import org.archive.crawler.deciderules.DecidingScope;
-    //public static final String DECIDINGSCOPE_CLASSNAME = DecidingScope.class.getName();
-    public static final String DECIDINGSCOPE_CLASSNAME = "org.archive.crawler.deciderules.DecidingScope";
-
-    // import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
-    //public static final String MATCHESLISTREGEXPDECIDERULE_CLASSNAME = MatchesListRegExpDecideRule.class.getName();
-    public static final String MATCHESLISTREGEXPDECIDERULE_CLASSNAME = "org.archive.crawler.deciderules.MatchesListRegExpDecideRule";
-
-    // import org.archive.crawler.framework.CrawlController;
-    //public static final Object CRAWLCONTROLLER_FINISHED = CrawlController.FINISHED;
-    public static final Object CRAWLCONTROLLER_FINISHED = "FINISHED".intern();
+//    /** Prefix associated with annotations made by this processor. */
+//    public static final String CONTENT_SIZE_ANNOTATION_PREFIX = "content-size:";
+//
+//    // import org.archive.crawler.datamodel.CrawlURI;
+//    //public static final int CRAWLURI_S_BLOCKED_BY_QUOTA = CrawlURI.S_BLOCKED_BY_QUOTA;
+//    public static final int CRAWLURI_S_BLOCKED_BY_QUOTA = -5003;
+//
+//    // import org.archive.crawler.deciderules.DecideRuleSequence;
+//    //public static final String DECIDERULESEQUENCE_CLASSNAME = DecideRuleSequence.class.getName();
+//    public static final String DECIDERULESEQUENCE_CLASSNAME = "org.archive.crawler.deciderules.DecideRuleSequence";
+//
+//    // import org.archive.crawler.deciderules.DecidingScope;
+//    //public static final String DECIDINGSCOPE_CLASSNAME = DecidingScope.class.getName();
+//    public static final String DECIDINGSCOPE_CLASSNAME = "org.archive.crawler.deciderules.DecidingScope";
+//
+//    // import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
+//    //public static final String MATCHESLISTREGEXPDECIDERULE_CLASSNAME = MatchesListRegExpDecideRule.class.getName();
+//    public static final String MATCHESLISTREGEXPDECIDERULE_CLASSNAME = "org.archive.crawler.deciderules.MatchesListRegExpDecideRule";
+//
+//    // import org.archive.crawler.framework.CrawlController;
+//    //public static final Object CRAWLCONTROLLER_FINISHED = CrawlController.FINISHED;
+//    public static final Object CRAWLCONTROLLER_FINISHED = "FINISHED".intern();
 
 }

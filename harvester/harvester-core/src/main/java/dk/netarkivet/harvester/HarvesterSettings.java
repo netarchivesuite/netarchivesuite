@@ -224,10 +224,7 @@ public class HarvesterSettings {
 
     /**
      * <b>settings.harvester.harvesting.serverDir</b>: <br>
-     * Each job gets a subdir of this dir. Job data is written and Heritrix writes to that subdir.
-     * TODO verify, if this is OK for Heritrix3 as well as Heritrix1
-     * NOTE THAT the jobsdir in Heritrix3 consists of ???????? 
-     * 
+     * Each job gets a subdir of this dir. Job data is written and Heritrix writes to that subdir. 
      */
     public static String HARVEST_CONTROLLER_SERVERDIR = "settings.harvester.harvesting.serverDir";
 
@@ -297,7 +294,6 @@ public class HarvesterSettings {
      * 
      * TODO Maybe move this from the heritrix settings (settings.harvester.harvesting.heritrix) to 
      * settings.harvester.harvesting.controller.  
-     * 
      */
     public static String CRAWL_LOOP_WAIT_TIME = "settings.harvester.harvesting.heritrix.crawlLoopWaitTime";
     
@@ -487,8 +483,6 @@ public class HarvesterSettings {
      * <b>settings.harvester.harvesting.metadata.archiveFilesReportName</b> If
      * {@link #METADATA_GENERATE_ARCHIVE_FILES_REPORT} is set to true, sets the name of the generated report file.
      * Default value is 'archivefiles-report.txt'.
-     * 
-     * FIXME: not easily portable to H3, as it depends on information in heritrix_out.log no longer available.
      *
      * @see HarvestDocumentation#documentHarvest(dk.netarkivet.harvester.harvesting.IngestableFiles)
      */
@@ -568,30 +562,18 @@ public class HarvesterSettings {
     public static String HERITRIX_WARC_START_NEW_FILES_ON_CHECKPOINT 
     	= "settings.harvester.harvesting.heritrix.warc.startNewFilesOnCheckpoint";
     
-    
-    
     /**
+     * Currently UNUSED.
      * <b>settings.harvester.harvesting.heritrix.version</b> Represents the version of Heritrix used by Netarchivesuite 
      * The default is h3. The optional value is h1.
+     * 
      * 
      * If h1 is chosen, we assume that our templates is h1, as well.
      * If h3 is chosen, we assume that our templates is h3, as well.
      * There is no attempt at migration from one to the other. This must be done by an commandline-tool.
      */
     public static String HERITRIX_VERSION = "settings.harvester.harvesting.heritrix.version";
-    /**
-     * <b>settings.harvester.harvesting.heritrix.bundle</b>Points to the Heritrix3 zipfile bundled with 
-     * netarchiveSuite classes. Currently no default value
-     */   	
-        public static String HERITRIX3_BUNDLE = "settings.harvester.harvesting.heritrix.bundle";
-
-    /**
-     * <b>settings.harvester.harvesting.heritrix.certificate</b>Points to the jks keystore to use for connection to the
-     * Heritrix3 rest api. If undefined the keystore provided with the heritrix3 bundler is used.
-     */
-    public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix.certificate";
-
-    public static String HERITRIX3_CERTIFICATE_PASSWORD = "settings.harvester.harvesting.heritrix.certificatePassword";
+    
     
     /**
      * <b>settings.harvester.performer</b>: <br>
@@ -693,5 +675,73 @@ public class HarvesterSettings {
      * The maximum length (in lines) of crawllog to be displayed in a browser window.
      */
     public static String MAX_CRAWLLOG_IN_BROWSER = "settings.harvester.webinterface.maxCrawlLogInBrowser";
+
+   /**
+     * <b>settings.harvester.harvesting.heritrix</b>: <br>
+     * The path to the Heritrix3 SETTINGS.
+     */
+    public static String HERITRIX3 = "settings.harvester.harvesting.heritrix3";
+
+    /** Heritrix3  ArcWriter settings **/
+    
+    public static String HERITRIX3_ARC_COMPRESSION = "settings.harvester.harvesting.heritrix3.arc.compression";
+
+    public static String HERITRIX3_ARC_SUFFIX = "settings.harvester.harvesting.heritrix3.arc.suffix";
+
+    public static String HERITRIX3_ARC_MAXSIZE = "settings.harvester.harvesting.heritrix3.arc.maxFileSizeBytes";
+
+    public static String HERITRIX3_ARC_POOL_MAXACTIVE = "settings.harvester.harvesting.heritrix3.arc.poolMaxActive";
+    
+    /**
+     * <b>settings.harvester.harvesting.heritrix3.warc.template</b>: <br>
+     * The template for warcfiles created by Heritrix.
+     * Default value in NAS: ${prefix}-${timestamp17}-${serialno}-${heritrix.hostname}
+     * Default value in H3:  ${prefix}-${timestamp17}-${serialno}-${heritrix.pid}~${heritrix.hostname}~${heritrix.port}
+     */
+    public static String HERITRIX3_WARC_TEMPLATE = "settings.harvester.harvesting.heritrix3.warc.template";
+
+    public static String HERITRIX3_WARC_COMPRESSION = "settings.harvester.harvesting.heritrix3.warc.compression";
+
+    public static String HERITRIX3_WARC_POOL_MAXACTIVE = "settings.harvester.harvesting.heritrix3.warc.poolMaxActive";
+    
+    public static String HERITRIX3_WARC_MAXSIZE = "settings.harvester.harvesting.heritrix3.warc.maxFileSizeBytes";
+    
+    public static String HERITRIX3_WARC_WRITE_REQUESTS = "settings.harvester.harvesting.heritrix3.warc.writeRequests";
+
+    public static String HERITRIX3_WARC_WRITE_METADATA = "settings.harvester.harvesting.heritrix3.warc.writeMetadata";
+
+    public static String HERITRIX3_WARC_SKIP_IDENTICAL_DIGESTS = "settings.harvester.harvesting.heritrix3.warc.skipIdenticalDigests";
+
+    public static String HERITRIX3_WARC_START_NEW_FILES_ON_CHECKPOINT = "settings.harvester.harvesting.heritrix3.warc.startNewFilesOnCheckpoint";
+    
+    /**
+     * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the
+     * harvested data. default: warc (alternative: arc)
+     */
+    public static String HERITRIX3_ARCHIVE_FORMAT = "settings.harvester.harvesting.heritrix3.archiveFormat";
+    /**
+     * <b>settings.harvester.harvesting.heritrix.archiveNaming.class</b> The class implementing the chosen way of naming
+     * your archive-files default: LegacyNamingConvention. This class decides what to put into the Heritrix "prefix"
+     * property of the org.archive.crawler.writer.ARCWriterProcessor and/or
+     * org.archive.crawler.writer.WARCWriterProcessor.
+     */
+    public static String HERITRIX3_ARCHIVE_NAMING_CLASS = "settings.harvester.harvesting.heritrix3.archiveNaming.class";
+   
+    /**
+     * <b>settings.harvester.harvesting.heritrix.bundle</b>Points to the Heritrix3 zipfile bundled with 
+     * netarchiveSuite classes. Currently no default value
+     */     
+    public static String HERITRIX3_BUNDLE = "settings.harvester.harvesting.heritrix3.bundle";
+
+    /**
+     * <b>settings.harvester.harvesting.heritrix.certificate</b>Points to the jks keystore to use for connection to the
+     * Heritrix3 rest api. If undefined the keystore provided with the heritrix3 bundler is used.
+     */
+    public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix3.certificate";
+    /**
+     * <b>settings.harvester.harvesting.heritrix.certificatePassword</b>Points to the password to use for connection to the
+     * Heritrix3 rest api.
+     */
+    public static String HERITRIX3_CERTIFICATE_PASSWORD = "settings.harvester.harvesting.heritrix3.certificatePassword";
 
 }

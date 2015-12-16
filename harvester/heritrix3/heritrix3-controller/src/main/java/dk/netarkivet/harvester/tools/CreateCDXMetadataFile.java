@@ -55,9 +55,9 @@ import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
-import dk.netarkivet.harvester.heritrix3.Heritrix3Settings;
 
 /**
  * This tool creates a CDX metadata file for a given job's jobID and harvestPrefix by running a batch job on the
@@ -220,7 +220,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             final long jobID = this.jobId;
             final String harvestPrefix = this.harvestnamePrefix;
             FileBatchJob job = new ArchiveExtractCDXJob();
-            Settings.set(Heritrix3Settings.METADATA_FORMAT, (isWarcOutputMode) ? "warc" : "arc");
+            Settings.set(HarvesterSettings.METADATA_FORMAT, (isWarcOutputMode) ? "warc" : "arc");
             final String filePattern = harvestPrefix + REMAINING_ARCHIVE_FILE_PATTERN;
 
             System.out.println("Creating cdx-" + ((isWarcOutputMode) ? "warcfile" : "arcfile")
