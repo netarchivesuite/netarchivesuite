@@ -7,3 +7,13 @@ target/
 working/
 *~
 .idea/
+.gitignore
+# NAS junk files
+derby.log
+**/archive-test/checksum/
+**/heritrix1-controller/oldjobs/
+**/wayback-indexer/derbyDB/
+**/harvester-test/tmp
+**/harvester-test/tmp1
+**/wayback-test/derbyDB/
+**/wayback-resourcestore/admin.data
