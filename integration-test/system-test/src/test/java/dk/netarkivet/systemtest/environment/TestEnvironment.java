@@ -68,4 +68,10 @@ public interface TestEnvironment {
      */
     public String getDeployConfig();
 
+    /**
+     * The full path to the heritrix3 bundler file
+     * @return
+     */
+    public String getH3Zip();
+
 }
