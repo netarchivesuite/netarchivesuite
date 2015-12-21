@@ -219,6 +219,11 @@ public final class Constants {
     /** Path to the branch with the Heritrix settings. */
     static final String[] SETTINGS_HERITRIX_BRANCH = HarvesterSettings.HERITRIX.replace(
             COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
+    
+    /** Path to the branch with the Heritrix3 settings. */
+    static final String[] SETTINGS_HERITRIX3_BRANCH = HarvesterSettings.HERITRIX3.replace(
+            COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
+    
     /** The path to the jmxUsername under heritrix from settings. */
     static final String[] SETTINGS_HERITRIX_JMX_USERNAME_LEAF = HarvesterSettings.HERITRIX_JMX_USERNAME.replace(
             COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");

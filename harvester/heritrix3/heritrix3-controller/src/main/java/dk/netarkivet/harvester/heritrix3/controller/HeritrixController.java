@@ -36,18 +36,13 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.TimeUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport;
 import dk.netarkivet.harvester.heritrix3.Heritrix3Files;
-import dk.netarkivet.harvester.heritrix3.Heritrix3Settings;
 
 /**
  * This implementation of the HeritrixController interface starts Heritrix as a separate process and uses JMX to
@@ -227,9 +222,6 @@ public class HeritrixController extends AbstractRestHeritrixController {
     public void cleanup(File crawlDir) {
     	JobResult jobResult;
   		try {
-  	        // Before cleaning up, we need to wait for the reports to be generated
-  	        //waitForReportGeneration(crawlDir);
-  	        // TODO Should we teardown job as well????
   			jobResult = h3wrapper.job(jobName);
   			if (jobResult != null) {
   				if (jobResult.status == ResultStatus.OK && jobResult.job.crawlControllerState != null) {
@@ -403,20 +395,6 @@ public class HeritrixController extends AbstractRestHeritrixController {
             cpm.setStatus(CrawlStatus.CRAWLER_ACTIVE);
         }
 
-        //Integer currentActiveToecount = job.job.threadReport.toeCount;
-        /*
-        Integer currentActiveToecount = null;
-        Iterator<String> iter = job.job.threadReport.processors.iterator();
-        String tmpStr;
-        int idx;
-        while (currentActiveToecount == null && iter.hasNext()) {
-        	tmpStr = iter.next();
-        	idx = tmpStr.indexOf(" noActiveProcessor");
-        	if (idx != -1) {
-        		currentActiveToecount = Integer.parseInt(tmpStr.substring(0, idx).trim());
-        	}
-        }
-        */
         Integer currentActiveToecount = job.job.loadReport.busyThreads;
         if (currentActiveToecount == null) {
             currentActiveToecount = -1;
@@ -444,43 +422,6 @@ public class HeritrixController extends AbstractRestHeritrixController {
         */                
     }
 
-    /**
-     * Periodically scans the crawl dir to see if Heritrix has finished generating the crawl reports. The time to wait
-     * is bounded by {@link HarvesterSettings#WAIT_FOR_REPORT_GENERATION_TIMEOUT}.
-     * Currently not used
-     * 
-     * @param crawlDir the crawl directory to scan.
-     */
-    @Deprecated
-    private void waitForReportGeneration(File crawlDir) {
-        log.info("Started waiting for Heritrix report generation.");
-
-        long currentTime = System.currentTimeMillis();
-        long waitSeconds = Settings.getLong(Heritrix3Settings.WAIT_FOR_REPORT_GENERATION_TIMEOUT);
-        long waitDeadline = currentTime + TimeUtils.SECOND_IN_MILLIS * waitSeconds;
-
-       
-        // While the deadline is not attained, periodically perform the
-        // following checks:
-        // 1) Verify that the crawl job MBean still exists. If not then
-        // the job is over, no need to wait more and exit the loop.
-        // 2) Read the job(s status. Since Heritrix 1.14.4, a FINISHED status
-        // guarantees that all reports have been generated. In this case
-        // exit the loop.
-        while (currentTime <= waitDeadline) {
-            currentTime = System.currentTimeMillis();
-            
-            //FIXME see if job is finished, if so, reports can be considered to ready as well?????
-            try {
-                // Wait 20 seconds
-                Thread.sleep(20 * TimeUtils.SECOND_IN_MILLIS);
-            } catch (InterruptedException e) {
-                log.trace("Received InterruptedException", e);
-            }
-        }
-        log.info("Waited {} for report generation. Will proceed with cleanup.", StringUtils.formatDuration(waitSeconds));
-    }
-    
     @Override
     public boolean atFinish() {
         throw new NotImplementedException("Not implemented");

@@ -46,6 +46,7 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -110,7 +111,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     private final PostProcessing postProcessing;
 
     /** The CHANNEL of jobs processed by this instance. */
-    private static final String CHANNEL = Settings.get(Heritrix3Settings.HARVEST_CONTROLLER_CHANNEL);
+    private static final String CHANNEL = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
 
     /** Jobs are fetched from this queue. */
     private ChannelID jobChannel;
@@ -149,10 +150,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
         // Make sure serverdir (where active crawl-dirs live) and oldJobsDir
         // (where old crawl dirs are stored) exist.
-        serverDir = new File(Settings.get(Heritrix3Settings.HARVEST_CONTROLLER_SERVERDIR));
+        serverDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
         ApplicationUtils.dirMustExist(serverDir);
         log.info("Serverdir: '{}'", serverDir);
-        minSpaceRequired = Settings.getLong(Heritrix3Settings.HARVEST_SERVERDIR_MINSPACE);
+        minSpaceRequired = Settings.getLong(HarvesterSettings.HARVEST_SERVERDIR_MINSPACE);
         if (minSpaceRequired <= 0L) {
             log.warn("Wrong setting of minSpaceLeft read from Settings: {}", minSpaceRequired);
             throw new ArgumentNotValid("Wrong setting of minSpaceLeft read from Settings: " + minSpaceRequired);
@@ -497,7 +498,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         /** Handles the periodic sending of status messages. */
         private PeriodicTaskExecutor statusTransmitter;
 
-        private final int SEND_READY_DELAY = Settings.getInt(Heritrix3Settings.SEND_READY_DELAY);
+        private final int SEND_READY_DELAY = Settings.getInt(HarvesterSettings.SEND_READY_DELAY);
 
         /**
          * Starts the sending of status messages.
@@ -505,7 +506,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         public void startSending() {
             this.channelIsValid = true;
             statusTransmitter = new PeriodicTaskExecutor("HarvesterStatus", this, 0,
-            		Settings.getInt(Heritrix3Settings.SEND_READY_INTERVAL));
+            		Settings.getInt(HarvesterSettings.SEND_READY_INTERVAL));
         }
 
         /**
