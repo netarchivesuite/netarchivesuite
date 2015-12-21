@@ -1,3 +1,25 @@
+/*
+ * #%L
+ * Netarchivesuite - harvester
+ * %%
+ * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ *             the National Library of France and the Austrian National Library.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
 package dk.netarkivet.harvester.heritrix3;
 
 import java.io.File;
@@ -16,6 +38,7 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.PersistentJobData;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
@@ -87,7 +110,7 @@ public class PostProcessing {
     public void processOldJobs() {
         // Search through all crawldirs and process PersistentJobData
         // files in them
-        File crawlDir = new File(Settings.get(Heritrix3Settings.HARVEST_CONTROLLER_SERVERDIR));
+        File crawlDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
         log.info("Looking for unprocessed crawldata in '{}'",crawlDir );
         File[] subdirs = crawlDir.listFiles();
         for (File oldCrawlDir : subdirs) {
@@ -170,7 +193,7 @@ public class PostProcessing {
                 // Delete superfluous files and move the rest to oldjobs.
                 // Cleanup is in an extra finally, because it consists of large amounts
                 // of data we need to remove, even on send trouble.
-            	File oldJobsdir = new File(Settings.get(Heritrix3Settings.HARVEST_CONTROLLER_OLDJOBSDIR));
+            	File oldJobsdir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
                 log.info("Cleanup after harvesting job with id '{}' and moving the rest of the job to oldjobsdir '{}' ", jobID, oldJobsdir);
                 files.cleanUpAfterHarvest(oldJobsdir);
             }
@@ -285,7 +308,7 @@ public class PostProcessing {
                     arcRepController.store(f);
                     log.info("File '{}' uploaded successfully to arcrepository.", f.getName());
                 } catch (Exception e) {
-                    File oldJobsDir = new File(Settings.get(Heritrix3Settings.HARVEST_CONTROLLER_OLDJOBSDIR));
+                    File oldJobsDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
                     String errorMsg = "Error uploading arcfile '" + f.getAbsolutePath() + "' Will be moved to '"
                             + oldJobsDir.getAbsolutePath() + "'";
                     errorMessage.append(errorMsg).append("\n").append(e.toString()).append("\n");

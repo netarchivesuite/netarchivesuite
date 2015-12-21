@@ -49,8 +49,9 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.NotificationType;
+import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.SystemUtils;
 
 /**
  * This class extends the functionality of FTPRemoteFile by allowing local input to be taken from an ArchiveRecord. It
@@ -318,6 +319,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
         connectionManager.logOn();
         boolean success = false;
         int tried = 0;
+        String message = null;
         while (!success && tried < FTP_RETRIES) {
             tried++;
             try {
@@ -326,7 +328,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
                     log.debug("FTP store failed attempt '{}' of " + FTP_RETRIES + ": {}", tried, connectionManager.getFtpErrorMessage());
                 }
             } catch (IOException e) {
-                String message = "Write operation to '" + ftpFileName + "' failed on attempt " + tried + " of "
+                message = "Write operation to '" + ftpFileName + "' failed on attempt " + tried + " of "
                         + FTP_RETRIES;
                 if (e instanceof CopyStreamException) {
                     CopyStreamException realException = (CopyStreamException) e;
@@ -336,8 +338,10 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
             }
         }
         if (!success) {
-            final String msg = "Failed to upload '" + name + "' after " + tried + " attempts";
+            final String msg = "Failed to upload '" + name + "' after " + tried + " attempts. Last reason: " + message;
             log.warn(msg);
+            // Send an Notification because of this
+            NotificationsFactory.getInstance().notify(msg, NotificationType.ERROR);
             throw new IOFailure(msg);
         }
         log.debug("Completed writing the file '{}'", ftpFileName);

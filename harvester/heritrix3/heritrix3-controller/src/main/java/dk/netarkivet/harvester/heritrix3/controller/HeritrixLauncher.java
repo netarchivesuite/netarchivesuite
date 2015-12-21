@@ -182,11 +182,10 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
                 crawlIsOver = true;
                 return;
             }
-            /*
+            
             log.info("Job ID: " + files.getJobID() + ", Harvest ID: " + files.getHarvestID() + ", " + cpm.getHostUrl()
                     + "\n" + cpm.getProgressStatisticsLegend() + "\n" + cpm.getJobStatus().getStatus() + " "
                     + cpm.getJobStatus().getProgressStatistics());
-                    */
         }
 
     }

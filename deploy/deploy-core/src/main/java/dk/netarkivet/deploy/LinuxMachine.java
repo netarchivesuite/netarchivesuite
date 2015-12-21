@@ -121,7 +121,7 @@ public class LinuxMachine extends Machine {
                     Element heritrixBundleElement =
                             appSettings.getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
                     if (heritrixBundleElement == null) {
-                        appSettings.getSubChild(Constants.SETTINGS_HERITRIX_BRANCH).addElement("bundle");
+                        appSettings.getSubChild(Constants.SETTINGS_HERITRIX3_BRANCH).addElement("bundle");
                         heritrixBundleElement =
                                 appSettings.getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
                         heritrixBundleElement.setText((String)bundles.values().toArray()[0]);

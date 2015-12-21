@@ -46,4 +46,9 @@ public class DefaultTestEnvironment implements TestEnvironment {
     @Override public String getDeployConfig() {
         return System.getProperty("systemtest.deployconf", deployconf);
     }
+
+    @Override public String getH3Zip() {
+        return System.getProperty("systemtest.h3zip");
+    }
+
 }
