@@ -155,8 +155,12 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             upgradeOrderTemplatesTable(currentVersion, toVersion);
         } else if (tableName.equals(HarvesterDatabaseTables.HARVESTCHANNELS.getTablename())) {
             upgradeHarvestchannelTable(currentVersion, toVersion);
-            // Add new if else when other tables need to be upgraded
+        } else if (tableName.equals(HarvesterDatabaseTables.EAVTYPEATTRIBUTE.getTablename())) {
+            upgradeEavTypeAttributeTable(currentVersion, toVersion);
+        } else if (tableName.equals(HarvesterDatabaseTables.EAVATTRIBUTE.getTablename())) {
+            upgradeEavAttributeTable(currentVersion, toVersion);
         } else {
+            // Add new if else when other tables need to be upgraded
             throw new NotImplementedException("No method exists for migrating table '" + tableName + "' to version "
                     + toVersion);
         }
@@ -690,5 +694,49 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             updateTable(table.getTablename(), table.getRequiredVersion());
         }
     }
+
+    /**
+     * Migrate the eavtypeattribute table.
+     * @param currentVersion the current version of the eavtypeattribute table
+     * @param toVersion the required version of the eavtypeattribute table
+     */
+    public void upgradeEavTypeAttributeTable(int currentVersion, int toVersion) {
+        if (currentVersion == 0 && toVersion >= 1) {
+        	createEavTypeAttributeTable(1);
+            currentVersion = 1;
+        }
+        if (currentVersion > HarvesterDatabaseTables.EAVTYPEATTRIBUTE.getRequiredVersion()) {
+            throw new NotImplementedException("No method exists for migrating table '"
+                    + HarvesterDatabaseTables.EAVTYPEATTRIBUTE.getTablename() + "' from version " + currentVersion
+                    + " to version " + toVersion);
+        }
+    }
+
+    /**
+     * Create the EavTypeAttribute table in the database.
+     */
+    public abstract void createEavTypeAttributeTable(int toVersion);
+
+    /**
+     * Migrate the eavattribute table.
+     * @param currentVersion the current version of the eavattribute table
+     * @param toVersion the required version of the eavattribute table
+     */
+    public void upgradeEavAttributeTable(int currentVersion, int toVersion) {
+        if (currentVersion == 0 && toVersion >= 1) {
+        	createEavAttributeTable(1);
+            currentVersion = 1;
+        }
+        if (currentVersion > HarvesterDatabaseTables.EAVATTRIBUTE.getRequiredVersion()) {
+            throw new NotImplementedException("No method exists for migrating table '"
+                    + HarvesterDatabaseTables.EAVATTRIBUTE.getTablename() + "' from version " + currentVersion
+                    + " to version " + toVersion);
+        }
+    }
+
+    /**
+     * Create the EavAttributeTable table in the database.
+     */
+    public abstract void createEavAttributeTable(int toVersion);
 
 }

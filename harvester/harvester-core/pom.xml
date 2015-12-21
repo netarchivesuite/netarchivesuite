@@ -133,13 +133,6 @@
     <dependency>
       <groupId>com.antiaction</groupId>
       <artifactId>raptor-dbl</artifactId>
-      <version>0.1.0-RC1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -150,6 +143,24 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/../../deploy/deploy-core/scripts/postgresql/migration/</directory>
+        <targetPath>sql-migration/postgresql/</targetPath>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/../../deploy/deploy-core/scripts/mysql/migration/</directory>
+        <targetPath>sql-migration/mysql/</targetPath>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/../../deploy/deploy-core/scripts/derby/migration/</directory>
+        <targetPath>sql-migration/derby/</targetPath>
+      </resource>
+    </resources>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

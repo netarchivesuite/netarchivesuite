@@ -200,9 +200,12 @@ public class SnapshotHarvestDefinition {
 
         // EAV
         try {
-        	long entity_id = hd.getOid();
-            EAV eav = eavDAOProvider.get();
-            List<AttributeAndType> attributesAndTypes = eav.getAttributesAndTypes(EAV.SNAPSHOT_TREE_ID, (int)entity_id);
+        	Long entity_id = hd.getOid();
+        	if (entity_id == null) {
+        		entity_id = 0L;
+        	}
+        	EAV eav = eavDAOProvider.get();
+            List<AttributeAndType> attributesAndTypes = eav.getAttributesAndTypes(EAV.SNAPSHOT_TREE_ID, (int)((long)entity_id));
             AttributeAndType attributeAndType;
             AttributeTypeBase attributeType;
             AttributeBase attribute;
@@ -212,7 +215,7 @@ public class SnapshotHarvestDefinition {
             	attribute = attributeAndType.attribute;
             	if (attribute == null) {
                 	attribute = attributeType.instanceOf();
-                	attribute.entity_id = (int)entity_id;
+                	attribute.entity_id = (int)((long)entity_id);
             	}
             	switch (attributeType.viewtype) {
             	case 1:
