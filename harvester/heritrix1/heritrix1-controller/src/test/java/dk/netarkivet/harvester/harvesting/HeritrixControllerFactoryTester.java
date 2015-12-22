@@ -23,6 +23,7 @@
 
 package dk.netarkivet.harvester.harvesting;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -39,6 +40,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.HeritrixConfigurator;
 import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
 import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
 import dk.netarkivet.harvester.harvesting.controller.HeritrixControllerFactory;
@@ -60,6 +62,7 @@ public class HeritrixControllerFactoryTester {
 
     @Before
     public void setUp() throws IOException {
+        HeritrixConfigurator.setUseH1();
         mtf.setUp();
         dummyLuceneIndex = mtf.newTmpDir();
         // Out commented to avoid reference to archive module from harvester module.
@@ -99,11 +102,10 @@ public class HeritrixControllerFactoryTester {
      */
     @Test
     public void testGetDefaultHeritrixControllerChangeDefaultSettigs() {
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
-                "dk.netarkivet.harvester.harvesting.HeritrixControllerFactoryTester$DummyHeritrixController");
+        final String controllerClass = "dk.netarkivet.harvester.harvesting.HeritrixControllerFactoryTester$DummyHeritrixController";
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, controllerClass);
         HeritrixController hc = HeritrixControllerFactory.getDefaultHeritrixController("hello world");
         assertTrue("Should have got a DummyHeritrixController, not " + hc, hc instanceof DummyHeritrixController);
-
     }
 
     /**
