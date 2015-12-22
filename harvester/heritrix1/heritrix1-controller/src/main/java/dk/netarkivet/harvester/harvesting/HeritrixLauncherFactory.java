@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.harvesting;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.SettingsFactory;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * Factory class for instantiating a specific implementation of {@link HeritrixLauncher}. The implementation class is
@@ -41,7 +42,7 @@ public class HeritrixLauncherFactory extends SettingsFactory<HeritrixLauncher> {
      * @throws ArgumentNotValid if the instance cannot be constructed.
      */
     public static HeritrixLauncher getInstance(Object... args) throws ArgumentNotValid {
-        return SettingsFactory.getInstance(Heritrix1Settings.HERITRIX_LAUNCHER_CLASS, args);
+        return SettingsFactory.getInstance(HarvesterSettings.HERITRIX_LAUNCHER_CLASS, args);
     }
 
 }
