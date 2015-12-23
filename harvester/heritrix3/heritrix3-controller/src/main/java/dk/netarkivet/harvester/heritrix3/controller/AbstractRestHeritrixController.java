@@ -144,17 +144,22 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             
             outputPrinter = new PrintWriter(files.getHeritrixStdoutLog(), "UTF-8");
             errorPrinter = new PrintWriter(files.getHeritrixStderrLog(), "UTF-8");
+            log.info(".. and setting output from heritrix3 to '{}', and errors to '{}'", files.getHeritrixStdoutLog(),files.getHeritrixStderrLog() );
             h3handler = new LaunchResultHandler(outputPrinter, errorPrinter);
             h3launcher.start(h3handler);
             Runtime.getRuntime().addShutdownHook(new HeritrixKiller());
-            log.info("Heritrix3 launched successfully");
+            log.info("Heritrix3 engine launched successfully");
         } catch( Throwable e) {
         	String errMsg = "Unexpected error while launching H3: ";
         	log.debug(errMsg, e);
         	throw new IOFailure(errMsg, e);
         }
     }
-
+    
+    /**
+     * Implementation of a LaunchResultHandler for Heritrix3. 
+     *
+     */
     public static class LaunchResultHandler implements LaunchResultHandlerAbstract {
     	protected Semaphore semaphore = new Semaphore(-2);
         protected PrintWriter outputPrinter;
@@ -166,7 +171,11 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
     	@Override
     	public void exitValue(int exitValue) {
     		semaphore.release();
-        	log.info("Heritrix3 exitValue=: {}", exitValue);
+        	if (exitValue != 0) {
+        	    log.error("Heritrix3 engine shutdown failed. ExitValue =  {}", exitValue);
+        	} else {
+        	    log.info("Heritrix3 engine shutdown was successful. ExitValue =  {}", exitValue);
+        	}
    	    }
     	@Override
     	public void output(String line) {
@@ -216,14 +225,14 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
     }
     
     /**
-     * @return the HTTP port used by the Heritrix GUI.
+     * @return the HTTP port used by the Heritrix3 GUI.
      */
     protected int getGuiPort() {
         return guiPort;
     }
 
     /**
-     * @return the Heritrix files wrapper.
+     * @return the Heritrix3 files wrapper.
      */
     protected Heritrix3Files getHeritrixFiles() {
         return files;
@@ -237,18 +246,18 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
     }
 
     /**
-     * Get the login name for accessing the Heritrix GUI. This name can be set in the settings.xml file.
+     * Get the login name for accessing the Heritrix3 GUI. This name can be set in the settings.xml file.
      *
-     * @return Name to use for accessing Heritrix web GUI
+     * @return Name to use for accessing Heritrix3 web GUI
      */
     protected String getHeritrixAdminName() {
         return Settings.get(Heritrix3Settings.HERITRIX_ADMIN_NAME);
     }
 
     /**
-     * Get the login password for accessing the Heritrix GUI. This password can be set in the settings.xml file.
+     * Get the login password for accessing the Heritrix3 GUI. This password can be set in the settings.xml file.
      *
-     * @return Password to use for accessing the Heritrix GUI
+     * @return Password to use for accessing the Heritrix3 GUI
      */
     protected String getHeritrixAdminPassword() {
         return Settings.get(Heritrix3Settings.HERITRIX_ADMIN_PASSWORD);
