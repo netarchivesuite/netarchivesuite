@@ -46,6 +46,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.HeritrixConfigurator;
 import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -74,6 +75,7 @@ public class HarvestControllerTester {
     @Before
     public void setUp() throws Exception, IllegalAccessException, IOException {
         rs.setUp();
+        HeritrixConfigurator.setUseH1();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
         TestFileUtils.copyDirectoryNonCVS(
@@ -243,6 +245,8 @@ public class HarvestControllerTester {
      * 'dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher'.
      */
     @Test
+    @Ignore("This is a badly formulated test. The runHarvest() command must throw either one exception or the other. Two catch "
+            + "clauses can't be the right answer.")
     public void testRunHarvest() throws Exception {
     	//FIXME hardwired to H1 HeritrixFiles
         HeritrixFiles files = HeritrixFiles.getH1HeritrixFilesWithDefaultJmxFiles( 

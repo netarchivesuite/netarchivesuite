@@ -58,6 +58,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.HeritrixConfigurator;
 import dk.netarkivet.harvester.datamodel.H1HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.testutils.TestResourceUtils;
@@ -90,6 +91,7 @@ public class HeritrixLauncherTester {
 
     @Before
     public void setUp() throws IOException {
+        HeritrixConfigurator.setUseH1();
         mtf = new MoveTestFiles(Heritrix1ControllerTestInfo.CRAWLDIR_ORIGINALS_DIR, WORKING_DIR);
         mtf.setUp();
         dummyLuceneIndex = mtf.newTmpDir();
@@ -102,6 +104,7 @@ public class HeritrixLauncherTester {
 
     @After
     public void tearDown() {
+        //Settings.set(Heritrix1Settings.HERITRIX_LAUNCHER_CLASS, "dk.netarkivet.harvester.heritrix3.controller.HeritrixLauncher");
         mtf.tearDown();
     }
 
@@ -230,7 +233,7 @@ public class HeritrixLauncherTester {
      */
 
     @Test
-    @Ignore("was commented out")
+    //@Ignore("was commented out")
     public void testStartMissingARCsPathOrderFile() {
         myTesterOfBadOrderfiles(Heritrix1ControllerTestInfo.MISSING_ARCS_PATH_ORDER_FILE);
     }
@@ -247,7 +250,7 @@ public class HeritrixLauncherTester {
      * Test that the launcher handles heritrix dying on a order file missing the seedsfile node correctly.
      */
     @Test
-    @Ignore("was commented out")
+    //@Ignore("was commented out")
     public void testStartMissingPrefixOrderFile() {
         myTesterOfBadOrderfiles(Heritrix1ControllerTestInfo.MISSING_PREFIX_FIELD_ORDER_FILE);
     }
