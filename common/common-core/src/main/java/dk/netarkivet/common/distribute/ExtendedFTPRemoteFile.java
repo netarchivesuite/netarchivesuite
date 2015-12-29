@@ -338,7 +338,7 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
             }
         }
         if (!success) {
-            final String msg = "Failed to upload '" + name + "' after " + tried + " attempts. Last reason: " + message;
+            final String msg = "Failed to upload '" + name + "' after " + tried + " attempts. Reason for last failure: " +  message;
             log.warn(msg);
             // Send an Notification because of this
             NotificationsFactory.getInstance().notify(msg, NotificationType.ERROR);
