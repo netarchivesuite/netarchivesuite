@@ -13,4 +13,4 @@ CREATE TABLE eav_attribute (
 
 ALTER TABLE eav_attribute ADD CONSTRAINT eav_attribute_pkey PRIMARY KEY (tree_id, id);
 
-CREATE UNIQUE INDEX eav_attribute_idx on eav_attribute(tree_id, entity_id) TABLESPACE tsindex;
+CREATE INDEX eav_attribute_idx on eav_attribute(tree_id, entity_id) TABLESPACE tsindex;
