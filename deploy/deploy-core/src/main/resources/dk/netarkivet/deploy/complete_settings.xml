@@ -98,8 +98,8 @@
             <server>localhost</server>
         </mail>
         <jmx> <!-- JMX logging settings -->
-            <port>9100</port>
-            <rmiPort>9200</rmiPort>
+            <port>8100</port>
+            <rmiPort>8200</rmiPort>
             <passwordFile>conf/jmxremote.password</passwordFile>
             <accessFile>conf/jmxremote.access</accessFile>
             <timeout>120</timeout>
