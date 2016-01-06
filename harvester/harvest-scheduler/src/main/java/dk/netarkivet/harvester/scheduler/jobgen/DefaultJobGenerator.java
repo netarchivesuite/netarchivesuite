@@ -64,6 +64,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         }
 
         public int compare(DomainConfiguration cfg1, DomainConfiguration cfg2) {
+            log.trace("Comparing " + cfg1 + " " + cfg2);
             // Compare order xml names
             int cmp = cfg1.getOrderXmlName().compareTo(cfg2.getOrderXmlName());
             if (cmp != 0) {
@@ -86,7 +87,10 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 return res < 0L ? -1 : 1;
             }
 
-            return EAV.compare(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
+            log.trace("Comparing EAV attributes now");
+            int result = EAV.compare(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
+            log.trace("Comparison of EAV attributes gave result " + result);
+            return result;
         }
     }
 

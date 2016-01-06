@@ -80,7 +80,10 @@ abstract class AbstractJobGenerator implements JobGenerator {
                 subset.add(domainConfigurations.next());
             }
 
-            Collections.sort(subset, getDomainConfigurationSubsetComparator(harvest));
+            final Comparator<DomainConfiguration> domainConfigurationSubsetComparator = getDomainConfigurationSubsetComparator(
+                    harvest);
+            log.trace("Sorting domains with instance of " + domainConfigurationSubsetComparator.getClass().getName());
+            Collections.sort(subset, domainConfigurationSubsetComparator);
             log.trace("{} domainconfigs now sorted and ready to processing for harvest #{}", subset.size(),
                     harvest.getOid());
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
