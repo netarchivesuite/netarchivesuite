@@ -37,6 +37,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.NumberUtils;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
 
 /**
  * The legacy job generator implementation. Aims at generating jobs that execute in a predictable time by taking
@@ -85,7 +86,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 return res < 0L ? -1 : 1;
             }
 
-            return 0;
+            return EAV.compare(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
         }
     }
 

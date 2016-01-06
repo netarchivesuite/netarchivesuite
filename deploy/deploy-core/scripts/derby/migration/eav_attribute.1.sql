@@ -10,4 +10,4 @@ CREATE TABLE eav_attribute (
 	PRIMARY KEY (tree_id, id)
 );
 
-CREATE UNIQUE INDEX eav_attribute_idx on eav_attribute(tree_id, entity_id);
+CREATE INDEX eav_attribute_idx on eav_attribute(tree_id, entity_id);
