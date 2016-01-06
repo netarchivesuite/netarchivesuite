@@ -22,18 +22,31 @@
  */
 package dk.netarkivet.systemtest.functional;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.AbstractSystemTest;
+import dk.netarkivet.systemtest.HarvestUtils;
 import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.SeleniumTest;
+import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
+import dk.netarkivet.systemtest.page.DomainWebTestHelper;
+import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
 /**
@@ -61,14 +74,14 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
         addStep("Create a selective harvest", "The harvest should be created successfully a be listed in the HD list");
         String harvest1ID = createHarverstID();
         SelectiveHarvestPageHelper.createSelectiveHarvest(harvest1ID);
-        NASAssert.assertTrue(driver.getPageSource().contains(harvest1ID), harvest1ID
+        assertTrue(driver.getPageSource().contains(harvest1ID), harvest1ID
                 + " not found in harvest list after creation");
 
         addStep("Create a second harvest and active it", "The second harvest also be listed in the HD list");
         String harvest2ID = createHarverstID();
         SelectiveHarvestPageHelper.createSelectiveHarvest(harvest2ID);
         SelectiveHarvestPageHelper.activateHarvest(harvest2ID);
-        NASAssert.assertTrue(driver.getPageSource().contains(harvest2ID), harvest2ID
+        assertTrue(driver.getPageSource().contains(harvest2ID), harvest2ID
                 + " not found in harvest list after creation");
 
         addStep("Hide inactive harvests", "The harvest first harvest should disappear from the HD list, "
@@ -76,19 +89,70 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
         driver.findElement(By.linkText("Hide inactive harvest definitions")).click();
         NASAssert.assertFalse(driver.getPageSource().contains(harvest1ID), "Inactive harvest " + harvest1ID
                 + " show in harvest list after 'hide inactive harvests' was clicked");
-        NASAssert.assertTrue(driver.getPageSource().contains(harvest2ID), harvest2ID
+        assertTrue(driver.getPageSource().contains(harvest2ID), harvest2ID
                 + " not found in harvest list after creation");
 
         addStep("Show inactive harvests", "The harvest first harvest should reappear from the HD list, "
                 + "the second should remain");
         driver.findElement(By.linkText("Show inactive harvest definitions")).click();
-        NASAssert.assertTrue(driver.getPageSource().contains(harvest1ID), "Inactive harvest " + harvest1ID
+        assertTrue(driver.getPageSource().contains(harvest1ID), "Inactive harvest " + harvest1ID
                 + " show in harvest list after 'hide inactive harvests' was clicked");
-        NASAssert.assertTrue(driver.getPageSource().contains(harvest2ID), harvest2ID
+        assertTrue(driver.getPageSource().contains(harvest2ID), harvest2ID
                 + " not found in harvest list after creation");
     }
 
     private String createHarverstID() {
         return harvestIDForTest + "-" + harvestCounter++;
     }
+
+    /**
+     * Test creates 8 distinct harvest configurations corresponding to two different values for each of 3
+     * parameters defined in the EAV model (2³=8).The eight configurations are placed in a single selective harvest
+     * and it is checked that eight jobs are created.
+     */
+    @Test(groups = {"guitest", "functest"})
+    public void jobSplittingTest() {
+        final String configName = "newconf";
+        List<String> domainList = new ArrayList<String>();
+        for (int i=0; i<=7; i++ ) {
+            domainList.add("d"+i+".dk");
+        }
+        createDomainAndConfiguration(domainList.get(0), configName, 10, false, false);
+        createDomainAndConfiguration(domainList.get(1), configName, 10, false, true);
+        createDomainAndConfiguration(domainList.get(2), configName, 10, true, false);
+        createDomainAndConfiguration(domainList.get(3), configName, 10, true, true);
+        createDomainAndConfiguration(domainList.get(4), configName, 20, false, false);
+        createDomainAndConfiguration(domainList.get(5), configName, 20, false, true);
+        createDomainAndConfiguration(domainList.get(6), configName, 20, true, false);
+        createDomainAndConfiguration(domainList.get(7), configName, 20, true, true);
+        final String harvestName = RandomStringUtils.random(6, true, true);
+        SelectiveHarvestPageHelper.createSelectiveHarvest(harvestName, "",
+                (String[]) domainList.toArray(new String[] {}));
+        SelectiveHarvestPageHelper.editHarvest(harvestName);
+        WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
+        List<WebElement> selects = table.findElements(By.tagName("select"));
+        for (WebElement select: selects) {
+            Select dropdown = new Select(select);
+            dropdown.selectByVisibleText(configName);
+        }
+        PageHelper.getWebDriver().findElement(By.name("save")).click();
+        SelectiveHarvestPageHelper.activateHarvest(harvestName);
+        HarvestUtils.waitForJobGeneration(harvestName);
+        List<WebElement> links = PageHelper.getWebDriver().findElements(By.partialLinkText(harvestName));
+        assertEquals(links.size(), 8, "Expected to generate one job per distinct configuration.");
+    }
+
+
+
+    private static void createDomainAndConfiguration(String domainName, String configurationName, int maxHops,
+            boolean obeyRobots, boolean extractJavascript) {
+        DomainWebTestHelper.createDomain(new String[] {domainName});
+        DomainConfigurationPageHelper.createConfiguration(domainName, configurationName);
+        DomainConfigurationPageHelper.gotoConfigurationPage(domainName, configurationName);
+        DomainConfigurationPageHelper.setMaxHops(maxHops);
+        DomainConfigurationPageHelper.setHonorRobots(obeyRobots);
+        DomainConfigurationPageHelper.setExtractJavascript(extractJavascript);
+        DomainConfigurationPageHelper.submitChanges();
+    }
+
 }

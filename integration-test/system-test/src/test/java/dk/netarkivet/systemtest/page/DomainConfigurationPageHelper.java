@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -36,6 +37,9 @@ public class DomainConfigurationPageHelper {
     public static final String MAX_OBJECTS_FIELD = "maxObjects";
     public static final String MAX_BYTES_FIELD = "maxBytes";
     public static final String COMMENTS = "comments";
+    public static final String MAX_HOPS = "MAX_HOPS";
+    public static final String HONOR_ROBOTS_DOT_TXT = "HONOR_ROBOTS_DOT_TXT";
+    public static final String EXTRACT_JAVASCRIPT = "EXTRACT_JAVASCRIPT";
 
     public static void createConfiguration(String domainName, String configurationName) {
         TestEventManager.getInstance().addStimuli("Creating configuration" + configurationName);
@@ -57,7 +61,7 @@ public class DomainConfigurationPageHelper {
     public static void gotoConfigurationPage(String domainName, String configurationName) {
         TestEventManager.getInstance().addStimuli("Updating configuration" + configurationName);
         DomainWebTestHelper.editDomain(domainName);
-
+        PageHelper.getWebDriver().findElement(By.linkText("Show unused configurations")).click();
         WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
         List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
         for (WebElement webElement : tr_collection) {
@@ -75,6 +79,28 @@ public class DomainConfigurationPageHelper {
         WebElement maxObjectsField = PageHelper.getWebDriver().findElement(By.name(MAX_OBJECTS_FIELD));
         maxObjectsField.clear();
         maxObjectsField.sendKeys(String.valueOf(value));
+    }
+
+    public static void setMaxHops(int value) {
+        WebElement maxHopsField = PageHelper.getWebDriver().findElement(By.name(MAX_HOPS));
+        maxHopsField.clear();
+        maxHopsField.sendKeys(String.valueOf(value));
+    }
+
+    public static void setHonorRobots(boolean value) {
+        WebElement honorRobotsBox = PageHelper.getWebDriver().findElement(By.name(HONOR_ROBOTS_DOT_TXT));
+        setCheckbox(honorRobotsBox, value);
+    }
+
+    public static void setExtractJavascript(boolean value) {
+        WebElement extractJavascriptBox = PageHelper.getWebDriver().findElement(By.name(EXTRACT_JAVASCRIPT));
+        setCheckbox(extractJavascriptBox, value);
+    }
+
+    private static void setCheckbox(WebElement checkbox, boolean value) {
+        if ( (checkbox.isSelected() && !value) || (!checkbox.isSelected() && value)) {
+            checkbox.click();
+        }
     }
 
     public static void submitChanges() {
