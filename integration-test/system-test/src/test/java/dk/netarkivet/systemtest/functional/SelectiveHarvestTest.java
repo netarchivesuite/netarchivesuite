@@ -35,6 +35,7 @@ import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.BeforeMethod;
@@ -148,6 +149,60 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
         assertEquals(links.size(), 8, "Expected to generate one job per distinct configuration.");
     }
 
+    /**
+     * In this test we first set the cfg for every known domain to be identical. Then we make changes in
+     * a number of them and check that the right number of jobs is generated.
+     */
+    @Test(groups = {"guitest", "functest"})
+    public void snapshotTest() {
+        List<String> editDomainLinks = DomainWebTestHelper.getAllEditDomainLinks();
+        for (String link: editDomainLinks) {
+            driver.get(link);
+            WebElement editAnchor = driver.findElement(By.id("configuration")).findElement(By.linkText("Edit"));
+            driver.get(editAnchor.getAttribute("href"));
+            Select order_xml = new Select(driver.findElement(By.name("order_xml")));
+            order_xml.selectByVisibleText("default_orderxml");
+            driver.findElement(By.name("maxObjects")).clear();
+            driver.findElement(By.name("maxObjects")).sendKeys("10");
+            driver.findElement(By.name("maxBytes")).clear();
+            driver.findElement(By.name("maxBytes")).sendKeys("100000");
+            DomainConfigurationPageHelper.setMaxHops(10);
+            DomainConfigurationPageHelper.setHonorRobots(true);
+            DomainConfigurationPageHelper.setExtractJavascript(true);
+            DomainConfigurationPageHelper.submitChanges();
+        }
+        driver.get(editDomainLinks.get(0));
+        WebElement editAnchor = driver.findElement(By.id("configuration")).findElement(By.linkText("Edit"));
+        driver.get(editAnchor.getAttribute("href"));
+        DomainConfigurationPageHelper.setMaxHops(20);
+        DomainConfigurationPageHelper.submitChanges();
+
+        driver.get(editDomainLinks.get(1));
+        editAnchor = driver.findElement(By.id("configuration")).findElement(By.linkText("Edit"));
+        driver.get(editAnchor.getAttribute("href"));
+        DomainConfigurationPageHelper.setHonorRobots(false);
+        DomainConfigurationPageHelper.submitChanges();
+
+        driver.get(editDomainLinks.get(2));
+        editAnchor = driver.findElement(By.id("configuration")).findElement(By.linkText("Edit"));
+        driver.get(editAnchor.getAttribute("href"));
+        DomainConfigurationPageHelper.setExtractJavascript(false);
+        DomainConfigurationPageHelper.submitChanges();
+
+        //So now a snapshot harvest should create four jobs
+        PageHelper.gotoPage(PageHelper.MenuPages.SnapshotHarvests);
+        final String harvestName = "snapshot_" + RandomStringUtils.random(3, true, true);
+        driver.findElement(By.partialLinkText("Create new snapshot harvest definition")).click();
+        driver.findElement(By.name("harvestname")).sendKeys(harvestName);
+        driver.findElement(By.name("snapshot_byte_limit")).clear();
+        driver.findElement(By.name("snapshot_byte_limit")).sendKeys("1000000");
+        driver.findElement(By.name("snapshot_byte_limit")).submit();
+        driver.findElement(By.cssSelector("input[value=\""+harvestName+"\"]")).submit();
+        HarvestUtils.waitForJobGeneration(harvestName);
+        List<WebElement> links = PageHelper.getWebDriver().findElements(By.partialLinkText(harvestName));
+        assertEquals(links.size(), 4, "Expected to generate one job per distinct configuration.");
+
+    }
 
 
     private static void createDomainAndConfiguration(String domainName, String configurationName, int maxHops,
