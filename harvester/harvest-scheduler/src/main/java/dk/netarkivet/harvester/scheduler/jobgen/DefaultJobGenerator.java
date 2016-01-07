@@ -29,9 +29,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.antiaction.raptor.dao.AttributeBase;
-import com.antiaction.raptor.dao.AttributeTypeBase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -127,21 +124,6 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         return new CompareConfigsDesc(harvest.getMaxCountObjects(), harvest.getMaxBytes());
     }
 
-    private static String cfgToString(DomainConfiguration cfg) {
-        if (cfg == null) {
-            return "cfg{null}";
-        }
-        String result = "cfg{" + cfg.getDomainName() + "," + cfg.getName() + ",";
-        for (EAV.AttributeAndType aat: cfg.getAttributesAndTypes()){
-            AttributeBase ab = aat.attribute;
-            if (ab != null) {
-                result += "(" + ab.id + "," + ab.entity_id + "," + ab.type_id + "," + ab.getInteger() + ")";
-            }
-            }
-        result += "}";
-        return result;
-    }
-
     /**
      * Create new jobs from a collection of configurations. All configurations must use the same order.xml file.Jobs
      *
@@ -166,13 +148,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                         (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
                 continue;
             }
-            // Do we need to create a new Job or is the current job ok
-            boolean changedCfg = isChangedCfg(previousDomainConf, cfg);
-            if (harvest.isSnapShot()) {
-                changedCfg = false;
-            }
-            log.trace("Compared " + cfgToString(previousDomainConf) + " with " + cfgToString(cfg) + " with result " + changedCfg);
-            if ((job == null) || (!canAccept(job, cfg)) || changedCfg) {
+            if ((job == null) || (!canAccept(job, cfg, previousDomainConf))) {
                 if (job != null) {
                     // If we're done with a job, write it out
                     ++jobsMade;
