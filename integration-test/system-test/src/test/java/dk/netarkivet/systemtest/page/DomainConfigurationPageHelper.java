@@ -59,7 +59,7 @@ public class DomainConfigurationPageHelper {
     }
 
     public static void gotoConfigurationPage(String domainName, String configurationName) {
-        TestEventManager.getInstance().addStimuli("Updating configuration" + configurationName);
+        TestEventManager.getInstance().addStimuli("Updating configuration " + configurationName);
         DomainWebTestHelper.editDomain(domainName);
         PageHelper.getWebDriver().findElement(By.linkText("Show unused configurations")).click();
         WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));

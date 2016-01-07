@@ -29,6 +29,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.antiaction.raptor.dao.AttributeBase;
+import com.antiaction.raptor.dao.AttributeTypeBase;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -124,6 +127,16 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         return new CompareConfigsDesc(harvest.getMaxCountObjects(), harvest.getMaxBytes());
     }
 
+    private static String cfgToString(DomainConfiguration cfg) {
+        String result = "cfg{" + cfg.getDomainName() + "," + cfg.getName() + ",";
+        for (EAV.AttributeAndType aat: cfg.getAttributesAndTypes()){
+            AttributeBase ab = aat.attribute;
+            result += "(" + ab.id + "," + ab.entity_id + "," + ab.type_id + "," + ab.getInteger() + ")";
+        }
+        result += "}";
+        return result;
+    }
+
     /**
      * Create new jobs from a collection of configurations. All configurations must use the same order.xml file.Jobs
      *
@@ -148,7 +161,9 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 continue;
             }
             // Do we need to create a new Job or is the current job ok
-            if ((job == null) || (!canAccept(job, cfg)) || isChangedCfg(previousDomainConf, cfg)) {
+            final boolean changedCfg = isChangedCfg(previousDomainConf, cfg);
+            log.trace("Compared " + cfgToString(previousDomainConf) + " with " + cfgToString(cfg) + " with result " + changedCfg);
+            if ((job == null) || (!canAccept(job, cfg)) || changedCfg) {
                 if (job != null) {
                     // If we're done with a job, write it out
                     ++jobsMade;
