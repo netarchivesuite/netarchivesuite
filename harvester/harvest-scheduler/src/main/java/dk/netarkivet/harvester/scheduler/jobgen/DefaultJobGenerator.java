@@ -128,6 +128,9 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
     }
 
     private static String cfgToString(DomainConfiguration cfg) {
+        if (cfg == null) {
+            return "cfg{null}";
+        }
         String result = "cfg{" + cfg.getDomainName() + "," + cfg.getName() + ",";
         for (EAV.AttributeAndType aat: cfg.getAttributesAndTypes()){
             AttributeBase ab = aat.attribute;
