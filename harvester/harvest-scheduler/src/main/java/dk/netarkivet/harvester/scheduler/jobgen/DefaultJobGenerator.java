@@ -134,8 +134,10 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         String result = "cfg{" + cfg.getDomainName() + "," + cfg.getName() + ",";
         for (EAV.AttributeAndType aat: cfg.getAttributesAndTypes()){
             AttributeBase ab = aat.attribute;
-            result += "(" + ab.id + "," + ab.entity_id + "," + ab.type_id + "," + ab.getInteger() + ")";
-        }
+            if (ab != null) {
+                result += "(" + ab.id + "," + ab.entity_id + "," + ab.type_id + "," + ab.getInteger() + ")";
+            }
+            }
         result += "}";
         return result;
     }
@@ -165,7 +167,10 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 continue;
             }
             // Do we need to create a new Job or is the current job ok
-            final boolean changedCfg = isChangedCfg(previousDomainConf, cfg);
+            boolean changedCfg = isChangedCfg(previousDomainConf, cfg);
+            if (harvest.isSnapShot()) {
+                changedCfg = false;
+            }
             log.trace("Compared " + cfgToString(previousDomainConf) + " with " + cfgToString(cfg) + " with result " + changedCfg);
             if ((job == null) || (!canAccept(job, cfg)) || changedCfg) {
                 if (job != null) {
