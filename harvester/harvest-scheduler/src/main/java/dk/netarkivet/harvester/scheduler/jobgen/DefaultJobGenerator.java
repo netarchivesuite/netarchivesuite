@@ -139,6 +139,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         Job job = null;
         log.debug("Adding domainconfigs with the same order.xml for harvest #{}", harvest.getOid());
         JobDAO dao = JobDAO.getInstance();
+        DomainConfiguration previousDomainConf = null;
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
             if (EXCLUDE_ZERO_BUDGET && (0 == cfg.getMaxBytes() || 0 == cfg.getMaxObjects())) {
@@ -147,7 +148,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 continue;
             }
             // Do we need to create a new Job or is the current job ok
-            if ((job == null) || (!canAccept(job, cfg))) {
+            if ((job == null) || (!canAccept(job, cfg)) || isChangedCfg(previousDomainConf, cfg)) {
                 if (job != null) {
                     // If we're done with a job, write it out
                     ++jobsMade;
@@ -162,6 +163,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 log.trace("Added job configuration {} for domain {} to current job for harvest #{}", cfg.getName(),
                         cfg.getDomainName(), harvest.getOid());
             }
+            previousDomainConf = cfg;
         }
         if (job != null) {
             ++jobsMade;
@@ -179,6 +181,15 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         }
         return jobsMade;
     }
+
+    private boolean isChangedCfg(DomainConfiguration previous, DomainConfiguration current) {
+         if (previous == null) {
+             return false;
+         } else {
+             return !(EAV.compare(previous.getAttributesAndTypes(), current.getAttributesAndTypes()) == 0);
+         }
+    }
+
 
     @Override
     protected boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg) {
