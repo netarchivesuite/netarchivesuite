@@ -107,14 +107,15 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
 
     /**
      * Test creates 8 distinct harvest configurations corresponding to two different values for each of 3
-     * parameters defined in the EAV model (2³=8).The eight configurations are placed in a single selective harvest
-     * and it is checked that eight jobs are created.
+     * parameters defined in the EAV model (2³=8). In addition, there are created 3 configurations using the
+     * same cxml and attribute values as 3 of the previous 8 jobs. So there should be
+     * eight jobs created.
      */
     @Test(groups = {"guitest", "functest"})
     public void jobSplittingTest() {
         final String configName = "newconf";
         List<String> domainList = new ArrayList<String>();
-        for (int i=0; i<=7; i++ ) {
+        for (int i=0; i<=10; i++ ) {
             domainList.add("d"+i+".dk");
         }
         createDomainAndConfiguration(domainList.get(0), configName, 10, false, false);
@@ -125,6 +126,11 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
         createDomainAndConfiguration(domainList.get(5), configName, 20, false, true);
         createDomainAndConfiguration(domainList.get(6), configName, 20, true, false);
         createDomainAndConfiguration(domainList.get(7), configName, 20, true, true);
+        //The next three configs are identical to three of the above so they should
+        //not generate new jobs - so only 8 jobs expected.
+        createDomainAndConfiguration(domainList.get(8), configName, 20, true, true);
+        createDomainAndConfiguration(domainList.get(9), configName, 20, true, false);
+        createDomainAndConfiguration(domainList.get(10), configName, 20, false, true);
         final String harvestName = RandomStringUtils.random(6, true, true);
         SelectiveHarvestPageHelper.createSelectiveHarvest(harvestName, "",
                 (String[]) domainList.toArray(new String[] {}));
