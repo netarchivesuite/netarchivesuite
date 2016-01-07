@@ -87,22 +87,23 @@ public final class JMSMonitorRegistryClient implements MonitorRegistryClient, Cl
      * @param localHostName The name of the host.
      * @param jmxPort The port for JMX connections to the host.
      * @param rmiPort The port for RMI connections for JMX communication.
-     * @throws ArgumentNotValid on null or empty hostname, or negative port numbers.
+     * @throws ArgumentNotValid on null or empty localHostName, or negative port numbers.
      */
     public synchronized void register(final String localHostName, final int jmxPort, final int rmiPort) {
         ArgumentNotValid.checkNotNullOrEmpty(localHostName, "String localHostName");
         ArgumentNotValid.checkNotNegative(jmxPort, "int jmxPort");
         ArgumentNotValid.checkNotNegative(rmiPort, "int rmiPort");
         if (registryTimer != null) {
+            log.info("Cancelling old registryTimer instance");
             registryTimer.cancel();
         }
         registryTimer = new Timer("Monitor-registry-client", true);
         TimerTask timerTask = new TimerTask() {
             /** The action to be performed by this timer task. */
             public void run() {
-                JMSConnectionFactory.getInstance().send(new RegisterHostMessage(localHostName, jmxPort, rmiPort));
                 log.trace("Registering this client for monitoring, using hostname '{}' and JMX/RMI ports {}/{}",
                         localHostName, jmxPort, rmiPort);
+                JMSConnectionFactory.getInstance().send(new RegisterHostMessage(localHostName, jmxPort, rmiPort));
             }
         };
 
@@ -117,8 +118,7 @@ public final class JMSMonitorRegistryClient implements MonitorRegistryClient, Cl
                     CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY, MonitorSettings.DEFAULT_REREGISTER_DELAY);
         }
 
-        log.info(
-                "Registering this client for monitoring every {} minutes, using hostname '{}' and JMX/RMI ports {}/{}",
+        log.info("Registering this client for monitoring every {} minutes, using hostname '{}' and JMX/RMI ports {}/{}",
                 reregisterDelay, localHostName, jmxPort, rmiPort);
         registryTimer.scheduleAtFixedRate(timerTask, NOW, reregisterDelay * MINUTE_IN_MILLISECONDS);
     }

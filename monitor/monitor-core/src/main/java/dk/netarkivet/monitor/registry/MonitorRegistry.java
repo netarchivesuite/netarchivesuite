@@ -60,7 +60,7 @@ public class MonitorRegistry {
     }
 
     /**
-     * Register a new JMX host entry.
+     * Register or re-register a JMX host entry.
      *
      * @param hostEntry The entry to add
      * @throws ArgumentNotValid if hostEntry is null.
@@ -72,10 +72,12 @@ public class MonitorRegistry {
             set = Collections.synchronizedSet(new HashSet<HostEntry>());
             hostEntries.put(hostEntry.getName(), set);
         }
-        if (set.add(hostEntry)) {
+        
+        if (set.add(hostEntry)) { 
+            // An hostEntry did not previously exist with tuple<name,jmxport, jmxport>=<hostEntry.getName(), hostEntry.getJmxPort(), hostEntry.getRmiPort()>
             log.info("Added host '{}' port {}/{}", hostEntry.getName(), hostEntry.getJmxPort(), hostEntry.getRmiPort());
-        } else {
-            // TODO WTF?!
+        } else { 
+            // remove and add the entry with updated timestamp.
             set.remove(hostEntry);
             set.add(hostEntry);
             log.trace("Updated time for '{}' port {}/{} to {}", hostEntry.getName(), hostEntry.getJmxPort(),
