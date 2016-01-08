@@ -11,7 +11,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-@RunWith(JUnit4.class)
+//@RunWith(JUnit4.class)
 public class TestCachingSLF4JAppender {
 
 	//@Test
