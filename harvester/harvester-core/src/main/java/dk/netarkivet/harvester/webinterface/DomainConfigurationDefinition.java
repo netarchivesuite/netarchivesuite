@@ -23,11 +23,15 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
+
+import com.antiaction.raptor.dao.AttributeBase;
+import com.antiaction.raptor.dao.AttributeTypeBase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -39,6 +43,8 @@ import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.Password;
 import dk.netarkivet.harvester.datamodel.SeedList;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 
 /**
  * Utility class containing methods for processing a GUI-request to update the details of a domain-configuration.
@@ -135,13 +141,15 @@ public class DomainConfigurationDefinition {
 
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
 
+        DomainConfiguration domainConf = null;
+
         if (!configOldName.isEmpty() && !configOldName.equals(configName)){
             // Are we allowed to rename to the new name? or does it already exist?
             if (domain.hasConfiguration(configName)) {
                 HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;configuration.exists.0", configName);
                 throw new ForwardedToErrorPage("Configuration " + configName + " already exist");
             } else {
-                DomainConfiguration domainConf = domain.getConfiguration(configOldName);
+                domainConf = domain.getConfiguration(configOldName);
                 String defaultConfigName = DomainDAO.getInstance().getDefaultDomainConfigurationName(domain.getName());
                 if (defaultConfigName.equals(configName)){	
                     HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;cannot.rename.defaultconfiguration.0", configOldName);
@@ -164,7 +172,44 @@ public class DomainConfigurationDefinition {
                 }
             }
         } else {
-            updateDomainConfig(domain, configName, order_xml, load, maxObjects, maxBytes, urlListList, comments);
+        	domainConf = updateDomainConfig(domain, configName, order_xml, load, maxObjects, maxBytes, urlListList, comments);
+        }
+
+        // EAV
+        try {
+        	long entity_id = domainConf.getID();
+            EAV eav = EAV.getInstance();
+            List<AttributeAndType> attributeTypes = eav.getAttributesAndTypes(EAV.DOMAIN_TREE_ID, (int)entity_id);
+            AttributeAndType attributeAndType;
+            AttributeTypeBase attributeType;
+            AttributeBase attribute;
+            for (int i=0; i<attributeTypes.size(); ++i) {
+            	attributeAndType = attributeTypes.get(i);
+            	attributeType = attributeAndType.attributeType;
+            	attribute = attributeAndType.attribute;
+            	if (attribute == null) {
+                	attribute = attributeType.instanceOf();
+                	attribute.entity_id = (int)entity_id;
+            	}
+            	switch (attributeType.viewtype) {
+            	case 1:
+                	long l = HTMLUtils.parseOptionalLong(context, attributeType.name, (long)attributeType.def_int);
+                	attribute.setInteger((int)l);
+            		break;
+            	case 5:
+            	case 6:
+                    String paramValue = context.getRequest().getParameter(attributeType.name);
+                    int intVal = 0;
+                    if (paramValue != null && !"0".equals(paramValue)) {
+                    	intVal = 1;
+                    }
+                	attribute.setInteger(intVal);
+            		break;
+            	}
+            	eav.saveAttribute(attribute);
+            }
+        } catch (SQLException e) {
+        	throw new RuntimeException("Unable to store EAV data!", e);
         }
     }
 
@@ -180,9 +225,8 @@ public class DomainConfigurationDefinition {
      * @param urlListList List of url list names
      * @param comments Comments, or null for none.
      */
-    private static void updateDomainConfig(Domain domain, String configName, String orderXml, int load, long maxObjects,
-    		long maxBytes, String[] urlListList, String comments) {
-
+    private static DomainConfiguration updateDomainConfig(Domain domain, String configName, String orderXml, int load, long maxObjects,
+            long maxBytes, String[] urlListList, String comments) {
     	// Update/create new configuration	
     	List<SeedList> seedlistList = new ArrayList<SeedList>();
     	for (String seedlistName : urlListList) {
@@ -204,7 +248,6 @@ public class DomainConfigurationDefinition {
     		domainConf.setComments(comments);
     	}
     	DomainDAO.getInstance().update(domain);
-
-
+        return domainConf;
     }
 }

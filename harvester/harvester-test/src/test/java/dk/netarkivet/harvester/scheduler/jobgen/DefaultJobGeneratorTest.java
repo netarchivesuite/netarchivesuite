@@ -38,11 +38,11 @@ public class DefaultJobGeneratorTest extends AbstractJobGeneratorTest {
         DefaultJobGenerator jobGen = new DefaultJobGenerator();
         assertFalse("Job should not accept configuration associated with domain " +
                         domainConfiguration.getDomainName(),
-                jobGen.canAccept(job, domainConfiguration));
+                jobGen.canAccept(job, domainConfiguration, null));
 
         // Test with a config associated with another domain:
         assertTrue("Job should accept configuration associated with domain " + anotherConfig.getDomainName(),
-                jobGen.canAccept(job, anotherConfig));
+                jobGen.canAccept(job, anotherConfig, null));
 
         // Test split according to byte limits
 
@@ -53,13 +53,13 @@ public class DefaultJobGeneratorTest extends AbstractJobGeneratorTest {
         job = new Job(TestInfo.HARVESTID, domainConfiguration, ht, FOCUSED_CHANNEL, -1L, 2000000, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
 
         anotherConfig.setMaxBytes(2000000);
-        assertTrue("Should accept config with same limit", jobGen.canAccept(job, anotherConfig));
+        assertTrue("Should accept config with same limit", jobGen.canAccept(job, anotherConfig, null));
 
         anotherConfig.setMaxBytes(1000000);
-        assertFalse("Should NOT accept config with lower limit", jobGen.canAccept(job, anotherConfig));
+        assertFalse("Should NOT accept config with lower limit", jobGen.canAccept(job, anotherConfig, null));
 
         anotherConfig.setMaxBytes(3000000);
-        assertTrue("Should accept config with higher limit", jobGen.canAccept(job, anotherConfig));
+        assertTrue("Should accept config with higher limit", jobGen.canAccept(job, anotherConfig, null));
 
         // Make a job with limit of 2000000 defined by harvest definition
         domainConfiguration.setMaxBytes(2000000);
@@ -67,13 +67,13 @@ public class DefaultJobGeneratorTest extends AbstractJobGeneratorTest {
                 SNAPSHOT_CHANNEL, -1L, 5000000, Constants.DEFAULT_MAX_JOB_RUNNING_TIME, 0);
 
         anotherConfig.setMaxBytes(2000000);
-        assertTrue("Should accept config with same limit", jobGen.canAccept(job, anotherConfig));
+        assertTrue("Should accept config with same limit", jobGen.canAccept(job, anotherConfig, null));
 
         anotherConfig.setMaxBytes(1000000);
-        assertFalse("Should NOT accept config with lower limit", jobGen.canAccept(job, anotherConfig));
+        assertFalse("Should NOT accept config with lower limit", jobGen.canAccept(job, anotherConfig, null));
 
         anotherConfig.setMaxBytes(3000000);
-        assertFalse("Should NOT accept config with higher limit", jobGen.canAccept(job, anotherConfig));
+        assertFalse("Should NOT accept config with higher limit", jobGen.canAccept(job, anotherConfig, null));
 
         // TODO: Should also be tested that expected size associated with this configuration
         // is with limits (minCountObjects, maxCountObjects). This should be a separate
@@ -83,6 +83,6 @@ public class DefaultJobGeneratorTest extends AbstractJobGeneratorTest {
     @Test (expected = ArgumentNotValid.class)
     public void testCanAcceptNullConfiguration() {
         Job job = JobTest.createDefaultJob();
-        createJobGenerator().canAccept(job, null);
+        createJobGenerator().canAccept(job, null, null);
     }
 }

@@ -135,6 +135,32 @@ public class HarvestUtils {
         }
     }
 
+    public static void waitForJobGeneration(String harvestName) {
+        boolean keepWaiting = true;
+        int secondsWaitingForJob = 0;
+        int maxSecondsToWaitForAllHarvests = 60;
+        while (keepWaiting) {
+            System.err.print(".");
+
+            try {
+                Thread.sleep(10000);
+                secondsWaitingForJob = secondsWaitingForJob + 10;
+            } catch (InterruptedException e) {
+            }
+            if (secondsWaitingForJob > maxSecondsToWaitForAllHarvests) {
+                throw new RuntimeException("The job for " + harvestName + " took to long (more that "
+                        + maxSecondsToWaitForAllHarvests + "s) to finish, " + "aborting");
+            }
+
+            PageHelper.reloadSubPage("History/Harveststatus-alljobs.jsp?" +
+                    "JOB_STATUS=ALL" +
+                    "&HARVEST_NAME=&START_DATE=&END_DATE=&JOB_ID_ORDER=ASC&PAGE_SIZE=100&START_PAGE_INDEX=1&upload=Show");
+            if (PageHelper.getWebDriver().getPageSource().contains(harvestName)) {
+                keepWaiting = false;
+            }
+        }
+    }
+
     public static String findHarvestingHost() {
         boolean jobIsRunning = false;
         int secondsBetweenCheckForRunningJob = 10;

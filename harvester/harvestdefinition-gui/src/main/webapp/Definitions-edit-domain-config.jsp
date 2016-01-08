@@ -59,6 +59,7 @@ passwordList:
 --%><%@ page import="java.text.NumberFormat,
                  java.util.HashSet,
                  java.util.Iterator,
+                 java.util.List,
                  java.util.Locale,
                  java.util.Set,
                  org.slf4j.Logger,
@@ -72,7 +73,11 @@ passwordList:
                  dk.netarkivet.harvester.datamodel.SeedList,
                  dk.netarkivet.harvester.datamodel.TemplateDAO,
                  dk.netarkivet.harvester.webinterface.Constants,
-                 dk.netarkivet.harvester.webinterface.DomainConfigurationDefinition"
+                 dk.netarkivet.harvester.webinterface.DomainConfigurationDefinition,
+                 dk.netarkivet.harvester.datamodel.eav.EAV,
+                 dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType,
+                 com.antiaction.raptor.dao.AttributeTypeBase,
+                 com.antiaction.raptor.dao.AttributeBase"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -167,7 +172,7 @@ Display all the form information for this domain
         <%-- First column is a two-column table of input fields --%>
         <table>
             <tr>
-                <td><fmt:message key="prompt;name"/> </td>
+                <td style="text-align:right;"><fmt:message key="prompt;name"/> </td>
                 <td><span id="focusElement">
                         <input name="<%=Constants.CONFIG_NAME_PARAM%>" size="50"
                             <%=nameString%>/>
@@ -175,7 +180,7 @@ Display all the form information for this domain
                 </td>
             </tr>
             <tr>
-                <td><fmt:message key="prompt;harvest.template"/> </td>
+                <td style="text-align:right;"><fmt:message key="prompt;harvest.template"/> </td>
                 <td><select name="<%=Constants.ORDER_XML_NAME_PARAM%>">
                     <%
                         Iterator<String> templates =
@@ -198,15 +203,94 @@ Display all the form information for this domain
             </tr>
             <input name="<%=Constants.MAX_RATE_PARAM%>" type="hidden" <%=load%> />
             <tr>
-                <td><fmt:message key="maximum.number.of.objects"/> </td>
+                <td style="text-align:right;"><fmt:message key="maximum.number.of.objects"/> </td>
                 <td><input name="<%=Constants.MAX_OBJECTS_PARAM%>" size="20" <%=maxObjects%> /></td>
             </tr>
             <tr>
-                <td><fmt:message key="maximum.number.of.bytes"/> </td>
+                <td style="text-align:right;"><fmt:message key="maximum.number.of.bytes"/> </td>
                 <td>
                     <input name="<%=Constants.MAX_BYTES_PARAM%>" size="20" <%=maxBytes%> />
                 </td>
             </tr>
+<%
+    if (dc == null) {
+		EAV eav = EAV.getInstance();
+		List<AttributeTypeBase> attributeTypes = eav.getAttributeTypes(EAV.DOMAIN_TREE_ID);
+		AttributeTypeBase attributeType;
+		for (int i=0; i<attributeTypes.size(); ++i) {
+			attributeType = attributeTypes.get(i);
+%>
+	        <tr> <!-- edit area for eav attribute -->
+	            <td style="text-align:right;"><fmt:message key="<%= attributeTypes.get(i).name %>"/></td>
+	            <td> 
+<%
+			switch (attributeType.viewtype) {
+			case 1:
+%>
+  	                <input type="text" id="<%= attributeType.name %>" name="<%= attributeType.name %>" value="<%= attributeType.def_int %>">
+<%
+				break;
+			case 5:
+			case 6:
+				if (attributeType.def_int > 0) {
+%>
+		            <input type="checkbox" id="<%= attributeType.name %>" name="<%= attributeType.name %>" value="1" checked="1">
+<%
+				} else {
+%>
+		            <input type="checkbox" id="<%= attributeType.name %>" name="<%= attributeType.name %>">
+<%
+				}
+				break;
+			}
+%>
+	             </td>
+	        </tr>
+<%
+		}
+    } else {
+		List<AttributeAndType> attributesAndTypes = dc.getAttributesAndTypes();
+		AttributeAndType attributeAndType;
+		for (int i=0; i<attributesAndTypes.size(); ++i) {
+			attributeAndType = attributesAndTypes.get(i);
+			Integer intVal = null;
+			if (attributeAndType.attribute != null) {
+				intVal = attributeAndType.attribute.getInteger();
+			}
+			if (intVal == null) {
+				intVal = attributeAndType.attributeType.def_int;
+			}
+			%>
+	        <tr> <!-- edit area for eav attribute -->
+	            <td style="text-align:right;"><fmt:message key="<%= attributeAndType.attributeType.name %>"/></td>
+	            <td> 
+<%
+				switch (attributeAndType.attributeType.viewtype) {
+				case 1:
+%>
+  	                <input type="text" id="<%= attributeAndType.attributeType.name %>" name="<%= attributeAndType.attributeType.name %>" value="<%= intVal %>">
+<%
+					break;
+				case 5:
+				case 6:
+					if (intVal > 0) {
+%>
+		            <input type="checkbox" id="<%= attributeAndType.attributeType.name %>" name="<%= attributeAndType.attributeType.name %>" value="1" checked="1">
+<%
+					} else {
+%>
+		            <input type="checkbox" id="<%= attributeAndType.attributeType.name %>" name="<%= attributeAndType.attributeType.name %>">
+<%
+					}
+					break;
+				}
+%>
+	             </td>
+	        </tr>
+<%
+		}
+    }
+%>
             <tr>
                 <td colspan="2"><fmt:message key="prompt;comments"/> </td>
             </tr>

@@ -35,6 +35,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Named;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 
 /**
  * This class describes a configuration for harvesting a domain. It combines a number of seedlists, a number of
@@ -74,6 +75,9 @@ public class DomainConfiguration implements Named {
 
     /** The crawlertraps associated with the domain. */
     private List<String> crawlertraps;
+
+    /** This configurations EAV attributes and attribute types. */
+    private List<AttributeAndType> attributesAndTypes;
 
     /**
      * How many objects should be harvested in a harvest to trust that our expected size of objects is less than the
@@ -567,5 +571,21 @@ public class DomainConfiguration implements Named {
 	public void setName(String configName) {
 		this.configName = configName;
 	}
+
+    /**
+     * Get this configurations EAV attributes and attribute types.
+     * @return this configurations EAV attributes and attribute types
+     */
+    public List<AttributeAndType> getAttributesAndTypes() {
+    	return attributesAndTypes;
+    }
+
+    /**
+     * Set this configurations EAV attributes and attribute types.
+     * @param attributesAndTypes EAV attributes and attribute types
+     */
+    public void setAttributesAndTypes(List<AttributeAndType> attributesAndTypes) {
+    	this.attributesAndTypes = attributesAndTypes;
+    }
 
 }

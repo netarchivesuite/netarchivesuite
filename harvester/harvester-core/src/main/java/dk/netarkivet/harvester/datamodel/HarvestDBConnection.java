@@ -24,12 +24,17 @@
 package dk.netarkivet.harvester.datamodel;
 
 import java.beans.PropertyVetoException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.antiaction.raptor.sql.ExecuteSqlFile;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import dk.netarkivet.common.CommonSettings;
@@ -117,7 +122,6 @@ public final class HarvestDBConnection {
      * @throws IOFailure in case of problems in interacting with the database
      */
     protected static void updateTable(final String table, final int newVersion, final String... updates) {
-
         Connection c = get();
         updateTable(c, table, newVersion, updates);
     }
@@ -138,6 +142,27 @@ public final class HarvestDBConnection {
 
         try {
             DBUtils.executeSQL(c, sqlStatements);
+        } finally {
+            release(c);
+        }
+    }
+
+    protected static void updateTableVersion(final String table, final int newVersion, final String... updates) {
+        Connection c = get();
+        updateTableVersion(c, table, newVersion);
+    }
+
+    public static void updateTableVersion(Connection c, final String table, final int newVersion) {
+        log.info("Updating table '{}' to version {}", table, newVersion);
+        String updateSchemaversionSql = null;
+        if (newVersion == 1) {
+            updateSchemaversionSql = "INSERT INTO schemaversions(tablename, version) VALUES ('" + table + "', 1)";
+        } else {
+            updateSchemaversionSql = "UPDATE schemaversions SET version = " + newVersion + " WHERE tablename = '"
+                    + table + "'";
+        }
+        try {
+            DBUtils.executeSQL(c, updateSchemaversionSql);
         } finally {
             release(c);
         }
@@ -279,4 +304,35 @@ public final class HarvestDBConnection {
                     dataSource.getPreferredTestQuery(), dataSource.isTestConnectionOnCheckin());
         }
     }
+
+    public static void executeSql(String dbm, String tableName, int version) {
+    	Connection conn = HarvestDBConnection.get();
+        executeSql(conn, dbm, tableName, version);
+        HarvestDBConnection.release(conn);
+        conn = null;
+    }
+
+    public static void executeSql(Connection conn, String dbm, String tableName, int version) {
+    	InputStream in = DerbySpecifics.class.getClassLoader().getResourceAsStream("sql-migration/" + dbm +"/" + tableName + "." + version + ".sql");
+    	try {
+        	List<Map.Entry<String, String>> statements = ExecuteSqlFile.splitSql(in, "UTF-8", 8192);
+        	in.close();
+        	in = null;
+            ExecuteSqlFile.executeStatements(conn, statements);
+            HarvestDBConnection.updateTable(conn, tableName, version);
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    	} finally {
+    		if (in != null) {
+    			try {
+        			in.close();
+    			} catch (IOException e) {
+    			}
+    			in = null;
+    		}
+    	}
+    }
+
 }

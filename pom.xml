@@ -299,6 +299,18 @@
         <artifactId>jwat-warc</artifactId>
         <version>${jwat.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>com.antiaction</groupId>
+        <artifactId>raptor-dbl</artifactId>
+        <version>0.1.0-RC2</version>
+        <exclusions>
+          <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 <!--
       <dependency>
         <groupId>xerces</groupId>

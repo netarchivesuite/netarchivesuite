@@ -131,6 +131,11 @@
     </dependency>
 
     <dependency>
+      <groupId>com.antiaction</groupId>
+      <artifactId>raptor-dbl</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <scope>test</scope>
@@ -138,6 +143,24 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/../../deploy/deploy-core/scripts/postgresql/migration/</directory>
+        <targetPath>sql-migration/postgresql/</targetPath>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/../../deploy/deploy-core/scripts/mysql/migration/</directory>
+        <targetPath>sql-migration/mysql/</targetPath>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/../../deploy/deploy-core/scripts/derby/migration/</directory>
+        <targetPath>sql-migration/derby/</targetPath>
+      </resource>
+    </resources>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -31,6 +31,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.antiaction.raptor.dao.AttributeBase;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -46,6 +48,7 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
 
 /**
  * A base class for {@link JobGenerator} implementations. It is recommended to extend this class to implement a new job
@@ -68,6 +71,21 @@ abstract class AbstractJobGenerator implements JobGenerator {
     /** Is deduplication enabled or disabled in the settings* */
     private final boolean DEDUPLICATION_ENABLED = Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);
 
+    public static String cfgToString(DomainConfiguration cfg) {
+        if (cfg == null) {
+            return "cfg{null}";
+        }
+        String result = "cfg{" + cfg.getDomainName() + "," + cfg.getName() + ",";
+        for (EAV.AttributeAndType aat: cfg.getAttributesAndTypes()){
+            AttributeBase ab = aat.attribute;
+            if (ab != null) {
+                result += "(" + ab.id + "," + ab.entity_id + "," + ab.type_id + "," + ab.getInteger() + ")";
+            }
+            }
+        result += "}";
+        return result;
+    }
+
     @Override
     public int generateJobs(HarvestDefinition harvest) {
         log.info("Generating jobs for harvestdefinition #{}", harvest.getOid());
@@ -80,7 +98,10 @@ abstract class AbstractJobGenerator implements JobGenerator {
                 subset.add(domainConfigurations.next());
             }
 
-            Collections.sort(subset, getDomainConfigurationSubsetComparator(harvest));
+            final Comparator<DomainConfiguration> domainConfigurationSubsetComparator = getDomainConfigurationSubsetComparator(
+                    harvest);
+            log.trace("Sorting domains with instance of " + domainConfigurationSubsetComparator.getClass().getName());
+            Collections.sort(subset, domainConfigurationSubsetComparator);
             log.trace("{} domainconfigs now sorted and ready to processing for harvest #{}", subset.size(),
                     harvest.getOid());
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
@@ -169,17 +190,17 @@ abstract class AbstractJobGenerator implements JobGenerator {
             Iterator<DomainConfiguration> domainConfSubset);
 
     @Override
-    public boolean canAccept(Job job, DomainConfiguration cfg) {
-        if (!checkAddDomainConfInvariant(job, cfg)) {
+    public boolean canAccept(Job job, DomainConfiguration cfg, DomainConfiguration previousCfg) {
+        if (!checkAddDomainConfInvariant(job, cfg, previousCfg)) {
             return false;
         }
         return checkSpecificAcceptConditions(job, cfg);
     }
 
     /**
-     * Called by {@link #canAccept(Job, DomainConfiguration)}. Tests the implementation-specific conditions to accept
+     * Called by {@link JobGenerator#canAccept(Job, DomainConfiguration, DomainConfiguration)}. Tests the implementation-specific conditions to accept
      * the given {@link DomainConfiguration} in the given {@link Job}. It is assumed that
-     * {@link #checkAddDomainConfInvariant(Job, DomainConfiguration)} has already passed.
+     * {@link #checkAddDomainConfInvariant(Job, DomainConfiguration, DomainConfiguration)} has already passed.
      *
      * @param job the {@link Job} n=being built
      * @param cfg the {@link DomainConfiguration} to test
@@ -220,15 +241,23 @@ abstract class AbstractJobGenerator implements JobGenerator {
      * <li>The given domain configuration and job are not null.</li>
      * <li>The job does not already contain the given domain configuration.</li>
      * <li>The domain configuration has the same order xml name as the first inserted domain config.</li>
+     * <li>If the previous configuration is not null, check that all attributes are identical between the two configurations</li>
      * </ol>
      *
      * @param job a given Job
      * @param cfg a given DomainConfiguration
+     * @param previousCfg if not null, the domain configuration added to the job immediately prior to this one
      * @return true, if the given DomainConfiguration can be inserted into the given job
      */
-    private boolean checkAddDomainConfInvariant(Job job, DomainConfiguration cfg) {
+    private boolean checkAddDomainConfInvariant(Job job, DomainConfiguration cfg, DomainConfiguration previousCfg) {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(cfg, "cfg");
+
+        if (previousCfg != null && EAV.compare(cfg.getAttributesAndTypes(), previousCfg.getAttributesAndTypes())!=0 ) {
+            log.debug("Attributes have changed between configurations {} and {}",
+                    cfgToString(previousCfg), cfgToString(cfg));
+            return false;
+        }
 
         // check if domain in DomainConfiguration cfg is not already in this job
         // domainName is used as key in domainConfigurationMap

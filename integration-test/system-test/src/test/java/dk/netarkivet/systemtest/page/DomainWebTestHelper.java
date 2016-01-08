@@ -22,11 +22,14 @@
  */
 package dk.netarkivet.systemtest.page;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 /**
  * Provides functionality for commonly used test access to domain web content.
@@ -71,5 +74,22 @@ public class DomainWebTestHelper {
         }
 
         driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
+    }
+
+    public static List<String> getAllEditDomainLinks() {
+        PageHelper.gotoPage(PageHelper.MenuPages.FindDomains);
+        WebDriver driver = PageHelper.getWebDriver();
+        final WebElement domainQueryField = driver.findElement(By.name("DOMAIN_QUERY_STRING"));
+        domainQueryField.sendKeys("*");
+        domainQueryField.submit();
+        List<WebElement> allLinks =  driver.findElements(By.tagName("a"));
+        List<String> editDomainLinks = new ArrayList<>();
+        for (WebElement link: allLinks) {
+            String url = link.getAttribute("href");
+            if (url.contains("Definitions-edit-domain")) {
+                editDomainLinks.add(url);
+            }
+        }
+        return editDomainLinks;
     }
 }

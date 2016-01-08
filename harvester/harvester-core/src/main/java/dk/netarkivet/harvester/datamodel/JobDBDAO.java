@@ -370,6 +370,33 @@ public class JobDBDAO extends JobDAO {
         }
     }
 
+    protected static final String GET_JOB_BY_ID_SQL = ""
+    		+ "SELECT "
+	    		+ "harvest_id,"
+	    		+ "status,"
+	    		+ "channel,"
+	            + "forcemaxcount,"
+	            + "forcemaxbytes,"
+	            + "forcemaxrunningtime,"
+	            + "orderxml,"
+	            + "orderxmldoc,"
+	            + "seedlist,"
+	            + "harvest_num,"
+	            + "harvest_errors,"
+	            + "harvest_error_details,"
+	            + "upload_errors,"
+	            + "upload_error_details,"
+	            + "startdate,"
+	            + "enddate,"
+	            + "submitteddate,"
+	            + "creationdate,"
+	            + "edition,"
+	            + "resubmitted_as_job,"
+	            + "continuationof,"
+	            + "harvestname_prefix,"
+	            + "snapshot "
+            + "FROM jobs WHERE job_id = ?";
+
     /**
      * Read a single job from the job database.
      *
@@ -385,12 +412,7 @@ public class JobDBDAO extends JobDAO {
         }
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("SELECT " + "harvest_id, status, channel, "
-                    + "forcemaxcount, forcemaxbytes, " + "forcemaxrunningtime, orderxml, "
-                    + "orderxmldoc, seedlist, harvest_num," + "harvest_errors, harvest_error_details, "
-                    + "upload_errors, upload_error_details, " + "startdate, enddate, submitteddate, creationdate, "
-                    + "edition, resubmitted_as_job, continuationof, harvestname_prefix, snapshot "
-                    + "FROM jobs WHERE job_id = ?");
+            statement = connection.prepareStatement(GET_JOB_BY_ID_SQL);
             statement.setLong(1, jobID);
             ResultSet result = statement.executeQuery();
             result.next();
@@ -412,7 +434,7 @@ public class JobDBDAO extends JobDAO {
             } else {
                 tmpStr = result.getString(8);
             }
-            orderXMLdoc = HeritrixTemplate.getTemplateFromString(tmpStr);
+            orderXMLdoc = HeritrixTemplate.getTemplateFromString(-1, tmpStr);
             String seedlist = "";
             if (useClobs) {
                 Clob clob = result.getClob(9);

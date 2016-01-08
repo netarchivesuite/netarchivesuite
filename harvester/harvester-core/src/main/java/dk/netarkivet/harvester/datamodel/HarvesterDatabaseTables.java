@@ -413,6 +413,36 @@ public enum HarvesterDatabaseTables {
         public String getTablename() {
             return NAME;
         }
+    },
+    /** Harvest channels. */
+    EAVTYPEATTRIBUTE {
+        static final String NAME = "eav_type_attribute";
+        static final int REQUIRED_VERSION = 1;
+
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** Harvest channels. */
+    EAVATTRIBUTE {
+        static final String NAME = "eav_attribute";
+        static final int REQUIRED_VERSION = 1;
+
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
     };
 
     /** @return required version of table. */

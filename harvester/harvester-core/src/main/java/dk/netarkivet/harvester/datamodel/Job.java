@@ -55,6 +55,7 @@ import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 import dk.netarkivet.harvester.harvesting.ArchiveFileNaming;
 import dk.netarkivet.harvester.harvesting.ArchiveFileNamingFactory;
 import dk.netarkivet.harvester.harvesting.JobInfo;
@@ -276,12 +277,18 @@ public class Job implements Serializable, JobInfo {
         addConfiguration(cfg);
 
         setMaxJobRunningTime(forceMaxJobRunningTime);
-        
+
         setArchiveFormatInTemplate(Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT));
-        
+
+    	setAttributes(cfg.getAttributesAndTypes());
+
         status = JobStatus.NEW;
     }
-    
+
+	public void setAttributes(List<AttributeAndType> attributesAndTypes) {
+        orderXMLdoc.setAttributes(attributesAndTypes);
+	}
+
     /**
      * Update the order template according to the chosen archive format (arc/warc).
      */
