@@ -123,6 +123,7 @@ public class ExtractorImpliedURI extends Extractor {
     public void extract(CrawlURI curi) {
         List<CrawlURI> links = new ArrayList<CrawlURI>(curi.getOutLinks());
         int max = links.size();
+        LOGGER.info("Examining " + max + " outlinks from uri '" + curi.getURI() + "' for any matches to pattern '" + getRegex().pattern() + "'"); 
         for (int i = 0; i < max; i++) {
         	CrawlURI link = links.get(i);
             Pattern trigger = getRegex();
@@ -130,6 +131,8 @@ public class ExtractorImpliedURI extends Extractor {
             CharSequence dest = link.getUURI();
             String implied = extractImplied(dest, trigger, build);
             if (implied != null) {
+            	LOGGER.info("Link '" + dest + "' matched pattern '" + getRegex().pattern() + "'. Creating implied Uri = " +  implied);
+            			
                 try {
                     UURI target = UURIFactory.getInstance(implied);
                     LinkContext lc = LinkContext.INFERRED_MISC;
