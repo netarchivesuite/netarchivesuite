@@ -14,7 +14,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 @RunWith(JUnit4.class)
 public class TestCachingSLF4JAppender {
 
-	@Test
+	//@Test
 	public void test_cachingslf4jappender() {
 		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 
