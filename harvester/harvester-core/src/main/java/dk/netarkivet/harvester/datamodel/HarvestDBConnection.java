@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -304,34 +305,55 @@ public final class HarvestDBConnection {
                     dataSource.getPreferredTestQuery(), dataSource.isTestConnectionOnCheckin());
         }
     }
-
+    /**
+     * Execute the sql to update a given table to a given version.  
+     * The necessary scripts are bundled into the root of the harvester-core.jar in the directory sql-migration.
+     * The source of these scripts are in one of these directories:
+     * 
+     *  $BASEDIR/deploy/deploy-core/scripts/postgresql/migration/
+     *  $BASEDIR/deploy/deploy-core/scripts/mysql/migration/
+     *  $BASEDIR/deploy/deploy-core/scripts/derby/migration/
+     *   
+     *  To allow the user to update table 'eav_attribute' in postgresql to version 1
+     *  the file $BASEDIR/deploy/deploy-core/scripts/postgresql/migration/eav_attribute.1.sql must exist
+     *  The postgresql files are during the build-phase put into the sql-migration/postgresql directory
+     *  The same holds for mysql and derby.
+     *  
+     * @param dbm the type of DBMS (mysql, postgresql,derby)  
+     * @param tableName The given table to update
+     * @param version The table version to update to
+     */
     public static void executeSql(String dbm, String tableName, int version) {
     	Connection conn = HarvestDBConnection.get();
         executeSql(conn, dbm, tableName, version);
         HarvestDBConnection.release(conn);
         conn = null;
     }
-
+    
+    /**
+     * Look for the file sql-migration/${dbm}/${tableName}.${version}.sql inside in the harvester-core.jar file.
+     * 
+     * @param conn a valid database connection
+     * @param dbm the name of the DBMS used
+     * @param tableName the name of the table being updated
+     * @param version The new version of the table
+     */
     public static void executeSql(Connection conn, String dbm, String tableName, int version) {
-    	InputStream in = DerbySpecifics.class.getClassLoader().getResourceAsStream("sql-migration/" + dbm +"/" + tableName + "." + version + ".sql");
+        String resource = "sql-migration/" + dbm +"/" + tableName + "." + version + ".sql";
+    	InputStream in = DerbySpecifics.class.getClassLoader().getResourceAsStream(resource);
     	try {
         	List<Map.Entry<String, String>> statements = ExecuteSqlFile.splitSql(in, "UTF-8", 8192);
         	in.close();
         	in = null;
             ExecuteSqlFile.executeStatements(conn, statements);
+            // Update the schemaversions with the new version for this table
             HarvestDBConnection.updateTable(conn, tableName, version);
     	} catch (IOException e) {
-    		e.printStackTrace();
+    		log.error("Unable to update the table {} to version {} using database {}", tableName, version, dbm, e);
     	} catch (SQLException e) {
-    		e.printStackTrace();
+    	    log.error("Unable to update the table {} to version {} using database {}", tableName, version, dbm, e);
     	} finally {
-    		if (in != null) {
-    			try {
-        			in.close();
-    			} catch (IOException e) {
-    			}
-    			in = null;
-    		}
+    	    IOUtils.closeQuietly(in);
     	}
     }
 
