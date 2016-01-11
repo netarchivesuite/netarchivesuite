@@ -162,6 +162,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             rs.next();
             trapId = rs.getInt(1);
             trapList.setId(trapId);
+            log.debug("Inserting {} traps into database for list {} (trapId={})", trapList.getTraps().size(), trapList.getName(), trapId);
             for (String expr : trapList.getTraps()) {
                 stmt = conn.prepareStatement(INSERT_TRAP_EXPR_STMT);
                 stmt.setInt(1, trapId);
@@ -357,7 +358,6 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
      * @param orderXmlDoc The template to add crawlertraps to.
      */
     public void addGlobalCrawlerTraps(HeritrixTemplate orderXmlDoc) {
-    	//System.out.println("Calling addGlobalCrawlerTraps w/arg: " + orderXmlDoc);
     
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
         orderXmlDoc.insertCrawlerTraps(Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,

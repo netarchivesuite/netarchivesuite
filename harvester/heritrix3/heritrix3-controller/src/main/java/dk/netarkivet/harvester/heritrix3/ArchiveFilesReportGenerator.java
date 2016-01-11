@@ -8,7 +8,6 @@ import java.util.Date;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
 
 
 /**This class generate a report that lists ARC/WARC files (depending on the configured archive format) along with the

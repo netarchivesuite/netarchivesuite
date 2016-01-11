@@ -56,8 +56,8 @@ public class TrapCreateOrUpdateAction extends TrapAction {
     /**
      * The logger for this class.
      */
-    //private static final Log log = LogFactory.getLog(TrapCreateOrUpdateAction.class);
     protected static final Logger log = LoggerFactory.getLogger(TrapCreateOrUpdateAction.class);
+ 
     @Override
     protected void doAction(PageContext context, I18n i18n) {
         String name = null;
@@ -107,7 +107,7 @@ public class TrapCreateOrUpdateAction extends TrapAction {
             if (fileName != null && !fileName.isEmpty()) {
                 log.debug("Reading global crawler trap list from '" + fileName + "'");
                 try {
-                    trap.setTrapsFromInputStream(is);
+                    trap.setTrapsFromInputStream(is, name);
                 } catch (ArgumentNotValid argumentNotValid) {
                     HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;crawlertrap.regexp.error");
                     throw new ForwardedToErrorPage(argumentNotValid.getMessage());
@@ -115,6 +115,7 @@ public class TrapCreateOrUpdateAction extends TrapAction {
             }
             dao.update(trap);
         } else { // create new trap list
+            log.debug("Reading global crawler trap list from '" + fileName + "'");
             GlobalCrawlerTrapList trap = new GlobalCrawlerTrapList(is, name, description, isActive);
             if (!dao.exists(name)) {
                 dao.create(trap);

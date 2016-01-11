@@ -72,7 +72,4 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
     }
     doc.writeTemplate(out);
-    // Old code:
-    //XMLWriter writer = new XMLWriter(out);
-    //writer.write(doc);
 %>

@@ -33,19 +33,25 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * Class representing one or more global crawler traps, modelled as a list of regular expressions.
+ * Class representing one or more global crawler traps, modeled as a set of regular expressions.
  */
 public class GlobalCrawlerTrapList {
 
+    /** The class logger. */
+    private static final Logger log = LoggerFactory.getLogger(GlobalCrawlerTrapList.class);
+    
     /** The unique id of this collection of crawler traps. */
     private int id;
 
     /**
-     * The list of traps. Each item is a regular expression matching url's to be avoided. In the database, (id, trap) is
+     * The set of traps. Each item is a regular expression matching url's to be avoided. In the database, (id, trap) is
      * a primary key for the table global_crawler_trap_expressions so we model the traps as a Set to avoid possible
      * duplicates.
      */
@@ -80,6 +86,7 @@ public class GlobalCrawlerTrapList {
         this.description = description;
         this.isActive = isActive;
         this.name = name;
+        log.debug("Constructed the list {} with traps {}", name, traps.size());
     }
 
     /**
@@ -104,36 +111,48 @@ public class GlobalCrawlerTrapList {
         } else {
             this.description = description;
         }
-        setTrapsFromInputStream(is);
+        setTrapsFromInputStream(is, name);
     }
 
     /**
      * A utility method to read the list of traps from an InputStream, line-by-line.
      *
      * @param is The input stream from which to read.
+     * @param listName the name of the list being constructed
      * @throws IOFailure if the input stream cannot be read.
      * @throws ArgumentNotValid if the input stream is null or if any of the specified traps are not valid regular
      * expressions.
      */
-    public void setTrapsFromInputStream(InputStream is) throws ArgumentNotValid {
+    public void setTrapsFromInputStream(InputStream is, String listName) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(is, "is");
         traps.clear();
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         String line;
+        int trapsAdded=0;
+        int skippedEmptyLines=0;
         try {
             while ((line = reader.readLine()) != null) {
                 final String trap = line.trim();
-                try {
-                    Pattern.compile(trap);
-                } catch (PatternSyntaxException e) {
-                    throw new ArgumentNotValid("Cannot parse the string '" + trap + "' as a Java regular expression.",
-                            e);
+                if (trap.isEmpty()) {
+                    log.debug("Skipping empty line in input for list '{}'", listName);
+                    skippedEmptyLines++;
+                    continue; 
+                } else {
+                    try {
+                        Pattern.compile(trap);
+                    } catch (PatternSyntaxException e) {
+                        throw new ArgumentNotValid("Cannot parse the string '" + trap + "' as a Java regular expression.",
+                                e);
+                    }
+                    traps.add(trap);
+                    trapsAdded++;
+                    log.trace("Added trap #{}: '{}'", trapsAdded, trap);
                 }
-                traps.add(trap);
             }
         } catch (IOException e) {
             throw new IOFailure("Could not read crawler traps", e);
         }
+        log.info("GlobalCrawlertraps list '{}' with {} unique traps (non-unique={}, skipped emptyLines={})", listName, traps.size(), trapsAdded, skippedEmptyLines);
     }
 
     /**
@@ -212,7 +231,7 @@ public class GlobalCrawlerTrapList {
     }
 
     /**
-     * Retruns true if this list is active.
+     * Returns true if this list is active.
      *
      * @return the activity state of the list.
      */
