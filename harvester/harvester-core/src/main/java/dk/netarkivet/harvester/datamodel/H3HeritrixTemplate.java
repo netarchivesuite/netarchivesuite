@@ -605,7 +605,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	}
 
 	@Override
-	public void setAttributes(List<AttributeAndType> attributesAndTypes) {
+	public void insertAttributes(List<AttributeAndType> attributesAndTypes) {
 		AttributeAndType attributeAndType;
 		AttributeTypeBase attributeType;
 		AttributeBase attribute;
@@ -656,8 +656,14 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 				}
 				break;
 			}
-			String templateNew = template.replace("%{" + attributeType.name.toUpperCase() + "}", val);
-			this.template = templateNew;
+			String placeholder = "%{" + attributeType.name.toUpperCase() + "}";
+			if (template.contains(placeholder)) {
+			    String templateNew = template.replace("%{" + attributeType.name.toUpperCase() + "}", val);
+			    this.template = templateNew;
+			} else {
+			    log.warn("Placeholder {} not found in template. Placeholder {} not replaced by {} in this template", 
+			            placeholder, placeholder, val); 
+			}
 		}
 	}
 

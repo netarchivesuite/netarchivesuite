@@ -144,7 +144,11 @@ public abstract class HeritrixTemplate implements Serializable {
 	 */
 	public abstract void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL);
 
-	public abstract void setAttributes(List<AttributeAndType> attributesAndTypes);
+	/**
+	 * Try to insert the given list of attributes into the template.
+	 * @param attributesAndTypes
+	 */
+	public abstract void insertAttributes(List<AttributeAndType> attributesAndTypes);
 
 	/**
 	 * Updates the order.xml to include a MatchesListRegExpDecideRule for each crawler-trap associated with for the given
