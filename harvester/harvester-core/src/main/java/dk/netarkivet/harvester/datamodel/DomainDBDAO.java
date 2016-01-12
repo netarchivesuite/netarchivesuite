@@ -51,6 +51,8 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
@@ -851,6 +853,10 @@ public class DomainDBDAO extends DomainDAO {
             dc.setID(domainconfigId);
             d.addConfiguration(dc);
             s1.close();
+
+            // EAV
+            List<AttributeAndType> attributesAndTypes = EAV.getInstance().getAttributesAndTypes(EAV.DOMAIN_TREE_ID, (int)domainconfigId);
+            dc.setAttributesAndTypes(attributesAndTypes);
         }
         if (!d.getAllConfigurations().hasNext()) {
             String message = "Loaded domain " + d + " with no configurations";
@@ -1111,13 +1117,8 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
-    /**
-     * Get the name of the default configuration for the given domain.
-     *
-     * @param domainName a name of a domain
-     * @return the name of the default configuration for the given domain.
-     */
-    private String getDefaultDomainConfigurationName(String domainName) {
+    @Override
+    public String getDefaultDomainConfigurationName(String domainName) {
         Connection c = HarvestDBConnection.get();
         try {
             return DBUtils.selectStringValue(c, "SELECT configurations.name " + "FROM domains, configurations "
@@ -1383,6 +1384,7 @@ public class DomainDBDAO extends DomainDAO {
         PreparedStatement s = null;
         try {
             // Read the configurations now that passwords and seedlists exist
+        	// TODO Seriously? Use a join.
             s = c.prepareStatement("SELECT config_id, " + "configurations.name, " + "comments, "
                     + "ordertemplates.name, " + "maxobjects, " + "maxrate, " + "maxbytes"
                     + " FROM configurations, ordertemplates " + "WHERE domain_id = (SELECT domain_id FROM domains "
@@ -1444,6 +1446,10 @@ public class DomainDBDAO extends DomainDAO {
                 dc.setID(domainconfigId);
                 foundConfigs.add(dc);
                 s2.close();
+
+                // EAV
+                List<AttributeAndType> attributesAndTypes = EAV.getInstance().getAttributesAndTypes(EAV.DOMAIN_TREE_ID, (int)domainconfigId);
+                dc.setAttributesAndTypes(attributesAndTypes);
             } // While
         } catch (SQLException e) {
             throw new IOFailure("Error while fetching DomainConfigration: ", e);
@@ -1563,4 +1569,34 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
+	@Override
+	public void renameAndUpdateConfig(Domain domain, DomainConfiguration domainConf,
+			String configOldName) {
+		Connection connection = HarvestDBConnection.get();
+		Long configId = DBUtils.selectLongValue(connection,
+                "SELECT config_id FROM configurations WHERE domain_id = ? and name = ?", domain.getID(), configOldName);
+		
+        try {
+			PreparedStatement s = connection.prepareStatement("UPDATE configurations SET name = ?, comments = ?, "
+			        + "template_id = ( SELECT template_id FROM ordertemplates " + "WHERE name = ? ), " + "maxobjects = ?, "
+			        + "maxrate = ?, " + "maxbytes = ? " + "WHERE config_id = ? AND domain_id = ?");
+					s.setString(1, domainConf.getName());
+	                DBUtils.setComments(s, 2, domainConf, Constants.MAX_COMMENT_SIZE);
+	                s.setString(3, domainConf.getOrderXmlName());
+	                s.setLong(4, domainConf.getMaxObjects());
+	                s.setInt(5, domainConf.getMaxRequestRate());
+	                s.setLong(6, domainConf.getMaxBytes());
+	                s.setLong(7, configId);
+	                s.setLong(8, domain.getID());
+	                s.executeUpdate();
+	                s.clearParameters();
+	            updateConfigPasswordsEntries(connection, domain, domainConf);
+	            updateConfigSeedlistsEntries(connection, domain, domainConf);
+	        s.close();
+		} catch (SQLException e) {
+			throw new IOFailure("Error while renaming configuration '" + configOldName + "' to: " + domainConf.getName(), e);
+		}  finally {
+            HarvestDBConnection.release(connection);
+        }
+	}
 }

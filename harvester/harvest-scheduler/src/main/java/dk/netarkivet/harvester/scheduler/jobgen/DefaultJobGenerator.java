@@ -37,6 +37,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.NumberUtils;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
 
 /**
  * The legacy job generator implementation. Aims at generating jobs that execute in a predictable time by taking
@@ -63,6 +64,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         }
 
         public int compare(DomainConfiguration cfg1, DomainConfiguration cfg2) {
+            log.trace("Comparing " + cfg1 + " " + cfg2);
             // Compare order xml names
             int cmp = cfg1.getOrderXmlName().compareTo(cfg2.getOrderXmlName());
             if (cmp != 0) {
@@ -85,7 +87,10 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 return res < 0L ? -1 : 1;
             }
 
-            return 0;
+            log.trace("Comparing EAV attributes now");
+            int result = EAV.compare(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
+            log.trace("Comparison of EAV attributes gave result " + result);
+            return result;
         }
     }
 
@@ -134,15 +139,16 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         Job job = null;
         log.debug("Adding domainconfigs with the same order.xml for harvest #{}", harvest.getOid());
         JobDAO dao = JobDAO.getInstance();
+        DomainConfiguration previousDomainConf = null;
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
+            log.trace("Processing " + cfgToString(cfg));
             if (EXCLUDE_ZERO_BUDGET && (0 == cfg.getMaxBytes() || 0 == cfg.getMaxObjects())) {
                 log.info("Config '{}' for '{}'" + " excluded (0{})", cfg.getName(), cfg.getDomainName(),
                         (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
                 continue;
             }
-            // Do we need to create a new Job or is the current job ok
-            if ((job == null) || (!canAccept(job, cfg))) {
+            if ((job == null) || (!canAccept(job, cfg, previousDomainConf))) {
                 if (job != null) {
                     // If we're done with a job, write it out
                     ++jobsMade;
@@ -157,6 +163,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 log.trace("Added job configuration {} for domain {} to current job for harvest #{}", cfg.getName(),
                         cfg.getDomainName(), harvest.getOid());
             }
+            previousDomainConf = cfg;
         }
         if (job != null) {
             ++jobsMade;
@@ -174,6 +181,15 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         }
         return jobsMade;
     }
+
+    private boolean isChangedCfg(DomainConfiguration previous, DomainConfiguration current) {
+         if (previous == null) {
+             return false;
+         } else {
+             return !(EAV.compare(previous.getAttributesAndTypes(), current.getAttributesAndTypes()) == 0);
+         }
+    }
+
 
     @Override
     protected boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg) {

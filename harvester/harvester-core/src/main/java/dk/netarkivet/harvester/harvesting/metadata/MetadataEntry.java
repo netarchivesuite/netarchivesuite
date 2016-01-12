@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -50,6 +53,8 @@ import dk.netarkivet.harvester.datamodel.AliasInfo;
 @SuppressWarnings({"serial"})
 public class MetadataEntry implements Serializable {
 
+    /** The instance logger. */
+    private static final Logger log = LoggerFactory.getLogger(MetadataEntry.class);
     /** The URL for this metadataEntry: Used as the unique identifier for this bit of metadata in the Netarchive. */
     private String url;
     /** The mimetype for this metadataEntry: Identifies which type of document this bit of metadata is. */
@@ -130,6 +135,7 @@ public class MetadataEntry implements Serializable {
             }
         }
         if (nonExpiredAliases.isEmpty()) {
+            log.warn("All the aliases for the domains in job {} are expired. Aborting creation of an alias MetadataEntry", jobId);
             return null;
         }
 

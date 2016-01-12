@@ -24,33 +24,35 @@ package dk.netarkivet.harvester.heritrix3.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.netarchivesuite.heritrix3wrapper.EngineResult;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper.CrawlControllerState;
 import org.netarchivesuite.heritrix3wrapper.JobResult;
 import org.netarchivesuite.heritrix3wrapper.ResultStatus;
+import org.netarchivesuite.heritrix3wrapper.jaxb.JobShort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.exceptions.HeritrixLaunchException;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.TimeUtils;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
 import dk.netarkivet.harvester.harvesting.frontier.FullFrontierReport;
 import dk.netarkivet.harvester.heritrix3.Heritrix3Files;
-import dk.netarkivet.harvester.heritrix3.Heritrix3Settings;
 
 /**
- * This implementation of the HeritrixController interface starts Heritrix as a separate process and uses JMX to
+ * This implementation of the HeritrixController interface starts Heritrix3 as a separate process and uses JMX to
  * communicate with it. Each instance executes exactly one process that runs exactly one crawl job.
  */
 public class HeritrixController extends AbstractRestHeritrixController {
@@ -59,17 +61,20 @@ public class HeritrixController extends AbstractRestHeritrixController {
     private static final Logger log = LoggerFactory.getLogger(HeritrixController.class);
 
     /**
-     * The name that Heritrix gives to the job we ask it to create. 
+     * The name that Heritrix3 gives to the job we ask it to create. 
      */
     private String jobName;
 
     /** The header line (legend) for the statistics report. */
     private String progressStatisticsLegend;
 
+    private int heritrix3EngineRetries;
+    private int heritrix3EngineIntervalBetweenRetriesInMillis;
+    
     /**
      * Create a BnfHeritrixController object.
      *
-     * @param files Files that are used to set up Heritrix.
+     * @param files Files that are used to set up Heritrix3.
      */
     public HeritrixController(Heritrix3Files files, String jobName) {
         super(files);
@@ -77,43 +82,46 @@ public class HeritrixController extends AbstractRestHeritrixController {
     }
 
     /**
-     * Initialize the JMXconnection to the Heritrix.
+     * Initialize the JMXconnection to the Heritrix3.
      *
-     * @throws IOFailure If Heritrix dies before initialisation, or we encounter any problems during the initialisation.
+     * @throws IOFailure If Heritrix3 dies before initialisation, or we encounter any problems during the initialisation.
      * @see IHeritrixController#initialize()
      */
     @Override
     public void initialize() {
-
+        
     	/////////////////////////////////////////////////////
         // Initialize H3 wrapper 
     	/////////////////////////////////////////////////////
 
+        //TODO these numbers could be settings
+        this.heritrix3EngineRetries = 60;
+        this.heritrix3EngineIntervalBetweenRetriesInMillis = 1000; // 1 second
+      
+        
         h3wrapper = Heritrix3Wrapper.getInstance(getHostName(), getGuiPort(), 
         		null, null, getHeritrixAdminName(), getHeritrixAdminPassword());
 
         EngineResult engineResult;
         try {
-        	//TODO these numbers should be settings
-        	int tries = 60;
-        	int millisecondsBetweenTries = 1000;
-        	engineResult = h3wrapper.waitForEngineReady(tries, millisecondsBetweenTries);
+        	engineResult = h3wrapper.waitForEngineReady(heritrix3EngineRetries, heritrix3EngineIntervalBetweenRetriesInMillis);
         } catch (Throwable e){
         	e.printStackTrace();
-        	throw new IOFailure("Heritrix not started: " + e);
+        	throw new IOFailure("Heritrix3 engine not started: " + e);
         }
 
         if (engineResult != null) {
         	if (engineResult.status != ResultStatus.OK) {
-            	log.error("Heritrix3 wrapper could not connect to Heritrix3. Resultstate = {}", engineResult.status, engineResult.t);
-            	throw new IOFailure("Heritrix3 wrapper could not connect to Heritrix3. Resultstate = " + engineResult.status);
+        	    String errMsg = "Heritrix3 wrapper could not connect to Heritrix3. Resultstate = " + engineResult.status;
+            	log.error(errMsg, engineResult.t);
+            	throw new IOFailure(errMsg, engineResult.t);
         	}
         } else {
-        	throw new IOFailure("Heritrix3 wrapper returned null engine result.");
+        	throw new IOFailure("Unexpected error: Heritrix3 wrapper returned null engine result.");
         }
 
         // POST: Heritrix3 is up and running and responds nicely
-        log.info("Heritrix3 REST interface connectable.");
+        log.info("Heritrix3 REST interface up and running");
     }
 
     @Override
@@ -136,26 +144,62 @@ public class HeritrixController extends AbstractRestHeritrixController {
   			throw new IOFailure("Problem occurred during the copying of files to our heritrix job", e);
   		}
 
-  		// PRE: h3 is running, and the job files copied to their final location? 
+  		// PRE: h3 is running, and the job files copied to their final location
   		EngineResult engineResult = null;
   		try {
       		engineResult = h3wrapper.rescanJobDirectory();
+      		log.info("H3 jobs available for building: {}", knownJobsToString(engineResult));
+      		
       		log.debug("Result of rescanJobDirectory() operation: " + new String(engineResult.response, "UTF-8"));
-      		jobResult = h3wrapper.job(jobName);
-
+      		
       		jobResult = h3wrapper.buildJobConfiguration(jobName);
       		log.debug("Result of buildJobConfiguration() operation: " + new String(jobResult.response, "UTF-8"));
+      		if (jobResult.status == ResultStatus.OK) {
+      		  if (jobResult.job.statusDescription.equalsIgnoreCase("Unbuilt")) {
+      		      throw new HeritrixLaunchException("The job '" + jobName + "' could not be built. Last loglines is " + StringUtils.join(jobResult.job.jobLogTail, "\n"));
+      		  } else if (jobResult.job.statusDescription.equalsIgnoreCase("Ready")) {
+      		      log.info("Job {} built successfully", jobName);
+      		  } else if (jobResult.job.statusDescription.startsWith("Finished")) { // Created but not launchable
+      		      log.warn("The job {} seems unlaunchable. Tearing down the job. Last loglines is ", jobName, 
+                          StringUtils.join(jobResult.job.jobLogTail, "\n"));
+      		      jobResult = h3wrapper.teardownJob(jobName);
+      		      log.debug("Result of teardown() operation: " + new String(jobResult.response, "UTF-8"));
+      		      throw new HeritrixLaunchException("Job '" + jobName + "' failed to launch: " + StringUtils.join(jobResult.job.jobLogTail, "\n"));
+      		  } else {
+      		      throw new IllegalState("Unknown job.statusdescription returned from h3: " + jobResult.job.statusDescription);
+      		  }
+      		} else {
+      		    throw new IllegalState("Unknown ResultStatus returned from h3wrapper: " 
+      		            + ResultStatus.toString(jobResult.status));   
+      		}
+      		
       		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.NASCENT, 60, 1000);
+      		if (jobResult.job.crawlControllerState.equals(CrawlControllerState.NASCENT)) {
+      		  log.info("The H3 job {} in now in state CrawlControllerState.NASCENT",  jobName);
+      		} else {
+      		  log.warn("The job state is now {}. Should have been CrawlControllerState.NASCENT",  jobResult.job.crawlControllerState);
+      		}
       		jobResult = h3wrapper.launchJob(jobName);
+      		
       		log.debug("Result of launchJob() operation: " + new String(jobResult.response, "UTF-8"));
       		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.PAUSED, 60, 1000);
+      		if (jobResult.job.crawlControllerState.equals(CrawlControllerState.PAUSED)) {
+      		    log.info("The H3 job {} in now in state CrawlControllerState.PAUSED",  jobName);
+      		} else {
+      		    log.warn("The job state is now {}. Should have been CrawlControllerState.PAUSED",  jobResult.job.crawlControllerState);
+      		}
+      		
       		jobResult = h3wrapper.unpauseJob(jobName);
-      	} catch (Throwable e) {
-      		throw new IOFailure("Unknown error during communication with heritrix3", e);
-      	}
-
-  		// POST: h3 is running, and the job with name 'jobName' is running
-  		log.debug("h3-State after unpausing job '{}': {}", jobName, jobResult.response);
+      		log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
+      		
+      		// POST: h3 is running, and the job with name 'jobName' is running
+            log.debug("h3-State after unpausing job '{}': {}", jobName, new String(jobResult.response, "UTF-8"));
+      		
+            
+            
+      	} catch (UnsupportedEncodingException e) {
+      	    throw new IOFailure("Unexpected error during communication with heritrix3", e);
+        }
     }
 
     @Override
@@ -180,25 +224,29 @@ public class HeritrixController extends AbstractRestHeritrixController {
 
     @Override
     public void stopHeritrix() {
-        log.debug("Stopping Heritrix");
+        log.debug("Stopping Heritrix3");
         try {
+            // Check if a heritrix3 process still exists for this jobName
             ProcessBuilder processBuilder = new ProcessBuilder("pgrep", "-f", jobName);
-            log.info("Looking up heritrix process with. " + processBuilder.command());
-            if (processBuilder.start().waitFor() == 0) {
-                log.info("Heritrix running, requesting heritrix to stop ignoring running job " + jobName);
+            log.info("Looking up heritrix3 process with. " + processBuilder.command());
+            if (processBuilder.start().waitFor() == 0) { // Yes, ask heritrix3 to shutdown, ignoring any jobs named jobName
+                log.info("Heritrix running, requesting heritrix to stop and ignoring running job '{}'", jobName);
                 h3wrapper.exitJavaProcess(Arrays.asList(new String[] {jobName}));
-            } else {
-                log.info("Heritrix not running.");
+            } else { 
+                log.info("Heritrix3 process not running for job '{}'", jobName);
             }
-            if (processBuilder.start().waitFor() == 0) {
-                log.info("Heritrix still running, pkill'ing heritrix ");
+            // Check again
+            if (processBuilder.start().waitFor() == 0) { // The process is still alive, kill it
+                log.info("Heritrix3 process still running, pkill'ing heritrix3 ");
                 ProcessBuilder killerProcessBuilder = new ProcessBuilder("pkill", "-f", jobName);
                 int pkillExitValue = killerProcessBuilder.start().exitValue();
-                if ( pkillExitValue != 0) {
-                    log.warn("Non xero exit value )" + pkillExitValue + ") when trying to pkill Heritrix.");
+                if (pkillExitValue != 0) {
+                    log.warn("Non xero exit value ({}) when trying to pkill Heritrix3.", pkillExitValue);
+                } else {
+                    log.info("Heritrix process terminated successfully with the pkill command {}", killerProcessBuilder.command());
                 }
             } else {
-                log.info("Heritrix stopped successfully.");
+                log.info("Heritrix3 stopped successfully.");
             }
         } catch (IOException e) {
             log.warn("Exception while trying to shutdown heritrix", e);
@@ -217,41 +265,81 @@ public class HeritrixController extends AbstractRestHeritrixController {
     }
 
     /**
-     * Cleanup after an Heritrix process. This entails sending the shutdown command to the Heritrix process, and killing
+     * Cleanup after an Heritrix3 process. This entails sending the shutdown command to the Heritrix3 process, and killing
      * it forcefully, if it is still alive after waiting the period of time specified by the
      * CommonSettings.PROCESS_TIMEOUT setting.
      *
-     * @param crawlDir the crawldir to cleanup
+     * @param crawlDir the crawldir to cleanup (argument is currently not used) 
      * @see IHeritrixController#cleanup()
      */
     public void cleanup(File crawlDir) {
-    	JobResult jobResult;
-  		try {
-  	        // Before cleaning up, we need to wait for the reports to be generated
-  	        //waitForReportGeneration(crawlDir);
-  	        // TODO Should we teardown job as well????
-  			jobResult = h3wrapper.job(jobName);
-  			if (jobResult != null) {
-  				if (jobResult.status == ResultStatus.OK && jobResult.job.crawlControllerState != null) {
-  					if (CrawlControllerState.FINISHED.name().equals(jobResult.job.crawlControllerState)) {
-  	  		  			jobResult = h3wrapper.teardownJob(jobName);
-  					} else {
-  			      		throw new IOFailure("Heritrix3 job  '" + jobName + "' not finished");
-  					}
-  				}
-  			} else {
-  	      		throw new IOFailure("Unknown error during communication with heritrix3");
-  			}
-  	    	h3wrapper.waitForJobState(jobName, null, 10, 1000);
-  	        EngineResult result = h3wrapper.exitJavaProcess(null);
-  	        if (result == null || (result.status != ResultStatus.RESPONSE_EXCEPTION && result.status != ResultStatus.OFFLINE)) {
-  	        	throw new IOFailure("Heritrix3 could not be shut down");
-  	        }
-      	} catch (Throwable e) {
-      		throw new IOFailure("Unknown error during communication with heritrix3", e);
-      	}
+        JobResult jobResult;
+        try {
+            // Check engine status
+            EngineResult engineResult = h3wrapper.rescanJobDirectory();
+            if (engineResult != null){
+                List<JobShort> knownJobs = engineResult.engine.jobs;
+                if (knownJobs.size() != 1) {
+                    log.warn("Should be one job but there is {} jobs: {}", knownJobs.size(), knownJobsToString(engineResult));
+                }
+            } else {
+                log.warn("Unresponsive Heritrix3 engine. Lets try continuing the cleanup anyway"); 
+            }
+            
+            // Check that job jobName still exists in H3 engine
+            jobResult = h3wrapper.job(jobName);
+            if (jobResult != null) {
+                if (jobResult.status == ResultStatus.OK && jobResult.job.crawlControllerState != null) {
+                    String TEARDOWN = "teardown";
+                    if (jobResult.job.availableActions.contains(TEARDOWN)) {
+                        log.info("Tearing down h3 job {}" , jobName);  
+                        jobResult = h3wrapper.teardownJob(jobName);
+                    } else {
+                        String errMsg = "Tearing down h3 job '" + jobName + "' not possible. Not one of the actions available: " + StringUtils.join(jobResult.job.availableActions, ",");   
+                        log.warn(errMsg);
+                        throw new IOFailure(errMsg);
+                    }
+                }
+            } else {
+                throw new IOFailure("Unexpected error during communication with heritrix3 during cleanup");
+            }
+            // Wait for the state: jobResult.job.crawlControllerState == null (but we only try ten times with 1 second interval 
+            jobResult = h3wrapper.waitForJobState(jobName, null, 10, heritrix3EngineIntervalBetweenRetriesInMillis);
+            // Did we get the expected state?
+            if (jobResult.job.crawlControllerState != null) {
+                log.warn("The job {} is still lurking about. Shutdown heritrix3 and ignore the job", jobName);
+                List<String> jobsToIgnore = new ArrayList<String>(); 
+                jobsToIgnore.add(jobName);
+                EngineResult result = h3wrapper.exitJavaProcess(jobsToIgnore);
+                if (result == null || (result.status != ResultStatus.RESPONSE_EXCEPTION && result.status != ResultStatus.OFFLINE)) {
+                    throw new IOFailure("Heritrix3 could not be shut down");
+                }
+            } else {
+                EngineResult result = h3wrapper.exitJavaProcess(null);
+                if (result == null || (result.status != ResultStatus.RESPONSE_EXCEPTION && result.status != ResultStatus.OFFLINE)) {
+                    throw new IOFailure("Heritrix3 could not be shut down");
+                }
+            }
+        } catch (Throwable e) {
+            throw new IOFailure("Unknown error during communication with heritrix3", e);
+        }
     }
 
+
+    private String knownJobsToString(EngineResult engineResult) {
+        String result = null;
+        if (engineResult == null || engineResult.engine == null || engineResult.engine.jobs == null) {
+            result = null;
+        } else {
+            List<JobShort> knownjobs = engineResult.engine.jobs;
+            for (JobShort js: knownjobs) {
+                result += js.shortName + " ";
+            }
+        }
+
+        return result;
+    }
+    
     /**
      * Return the URL for monitoring this instance.
      *
@@ -403,20 +491,6 @@ public class HeritrixController extends AbstractRestHeritrixController {
             cpm.setStatus(CrawlStatus.CRAWLER_ACTIVE);
         }
 
-        //Integer currentActiveToecount = job.job.threadReport.toeCount;
-        /*
-        Integer currentActiveToecount = null;
-        Iterator<String> iter = job.job.threadReport.processors.iterator();
-        String tmpStr;
-        int idx;
-        while (currentActiveToecount == null && iter.hasNext()) {
-        	tmpStr = iter.next();
-        	idx = tmpStr.indexOf(" noActiveProcessor");
-        	if (idx != -1) {
-        		currentActiveToecount = Integer.parseInt(tmpStr.substring(0, idx).trim());
-        	}
-        }
-        */
         Integer currentActiveToecount = job.job.loadReport.busyThreads;
         if (currentActiveToecount == null) {
             currentActiveToecount = -1;
@@ -444,43 +518,6 @@ public class HeritrixController extends AbstractRestHeritrixController {
         */                
     }
 
-    /**
-     * Periodically scans the crawl dir to see if Heritrix has finished generating the crawl reports. The time to wait
-     * is bounded by {@link HarvesterSettings#WAIT_FOR_REPORT_GENERATION_TIMEOUT}.
-     * Currently not used
-     * 
-     * @param crawlDir the crawl directory to scan.
-     */
-    @Deprecated
-    private void waitForReportGeneration(File crawlDir) {
-        log.info("Started waiting for Heritrix report generation.");
-
-        long currentTime = System.currentTimeMillis();
-        long waitSeconds = Settings.getLong(Heritrix3Settings.WAIT_FOR_REPORT_GENERATION_TIMEOUT);
-        long waitDeadline = currentTime + TimeUtils.SECOND_IN_MILLIS * waitSeconds;
-
-       
-        // While the deadline is not attained, periodically perform the
-        // following checks:
-        // 1) Verify that the crawl job MBean still exists. If not then
-        // the job is over, no need to wait more and exit the loop.
-        // 2) Read the job(s status. Since Heritrix 1.14.4, a FINISHED status
-        // guarantees that all reports have been generated. In this case
-        // exit the loop.
-        while (currentTime <= waitDeadline) {
-            currentTime = System.currentTimeMillis();
-            
-            //FIXME see if job is finished, if so, reports can be considered to ready as well?????
-            try {
-                // Wait 20 seconds
-                Thread.sleep(20 * TimeUtils.SECOND_IN_MILLIS);
-            } catch (InterruptedException e) {
-                log.trace("Received InterruptedException", e);
-            }
-        }
-        log.info("Waited {} for report generation. Will proceed with cleanup.", StringUtils.formatDuration(waitSeconds));
-    }
-    
     @Override
     public boolean atFinish() {
         throw new NotImplementedException("Not implemented");

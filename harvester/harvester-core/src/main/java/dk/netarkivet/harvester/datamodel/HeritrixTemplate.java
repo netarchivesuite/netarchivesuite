@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 
 /**
  * Abstract class for manipulating Heritrix Templates.
@@ -99,6 +100,9 @@ public abstract class HeritrixTemplate implements Serializable {
 	public abstract void setMaxObjectsPerDomain(Long maxobjectsL);
 	public abstract Long getMaxObjectsPerDomain(); // TODO Is necessary? 
 
+	/** We need the persistent template id if we want to attach any attributes to it. */
+	public long template_id;
+
 	/**
 	 * 
 	 * @return true, if deduplication is enabled in the template (used for determine whether or not to request a deduplication index from the indexserver)
@@ -140,6 +144,8 @@ public abstract class HeritrixTemplate implements Serializable {
 	 */
 	public abstract void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL);
 
+	public abstract void setAttributes(List<AttributeAndType> attributesAndTypes);
+
 	/**
 	 * Updates the order.xml to include a MatchesListRegExpDecideRule for each crawler-trap associated with for the given
 	 * DomainConfiguration.
@@ -162,7 +168,6 @@ public abstract class HeritrixTemplate implements Serializable {
 		}
 	}
 
-
 	public abstract void setDeduplicationIndexLocation(String absolutePath);
 	public abstract void setSeedsFilePath(String absolutePath);
 
@@ -177,16 +182,16 @@ public abstract class HeritrixTemplate implements Serializable {
 	public abstract void writeToFile(File orderXmlFile);
 	public abstract void setRecoverlogNode(File recoverlogGzFile);
 
-	public static HeritrixTemplate getTemplateFromString(String templateAsString){
+	public static HeritrixTemplate getTemplateFromString(long template_id, String templateAsString){
 		if (templateAsString.contains(H1_SIGNATURE)) {
 			try {
-				return new H1HeritrixTemplate(templateAsString);
+				return new H1HeritrixTemplate(template_id, templateAsString);
 			} catch (DocumentException e) {
 				throw new IOFailure("Unable to recognize as a valid dom4j Document the following string: " 
 						+ templateAsString, e);
 			}
 		} else if (templateAsString.contains(H3_SIGNATURE)) {
-			return new H3HeritrixTemplate(templateAsString);
+			return new H3HeritrixTemplate(template_id, templateAsString);
 		} else {
 			throw new ArgumentNotValid("The given template is neither H1 or H3: " + templateAsString);
 		}
@@ -199,7 +204,7 @@ public abstract class HeritrixTemplate implements Serializable {
 	 */
 	public static HeritrixTemplate read(File orderXmlFile){
 		try {
-			return read(new FileReader(orderXmlFile));
+			return read(-1, new FileReader(orderXmlFile));
 		} catch (FileNotFoundException e) {
 			throw new IOFailure("The file '" + orderXmlFile.getAbsolutePath() + "' was not found", e);
 		}
@@ -210,7 +215,7 @@ public abstract class HeritrixTemplate implements Serializable {
 	 * @param reader A given Reader
 	 * @return a HeritrixTemplate object
 	 */
-	public static HeritrixTemplate read(Reader orderTemplateReader) {
+	public static HeritrixTemplate read(long template_id, Reader orderTemplateReader) {
 		StringBuilder sb = new StringBuilder();
 		BufferedReader in = new BufferedReader(orderTemplateReader);
 		String line;
@@ -222,7 +227,7 @@ public abstract class HeritrixTemplate implements Serializable {
 		} catch (IOException e) {
 			throw new IOFailure("IOException thrown", e);
 		}
-		return getTemplateFromString((sb.toString()));
+		return getTemplateFromString(template_id, sb.toString());
 	}
 
 

@@ -32,8 +32,7 @@ class ArchiveFilesReportGenerator {
     /**
      * The header line of the report file.
      */
-    public static final String REPORT_FILE_HEADER = Settings
-            .get(Heritrix3Settings.METADATA_ARCHIVE_FILES_REPORT_HEADER);
+    public static final String REPORT_FILE_HEADER = Settings.get(Heritrix3Settings.METADATA_ARCHIVE_FILES_REPORT_HEADER);
 
     private IngestableFiles ingestablefiles;
 
@@ -42,42 +41,42 @@ class ArchiveFilesReportGenerator {
      *
      * @param ingestableFiles files belonging to a Heritrix harvest
      */
-    
-	public ArchiveFilesReportGenerator(IngestableFiles ingestableFiles) {
-		this.ingestablefiles = ingestableFiles;
-	}   
 
-	/**
-	 * Parses heritrix.out and generates the ARC/WARC files report.
-	 *
-	 * @return the generated report file.
-	 */
-	protected File generateReport() {
+    public ArchiveFilesReportGenerator(IngestableFiles ingestableFiles) {
+        this.ingestablefiles = ingestableFiles;
+    }   
 
-		File reportFile = new File(ingestablefiles.getCrawlDir(), REPORT_FILE_NAME);
+    /**
+     * Parses heritrix.out and generates the ARC/WARC files report.
+     *
+     * @return the generated report file.
+     */
+    protected File generateReport() {
 
-		try {
-			boolean created = reportFile.createNewFile();
-			if (!created) {
-				throw new IOException("Unable to create '" + reportFile.getAbsolutePath() + "'.");
-			}
-			PrintWriter out = new PrintWriter(reportFile);
+        File reportFile = new File(ingestablefiles.getCrawlDir(), REPORT_FILE_NAME);
 
-			out.println(REPORT_FILE_HEADER);
+        try {
+            boolean created = reportFile.createNewFile();
+            if (!created) {
+                throw new IOException("Unable to create '" + reportFile.getAbsolutePath() + "'.");
+            }
+            PrintWriter out = new PrintWriter(reportFile);
 
-			for (File arcfile : ingestablefiles.getArcFiles()) {
-				out.println(arcfile.getName() + " " + ISO_8601_DATE_FORMAT.format(new Date(arcfile.lastModified())) + " " + arcfile.length());
-			}
-			for (File warcfile : ingestablefiles.getWarcFiles()) {
-				out.println(warcfile.getName() + " " + ISO_8601_DATE_FORMAT.format(new Date(warcfile.lastModified())) + " " + warcfile.length());
-			}
+            out.println(REPORT_FILE_HEADER);
 
-			out.close();
-		} catch (IOException e) {
-			throw new IOFailure("Failed to create " + reportFile.getName(), e);
-		}
+            for (File arcfile : ingestablefiles.getArcFiles()) {
+                out.println(arcfile.getName() + " " + ISO_8601_DATE_FORMAT.format(new Date(arcfile.lastModified())) + " " + arcfile.length());
+            }
+            for (File warcfile : ingestablefiles.getWarcFiles()) {
+                out.println(warcfile.getName() + " " + ISO_8601_DATE_FORMAT.format(new Date(warcfile.lastModified())) + " " + warcfile.length());
+            }
 
-		return reportFile;
-	}
+            out.close();
+        } catch (IOException e) {
+            throw new IOFailure("Failed to create " + reportFile.getName(), e);
+        }
+
+        return reportFile;
+    }
 
 }

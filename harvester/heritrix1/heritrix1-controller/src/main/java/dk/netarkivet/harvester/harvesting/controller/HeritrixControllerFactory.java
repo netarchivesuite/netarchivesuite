@@ -26,6 +26,7 @@ package dk.netarkivet.harvester.harvesting.controller;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.Heritrix1Settings;
 
 /**
  * A factory class for HeritrixController instances.

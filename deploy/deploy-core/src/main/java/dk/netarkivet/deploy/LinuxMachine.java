@@ -80,10 +80,10 @@ public class LinuxMachine extends Machine {
             if (app.isBundledHarvester()) {
                 bundlesArr = app.getSettingsValues(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
                 if ((bundlesArr == null || bundlesArr.length == 0)
-                        && deployConfiguration.getDefaultBundlerZip().isPresent()) {
-                    bundlesArr = new String[] { deployConfiguration.getDefaultBundlerZip().get().getAbsolutePath() };
+                        && deployConfiguration.getDefaultBundlerZip() != null) {
+                    bundlesArr = new String[] { deployConfiguration.getDefaultBundlerZip().getAbsolutePath() };
                 } else if ((bundlesArr == null || bundlesArr.length == 0)
-                        && !deployConfiguration.getDefaultBundlerZip().isPresent()) {
+                        && deployConfiguration.getDefaultBundlerZip() == null) {
                     throw new IllegalArgumentException("A Heritrix bundler needs to be defined for H3 controllers, "
                             + "either directly in the deploy configuration or from the command line with the -B option.");
                 }
@@ -121,7 +121,7 @@ public class LinuxMachine extends Machine {
                     Element heritrixBundleElement =
                             appSettings.getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
                     if (heritrixBundleElement == null) {
-                        appSettings.getSubChild(Constants.SETTINGS_HERITRIX_BRANCH).addElement("bundle");
+                        appSettings.getSubChild(Constants.SETTINGS_HERITRIX3_BRANCH).addElement("bundle");
                         heritrixBundleElement =
                                 appSettings.getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
                         heritrixBundleElement.setText((String)bundles.values().toArray()[0]);

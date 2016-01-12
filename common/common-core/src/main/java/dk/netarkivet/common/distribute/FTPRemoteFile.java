@@ -45,6 +45,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.NotificationType;
+import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 
 /**
@@ -170,6 +172,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 }
                 boolean success = false;
                 int tried = 0;
+                String message = null;
                 while (!success && tried < FTP_RETRIES) {
                     tried++;
                     try {
@@ -179,7 +182,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                                     cm.getFtpErrorMessage());
                         }
                     } catch (IOException e) {
-                        String message = "Write operation to '" + ftpFileName + "' failed on attempt " + tried + " of "
+                        message = "Write operation to '" + ftpFileName + "' failed on attempt " + tried + " of "
                                 + FTP_RETRIES;
                         if (e instanceof CopyStreamException) {
                             CopyStreamException realException = (CopyStreamException) e;
@@ -189,8 +192,11 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                     }
                 }
                 if (!success) {
-                    final String msg = "Failed to upload '" + localFile + "' after " + tried + " attempts";
+                    final String msg = "Failed to upload '" + localFile + "' after " + tried 
+                            + " attempts. Reason for last failure: " +  message;
                     log.warn(msg);
+                    // Send an Notification because of this
+                    NotificationsFactory.getInstance().notify(msg, NotificationType.ERROR);
                     throw new IOFailure(msg);
                 }
                 log.debug("Completed writing the file '{}'", ftpFileName);

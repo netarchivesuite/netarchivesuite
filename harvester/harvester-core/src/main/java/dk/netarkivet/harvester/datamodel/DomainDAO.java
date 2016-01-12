@@ -332,5 +332,20 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
      * @return The list of ID for the used configurations.
      */
     public abstract List<Long> findUsedConfigurations(Long domainID);
+    
+    /**
+     * Rename and update a DomainConfiguration for a specific domain.
+     * @param domain The given domain
+     * @param domainConf The given domainConfig
+     * @param configOldName The old name of the domainConfig
+     */
+	public abstract void renameAndUpdateConfig(Domain domain, DomainConfiguration domainConf, String configOldName);
 
+	/**
+     * Get the name of the default configuration for the given domain.
+     *
+     * @param domainName a name of a domain
+     * @return the name of the default configuration for the given domain.
+     */
+	public abstract String getDefaultDomainConfigurationName(String domainName);
 }

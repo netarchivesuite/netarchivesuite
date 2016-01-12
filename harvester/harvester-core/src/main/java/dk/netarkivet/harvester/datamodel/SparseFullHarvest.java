@@ -22,8 +22,11 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import java.util.List;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 
@@ -59,6 +62,9 @@ public class SparseFullHarvest extends ExtendableEntity {
 
     /** The id of the associated harvest channel, or null if the default one is to be used. */
     private Long channelId;
+
+    /** Set full harvest EAV attributes and attribute types. */
+    private List<AttributeAndType> attributesAndTypes;
 
     /**
      * Create new instance of SparseFullHarvest.
@@ -190,6 +196,22 @@ public class SparseFullHarvest extends ExtendableEntity {
 
     protected Long getChannelId() {
         return channelId;
+    }
+
+    /**
+     * Get full harvest EAV attributes and attribute types.
+     * @return full harvest EAV attributes and attribute types
+     */
+    public List<AttributeAndType> getAttributesAndTypes() {
+    	return attributesAndTypes;
+    }
+
+    /**
+     * Set full harvest EAV attributes and attribute types.
+     * @param attributesAndTypes full harvest EAV attributes and attribute types
+     */
+    public void setAttributesAndTypes(List<AttributeAndType> attributesAndTypes) {
+    	this.attributesAndTypes = attributesAndTypes;
     }
 
     @Override

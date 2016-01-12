@@ -5,4 +5,3 @@ export CLASSPATH=$INSTALLDIR/lib/netarchivesuite-harvester-core.jar:$INSTALLDIR/
 
 java -Ddk.netarkivet.settings.file=$INSTALLDIR/conf/settings_GUIApplication.xml dk.netarkivet.harvester.tools.HarvestdatabaseUpdateApplication
 
-

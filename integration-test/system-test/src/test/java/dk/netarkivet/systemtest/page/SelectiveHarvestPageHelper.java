@@ -83,6 +83,22 @@ public class SelectiveHarvestPageHelper {
         }
     }
 
+    public static void editHarvest(String name) {
+        TestEventManager.getInstance().addStimuli("Activating harvest " + name);
+        PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
+        if (PageHelper.getWebDriver().getPageSource().contains("Show inactive harvest definitions")) {
+            PageHelper.getWebDriver().findElement(By.linkText("Show inactive harvest definitions")).click();
+        }
+        WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
+        List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
+        for (WebElement webElement : tr_collection) {
+            if (webElement.getText().contains(name)) {
+                webElement.findElement(By.linkText("Edit")).click();
+                break;
+            }
+        }
+    }
+
     public static void deactivateHarvest(String name) {
         TestEventManager.getInstance().addStimuli("Deactivating harvest " + name);
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);

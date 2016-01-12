@@ -46,13 +46,11 @@ public class JobSupervisorTest {
     // JAVA 8 required
     //private Provider<JobDAO> jobDAOProvider = () -> jobDaoMock;
     private Provider<JobDAO> jobDAOProvider = new Provider<JobDAO>() {
+        @Override
+        public JobDAO get() {
+            return jobDaoMock;
+        }
 
-		@Override
-		public JobDAO get() {
-			// TODO Auto-generated method stub
-			return jobDaoMock;
-		}
-    	
     };
 
     @Test

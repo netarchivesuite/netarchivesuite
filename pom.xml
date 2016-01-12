@@ -131,6 +131,30 @@
 
   <dependencyManagement>
     <dependencies>
+
+     <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbyclient</artifactId>
+      <version>${derby.version}</version>
+     </dependency>
+
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>${derby.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbytools</artifactId>
+      <version>${derby.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbynet</artifactId>
+      <version>${derby.version}</version>
+    </dependency>
+
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
@@ -275,6 +299,18 @@
         <artifactId>jwat-warc</artifactId>
         <version>${jwat.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>com.antiaction</groupId>
+        <artifactId>raptor-dbl</artifactId>
+        <version>0.1.0-RC2</version>
+        <exclusions>
+          <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 <!--
       <dependency>
         <groupId>xerces</groupId>
@@ -417,7 +453,8 @@
           <linksource>true</linksource>
           <quiet>true</quiet>
           <!-- Note: This fails with a JVM older than Java 8 -->
-          <additionalparam>-Xdoclint:none</additionalparam>
+          <!-- <additionalparam>-Xdoclint:none</additionalparam> --> 
+          <additionalparam>${javadoc.doclint.none}</additionalparam>
         </configuration>
         <executions>
           <execution>
@@ -523,5 +560,14 @@
         </plugins>
       </build>
     </profile>
+	<profile>
+            <id>java8-disable-strict-javadoc</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
+            </properties>
+        </profile>
   </profiles>
 </project>

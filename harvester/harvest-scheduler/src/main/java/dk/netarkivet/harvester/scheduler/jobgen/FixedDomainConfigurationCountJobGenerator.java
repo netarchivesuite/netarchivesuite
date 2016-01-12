@@ -224,7 +224,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
             if (match == null) {
                 match = initNewJob(harvest, cfg);
             } else {
-                if (canAccept(match, cfg)) {
+                if (canAccept(match, cfg, null)) {
                     match.addConfiguration(cfg);
                 } else {
                     // The job is ready, post-process and store it in DB

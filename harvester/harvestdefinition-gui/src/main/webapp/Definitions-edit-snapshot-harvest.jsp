@@ -50,6 +50,7 @@ snapshot_byte_limit (Constants.DOMAIN_BYTELIMIT_PARAM):
 harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
     (null or single) The name of the harvest to be created or modified
 --%><%@ page import="java.text.NumberFormat,
+                 java.util.List,
                  java.util.Locale,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
@@ -57,7 +58,11 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
                  dk.netarkivet.harvester.datamodel.SparseFullHarvest, 
                  dk.netarkivet.harvester.webinterface.Constants, 
-                 dk.netarkivet.harvester.webinterface.SnapshotHarvestDefinition"
+                 dk.netarkivet.harvester.webinterface.SnapshotHarvestDefinition,
+                 dk.netarkivet.harvester.datamodel.eav.EAV,
+                 dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType,
+                 com.antiaction.raptor.dao.AttributeTypeBase,
+                 com.antiaction.raptor.dao.AttributeBase"
          pageEncoding="UTF-8"
 %>
 <%@ page import="javax.inject.Provider" %>
@@ -69,19 +74,6 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
-
-    Provider<HarvestDefinitionDAO> hdDaoProvider = new Provider<HarvestDefinitionDAO>() {
- 	public HarvestDefinitionDAO get() {
-            return HarvestDefinitionDAO.getInstance();
-        }
-    };
-
-    Provider<JobDAO> jobDaoProvider = new Provider<JobDAO>() {
-        public JobDAO get() {
-            return JobDAO.getInstance();
-        }
-    };
-
     try {
         SnapshotHarvestDefinition snapshotHarvestDefinition = SnapshotHarvestDefinition.
                 createSnapshotHarvestDefinitionWithDefaultDAOs();
@@ -100,7 +92,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
     String harvestName = request.getParameter(Constants.HARVEST_PARAM);
     SparseFullHarvest hd = null;
     if (harvestName != null) {
-        hd = hdDaoProvider.get().getSparseFullHarvest(harvestName);
+        hd = HarvestDefinitionDAO.getInstance().getSparseFullHarvest(harvestName);
         if (hd == null) {
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                     "errormsg;harvest.0.does.not.exist", harvestName);
@@ -108,16 +100,14 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
         }
     }
 
-    long objectLimit =
-            dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS;
+    long objectLimit = dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS;
     Long oldHarvestOid = null;
     if (hd != null) {
         objectLimit = hd.getMaxCountObjects();
         oldHarvestOid = hd.getPreviousHarvestDefinitionOid();
     }
     HTMLUtils.generateHeader(pageContext);
-    NumberFormat nf =
-            NumberFormat.getInstance(HTMLUtils.getLocaleObject(pageContext));
+    NumberFormat nf = NumberFormat.getInstance(HTMLUtils.getLocaleObject(pageContext));
 %>
 <h3 class="page_heading"><fmt:message key="pagetitle;snapshot.harvest"/></h3>
 
@@ -128,13 +118,14 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
         <input type="hidden" name="<%=Constants.CREATENEW_PARAM%>" value="1" />
   <% } else { %>
     <input type="hidden" name="<%= Constants.EDITION_PARAM %>"
-           value="<%= hd.getEdition() %>"/>
+           value="<%= hd.getEdition() %>"/>              
   <% } %>
     <input type="hidden" name="<%= Constants.UPDATE_PARAM %>" value="1"/>
+    <input type="hidden" name="<%= Constants.HARVEST_OLD_PARAM %>" value="<%=HTMLUtils.escapeHtmlValues(harvestName) %>"/>
     
     <table>
         <tr>
-            <td><fmt:message key="prompt;harvest.name"/></td>
+            <td style="text-align:right;"><fmt:message key="prompt;harvest.name"/></td>
             <td>
           <% if (hd == null) { %>
               <span id="focusElement">
@@ -143,8 +134,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
               </span>
           <% } else { %>
                 <input type="text" name="<%= Constants.HARVEST_PARAM %>"
-                     value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"
-                     readonly="readonly"/>
+                     value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"/>
           <% } %>
             </td>
         </tr>
@@ -154,7 +144,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
             long dftMaxObjects =
                 dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS;
             %>
-            <td><fmt:message key="prompt;max.objects.per.domain"/></td>
+            <td style="text-align:right;"><fmt:message key="prompt;max.objects.per.domain"/></td>
             <td><input 
                 name="<%= Constants.DOMAIN_OBJECTLIMIT_PARAM %>"
                 size="20" 
@@ -170,7 +160,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
             long dftMaxBytes =
                 dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES;
             %>
-            <td><fmt:message key="prompt;max.bytes.per.domain"/></td>
+            <td style="text-align:right;"><fmt:message key="prompt;max.bytes.per.domain"/></td>
             <td><input 
                 name="<%= Constants.DOMAIN_BYTELIMIT_PARAM %>"
                 size="20" 
@@ -185,7 +175,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
             long dftMaxJobRunningTime =
                 dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_JOB_RUNNING_TIME;
             %>
-            <td><fmt:message key="prompt;max.seconds.per.crawljob"/></td>
+            <td style="text-align:right;"><fmt:message key="prompt;max.seconds.per.crawljob"/></td>
             <td><input 
                 name="<%= Constants.JOB_TIMELIMIT_PARAM %>"
                 size="20" 
@@ -195,7 +185,85 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
                    %>"/>
              </td>
         </tr>
-        
+<%
+		if (hd == null) {
+			EAV eav = EAV.getInstance();
+			List<AttributeTypeBase> attributeTypes = eav.getAttributeTypes(EAV.SNAPSHOT_TREE_ID);
+			AttributeTypeBase attributeType;
+			for (int i=0; i<attributeTypes.size(); ++i) {
+				attributeType = attributeTypes.get(i);
+%>
+	        <tr> <!-- edit area for eav attribute -->
+	            <td style="text-align:right;"><fmt:message key="<%= attributeTypes.get(i).name %>"/></td>
+	            <td> 
+<%
+				switch (attributeType.viewtype) {
+				case 1:
+%>
+  	                <input type="text" id="<%= attributeType.name %>" name="<%= attributeType.name %>" value="<%= attributeType.def_int %>">
+<%
+					break;
+				case 5:
+				case 6:
+					if (attributeType.def_int > 0) {
+%>
+		                <input type="checkbox" id="<%= attributeType.name %>" name="<%= attributeType.name %>" value="1" checked="1">
+<%
+					} else {
+%>
+		                <input type="checkbox" id="<%= attributeType.name %>" name="<%= attributeType.name %>">
+<%
+					}
+					break;
+				}
+%>
+	             </td>
+	        </tr>
+<%
+			}
+		} else {
+			List<AttributeAndType> attributesAndTypes = hd.getAttributesAndTypes();
+			AttributeAndType attributeAndType;
+			for (int i=0; i<attributesAndTypes.size(); ++i) {
+				attributeAndType = attributesAndTypes.get(i);
+				Integer intVal = null;
+				if (attributeAndType.attribute != null) {
+					intVal = attributeAndType.attribute.getInteger();
+				}
+				if (intVal == null) {
+					intVal = attributeAndType.attributeType.def_int;
+				}
+				%>
+		        <tr> <!-- edit area for eav attribute -->
+		            <td style="text-align:right;"><fmt:message key="<%= attributeAndType.attributeType.name %>"/></td>
+		            <td> 
+<%
+					switch (attributeAndType.attributeType.viewtype) {
+					case 1:
+%>
+	  	                <input type="text" id="<%= attributeAndType.attributeType.name %>" name="<%= attributeAndType.attributeType.name %>" value="<%= intVal %>">
+<%
+						break;
+					case 5:
+					case 6:
+						if (intVal > 0) {
+%>
+		            <input type="checkbox" id="<%= attributeAndType.attributeType.name %>" name="<%= attributeAndType.attributeType.name %>" value="1" checked="1">
+<%
+						} else {
+%>
+		            <input type="checkbox" id="<%= attributeAndType.attributeType.name %>" name="<%= attributeAndType.attributeType.name %>">
+<%
+						}
+						break;
+					}
+%>
+		             </td>
+		        </tr>
+<%
+			}
+		}
+%>
     </table>
 
     <br/>
@@ -224,7 +292,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
         <%
             int rowcount = 0;
             for (SparseFullHarvest oldHarvest
-                    : hdDaoProvider.get().getAllSparseFullHarvestDefinitions()) {
+                    : HarvestDefinitionDAO.getInstance().getAllSparseFullHarvestDefinitions()) {
                 if (oldHarvest.getName().equals(harvestName)) {
                     continue;
                 }

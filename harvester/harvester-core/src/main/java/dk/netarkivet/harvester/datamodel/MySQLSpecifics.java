@@ -410,4 +410,16 @@ public class MySQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable(tableName, 2, sqlStatements);
     }
 
+    @Override
+    public void createEavTypeAttributeTable(int toVersion) {
+        String tableName = HarvesterDatabaseTables.EAVTYPEATTRIBUTE.getTablename();
+        HarvestDBConnection.executeSql("mysql", tableName, 1 );
+    }
+
+    @Override
+    public void createEavAttributeTable(int toVersion) {
+        String tableName = HarvesterDatabaseTables.EAVATTRIBUTE.getTablename();
+        HarvestDBConnection.executeSql("mysql", tableName, 1 );
+    }
+
 }

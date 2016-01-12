@@ -49,9 +49,10 @@ public interface JobGenerator {
      *
      * @param job the job being built.
      * @param cfg the configuration to check
+     * @param previousCfg if not null, the configuration added to this job immediately prior
      * @return true if adding the configuration to this Job does not exceed any of the Job limits.
      * @throws ArgumentNotValid if cfg is null
      */
-    boolean canAccept(Job job, DomainConfiguration cfg);
+    boolean canAccept(Job job, DomainConfiguration cfg, DomainConfiguration previousCfg);
 
 }

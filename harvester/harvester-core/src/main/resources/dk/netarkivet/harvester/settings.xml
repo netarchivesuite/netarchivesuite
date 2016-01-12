@@ -95,8 +95,9 @@ National Library.
             <channel></channel>
             <sendReadyInterval>30</sendReadyInterval>
             <sendReadyDelay>300</sendReadyDelay>
+	    <!-- not implemented for Heritrix3 -->
             <continuationFromHeritrixRecoverlogEnabled>false</continuationFromHeritrixRecoverlogEnabled>
-            <heritrix>
+            <heritrix> <!-- heritrix1 settings -->
                 <!-- 30 minutes -->
                 <inactivityTimeout>1800</inactivityTimeout>
                 <!-- 30 minutes -->
@@ -127,6 +128,42 @@ National Library.
 			<startNewFilesOnCheckpoint>true</startNewFilesOnCheckpoint>
                 </warc>
             </heritrix>
+	    <heritrix3>	<!-- heritrix3 settings -->
+                <!-- 30 minutes -->
+                <inactivityTimeout>1800</inactivityTimeout>
+                <!-- 30 minutes -->
+                <noresponseTimeout>1800</noresponseTimeout>
+                <!--  10 minutes -->
+                <waitForReportGenerationTimeout>600</waitForReportGenerationTimeout>
+                <!--  20 seconds -->
+                <crawlLoopWaitTime>20</crawlLoopWaitTime>
+                <abortIfConnectionLost>true</abortIfConnectionLost>
+                <adminName>admin</adminName>
+                <adminPassword>adminPassword</adminPassword>
+                <guiPort>8090</guiPort>
+                <heapSize>1598M</heapSize>
+                <javaOpts></javaOpts>
+                <archiveFormat>warc</archiveFormat>
+                <archiveNaming>
+                    <class>dk.netarkivet.harvester.harvesting.LegacyNamingConvention</class>
+                </archiveNaming>
+                <arc>
+			<compression>false</compression>
+                	<poolMaxActive>1</poolMaxActive>
+			<maxFileSizeBytes>1000000000</maxFileSizeBytes>
+			<suffix>${HOSTNAME}</suffix>
+                </arc>
+		<warc>	
+			<template>${prefix}-${timestamp17}-${serialno}-${heritrix.hostname}</template>			
+			<compression>false</compression>
+                	<poolMaxActive>1</poolMaxActive>
+			<maxFileSizeBytes>1000000000</maxFileSizeBytes>
+	        	<writeRequests>true</writeRequests>
+			<writeMetadata>true</writeMetadata>
+			<skipIdenticalDigests>false</skipIdenticalDigests>
+			<startNewFilesOnCheckpoint>true</startNewFilesOnCheckpoint>
+                </warc>
+            </heritrix3>	
             <frontier>
                 <!-- 10 minutes -->
                 <frontierReportWaitTime>600</frontierReportWaitTime>
@@ -136,10 +173,10 @@ National Library.
                 </filter>
             </frontier>
             <heritrixLauncher>
-                <class>dk.netarkivet.harvester.harvesting.controller.BnfHeritrixLauncher</class>
+                <class>dk.netarkivet.harvester.heritrix3.controller.HeritrixLauncher</class>
             </heritrixLauncher>
             <heritrixController>
-                <class>dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController</class>
+                <class>dk.netarkivet.harvester.heritrix3.controller.HeritrixController</class>
             </heritrixController>
             <harvestReport>
                 <class>dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport</class>

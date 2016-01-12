@@ -60,49 +60,44 @@ public class HarvestSchedulerMonitorServerTest {
     private final JMSConnection jmsConnectionMock = mock(JMSConnection.class);
     //private final Provider<JMSConnection> jmsConnectionProvider = () -> jmsConnectionMock;
     private final Provider<JMSConnection> jmsConnectionProvider = new Provider<JMSConnection>() {
+        @Override
+        public JMSConnection get() {
+            return jmsConnectionMock;
+        }
 
-		@Override
-		public JMSConnection get() {
-			// TODO Auto-generated method stub
-			return jmsConnectionMock;
-		}
-    	
     };
     
     private JobDAO jobDAOMock = mock(JobDAO.class);
     //private final Provider<JobDAO> jobDAOProvider = () -> jobDAOMock;
     private final Provider<JobDAO> jobDAOProvider = new Provider<JobDAO>() {
+        @Override
+        public JobDAO get() {
+            return jobDAOMock;
+        }
 
-		@Override
-		public JobDAO get() {
-			// TODO Auto-generated method stub
-			return jobDAOMock;
-		}
-    	
     };
 
     private final HarvestDefinitionDAO harvestDefinitionDAOMock = mock(HarvestDefinitionDAO.class);
     //private final Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = () -> harvestDefinitionDAOMock;
     private final Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = new Provider<HarvestDefinitionDAO>(){
 
-		@Override
-		public HarvestDefinitionDAO get() {
-			// TODO Auto-generated method stub
-			return harvestDefinitionDAOMock;
-		}
-    	
+        @Override
+        public HarvestDefinitionDAO get() {
+            return harvestDefinitionDAOMock;
+        }
+
     };
 
     private final Notifications notificationsMock = mock(Notifications.class);
     //private final Provider<Notifications> notificationsProvider = () -> notificationsMock;
     private final Provider<Notifications> notificationsProvider = new Provider<Notifications>() {
 
-		@Override
-		public Notifications get() {
-			// TODO Auto-generated method stub
-			return notificationsMock;
-		}
-    	
+        @Override
+        public Notifications get() {
+
+            return notificationsMock;
+        }
+
     };
 
     private final HarvestSchedulerMonitorServer harvestStatusMonitor = new HarvestSchedulerMonitorServer(

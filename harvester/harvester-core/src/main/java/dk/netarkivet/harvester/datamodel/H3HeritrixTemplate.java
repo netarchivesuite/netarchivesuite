@@ -37,12 +37,16 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.antiaction.raptor.dao.AttributeBase;
+import com.antiaction.raptor.dao.AttributeTypeBase;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 
 /**
  * Class encapsulating the Heritrix crawler-beans.cxml file 
@@ -103,8 +107,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
      * @throws ArgumentNotValid if doc is null, or verify is true and doc does not obey the constraints required by our
      * software.
      */
-    public H3HeritrixTemplate(String template) {
+    public H3HeritrixTemplate(long template_id, String template) {
         ArgumentNotValid.checkNotNull(template, "String template");
+        this.template_id = template_id;
         this.template = template;
     }
     
@@ -310,14 +315,36 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 //  	        </list>
 //  	       </property> -->
 //  	 </bean>
-// 
-  	   String arcWriterBean 
-  	   	= "<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">";
-  	   // TODO Read compress value from heritrix3Settings
-  	   arcWriterBean += "\n<property name=\"compress\" value=\"false\"/>"
-  			 + "\n<property name=\"prefix\" value=\"" + ARCHIVE_FILE_PREFIX_PLACEHOLDER  
-  	   		+ "\"/></bean>";
-  	   return arcWriterBean;  			      
+// "<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">";
+  	  String propertyName="\n<property name=\"";
+      String valuePrefix = "\" value=\"";
+      String valueSuffix = "\"";
+      String propertyEnd="/>";
+      
+  	   StringBuilder arcWriterBeanBuilder = new StringBuilder();
+  	   arcWriterBeanBuilder.append("<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">\n");
+  	   arcWriterBeanBuilder.append(propertyName + "compress" + valuePrefix
+  	           + Settings.get(HarvesterSettings.HERITRIX3_ARC_COMPRESSION) 
+               + valueSuffix + propertyEnd); 
+  	   arcWriterBeanBuilder.append(propertyName + "prefix" + valuePrefix
+  	         + ARCHIVE_FILE_PREFIX_PLACEHOLDER
+             + valueSuffix + propertyEnd);
+  	 arcWriterBeanBuilder.append(propertyName + "suffix" + valuePrefix
+             + Settings.get(HarvesterSettings.HERITRIX3_ARC_SUFFIX) 
+             + valueSuffix + propertyEnd); 
+  	arcWriterBeanBuilder.append(propertyName + "maxFileSizeBytes" + valuePrefix
+            + Settings.get(HarvesterSettings.HERITRIX3_ARC_MAXSIZE) 
+            + valueSuffix + propertyEnd); 
+  	arcWriterBeanBuilder.append(propertyName + "poolMaxActive" + valuePrefix
+            + Settings.get(HarvesterSettings.HERITRIX3_ARC_POOL_MAXACTIVE) 
+            + valueSuffix + propertyEnd); 
+    
+  	   
+  	   
+  	   
+  	   arcWriterBeanBuilder.append("</bean>");
+  			 
+  	   return arcWriterBeanBuilder.toString();  			      
   	}
 
 		
@@ -342,36 +369,34 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   					+ "' is missing");
   		}
   		StringBuilder propertyBuilder = new StringBuilder();
-  		// TODO Read template from Heritrix3Settings
   		propertyBuilder.append(propertyName + "template" + valuePrefix 
-  				+ "${prefix}-${timestamp17}-${serialno}-${heritrix.hostname}"
-  				// Default value: ${prefix}-${timestamp17}-${serialno}-${heritrix.pid}~${heritrix.hostname}~${heritrix.port}
+  		      + Settings.get(HarvesterSettings.HERITRIX3_WARC_TEMPLATE)
+              + valueSuffix + propertyEnd);  				
+  		propertyBuilder.append(propertyName + "compress" + valuePrefix 
+  		      + Settings.get(HarvesterSettings.HERITRIX3_WARC_COMPRESSION) 
   				+ valueSuffix + propertyEnd);
-  		propertyBuilder.append(propertyName + "compress" + valuePrefix + "false"  // TODO Replace false by Heritrix3Settingsvalue 
-  				+ valueSuffix + propertyEnd);
+  		// Note: The prefix value will be replaced later by the setArchiveFilePrefix() method
   		propertyBuilder.append(propertyName + "prefix" + valuePrefix 
   				+ ARCHIVE_FILE_PREFIX_PLACEHOLDER
   				+ valueSuffix + propertyEnd);
+  		propertyBuilder.append(propertyName + "maxFileSizeBytes" + valuePrefix
+  		      + Settings.get(HarvesterSettings.HERITRIX3_WARC_MAXSIZE)
+  		      + valueSuffix + propertyEnd);
+  		propertyBuilder.append(propertyName + "poolMaxActive" + valuePrefix
+                + Settings.get(HarvesterSettings.HERITRIX3_WARC_POOL_MAXACTIVE)
+                + valueSuffix + propertyEnd);
+          
   		propertyBuilder.append(propertyName + "writeRequests" + valuePrefix 
-  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS)
+  				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_WRITE_REQUESTS)
   				+ valueSuffix + propertyEnd);
   		propertyBuilder.append(propertyName + "writeMetadata" + valuePrefix 
-  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA)
+  				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_WRITE_METADATA)
   				+ valueSuffix + propertyEnd);
- /*
-  		propertyBuilder.append(propertyName + "writeRevisitForIdenticalDigests" + valuePrefix 
-  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS)
-  				+ valueSuffix + propertyEnd);
-  		propertyBuilder.append(propertyName + "writeRevisitForNotModified" + valuePrefix 
-  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED)
-  				+ valueSuffix + propertyEnd);
-  */
   		propertyBuilder.append(propertyName + "skipIdenticalDigests" + valuePrefix 
-  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS)
+  				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_SKIP_IDENTICAL_DIGESTS)
   				+ valueSuffix + propertyEnd);
- 		propertyBuilder.append(		
-  			  propertyName + "startNewFilesOnCheckpoint" + valuePrefix 
-  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_START_NEW_FILES_ON_CHECKPOINT)
+ 		propertyBuilder.append(propertyName + "startNewFilesOnCheckpoint" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_START_NEW_FILES_ON_CHECKPOINT)
   				+ valueSuffix + propertyEnd);
   		
   		warcWriterProcessorBean += propertyBuilder.toString();
@@ -578,7 +603,64 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		String templateNew = template.replace(METADATA_ITEMS_PLACEHOLDER, sb.toString());
 		this.template = templateNew;
 	}
-	
+
+	@Override
+	public void setAttributes(List<AttributeAndType> attributesAndTypes) {
+		AttributeAndType attributeAndType;
+		AttributeTypeBase attributeType;
+		AttributeBase attribute;
+		Integer intVal = null;
+		String val = null;
+		for (int i=0; i<attributesAndTypes.size(); ++i) {
+			attributeAndType = attributesAndTypes.get(i);
+			attributeType = attributeAndType.attributeType;
+			attribute = attributeAndType.attribute;
+			switch (attributeType.viewtype) {
+			case 1:
+				if (attribute !=  null) {
+					intVal = attribute.getInteger();
+				}
+				if (intVal == null && attributeType.def_int != null) {
+					intVal = attributeType.def_int;
+				}
+				if (intVal != null) {
+					val = intVal.toString();
+				} else {
+					val = "";
+				}
+				break;
+			case 5:
+				if (attribute !=  null) {
+					intVal = attribute.getInteger();
+				}
+				if (intVal == null && attributeType.def_int != null) {
+					intVal = attributeType.def_int;
+				}
+				if (intVal != null && intVal > 0) {
+					val = "true";
+				} else {
+					val = "false";
+				}
+				break;
+			case 6:
+				if (attribute !=  null) {
+					intVal = attribute.getInteger();
+				}
+				if (intVal == null && attributeType.def_int != null) {
+					intVal = attributeType.def_int;
+				}
+				if (intVal != null && intVal > 0) {
+					val = "obey";
+				} else {
+					val = "ignore";
+				}
+				break;
+			}
+			String templateNew = template.replace("%{" + attributeType.name.toUpperCase() + "}", val);
+			this.template = templateNew;
+		}
+	}
+
 	@Override
 	public void writeTemplate(JspWriter out) throws IOFailure {
 		try {
