@@ -175,7 +175,8 @@ public class JobDispatcher {
             // Add an entry documenting that this job
             // contains domains that has aliases
             metadata.add(aliasMetadataEntry);
-        }
+            log.info("Added alias metadataEntry for job {} ", job.getJobID());
+        } 
 
         if (job.getOrderXMLdoc().IsDeduplicationEnabled()) {
             MetadataEntry duplicateReductionMetadataEntry = MetadataEntry.makeDuplicateReductionMetadataEntry(
@@ -184,6 +185,7 @@ public class JobDispatcher {
             // Always add a duplicationReductionMetadataEntry when deduplication is enabled
             // even if the list of JobIDs for deduplication is empty!
             metadata.add(duplicateReductionMetadataEntry);
+            log.info("Added duplicateReductionMetadataEntry metadataEntry for job {} ", job.getJobID());
         }
         return metadata;
     }

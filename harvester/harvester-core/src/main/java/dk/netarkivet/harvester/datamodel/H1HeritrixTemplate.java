@@ -880,8 +880,9 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 	}
 
 	@Override
-	public void setAttributes(List<AttributeAndType> attributesAndTypes) {
+	public void insertAttributes(List<AttributeAndType> attributesAndTypes) {
 		// Unsupported for Heritrix 1 templates at this point.
+	    log.warn("No attribute insertion is done for H1 templates");
 	}
 
 	@Override

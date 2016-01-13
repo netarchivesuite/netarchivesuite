@@ -89,7 +89,6 @@ public class HTMLUtils {
             + "</head> <body onload=\"giveFocus()\">\n";
 
     /** Logger for this class. */
-    //private static Log log = LogFactory.getLog(HTMLUtils.class.getName());
     private static final Logger log = LoggerFactory.getLogger(HTMLUtils.class);
     /** Translations for this module. */
     private static final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
@@ -198,7 +197,7 @@ public class HTMLUtils {
         String url = ((HttpServletRequest) context.getRequest()).getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
         title = escapeHtmlValues(title);
-        log.debug("Loaded URL '" + url + "' with title '" + title + "'");
+        log.debug("Loading URL '" + url + "' with title '" + title + "'");
         out.print(WEBPAGE_HEADER_TEMPLATE_TOP);
 
         String includeJs = "";
@@ -217,6 +216,7 @@ public class HTMLUtils {
         out.print("<td valign = \"top\" >\n");
         // Language links
         generateLanguageLinks(out);
+        log.debug("Loaded URL '" + url + "' with title '" + title + "'");
     }
 
     /**
@@ -236,7 +236,7 @@ public class HTMLUtils {
         String url = ((HttpServletRequest) context.getRequest()).getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
         title = escapeHtmlValues(title);
-        log.debug("Loaded URL '" + url + "' with title '" + title + "'");
+        log.debug("Loading URL '" + url + "' with title '" + title + "'");
         out.print(WEBPAGE_HEADER_TEMPLATE_TOP);
         if (refreshInSeconds > 0) {
             out.print(WEBPAGE_HEADER_AUTOREFRESH.replace(TITLE_PLACEHOLDER, Long.toString(refreshInSeconds)));
@@ -250,6 +250,7 @@ public class HTMLUtils {
         out.print("<td valign = \"top\" >\n");
         // Language links
         generateLanguageLinks(out);
+        log.debug("Loaded URL '" + url + "' with title '" + title + "'");
     }
 
     /**
@@ -868,8 +869,8 @@ public class HTMLUtils {
      *
      * @param i A long integer
      * @param locale The given locale.
-     * @return a localized string representation of the given long TODO Should this method throw ArgumentNotValid if the
-     * locale is null
+     * @return a localized string representation of the given long 
+     * TODO Should this method throw ArgumentNotValid if the locale is null
      */
     public static String localiseLong(long i, Locale locale) {
         NumberFormat nf = NumberFormat.getInstance(locale);

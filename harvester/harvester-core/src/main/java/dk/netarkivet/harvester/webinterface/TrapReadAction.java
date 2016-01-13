@@ -23,12 +23,16 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import java.io.IOException;
+//import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
@@ -42,6 +46,9 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
  */
 
 public class TrapReadAction extends TrapAction {
+    
+    protected static final Logger log = LoggerFactory.getLogger(TrapReadAction.class);
+    
     @Override
     protected void doAction(PageContext context, I18n i18n) {
         HttpServletRequest request = (HttpServletRequest) context.getRequest();
@@ -55,15 +62,22 @@ public class TrapReadAction extends TrapAction {
             response.setHeader("Content-Disposition", "Attachment; filename=" + trapList.getName());
         }
         OutputStream out = null;
+        Set<String> traps= trapList.getTraps();
+        int trapSize = traps.size();
         try {
             out = response.getOutputStream();
+            int count=0;
             for (String trap : trapList.getTraps()) {
+                count++;
+                log.trace("Writing trap {}/{} to output destination", count, trapSize);
                 out.write((trap + "\n").getBytes());
             }
             out.close();
-        } catch (IOException e) {
+        } catch (Throwable e) {
+            log.warn("error occurred", e);
             HTMLUtils.forwardWithErrorMessage(context, i18n, e, "");
             throw new ForwardedToErrorPage("Error in retrieving trap list", e);
         }
+        log.info("All {} traps in list {} written to output destination successfully", trapSize, trapList.getName());
     }
 }
