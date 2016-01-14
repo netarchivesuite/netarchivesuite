@@ -114,10 +114,12 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
      */
     @Test(groups = {"guitest", "functest"})
     public void jobSplittingTest() {
-        final String configName = "newconf";
+        final String domainRandomString = RandomStringUtils.random(6, true, true);
+        final String configRandomString = RandomStringUtils.random(6, true, true);
+        final String configName = "newconf_" + configRandomString;
         List<String> domainList = new ArrayList<String>();
         for (int i=0; i<=10; i++ ) {
-            domainList.add("d"+i+".dk");
+            domainList.add("d"+i+"_"+domainRandomString+".dk");
         }
         createDomainAndConfiguration(domainList.get(0), configName, 10, false, false);
         createDomainAndConfiguration(domainList.get(1), configName, 10, false, true);
@@ -132,7 +134,7 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
         createDomainAndConfiguration(domainList.get(8), configName, 20, true, true);
         createDomainAndConfiguration(domainList.get(9), configName, 20, true, false);
         createDomainAndConfiguration(domainList.get(10), configName, 20, false, true);
-        final String harvestName = RandomStringUtils.random(6, true, true);
+        final String harvestName = "splitharvest_" + RandomStringUtils.random(6, true, true);
         SelectiveHarvestPageHelper.createSelectiveHarvest(harvestName, "",
                 (String[]) domainList.toArray(new String[] {}));
         SelectiveHarvestPageHelper.editHarvest(harvestName);
