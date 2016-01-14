@@ -44,6 +44,9 @@ import org.dom4j.tree.DefaultDocument;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.internal.verification.AtLeast;
+import org.mockito.internal.verification.Times;
+import org.mockito.verification.VerificationMode;
 
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -94,8 +97,11 @@ public class JobDispatcherTest {
 
         verify(jobMock).setStatus(JobStatus.SUBMITTED);
         verify(jobMock).setSubmittedDate(any(Date.class));
-        verify(jobDAO).update(jobMock);
+        //verify(jobDAO).update(jobMock);
+        verify(jobDAO, new Times(2)).update(jobMock);
+        
         verify(jmsConnection).send(crawlMessageCaptor.capture());
+        
         assertTrue(jobMock == crawlMessageCaptor.getValue().getJob());
         assertEquals(HarvesterChannels.getHarvestJobChannelId(SELECTIVE_HARVEST_CHANNEL), crawlMessageCaptor.getValue()
                 .getTo());
