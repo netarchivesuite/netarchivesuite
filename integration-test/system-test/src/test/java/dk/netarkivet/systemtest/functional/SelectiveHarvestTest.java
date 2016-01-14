@@ -119,7 +119,7 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
         final String configName = "newconf_" + configRandomString;
         List<String> domainList = new ArrayList<String>();
         for (int i=0; i<=10; i++ ) {
-            domainList.add("d"+i+"_"+domainRandomString+".dk");
+            domainList.add("d"+i+"-"+domainRandomString+".dk");
         }
         createDomainAndConfiguration(domainList.get(0), configName, 10, false, false);
         createDomainAndConfiguration(domainList.get(1), configName, 10, false, true);
