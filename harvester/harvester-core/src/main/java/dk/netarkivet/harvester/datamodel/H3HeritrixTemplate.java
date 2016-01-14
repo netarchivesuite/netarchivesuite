@@ -615,6 +615,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 			attributeAndType = attributesAndTypes.get(i);
 			attributeType = attributeAndType.attributeType;
 			attribute = attributeAndType.attribute;
+			log.debug("Trying to insert the attribute {} into the template", attributeType.name);
 			switch (attributeType.viewtype) {
 			case 1:
 				if (attribute !=  null) {
@@ -622,6 +623,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 				}
 				if (intVal == null && attributeType.def_int != null) {
 					intVal = attributeType.def_int;
+					log.info("Viewtype 1 attribute {} undefined. Using default value '{}'",  attributeType.name, intVal);
 				}
 				if (intVal != null) {
 					val = intVal.toString();
@@ -635,6 +637,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 				}
 				if (intVal == null && attributeType.def_int != null) {
 					intVal = attributeType.def_int;
+					log.info("Viewtype 5 attribute {} is undefined. Using default value '{}'", attributeType.name, intVal);
 				}
 				if (intVal != null && intVal > 0) {
 					val = "true";
@@ -648,6 +651,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 				}
 				if (intVal == null && attributeType.def_int != null) {
 					intVal = attributeType.def_int;
+					log.info("Viewtype 6 attribute {} is undefined. Using default value '{}'", attributeType.name, intVal);
 				}
 				if (intVal != null && intVal > 0) {
 					val = "obey";
@@ -661,8 +665,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 			    String templateNew = template.replace("%{" + attributeType.name.toUpperCase() + "}", val);
 			    this.template = templateNew;
 			} else {
-			    log.warn("Placeholder {} not found in template. Placeholder {} not replaced by {} in this template", 
-			            placeholder, placeholder, val); 
+			    log.warn("Placeholder '{}' not found in template. Therefore not substituted by '{}' in this template", 
+			            placeholder, val); 
 			}
 		}
 	}

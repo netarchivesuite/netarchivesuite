@@ -312,10 +312,11 @@ value="<%= jobID %>"/>
 	// make link to harvest template for job
 	String link = "/History/Harveststatus-download-job-harvest-template.jsp?"
 	 + "JobID=" + job.getJobID();
+	String linkWithrequestedType = link + "&requestedContentType=text/plain";        
 %>
 <a href="<%=link %>"><fmt:message key="show.job.0.harvesttemplate">
 <fmt:param value="<%=job.getJobID()%>"/>
-</fmt:message></a>
+</fmt:message></a>&nbsp;(<a href="<%=linkWithrequestedType %>">text/plain)</a>)
 
 
 <%
