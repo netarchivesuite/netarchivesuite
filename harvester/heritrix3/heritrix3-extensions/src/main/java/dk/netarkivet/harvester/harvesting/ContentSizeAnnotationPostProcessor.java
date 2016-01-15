@@ -55,7 +55,7 @@ public class ContentSizeAnnotationPostProcessor extends Processor {
      * @param crawlURI URI to add annotation for if successful.
      * @throws ArgumentNotValid if crawlURI is null.
      * @throws InterruptedException never.
-     * @see Processor#innerProcess(org.archive.crawler.datamodel.CrawlURI)
+     * @see Processor
      */
     protected void innerProcess(CrawlURI crawlURI) throws InterruptedException {
         ArgumentNotValid.checkNotNull(crawlURI, "CrawlURI crawlURI");

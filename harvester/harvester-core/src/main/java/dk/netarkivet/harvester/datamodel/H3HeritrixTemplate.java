@@ -102,10 +102,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     /**
      * Constructor for HeritrixTemplate class.
      *
-     * @param doc the order.xml
-     * @param verify If true, verifies if the given dom4j Document contains the elements required by our software.
-     * @throws ArgumentNotValid if doc is null, or verify is true and doc does not obey the constraints required by our
-     * software.
+     * @param template_id The persistent id of the template in the database
+     * @param template The template as String object
+     * @throws ArgumentNotValid if template is null.
      */
     public H3HeritrixTemplate(long template_id, String template) {
         ArgumentNotValid.checkNotNull(template, "String template");
@@ -264,7 +263,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
      * Make sure that Heritrix will archive its data in the chosen archiveFormat.
      *
      * @param archiveFormat the chosen archiveformat ('arc' or 'warc' supported)
-     * @throw ArgumentNotValid If the chosen archiveFormat is not supported.
+     * @throws ArgumentNotValid If the chosen archiveFormat is not supported.
      */
 	@Override
 	public void setArchiveFormat(String archiveFormat) {
