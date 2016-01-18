@@ -316,7 +316,7 @@ value="<%= jobID %>"/>
 %>
 <a href="<%=link %>"><fmt:message key="show.job.0.harvesttemplate">
 <fmt:param value="<%=job.getJobID()%>"/>
-</fmt:message></a>&nbsp;(<a href="<%=linkWithrequestedType %>">text/plain)</a>)
+</fmt:message></a>&nbsp;(<a href="<%=linkWithrequestedType %>">text/plain</a>)
 
 
 <%
