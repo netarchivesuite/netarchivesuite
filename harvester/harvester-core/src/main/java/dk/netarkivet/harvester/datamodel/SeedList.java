@@ -92,7 +92,7 @@ public class SeedList implements Serializable, Named {
      *
      * @param url The url to check
      * @return true, if it is accepted
-     * @see {@link HarvesterSettings#VALID_SEED_REGEX}.
+     * @see HarvesterSettings#VALID_SEED_REGEX
      */
     private boolean isAcceptableURL(String url) {
         Pattern validSeedPattern = Pattern.compile(Settings.get(HarvesterSettings.VALID_SEED_REGEX));

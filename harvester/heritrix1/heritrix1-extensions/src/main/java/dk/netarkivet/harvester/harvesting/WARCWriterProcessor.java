@@ -36,9 +36,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.management.AttributeNotFoundException;
-import javax.management.MBeanException;
-import javax.management.ReflectionException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -196,9 +193,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         e.setExpertSetting(true);
 
         // Add map setting to add NAS metadata to WarcInfo records. 
-
         e = addElementToDefinition(new MapType(ATTR_METADATA_ITEMS, "Metadata items.", String.class));
-        //e = addElementToDefinition(new StringList(ATTR_METADATA_ITEMS, "Metadata items."));
         e.setOverrideable(true);
         e.setExpertSetting(true);
     }
@@ -207,45 +202,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         setPool(new WARCWriterPool(serialNo, this, getPoolMaximumActive(), getPoolMaximumWait()));
     }
 
-    /**
-     * @return Metadata inputs as convenient map.  Returns null if no metadata items.
-     * @throws AttributeNotFoundException
-     * @throws ReflectionException 
-     * @throws MBeanException 
-     */
-    /*
-    public Map<String,Object> getMetadataItems() throws AttributeNotFoundException, MBeanException, ReflectionException {
-        Map<String,Object> result = null;
-        MapType items = (MapType)getAttribute(ATTR_METADATA_ITEMS);
-        if (items != null) {
-            for (Iterator i = items.iterator(null); i.hasNext();) {
-                Attribute a = (Attribute)i.next();
-                if (result == null) {
-                    result = new HashMap<String,Object>();
-                }
-                result.put(a.getName(), a.getValue());
-            }
-        }
-        return result;
-    }
-    */
-
-    @SuppressWarnings("unchecked")
-    /*
-    public List<String> getMetadataItems() {
-        ArrayList<String> results = new ArrayList<String>();
-        Object obj = getAttributeUnchecked(ATTR_METADATA_ITEMS);
-        if (obj != null) {
-            List list = (StringList)obj;
-            for (Iterator i = list.iterator(); i.hasNext();) {
-                String str = (String)i.next();
-                results.add(str);
-            }
-        }
-        return results;
-    }
-    */
-
+    
     /**
      * Writes a CrawlURI and its associated data to store file.
      * <p>
@@ -711,15 +668,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         } catch (XPathExpressionException e) {
             logger.log(Level.WARNING, "Error obtaining metadata items", e);
         }
-        /* catch (AttributeNotFoundException e) {
-        	logger.log(Level.WARNING, "Error obtaining warcinfo", e);
-		} catch (MBeanException e) {
-			logger.log(Level.WARNING, "Error obtaining warcinfo", e);
-		} catch (ReflectionException e) {
-			logger.log(Level.WARNING, "Error obtaining warcinfo", e);
-		}
-		*/
-
+        
         // add fields from harvesInfo.xml version 0.4
         /*
          * <harvestInfo> <version>0.4</version> <jobId>1</jobId> <priority>HIGHPRIORITY</priority>

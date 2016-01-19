@@ -83,7 +83,6 @@ public abstract class TrapAction {
      *
      * @param context the context of the servlet request triggering this action.
      * @param i18n the internationalisation to use for presenting the results.
-     * @return true, if we should continue our rendering of the page, false otherwise
      */
     protected abstract void doAction(PageContext context, I18n i18n);
 

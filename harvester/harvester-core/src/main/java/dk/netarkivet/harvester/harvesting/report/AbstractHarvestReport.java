@@ -60,7 +60,7 @@ public abstract class AbstractHarvestReport implements HarvestReport{
     /**
      * Constructor from DomainStatsReports.
      *
-     * @param files the result of parsing the crawl.log for domain statistics
+     * @param dsr the result of parsing the crawl.log for domain statistics
      */
     public AbstractHarvestReport(DomainStatsReport dsr) {
         ArgumentNotValid.checkNotNull(dsr, "DomainStatsReport dsr");

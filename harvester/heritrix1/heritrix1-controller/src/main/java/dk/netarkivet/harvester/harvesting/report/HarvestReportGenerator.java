@@ -51,6 +51,14 @@ import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
 
 /**
  * Base implementation for a harvest report.
+ * The constructor gets the data in a crawl.log file, and parses the file. The crawl.log is described in the
+ * Heritrix user-manual, section 8.2.1: http://crawler.archive.org/articles/user_manual/analysis.html#logs Note:
+ * Invalid lines are logged and then ignored.
+ * <p>
+ * Each url listed in the file is assigned to a domain, the total object count and byte count per domain is
+ * calculated. Finally, a StopReason is found for each domain: When the response is CrawlURI.S_BLOCKED_BY_QUOTA (
+ * currently = -5003), the StopReason is set to StopReason.SIZE_LIMIT, if the annotation equals "Q:group-max-all-kb"
+ * or StopReason.OBJECT_LIMIT, if the annotation equals "Q:group-max-fetch-successes".
  */
 @SuppressWarnings({"serial"})
 public class HarvestReportGenerator {
@@ -380,8 +388,7 @@ public class HarvestReportGenerator {
     }
     
     /**
-     * 
-     * @return
+     * @return default stopReason
      */
     public StopReason getDefaultStopReason() {
         return defaultStopReason;

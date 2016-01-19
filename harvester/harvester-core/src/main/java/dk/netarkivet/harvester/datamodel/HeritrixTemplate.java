@@ -124,9 +124,8 @@ public abstract class HeritrixTemplate implements Serializable {
 	 * global traps.
 	 *
 	 * @param elementName The name of the added element.
-	 * @param crawlerTraps A list of crawler trap regular expressions to add to this job.
+	 * @param crawlertraps A list of crawler trap regular expressions to add to this job.
 	 */
-
 	public abstract void insertCrawlerTraps(String elementName, List<String> crawlertraps);
 
 	/**
@@ -186,6 +185,12 @@ public abstract class HeritrixTemplate implements Serializable {
 	public abstract void writeToFile(File orderXmlFile);
 	public abstract void setRecoverlogNode(File recoverlogGzFile);
 
+	/**
+	 * Construct a H1HeritrixTemplate or H3HeritrixTemplate based on the signature of the given string.
+	 * @param template_id The id of the template
+	 * @param templateAsString The template as a String object
+	 * @return a HeritrixTemplate based on the signature of the given string.
+	 */
 	public static HeritrixTemplate getTemplateFromString(long template_id, String templateAsString){
 		if (templateAsString.contains(H1_SIGNATURE)) {
 			try {
@@ -215,8 +220,10 @@ public abstract class HeritrixTemplate implements Serializable {
 	}
 
 	/**
-	 * Read the template using the given Reader
-	 * @param reader A given Reader
+	 * Read the template using the given Reader.
+	 * 
+	 * @param template_id The id of the template
+	 * @param orderTemplateReader A given Reader to read a template
 	 * @return a HeritrixTemplate object
 	 */
 	public static HeritrixTemplate read(long template_id, Reader orderTemplateReader) {
