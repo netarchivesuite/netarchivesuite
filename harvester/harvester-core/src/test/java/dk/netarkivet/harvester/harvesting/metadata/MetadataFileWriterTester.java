@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,20 +41,26 @@ import org.jwat.common.ANVLRecord;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SlowTest;
-import dk.netarkivet.harvester.harvesting.Heritrix1ControllerTestInfo;
 import dk.netarkivet.testutils.TestResourceUtils;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class MetadataFileWriterTester {
-    @Rule public TestName test = new TestName();
+
+	@Rule
+	public TestName test = new TestName();
+
+    private static File logsDir = TestResourceUtils.getFile("crawldir/logs");
+
     private File WORKING_DIR;
-    private static File logsDir = new File(Heritrix1ControllerTestInfo.CRAWLDIR_ORIGINALS_DIR, "logs");
 
     @Before
     public void initialize() {
-        WORKING_DIR = new File(TestResourceUtils.OUTPUT_DIR, getClass().getSimpleName() + "/" + test.getMethodName());
+    	WORKING_DIR = new File(TestResourceUtils.OUTPUT_DIR, getClass().getSimpleName() + "/" + test.getMethodName());
         FileUtils.removeRecursively(WORKING_DIR);
         FileUtils.createDir(WORKING_DIR);
+        if (!logsDir.exists() || !logsDir.isDirectory()) {
+        	Assert.fail("Test resource directory missing 'crawldir/logs'!");
+        }
     }
 
     @Test
@@ -143,4 +150,5 @@ public class MetadataFileWriterTester {
         }
         return arcfile;
     }
+
 }

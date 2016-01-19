@@ -169,6 +169,36 @@ public final class ChecksumCalculator {
         return new String(hexchars);
     }
 
+    public static byte[] digestFile(File src, String digestAlgorithm) {
+        ArgumentNotValid.checkNotNull(src, "File src");
+        ArgumentNotValid.checkTrue(src.isFile(), "Argument should be a file");
+        try {
+            FileInputStream fileInputStream = new FileInputStream(src);
+            try {
+                return digestInputStream(fileInputStream, digestAlgorithm);
+            } finally {
+                IOUtils.closeQuietly(fileInputStream);
+            }
+        } catch (FileNotFoundException e) {
+            throw new IOFailure("Could not read file '" + src.getAbsolutePath() + "'", e);
+        }
+    }
+
+    public static byte[] digestInputStream(InputStream instream, String algorithm) {
+        byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
+        MessageDigest messageDigest = getMessageDigest(algorithm);
+        messageDigest.reset();
+        int bytesRead;
+        try {
+            while ((bytesRead = instream.read(buffer)) != -1) {
+                messageDigest.update(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Error making a '" + algorithm + "' digest on the inputstream", e);
+        }
+        return messageDigest.digest();
+    }
+
     /**
      * Get a MessageDigest for a specific algorithm.
      *
