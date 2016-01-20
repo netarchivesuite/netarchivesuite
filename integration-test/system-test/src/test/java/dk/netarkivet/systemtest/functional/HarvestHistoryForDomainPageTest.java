@@ -324,7 +324,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
                             + "conf/kill_GUIApplication.sh; "
                             + "cp conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
                             + " conf/start_GUIApplication.sh; " + "fi");
-            TestGUIController.waitForGUIToStart(10);
+            TestGUIController.waitForGUIToStart(120);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -40,7 +40,7 @@ public class TestGUIController {
             log.info("Restarting GUI");
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/kill_GUIApplication.sh");
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/start_GUIApplication.sh");
-            waitForGUIToStart(10);
+            waitForGUIToStart(120);
         } catch (Exception e) {
             throw new RuntimeException("Failed to redeploy GUI", e);
         }
@@ -67,7 +67,7 @@ public class TestGUIController {
         TestEventManager.getInstance().addStimuli("Waiting for GUI to start.");
         while (numberOfSecondsToWaiting++ < maxNumberOfSecondsToWait) {
             PageHelper.reloadSubPage("HarvestDefinition");
-            if (PageHelper.getWebDriver().getPageSource().contains("Definitions")) {
+            if (PageHelper.getWebDriver().getPageSource().contains("Menu")) {
                 System.out.println();
                 return;
             } else {
