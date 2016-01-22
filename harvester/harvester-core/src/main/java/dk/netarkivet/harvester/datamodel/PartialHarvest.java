@@ -366,8 +366,9 @@ public class PartialHarvest extends HarvestDefinition {
      */
     private boolean processSeed(String seed, StringBuilder invalidMessage, Map<String, Set<String>> acceptedSeeds) {
         seed = seed.trim();
-        if (seed.length() != 0) {
-            if (!(seed.startsWith("http://") || seed.startsWith("https://"))) {
+        if (seed.length() != 0 && !seed.startsWith("#") && !seed.startsWith("//")) { // ignore empty lines and comments
+            
+            if (!(seed.toLowerCase().startsWith("http://") || seed.toLowerCase().startsWith("https://"))) {
                 seed = "http://" + seed;
             }
             URL url = null;
