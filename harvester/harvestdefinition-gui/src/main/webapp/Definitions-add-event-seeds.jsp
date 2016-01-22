@@ -58,7 +58,11 @@ harvest.
                  org.apache.commons.fileupload.FileItemFactory,
                  org.apache.commons.fileupload.disk.DiskFileItemFactory,
                  org.apache.commons.fileupload.servlet.ServletFileUpload,
-                 org.apache.commons.fileupload.FileItem,dk.netarkivet.harvester.webinterface.EventHarvestUtil"
+                 org.apache.commons.fileupload.FileItem,dk.netarkivet.harvester.webinterface.EventHarvestUtil,
+                 dk.netarkivet.harvester.datamodel.eav.EAV,
+                 dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType,
+                 com.antiaction.raptor.dao.AttributeTypeBase,
+                 com.antiaction.raptor.dao.AttributeBase"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -105,7 +109,7 @@ harvest.
             } else if (fieldName.equals(Constants.UPLOAD_FILE_PARAM)) {
               	item.write(seedsFile);
            		seedsFileName = item.getName();
-            }
+            } // FIXME Add else-ifs for the attribute values either hardwired or based on contents 
        	}
     } else {
     	harvestName = request.getParameter(Constants.HARVEST_PARAM);
@@ -135,7 +139,7 @@ harvest.
                 harvestName);
         return;
     }
-    // Should we test, that this is in fact a PartialHarvest
+    // Should we test, that this is in fact a PartialHarvest?
     String harvestComments = hddao.getSparsePartialHarvest(
     	harvestName).getComments();
     
@@ -238,6 +242,51 @@ the user
                 </select>
             </td>
         </tr>
+        <!-- ############################################################################ -->
+        <!--  add html for optional attributes -->
+        <!-- ############################################################################ -->
+        <%
+        
+		EAV eav = EAV.getInstance();
+		List<AttributeTypeBase> attributeTypes = eav.getAttributeTypes(EAV.DOMAIN_TREE_ID);
+		AttributeTypeBase attributeType;
+		for (int i=0; i<attributeTypes.size(); ++i) {
+			attributeType = attributeTypes.get(i);
+%>
+	        <tr> <!-- edit area for eav attribute -->
+	            <td style="text-align:right;"><fmt:message key="<%= attributeTypes.get(i).name %>"/></td>
+	            <td> 
+<%
+			switch (attributeType.viewtype) {
+			case 1:
+%>
+  	                <input type="text" id="<%= attributeType.name %>" name="<%= attributeType.name %>" value="<%= attributeType.def_int %>">
+<%
+				break;
+			case 5:
+			case 6:
+				if (attributeType.def_int > 0) {
+%>
+		            <input type="checkbox" id="<%= attributeType.name %>" name="<%= attributeType.name %>" value="1" checked="1">
+<%
+				} else {
+%>
+		            <input type="checkbox" id="<%= attributeType.name %>" name="<%= attributeType.name %>">
+<%
+				}
+				break;
+			}
+%>
+	             </td>
+	        </tr>
+<%
+		}
+%>
+        
+        <!-- ############################################################################ -->
+        <!-- END OF: adding html for optional attributes -->
+        <!-- ############################################################################ -->
+        
         <tr>
             <td colspan="2"><input type="submit"
                                    value="<fmt:message key="insert"/>"/></td>
