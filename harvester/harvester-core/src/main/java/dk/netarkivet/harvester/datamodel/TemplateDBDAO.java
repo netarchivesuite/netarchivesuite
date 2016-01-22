@@ -76,7 +76,7 @@ public class TemplateDBDAO extends TemplateDAO {
         ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
-        log.debug("Reading template {} from database");
+        log.debug("Reading template {} from database", orderXmlName);
         try {
             s = c.prepareStatement("SELECT template_id, orderxml, isActive FROM ordertemplates WHERE name = ?");
             s.setString(1, orderXmlName);
