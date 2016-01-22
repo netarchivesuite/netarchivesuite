@@ -76,6 +76,7 @@ public class TemplateDBDAO extends TemplateDAO {
         ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
+        log.debug("Reading template {} from database");
         try {
             s = c.prepareStatement("SELECT template_id, orderxml, isActive FROM ordertemplates WHERE name = ?");
             s.setString(1, orderXmlName);
@@ -90,10 +91,8 @@ public class TemplateDBDAO extends TemplateDAO {
                 orderTemplateReader = clob.getCharacterStream();
             } else {
                 String string = res.getString(2);
-                // log.debug("clob=" + string);
                 orderTemplateReader = new StringReader(string);
             } 
-            System.out.println("Calling HeritrixTemplate.read() w/ arg:" + orderTemplateReader);
             HeritrixTemplate heritrixTemplate = HeritrixTemplate.read(template_id, orderTemplateReader);
             heritrixTemplate.setIsActive(res.getBoolean(3));
             return heritrixTemplate;
@@ -102,12 +101,6 @@ public class TemplateDBDAO extends TemplateDAO {
                     + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
-       /*
-        } catch (DocumentException e) {
-            final String message = "Error parsing order.xml string for " + orderXmlName;
-            log.warn(message, e);
-            throw new IOFailure(message, e);
-            */
         }
          finally {
             DBUtils.closeStatementIfOpen(s);
