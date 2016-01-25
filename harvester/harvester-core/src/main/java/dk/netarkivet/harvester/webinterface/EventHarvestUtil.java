@@ -24,8 +24,10 @@
 package dk.netarkivet.harvester.webinterface;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletRequest;
@@ -41,13 +43,13 @@ import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
 
 /**
  * Contains utility methods for supporting event harvest GUI.
  */
 public final class EventHarvestUtil {
 
-    //static final Log log = LogFactory.getLog(EventHarvestUtil.class.getName());
     static final Logger log = LoggerFactory.getLogger(EventHarvestUtil.class);
 
     /**
@@ -112,11 +114,21 @@ public final class EventHarvestUtil {
         long maxObjectsL = HTMLUtils.parseOptionalLong(context, Constants.MAX_OBJECTS_PARAM,
                 dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS);
         int maxObjects = (int) maxObjectsL;
+        
+        Map<String,String> attributeValues = new HashMap<String,String>();
+        // Fetch all attributes from context to be used later
+        for (String attrParam: EAV.getAttributeNames(EAV.DOMAIN_TREE_ID)){
+            String paramValue = context.getRequest().getParameter(attrParam);
+            log.debug("Read attribute {}. The value in form: {}", attrParam, paramValue);
+            attributeValues.put(attrParam, paramValue);
+        }
+        
+        
         // All parameters are valid, so call method
         try {
             PartialHarvest eventHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(
                     eventHarvestName);
-            eventHarvest.addSeeds(seedSet, orderTemplate, maxBytes, maxObjects);
+            eventHarvest.addSeeds(seedSet, orderTemplate, maxBytes, maxObjects, attributeValues);
         } catch (Exception e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;error.adding.seeds.to.0", eventHarvestName, e);
             throw new ForwardedToErrorPage("Error while adding seeds", e);
@@ -134,9 +146,10 @@ public final class EventHarvestUtil {
      * @param maxobjectsString The given maxobjects as a string
      * @param maxrateString The given maxrate as a string (currently not used)
      * @param ordertemplate The name of the ordertemplate to use
+     * @param attributes A list of attributes and form values
      */
     public static void addConfigurationsFromSeedsFile(PageContext context, I18n i18n, String eventHarvestName,
-            File seeds, String maxbytesString, String maxobjectsString, String maxrateString, String ordertemplate) {
+            File seeds, String maxbytesString, String maxobjectsString, String maxrateString, String ordertemplate, Map<String,String> attributes) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         ArgumentNotValid.checkNotNullOrEmpty(eventHarvestName, "String eventHarvestName");
@@ -179,7 +192,7 @@ public final class EventHarvestUtil {
         try {
             PartialHarvest eventHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(
                     eventHarvestName);
-            eventHarvest.addSeedsFromFile(seeds, ordertemplate, maxBytes, maxObjects);
+            eventHarvest.addSeedsFromFile(seeds, ordertemplate, maxBytes, maxObjects, attributes);
         } catch (Exception e) {
             HTMLUtils
                     .forwardWithErrorMessage(context, i18n, "errormsg;error.adding.seeds.to.0", e, eventHarvestName, e);

@@ -182,6 +182,7 @@ public class DomainConfigurationDefinition {
         // EAV
         try {
         	long entity_id = domainConf.getID();
+        	log.info("Saving attributes for domain config id {} and name {}", entity_id, domainConf.getName());
             EAV eav = EAV.getInstance();
             List<AttributeAndType> attributeTypes = eav.getAttributesAndTypes(EAV.DOMAIN_TREE_ID, (int)entity_id);
             AttributeAndType attributeAndType;
@@ -198,7 +199,7 @@ public class DomainConfigurationDefinition {
             	switch (attributeType.viewtype) {
             	case 1:
                 	long longValue = HTMLUtils.parseOptionalLong(context, attributeType.name, (long)attributeType.def_int);
-                	log.info("Setting attribute {} to value {}", attributeType.name,longValue);
+                	log.info("Setting attribute {} to value {}", attributeType.name, longValue);
                 	attribute.setInteger((int)longValue);
             		break;
             	case 5:

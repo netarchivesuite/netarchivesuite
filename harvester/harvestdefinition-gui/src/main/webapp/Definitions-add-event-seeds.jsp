@@ -46,7 +46,10 @@ name of the harvest and the orderTemplate and add that configuration to the
 harvest.
 --%><%@ page import="java.util.Iterator,
                  java.util.List,
+                 java.util.HashMap,
+                 java.util.Map,
                  java.io.File,
+                 java.util.Set,
                  dk.netarkivet.common.utils.FileUtils,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
@@ -81,7 +84,9 @@ harvest.
     String orderTemplateString = null;
     String maxrateString = null;
     String seedsFileName = "";
-                    
+    Map<String,String> attributeMap = new HashMap<String,String>(); 
+    Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
+    
     if (isMultiPart) {
     	// Create a factory for disk-based file items
     	FileItemFactory factory = new DiskFileItemFactory();
@@ -109,7 +114,11 @@ harvest.
             } else if (fieldName.equals(Constants.UPLOAD_FILE_PARAM)) {
               	item.write(seedsFile);
            		seedsFileName = item.getName();
-            } // FIXME Add else-ifs for the attribute values either hardwired or based on contents 
+            } 
+             // else-if for the attribute values 
+             else if (attributeNames.contains(fieldName)) {
+                 attributeMap.put(fieldName, item.getString());
+             }            
        	}
     } else {
     	harvestName = request.getParameter(Constants.HARVEST_PARAM);
@@ -152,7 +161,7 @@ harvest.
 					if (seedsFile.length() > 0) { // and has size > 0
 						EventHarvestUtil.addConfigurationsFromSeedsFile(
 							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
-							maxobjectsString, maxrateString, orderTemplateString);
+							maxobjectsString, maxrateString, orderTemplateString, attributeMap);
 					}
 				} else {
 					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,

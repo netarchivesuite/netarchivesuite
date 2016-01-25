@@ -4,9 +4,15 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.antiaction.raptor.dao.AttributeBase;
 import com.antiaction.raptor.dao.AttributeTypeBase;
@@ -20,6 +26,8 @@ import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
  * EAV wrapper for the actual EAV implementation.
  */
 public class EAV {
+    
+    private static final Logger log = LoggerFactory.getLogger(EAV.class);
 
 	/** tree id for <code>SparseFullHarvest</code> attributes and types. */
 	public static final int SNAPSHOT_TREE_ID = 1;
@@ -211,6 +219,24 @@ public class EAV {
             }
         }
     	return 0;
+    }
+    
+    /////////////////// Utility methods //////////////////////////////////////
+    /**
+     * Get list of attribute names for a specific tree_id
+     * @param tree_id a given tree_id
+     * @return list of attribute names for a specific tree_id
+     */
+    public static Set<String> getAttributeNames(int tree_id) {
+        EAV eav = EAV.getInstance();
+        Set<String> attributeNames = new HashSet<String>();
+        List<AttributeTypeBase> attributeTypes = eav.getAttributeTypes(tree_id);
+        for (AttributeTypeBase atb: attributeTypes) {
+           log.trace("Adding {} to list of attributenames", atb.name); 
+           attributeNames.add(atb.name);
+        }
+        log.debug("The list of available attributeNames are {}", StringUtils.join(attributeNames, ","));
+        return attributeNames;
     }
 
 }

@@ -279,9 +279,10 @@ public class PartialHarvest extends HarvestDefinition {
      * @param templateName the name of the template to be used
      * @param maxBytes Maximum number of bytes to harvest per domain
      * @param maxObjects Maximum number of objects to harvest per domain
+     * @param attributeValues  Attributes read from webpage
      * @see EventHarvestUtil#addConfigurations(PageContext, I18n, String) for details
      */
-    public void addSeeds(Set<String> seeds, String templateName, long maxBytes, int maxObjects) {
+    public void addSeeds(Set<String> seeds, String templateName, long maxBytes, int maxObjects, Map<String, String> attributeValues) {
         ArgumentNotValid.checkNotNull(seeds, "seeds");
         ArgumentNotValid.checkNotNullOrEmpty(templateName, "templateName");
         if (!TemplateDAO.getInstance().exists(templateName)) {
@@ -305,7 +306,7 @@ public class PartialHarvest extends HarvestDefinition {
             throw new ArgumentNotValid(invalidMessage.toString());
         }
 
-        addSeedsToDomain(templateName, maxBytes, maxObjects, acceptedSeeds);
+        addSeedsToDomain(templateName, maxBytes, maxObjects, acceptedSeeds, attributeValues);
     }
 
     /**
@@ -316,7 +317,7 @@ public class PartialHarvest extends HarvestDefinition {
      * @param maxBytes Maximum number of bytes to harvest per domain
      * @param maxObjects Maximum number of objects to harvest per domain
      */
-    public void addSeedsFromFile(File seedsFile, String templateName, long maxBytes, int maxObjects) {
+    public void addSeedsFromFile(File seedsFile, String templateName, long maxBytes, int maxObjects, Map<String,String> attributeValues) {
         ArgumentNotValid.checkNotNull(seedsFile, "seeds");
         ArgumentNotValid.checkTrue(seedsFile.isFile(), "seedsFile does not exist");
         ArgumentNotValid.checkNotNullOrEmpty(templateName, "templateName");
@@ -353,7 +354,7 @@ public class PartialHarvest extends HarvestDefinition {
             throw new ArgumentNotValid(invalidMessage.toString());
         }
 
-        addSeedsToDomain(templateName, maxBytes, maxObjects, acceptedSeeds);
+        addSeedsToDomain(templateName, maxBytes, maxObjects, acceptedSeeds, attributeValues);
     }
 
     /**
@@ -406,7 +407,7 @@ public class PartialHarvest extends HarvestDefinition {
      * @param acceptedSeeds The set of accepted seeds
      */
     private void addSeedsToDomain(String templateName, long maxBytes, int maxObjects,
-            Map<String, Set<String>> acceptedSeeds) {
+            Map<String, Set<String>> acceptedSeeds, Map<String, String> attributeValues) {
         // Generate components for the name for the configuration and seedlist
         final String maxbytesSuffix = "Bytes";
         String maxBytesS = "Unlimited" + maxbytesSuffix;
@@ -442,6 +443,7 @@ public class PartialHarvest extends HarvestDefinition {
                     domain.addSeedList(seedlist);
                 }
             } else {
+                log.info("Domain {} not yet created in DomainDAO", domainName);
                 domain = Domain.getDefaultDomain(domainName);
                 domain.addSeedList(seedlist);
                 DomainDAO.getInstance().create(domain);
@@ -449,6 +451,7 @@ public class PartialHarvest extends HarvestDefinition {
             // Find or create the DomainConfiguration
             DomainConfiguration dc = null;
             if (domain.hasConfiguration(name)) {
+                log.info("");
                 dc = domain.getConfiguration(name);
             } else {
                 dc = new DomainConfiguration(name, domain, seedListList, new ArrayList<Password>());
@@ -476,20 +479,18 @@ public class PartialHarvest extends HarvestDefinition {
         }
 
         boolean thisInDAO = HarvestDefinitionDAO.getInstance().exists(this.harvestDefName);
-        if (thisInDAO) {
+        if (thisInDAO) { // We have previously created this harvestdefinition in the HarvestDefinitionDAO.
             HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
             for (DomainConfiguration dc : newDcs) {
                 addConfiguration(dc);
                 hddao.addDomainConfiguration(this, new SparseDomainConfiguration(dc));
             }
             hddao.update(this);
-        } else {
+        } else { // not yet created in the HarvestDefinitionDAO
             for (DomainConfiguration dc : newDcs) {
                 addConfiguration(dc);
             }
             HarvestDefinitionDAO.getInstance().create(this);
         }
-
     }
-
 }
