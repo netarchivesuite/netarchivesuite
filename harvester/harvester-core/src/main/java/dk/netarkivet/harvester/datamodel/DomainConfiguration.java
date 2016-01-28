@@ -501,7 +501,7 @@ public class DomainConfiguration implements Named {
      *
      * @return the ID of this configuration
      */
-    public long getID() {
+    public Long getID() {
         return id;
     }
 

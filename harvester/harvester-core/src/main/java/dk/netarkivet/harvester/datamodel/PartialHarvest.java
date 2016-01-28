@@ -27,6 +27,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -43,12 +44,17 @@ import org.apache.commons.io.LineIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.antiaction.raptor.dao.AttributeBase;
+import com.antiaction.raptor.dao.AttributeTypeBase;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 import dk.netarkivet.harvester.webinterface.EventHarvestUtil;
 
 /**
@@ -443,7 +449,7 @@ public class PartialHarvest extends HarvestDefinition {
                     domain.addSeedList(seedlist);
                 }
             } else {
-                log.info("Domain {} not yet created in DomainDAO", domainName);
+                log.info("Creating domain {} in DomainDAO", domainName);
                 domain = Domain.getDefaultDomain(domainName);
                 domain.addSeedList(seedlist);
                 DomainDAO.getInstance().create(domain);
@@ -451,15 +457,15 @@ public class PartialHarvest extends HarvestDefinition {
             // Find or create the DomainConfiguration
             DomainConfiguration dc = null;
             if (domain.hasConfiguration(name)) {
-                log.info("");
                 dc = domain.getConfiguration(name);
+                log.info("Adding seeds til existing configuration '{}' (id={}) for domain '{}' ", name, dc.getID(), domain.getName());
             } else {
                 dc = new DomainConfiguration(name, domain, seedListList, new ArrayList<Password>());
                 dc.setOrderXmlName(templateName);
-
                 dc.setMaxBytes(maxBytes);
                 dc.setMaxObjects(maxObjects);
                 domain.addConfiguration(dc);
+                log.info("Adding seeds til new configuration '{}' (id={}) for domain '{}' ", name, dc.getID(), domain.getName());
             }
 
             // Find the SeedList and add this seed to it
@@ -476,6 +482,8 @@ public class PartialHarvest extends HarvestDefinition {
             // this harvest.
             newDcs.add(dc);
             DomainDAO.getInstance().update(domain);
+            log.info("Created configuration '{}' for domain {} with ID {}", dc.getName(), dc.getDomainName(), dc.getID());
+            saveAttributes(dc, attributeValues);
         }
 
         boolean thisInDAO = HarvestDefinitionDAO.getInstance().exists(this.harvestDefName);
@@ -491,6 +499,60 @@ public class PartialHarvest extends HarvestDefinition {
                 addConfiguration(dc);
             }
             HarvestDefinitionDAO.getInstance().create(this);
+        }
+    }
+
+    private void saveAttributes(DomainConfiguration dc, Map<String, String> attributeValues) {
+        if (dc.getID() == null) {
+             log.warn("Attributes not saved to database. Id of domainConfiguration not yet available");
+             return;
+        }
+        // EAV
+        try {
+            long entity_id = dc.getID();
+            log.info("Saving attributes for domain config id {} and name {} and domain {}", entity_id, dc.getName(), dc.getDomainName());
+            EAV eav = EAV.getInstance();
+            List<AttributeAndType> attributeTypes = eav.getAttributesAndTypes(EAV.DOMAIN_TREE_ID, (int)entity_id);
+            log.debug("3 attributes available for entity {}", entity_id);
+            AttributeAndType attributeAndType;
+            AttributeTypeBase attributeType;
+            AttributeBase attribute;
+            for (int i=0; i<attributeTypes.size(); ++i) {
+                attributeAndType = attributeTypes.get(i);
+                attributeType = attributeAndType.attributeType;
+                log.debug("Examining attribute {}",attributeType.name);
+                attribute = attributeAndType.attribute;
+                if (attribute == null) {
+                    attribute = attributeType.instanceOf();
+                    attribute.entity_id = (int)entity_id;
+                }
+                switch (attributeType.viewtype) {
+                case 1:
+                    String paramValue = attributeValues.get(attributeType.name);
+                    int intValue;
+                    if (paramValue != null) {
+                      intValue = Integer.decode(paramValue);
+                    } else {
+                      intValue = attributeType.def_int;
+                    }
+                    log.info("Setting attribute {} to value {}", attributeType.name, intValue);
+                    attribute.setInteger(intValue);
+                    break;
+                case 5:
+                case 6:
+                    paramValue = attributeValues.get(attributeType.name);
+                    int intVal = 0;
+                    if (paramValue != null && !"0".equals(paramValue)) {
+                        intVal = 1;
+                    } 
+                    log.debug("Set intVal = 1 for attribute {} when receiving paramValue={}", attributeType.name, paramValue);
+                    attribute.setInteger(intVal);
+                    break;
+                }
+                eav.saveAttribute(attribute);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to store EAV data!", e);
         }
     }
 }

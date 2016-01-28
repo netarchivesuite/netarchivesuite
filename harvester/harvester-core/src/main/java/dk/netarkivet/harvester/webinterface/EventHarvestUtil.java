@@ -123,13 +123,13 @@ public final class EventHarvestUtil {
             attributeValues.put(attrParam, paramValue);
         }
         
-        
         // All parameters are valid, so call method
         try {
             PartialHarvest eventHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(
                     eventHarvestName);
             eventHarvest.addSeeds(seedSet, orderTemplate, maxBytes, maxObjects, attributeValues);
         } catch (Exception e) {
+            log.error("Unexpected exception thrown", e);
             HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;error.adding.seeds.to.0", eventHarvestName, e);
             throw new ForwardedToErrorPage("Error while adding seeds", e);
         }
@@ -192,8 +192,10 @@ public final class EventHarvestUtil {
         try {
             PartialHarvest eventHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(
                     eventHarvestName);
+            
             eventHarvest.addSeedsFromFile(seeds, ordertemplate, maxBytes, maxObjects, attributes);
         } catch (Exception e) {
+            log.error("Unexpected exception thrown", e);
             HTMLUtils
                     .forwardWithErrorMessage(context, i18n, "errormsg;error.adding.seeds.to.0", e, eventHarvestName, e);
             throw new ForwardedToErrorPage("Error while adding seeds", e);
