@@ -454,19 +454,23 @@ public class PartialHarvest extends HarvestDefinition {
                 domain.addSeedList(seedlist);
                 DomainDAO.getInstance().create(domain);
             }
-            // Find or create the DomainConfiguration
+            //  create a DomainConfiguration with this name, if it doesn't exist already,
+            // If it exists already, add a "_" + timestamp to the end of the name to be make it unique.
+            // This will probably happen rarely.
             DomainConfiguration dc = null;
             if (domain.hasConfiguration(name)) {
-                dc = domain.getConfiguration(name);
-                log.info("Adding seeds til existing configuration '{}' (id={}) for domain '{}' ", name, dc.getID(), domain.getName());
-            } else {
-                dc = new DomainConfiguration(name, domain, seedListList, new ArrayList<Password>());
-                dc.setOrderXmlName(templateName);
-                dc.setMaxBytes(maxBytes);
-                dc.setMaxObjects(maxObjects);
-                domain.addConfiguration(dc);
-                log.info("Adding seeds til new configuration '{}' (id={}) for domain '{}' ", name, dc.getID(), domain.getName());
-            }
+                String oldName = name;
+                name = name + "_" + System.currentTimeMillis();
+                log.info("configuration '{}' for domain '{}' already exists. Change name to ", oldName, name, domain.getName());
+            }   
+
+            dc = new DomainConfiguration(name, domain, seedListList, new ArrayList<Password>());
+            dc.setOrderXmlName(templateName);
+            dc.setMaxBytes(maxBytes);
+            dc.setMaxObjects(maxObjects);
+            domain.addConfiguration(dc);
+            log.info("Adding seeds til new configuration '{}' (id={}) for domain '{}' ", name, dc.getID(), domain.getName());
+
 
             // Find the SeedList and add this seed to it
             seedlist = domain.getSeedList(name);
