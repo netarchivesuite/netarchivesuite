@@ -82,7 +82,7 @@ public class LinuxMachine extends Machine {
                 if ((bundlesArr == null || bundlesArr.length == 0)
                         && deployConfiguration.getDefaultBundlerZip() != null) {
                     bundlesArr = new String[] { deployConfiguration.getDefaultBundlerZip().getAbsolutePath() };
-                } else if ((bundlesArr == null || bundlesArr.length == 0)
+                } else if ((bundlesArr == null || bundlesArr.length == 0 || bundlesArr[0].length()==0)
                         && deployConfiguration.getDefaultBundlerZip() == null) {
                     throw new IllegalArgumentException("A Heritrix bundler needs to be defined for H3 controllers, "
                             + "either directly in the deploy configuration or from the command line with the -B option.");

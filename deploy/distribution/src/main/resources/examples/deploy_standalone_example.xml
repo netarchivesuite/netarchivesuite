@@ -233,7 +233,6 @@ National Library.
                 <jmxPassword>R_D</jmxPassword>
               </heritrix>
               <heritrix3>
-                             <bundle>NetarchiveSuite-heritrix3-bundler.zip</bundle>
                            </heritrix3>
               <serverDir>harvester_snapshot</serverDir>
             </harvesting>
@@ -264,7 +263,6 @@ National Library.
                 <jmxPassword>R_D</jmxPassword>
               </heritrix>
               <heritrix3>
-                             <bundle>NetarchiveSuite-heritrix3-bundler.zip</bundle>
                            </heritrix3>
               <serverDir>harvester_focused</serverDir>
             </harvesting>
