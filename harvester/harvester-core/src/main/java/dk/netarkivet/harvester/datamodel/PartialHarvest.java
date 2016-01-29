@@ -435,36 +435,35 @@ public class PartialHarvest extends HarvestDefinition {
         for (Map.Entry<String, Set<String>> entry : acceptedSeeds.entrySet()) {
             String domainName = entry.getKey();
             Domain domain;
-
-            // Need a seedlist to include in the configuration when we
-            // create it. This will be replaced later.
-            SeedList seedlist = new SeedList(name, "");
             List<SeedList> seedListList = new ArrayList<SeedList>();
-            seedListList.add(seedlist);
-
+            SeedList seedlist;
             // Find or create the domain
             if (DomainDAO.getInstance().exists(domainName)) {
                 domain = DomainDAO.getInstance().read(domainName);
-                if (!domain.hasSeedList(name)) {
-                    domain.addSeedList(seedlist);
+                
+                // If a config with this name exists already for the dommain, add a "_" + timestamp to the end of the name to be make it unique.
+                // This will probably happen rarely.
+                // This name is used for both the configuration and corresponding seed
+                if (domain.hasConfiguration(name)) {
+                    String oldName = name;
+                    name = name + "_" + System.currentTimeMillis();
+                    log.info("configuration '{}' for domain '{}' already exists. Change name for config and corresponding seed to ", 
+                            oldName, name, domain.getName());
                 }
+                seedlist =  new SeedList(name, ""); // Assure that the seedname is the same as the configname.
+                seedListList.add(seedlist);
+                domain.addSeedList(seedlist);
+                                
             } else {
+                seedlist =  new SeedList(name, ""); // Assure that the seedname is the same as the configname.
+                seedListList.add(seedlist);
                 log.info("Creating domain {} in DomainDAO", domainName);
                 domain = Domain.getDefaultDomain(domainName);
                 domain.addSeedList(seedlist);
                 DomainDAO.getInstance().create(domain);
             }
-            //  create a DomainConfiguration with this name, if it doesn't exist already,
-            // If it exists already, add a "_" + timestamp to the end of the name to be make it unique.
-            // This will probably happen rarely.
-            DomainConfiguration dc = null;
-            if (domain.hasConfiguration(name)) {
-                String oldName = name;
-                name = name + "_" + System.currentTimeMillis();
-                log.info("configuration '{}' for domain '{}' already exists. Change name to ", oldName, name, domain.getName());
-            }   
-
-            dc = new DomainConfiguration(name, domain, seedListList, new ArrayList<Password>());
+            
+            DomainConfiguration dc = new DomainConfiguration(name, domain, seedListList, new ArrayList<Password>());
             dc.setOrderXmlName(templateName);
             dc.setMaxBytes(maxBytes);
             dc.setMaxObjects(maxObjects);
