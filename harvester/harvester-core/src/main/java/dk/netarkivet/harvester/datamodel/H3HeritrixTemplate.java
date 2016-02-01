@@ -296,54 +296,54 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     	template = templateNew.replace(ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER, getArcWriterProcessor()); 
     }
     		
-  	private String getArcWriterProcessor() {
-		
-//      <bean id="arcWriter" class="org.archive.modules.writer.ARCWriterProcessor">
-//  	  <!-- <property name="compress" value="true" /> -->
-//  	  <!-- <property name="prefix" value="IAH" /> -->
-//  	  <!-- <property name="suffix" value="${HOSTNAME}" /> -->
-//  	  <!-- <property name="maxFileSizeBytes" value="100000000" /> -->
-//  	  <!-- <property name="poolMaxActive" value="1" /> -->
-//  	  <!-- <property name="poolMaxWaitMs" value="300000" /> -->
-//  	  <!-- <property name="skipIdenticalDigests" value="false" /> -->
-//  	  <!-- <property name="maxTotalBytesToWrite" value="0" /> -->
-//  	  <!-- <property name="directory" value="." /> -->
-//  	  <!-- <property name="storePaths">
-//  	        <list>
-//  	         <value>arcs</value>
-//  	        </list>
-//  	       </property> -->
-//  	 </bean>
-// "<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">";
-  	  String propertyName="\n<property name=\"";
-      String valuePrefix = "\" value=\"";
-      String valueSuffix = "\"";
-      String propertyEnd="/>";
-      
-  	   StringBuilder arcWriterBeanBuilder = new StringBuilder();
-  	   arcWriterBeanBuilder.append("<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">\n");
-  	   arcWriterBeanBuilder.append(propertyName + "compress" + valuePrefix
-  	           + Settings.get(HarvesterSettings.HERITRIX3_ARC_COMPRESSION) 
-               + valueSuffix + propertyEnd); 
-  	   arcWriterBeanBuilder.append(propertyName + "prefix" + valuePrefix
-  	         + ARCHIVE_FILE_PREFIX_PLACEHOLDER
-             + valueSuffix + propertyEnd);
-  	 arcWriterBeanBuilder.append(propertyName + "suffix" + valuePrefix
-             + Settings.get(HarvesterSettings.HERITRIX3_ARC_SUFFIX) 
-             + valueSuffix + propertyEnd); 
-  	arcWriterBeanBuilder.append(propertyName + "maxFileSizeBytes" + valuePrefix
-            + Settings.get(HarvesterSettings.HERITRIX3_ARC_MAXSIZE) 
-            + valueSuffix + propertyEnd); 
-  	arcWriterBeanBuilder.append(propertyName + "poolMaxActive" + valuePrefix
-            + Settings.get(HarvesterSettings.HERITRIX3_ARC_POOL_MAXACTIVE) 
-            + valueSuffix + propertyEnd); 
-    
-  	   
-  	   
-  	   
-  	   arcWriterBeanBuilder.append("</bean>");
-  			 
-  	   return arcWriterBeanBuilder.toString();  			      
+	private String getArcWriterProcessor() {
+
+	    //      <bean id="arcWriter" class="org.archive.modules.writer.ARCWriterProcessor">
+	    //  	  <!-- <property name="compress" value="true" /> -->
+	    //  	  <!-- <property name="prefix" value="IAH" /> -->
+	    //  	  <!-- <property name="suffix" value="${HOSTNAME}" /> -->
+	    //  	  <!-- <property name="maxFileSizeBytes" value="100000000" /> -->
+	    //  	  <!-- <property name="poolMaxActive" value="1" /> -->
+	    //  	  <!-- <property name="poolMaxWaitMs" value="300000" /> -->
+	    //  	  <!-- <property name="skipIdenticalDigests" value="false" /> -->
+	    //  	  <!-- <property name="maxTotalBytesToWrite" value="0" /> -->
+	    //  	  <!-- <property name="directory" value="." /> -->
+	    //  	  <!-- <property name="storePaths">
+	    //  	        <list>
+	    //  	         <value>arcs</value>
+	    //  	        </list>
+	    //  	       </property> -->
+	    //  	 </bean>
+	    // "<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">";
+	    String propertyName="\n<property name=\"";
+	    String valuePrefix = "\" value=\"";
+	    String valueSuffix = "\"";
+	    String propertyEnd="/>";
+
+	    StringBuilder arcWriterBeanBuilder = new StringBuilder();
+	    arcWriterBeanBuilder.append("<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">\n");
+	    arcWriterBeanBuilder.append(propertyName + "compress" + valuePrefix
+	            + Settings.get(HarvesterSettings.HERITRIX3_ARC_COMPRESSION) 
+	            + valueSuffix + propertyEnd); 
+	    arcWriterBeanBuilder.append(propertyName + "prefix" + valuePrefix
+	            + ARCHIVE_FILE_PREFIX_PLACEHOLDER
+	            + valueSuffix + propertyEnd);
+	    arcWriterBeanBuilder.append(propertyName + "suffix" + valuePrefix
+	            + Settings.get(HarvesterSettings.HERITRIX3_ARC_SUFFIX) 
+	            + valueSuffix + propertyEnd); 
+	    arcWriterBeanBuilder.append(propertyName + "maxFileSizeBytes" + valuePrefix
+	            + Settings.get(HarvesterSettings.HERITRIX3_ARC_MAXSIZE) 
+	            + valueSuffix + propertyEnd); 
+	    arcWriterBeanBuilder.append(propertyName + "poolMaxActive" + valuePrefix
+	            + Settings.get(HarvesterSettings.HERITRIX3_ARC_POOL_MAXACTIVE) 
+	            + valueSuffix + propertyEnd); 
+
+
+
+
+	    arcWriterBeanBuilder.append("</bean>");
+
+	    return arcWriterBeanBuilder.toString();  			      
   	}
 
 		
@@ -605,76 +605,74 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
 	@Override
 	public void insertAttributes(List<AttributeAndType> attributesAndTypes) {
-		AttributeAndType attributeAndType;
-		AttributeTypeBase attributeType;
-		AttributeBase attribute;
-		for (int i=0; i<attributesAndTypes.size(); ++i) {
-			attributeAndType = attributesAndTypes.get(i);
-			attributeType = attributeAndType.attributeType;
-			attribute = attributeAndType.attribute;
-			// initialize temp variables
-			Integer intVal = null;   
+	    ArgumentNotValid.checkNotNull(attributesAndTypes, "List<AttributeAndType> attributesAndTypes");
+	    for (AttributeAndType attributeAndType: attributesAndTypes) {
+	        // initialize temp variables
+	        Integer intVal = null;
 	        String val = null;
-			log.debug("Trying to insert the attribute {} into the template", attributeType.name);
-			switch (attributeType.viewtype) {
-			case 1:
-				if (attribute != null) {
-					intVal = attribute.getInteger();
-					log.debug("Read explicitly value for attribute '{}'", attributeType.name, intVal);
-				}
-				if (intVal == null && attributeType.def_int != null) {
-					intVal = attributeType.def_int;
-					log.info("Viewtype 1 attribute '{}' not set explicitly. Using default value '{}'",  attributeType.name, intVal);
-				}
-				if (intVal != null) {
-					val = intVal.toString();
-				} else {
-					val = "";
-				}
-				log.debug("Value selected for attribute {} {}", attributeType.name, val);
-				break;
-			case 5:
-				if (attribute != null) {
-					intVal = attribute.getInteger();
-					log.debug("Read explicitly value for attribute '{}'", attributeType.name, intVal);
-				}
-				if (intVal == null && attributeType.def_int != null) {
-					intVal = attributeType.def_int;
-					log.info("Viewtype 5 attribute '{}' not set explicitly. Using default value '{}'", attributeType.name, intVal);
-				}
-				if (intVal != null && intVal > 0) {
-					val = "true";
-				} else {
-					val = "false";
-				}
-				log.debug("Value selected for attribute '{}' '{}'", attributeType.name, val);
-				break;
-			case 6:
-				if (attribute != null) {
-					intVal = attribute.getInteger();
-					log.debug("Read explicitly value for attribute '{}'", attributeType.name, intVal);
-				}
-				if (intVal == null && attributeType.def_int != null) {
-					intVal = attributeType.def_int;
-					log.info("Viewtype 6 attribute '{}' not set explicitly. Using default value '{}'", attributeType.name, intVal);
-				}
-				if (intVal != null && intVal > 0) {
-					val = "obey";
-				} else {
-					val = "ignore";
-				}
-				log.debug("Value selected for attribute '{}' '{}'", attributeType.name, val);
-				break;
-			}
-			String placeholder = "%{" + attributeType.name.toUpperCase() + "}";
-			if (template.contains(placeholder)) {
-			    String templateNew = template.replace("%{" + attributeType.name.toUpperCase() + "}", val);
-			    this.template = templateNew;
-			} else {
-			    log.warn("Placeholder '{}' not found in template. Therefore not substituted by '{}' in this template", 
-			            placeholder, val); 
-			}
-		}
+	        AttributeTypeBase attributeType = attributeAndType.attributeType;
+	        AttributeBase attribute = attributeAndType.attribute;
+
+	        log.debug("Trying to insert the attribute {} into the template", attributeType.name);
+	        switch (attributeType.viewtype) {
+	        case 1:
+	            if (attribute != null) {
+	                intVal = attribute.getInteger();
+	                log.debug("Read explicitly value for attribute '{}'", attributeType.name, intVal);
+	            }
+	            if (intVal == null && attributeType.def_int != null) {
+	                intVal = attributeType.def_int;
+	                log.debug("Viewtype 1 attribute '{}' not set explicitly. Using default value '{}'",  attributeType.name, intVal);
+	            }
+	            if (intVal != null) {
+	                val = intVal.toString();
+	            } else {
+	                val = "";
+	            }
+	            log.info("Value selected for attribute {}: {}", attributeType.name, val);
+	            break;
+	        case 5:
+	            if (attribute != null) {
+	                intVal = attribute.getInteger();
+	                log.debug("Read explicitly value for attribute '{}'", attributeType.name, intVal);
+	            }
+	            if (intVal == null && attributeType.def_int != null) {
+	                intVal = attributeType.def_int;
+	                log.debug("Viewtype 5 attribute '{}' not set explicitly. Using default value '{}'", attributeType.name, intVal);
+	            }
+	            if (intVal != null && intVal > 0) {
+	                val = "true";
+	            } else {
+	                val = "false";
+	            }
+	            log.info("Value selected for attribute '{}': '{}'", attributeType.name, val);
+	            break;
+	        case 6:
+	            if (attribute != null) {
+	                intVal = attribute.getInteger();
+	                log.debug("Read explicitly value for attribute '{}'", attributeType.name, intVal);
+	            }
+	            if (intVal == null && attributeType.def_int != null) {
+	                intVal = attributeType.def_int;
+	                log.debug("Viewtype 6 attribute '{}' not set explicitly. Using default value '{}'", attributeType.name, intVal);
+	            }
+	            if (intVal != null && intVal > 0) {
+	                val = "obey";
+	            } else {
+	                val = "ignore";
+	            }
+	            log.info("Value selected for attribute '{}': '{}'", attributeType.name, val);
+	            break;
+	        }
+	        String placeholder = "%{" + attributeType.name.toUpperCase() + "}";
+	        if (template.contains(placeholder)) {
+	            String templateNew = template.replace("%{" + attributeType.name.toUpperCase() + "}", val);
+	            this.template = templateNew;
+	        } else {
+	            log.warn("Placeholder '{}' not found in template. Therefore not substituted by '{}' in this template", 
+	                    placeholder, val); 
+	        }
+	    }
 	}
 
 	@Override
