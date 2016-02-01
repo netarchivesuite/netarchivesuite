@@ -608,55 +608,62 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		AttributeAndType attributeAndType;
 		AttributeTypeBase attributeType;
 		AttributeBase attribute;
-		Integer intVal = null;
-		String val = null;
 		for (int i=0; i<attributesAndTypes.size(); ++i) {
 			attributeAndType = attributesAndTypes.get(i);
 			attributeType = attributeAndType.attributeType;
 			attribute = attributeAndType.attribute;
+			// initialize temp variables
+			Integer intVal = null;   
+	        String val = null;
 			log.debug("Trying to insert the attribute {} into the template", attributeType.name);
 			switch (attributeType.viewtype) {
 			case 1:
-				if (attribute !=  null) {
+				if (attribute != null) {
 					intVal = attribute.getInteger();
+					log.debug("Read explicitly value for attribute '{}'", attributeType.name, intVal);
 				}
 				if (intVal == null && attributeType.def_int != null) {
 					intVal = attributeType.def_int;
-					log.info("Viewtype 1 attribute {} undefined. Using default value '{}'",  attributeType.name, intVal);
+					log.info("Viewtype 1 attribute '{}' not set explicitly. Using default value '{}'",  attributeType.name, intVal);
 				}
 				if (intVal != null) {
 					val = intVal.toString();
 				} else {
 					val = "";
 				}
+				log.debug("Value selected for attribute {} {}", attributeType.name, val);
 				break;
 			case 5:
-				if (attribute !=  null) {
+				if (attribute != null) {
 					intVal = attribute.getInteger();
+					log.debug("Read explicitly value for attribute '{}'", attributeType.name, intVal);
 				}
 				if (intVal == null && attributeType.def_int != null) {
 					intVal = attributeType.def_int;
-					log.info("Viewtype 5 attribute {} is undefined. Using default value '{}'", attributeType.name, intVal);
+					log.info("Viewtype 5 attribute '{}' not set explicitly. Using default value '{}'", attributeType.name, intVal);
 				}
 				if (intVal != null && intVal > 0) {
 					val = "true";
 				} else {
 					val = "false";
 				}
+				log.debug("Value selected for attribute '{}' '{}'", attributeType.name, val);
 				break;
 			case 6:
-				if (attribute !=  null) {
+				if (attribute != null) {
 					intVal = attribute.getInteger();
+					log.debug("Read explicitly value for attribute '{}'", attributeType.name, intVal);
 				}
 				if (intVal == null && attributeType.def_int != null) {
 					intVal = attributeType.def_int;
-					log.info("Viewtype 6 attribute {} is undefined. Using default value '{}'", attributeType.name, intVal);
+					log.info("Viewtype 6 attribute '{}' not set explicitly. Using default value '{}'", attributeType.name, intVal);
 				}
 				if (intVal != null && intVal > 0) {
 					val = "obey";
 				} else {
 					val = "ignore";
 				}
+				log.debug("Value selected for attribute '{}' '{}'", attributeType.name, val);
 				break;
 			}
 			String placeholder = "%{" + attributeType.name.toUpperCase() + "}";
