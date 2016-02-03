@@ -208,23 +208,17 @@ public class JobDispatcher {
             IOFailure {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
-        boolean jobChanged=false;
 
         if (origHarvestAudience != null && !origHarvestAudience.isEmpty()) {
             job.setHarvestAudience(origHarvestAudience);
-            jobChanged=true;
         }
         if (usingWarcAsArchiveFormat()) {
         	log.info("As we're using WARC as archiveFormat WarcInfoMetadata is now added to the template");
         	HeritrixTemplate ht = job.getOrderXMLdoc();
         	ht.insertWarcInfoMetadata(job, origHarvestName, origHarvestSchedule, Settings.get(HarvesterSettings.PERFORMER));
         	job.setOrderXMLDoc(ht);
-        	jobChanged=true;
         } else {
         	log.info("As we're using ARC as archiveFormat no WarcInfoMetadata was added to the template");
-        }
-        if (jobChanged) {
-            jobDao.update(job); // Persist the last changes in the jobdatabase before submitting the job
         }
         
         DoOneCrawlMessage nMsg = new DoOneCrawlMessage(job, HarvesterChannels.getHarvestJobChannelId(channel),
