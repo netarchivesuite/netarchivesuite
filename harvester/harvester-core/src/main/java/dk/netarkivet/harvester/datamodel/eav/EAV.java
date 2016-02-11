@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -88,14 +90,23 @@ public class EAV {
     /**
      * Handy class to pair an attribute and its type.
      */
-    public static class AttributeAndType {
+    public static class AttributeAndType implements Comparable<AttributeAndType> {
     	public AttributeTypeBase attributeType;
     	public AttributeBase attribute;
     	public AttributeAndType(AttributeTypeBase attributeType, AttributeBase attribute) {
         	this.attributeType = attributeType;
         	this.attribute = attribute;
     	}
-    }
+
+		/**
+		 * Comparator allows a list to be sorted so attributes appear in a reproducible order.
+		 * @param o
+		 * @return
+		 */
+		@Override public int compareTo(AttributeAndType o) {
+			 return attributeType.id - o.attributeType.id;
+		}
+	}
 
     /**
      * Returns a list of attributes and their type for a given entity id and tree id.
@@ -141,6 +152,8 @@ public class EAV {
      * @return the result of comparing two lists containing attributes and their types
      */
     public static int compare(List<AttributeAndType> antList1, List<AttributeAndType> antList2) {
+		Collections.sort(antList1);
+		Collections.sort(antList2);
     	int res;
         AttributeAndType ant1;
         AttributeAndType ant2;
