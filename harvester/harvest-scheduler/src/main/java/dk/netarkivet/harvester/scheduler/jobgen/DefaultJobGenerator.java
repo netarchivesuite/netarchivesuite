@@ -49,6 +49,24 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
     /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(DefaultJobGenerator.class);
 
+    private static Long CONFIG_COUNT_SNAPSHOT = null;
+
+    public DefaultJobGenerator() {
+        try {
+            CONFIG_COUNT_SNAPSHOT = Settings.getLong(HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
+            if (CONFIG_COUNT_SNAPSHOT <= 0) {
+                log.info("The parameter {} has the value {} and is therefore ignored during job splitting for "
+                        + "snapshot jobs.", HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT, CONFIG_COUNT_SNAPSHOT);
+            } else {
+                log.info("Snapshot jobs will be split at an absolute maximum of {} configurations ({}).",
+                        CONFIG_COUNT_SNAPSHOT, HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
+            }
+        } catch (ArgumentNotValid argumentNotValid) {
+            log.info("The parameter {} is not set so there is no absolute limit to the number of configurations per "
+                    + "snapshot job.", HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
+        }
+    }
+
     /**
      * Compare two configurations using the following order: 1) Harvest template 2) Byte limit 3) expected number of
      * object a harvest of the configuration will produce. The comparison will put the largest configuration first (with
@@ -186,19 +204,12 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
 
     @Override
     protected boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg) {
-        if (job.isSnapshot()) {
-            try {
-                long CONFIG_COUNT_SNAPSHOT = Settings.getLong(HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
-                if (CONFIG_COUNT_SNAPSHOT <= 0) {
-                    log.info("The parameter {} has the value {} and is therefore ignored during job splitting for "
-                                           + "snapshot jobs.", HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT, CONFIG_COUNT_SNAPSHOT);
-                } else if (CONFIG_COUNT_SNAPSHOT > 0 && job.getDomainConfigurationMap().size() >= CONFIG_COUNT_SNAPSHOT) {
-                    return false;
-                }
-            } catch (ArgumentNotValid argumentNotValid) {
-                log.info("The parameter {} is not set so there is no absolute limit to the number of configurations per "
-                        + "snapshot job.", HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
-            }
+        if (job.isSnapshot()
+                && CONFIG_COUNT_SNAPSHOT != null
+                && CONFIG_COUNT_SNAPSHOT > 0
+                && job.getDomainConfigurationMap().size() >= CONFIG_COUNT_SNAPSHOT
+                ) {
+            return false;
         }
 
         // By default byte limit is used as base criterion for splitting a
