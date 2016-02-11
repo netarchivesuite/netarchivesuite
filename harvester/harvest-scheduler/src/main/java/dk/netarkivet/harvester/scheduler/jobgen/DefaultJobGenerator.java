@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
@@ -185,6 +186,21 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
 
     @Override
     protected boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg) {
+        if (job.isSnapshot()) {
+            try {
+                long CONFIG_COUNT_SNAPSHOT = Settings.getLong(HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
+                if (CONFIG_COUNT_SNAPSHOT <= 0) {
+                    log.info("The parameter {} has the value {} and is therefore ignored during job splitting for "
+                                           + "snapshot jobs.", HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT, CONFIG_COUNT_SNAPSHOT);
+                } else if (CONFIG_COUNT_SNAPSHOT > 0 && job.getDomainConfigurationMap().size() >= CONFIG_COUNT_SNAPSHOT) {
+                    return false;
+                }
+            } catch (ArgumentNotValid argumentNotValid) {
+                log.info("The parameter {} is not set so there is no absolute limit to the number of configurations per "
+                        + "snapshot job.", HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
+            }
+        }
+
         // By default byte limit is used as base criterion for splitting a
         // harvest in config chunks, however the configuration can override
         // this and instead use object limit.
