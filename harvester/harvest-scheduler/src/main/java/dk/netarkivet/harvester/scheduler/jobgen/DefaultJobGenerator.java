@@ -182,14 +182,6 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         return jobsMade;
     }
 
-    private boolean isChangedCfg(DomainConfiguration previous, DomainConfiguration current) {
-         if (previous == null) {
-             return false;
-         } else {
-             return !(EAV.compare(previous.getAttributesAndTypes(), current.getAttributesAndTypes()) == 0);
-         }
-    }
-
 
     @Override
     protected boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg) {
