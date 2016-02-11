@@ -61,7 +61,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 log.info("Snapshot jobs will be split at an absolute maximum of {} configurations ({}).",
                         CONFIG_COUNT_SNAPSHOT, HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
             }
-        } catch (ArgumentNotValid argumentNotValid) {
+        } catch (UnknownID u) {
             log.info("The parameter {} is not set so there is no absolute limit to the number of configurations per "
                     + "snapshot job.", HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
         }
