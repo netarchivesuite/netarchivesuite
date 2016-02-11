@@ -108,6 +108,9 @@ public class ExtractorOAI extends ContentExtractor {
 	protected boolean innerExtract(CrawlURI curi) {
         try {
             String query = curi.getUURI().getQuery();
+            if (query == null) { // Test for null query - strange that we need to do that
+                return false;
+            }
             if (!query.contains("verb=ListRecords")) { //Not an OAI-PMH document
                 return false;
             }
