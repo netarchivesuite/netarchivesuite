@@ -53,6 +53,7 @@ import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -73,6 +74,7 @@ public class ArchiveMessageHandlerTester {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
         tmh = new TestMessageHandler();
+        ApplicationUtils.dirMustExist(FileUtils.getTempDir());
     }
 
     @After
