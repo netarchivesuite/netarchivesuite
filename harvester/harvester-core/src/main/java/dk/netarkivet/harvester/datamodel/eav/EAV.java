@@ -145,6 +145,51 @@ public class EAV {
 		return attributes;
 	}
 
+	public static int compare2 (List<AttributeAndType> antList1, List<AttributeAndType> antList2) {
+		int size1 = antList1.size();
+		int size2 = antList2.size();
+		if (size1 != size2) {
+			return (size1 - size2) < 0 ? -1 : 1;
+		}
+		Collections.sort(antList1);
+		Collections.sort(antList2);
+		for (int i=0; i < size1; i++) {
+			AttributeAndType ant1 = antList1.get(i);
+			AttributeAndType ant2 = antList2.get(i);
+			if (ant1.attributeType.id != ant2.attributeType.id) {
+				return (ant1.attributeType.id - ant2.attributeType.id) < 0 ? -1 : 1;
+			}
+			if (ant1.attributeType.datatype != 1) {
+				throw new UnsupportedOperationException("EAV attribute datatype compare not implemented yet.");
+			}
+			Integer i1 = null;
+			Integer i2 = null;
+			if (ant1.attribute != null) {
+				i1 = ant1.attribute.getInteger();
+			}
+			if (i1 == null) {
+				i1 = ant1.attributeType.def_int;
+			}
+			if (i1 == null) {
+				i1 = 0;
+			}
+			if (ant2.attribute != null) {
+				i2 = ant2.attribute.getInteger();
+			}
+			if (i2 == null) {
+				i2 = ant2.attributeType.def_int;
+			}
+			if (i2 == null) {
+				i2 = 0;
+			}
+			int res = i2 - i1;
+			if (res != 0L) {
+				return res < 0L ? -1 : 1;
+			}
+		}
+		return 0;
+	}
+
     /**
      * Compare two lists containing attributes and their types.
      * @param antList1

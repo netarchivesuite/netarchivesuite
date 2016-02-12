@@ -107,7 +107,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             }
 
             log.trace("Comparing EAV attributes now");
-            int result = EAV.compare(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
+            int result = EAV.compare2(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
             log.trace("Comparison of EAV attributes gave result " + result);
             return result;
         }
