@@ -102,6 +102,20 @@ public class PreconditionEnforcer extends Processor  {
     }   
     
     /**
+     * Whether to consider dns checks in the preconditionenforcer.
+     * default: true
+     */
+    {
+        setConsiderDnsChecks(true);
+    }
+    public boolean getConsiderDnsChecks() {
+        return (Boolean) kp.get("considerDnsChecks");
+    }
+    public void setConsiderDnsChecks(boolean considerDnsChecks) {
+        kp.put("considerDnsChecks", considerDnsChecks);
+    }
+        
+    /**
      * Auto-discovered module providing configured (or overridden)
      * User-Agent value and RobotsHonoringPolicy
      */
@@ -163,9 +177,11 @@ public class PreconditionEnforcer extends Processor  {
     @Override
     protected ProcessResult innerProcessResult(CrawlURI puri) {
         CrawlURI curi = (CrawlURI)puri;
-        if (considerDnsPreconditions(curi)) {
-        	logger.info("DnsPreconditions: ProcessResult for curi" +  curi + ": ProcessResult.FINISH");
-            return ProcessResult.FINISH;
+        if (getConsiderDnsChecks()) {
+        	if (considerDnsPreconditions(curi)) {
+        		logger.info("DnsPreconditions failed: ProcessResult for curi" +  curi + ": ProcessResult.FINISH");
+        		return ProcessResult.FINISH;
+        	}
         }
 
         // make sure we only process schemes we understand (i.e. not dns)
@@ -178,7 +194,7 @@ public class PreconditionEnforcer extends Processor  {
         }
 
         if (considerRobotsPreconditions(curi)) {
-        	logger.info("RobotsPreconditions: ProcessResult for curi " +  curi + ": ProcessResult.FINISH");
+        	logger.info("RobotsPreconditions failed: ProcessResult for curi " +  curi + ": ProcessResult.FINISH");
             return ProcessResult.FINISH;
         }
 
@@ -289,6 +305,7 @@ public class PreconditionEnforcer extends Processor  {
         if(cs == null) {
             curi.setFetchStatus(S_UNFETCHABLE_URI);
 //            curi.skipToPostProcessing();
+            logger.info("Unable to retrieve a CrawlServer for UURI '" + curi.getUURI() + "'");
             return true;
         }
 
@@ -303,6 +320,8 @@ public class PreconditionEnforcer extends Processor  {
             }
             curi.setFetchStatus(S_DOMAIN_PREREQUISITE_FAILURE);
 //            curi.skipToPostProcessing();
+            logger.info( "no dns for " + ch +
+                    " cancelling processing for CrawlURI " + curi.toString());
             return true;
         }
 
@@ -314,9 +333,12 @@ public class PreconditionEnforcer extends Processor  {
             String preq = "dns:" + ch.getHostName();
             try {
                 curi.markPrerequisite(preq);
+                logger.info("Deferring processing of CrawlURI " + curi.toString()
+                + " for dns lookup. Marking '" + preq + "' as prerequisite!.");
             } catch (URIException e) {
                 throw new RuntimeException(e); // shouldn't ever happen
             }
+            
             return true;
         }
         

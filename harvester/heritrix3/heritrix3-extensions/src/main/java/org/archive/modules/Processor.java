@@ -133,11 +133,12 @@ implements HasKeyedProperties,
     public ProcessResult process(CrawlURI uri) 
     throws InterruptedException {
         if (!getEnabled()) {
+        	logger.info("Skip processing for curi '" + uri +"'. The bean is disabled.");
             return ProcessResult.PROCEED;
         }
         
         if (getShouldProcessRule().decisionFor(uri) == DecideResult.REJECT) {
-        	logger.info("curi " + uri + " is rejected by bean" + this.getBeanName());
+        	logger.info("curi " + uri + " is rejected by bean " + this.getBeanName());
             innerRejectProcess(uri);
             logger.info("curi " + uri + " is allowed to proceed to the next bean");
             return ProcessResult.PROCEED;
