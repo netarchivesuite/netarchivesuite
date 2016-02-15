@@ -146,6 +146,7 @@ public class EAV {
 	}
 
 	public static int compare2 (List<AttributeAndType> antList1, List<AttributeAndType> antList2) {
+		log.debug("Using new comparator");
 		if (antList1 == null) {
 			antList1 = new ArrayList<>();
 		}
@@ -234,6 +235,7 @@ public class EAV {
      * @return the result of comparing two lists containing attributes and their types
      */
     public static int compare(List<AttributeAndType> antList1, List<AttributeAndType> antList2) {
+		log.debug("Using old comparator");
 		Collections.sort(antList1);
 		Collections.sort(antList2);
     	int res;
