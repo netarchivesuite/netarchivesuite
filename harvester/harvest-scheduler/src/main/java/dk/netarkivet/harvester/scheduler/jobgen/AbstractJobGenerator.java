@@ -191,6 +191,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
 
     @Override
     public boolean canAccept(Job job, DomainConfiguration cfg, DomainConfiguration previousCfg) {
+        log.trace("Comparing current cfg {} with previous cfg {}", cfg, previousCfg);
         if (!checkAddDomainConfInvariant(job, cfg, previousCfg)) {
             return false;
         }
@@ -253,7 +254,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(cfg, "cfg");
 
-        if (previousCfg != null && EAV.compare(cfg.getAttributesAndTypes(), previousCfg.getAttributesAndTypes())!=0 ) {
+        if (previousCfg != null && EAV.compare2(cfg.getAttributesAndTypes(), previousCfg.getAttributesAndTypes())!=0 ) {
             log.debug("Attributes have changed between configurations {} and {}",
                     cfgToString(previousCfg), cfgToString(cfg));
             return false;
