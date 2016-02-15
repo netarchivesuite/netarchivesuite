@@ -86,6 +86,31 @@ abstract class AbstractJobGenerator implements JobGenerator {
         return result;
     }
 
+    public static <T> void chunk(List<T> inputList, Comparator<T> comparator) {
+        List<List<T>> chunks = new ArrayList<>();
+        for (T input: inputList) {
+            boolean found = false;
+            for (List<T> foundChunk: chunks) {
+                if (comparator.compare(input, foundChunk.get(0)) == 0) {
+                    foundChunk.add(input);
+                    found = true;
+                }
+            }
+            if (!found) {
+                List<T> newList = new ArrayList<>();
+                newList.add(input);
+                chunks.add(newList);
+            }
+        }
+        int i = 0;
+        for (List<T> chunk: chunks) {
+            for (T value: chunk) {
+                inputList.set(i, value);
+                i++;
+            }
+        }
+    }
+
     @Override
     public int generateJobs(HarvestDefinition harvest) {
         log.info("Generating jobs for harvestdefinition #{}", harvest.getOid());
@@ -105,7 +130,9 @@ abstract class AbstractJobGenerator implements JobGenerator {
             for (DomainConfiguration dc: subset) {
                 log.debug(cfgToString(dc));
             }
-            Collections.sort(subset, domainConfigurationSubsetComparator);
+            // Don't really need to sort here - just by those which are equal under the comparartor.
+            // Collections.sort(subset, domainConfigurationSubsetComparator);
+            chunk(subset, domainConfigurationSubsetComparator);
             log.debug("After Sorting:");
             for (DomainConfiguration dc: subset) {
                 log.debug(cfgToString(dc));
