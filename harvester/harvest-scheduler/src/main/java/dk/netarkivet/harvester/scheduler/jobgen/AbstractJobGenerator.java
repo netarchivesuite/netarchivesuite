@@ -75,7 +75,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
         if (cfg == null) {
             return "cfg{null}";
         }
-        String result = "cfg{" + cfg.getDomainName() + "," + cfg.getName() + ",";
+        String result = "cfg{" + cfg.getDomainName() + "," + cfg.getName() + ","+cfg.getMaxBytes()+","+cfg.getMaxObjects()+",";
         for (EAV.AttributeAndType aat: cfg.getAttributesAndTypes()){
             AttributeBase ab = aat.attribute;
             if (ab != null) {
@@ -115,7 +115,6 @@ abstract class AbstractJobGenerator implements JobGenerator {
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
         }
         harvest.setNumEvents(harvest.getNumEvents() + 1);
-        if (1 == 1) return jobsMade;
 
         if (!harvest.isSnapShot()) {
             PartialHarvest focused = (PartialHarvest) harvest;
