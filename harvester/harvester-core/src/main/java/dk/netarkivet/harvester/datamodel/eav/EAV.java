@@ -146,7 +146,6 @@ public class EAV {
 	}
 
 	public static int compare2 (List<AttributeAndType> antList1, List<AttributeAndType> antList2) {
-		log.debug("Using new comparator");
 		if (antList1 == null) {
 			antList1 = new ArrayList<>();
 		}
