@@ -114,17 +114,9 @@ abstract class AbstractJobGenerator implements JobGenerator {
             final Comparator<DomainConfiguration> domainConfigurationSubsetComparator = getDomainConfigurationSubsetComparator(
                     harvest);
             log.trace("Sorting domains with instance of " + domainConfigurationSubsetComparator.getClass().getName());
-            log.debug("Before Sorting:");
-            for (DomainConfiguration dc: subset) {
-                log.debug(DomainConfiguration.cfgToString(dc));
-            }
             // Don't really need to sort here - just by those which are equal under the comparartor.
             // Collections.sort(subset, domainConfigurationSubsetComparator);
             chunk(subset, domainConfigurationSubsetComparator);
-            log.debug("After Sorting:");
-            for (DomainConfiguration dc: subset) {
-                log.debug(DomainConfiguration.cfgToString(dc));
-            }
             log.trace("{} domainconfigs now sorted and ready to processing for harvest #{}", subset.size(),
                     harvest.getOid());
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
