@@ -23,15 +23,12 @@
 package dk.netarkivet.harvester.scheduler.jobgen;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.antiaction.raptor.dao.AttributeBase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
@@ -71,21 +68,6 @@ abstract class AbstractJobGenerator implements JobGenerator {
     /** Is deduplication enabled or disabled in the settings* */
     private final boolean DEDUPLICATION_ENABLED = Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);
 
-    public static String cfgToString(DomainConfiguration cfg) {
-        if (cfg == null) {
-            return "cfg{null}";
-        }
-        String result = "cfg{" + cfg.getDomainName() + "," + cfg.getName() + ","+cfg.getMaxBytes()+","+cfg.getMaxObjects()+",";
-        for (EAV.AttributeAndType aat: cfg.getAttributesAndTypes()){
-            AttributeBase ab = aat.attribute;
-            if (ab != null) {
-                result += "(" + ab.id + "," + ab.entity_id + "," + ab.type_id + "," + ab.getInteger() + ")";
-            }
-            }
-        result += "}";
-        return result;
-    }
-
     public static <T> void chunk(List<T> inputList, Comparator<T> comparator) {
         log.debug("Chunking list of length {}.", inputList.size());
         List<List<T>> chunks = new ArrayList<>();
@@ -103,7 +85,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
                 chunks.add(newList);
                 if (input instanceof DomainConfiguration) {
                     log.debug("Creating chunk number {} with config {}.", chunks.size(),
-                            cfgToString((DomainConfiguration) input));
+                            DomainConfiguration.cfgToString((DomainConfiguration) input));
                 }
             }
         }
@@ -134,14 +116,14 @@ abstract class AbstractJobGenerator implements JobGenerator {
             log.trace("Sorting domains with instance of " + domainConfigurationSubsetComparator.getClass().getName());
             log.debug("Before Sorting:");
             for (DomainConfiguration dc: subset) {
-                log.debug(cfgToString(dc));
+                log.debug(DomainConfiguration.cfgToString(dc));
             }
             // Don't really need to sort here - just by those which are equal under the comparartor.
             // Collections.sort(subset, domainConfigurationSubsetComparator);
             chunk(subset, domainConfigurationSubsetComparator);
             log.debug("After Sorting:");
             for (DomainConfiguration dc: subset) {
-                log.debug(cfgToString(dc));
+                log.debug(DomainConfiguration.cfgToString(dc));
             }
             log.trace("{} domainconfigs now sorted and ready to processing for harvest #{}", subset.size(),
                     harvest.getOid());
@@ -297,7 +279,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
 
         if (previousCfg != null && EAV.compare2(cfg.getAttributesAndTypes(), previousCfg.getAttributesAndTypes())!=0 ) {
             log.debug("Attributes have changed between configurations {} and {}",
-                    cfgToString(previousCfg), cfgToString(cfg));
+                    DomainConfiguration.cfgToString(previousCfg), DomainConfiguration.cfgToString(cfg));
             return false;
         }
 

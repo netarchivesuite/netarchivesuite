@@ -161,7 +161,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         DomainConfiguration previousDomainConf = null;
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
-            log.trace("Processing " + cfgToString(cfg));
+            log.trace("Processing " + DomainConfiguration.cfgToString(cfg));
             if (EXCLUDE_ZERO_BUDGET && (0 == cfg.getMaxBytes() || 0 == cfg.getMaxObjects())) {
                 log.info("Config '{}' for '{}'" + " excluded (0{})", cfg.getName(), cfg.getDomainName(),
                         (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
