@@ -23,6 +23,7 @@
 package dk.netarkivet.harvester.scheduler.jobgen;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
@@ -114,9 +115,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
             final Comparator<DomainConfiguration> domainConfigurationSubsetComparator = getDomainConfigurationSubsetComparator(
                     harvest);
             log.trace("Sorting domains with instance of " + domainConfigurationSubsetComparator.getClass().getName());
-            // Don't really need to sort here - just by those which are equal under the comparartor.
-            // Collections.sort(subset, domainConfigurationSubsetComparator);
-            chunk(subset, domainConfigurationSubsetComparator);
+            Collections.sort(subset, domainConfigurationSubsetComparator);
             log.trace("{} domainconfigs now sorted and ready to processing for harvest #{}", subset.size(),
                     harvest.getOid());
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
