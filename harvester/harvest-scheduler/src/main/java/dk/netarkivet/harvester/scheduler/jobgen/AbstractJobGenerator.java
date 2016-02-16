@@ -87,11 +87,12 @@ abstract class AbstractJobGenerator implements JobGenerator {
     }
 
     public static <T> void chunk(List<T> inputList, Comparator<T> comparator) {
+        log.debug("Chunking list of length {}.", inputList.size());
         List<List<T>> chunks = new ArrayList<>();
         for (T input: inputList) {
             boolean found = false;
             for (List<T> foundChunk: chunks) {
-                if (comparator.compare(input, foundChunk.get(0)) == 0) {
+                if (!found && comparator.compare(input, foundChunk.get(0)) == 0) {
                     foundChunk.add(input);
                     found = true;
                 }
@@ -100,8 +101,13 @@ abstract class AbstractJobGenerator implements JobGenerator {
                 List<T> newList = new ArrayList<>();
                 newList.add(input);
                 chunks.add(newList);
+                if (input instanceof DomainConfiguration) {
+                    log.debug("Creating chunk number {} with config {}.", chunks.size(),
+                            cfgToString((DomainConfiguration) input));
+                }
             }
         }
+        log.debug("Done chunking.");
         int i = 0;
         for (List<T> chunk: chunks) {
             for (T value: chunk) {

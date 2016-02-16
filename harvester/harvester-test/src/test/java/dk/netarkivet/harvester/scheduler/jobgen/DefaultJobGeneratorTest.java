@@ -114,7 +114,8 @@ public class DefaultJobGeneratorTest extends AbstractJobGeneratorTest {
         dc6.setMaxBytes(2000000L);
         dcs.add(dc6); //default domain, should get values (20, false, true)
         Comparator<DomainConfiguration> comparator = new DefaultJobGenerator.CompareConfigsDesc(-1, 10000000L);
-        Collections.sort(dcs, comparator);
+        //Collections.sort(dcs, comparator);
+        DefaultJobGenerator.chunk(dcs, comparator);
         List<String> sortedNames = new ArrayList<>();
         for (DomainConfiguration dc:dcs) {
             sortedNames.add(dc.getDomainName());
