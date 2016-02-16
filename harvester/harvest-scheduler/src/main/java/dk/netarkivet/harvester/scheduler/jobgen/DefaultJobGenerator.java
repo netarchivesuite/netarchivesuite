@@ -90,6 +90,13 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 return cmp;
             }
 
+            log.debug("Comparing EAV attributes now");
+                        int result = EAV.compare2(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
+                        log.debug("Comparison of EAV attributes gave result " + result);
+            if (result != 0) {
+                return result;
+            }
+
             // Compare byte limits
             long bytelimit1 = NumberUtils.minInf(cfg1.getMaxBytes(), byteLimit);
             long bytelimit2 = NumberUtils.minInf(cfg2.getMaxBytes(), byteLimit);
@@ -105,11 +112,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             if (res != 0L) {
                 return res < 0L ? -1 : 1;
             }
-
-            log.debug("Comparing EAV attributes now");
-            int result = EAV.compare2(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
-            log.debug("Comparison of EAV attributes gave result " + result);
-            return result;
+            return 0;
         }
     }
 
