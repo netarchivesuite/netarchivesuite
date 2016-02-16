@@ -69,37 +69,6 @@ abstract class AbstractJobGenerator implements JobGenerator {
     /** Is deduplication enabled or disabled in the settings* */
     private final boolean DEDUPLICATION_ENABLED = Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);
 
-    public static <T> void chunk(List<T> inputList, Comparator<T> comparator) {
-        log.debug("Chunking list of length {}.", inputList.size());
-        List<List<T>> chunks = new ArrayList<>();
-        for (T input: inputList) {
-            boolean found = false;
-            for (List<T> foundChunk: chunks) {
-                if (!found && comparator.compare(input, foundChunk.get(0)) == 0) {
-                    foundChunk.add(input);
-                    found = true;
-                }
-            }
-            if (!found) {
-                List<T> newList = new ArrayList<>();
-                newList.add(input);
-                chunks.add(newList);
-                if (input instanceof DomainConfiguration) {
-                    log.debug("Creating chunk number {} with config {}.", chunks.size(),
-                            DomainConfiguration.cfgToString((DomainConfiguration) input));
-                }
-            }
-        }
-        log.debug("Done chunking.");
-        int i = 0;
-        for (List<T> chunk: chunks) {
-            for (T value: chunk) {
-                inputList.set(i, value);
-                i++;
-            }
-        }
-    }
-
     @Override
     public int generateJobs(HarvestDefinition harvest) {
         log.info("Generating jobs for harvestdefinition #{}", harvest.getOid());
@@ -268,7 +237,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(cfg, "cfg");
 
-        if (previousCfg != null && EAV.compare2(cfg.getAttributesAndTypes(), previousCfg.getAttributesAndTypes())!=0 ) {
+        if (previousCfg != null && EAV.compare(cfg.getAttributesAndTypes(), previousCfg.getAttributesAndTypes())!=0 ) {
             log.debug("Attributes have changed between configurations {} and {}",
                     DomainConfiguration.cfgToString(previousCfg), DomainConfiguration.cfgToString(cfg));
             return false;

@@ -62,8 +62,8 @@ public class TestEAV {
     	antList2.add(aat);
 
 
-    	Assert.assertEquals(1, EAV.compare(antList1, antList2));
-    	Assert.assertEquals(-1, EAV.compare(antList2, antList1));
+    	Assert.assertNotEquals(0, EAV.compare(antList1, antList2));
+    	Assert.assertEquals(-1*EAV.compare(antList1, antList2), EAV.compare(antList2, antList1));
 
     	antList1.clear();
     	antList2.clear();

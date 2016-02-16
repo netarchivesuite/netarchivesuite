@@ -83,20 +83,18 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         }
 
         public int compare(DomainConfiguration cfg1, DomainConfiguration cfg2) {
-            log.debug("Comparing " + cfg1 + " " + cfg2);
+            log.trace("Comparing " + cfg1 + " " + cfg2);
             // Compare order xml names
             int cmp = cfg1.getOrderXmlName().compareTo(cfg2.getOrderXmlName());
             if (cmp != 0) {
                 return cmp;
             }
-
-            log.debug("Comparing EAV attributes now");
-                        int result = EAV.compare2(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
-                        log.debug("Comparison of EAV attributes gave result " + result);
+            log.trace("Comparing EAV attributes now");
+            int result = EAV.compare(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
+            log.trace("Comparison of EAV attributes gave result " + result);
             if (result != 0) {
                 return result;
             }
-
             // Compare byte limits
             long bytelimit1 = NumberUtils.minInf(cfg1.getMaxBytes(), byteLimit);
             long bytelimit2 = NumberUtils.minInf(cfg2.getMaxBytes(), byteLimit);
@@ -104,7 +102,6 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             if (cmp != 0) {
                 return cmp;
             }
-
             // Compare expected sizes
             long expectedsize1 = cfg1.getExpectedNumberOfObjects(objectLimit, byteLimit);
             long expectedsize2 = cfg2.getExpectedNumberOfObjects(objectLimit, byteLimit);

@@ -99,7 +99,7 @@ public class DefaultJobGeneratorTest extends AbstractJobGeneratorTest {
         DomainConfiguration dc2 = DomainConfigurationTest.createDefaultDomainConfiguration("2.dk");
         dc1.setAttributesAndTypes(DomainConfigurationTest.getAttributes(20, false, true));
         dc2.setAttributesAndTypes(new ArrayList<EAV.AttributeAndType>());
-        assertEquals(0, EAV.compare2(dc1.getAttributesAndTypes(), dc2.getAttributesAndTypes()));
+        assertEquals(0, EAV.compare(dc1.getAttributesAndTypes(), dc2.getAttributesAndTypes()));
     }
 
     @Test
@@ -114,8 +114,7 @@ public class DefaultJobGeneratorTest extends AbstractJobGeneratorTest {
         dc6.setMaxBytes(2000000L);
         dcs.add(dc6); //default domain, should get values (20, false, true)
         Comparator<DomainConfiguration> comparator = new DefaultJobGenerator.CompareConfigsDesc(-1, 10000000L);
-        //Collections.sort(dcs, comparator);
-        DefaultJobGenerator.chunk(dcs, comparator);
+        Collections.sort(dcs, comparator);
         List<String> sortedNames = new ArrayList<>();
         for (DomainConfiguration dc:dcs) {
             sortedNames.add(dc.getDomainName());

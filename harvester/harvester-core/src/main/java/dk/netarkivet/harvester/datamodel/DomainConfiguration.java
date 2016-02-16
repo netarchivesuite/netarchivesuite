@@ -137,12 +137,14 @@ public class DomainConfiguration implements Named {
             return "cfg{null}";
         }
         String result = "cfg{" + cfg.getDomainName() + "," + cfg.getName() + ","+cfg.getMaxBytes()+","+cfg.getMaxObjects()+",";
-        for (AttributeAndType aat: cfg.getAttributesAndTypes()){
-            AttributeBase ab = aat.attribute;
-            if (ab != null) {
-                result += "(" + ab.id + "," + ab.entity_id + "," + ab.type_id + "," + ab.getInteger() + ")";
+        if (cfg.getAttributesAndTypes() != null) {
+            for (AttributeAndType aat : cfg.getAttributesAndTypes()) {
+                AttributeBase ab = aat.attribute;
+                if (ab != null) {
+                    result += "(" + ab.id + "," + ab.entity_id + "," + ab.type_id + "," + ab.getInteger() + ")";
+                }
             }
-            }
+        }
         result += "}";
         return result;
     }

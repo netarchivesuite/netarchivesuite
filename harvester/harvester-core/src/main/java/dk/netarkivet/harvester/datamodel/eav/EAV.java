@@ -145,177 +145,97 @@ public class EAV {
 		return attributes;
 	}
 
-	public static int compare2 (List<AttributeAndType> antList1, List<AttributeAndType> antList2) {
+	/**
+  * Compare two lists containing attributes and their types.
+  * @param antList1
+  * @param antList2
+  * @return the result of comparing two lists containing attributes and their types
+  */
+	public static int compare(List<AttributeAndType> antList1, List<AttributeAndType> antList2) {
+		//For the vast majority of domains, we just have default attributes so let's deal
+		//with that case efficiently right away:
+		if (antList1 == null && antList2 == null) {
+			return 0;
+		}
 		if (antList1 == null) {
 			antList1 = new ArrayList<>();
 		}
 		if (antList2 == null) {
 			antList2 = new ArrayList<>();
 		}
-		int size1 = antList1.size();
-		int size2 = antList2.size();
-		if (!antList1.isEmpty() && !antList2.isEmpty() &&  size1 != size2) {
-			//return (size1 - size2) < 0 ? -1 : 1;
-			throw new UnsupportedOperationException("Haven't though about how to compare attribute lists of different lengths");
-		}
 		if (antList1.isEmpty() && antList2.isEmpty()) {
 			return 0;
 		}
-		Collections.sort(antList1);
-		Collections.sort(antList2);
-		if (antList1.size() == antList2.size()) {
-			for (int i = 0; i < size1; i++) {
-				AttributeAndType ant1 = antList1.get(i);
-				AttributeAndType ant2 = antList2.get(i);
-				if (ant1.attributeType.id != ant2.attributeType.id) {
-					return (ant1.attributeType.id - ant2.attributeType.id) < 0 ? -1 : 1;
+		int size1 = antList1.size();
+		int size2 = antList2.size();
+		if (!antList1.isEmpty() && !antList2.isEmpty() &&  size1 != size2) {
+			throw new UnsupportedOperationException("Haven't though about how to compare attribute lists of different lengths");
+		}
+
+		//Case where one list is empty, the other isn't. Check that all values are equal to default.
+		if (antList1.isEmpty() || antList2.isEmpty()) {
+			antList1.addAll(antList2);
+			for (AttributeAndType attributeAndType: antList1) {
+				Integer defaultValue = attributeAndType.attributeType.def_int;
+				Integer value = null;
+				if (defaultValue == null) {
+					defaultValue = 0;
 				}
-				if (ant1.attributeType.datatype != 1) {
-					throw new UnsupportedOperationException("EAV attribute datatype compare not implemented yet.");
+				if (attributeAndType.attribute != null) {
+					value = attributeAndType.attribute.getInteger();
 				}
-				Integer i1 = null;
-				Integer i2 = null;
-				if (ant1.attribute != null) {
-					i1 = ant1.attribute.getInteger();
+				if (value == null) {
+					value = defaultValue;
 				}
-				if (i1 == null) {
-					i1 = ant1.attributeType.def_int;
-				}
-				if (i1 == null) {
-					i1 = 0;
-				}
-				if (ant2.attribute != null) {
-					i2 = ant2.attribute.getInteger();
-				}
-				if (i2 == null) {
-					i2 = ant2.attributeType.def_int;
-				}
-				if (i2 == null) {
-					i2 = 0;
-				}
-				int res = i2 - i1;
+				int res = value -defaultValue;
 				if (res != 0L) {
 					return res < 0L ? -1 : 1;
 				}
 			}
-		} else {
-			for (int i = 0; i < Math.max(size1, size2); i++) {
-				Integer i1 = 0;
-				Integer i2 = 0;
-				if (!antList1.isEmpty()) {
-					AttributeAndType ant1 = antList1.get(i);
-					i1 = ant1.attribute.getInteger();
-					i2 = ant1.attributeType.def_int;
-					if (i1 == null) {
-						i1 = i2;
-					}
-				}
-				if (!antList2.isEmpty()) {
-					AttributeAndType ant2 = antList2.get(i);
-					i2 = ant2.attribute.getInteger();
-					i1 = ant2.attributeType.def_int;
-					if (i2 == null) {
-						i2 = i1;
-					}
-				}
-				int res = i2 - i1;
-				if (res != 0L) {
-					return res < 0L ? -1 : 1;
-				}
+			return 0;
+		}
+
+		//Case where neither list is empty. Compare attribute by attribute.
+		Collections.sort(antList1);
+		Collections.sort(antList2);
+		for (int i = 0; i < size1; i++) {
+			AttributeAndType ant1 = antList1.get(i);
+			AttributeAndType ant2 = antList2.get(i);
+			if (ant1.attributeType.id != ant2.attributeType.id) {
+				return (ant1.attributeType.id - ant2.attributeType.id) < 0 ? -1 : 1;
+			}
+			if (ant1.attributeType.datatype != 1) {
+				throw new UnsupportedOperationException("EAV attribute datatype compare not implemented yet.");
+			}
+			Integer i1 = null;
+			Integer i2 = null;
+			if (ant1.attribute != null) {
+				i1 = ant1.attribute.getInteger();
+			}
+			if (i1 == null) {
+				i1 = ant1.attributeType.def_int;
+			}
+			if (i1 == null) {
+				i1 = 0;
+			}
+			if (ant2.attribute != null) {
+				i2 = ant2.attribute.getInteger();
+			}
+			if (i2 == null) {
+				i2 = ant2.attributeType.def_int;
+			}
+			if (i2 == null) {
+				i2 = 0;
+			}
+			int res = i2 - i1;
+			if (res != 0L) {
+				return res < 0L ? -1 : 1;
 			}
 		}
 		return 0;
 	}
 
-    /**
-     * Compare two lists containing attributes and their types.
-     * @param antList1
-     * @param antList2
-     * @return the result of comparing two lists containing attributes and their types
-     */
-    public static int compare(List<AttributeAndType> antList1, List<AttributeAndType> antList2) {
-		log.debug("Using old comparator");
-		Collections.sort(antList1);
-		Collections.sort(antList2);
-    	int res;
-        AttributeAndType ant1;
-        AttributeAndType ant2;
-        int idx1 = 0;
-        int idx2 = 0;
-        if (antList1.size() > 0 || antList2.size() > 0) {
-        	if (idx1 < antList1.size()) {
-        		ant1 = antList1.get( idx1++ );
-        	} else {
-        		ant1 = null;
-        	}
-        	if (idx2 < antList2.size()) {
-        		ant2 = antList2.get( idx2++ );
-        	} else {
-        		ant2 = null;
-        	}
-            boolean bLoop = true;
-            while (bLoop) {
-            	if (ant1 != null) {
-            		if (ant2 != null) {
-            			res = ant2.attributeType.id - ant1.attributeType.id;
-                        if (res != 0L) {
-                            return res < 0L ? -1 : 1;
-                        }
-                        // TODO Change to support types other than integer.
-                        switch (ant1.attributeType.datatype) {
-                        case 1:
-                        	Integer i1 = null;
-                        	Integer i2 = null;
-                        	if (ant1.attribute != null) {
-                        		i1 = ant1.attribute.getInteger();
-                        	}
-                        	if (i1 == null) {
-                        		i1 = ant1.attributeType.def_int;
-                        	}
-                        	if (i1 == null) {
-                        		i1 = 0;
-                        	}
-                        	if (ant2.attribute != null) {
-                        		i2 = ant2.attribute.getInteger();
-                        	}
-                        	if (i2 == null) {
-                        		i2 = ant2.attributeType.def_int;
-                        	}
-                        	if (i2 == null) {
-                        		i2 = 0;
-                        	}
-                        	res = i2 - i1;
-                            if (res != 0L) {
-                                return res < 0L ? -1 : 1;
-                            }
-                        	break;
-                       	default:
-                       		throw new UnsupportedOperationException("EAV attribute datatype compare not implemented yet.");
-                        }
-                    	if (idx1 < antList1.size()) {
-                    		ant1 = antList1.get( idx1++ );
-                    	} else {
-                    		ant1 = null;
-                    	}
-                    	if (idx2 < antList2.size()) {
-                    		ant2 = antList2.get( idx2++ );
-                    	} else {
-                    		ant2 = null;
-                    	}
-            		} else {
-            			return -1;
-            		}
-            	} else {
-            		if (ant2 != null) {
-            			return 1;
-            		} else {
-            			bLoop = false;
-            		}
-            	}
-            }
-        }
-    	return 0;
-    }
+
     
     /////////////////// Utility methods //////////////////////////////////////
     /**
