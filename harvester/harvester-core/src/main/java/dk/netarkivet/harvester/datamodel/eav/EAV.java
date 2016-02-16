@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -154,6 +153,7 @@ public class EAV {
 	public static int compare(List<AttributeAndType> antList1, List<AttributeAndType> antList2) {
 		//For the vast majority of domains, we just have default attributes so let's deal
 		//with that case efficiently right away:
+	    
 		if (antList1 == null && antList2 == null) {
 			return 0;
 		}
@@ -168,28 +168,41 @@ public class EAV {
 		}
 		int size1 = antList1.size();
 		int size2 = antList2.size();
-		if (!antList1.isEmpty() && !antList2.isEmpty() &&  size1 != size2) {
+		if (!antList1.isEmpty() && !antList2.isEmpty() &&  size1 != size2) { // both non-empty but different length
 			throw new UnsupportedOperationException("Haven't though about how to compare attribute lists of different lengths");
 		}
 
 		//Case where one list is empty, the other isn't. Check that all values are equal to default.
 		if (antList1.isEmpty() || antList2.isEmpty()) {
-			antList1.addAll(antList2);
-			for (AttributeAndType attributeAndType: antList1) {
+		    boolean antList2Empty = antList2.isEmpty(); 
+			List<AttributeAndType> antList3 = new ArrayList<AttributeAndType>();
+			antList3.addAll(antList1); 
+			antList3.addAll(antList2);
+			for (AttributeAndType attributeAndType: antList3) {
 				Integer defaultValue = attributeAndType.attributeType.def_int;
+				
 				Integer value = null;
 				if (defaultValue == null) {
 					defaultValue = 0;
 				}
+				
 				if (attributeAndType.attribute != null) {
 					value = attributeAndType.attribute.getInteger();
 				}
+				
 				if (value == null) {
 					value = defaultValue;
 				}
+				
+				
 				int res = value -defaultValue;
-				if (res != 0L) {
-					return res < 0L ? -1 : 1;
+				
+				if (res != 0L) { // value different from default
+				    int result = res < 0L ? -1 : 1;
+				    if (antList2Empty) {
+				        result = -result;
+				    }
+					return result;
 				}
 			}
 			return 0;

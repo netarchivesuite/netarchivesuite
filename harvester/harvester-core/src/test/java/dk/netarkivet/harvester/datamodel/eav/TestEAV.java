@@ -1,13 +1,11 @@
 package dk.netarkivet.harvester.datamodel.eav;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.antiaction.raptor.dao.AttributeBase;
 import com.antiaction.raptor.dao.AttributeTypeBase;
 
 import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
@@ -18,7 +16,6 @@ public class TestEAV {
     public void testEAV() {
     	AttributeAndType aat;
     	AttributeTypeBase at;
-    	AttributeBase a;
 
     	List<AttributeAndType> antList1 = new ArrayList<AttributeAndType>();
     	List<AttributeAndType> antList2 = new ArrayList<AttributeAndType>();
@@ -32,12 +29,15 @@ public class TestEAV {
     	aat = new AttributeAndType(at, new ContentAttribute_Generic(at));
     	aat.attribute.setInteger(1);
     	antList2.add(aat);
-
-    	Assert.assertEquals(1, EAV.compare(antList1, antList2));
+    	
+  
+    	Assert.assertEquals(1, EAV.compare(antList1, antList2)); 
+   
     	Assert.assertEquals(-1, EAV.compare(antList2, antList1));
 
+    	
     	antList1.add(aat);
-
+         
 
     	Assert.assertEquals(0, EAV.compare(antList1, antList2));
     	Assert.assertEquals(0, EAV.compare(antList2, antList1));

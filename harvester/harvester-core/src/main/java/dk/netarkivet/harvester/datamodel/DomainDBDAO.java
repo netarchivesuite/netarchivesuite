@@ -1071,6 +1071,7 @@ public class DomainDBDAO extends DomainDAO {
     public Iterator<Domain> getAllDomainsInSnapshotHarvestOrder() {
         Connection c = HarvestDBConnection.get();
         try {
+            log.info("Starting a select of all domains used for Snapshot harvesting");
             // Note: maxbytes are ordered with largest first for symmetry
             // with HarvestDefinition.CompareConfigDesc
             List<String> domainNames = DBUtils.selectStringList(c, "SELECT domains.name"
@@ -1078,7 +1079,21 @@ public class DomainDBDAO extends DomainDAO {
                     + " WHERE domains.defaultconfig=configurations.config_id" + " AND configurations.template_id"
                     + "=ordertemplates.template_id" + " ORDER BY" + " ordertemplates.name,"
                     + " configurations.maxbytes DESC," + " domains.name");
-            return new FilterIterator<String, Domain>(domainNames.iterator()) {
+            log.info("Retrieved all {} domains used for Snapshot harvesting without searching for attributes for their default configs", domainNames.size());
+            List<String> domainNamesWithAttributes = DBUtils.selectStringList(c, // Don't order this - it will be ordered later
+                    "SELECT DISTINCT domains.name"
+                            + " FROM domains, configurations, eav_attribute"
+                            + " WHERE domains.defaultconfig=configurations.config_id" 
+                            + " AND configurations.id=eav_attribute.entity_id");
+            log.info("Retrieved all {} domains used for Snapshot harvesting that has attributes for their default configs", domainNamesWithAttributes.size());
+            //  Remove the content of domainNamesWithAttributes from domainNames              
+            domainNames.removeAll(domainNamesWithAttributes);
+            log.info("Removed all {} domains with attributes from the total list, reducing total-list to {}", domainNamesWithAttributes.size(), domainNames.size());
+            // Add the remainder of domainNames to domainNamesWithAttributes, so the domain configs with attributes will be handled first.
+            domainNamesWithAttributes.addAll(domainNames);
+            log.info("Remainder of total list merged with list of domains w/ attributes");
+            
+            return new FilterIterator<String, Domain>(domainNamesWithAttributes.iterator()) {
                 public Domain filter(String s) {
                     return readKnown(s);
                 }
