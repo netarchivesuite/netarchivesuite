@@ -37,7 +37,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Named;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.eav.EAV;
 import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 
 /**

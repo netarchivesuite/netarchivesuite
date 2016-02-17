@@ -1084,7 +1084,7 @@ public class DomainDBDAO extends DomainDAO {
                     "SELECT DISTINCT domains.name"
                             + " FROM domains, configurations, eav_attribute"
                             + " WHERE domains.defaultconfig=configurations.config_id" 
-                            + " AND configurations.id=eav_attribute.entity_id");
+                            + " AND configurations.config_id=eav_attribute.entity_id");
             log.info("Retrieved all {} domains used for Snapshot harvesting that has attributes for their default configs", domainNamesWithAttributes.size());
             //  Remove the content of domainNamesWithAttributes from domainNames              
             domainNames.removeAll(domainNamesWithAttributes);
