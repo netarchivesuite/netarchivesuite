@@ -141,7 +141,7 @@ public abstract class ScheduleDAO implements DAO, Iterable<Schedule> {
         } else {
             boolean exists = instance.exists(scheduleName);
             if (!exists) {
-                log.warn("The default schedule '{}' defined by your settings does not exist");
+                log.warn("The default schedule '{}' defined by your setting '{}' does not exist", scheduleName, HarvesterSettings.DOMAIN_CONFIG_SCHEDULE);
             }
             return exists;
         }
