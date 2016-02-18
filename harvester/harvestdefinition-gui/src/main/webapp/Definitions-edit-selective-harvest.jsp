@@ -195,7 +195,7 @@ DomainConfigurations are posted as pairs
 		if (scheduleName.isEmpty() && dao.existsDefaultSchedule()) {
 			 scheduleName = dao.getDefaultScheduleName();
 		}
-        for (Schedule sch : dao.getAllSchedules()) {
+        for (Schedule sch : ScheduleDAO.getInstance()) {
             String selected = "";
             if (sch.getName().equals(scheduleName)) {
                 selected = "selected=\"selected\"";
