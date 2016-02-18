@@ -24,16 +24,23 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * A DAO for reading and writing schedules by name.
  */
 public abstract class ScheduleDAO implements DAO, Iterable<Schedule> {
 
+    private static final Logger log = LoggerFactory.getLogger(ScheduleDAO.class);
+    
     /** The singleton instance. */
     private static ScheduleDAO instance;
 
@@ -122,5 +129,28 @@ public abstract class ScheduleDAO implements DAO, Iterable<Schedule> {
     static void reset() {
         instance = null;
     }
-
+    
+    /**
+     * Does the schedule represented by HarvesterSettings.DOMAIN_CONFIG_SCHEDULE exist?
+     * @return false if defaultschedule is undefined (empty) or does not exist in the database.
+     */
+    public boolean existsDefaultSchedule() {
+        String scheduleName = getDefaultScheduleName();
+        if (scheduleName.isEmpty()) {
+            return false;
+        } else {
+            boolean exists = instance.exists(scheduleName);
+            if (!exists) {
+                log.warn("The default schedule '{}' defined by your settings does not exist");
+            }
+            return exists;
+        }
+    }
+    
+    /**
+     * @return the default schedule 
+     */
+    public String getDefaultScheduleName() {
+        return Settings.get(HarvesterSettings.DOMAIN_CONFIG_SCHEDULE);
+    }
 }

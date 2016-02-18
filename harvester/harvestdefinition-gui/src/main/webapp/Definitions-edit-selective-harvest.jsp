@@ -191,8 +191,11 @@ DomainConfigurations are posted as pairs
 <select name="<%= Constants.SCHEDULE_PARAM %>" size="1">
     <%
         String scheduleName = (hdd != null?hdd.getScheduleName():"");
-
-        for (Schedule sch : ScheduleDAO.getInstance()) {
+    	ScheduleDAO dao = ScheduleDAO.getInstance();
+		if (scheduleName.isEmpty() && dao.existsDefaultSchedule()) {
+			 scheduleName = dao.getDefaultScheduleName();
+		}
+        for (Schedule sch : dao.getAllSchedules()) {
             String selected = "";
             if (sch.getName().equals(scheduleName)) {
                 selected = "selected=\"selected\"";

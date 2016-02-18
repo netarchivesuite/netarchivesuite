@@ -217,4 +217,15 @@ public class ScheduleDAOTester extends DataModelTestCase {
     public static void resetDAO() {
         ScheduleDAO.reset();
     }
+    
+    @Category(SlowTest.class)
+    @Test
+    public void testGetDefaultScheduleName() {
+        ScheduleDAO scheduledao = ScheduleDAO.getInstance();
+        String defaultSchedule = scheduledao.getDefaultScheduleName();
+        boolean existsOne = scheduledao.existsDefaultSchedule();
+        boolean existsTwo = (defaultSchedule.isEmpty()? false: scheduledao.exists(defaultSchedule));
+        assertEquals(existsOne, existsTwo);
+    }
+    
 }
