@@ -31,8 +31,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.antiaction.raptor.dao.AttributeBase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -70,21 +68,6 @@ abstract class AbstractJobGenerator implements JobGenerator {
 
     /** Is deduplication enabled or disabled in the settings* */
     private final boolean DEDUPLICATION_ENABLED = Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);
-
-    public static String cfgToString(DomainConfiguration cfg) {
-        if (cfg == null) {
-            return "cfg{null}";
-        }
-        String result = "cfg{" + cfg.getDomainName() + "," + cfg.getName() + ",";
-        for (EAV.AttributeAndType aat: cfg.getAttributesAndTypes()){
-            AttributeBase ab = aat.attribute;
-            if (ab != null) {
-                result += "(" + ab.id + "," + ab.entity_id + "," + ab.type_id + "," + ab.getInteger() + ")";
-            }
-            }
-        result += "}";
-        return result;
-    }
 
     @Override
     public int generateJobs(HarvestDefinition harvest) {
@@ -191,6 +174,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
 
     @Override
     public boolean canAccept(Job job, DomainConfiguration cfg, DomainConfiguration previousCfg) {
+        log.trace("Comparing current cfg {} with previous cfg {}", cfg, previousCfg);
         if (!checkAddDomainConfInvariant(job, cfg, previousCfg)) {
             return false;
         }
@@ -255,7 +239,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
 
         if (previousCfg != null && EAV.compare(cfg.getAttributesAndTypes(), previousCfg.getAttributesAndTypes())!=0 ) {
             log.debug("Attributes have changed between configurations {} and {}",
-                    cfgToString(previousCfg), cfgToString(cfg));
+                    DomainConfiguration.cfgToString(previousCfg), DomainConfiguration.cfgToString(cfg));
             return false;
         }
 

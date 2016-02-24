@@ -217,8 +217,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         if (status.isChannelValid() || !CHANNEL.equals(channelName)) {
             // Controller has already started
             jmsConnection.resend(msg, msg.getTo());
-            if (log.isDebugEnabled()) {
-                log.debug("Resending harvest channel validity message for channel '{}'", channelName);
+            if (log.isTraceEnabled()) {
+                log.trace("Resending harvest channel validity message for channel '{}'", channelName);
             }
             return;
         }

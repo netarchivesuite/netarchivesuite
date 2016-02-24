@@ -27,6 +27,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -43,12 +44,17 @@ import org.apache.commons.io.LineIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.antiaction.raptor.dao.AttributeBase;
+import com.antiaction.raptor.dao.AttributeTypeBase;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 import dk.netarkivet.harvester.webinterface.EventHarvestUtil;
 
 /**
@@ -279,9 +285,10 @@ public class PartialHarvest extends HarvestDefinition {
      * @param templateName the name of the template to be used
      * @param maxBytes Maximum number of bytes to harvest per domain
      * @param maxObjects Maximum number of objects to harvest per domain
+     * @param attributeValues  Attributes read from webpage
      * @see EventHarvestUtil#addConfigurations(PageContext, I18n, String) for details
      */
-    public void addSeeds(Set<String> seeds, String templateName, long maxBytes, int maxObjects) {
+    public void addSeeds(Set<String> seeds, String templateName, long maxBytes, int maxObjects, Map<String, String> attributeValues) {
         ArgumentNotValid.checkNotNull(seeds, "seeds");
         ArgumentNotValid.checkNotNullOrEmpty(templateName, "templateName");
         if (!TemplateDAO.getInstance().exists(templateName)) {
@@ -305,7 +312,7 @@ public class PartialHarvest extends HarvestDefinition {
             throw new ArgumentNotValid(invalidMessage.toString());
         }
 
-        addSeedsToDomain(templateName, maxBytes, maxObjects, acceptedSeeds);
+        addSeedsToDomain(templateName, maxBytes, maxObjects, acceptedSeeds, attributeValues);
     }
 
     /**
@@ -316,7 +323,7 @@ public class PartialHarvest extends HarvestDefinition {
      * @param maxBytes Maximum number of bytes to harvest per domain
      * @param maxObjects Maximum number of objects to harvest per domain
      */
-    public void addSeedsFromFile(File seedsFile, String templateName, long maxBytes, int maxObjects) {
+    public void addSeedsFromFile(File seedsFile, String templateName, long maxBytes, int maxObjects, Map<String,String> attributeValues) {
         ArgumentNotValid.checkNotNull(seedsFile, "seeds");
         ArgumentNotValid.checkTrue(seedsFile.isFile(), "seedsFile does not exist");
         ArgumentNotValid.checkNotNullOrEmpty(templateName, "templateName");
@@ -353,7 +360,7 @@ public class PartialHarvest extends HarvestDefinition {
             throw new ArgumentNotValid(invalidMessage.toString());
         }
 
-        addSeedsToDomain(templateName, maxBytes, maxObjects, acceptedSeeds);
+        addSeedsToDomain(templateName, maxBytes, maxObjects, acceptedSeeds, attributeValues);
     }
 
     /**
@@ -366,8 +373,9 @@ public class PartialHarvest extends HarvestDefinition {
      */
     private boolean processSeed(String seed, StringBuilder invalidMessage, Map<String, Set<String>> acceptedSeeds) {
         seed = seed.trim();
-        if (seed.length() != 0) {
-            if (!(seed.startsWith("http://") || seed.startsWith("https://"))) {
+        if (seed.length() != 0 && !seed.startsWith("#") && !seed.startsWith("//")) { // ignore empty lines and comments
+            
+            if (!(seed.toLowerCase().startsWith("http://") || seed.toLowerCase().startsWith("https://"))) {
                 seed = "http://" + seed;
             }
             URL url = null;
@@ -405,7 +413,7 @@ public class PartialHarvest extends HarvestDefinition {
      * @param acceptedSeeds The set of accepted seeds
      */
     private void addSeedsToDomain(String templateName, long maxBytes, int maxObjects,
-            Map<String, Set<String>> acceptedSeeds) {
+            Map<String, Set<String>> acceptedSeeds, Map<String, String> attributeValues) {
         // Generate components for the name for the configuration and seedlist
         final String maxbytesSuffix = "Bytes";
         String maxBytesS = "Unlimited" + maxbytesSuffix;
@@ -427,36 +435,41 @@ public class PartialHarvest extends HarvestDefinition {
         for (Map.Entry<String, Set<String>> entry : acceptedSeeds.entrySet()) {
             String domainName = entry.getKey();
             Domain domain;
-
-            // Need a seedlist to include in the configuration when we
-            // create it. This will be replaced later.
-            SeedList seedlist = new SeedList(name, "");
             List<SeedList> seedListList = new ArrayList<SeedList>();
-            seedListList.add(seedlist);
-
+            SeedList seedlist;
             // Find or create the domain
             if (DomainDAO.getInstance().exists(domainName)) {
                 domain = DomainDAO.getInstance().read(domainName);
-                if (!domain.hasSeedList(name)) {
-                    domain.addSeedList(seedlist);
+                
+                // If a config with this name exists already for the dommain, add a "_" + timestamp to the end of the name to be make it unique.
+                // This will probably happen rarely.
+                // This name is used for both the configuration and corresponding seed
+                if (domain.hasConfiguration(name)) {
+                    String oldName = name;
+                    name = name + "_" + System.currentTimeMillis();
+                    log.info("configuration '{}' for domain '{}' already exists. Change name for config and corresponding seed to ", 
+                            oldName, name, domain.getName());
                 }
+                seedlist =  new SeedList(name, ""); // Assure that the seedname is the same as the configname.
+                seedListList.add(seedlist);
+                domain.addSeedList(seedlist);
+                                
             } else {
+                seedlist =  new SeedList(name, ""); // Assure that the seedname is the same as the configname.
+                seedListList.add(seedlist);
+                log.info("Creating domain {} in DomainDAO", domainName);
                 domain = Domain.getDefaultDomain(domainName);
                 domain.addSeedList(seedlist);
                 DomainDAO.getInstance().create(domain);
             }
-            // Find or create the DomainConfiguration
-            DomainConfiguration dc = null;
-            if (domain.hasConfiguration(name)) {
-                dc = domain.getConfiguration(name);
-            } else {
-                dc = new DomainConfiguration(name, domain, seedListList, new ArrayList<Password>());
-                dc.setOrderXmlName(templateName);
+            
+            DomainConfiguration dc = new DomainConfiguration(name, domain, seedListList, new ArrayList<Password>());
+            dc.setOrderXmlName(templateName);
+            dc.setMaxBytes(maxBytes);
+            dc.setMaxObjects(maxObjects);
+            domain.addConfiguration(dc);
+            log.info("Adding seeds til new configuration '{}' (id={}) for domain '{}' ", name, dc.getID(), domain.getName());
 
-                dc.setMaxBytes(maxBytes);
-                dc.setMaxObjects(maxObjects);
-                domain.addConfiguration(dc);
-            }
 
             // Find the SeedList and add this seed to it
             seedlist = domain.getSeedList(name);
@@ -472,23 +485,77 @@ public class PartialHarvest extends HarvestDefinition {
             // this harvest.
             newDcs.add(dc);
             DomainDAO.getInstance().update(domain);
+            log.info("Created configuration '{}' for domain {} with ID {}", dc.getName(), dc.getDomainName(), dc.getID());
+            saveAttributes(dc, attributeValues);
         }
 
         boolean thisInDAO = HarvestDefinitionDAO.getInstance().exists(this.harvestDefName);
-        if (thisInDAO) {
+        if (thisInDAO) { // We have previously created this harvestdefinition in the HarvestDefinitionDAO.
             HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
             for (DomainConfiguration dc : newDcs) {
                 addConfiguration(dc);
                 hddao.addDomainConfiguration(this, new SparseDomainConfiguration(dc));
             }
             hddao.update(this);
-        } else {
+        } else { // not yet created in the HarvestDefinitionDAO
             for (DomainConfiguration dc : newDcs) {
                 addConfiguration(dc);
             }
             HarvestDefinitionDAO.getInstance().create(this);
         }
-
     }
 
+    private void saveAttributes(DomainConfiguration dc, Map<String, String> attributeValues) {
+        if (dc.getID() == null) {
+             log.warn("Attributes not saved to database. Id of domainConfiguration not yet available");
+             return;
+        }
+        // EAV
+        try {
+            long entity_id = dc.getID();
+            log.info("Saving attributes for domain config id {} and name {} and domain {}", entity_id, dc.getName(), dc.getDomainName());
+            EAV eav = EAV.getInstance();
+            List<AttributeAndType> attributeTypes = eav.getAttributesAndTypes(EAV.DOMAIN_TREE_ID, (int)entity_id);
+            log.debug("3 attributes available for entity {}", entity_id);
+            AttributeAndType attributeAndType;
+            AttributeTypeBase attributeType;
+            AttributeBase attribute;
+            for (int i=0; i<attributeTypes.size(); ++i) {
+                attributeAndType = attributeTypes.get(i);
+                attributeType = attributeAndType.attributeType;
+                log.debug("Examining attribute {}",attributeType.name);
+                attribute = attributeAndType.attribute;
+                if (attribute == null) {
+                    attribute = attributeType.instanceOf();
+                    attribute.entity_id = (int)entity_id;
+                }
+                switch (attributeType.viewtype) {
+                case 1:
+                    String paramValue = attributeValues.get(attributeType.name);
+                    int intValue;
+                    if (paramValue != null) {
+                      intValue = Integer.decode(paramValue);
+                    } else {
+                      intValue = attributeType.def_int;
+                    }
+                    log.info("Setting attribute {} to value {}", attributeType.name, intValue);
+                    attribute.setInteger(intValue);
+                    break;
+                case 5:
+                case 6:
+                    paramValue = attributeValues.get(attributeType.name);
+                    int intVal = 0;
+                    if (paramValue != null && !"0".equals(paramValue)) {
+                        intVal = 1;
+                    } 
+                    log.debug("Set intVal = 1 for attribute {} when receiving paramValue={}", attributeType.name, paramValue);
+                    attribute.setInteger(intVal);
+                    break;
+                }
+                eav.saveAttribute(attribute);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to store EAV data!", e);
+        }
+    }
 }

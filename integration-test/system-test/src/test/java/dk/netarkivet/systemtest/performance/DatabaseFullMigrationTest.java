@@ -37,7 +37,7 @@ import dk.netarkivet.systemtest.environment.TestGUIController;
 public class DatabaseFullMigrationTest extends AbstractStressTest {
     protected final TestLogger log = new TestLogger(getClass());
 
-    @Test
+    @Test ( enabled = false )
     public void testUpdateFileStatus() {
         addDescription("Test updating the file status for all files in one bitarchive replica. This procedure takes around one hour to run for " +
                 "a full production load. Because there are no actual files present in the test system, the test will eventually show that all files are " +
@@ -59,7 +59,7 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
         doIngestDomains();
     }
 
-    @Test
+    @Test  ( enabled = false )
     public void testGenerateSnapshot() {
         addDescription("Test generating snapshot jobs with a maximum number of bytes per domain of 100 000. This takes about ten hours to complete. The" +
                 " number of jobs generated is determined roughly by the parameter settings.harvester.scheduler.jobGen.domainConfigSubsetSize which is" +

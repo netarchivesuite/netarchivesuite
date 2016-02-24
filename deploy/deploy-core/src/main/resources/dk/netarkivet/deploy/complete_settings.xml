@@ -621,9 +621,11 @@
 					<writeRevisitForIdenticalDigests>false</writeRevisitForIdenticalDigests>
 					<writeRevisitForNotModified>false</writeRevisitForNotModified>
                 </warc>
-                <bundle></bundle>
-                <certificate></certificate> 
             </heritrix>
+            <heritrix3>
+             	<bundle></bundle>
+             	<certificate></certificate>
+            </heritrix3>
             <frontier>
                 <!-- 10 minutes -->
                 <frontierReportWaitTime>600</frontierReportWaitTime>

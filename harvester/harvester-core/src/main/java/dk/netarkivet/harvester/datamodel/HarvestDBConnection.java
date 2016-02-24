@@ -340,6 +340,7 @@ public final class HarvestDBConnection {
      */
     public static void executeSql(Connection conn, String dbm, String tableName, int version) {
         String resource = "sql-migration/" + dbm +"/" + tableName + "." + version + ".sql";
+        log.info("Fetching resource {} to update table '{}' to version {} using databasetype {}", resource, tableName, version, dbm);
     	InputStream in = DerbySpecifics.class.getClassLoader().getResourceAsStream(resource);
     	try {
         	List<Map.Entry<String, String>> statements = ExecuteSqlFile.splitSql(in, "UTF-8", 8192);
@@ -349,9 +350,11 @@ public final class HarvestDBConnection {
             // Update the schemaversions with the new version for this table
             HarvestDBConnection.updateTable(conn, tableName, version);
     	} catch (IOException e) {
-    		log.error("Unable to update the table {} to version {} using database {}", tableName, version, dbm, e);
+    		throw new IOFailure("Unable to update the table '" + tableName 
+    		        + "' to version '" + version + "' using database '" + dbm + "'", e);
     	} catch (SQLException e) {
-    	    log.error("Unable to update the table {} to version {} using database {}", tableName, version, dbm, e);
+    	    throw new IOFailure("Unable to update the table '" + tableName 
+            + "' to version '" + version + "' using database '" + dbm + "':\n" + ExceptionUtils.getSQLExceptionCause(e), e);
     	} finally {
     	    IOUtils.closeQuietly(in);
     	}

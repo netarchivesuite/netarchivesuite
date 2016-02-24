@@ -150,20 +150,20 @@ public class HeritrixController extends AbstractRestHeritrixController {
       		engineResult = h3wrapper.rescanJobDirectory();
       		log.info("H3 jobs available for building: {}", knownJobsToString(engineResult));
       		
-      		log.debug("Result of rescanJobDirectory() operation: " + new String(engineResult.response, "UTF-8"));
+      		log.trace("Result of rescanJobDirectory() operation: " + new String(engineResult.response, "UTF-8"));
       		
       		jobResult = h3wrapper.buildJobConfiguration(jobName);
-      		log.debug("Result of buildJobConfiguration() operation: " + new String(jobResult.response, "UTF-8"));
+      		log.trace("Result of buildJobConfiguration() operation: " + new String(jobResult.response, "UTF-8"));
       		if (jobResult.status == ResultStatus.OK) {
       		  if (jobResult.job.statusDescription.equalsIgnoreCase("Unbuilt")) {
-      		      throw new HeritrixLaunchException("The job '" + jobName + "' could not be built. Last loglines is " + StringUtils.join(jobResult.job.jobLogTail, "\n"));
+      		      throw new HeritrixLaunchException("The job '" + jobName + "' could not be built. Last loglines are " + StringUtils.join(jobResult.job.jobLogTail, "\n"));
       		  } else if (jobResult.job.statusDescription.equalsIgnoreCase("Ready")) {
       		      log.info("Job {} built successfully", jobName);
       		  } else if (jobResult.job.statusDescription.startsWith("Finished")) { // Created but not launchable
-      		      log.warn("The job {} seems unlaunchable. Tearing down the job. Last loglines is ", jobName, 
+      		      log.warn("The job {} seems unlaunchable. Tearing down the job. Last loglines are ", jobName, 
                           StringUtils.join(jobResult.job.jobLogTail, "\n"));
       		      jobResult = h3wrapper.teardownJob(jobName);
-      		      log.debug("Result of teardown() operation: " + new String(jobResult.response, "UTF-8"));
+      		      log.trace("Result of teardown() operation: " + new String(jobResult.response, "UTF-8"));
       		      throw new HeritrixLaunchException("Job '" + jobName + "' failed to launch: " + StringUtils.join(jobResult.job.jobLogTail, "\n"));
       		  } else {
       		      throw new IllegalState("Unknown job.statusdescription returned from h3: " + jobResult.job.statusDescription);
@@ -174,16 +174,16 @@ public class HeritrixController extends AbstractRestHeritrixController {
       		}
       		
       		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.NASCENT, 60, 1000);
-      		if (jobResult.job.crawlControllerState.equals(CrawlControllerState.NASCENT)) {
+      		if (jobResult.job.crawlControllerState.equalsIgnoreCase(CrawlControllerState.NASCENT.toString())) {
       		  log.info("The H3 job {} in now in state CrawlControllerState.NASCENT",  jobName);
       		} else {
       		  log.warn("The job state is now {}. Should have been CrawlControllerState.NASCENT",  jobResult.job.crawlControllerState);
       		}
       		jobResult = h3wrapper.launchJob(jobName);
       		
-      		log.debug("Result of launchJob() operation: " + new String(jobResult.response, "UTF-8"));
+      		log.trace("Result of launchJob() operation: " + new String(jobResult.response, "UTF-8"));
       		jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.PAUSED, 60, 1000);
-      		if (jobResult.job.crawlControllerState.equals(CrawlControllerState.PAUSED)) {
+      		if (jobResult.job.crawlControllerState.equalsIgnoreCase(CrawlControllerState.PAUSED.toString())) {
       		    log.info("The H3 job {} in now in state CrawlControllerState.PAUSED",  jobName);
       		} else {
       		    log.warn("The job state is now {}. Should have been CrawlControllerState.PAUSED",  jobResult.job.crawlControllerState);
@@ -193,7 +193,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
       		log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
       		
       		// POST: h3 is running, and the job with name 'jobName' is running
-            log.debug("h3-State after unpausing job '{}': {}", jobName, new String(jobResult.response, "UTF-8"));
+            log.trace("h3-State after unpausing job '{}': {}", jobName, new String(jobResult.response, "UTF-8"));
       		
             
             
@@ -283,7 +283,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
                     log.warn("Should be one job but there is {} jobs: {}", knownJobs.size(), knownJobsToString(engineResult));
                 }
             } else {
-                log.warn("Unresponsive Heritrix3 engine. Lets try continuing the cleanup anyway"); 
+                log.warn("Unresponsive Heritrix3 engine. Let's try continuing the cleanup anyway"); 
             }
             
             // Check that job jobName still exists in H3 engine
@@ -327,7 +327,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
 
 
     private String knownJobsToString(EngineResult engineResult) {
-        String result = null;
+        String result = "";
         if (engineResult == null || engineResult.engine == null || engineResult.engine.jobs == null) {
             result = null;
         } else {

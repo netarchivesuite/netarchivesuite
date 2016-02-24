@@ -926,7 +926,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
      *
      * @param fieldName name of the field to look in.
      * @param value The value to query for
-     * @returns A Query for the given value in the given field.
+     * @return A Query for the given value in the given field.
      */
 	protected Query queryField(String fieldName, String value) {
 		Query query = null;

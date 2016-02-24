@@ -212,6 +212,8 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
     public void historySortedTablePagingTest() throws Exception {
         addDescription("Tests that sorting is maintained when paging through " + "the harvest history");
         addStep("Ensure that at least harvests have finished for the default domain", "");
+        //Note that this would be more efficient if we ran SelectiveHarvestTest first as there would already be
+        //enough harvest history of pligtaflevering.dk to do this test straight away.
         HarvestUtils.ensureNumberOfHarvestsForDefaultDomain(3);
 
         addStep("Click the 'End time' header link twice", "The table should now be sorted descending according to"
@@ -288,11 +290,26 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
     }
 
     private void setHarvestStatusPageSize(int size) throws Exception {
+        String originalFileName = "conf/settings_GUIApplication.xml.original";
+        String newFileName = "conf/settings_GUIApplication.xml."+size;
+
         getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                "cp conf/settings_GUIApplication.xml conf/settings_GUIApplication.xml.original");
-        getTestController().replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER, "conf/settings_GUIApplication.xml",
+                "if [ ! -f " + originalFileName + " ]; then "
+                + " cp conf/settings_GUIApplication.xml " + originalFileName + ";fi");
+
+        getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+                " cp conf/settings_GUIApplication.xml " + newFileName);
+
+        //getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+        //        "cp conf/settings_GUIApplication.xml conf/settings_GUIApplication.xml.original");
+
+        getTestController().replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER, newFileName,
                 "</indexClient>", "</indexClient>" + "<webinterface><harvestStatus><defaultPageSize>" + size
                         + "</defaultPageSize></harvestStatus></webinterface>");
+
+
+        getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+                        " cp " + newFileName + " conf/settings_GUIApplication.xml");
 
         TestGUIController.restartGUI();
     }
@@ -305,9 +322,9 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
                     "if [ -f conf/settings_GUIApplication.xml.original ]; then "
                             + "echo conf/settings_GUIApplication.xml.original exist, moving back.; "
                             + "conf/kill_GUIApplication.sh; "
-                            + "mv conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
+                            + "cp conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
                             + " conf/start_GUIApplication.sh; " + "fi");
-            TestGUIController.waitForGUIToStart(10);
+            TestGUIController.waitForGUIToStart(120);
         } catch (Exception e) {
             e.printStackTrace();
         }

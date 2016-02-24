@@ -30,6 +30,9 @@ import java.util.List;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.antiaction.raptor.dao.AttributeBase;
 import com.antiaction.raptor.dao.AttributeTypeBase;
 
@@ -51,7 +54,8 @@ import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
  */
 
 public class DomainConfigurationDefinition {
-	//private static final Logger log = LoggerFactory.getLogger(DomainConfigurationDefinition.class);
+	
+	private static final Logger log = LoggerFactory.getLogger(DomainConfigurationDefinition.class);
 	
     /**
      * Extracts all required parameters from the request, checks for any inconsistencies, and passes the requisite data
@@ -178,6 +182,7 @@ public class DomainConfigurationDefinition {
         // EAV
         try {
         	long entity_id = domainConf.getID();
+        	log.info("Saving attributes for domain config id {} and name {}", entity_id, domainConf.getName());
             EAV eav = EAV.getInstance();
             List<AttributeAndType> attributeTypes = eav.getAttributesAndTypes(EAV.DOMAIN_TREE_ID, (int)entity_id);
             AttributeAndType attributeAndType;
@@ -193,14 +198,16 @@ public class DomainConfigurationDefinition {
             	}
             	switch (attributeType.viewtype) {
             	case 1:
-                	long l = HTMLUtils.parseOptionalLong(context, attributeType.name, (long)attributeType.def_int);
-                	attribute.setInteger((int)l);
+                	long longValue = HTMLUtils.parseOptionalLong(context, attributeType.name, (long)attributeType.def_int);
+                	log.info("Setting attribute {} to value {}", attributeType.name, longValue);
+                	attribute.setInteger((int)longValue);
             		break;
             	case 5:
             	case 6:
                     String paramValue = context.getRequest().getParameter(attributeType.name);
                     int intVal = 0;
                     if (paramValue != null && !"0".equals(paramValue)) {
+                        log.debug("Set intVal = 1 for attribute {} when receiving paramValue={}", attributeType.name, paramValue);
                     	intVal = 1;
                     }
                 	attribute.setInteger(intVal);

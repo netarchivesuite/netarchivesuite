@@ -46,6 +46,7 @@ National Library.
                 <defaultMaxrate>100</defaultMaxrate>
                 <defaultMaxbytes>1000000000</defaultMaxbytes>
                 <defaultMaxobjects>-1</defaultMaxobjects>
+                <defaultSchedule></defaultSchedule>
                 <!-- Used when creating ids for new jobs after a admin
                 database restore. -->
                 <nextJobId>0</nextJobId>
@@ -72,8 +73,9 @@ National Library.
                     <errorFactorBestGuess>2</errorFactorBestGuess>
                     <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
                     <maxDomainSize>5000</maxDomainSize>
+                    <!-- Used by FixedDomainConfigurationCountJobGenerator and as an absolute limit in DefaultJobGenerator -->
+                    <fixedDomainCountSnapshot>10000</fixedDomainCountSnapshot>
                     <!-- Only used by FixedDomainConfigurationCountJobGenerator -->
-                    <fixedDomainCountSnapshot>0</fixedDomainCountSnapshot>
                     <fixedDomainCountFocused>0</fixedDomainCountFocused>
                     <excludeDomainsWithZeroBudget>false</excludeDomainsWithZeroBudget>
                     <postponeUnregisteredChannel>true</postponeUnregisteredChannel>

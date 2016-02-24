@@ -43,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -89,8 +90,9 @@ public class JobDAOTester extends DataModelTestCase {
         Job readJob = jobDAO.read(job.getJobID());
         assertEquals("Id of read Job should equal id of original Job", job.getJobID(), readJob.getJobID());
         assertEquals("Status of read Job should equal status of original Job", job.getStatus(), readJob.getStatus());
-        assertEquals("Seedlist of read Job should equal seedlist of original " + "Job", job.getSeedListAsString(),
-                readJob.getSeedListAsString());
+        assertEquals("Seedlist of read Job should equal seedlist of original Job", StringUtils.join(job.getSortedSeedList(),","), 
+                StringUtils.join(readJob.getSortedSeedList(),","));
+         
         // FIXME
         //assertEquals("Order.xml of read Job should equal order.xml of " + "original Job", job.getOrderXMLdoc()
         //        .getText(), readJob.getOrderXMLdoc().getText());

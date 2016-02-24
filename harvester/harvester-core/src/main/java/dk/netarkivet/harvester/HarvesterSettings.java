@@ -51,7 +51,7 @@ public class HarvesterSettings {
      * Default name of the seedlist to use when new domains are created.
      */
     public static String DEFAULT_SEEDLIST = "settings.harvester.datamodel.domain.defaultSeedlist";
-
+    
     /**
      * <b>settings.harvester.datamodel.domain.validSeedRegex</b>: <br>
      * Regular expression used to validate a seed within a seedlist.
@@ -90,7 +90,13 @@ public class HarvesterSettings {
      * Default object limit for domain configuration.
      */
     public static String DOMAIN_CONFIG_MAXOBJECTS = "settings.harvester.datamodel.domain.defaultMaxobjects";
-
+    
+    /**
+     * <b>settings.harvester.datamodel.domain.defaultSchedule</b>: <br>
+     * Default schedule for selective harvesting,. No default by default.
+     */
+    public static String DOMAIN_CONFIG_SCHEDULE = "settings.harvester.datamodel.domain.defaultSchedule";
+    
     /**
      * <b>settings.harvester.scheduler.jobGen.config.errorFactorPrevResult</b>: <br>
      * Used when calculating expected size of a harvest of some configuration during job-creation process. This defines

@@ -61,7 +61,7 @@ public class BnfHarvestReport extends AbstractHarvestReport{
     /**
      * Constructor for this class.
      *
-     * @param files A HeritrixFiles object.
+     * @param dsr A DomainStatsReport
      * @throws IOFailure If the processing of the files goes wrong
      */
     public BnfHarvestReport(DomainStatsReport dsr) throws IOFailure {

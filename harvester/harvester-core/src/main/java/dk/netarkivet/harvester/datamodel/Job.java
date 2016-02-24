@@ -286,7 +286,7 @@ public class Job implements Serializable, JobInfo {
     }
 
 	public void setAttributes(List<AttributeAndType> attributesAndTypes) {
-        orderXMLdoc.setAttributes(attributesAndTypes);
+        orderXMLdoc.insertAttributes(attributesAndTypes);
 	}
 
     /**

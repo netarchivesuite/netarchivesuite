@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
@@ -47,6 +48,24 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
 
     /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(DefaultJobGenerator.class);
+
+    private static Long CONFIG_COUNT_SNAPSHOT = null;
+
+    public DefaultJobGenerator() {
+        try {
+            CONFIG_COUNT_SNAPSHOT = Settings.getLong(HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
+            if (CONFIG_COUNT_SNAPSHOT <= 0) {
+                log.info("The parameter {} has the value {} and is therefore ignored during job splitting for "
+                        + "snapshot jobs.", HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT, CONFIG_COUNT_SNAPSHOT);
+            } else {
+                log.info("Snapshot jobs will be split at an absolute maximum of {} configurations ({}).",
+                        CONFIG_COUNT_SNAPSHOT, HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
+            }
+        } catch (UnknownID u) {
+            log.info("The parameter {} is not set so there is no absolute limit to the number of configurations per "
+                    + "snapshot job.", HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
+        }
+    }
 
     /**
      * Compare two configurations using the following order: 1) Harvest template 2) Byte limit 3) expected number of
@@ -70,7 +89,12 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             if (cmp != 0) {
                 return cmp;
             }
-
+            log.trace("Comparing EAV attributes now");
+            int result = EAV.compare(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
+            log.trace("Comparison of EAV attributes gave result " + result);
+            if (result != 0) {
+                return result;
+            }
             // Compare byte limits
             long bytelimit1 = NumberUtils.minInf(cfg1.getMaxBytes(), byteLimit);
             long bytelimit2 = NumberUtils.minInf(cfg2.getMaxBytes(), byteLimit);
@@ -78,7 +102,6 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             if (cmp != 0) {
                 return cmp;
             }
-
             // Compare expected sizes
             long expectedsize1 = cfg1.getExpectedNumberOfObjects(objectLimit, byteLimit);
             long expectedsize2 = cfg2.getExpectedNumberOfObjects(objectLimit, byteLimit);
@@ -86,11 +109,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             if (res != 0L) {
                 return res < 0L ? -1 : 1;
             }
-
-            log.trace("Comparing EAV attributes now");
-            int result = EAV.compare(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
-            log.trace("Comparison of EAV attributes gave result " + result);
-            return result;
+            return 0;
         }
     }
 
@@ -142,7 +161,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         DomainConfiguration previousDomainConf = null;
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
-            log.trace("Processing " + cfgToString(cfg));
+            log.trace("Processing " + DomainConfiguration.cfgToString(cfg));
             if (EXCLUDE_ZERO_BUDGET && (0 == cfg.getMaxBytes() || 0 == cfg.getMaxObjects())) {
                 log.info("Config '{}' for '{}'" + " excluded (0{})", cfg.getName(), cfg.getDomainName(),
                         (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
@@ -182,17 +201,17 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         return jobsMade;
     }
 
-    private boolean isChangedCfg(DomainConfiguration previous, DomainConfiguration current) {
-         if (previous == null) {
-             return false;
-         } else {
-             return !(EAV.compare(previous.getAttributesAndTypes(), current.getAttributesAndTypes()) == 0);
-         }
-    }
-
 
     @Override
     protected boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg) {
+        if (job.isSnapshot()
+                && CONFIG_COUNT_SNAPSHOT != null
+                && CONFIG_COUNT_SNAPSHOT > 0
+                && job.getDomainConfigurationMap().size() >= CONFIG_COUNT_SNAPSHOT
+                ) {
+            return false;
+        }
+
         // By default byte limit is used as base criterion for splitting a
         // harvest in config chunks, however the configuration can override
         // this and instead use object limit.
