@@ -291,6 +291,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>harvester-core</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>org.netpreserve.commons</groupId>
