@@ -15,7 +15,7 @@
 
   <modules>
     <module>harvester-core</module>
-    <module>heritrix1</module>
+    <!--<module>heritrix1</module>-->
     <module>heritrix3</module>
     <module>harvest-scheduler</module>
     <module>harvestchannel-gui</module>
