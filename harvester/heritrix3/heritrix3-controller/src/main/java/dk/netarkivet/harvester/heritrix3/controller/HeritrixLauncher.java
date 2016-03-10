@@ -133,16 +133,11 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
      * This class executes a crawl control task, e.g. queries the crawler for progress summary, sends the adequate JMS
      * message to the monitor, and checks whether the crawl is finished, in which case crawl control will be ended.
      * <p>
-     * These tasks are scheduled by a {@link CrawlControlExecutor}.
      */
     private class CrawlControl implements Runnable {
        
         @Override
         public void run() {
-            if (crawlIsOver) {
-                log.warn("Why do you check me again. we're done already!");
-                return;
-            }
             CrawlProgressMessage cpm = null;
             try {
                 cpm = heritrixController.getCrawlProgress();
