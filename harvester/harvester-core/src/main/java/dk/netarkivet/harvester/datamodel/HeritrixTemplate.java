@@ -165,7 +165,14 @@ public abstract class HeritrixTemplate implements Serializable {
 	public void editOrderXMLAddPerDomainCrawlerTraps(DomainConfiguration cfg) {
 		List<String> crawlerTraps = cfg.getCrawlertraps();
 		String elementName = cfg.getDomainName();
-		if (!crawlerTraps.isEmpty()) {
+		int trapCount=crawlerTraps.size();
+		for (String trap: crawlerTraps){
+		    if (trap.isEmpty()) { // Ignore empty traps in the trapcount (NAS-2480)
+		        log.warn("Found empty trap for domain", cfg.getDomainName());
+		        trapCount--; 
+		    }
+		}
+		if (trapCount > 0) {
 			log.info("Inserting {} crawlertraps for domain '{}' into the template", crawlerTraps.size(), elementName);
 			insertCrawlerTraps(elementName, crawlerTraps);
 		}

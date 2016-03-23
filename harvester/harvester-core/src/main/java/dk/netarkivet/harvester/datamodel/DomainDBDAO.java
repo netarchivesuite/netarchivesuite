@@ -773,8 +773,16 @@ public class DomainDBDAO extends DomainDAO {
             Domain d = new Domain(domainName);
             d.setComments(comments);
             // don't throw exception if illegal regexps are found.
-            boolean strictMode = false;
-            d.setCrawlerTraps(Arrays.asList(crawlertraps.split("\n")), strictMode);
+            boolean strictMode = false; 
+            String[] traps = crawlertraps.split("\n");
+            List<String> insertList = new ArrayList<String>();
+            for (String trap: traps) {
+                if (!trap.isEmpty()) { // Ignore empty traps (NAS-2480)
+                    insertList.add(trap);
+                }
+            }
+            log.debug("Found {} crawlertraps for domain '{}' in database", insertList.size(), domainName);
+            d.setCrawlerTraps(insertList, strictMode);
             d.setID(domainId);
             d.setEdition(edition);
             if (alias != null) {
