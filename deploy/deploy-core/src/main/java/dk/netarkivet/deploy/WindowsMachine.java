@@ -640,7 +640,7 @@ public class WindowsMachine extends Machine {
                 "Else",
                 "  java = javahome & \"\\bin\\java\"",
                 "End If",
-                "Set oExec = WshShell.exec(java & \" ${machineparameters} -classpath \"\"${classpath}\"\""
+                "Set oExec = WshShell.exec(\"\"\"java\"\"\" & \" ${machineparameters} -classpath \"\"${classpath}\"\""
                         + " -Ddk.netarkivet.settings.file=\"\"${confdirpath}settings_${id}.xml\"\""
                         + "${slf4jlogger}" + "${securityManagement}" + " ${appname}" + "\")",
                 "Set fso= CreateObject(\"Scripting.FileSystemObject\")",
