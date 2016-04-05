@@ -153,13 +153,24 @@ public class HarvestDocumentation {
             // Try to create CDXes over ARC and WARC files.
             File arcFilesDir = ingestables.getArcsDir();
             File warcFilesDir = ingestables.getWarcsDir();
-
+		
             if (arcFilesDir.isDirectory() && FileUtils.hasFiles(arcFilesDir)) {
                 addCDXes(ingestables, arcFilesDir, mdfw, ArchiveProfile.ARC_PROFILE);
                 cdxGenerationSucceeded = true;
             }
             if (warcFilesDir.isDirectory() && FileUtils.hasFiles(warcFilesDir)) {
                 addCDXes(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
+                // optionally, make text-extracts and generate outlink reports
+				if (Settings.getBoolean(HarvesterSettings.METADATA_OUTLINK_REPORT)) {
+					log.info("Attempt at generating an outlink report for job {}", jobID);
+					generateOutlinkReport(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
+				}
+				if (Settings.getBoolean(HarvesterSettings.METADATA_GENERATE_TEXT_EXTRACTS)) {
+					log.info("Attempt at generating an text extracts for job {}", jobID);
+					generateTextExtracts(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
+				}
+
+
                 cdxGenerationSucceeded = true;
             }
 
@@ -186,7 +197,21 @@ public class HarvestDocumentation {
         }
     }
 
-    private static void addCDXes(IngestableFiles files, File archiveDir, MetadataFileWriter writer,
+    private static void generateTextExtracts(IngestableFiles ingestables,
+			File warcFilesDir, MetadataFileWriter mdfw,
+			ArchiveProfile warcProfile) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void generateOutlinkReport(IngestableFiles ingestables,
+			File warcFilesDir, MetadataFileWriter mdfw,
+			ArchiveProfile warcProfile) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void addCDXes(IngestableFiles files, File archiveDir, MetadataFileWriter writer,
             ArchiveProfile profile) {
         moveAwayForeignFiles(profile, archiveDir, files);
         File cdxFilesDir = FileUtils.createUniqueTempDir(files.getTmpMetadataDir(), "cdx");

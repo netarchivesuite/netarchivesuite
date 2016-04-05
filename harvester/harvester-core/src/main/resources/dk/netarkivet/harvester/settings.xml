@@ -198,6 +198,8 @@ National Library.
                 </archiveFilesReport>
                 <metadataFormat>warc</metadataFormat>
                 <compression>false</compression>
+                <generateOutlinkReport>true</generateOutlinkReport>
+                <generateTextExtractFiles>true</generateTextExtract>  
             </metadata>
         </harvesting>
         <indexserver>

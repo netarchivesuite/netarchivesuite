@@ -530,6 +530,19 @@ public class HarvesterSettings {
     public static String METADATA_COMPRESSION = "settings.harvester.harvesting.metadata.compression";
     
     /**
+     * <b>settings.harvester.harvesting.metadata.generateOutlinkReport</b> Do we generate outlinkreports for the harvested files
+     * default: true (not necessarily true in main branch)
+     */
+    public static String METADATA_OUTLINK_REPORT = "settings.harvester.harvesting.metadata.generateOutlinkReport";
+   
+
+    /**
+     * <b>settings.harvester.harvesting.metadata.generateTextExtractFiles</b> Do we generate text extracts for the harvested files
+     * default: true (not necessarily true in main branch)
+     */
+    public static String METADATA_GENERATE_TEXT_EXTRACTS = "settings.harvester.harvesting.metadata.generateOutlinkReport";
+   
+    /**
      * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the
      * harvested data. default: warc (alternative: arc)
      */

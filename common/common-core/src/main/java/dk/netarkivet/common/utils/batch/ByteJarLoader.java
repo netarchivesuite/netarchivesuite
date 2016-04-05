@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,8 +69,9 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
         ArgumentNotValid.checkNotNull(files, "File ... files");
         ArgumentNotValid.checkTrue(files.length != 0, "Should not be empty array");
         for (File file : files) {
+        	JarFile jarFile = null;
             try {
-                JarFile jarFile = new JarFile(file);
+                jarFile = new JarFile(file);
                 for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements();) {
                     JarEntry entry = e.nextElement();
                     String name = entry.getName();
@@ -81,6 +83,8 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
                 }
             } catch (IOException e) {
                 throw new IOFailure("Failed to load jar file '" + file.getAbsolutePath() + "': " + e);
+            } finally {
+            	IOUtils.closeQuietly(jarFile);
             }
         }
     }
