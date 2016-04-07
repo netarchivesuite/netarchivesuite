@@ -1,7 +1,7 @@
 /* File:        $Id$
  * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+ * Author:      $NielsGamborg$
+ * Date:        $2016-04-07$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -24,8 +24,10 @@
  * CSS style rules for the webarchive interface
  */
 body {
+    background-color: #ffffff;
     font-family: Verdana, Arial, Helvetica, Geneva, sans-serif;
-    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
 }
 
 h1 {
@@ -41,9 +43,12 @@ h2 {
 }
 
 h3 {
+    background-color: transparent;
+    color: #113366;
     font-size:24px;
     font-weight:bold;
-    background-color: #ACC8E3;
+    margin: 1.5em 0 0.5em;
+    padding: .2em 0px;
 }
 
 h4 {
@@ -64,60 +69,17 @@ h6 {
     font-size: 90%;
 }
 
-#main_table {
-    width:100%;
-}
-
-td#menu {
-    width: 18em;
-    background-color: #cccccc;
-}
-
-table#menu_table{
-    width: 18em;
-    background-color: #cccccc;
-}
-
-body,table,tr,td {
-    padding:0;
-    margin:0;
-    border:none;
-}
-
-th {
-    font-size:16px;
-    font-weight:bold;
-    background-color: #ACC8E3;
-}
-
-tr {
-    font-size:12px;
-    font-style:normal;
-}
-
-tr.row0{
-    background-color: #CCCCCC;
-}
-
-tr.row1{
-    background-color: white;
-}
 
 a {
+    color: #336699;
+    cursor: pointer;
     font-family: verdana, Arial, Helvetica, sans-serif;
     font-size: 14px;
-    color: #336699;
-}
-
-a:link {
-    text-decoration:none ;
-}
-
-a:visited {
-    text-decoration:none ;
+    text-decoration:none;
 }
 
 a:hover {
+    color: #1e3b57;
     text-decoration:underline ;
 }
 
@@ -125,41 +87,212 @@ a:active {
     text-decoration:underline ;
 }
 
-h3 a {
+h3 a{
     font-size:24px;
     font-weight:bold;
-    background-color: #ACC8E3;
+    background-color: #ffff99;
 }
 
-.selection_table  {
-    width:100%;
-    vertical-align:text-center;
-}
-.selection_table th {
-    text-align: left;
+
+p{
+    margin: .5em 0;
 }
 
-.edit_box{
-    border: 2px solid #D4ECFB;
-    width: 90%;
-    position: relative;
-    left:5%;
+br{
+    margin: .5em 0;
 }
 
-input[type=submit] {
-    background-color:#FFFDED;
+hr{
+    border-bottom: 0;
+    border-top: 1px solid #999;
+}
+
+pre{
+    word-wrap: break-word;
+}
+
+img {
+    border-width: 0;
+}
+
+/* Input styles */
+input, select{
+    margin: 0.2em 20px 0.2em 0;
+}
+
+input[type="submit"]{
+    background-color: #79a7c0;
+    border: 0;
+    border-radius: 3px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    margin: .5em .5em .5em 0;
+    padding: .1em .5em .2em;
+}
+
+input[type="submit"]:hover {
+    background-color: #6a9db7;
+}
+
+input[type="submit"]:active {
+    background-color: #5e95ae;
+}
+
+[readonly="readonly"] {
+    background-color: #eee;
 }
 
 input[name=addDomains] {
     position:relative;
 }
 
-[readonly=readonly] {
-    background-color:#ACACAC;
+select{
+    margin-bottom: 1em;
+    vertical-align: text-top;
 }
 
-img {
-    border-width: 0;
+#templates select{
+    vertical-align: baseline;
+}
+
+/* Table styles */
+table{
+    border-collapse: collapse;
+    margin-bottom: 1em;
+}
+
+tr {
+    font-size:12px;
+    font-style:normal;
+}
+
+tr.row0 {
+    background-color: #f0f0f0;
+}
+
+tr.row1 {
+    background-color: white;
+}
+
+td,th{
+    border: 1px solid white;
+}
+
+th{
+    background-color: #b5d0eb;
+    font-size: 14px;
+    padding: 0.2em 10px;
+}
+
+td {
+    padding: 0.5em 10px;
+}
+
+/* Table special case styles */
+#main_table, .selection_table  {
+    width:100%;
+}
+
+.selection_table th {
+    text-align: left;
+}
+
+#main_table > tbody > tr > td{
+    border: 0;
+    padding: 20px;
+}
+
+#main_table > tbody > tr > td:last-child{
+    padding: 0 20px 0 20px;
+}
+
+table.selection_table, table#system_state_table {
+    margin-top: 1em;
+}
+
+#system_state_table tr:nth-child(odd){
+    background-color: #f0f0f0;
+}
+
+/* Overwriting inline stylesheet for templates */
+table table[id="templates"] tr.light td { /* Many selctors to overwrite inline style */
+    background-color: #eaf1f6;
+    padding: 3px 10px;
+}
+
+table table[id="templates"] tr.dark td {
+    background-color: #dde4e9;
+    padding: 3px 10px;
+}
+
+table table[id="templates"] td a {
+    color: #336699;
+}
+
+/* Menu styles */
+td#menu, table#menu_table{
+    background-color: #f0f0f0;
+    width: 18em;
+}
+
+table#menu_table {
+    width: 20em;
+}
+
+
+table#menu_table td{
+    border: 0;
+    padding: 0;
+}
+
+table#menu_table a{
+    display: inline-block;
+    padding: .2em 0;
+}
+
+.sidebarHeader {
+    font-family: sans-serif;
+    font-size: 18pt;
+    color: black;
+    line-height: 54px;
+    margin-bottom: .5em;
+    margin-top: .2em;
+}
+
+.sidebarHeader:hover {
+    text-decoration: none;
+}
+
+.sidebarHeader img {
+    vertical-align: middle;
+}
+
+/* Language bar styles */
+.languagelinks{
+    float: right;
+    margin-right: -20px;
+    padding-top: .2em ;
+}
+
+.languagelinks a{
+    border-right: 1px solid #ccc;
+    color: #666;
+    display: inline-block;
+    font-size: 12px;
+    padding: .1em 0.4em .1em .2em;
+}
+
+.languagelinks a:last-child{
+    border-right: 0px;
+}
+
+/* Special case styles */
+.edit_box{
+    border: 2px solid #D4ECFB;
+    width: 90%;
+    position: relative;
+    left:5%;
 }
 
 #error_message{
@@ -172,7 +305,6 @@ img {
     border-style:ridge;
     border-width:4pt;
     padding:4pt;
-
 }
 
 #message{
@@ -189,7 +321,7 @@ img {
 }
 
 #message a{
-   font-size: 14pt;
+    font-size: 14pt;
 }
 
 form.inlineform {
@@ -198,26 +330,45 @@ form.inlineform {
     border-style:none;
 }
 
-.languagelinks {
-    text-align: right;
+form h4{ /* Statuspage with no header */
+    font-weight: normal;
+    margin-top: 3em;
 }
 
+/* Fotter styles */
 .systeminfo {
-    background-color: #ACC8E3;
-    text-align: right;
+    background-color: #f0f0f0;
+    color: #f04e23; /*#666;*/
+    font-size: 12px;
+    margin-top: 2em;
+    padding: .2em 20px;
+    text-align: center;
 }
 
-.sidebarHeader {
-    font-family: sans-serif;
-    font-size: 18pt;
-    color: black;
-    line-height: 54px;
+/* only in history-gui */
+.selection_table .harvestHeader {
+    text-align: center;
+    background-color: #cce1f4;
+    font-size:14px;
+    font-weight:bold;
 }
 
-.sidebarHeader:hover {
-    text-decoration: none;
+.selection_table .spacerRowSmall {
+    margin: 5;
+    padding: 0;
 }
 
-.sidebarHeader img {
-    vertical-align: middle;
+.selection_table .spacerRowBig {
+    margin: 15;
+    padding: 0;
 }
+
+.crawlerHost a:link {
+    font-weight:bold;
+}
+
+.crawlerhost a:visited {
+    color: #660099;
+}
+
+
