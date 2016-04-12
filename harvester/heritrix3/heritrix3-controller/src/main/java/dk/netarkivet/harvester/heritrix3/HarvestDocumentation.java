@@ -51,6 +51,8 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriter;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
+import dk.netarkivet.harvester.heritrix3.report.GenerateOutlinkReport;
+import dk.netarkivet.harvester.heritrix3.report.GenerateTextExtracts;
 
 /**
  * This class contains code for documenting a H3 harvest. Metadata is read from the directories associated with a given
@@ -79,137 +81,137 @@ public class HarvestDocumentation {
      * @throws IOFailure if - reading ARC files or temporary files fails - writing a file to arcFilesDir fails
      */
     public static void documentHarvest(IngestableFiles ingestables) throws IOFailure {
-        ArgumentNotValid.checkNotNull(ingestables, "ingestables");
+    	ArgumentNotValid.checkNotNull(ingestables, "ingestables");
 
-        File crawlDir = ingestables.getCrawlDir();
-        Long jobID = ingestables.getJobId();
-        Long harvestID = ingestables.getHarvestID();
+    	File crawlDir = ingestables.getCrawlDir();
+    	Long jobID = ingestables.getJobId();
+    	Long harvestID = ingestables.getHarvestID();
 
-        // Prepare metadata-arcfile for ingestion of metadata, and enumerate
-        // items to ingest.
+    	// Prepare metadata-arcfile for ingestion of metadata, and enumerate
+    	// items to ingest.
 
-        // If metadata-arcfile already exists, we are done
-        // See bug 722
-        if (ingestables.isMetadataReady()) {
-            log.warn("The metadata-file '{}' already exists, so we don't make another one!", ingestables
-                    .getMetadataFile().getAbsolutePath());
-            return;
-        }
-        List<File> filesAddedAndNowDeletable = null;
+    	// If metadata-arcfile already exists, we are done
+    	// See bug 722
+    	if (ingestables.isMetadataReady()) {
+    		log.warn("The metadata-file '{}' already exists, so we don't make another one!", ingestables
+    				.getMetadataFile().getAbsolutePath());
+    		return;
+    	}
+    	List<File> filesAddedAndNowDeletable = null;
 
-        try {
-            MetadataFileWriter mdfw;
-            mdfw = ingestables.getMetadataWriter();
+    	try {
+    		MetadataFileWriter mdfw;
+    		mdfw = ingestables.getMetadataWriter();
 
-            if (mdfw instanceof MetadataFileWriterWarc) {
-                // add warc-info record
-                ANVLRecord infoPayload = new ANVLRecord();
-                infoPayload.addLabelValue("software",
-                        "NetarchiveSuite/" + dk.netarkivet.common.Constants.getVersionString() + "/"
-                                + dk.netarkivet.common.Constants.PROJECT_WEBSITE);
-                infoPayload.addLabelValue("ip", SystemUtils.getLocalIP());
-                infoPayload.addLabelValue("hostname", SystemUtils.getLocalHostName());
-                infoPayload.addLabelValue("conformsTo",
-                        "http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf");
+    		if (mdfw instanceof MetadataFileWriterWarc) {
+    			// add warc-info record
+    			ANVLRecord infoPayload = new ANVLRecord();
+    			infoPayload.addLabelValue("software",
+    					"NetarchiveSuite/" + dk.netarkivet.common.Constants.getVersionString() + "/"
+    							+ dk.netarkivet.common.Constants.PROJECT_WEBSITE);
+    			infoPayload.addLabelValue("ip", SystemUtils.getLocalIP());
+    			infoPayload.addLabelValue("hostname", SystemUtils.getLocalHostName());
+    			infoPayload.addLabelValue("conformsTo",
+    					"http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf");
 
-                PersistentJobData psj = new PersistentJobData(crawlDir);
-                infoPayload.addLabelValue("isPartOf", "" + psj.getJobID());
-                MetadataFileWriterWarc mfww = (MetadataFileWriterWarc) mdfw;
-                mfww.insertInfoRecord(infoPayload);
-            }
+    			PersistentJobData psj = new PersistentJobData(crawlDir);
+    			infoPayload.addLabelValue("isPartOf", "" + psj.getJobID());
+    			MetadataFileWriterWarc mfww = (MetadataFileWriterWarc) mdfw;
+    			mfww.insertInfoRecord(infoPayload);
+    		}
 
-            // Fetch any serialized preharvest metadata objects, if they exists.
-            List<MetadataEntry> storedMetadata = getStoredMetadata(crawlDir);
-            try {
-                for (MetadataEntry m : storedMetadata) {
-                    mdfw.write(m.getURL(), m.getMimeType(), SystemUtils.getLocalIP(), System.currentTimeMillis(),
-                            m.getData());
-                }
-            } catch (IOException e) {
-                log.warn("Unable to write pre-metadata to metadata archivefile", e);
-            }
+    		// Fetch any serialized preharvest metadata objects, if they exists.
+    		List<MetadataEntry> storedMetadata = getStoredMetadata(crawlDir);
+    		try {
+    			for (MetadataEntry m : storedMetadata) {
+    				mdfw.write(m.getURL(), m.getMimeType(), SystemUtils.getLocalIP(), System.currentTimeMillis(),
+    						m.getData());
+    			}
+    		} catch (IOException e) {
+    			log.warn("Unable to write pre-metadata to metadata archivefile", e);
+    		}
 
-            // Insert the harvestdetails into metadata archivefile.
-            filesAddedAndNowDeletable = writeHarvestDetails(jobID, harvestID, ingestables, mdfw, Constants.getHeritrix3VersionString());
-            // All these files just added to the metadata archivefile can now be deleted
-            // except for the files we need for later processing):
-            // - crawl.log is needed to create domainharvestreport later
-            // - harvestInfo.xml is needed to upload stored data after
-            // crashes/stops on the harvesters
-            // - progress-statistics.log is needed to find out if crawl ended due
-            // to hitting a size limit, or due to other completion
+    		// Insert the harvestdetails into metadata archivefile.
+    		filesAddedAndNowDeletable = writeHarvestDetails(jobID, harvestID, ingestables, mdfw, Constants.getHeritrix3VersionString());
+    		// All these files just added to the metadata archivefile can now be deleted
+    		// except for the files we need for later processing):
+    		// - crawl.log is needed to create domainharvestreport later
+    		// - harvestInfo.xml is needed to upload stored data after
+    		// crashes/stops on the harvesters
+    		// - progress-statistics.log is needed to find out if crawl ended due
+    		// to hitting a size limit, or due to other completion
 
-            Iterator<File> iterator = filesAddedAndNowDeletable.iterator();
-            while (iterator.hasNext()) {
-                File f = iterator.next();
-                if (f.getName().equals("crawl.log") || f.getName().equals("harvestInfo.xml")
-                        || f.getName().equals("progress-statistics.log")) {
-                    iterator.remove();
-                }
-            }
+    		Iterator<File> iterator = filesAddedAndNowDeletable.iterator();
+    		while (iterator.hasNext()) {
+    			File f = iterator.next();
+    			if (f.getName().equals("crawl.log") || f.getName().equals("harvestInfo.xml")
+    					|| f.getName().equals("progress-statistics.log")) {
+    				iterator.remove();
+    			}
+    		}
 
-            boolean cdxGenerationSucceeded = false;
+    		boolean cdxGenerationSucceeded = false;
 
-            // Try to create CDXes over ARC and WARC files.
-            File arcFilesDir = ingestables.getArcsDir();
-            File warcFilesDir = ingestables.getWarcsDir();
-		
-            if (arcFilesDir.isDirectory() && FileUtils.hasFiles(arcFilesDir)) {
-                addCDXes(ingestables, arcFilesDir, mdfw, ArchiveProfile.ARC_PROFILE);
-                cdxGenerationSucceeded = true;
-            }
-            if (warcFilesDir.isDirectory() && FileUtils.hasFiles(warcFilesDir)) {
-                addCDXes(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
-                // optionally, make text-extracts and generate outlink reports
-				if (Settings.getBoolean(HarvesterSettings.METADATA_OUTLINK_REPORT)) {
-					log.info("Attempt at generating an outlink report for job {}", jobID);
-					generateOutlinkReport(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
-				}
-				if (Settings.getBoolean(HarvesterSettings.METADATA_GENERATE_TEXT_EXTRACTS)) {
-					log.info("Attempt at generating an text extracts for job {}", jobID);
-					generateTextExtracts(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
-				}
+    		// Try to create CDXes over ARC and WARC files.
+    		File arcFilesDir = ingestables.getArcsDir();
+    		File warcFilesDir = ingestables.getWarcsDir();
+
+    		if (arcFilesDir.isDirectory() && FileUtils.hasFiles(arcFilesDir)) {
+    			addCDXes(ingestables, arcFilesDir, mdfw, ArchiveProfile.ARC_PROFILE);
+    			cdxGenerationSucceeded = true;
+    		}
+    		if (warcFilesDir.isDirectory() && FileUtils.hasFiles(warcFilesDir)) {
+    			addCDXes(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
+    			// optionally, make text-extracts and generate outlink reports
+    			if (Settings.getBoolean(HarvesterSettings.METADATA_OUTLINK_REPORT)) {
+    				log.info("Attempt at generating an outlink report for job {}", jobID);
+    				generateOutlinkReport(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
+    			}
+    			if (Settings.getBoolean(HarvesterSettings.METADATA_GENERATE_TEXT_EXTRACTS)) {
+    				log.info("Attempt at generating an text extracts for job {}", jobID);
+    				generateTextExtracts(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
+    			}
 
 
-                cdxGenerationSucceeded = true;
-            }
+    			cdxGenerationSucceeded = true;
+    		}
 
-            if (cdxGenerationSucceeded) {
-                // This indicates, that either the files in the arcsdir or in the warcsdir
-                // have now been CDX-processed.
-                //
-                // TODO refactor, as this call has too many sideeffects
-                ingestables.setMetadataGenerationSucceeded(true);
-            } else {
-                log.warn("Found no archive directory with ARC og WARC files. Looked for dirs '{}' and '{}'.",
-                        arcFilesDir.getAbsolutePath(), warcFilesDir.getAbsolutePath());
-            }
-        } finally {
-            // If at this point metadata is not ready, an error occurred.
-            if (!ingestables.isMetadataReady()) {
-                ingestables.setMetadataGenerationSucceeded(false);
-            } else {
-                for (File fileAdded : filesAddedAndNowDeletable) {
-                    FileUtils.remove(fileAdded);
-                }
-                ingestables.cleanup();
-            }
-        }
+    		if (cdxGenerationSucceeded) {
+    			// This indicates, that either the files in the arcsdir or in the warcsdir
+    			// have now been CDX-processed.
+    			//
+    			// TODO refactor, as this call has too many sideeffects
+    			ingestables.setMetadataGenerationSucceeded(true);
+    		} else {
+    			log.warn("Found no archive directory with ARC og WARC files. Looked for dirs '{}' and '{}'.",
+    					arcFilesDir.getAbsolutePath(), warcFilesDir.getAbsolutePath());
+    		}
+    	} finally {
+    		// If at this point metadata is not ready, an error occurred.
+    		if (!ingestables.isMetadataReady()) {
+    			ingestables.setMetadataGenerationSucceeded(false);
+    		} else {
+    			for (File fileAdded : filesAddedAndNowDeletable) {
+    				FileUtils.remove(fileAdded);
+    			}
+    			ingestables.cleanup();
+    		}
+    	}
     }
 
     private static void generateTextExtracts(IngestableFiles ingestables,
-			File warcFilesDir, MetadataFileWriter mdfw,
-			ArchiveProfile warcProfile) {
-		// TODO Auto-generated method stub
-		
-	}
+    		File warcFilesDir, MetadataFileWriter mdfw,
+    		ArchiveProfile warcProfile) {
+    	GenerateTextExtracts.doTextExtracts(warcFilesDir);
 
-	private static void generateOutlinkReport(IngestableFiles ingestables,
-			File warcFilesDir, MetadataFileWriter mdfw,
-			ArchiveProfile warcProfile) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
+
+    private static void generateOutlinkReport(IngestableFiles ingestables,
+    		File warcFilesDir, MetadataFileWriter mdfw,
+    		ArchiveProfile warcProfile) {
+    	GenerateOutlinkReport.generateReport(warcFilesDir);
+
+    }
 
 	private static void addCDXes(IngestableFiles files, File archiveDir, MetadataFileWriter writer,
             ArchiveProfile profile) {
