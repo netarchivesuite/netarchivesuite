@@ -175,8 +175,20 @@ tr.row1 {
     background-color: white;
 }
 
-td,th{
+tr.row0  td, th{
     border: 1px solid white;
+}
+
+tr.row1  td{
+    border: 1px solid #f0f0f0;
+}
+
+tr.row1  td:first-child{
+    border-left: 0px;
+}
+
+tr.row1  td:last-child{
+    border-right: 0px;
 }
 
 th{
@@ -216,7 +228,7 @@ table.selection_table, table#system_state_table {
 }
 
 /* Overwriting inline stylesheet for templates */
-table table[id="templates"] tr.light td { /* Many selctors to overwrite inline style */
+table table[id="templates"] tr.light td { /* Many selectors to overwrite inline style */
     background-color: #eaf1f6;
     padding: 3px 10px;
 }
@@ -233,13 +245,8 @@ table table[id="templates"] td a {
 /* Menu styles */
 td#menu, table#menu_table{
     background-color: #f0f0f0;
-    width: 18em;
-}
-
-table#menu_table {
     width: 20em;
 }
-
 
 table#menu_table td{
     border: 0;
@@ -353,13 +360,12 @@ form h4{ /* Statuspage with no header */
     font-weight:bold;
 }
 
-.selection_table .spacerRowSmall {
-    margin: 5;
-    padding: 0;
+.selection_table .spacerRowBig {
+    height: 3em;
 }
 
-.selection_table .spacerRowBig {
-    margin: 15;
+.selection_table .spacerRowSmall td{
+    font-size: 50%; /* To minimize height of these empty rows */
     padding: 0;
 }
 
@@ -370,5 +376,3 @@ form h4{ /* Statuspage with no header */
 .crawlerhost a:visited {
     color: #660099;
 }
-
-
