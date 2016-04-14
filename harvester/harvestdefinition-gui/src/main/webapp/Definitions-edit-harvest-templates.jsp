@@ -112,11 +112,6 @@ no parameters.
 <button id="hide" onclick="hideInactive();"><fmt:message key="harvestdefinition.templates.hide.inactive"/></button><button id="show" onclick="showInactive();"><fmt:message key="harvestdefinition.templates.show.inactive"/></button> </br>
 <%}%>
 <table id="templates">
-    <style>
-        table[id="templates"] tr.dark td {padding: 3px; background-color: #c4b8c0}
-        table[id="templates"] tr.light td {padding: 3px; background-color: #b4a8b0}
-        table[id="templates"] td a {color: black}
-    </style>
     <%
         int rowNumber = 0;
         for (TemplateWithActivity templateWithActivity: templateList) {

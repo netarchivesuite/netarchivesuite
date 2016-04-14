@@ -23,6 +23,7 @@
  *
  * CSS style rules for the webarchive interface
  */
+
 body {
     background-color: #ffffff;
     font-family: Verdana, Arial, Helvetica, Geneva, sans-serif;
@@ -47,7 +48,7 @@ h3 {
     color: #113366;
     font-size:24px;
     font-weight:bold;
-    margin: 1.5em 0 0.5em;
+    margin: .6em 0 0.5em;
     padding: .2em 0px;
 }
 
@@ -90,7 +91,7 @@ a:active {
 h3 a{
     font-size:24px;
     font-weight:bold;
-    background-color: #ffff99;
+    background-color: #c;
 }
 
 
@@ -149,11 +150,6 @@ input[name=addDomains] {
 
 select{
     margin-bottom: 1em;
-    vertical-align: text-top;
-}
-
-#templates select{
-    vertical-align: baseline;
 }
 
 /* Table styles */
@@ -228,14 +224,17 @@ table.selection_table, table#system_state_table {
 }
 
 /* Overwriting inline stylesheet for templates */
-table table[id="templates"] tr.light td { /* Many selectors to overwrite inline style */
-    background-color: #eaf1f6;
+table table[id="templates"] tr.light td, table table[id="templates"] tr.dark td { /* Many selectors to overwrite inline style */
+    border: 1px solid white;
     padding: 3px 10px;
 }
 
 table table[id="templates"] tr.dark td {
     background-color: #dde4e9;
-    padding: 3px 10px;
+}
+
+table table[id="templates"] tr.light td { /* Many selectors to overwrite inline style */
+    background-color: #eaf1f6;
 }
 
 table table[id="templates"] td a {
@@ -275,11 +274,16 @@ table#menu_table a{
     vertical-align: middle;
 }
 
+/* Logo */
+#main_table > tbody > tr > td > a > img{
+    margin-top: 2em;
+}
+
 /* Language bar styles */
 .languagelinks{
-    float: right;
     margin-right: -20px;
-    padding-top: .2em ;
+    padding-top: .2em;
+    text-align: right;
 }
 
 .languagelinks a{
@@ -296,35 +300,15 @@ table#menu_table a{
 
 /* Special case styles */
 .edit_box{
-    border: 2px solid #D4ECFB;
-    width: 90%;
-    position: relative;
-    left:5%;
+    border: 1px solid #D4ECFB;
+    padding: 0 1em;
 }
 
-#error_message{
-    background-color:#FFFDED;
-    font-size: 14pt;
-    position:relative;
-    left:10%;
-    width: 80%;
-    border-color:#E9556A;
-    border-style:ridge;
-    border-width:4pt;
-    padding:4pt;
-}
-
-#message{
-    background-color:#FFFDED;
-    font-size: 14pt;
-    position:relative;
-    left:10%;
-    width: 80%;
-    border-color:#EAE4EF;
-    border-style:ridge;
-    border-width:4pt;
-    padding:4pt;
-
+#error_message, #message{
+    background-color:#ffffcc;
+    font-size: 16px;
+    border: 1px solid black;
+    padding: 1em;
 }
 
 #message a{
@@ -339,10 +323,14 @@ form.inlineform {
 
 form h4{ /* Statuspage with no header */
     font-weight: normal;
-    margin-top: 3em;
+    margin-top: 2em;
 }
 
-/* Fotter styles */
+form h4 select[name="JOB_STATUS"]{ /* Statuspage top select */
+    vertical-align: top;
+}
+
+/* Footer styles */
 .systeminfo {
     background-color: #f0f0f0;
     color: #f04e23; /*#666;*/
@@ -358,10 +346,6 @@ form h4{ /* Statuspage with no header */
     background-color: #cce1f4;
     font-size:14px;
     font-weight:bold;
-}
-
-.selection_table .spacerRowBig {
-    height: 3em;
 }
 
 .selection_table .spacerRowSmall td{
