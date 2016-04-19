@@ -24,6 +24,7 @@
  * CSS style rules for the webarchive interface
  */
 
+
 body {
     background-color: #ffffff;
     font-family: Verdana, Arial, Helvetica, Geneva, sans-serif;
@@ -89,9 +90,7 @@ a:active {
 }
 
 h3 a{
-    font-size:24px;
-    font-weight:bold;
-    background-color: #c;
+    text-decoration: underline;
 }
 
 
@@ -109,7 +108,7 @@ hr{
 }
 
 pre{
-    word-wrap: break-word;
+    margin: .2em 0;
 }
 
 img {
@@ -121,25 +120,6 @@ input, select{
     margin: 0.2em 20px 0.2em 0;
 }
 
-input[type="submit"]{
-    background-color: #79a7c0;
-    border: 0;
-    border-radius: 3px;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    margin: .5em .5em .5em 0;
-    padding: .1em .5em .2em;
-}
-
-input[type="submit"]:hover {
-    background-color: #6a9db7;
-}
-
-input[type="submit"]:active {
-    background-color: #5e95ae;
-}
-
 [readonly="readonly"] {
     background-color: #eee;
 }
@@ -148,19 +128,11 @@ input[name=addDomains] {
     position:relative;
 }
 
-select{
-    margin-bottom: 1em;
-}
-
 /* Table styles */
 table{
     border-collapse: collapse;
+    font-size: 12px;
     margin-bottom: 1em;
-}
-
-tr {
-    font-size:12px;
-    font-style:normal;
 }
 
 tr.row0 {
@@ -175,22 +147,22 @@ tr.row0  td, th{
     border: 1px solid white;
 }
 
-tr.row1  td{
+tr.row1  td, #system_state_table tr td{
     border: 1px solid #f0f0f0;
 }
 
-tr.row1  td:first-child{
+tr.row1  td:first-child, #system_state_table tr td:first-child{
     border-left: 0px;
 }
 
-tr.row1  td:last-child{
+tr.row1  td:last-child, #system_state_table tr td:last-child{
     border-right: 0px;
 }
 
 th{
     background-color: #b5d0eb;
     font-size: 14px;
-    padding: 0.2em 10px;
+    padding: 0.5em 10px;
 }
 
 td {
@@ -219,26 +191,44 @@ table.selection_table, table#system_state_table {
     margin-top: 1em;
 }
 
-#system_state_table tr:nth-child(odd){
+/* Going for 3 successive colored rows because this patterne is used in all other tables in the Netarchive Suite */
+#system_state_table tr:nth-child(6n + 2), #system_state_table tr:nth-child(6n + 3), #system_state_table tr:nth-child(6n + 4){
     background-color: #f0f0f0;
 }
 
+#system_state_table tr:nth-child(6n + 2) td, #system_state_table tr:nth-child(6n + 3) td, #system_state_table tr:nth-child(6n + 4) td{
+    border: 1px solid white;
+}
+
 /* Overwriting inline stylesheet for templates */
+table[id="templates"]{
+    margin-top: 1em;
+}
+
 table table[id="templates"] tr.light td, table table[id="templates"] tr.dark td { /* Many selectors to overwrite inline style */
     border: 1px solid white;
     padding: 3px 10px;
 }
 
 table table[id="templates"] tr.dark td {
-    background-color: #dde4e9;
+    background-color: white; /*#dde4e9;*/
+    border: 1px solid #f0f0f0;
 }
 
 table table[id="templates"] tr.light td { /* Many selectors to overwrite inline style */
-    background-color: #eaf1f6;
+    background-color: #f0f0f0; /*#eaf1f6;*/
 }
 
 table table[id="templates"] td a {
     color: #336699;
+}
+
+table table[id="templates"] tr td:first-child{
+    border-left: 0px;
+}
+
+table table[id="templates"] tr td:last-child{
+    border-right: 0px;
 }
 
 /* Menu styles */
@@ -327,7 +317,12 @@ form h4{ /* Statuspage with no header */
 }
 
 form h4 select[name="JOB_STATUS"]{ /* Statuspage top select */
+    margin-bottom: 1em;
     vertical-align: top;
+}
+
+#configuration input, #configuration textarea{
+    margin-bottom: 1em;
 }
 
 /* Footer styles */
