@@ -120,6 +120,10 @@ input, select{
     margin: 0.2em 20px 0.2em 0;
 }
 
+input[type="submit"]{
+    margin: .5em .5em .5em 0;
+}
+
 [readonly="readonly"] {
     background-color: #eee;
 }
