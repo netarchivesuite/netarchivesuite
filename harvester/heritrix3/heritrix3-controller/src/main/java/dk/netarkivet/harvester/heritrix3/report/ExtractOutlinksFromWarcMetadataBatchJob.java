@@ -6,13 +6,21 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 
-
+/**
+ * Batchjobs that extract all outlinks in the heritrix metadata records. 
+ * 
+ */
 public class ExtractOutlinksFromWarcMetadataBatchJob extends ArchiveBatchJob {
-
+	
+	private static final Logger log = LoggerFactory.getLogger(ExtractOutlinksFromWarcMetadataBatchJob.class);
+	
 	public ExtractOutlinksFromWarcMetadataBatchJob() {	
 	}
 	
@@ -22,17 +30,18 @@ public class ExtractOutlinksFromWarcMetadataBatchJob extends ArchiveBatchJob {
 		try {
 			String line;
 			BufferedReader bufferedReader = new BufferedReader( new InputStreamReader( record.getInputStream()) );
-			while( (line = bufferedReader.readLine()) != null ){ 
+			while ( (line = bufferedReader.readLine()) != null ){ 
 				if (line.startsWith("outlink")) {
-					//System.out.println("Found outlink line: " + line);
-					os.write(line.getBytes(Charset.forName("UTF-8")));
+					String [] parts = line.split("outlink: ");
+					log.trace("Found outlink: {}", parts[1]);
+					os.write(parts[1].getBytes(Charset.forName("UTF-8")));
 					os.write("\n".getBytes(Charset.forName("UTF-8")));
 				} else {
-					//System.out.println("Skipping line: " + line);
+					log.trace("Skipping line: {}", line);
 				}
 			}  
-		} catch( IOException e ) {
-			System.err.println("Error: " + e );
+		} catch (IOException e) {
+			log.warn("Error: ", e );
 		}
 	}
 

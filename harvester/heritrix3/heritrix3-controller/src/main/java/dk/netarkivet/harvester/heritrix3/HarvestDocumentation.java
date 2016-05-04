@@ -165,11 +165,15 @@ public class HarvestDocumentation {
     			// optionally, make text-extracts and generate outlink reports
     			if (Settings.getBoolean(HarvesterSettings.METADATA_OUTLINK_REPORT)) {
     				log.info("Attempt at generating an outlink report for job {}", jobID);
-    				generateOutlinkReport(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
+    				File reportfile = GenerateOutlinkReport.generateReport(warcFilesDir);
+    		    	// FIXME finish the writing to the warc-file
+    		    	String uri = "";
+    				String mime = "text/plain";
+    				//mdfw.writeFileTo(reportfile, uri, mime);
     			}
     			if (Settings.getBoolean(HarvesterSettings.METADATA_GENERATE_TEXT_EXTRACTS)) {
     				log.info("Attempt at generating an text extracts for job {}", jobID);
-    				generateTextExtracts(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
+    				GenerateTextExtracts.doTextExtracts(warcFilesDir);
     			}
 
 
@@ -197,20 +201,6 @@ public class HarvestDocumentation {
     			ingestables.cleanup();
     		}
     	}
-    }
-
-    private static void generateTextExtracts(IngestableFiles ingestables,
-    		File warcFilesDir, MetadataFileWriter mdfw,
-    		ArchiveProfile warcProfile) {
-    	GenerateTextExtracts.doTextExtracts(warcFilesDir);
-
-    }
-
-    private static void generateOutlinkReport(IngestableFiles ingestables,
-    		File warcFilesDir, MetadataFileWriter mdfw,
-    		ArchiveProfile warcProfile) {
-    	GenerateOutlinkReport.generateReport(warcFilesDir);
-
     }
 
 	private static void addCDXes(IngestableFiles files, File archiveDir, MetadataFileWriter writer,
