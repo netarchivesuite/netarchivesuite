@@ -197,6 +197,7 @@ National Library.
                 	<fileHeader>[ARCHIVEFILE] [Opened] [Closed] [Size]</fileHeader>
                 </archiveFilesReport>
                 <metadataFormat>warc</metadataFormat>
+                <compression>false</compression>
             </metadata>
         </harvesting>
         <indexserver>

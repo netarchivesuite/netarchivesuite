@@ -75,7 +75,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     public static MetadataFileWriter createWriter(File metadataWarcFile) {
         MetadataFileWriterWarc mtfw = new MetadataFileWriterWarc();
     	WarcFileNaming naming = new WarcFileNamingSingleFile(metadataWarcFile);
-    	WarcFileWriterConfig config = new WarcFileWriterConfig(metadataWarcFile.getParentFile(), false, Long.MAX_VALUE, true);
+    	WarcFileWriterConfig config = new WarcFileWriterConfig(metadataWarcFile.getParentFile(), compressRecords(), Long.MAX_VALUE, true);
         mtfw.writer = WarcFileWriter.getWarcWriterInstance(naming, config);
         mtfw.open();
         return mtfw;

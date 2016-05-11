@@ -72,7 +72,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
     private static BitarchiveServer instance;
 
     /** the jms connection. */
-    private JMSConnection con;
+    protected JMSConnection con;
 
     /** The logger used by this class. */
     private static final Logger log = LoggerFactory.getLogger(BitarchiveServer.class);
@@ -122,7 +122,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
      * cannot be created.
      * @throws PermissionDenied - if the temporary directory or the file directory cannot be written
      */
-    private BitarchiveServer() throws UnknownID, PermissionDenied {
+    protected BitarchiveServer() throws UnknownID, PermissionDenied {
         System.setOut(new PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.INFO, log, "StdOut: ")));
         System.setErr(new PrintStream(new LoggingOutputStream(LoggingOutputStream.LoggingLevel.WARN, log, "StdErr: ")));
         boolean listening = false; // are we listening to queue ANY_BA

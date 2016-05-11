@@ -35,12 +35,10 @@ import dk.netarkivet.harvester.datamodel.IngestDomainList;
 
 
 /**
- * This class manages a thread of ingesting domains.
+ * This class manages a thread that ingests (i.e. creates) new domains.
  */
-
 public class DomainIngester extends Thread {
     /** The log. */
-    //Log log = LogFactory.getLog(DomainIngester.class.getName());
     private static final Logger log = LoggerFactory.getLogger(DomainIngester.class);
     /** Whether or not the ingesting process is finished yet. */
     private boolean done = false;
@@ -54,15 +52,13 @@ public class DomainIngester extends Thread {
     private Locale l;
 
     /**
-     * Create a new ingester for a given session and outpout, reading domains from a file.
+     * Create a new ingester for a given session and output, reading domains from a file.
      *
      * @param out The writer that goes into HTML output
-     * @param ingestFile The file of domains to ingest.
+     * @param ingestFile The file with a list of domains to ingest.
      * @param l the given locale
      */
     public DomainIngester(JspWriter out, File ingestFile, Locale l) {
-        // TODO Should we validate the JspWriter
-        // We currently don't, so we don't do it here either.
         ArgumentNotValid.checkNotNull(ingestFile, "File ingestFile");
         ArgumentNotValid.checkNotNull(l, "Locale l");
 
@@ -96,7 +92,7 @@ public class DomainIngester extends Thread {
     }
 
     /**
-     * @return any exception catched during ingest
+     * @return any exception caught during ingest
      */
     public Exception getException() {
         return e;

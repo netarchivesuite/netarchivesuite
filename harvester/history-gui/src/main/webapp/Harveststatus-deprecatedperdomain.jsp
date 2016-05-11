@@ -41,6 +41,9 @@ displayed, if no domains are found a message is shown.
   HTMLUtils.setUTF8(request);
   HTMLUtils.generateHeader(pageContext);
 %>
+
+<h3 class="page_heading">Depricated</h3>
+
 Please find the domain harvest history by:
 <ol>
   <li> Going to the

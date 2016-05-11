@@ -67,7 +67,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     public static MetadataFileWriter createWriter(File metadataARCFile) {
         MetadataFileWriterArc mtfw = new MetadataFileWriterArc();
     	ArcFileNaming naming = new ArcFileNamingSingleFile(metadataARCFile);
-    	ArcFileWriterConfig config = new ArcFileWriterConfig(metadataARCFile.getParentFile(), false, Long.MAX_VALUE, true);
+    	ArcFileWriterConfig config = new ArcFileWriterConfig(metadataARCFile.getParentFile(), compressRecords(), Long.MAX_VALUE, true);
         mtfw.writer = ArcFileWriter.getArcWriterInstance(naming, config);
         mtfw.open();
         return mtfw;

@@ -937,7 +937,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                                 + "       fullharvests.maxobjects," + "       fullharvests.maxbytes,"
                                 + "       fullharvests.maxjobrunningtime," + "       fullharvests.previoushd, "
                                 + "       harvestdefinitions.channel_id " + "FROM harvestdefinitions, fullharvests"
-                                + " WHERE harvestdefinitions.harvest_id " + "       = fullharvests.harvest_id");
+                                + " WHERE harvestdefinitions.harvest_id " + "       = fullharvests.harvest_id"
+                                + " ORDER BY harvestdefinitions.name");
         ) {
             ResultSet res = s.executeQuery();
             List<SparseFullHarvest> harvests = new ArrayList<SparseFullHarvest>();

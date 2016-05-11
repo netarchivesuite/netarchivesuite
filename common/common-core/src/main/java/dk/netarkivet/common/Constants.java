@@ -49,7 +49,8 @@ public final class Constants {
     /**
      * The suffix of a regular expression that matches the metadata files. Add job IDs to the front as necessary.
      */
-    public static final String METADATA_FILE_PATTERN_SUFFIX = "-metadata-[0-9]+.(w)?arc";
+    public static final String METADATA_FILE_PATTERN_SUFFIX = "-metadata-[0-9]+.(w)?arc(\\.gz)?";
+    
     /** The mimetype for a list of CDX entries. */
     public static final String CDX_MIME_TYPE = "application/x-cdx";
 

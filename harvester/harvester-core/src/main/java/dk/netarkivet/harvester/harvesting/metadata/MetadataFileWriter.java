@@ -97,11 +97,16 @@ public abstract class MetadataFileWriter {
         if (metadataFormat == 0) {
             initializeMetadataFormat();
         }
+        boolean compressionOn = compressRecords();
+        String possibleGzSuffix = "";
+        if (compressionOn) {
+            possibleGzSuffix = ".gz";
+        }
         switch (metadataFormat) {
         case MDF_ARC:
-            return jobID + "-metadata-" + 1 + ".arc";
+            return jobID + "-metadata-" + 1 + ".arc" + possibleGzSuffix;
         case MDF_WARC:
-            return jobID + "-metadata-" + 1 + ".warc";
+            return jobID + "-metadata-" + 1 + ".warc" + possibleGzSuffix;
         default:
             throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
         }
@@ -306,6 +311,13 @@ public abstract class MetadataFileWriter {
         result += "&" + CDX_URI_JOB_ID_PARAMETER_NAME + "=" + jobID;
         result += "&" + CDX_URI_FILENAME_PARAMETER_NAME + "=" + filename;
         return result;
+    }
+    
+    /**
+     * @return true, if we want to compress out metadata records, false, if not
+     */
+    public static boolean compressRecords() {
+        return Settings.getBoolean(HarvesterSettings.METADATA_COMPRESSION);
     }
     
 }

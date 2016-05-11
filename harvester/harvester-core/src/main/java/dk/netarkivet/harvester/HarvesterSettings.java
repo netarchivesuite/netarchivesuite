@@ -521,7 +521,14 @@ public class HarvesterSettings {
      * metadata associated with a given harvest job. default: arc (alternative: warc)
      */
     public static String METADATA_FORMAT = "settings.harvester.harvesting.metadata.metadataFormat";
-
+    
+    /**
+     * <b>settings.harvester.harvesting.metadata.compression</b> Do we compress the
+     * metadata associated with a given harvest job. 
+     * default: false 
+     */
+    public static String METADATA_COMPRESSION = "settings.harvester.harvesting.metadata.compression";
+    
     /**
      * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the
      * harvested data. default: warc (alternative: arc)
