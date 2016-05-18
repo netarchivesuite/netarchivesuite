@@ -296,10 +296,10 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                 .makeHarvestRunLink(hri.getHarvestID(), hri.getRunNr())%>
         </td>
         <td>
-            <fmt:formatDate type="both" value="<%=hri.getStartDate()%>"/>
+            <%=HTMLUtils.parseDate(hri.getStartDate())%>
         </td>
         <td>
-            <fmt:formatDate type="both" value="<%=hri.getEndDate()%>"/>
+            <%=HTMLUtils.parseDate(hri.getEndDate())%>
         </td>
         <td>
             <fmt:formatNumber type="number"

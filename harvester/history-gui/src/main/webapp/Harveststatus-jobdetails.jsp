@@ -142,9 +142,15 @@ and reponse.getLocale use this locale.
                 .makeHarvestRunLink(harvestID,
                                     job.getHarvestNum())%>
         </td>
-        <td><fmt:formatDate type="both" value="<%=job.getCreationDate()%>"/></td>
-        <td><fmt:formatDate type="both" value="<%=job.getActualStart()%>"/></td>
-        <td><fmt:formatDate type="both" value="<%=job.getActualStop()%>"/></td>
+        <td>
+            <%=HTMLUtils.parseDate(job.getCreationDate())%>
+        </td>
+        <td>
+            <%=HTMLUtils.parseDate(job.getActualStart())%>
+        </td>
+        <td>
+            <%=HTMLUtils.parseDate(job.getActualStop())%>
+        </td>
         <td><%=jobstatusTdContents %></td>
         <td><a href="#harvesterror">
             <%=HTMLUtils.escapeHtmlValues(job.getHarvestErrors())%>

@@ -154,7 +154,7 @@ inactive or vice-versa.
         <td>
             <% // Only output the date, if the HarvestDefinition is active
                 if (sph.isActive()) { %>
-            <fmt:formatDate type="both" value="<%=sph.getNextDate()%>"/>
+                <%=HTMLUtils.parseDate(sph.getNextDate())%>
             <% } else {
                 out.print(Constants.NoNextDate);
             } %>

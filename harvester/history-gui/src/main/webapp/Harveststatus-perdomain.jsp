@@ -235,8 +235,8 @@ displayed, if no domains are found a message is shown.
     </td>
     <td><%=HTMLUtils.escapeHtmlValues(hi.getConfigName())%>
     </td>
-    <td><fmt:formatDate type="both" value="<%=hi.getStartDate()%>"/></td>
-    <td><fmt:formatDate type="both" value="<%=hi.getEndDate()%>"/></td>
+    <td><%=HTMLUtils.parseDate(hi.getStartDate())%></td>
+    <td><%=HTMLUtils.parseDate(hi.getEndDate())%></td>
     <td><fmt:formatNumber value="<%=hi.getBytesDownloaded()%>"/></td>
     <td><fmt:formatNumber value="<%=hi.getDocsDownloaded()%>"/></td>
     <td><%

@@ -121,9 +121,6 @@ resubmit - jobID of a job to resubmit.
 <%!
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-
-    private static final SimpleDateFormat DATE_FMT =
-    	new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 %>
 
 <%
@@ -501,10 +498,10 @@ function resubmitSelectedJobs() {
                         js.getHarvestDefinitionID(), js.getHarvestNum())%>
                 </td>
                 <td>
-                <%= startDate != null ? DATE_FMT.format(startDate) : "-" %>
+                    <%=HTMLUtils.parseDate(startDate)%>
                 </td>
                 <td>
-                <%= endDate != null ? DATE_FMT.format(endDate) : "-" %>
+                    <%=HTMLUtils.parseDate(endDate)%>
                 </td>
                 <td>
                 	<%=jobStatusTdContents%>

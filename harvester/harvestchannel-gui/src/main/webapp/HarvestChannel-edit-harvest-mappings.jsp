@@ -148,7 +148,7 @@ function onClickCancelEditChannel() {
         <td>
         <% // Only output the date, if the HarvestDefinition is active
         if (ph.isActive()) { %>
-           <fmt:formatDate type="both" value="<%=ph.getNextDate()%>"/>
+           <%= HTMLUtils.parseDate(ph.getNextDate())%>
         <% } else { out.print(Constants.NoNextDate); } %>
         </td>
         <td><%=HTMLUtils.escapeHtmlValues(isActive)%></td>

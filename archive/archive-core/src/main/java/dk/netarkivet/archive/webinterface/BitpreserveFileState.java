@@ -361,11 +361,8 @@ public class BitpreserveFileState {
             out.print("</a>");
         }
         out.println("<br/>");
-        Date lastMissingFilesupdate = activeBitPreservation.getDateForMissingFiles(replica);
-        if (lastMissingFilesupdate == null) {
-            lastMissingFilesupdate = new Date(0);
-        }
-        out.println("<span id=\"" + updatedId + "\">" + I18N.getString(locale, "last.update.at.0", lastMissingFilesupdate) + "</span>");
+
+        out.println("<span id=\"" + updatedId + "\">" + I18N.getString(locale, "last.update.at.0", HTMLUtils.parseDate(activeBitPreservation.getDateForMissingFiles(replica))) + "</span>");
         out.println("<br/>");
 
         out.println("<a href=\"" + Constants.FILESTATUS_UPDATE_PAGE + "?" + Constants.UPDATE_TYPE_PARAM + "="
@@ -410,12 +407,7 @@ public class BitpreserveFileState {
         }
         out.println("<br/>");
 
-        // Time for last update
-        Date lastChangedFilesupdate = bitPreservation.getDateForChangedFiles(replica);
-        if (lastChangedFilesupdate == null) {
-            lastChangedFilesupdate = new Date(0);
-        }
-        out.println(I18N.getString(locale, "last.update.at.0", lastChangedFilesupdate));
+        out.println(I18N.getString(locale, "last.update.at.0", HTMLUtils.parseDate(bitPreservation.getDateForChangedFiles(replica))));
         out.println("<br/>");
 
         // Link for running a new job
