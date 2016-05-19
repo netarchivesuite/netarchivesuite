@@ -154,7 +154,7 @@ function onClickCancelEditChannel() {
         <td><%=HTMLUtils.escapeHtmlValues(isActive)%></td>
         <td id="formTd<%=ph.getOid()%>"><%=chan.getName()%></td>
         <td id="linkTd<%=ph.getOid()%>">
-        <a href="#" onClick="onClickEditChannel(<%=ph.getOid()%>, false)">
+        <a href="#" onClick="onClickEditChannel(<%=ph.getOid()%>, false); return false">
         <fmt:message key="edit.harvest.mappings.edit.link"/>
         </a></td>
     </tr>
