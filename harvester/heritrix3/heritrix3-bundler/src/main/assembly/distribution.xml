@@ -89,14 +89,16 @@
                 <exclude>org.apache.httpcomponents:httpclient:jar:4.2.5</exclude>
                 <exclude>org.apache.httpcomponents:httpcore:jar:4.2.4</exclude>
             </excludes>
-            <outputDirectory>/heritrix-3.3.0-LBS-2014-03/lib/</outputDirectory>
+<!--3.3.0-LBS-2014-03-->
+            <outputDirectory>/heritrix-${heritrix3.version}/lib/</outputDirectory>
         </dependencySet>
     </dependencySets>
 
     <fileSets>
         <fileSet>
             <directory>${basedir}/src/main/resources/</directory>
-            <outputDirectory>/heritrix-3.3.0-LBS-2014-03</outputDirectory>
+<!--3.3.0-LBS-2014-03-->
+            <outputDirectory>/heritrix-${heritrix3.version}</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>

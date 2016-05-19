@@ -49,8 +49,7 @@ import dk.netarkivet.common.utils.DomainUtils;
  * nn.nn.nn.nn -> nn.nn.nn.nn
  * 
  */
-public class SeedUriDomainnameQueueAssignmentPolicy
-        extends HostnameQueueAssignmentPolicy {
+public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignmentPolicy {
     
     /** A key used for the cases when we can't figure out the URI.
      *  This is taken from parent, where it has private access.  Parent returns
@@ -58,10 +57,10 @@ public class SeedUriDomainnameQueueAssignmentPolicy
      */
     static final String DEFAULT_CLASS_KEY = "default...";
 
-    private Log log
-            = LogFactory.getLog(getClass());
+    private Log log = LogFactory.getLog(getClass());
 
-    /** Return a key for queue names based on domain names (last two parts of
+    /**
+     * Return a key for queue names based on domain names (last two parts of
      * host name) or IP address.  They key may include a #<portnr> at the end.
      *
      * @param cauri A potential URI.
@@ -72,16 +71,12 @@ public class SeedUriDomainnameQueueAssignmentPolicy
      public String getClassKey(CrawlURI cauri) {
         String candidate;
         
-        boolean ignoreSourceSeed =
-                cauri != null &&
-        		cauri.getCanonicalString().startsWith("dns");
+        boolean ignoreSourceSeed = cauri != null && cauri.getCanonicalString().startsWith("dns");
         try {
-            // Since getClassKey has no contract, we must encapsulate it from
-            // errors.
+            // Since getClassKey has no contract, we must encapsulate it from errors.
             candidate = super.getClassKey(cauri);
         } catch (NullPointerException e) {
-            log.debug("Heritrix broke getting class key candidate for "
-                      + cauri);
+            log.debug("Heritrix broke getting class key candidate for " + cauri);
             candidate = DEFAULT_CLASS_KEY;
         }
         
@@ -102,8 +97,7 @@ public class SeedUriDomainnameQueueAssignmentPolicy
         
             String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
             if (domainName == null) { // Not valid according to our rules
-                log.debug("Illegal class key candidate '" + candidate
-                      + "' for '" + cauri + "'");
+                log.debug("Illegal class key candidate '" + candidate + "' for '" + cauri + "'");
                 return candidate;
             }
             return domainName;
@@ -128,8 +122,7 @@ public class SeedUriDomainnameQueueAssignmentPolicy
         try {
              hostname = UURIFactory.getInstance(sourceCandidate).getHost();
         } catch (URIException e) {
-            log.warn("Hostname could not be extracted from sourceCandidate: " 
-                    + sourceCandidate);
+            log.warn("Hostname could not be extracted from sourceCandidate: " + sourceCandidate);
             return null;
         }
         return DomainUtils.domainNameFromHostname(hostname);
