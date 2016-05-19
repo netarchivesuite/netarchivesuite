@@ -64,7 +64,6 @@ public class SeedUriDomainnameQueueAssignmentPolicy
     /** Return a key for queue names based on domain names (last two parts of
      * host name) or IP address.  They key may include a #<portnr> at the end.
      *
-     * @param controller The controller the crawl is running on.
      * @param cauri A potential URI.
      * @return a class key (really an arbitrary string), one of <domainOrIP>,
      * <domainOrIP>#<port>, or "default...".
@@ -72,12 +71,15 @@ public class SeedUriDomainnameQueueAssignmentPolicy
      *  org.archive.crawler.framework.CrawlController,
      *  org.archive.crawler.datamodel.CandidateURI)
      */
+     @Override
      public String getClassKey(CrawlURI cauri) {
         String candidate;
-        
+        log.info("cauri: " + cauri);
         boolean ignoreSourceSeed =
-                cauri != null &&
-        		cauri.getCanonicalString().startsWith("dns");
+                cauri != null; 
+        //&&
+        //		cauri.getCanonicalString().startsWith("dns");
+                
         try {
             // Since getClassKey has no contract, we must encapsulate it from
             // errors.
@@ -135,6 +137,8 @@ public class SeedUriDomainnameQueueAssignmentPolicy
                     + sourceCandidate);
             return null;
         }
-        return DomainUtils.domainNameFromHostname(hostname);
+        String candidate = DomainUtils.domainNameFromHostname(hostname);
+        //log.info("candidate is " + candidate);
+        return candidate;
     }
 }
