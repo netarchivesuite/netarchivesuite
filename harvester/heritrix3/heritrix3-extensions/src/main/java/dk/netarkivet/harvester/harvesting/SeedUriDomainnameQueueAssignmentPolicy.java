@@ -71,7 +71,7 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
      public String getClassKey(CrawlURI cauri) {
         String candidate;
         
-        boolean ignoreSourceSeed = cauri != null && cauri.getCanonicalString().startsWith("dns");
+        boolean ignoreSourceSeed = cauri != null; // don't igoreSourceSeed if it is a dns url
         try {
             // Since getClassKey has no contract, we must encapsulate it from errors.
             candidate = super.getClassKey(cauri);
@@ -125,6 +125,8 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
             log.warn("Hostname could not be extracted from sourceCandidate: " + sourceCandidate);
             return null;
         }
-        return DomainUtils.domainNameFromHostname(hostname);
+	String candidateKey = DomainUtils.domainNameFromHostname(hostname);
+        //log.info("CandidateKey: " + candidateKey);
+	return candidateKey;
     }
 }
