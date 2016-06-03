@@ -31,11 +31,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.el.ELContext;
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+import javax.servlet.FilterRegistration;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -44,8 +49,12 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 
+import javax.servlet.ServletRegistration;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.SessionCookieConfig;
+import javax.servlet.SessionTrackingMode;
+import javax.servlet.descriptor.JspConfigDescriptor;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -108,12 +117,12 @@ public class WebinterfaceTestCase {
         public int getContentLength() {
             throw new NotImplementedException("Not implemented");
         }
-/*
+
         @Override
         public long getContentLengthLong() {
             return 0;
         }
-*/
+
         public String getContentType() {
             throw new NotImplementedException("Not implemented");
         }
@@ -213,7 +222,7 @@ public class WebinterfaceTestCase {
         public int getLocalPort() {
             return 0;
         }
-/*
+
         @Override
         public ServletContext getServletContext() {
             return null;
@@ -249,7 +258,7 @@ public class WebinterfaceTestCase {
         public DispatcherType getDispatcherType() {
             return null;
         }
-        */
+
     }
 
     public static class TestPageContext extends PageContext {
@@ -312,12 +321,12 @@ public class WebinterfaceTestCase {
 
                 public void setContentLength(int i) {
                 }
-                /*
+
                 @Override
                 public void setContentLengthLong(long l) {
 
                 }
-                 */
+
                 public void setContentType(String string) {
                 }
 
@@ -377,7 +386,7 @@ public class WebinterfaceTestCase {
                 public int getMinorVersion() {
                     return 0; 
                 }
-/*
+
                 @Override
                 public int getEffectiveMajorVersion() {
                     return 0;
@@ -387,7 +396,7 @@ public class WebinterfaceTestCase {
                 public int getEffectiveMinorVersion() {
                     return 0;
                 }
-*/
+
                 public String getMimeType(String string) {
                     return null;
                 }
@@ -461,12 +470,12 @@ public class WebinterfaceTestCase {
                 public Enumeration getInitParameterNames() {
                     return null; 
                 }
-/*
+
                 @Override
                 public boolean setInitParameter(String s, String s2) {
                     return false;
                 }
-*/
+
                 public Object getAttribute(String string) {
                     return null; 
                 }
@@ -484,7 +493,7 @@ public class WebinterfaceTestCase {
                 public String getServletContextName() {
                     return null;
                 }
-/*
+
                 @Override
                 public ServletRegistration.Dynamic addServlet(String s, String s2) {
                     return null;
@@ -604,7 +613,7 @@ public class WebinterfaceTestCase {
                 public String getVirtualServerName() {
                     return null;
                 }
-                */
+
             };
         }
 
@@ -718,12 +727,12 @@ public class WebinterfaceTestCase {
 
                     public void setContentLength(int i) {
                     }
-/*
+
                     @Override
                     public void setContentLengthLong(long l) {
 
                     }
-*/
+
                     public void setContentType(String string) {
                     }
 
