@@ -68,9 +68,9 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
      * <domainOrIP>#<port>, or "default...".
      * @see HostnameQueueAssignmentPolicy#getClassKey(CrawlURI)
      */
-     public String getClassKey(CrawlURI cauri) {
+    public String getClassKey(CrawlURI cauri) {
         String candidate;
-        
+        log.debug("Finding classKeý for cauri: " + cauri);
         boolean ignoreSourceSeed = cauri != null; // don't igoreSourceSeed if it is a dns url
         try {
             // Since getClassKey has no contract, we must encapsulate it from errors.
@@ -79,22 +79,20 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
             log.debug("Heritrix broke getting class key candidate for " + cauri);
             candidate = DEFAULT_CLASS_KEY;
         }
-        
+
         String sourceSeedCandidate = null;
         if (!ignoreSourceSeed) {
             sourceSeedCandidate = getCandidateFromSource(cauri);
         }
-        
+
         if (sourceSeedCandidate != null) {
             return sourceSeedCandidate;
-        } else {
-            // If sourceSeedCandidates are disabled, use the old method:
-        
+        } else { //sourceSeedCandidates are disabled, use the old method:
             String[] hostnameandportnr = candidate.split("#");
             if (hostnameandportnr.length == 0 || hostnameandportnr.length > 2) {
                 return candidate;
             }
-        
+
             String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
             if (domainName == null) { // Not valid according to our rules
                 log.debug("Illegal class key candidate '" + candidate + "' for '" + cauri + "'");
@@ -109,24 +107,24 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
       * @param cauri A potential URI
       * @return a candidate from the source or null if none found
       */
-    private String getCandidateFromSource(CrawlURI cauri) {
-        String sourceCandidate = null;  
-        try {
-        	sourceCandidate = cauri.getSourceTag(); 
-        } catch (NoSuchElementException e) {
-            log.warn("source-tag-seeds not set in Heritrix template!");
-            return null;
-        }
-         
-        String hostname = null;
-        try {
+     private String getCandidateFromSource(CrawlURI cauri) {
+         String sourceCandidate = null;  
+         try {
+             sourceCandidate = cauri.getSourceTag(); 
+         } catch (NoSuchElementException e) {
+             log.warn("source-tag-seeds not set in Heritrix template!");
+             return null;
+         }
+
+         String hostname = null;
+         try {
              hostname = UURIFactory.getInstance(sourceCandidate).getHost();
-        } catch (URIException e) {
-            log.warn("Hostname could not be extracted from sourceCandidate: " + sourceCandidate);
-            return null;
-        }
-	String candidateKey = DomainUtils.domainNameFromHostname(hostname);
-        //log.info("CandidateKey: " + candidateKey);
-	return candidateKey;
-    }
+         } catch (URIException e) {
+             log.warn("Hostname could not be extracted from sourceCandidate: " + sourceCandidate);
+             return null;
+         }
+         String candidateKey = DomainUtils.domainNameFromHostname(hostname);
+         log.debug("CandidateKey for cauri '" + cauri + "':" + candidateKey);
+         return candidateKey;
+     }
 }
