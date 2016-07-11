@@ -94,6 +94,7 @@ public class DomainnameQueueAssignmentPolicy
                     + "' for '" + basis + "'");
             return candidate;
         }
+        log.info("Core-key: " + domainName);
         return domainName;
     }
  

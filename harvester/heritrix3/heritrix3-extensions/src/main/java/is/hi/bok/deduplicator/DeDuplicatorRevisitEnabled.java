@@ -24,8 +24,18 @@ package is.hi.bok.deduplicator;
 
 import static is.hi.bok.deduplicator.DedupAttributeConstants.A_CONTENT_STATE_KEY;
 import static is.hi.bok.deduplicator.DedupAttributeConstants.CONTENT_UNCHANGED;
+/*
 import static org.archive.modules.recrawl.RecrawlAttributeConstants.A_CONTENT_DIGEST;
 import static org.archive.modules.recrawl.RecrawlAttributeConstants.A_FETCH_HISTORY;
+*/
+import static is.landsbokasafn.deduplicator.heritrix.DeDuplicatorConstants.EXTRA_REVISIT_DATE;
+import static is.landsbokasafn.deduplicator.heritrix.DeDuplicatorConstants.EXTRA_REVISIT_PROFILE;
+import static is.landsbokasafn.deduplicator.heritrix.DeDuplicatorConstants.EXTRA_REVISIT_URI;
+import static is.landsbokasafn.deduplicator.heritrix.DeDuplicatorConstants.REVISIT_ANNOTATION_MARKER;
+import static is.landsbokasafn.deduplicator.heritrix.IndexFields.DATE;
+import static is.landsbokasafn.deduplicator.heritrix.IndexFields.DIGEST;
+import static is.landsbokasafn.deduplicator.heritrix.IndexFields.ORIGINAL_RECORD_ID;
+import static is.landsbokasafn.deduplicator.heritrix.IndexFields.URL;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +64,7 @@ import org.archive.modules.CrawlURI;
 import org.archive.modules.ProcessResult;
 import org.archive.modules.Processor;
 import org.archive.modules.net.ServerCache;
+import org.archive.modules.revisit.IdenticalPayloadDigestRevisit;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.Base32;
 import org.springframework.beans.factory.InitializingBean;
@@ -92,10 +103,10 @@ import dk.netarkivet.common.utils.AllDocsCollector;
  * 
  */
 @SuppressWarnings({"unchecked"})
-public class DeDuplicator extends Processor implements InitializingBean {
+public class DeDuplicatorRevisitEnabled extends Processor implements InitializingBean {
 
     private static Logger logger =
-        Logger.getLogger(DeDuplicator.class.getName());
+        Logger.getLogger(DeDuplicatorRevisitEnabled.class.getName());
 
     // Spring configurable parameters
     
@@ -439,8 +450,24 @@ public class DeDuplicator extends Processor implements InitializingBean {
         } else {
             duplicate = lookupByDigest(curi,currHostStats);
         }
-
+        
         if (duplicate != null){
+        	
+        	//// Code taken from LuceneIndexSearcher.wrap() method //////////////////////////
+        	IdenticalPayloadDigestRevisit duplicateRevisit = new IdenticalPayloadDigestRevisit(
+        			duplicate.get("digest")); //DIGEST.name()));
+
+        	duplicateRevisit.setRefersToTargetURI(
+        			duplicate.get("url"));  // URL.name()
+        	duplicateRevisit.setRefersToDate(
+        			duplicate.get("date")); // DATE.name()
+
+        	/* TODO enable a ORIGINAL_RECORD_ID field during indexing
+        	String refersToRecordID = duplicate.get(ORIGINAL_RECORD_ID.name());
+        	if (refersToRecordID!=null && !refersToRecordID.isEmpty()) {
+        		duplicateRevisit.setRefersToRecordID(refersToRecordID);
+        	} */       	
+        	
             // Perform tasks common to when a duplicate is found.
             // Increment statistics counters
             stats.duplicateAmount += curi.getContentSize();
@@ -458,7 +485,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
             
             // Record origin?
             String annotation = "duplicate";
-            if(useOrigin){
+            if(useOrigin){ 
                 // TODO: Save origin in the CrawlURI so that other processors
                 //       can make use of it. (Future: WARC)
                 if(useOriginFromIndex && 
@@ -473,10 +500,22 @@ public class DeDuplicator extends Processor implements InitializingBean {
                         annotation += ":\"" + tmp + "\""; 
                     }
                 }
+                // Make duplicate-annotation in log
+                curi.getAnnotations().add(annotation);
             } 
-            // Make note in log
-            curi.getAnnotations().add(annotation);
+            
+            curi.setRevisitProfile(duplicateRevisit);
+            
 
+        	// Add annotation to crawl.log 
+            curi.getAnnotations().add(REVISIT_ANNOTATION_MARKER);
+            
+            // Write extra logging information (needs to be enabled in CrawlerLoggerModule)
+            curi.addExtraInfo(EXTRA_REVISIT_PROFILE, duplicateRevisit.getProfileName());
+            curi.addExtraInfo(EXTRA_REVISIT_URI, duplicateRevisit.getRefersToTargetURI());
+            curi.addExtraInfo(EXTRA_REVISIT_DATE, duplicateRevisit.getRefersToDate());
+        }
+ /*           
             if(getChangeContentSize()){
                 // Set content size to zero, we are not planning to 
                 // 'write it to disk'
@@ -517,6 +556,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
             // Mark as duplicate for other processors
             curi.getData().put(A_CONTENT_STATE_KEY, CONTENT_UNCHANGED);
         }
+        */
         
         if(getAnalyzeTimestamp()){
             doAnalysis(curi,currHostStats, duplicate!=null);
@@ -942,5 +982,3 @@ public class DeDuplicator extends Processor implements InitializingBean {
 	}
 	
 }
-
-

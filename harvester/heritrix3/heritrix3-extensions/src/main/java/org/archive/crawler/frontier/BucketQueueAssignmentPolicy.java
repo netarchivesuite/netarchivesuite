@@ -60,6 +60,7 @@ public class BucketQueueAssignmentPolicy extends QueueAssignmentPolicy {
     public String getClassKey(final CrawlURI curi) {
     	LOGGER.info("Getting ClassKey for curi: " + curi);
         CrawlHost host;
+        
         String queue=null;
         host = serverCache.getHostFor(curi.getUURI());
         

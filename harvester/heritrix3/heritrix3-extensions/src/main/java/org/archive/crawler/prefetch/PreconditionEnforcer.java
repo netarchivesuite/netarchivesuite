@@ -179,7 +179,7 @@ public class PreconditionEnforcer extends Processor  {
         CrawlURI curi = (CrawlURI)puri;
         if (getConsiderDnsChecks()) {
         	if (considerDnsPreconditions(curi)) {
-        		logger.info("DnsPreconditions failed: ProcessResult for curi" +  curi + ": ProcessResult.FINISH");
+        		logger.info("DnsPreconditions failed: ProcessResult for curi '" +  curi + "': ProcessResult.FINISH");
         		return ProcessResult.FINISH;
         	}
         }
@@ -189,17 +189,17 @@ public class PreconditionEnforcer extends Processor  {
         if (! (scheme.equals("http") || scheme.equals("https"))) {
             logger.fine("PolitenessEnforcer doesn't understand uri's of type " +
                 scheme + " (ignoring)");
-            logger.info("schema =  " + scheme + ": ProcessResult for curi " +  curi + ": ProcessResult.PROCEED");
+            logger.info("schema =  " + scheme + ": ProcessResult for curi '" +  curi + "': ProcessResult.PROCEED");
             return ProcessResult.PROCEED;
         }
 
         if (considerRobotsPreconditions(curi)) {
-        	logger.info("RobotsPreconditions failed: ProcessResult for curi " +  curi + ": ProcessResult.FINISH");
+        	logger.info("RobotsPreconditions failed: ProcessResult for curi '" +  curi + "': ProcessResult.FINISH");
             return ProcessResult.FINISH;
         }
 
         if (!curi.isPrerequisite() && credentialPrecondition(curi)) {
-        	logger.info("Not prerequisite && no credentialPreconditions)ProcessResult for curi " +  curi + ": ProcessResult.FINISH");
+        	logger.info("Not prerequisite && no credentialPreconditions)ProcessResult for curi '" +  curi + "': ProcessResult.FINISH");
             return ProcessResult.FINISH;
         }
 
@@ -355,6 +355,7 @@ public class PreconditionEnforcer extends Processor  {
         CrawlHost host = serverCache.getHostFor(curi.getUURI());
         if (!host.hasBeenLookedUp()) {
             // IP has not been looked up yet.
+        	logger.info("It seems that the IP for '" + curi + "' hasn't been looked up yet");
             return true;
         }
 
@@ -381,8 +382,10 @@ public class PreconditionEnforcer extends Processor  {
         if (duration > 0) {
             duration *= 1000;
         }
-
-        return (duration + host.getIpFetched()) < System.currentTimeMillis();
+        boolean isExpired = (duration + host.getIpFetched()) < System.currentTimeMillis();
+        logger.info("IP of curi '" + curi + "' is " + (isExpired?" ":"NOT ") + "expired. Was fetched at " +  host.getIpFetched());
+        
+        return isExpired;
     }
 
    /**
