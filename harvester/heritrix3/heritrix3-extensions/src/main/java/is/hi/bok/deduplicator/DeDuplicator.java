@@ -36,7 +36,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,6 +53,7 @@ import org.archive.modules.CrawlURI;
 import org.archive.modules.ProcessResult;
 import org.archive.modules.Processor;
 import org.archive.modules.net.ServerCache;
+import org.archive.modules.revisit.IdenticalPayloadDigestRevisit;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.Base32;
 import org.springframework.beans.factory.InitializingBean;
@@ -392,12 +392,11 @@ public class DeDuplicator extends Processor implements InitializingBean {
                     curi.getContentType() + ").");
             return false;
         }
-        if(curi.getData().containsKey(A_CONTENT_STATE_KEY) && 
-                ((Integer)curi.getData().get(A_CONTENT_STATE_KEY)).intValue()==CONTENT_UNCHANGED){
-            // Early return. A previous processor or filter has judged this
-            // CrawlURI as having unchanged content.
+        
+        if(curi.isRevisit()){
+            // A previous processor or filter has judged this CrawlURI to be a revisit
             logger.finest("Not handling " + curi.toString()
-                    + ", already flagged as unchanged.");
+                    + ", already flagged as revisit.");
             return false;
         }
         return true;
@@ -442,6 +441,24 @@ public class DeDuplicator extends Processor implements InitializingBean {
 
         if (duplicate != null){
             // Perform tasks common to when a duplicate is found.
+
+        	//// Code taken from LuceneIndexSearcher.wrap() method //////////////////////////
+        	IdenticalPayloadDigestRevisit duplicateRevisit = new IdenticalPayloadDigestRevisit(
+        			duplicate.get("digest")); //DIGEST.name()));
+
+        	duplicateRevisit.setRefersToTargetURI(
+        			duplicate.get("url"));  // URL.name()
+        	duplicateRevisit.setRefersToDate(
+        			duplicate.get("date")); // DATE.name()
+
+        	/* TODO enable a ORIGINAL_RECORD_ID field during indexing
+        	 * Requires the record ID information to be available to the indexer.
+        	String refersToRecordID = duplicate.get(ORIGINAL_RECORD_ID.name());
+        	if (refersToRecordID!=null && !refersToRecordID.isEmpty()) {
+       		duplicateRevisit.setRefersToRecordID(refersToRecordID);
+        	} */       	
+
+
             // Increment statistics counters
             stats.duplicateAmount += curi.getContentSize();
             stats.duplicateNumber++;
@@ -474,50 +491,22 @@ public class DeDuplicator extends Processor implements InitializingBean {
                     }
                 }
             } 
-            // Make note in log
+            // Make duplicate-note in crawl-log
             curi.getAnnotations().add(annotation);
-
-            if(getChangeContentSize()){
-                // Set content size to zero, we are not planning to 
-                // 'write it to disk'
-                // TODO: Reconsider this
-                curi.setContentSize(0);
-            } else if (lookupByURL) {
-            	// A hack to have Heritrix count this as a duplicate.
-            	// TODO: Get gojomo to change how Heritrix decides CURIs are duplicates.
-                int targetHistoryLength = 2;
-		        Map[] history = 
-		            (HashMap[]) (curi.containsDataKey(A_FETCH_HISTORY) 
-				    ? curi.getData().get(A_FETCH_HISTORY) 
-				    : new HashMap[targetHistoryLength]);
+            // Notify Heritrix that this is a revisit
+            curi.setRevisitProfile(duplicateRevisit);
+            
+            /* TODO enable this when moving to indexing based on this data
+            // Add annotation to crawl.log 
+            curi.getAnnotations().add(REVISIT_ANNOTATION_MARKER);
                         
-                // Create space 
-		        if(history.length != targetHistoryLength) {
-		            HashMap[] newHistory = new HashMap[targetHistoryLength];
-		            System.arraycopy(
-		                    history,0,
-		                    newHistory,0,
-		                    Math.min(history.length,newHistory.length));
-		            history = newHistory; 
-		        }
-                
-                // rotate all history entries up one slot except the newest
-                // insert from index at [1]
-                for(int i = history.length-1; i >1; i--) {
-                    history[i] = history[i-1];
-                }
-                // Fake the 'last' entry
-                Map oldVisit = new HashMap();
-                oldVisit.put(A_CONTENT_DIGEST, curi.getContentDigest());
-                history[1]=oldVisit;
-                
-                curi.getData().put(A_FETCH_HISTORY,history);
-            	
-            } // TODO: Handle matching on digest
-            // Mark as duplicate for other processors
-            curi.getData().put(A_CONTENT_STATE_KEY, CONTENT_UNCHANGED);
+            // Write extra logging information (needs to be enabled in CrawlerLoggerModule)
+            curi.addExtraInfo(EXTRA_REVISIT_PROFILE, duplicateRevisit.getProfileName());
+            curi.addExtraInfo(EXTRA_REVISIT_URI, duplicateRevisit.getRefersToTargetURI());
+            curi.addExtraInfo(EXTRA_REVISIT_DATE, duplicateRevisit.getRefersToDate());
+            */
+            
         }
-        
         if(getAnalyzeTimestamp()){
             doAnalysis(curi,currHostStats, duplicate!=null);
         }
