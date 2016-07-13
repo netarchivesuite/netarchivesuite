@@ -391,6 +391,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   		propertyBuilder.append(propertyName + "writeMetadata" + valuePrefix 
   				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_WRITE_METADATA)
   				+ valueSuffix + propertyEnd);
+  		propertyBuilder.append(propertyName + "writeMetadataOutlinks" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_WRITE_METADATA_OUTLINKS)
+  				+ valueSuffix + propertyEnd);
   		propertyBuilder.append(propertyName + "skipIdenticalDigests" + valuePrefix 
   				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_SKIP_IDENTICAL_DIGESTS)
   				+ valueSuffix + propertyEnd);
