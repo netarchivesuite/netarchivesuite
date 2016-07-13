@@ -181,6 +181,8 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         e.setExpertSetting(true);
         e = addElementToDefinition(new SimpleType(ATTR_WRITE_METADATA,
                 "Whether to write 'metadata' type records. Default is true.", new Boolean(true)));
+        e.setOverrideable(true);
+        e.setExpertSetting(true);
         e = addElementToDefinition(new SimpleType(ATTR_WRITE_METADATA_OUTLINKS,
                 "Whether to write 'metadata-outlinks' type records. Default is true.", new Boolean(true)));
         e.setOverrideable(true);

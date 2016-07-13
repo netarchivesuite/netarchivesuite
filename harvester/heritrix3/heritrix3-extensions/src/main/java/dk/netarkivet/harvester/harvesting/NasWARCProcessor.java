@@ -51,7 +51,7 @@ public class NasWARCProcessor extends WARCWriterProcessor {
 	private static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
 
 	public boolean getWriteMetadataOutlinks() {
-        return (Boolean) kp.get("writeMetadata");
+        return (Boolean) kp.get("writeMetadataOutlinks");
     }
     public void setWriteMetadataOutlinks(boolean writeMetadataOutlinks) {
         kp.put("writeMetadataOutlinks",writeMetadataOutlinks);
