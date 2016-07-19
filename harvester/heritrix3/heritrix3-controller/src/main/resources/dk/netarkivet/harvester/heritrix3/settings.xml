@@ -75,6 +75,7 @@ National Library.
                 	<skipIdenticalDigests>false</skipIdenticalDigests>
 					<writeRequests>false</writeRequests>
 					<writeMetadata>false</writeMetadata>
+					<writeMetadataOutlinks>false</writeMetadataOutlinks>
 					<writeRevisitForIdenticalDigests>false</writeRevisitForIdenticalDigests>
 					<writeRevisitForNotModified>false</writeRevisitForNotModified>
                 </warc>

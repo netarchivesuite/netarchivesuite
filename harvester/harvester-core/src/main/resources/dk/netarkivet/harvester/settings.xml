@@ -123,11 +123,13 @@ National Library.
                 </archiveNaming>
                 <warc>
                 	<skipIdenticalDigests>false</skipIdenticalDigests>
-			<writeRequests>true</writeRequests>
-			<writeMetadata>true</writeMetadata>
-			<writeRevisitForIdenticalDigests>false</writeRevisitForIdenticalDigests>
-			<writeRevisitForNotModified>false</writeRevisitForNotModified>
-			<startNewFilesOnCheckpoint>true</startNewFilesOnCheckpoint>
+                	<writeRequests>true</writeRequests>
+                	<writeMetadata>true</writeMetadata>
+                	<writeMetadataOutlinks>false</writeMetadataOutlinks>
+                	<writeRevisitForIdenticalDigests>false</writeRevisitForIdenticalDigests>
+                	<writeRevisitForNotModified>false</writeRevisitForNotModified>
+                	<startNewFilesOnCheckpoint>true</startNewFilesOnCheckpoint>
+                	<writeMetadataOutlinks>true</writeMetadataOutlinks>
                 </warc>
             </heritrix>
 	    <heritrix3>	<!-- heritrix3 settings -->
@@ -162,6 +164,7 @@ National Library.
 			<maxFileSizeBytes>1000000000</maxFileSizeBytes>
 	        	<writeRequests>true</writeRequests>
 			<writeMetadata>true</writeMetadata>
+			<writeMetadataOutlinks>false</writeMetadataOutlinks>
 			<skipIdenticalDigests>false</skipIdenticalDigests>
 			<startNewFilesOnCheckpoint>true</startNewFilesOnCheckpoint>
                 </warc>
