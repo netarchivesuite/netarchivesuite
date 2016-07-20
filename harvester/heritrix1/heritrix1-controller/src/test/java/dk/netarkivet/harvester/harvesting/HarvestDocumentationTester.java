@@ -130,7 +130,7 @@ public class HarvestDocumentationTester {
         HarvestDocumentation.documentHarvest(inf);
 
         // Verify that the new file exists.
-        MetadataFileWriter.getMetadataArchiveFileName(Heritrix1ControllerTestInfo.ARC_JOB_ID, Heritrix1ControllerTestInfo.ARC_HARVEST_ID);
+        MetadataFileWriter.getMetadataArchiveFileName(Heritrix1ControllerTestInfo.ARC_JOB_ID, Long.parseLong(Heritrix1ControllerTestInfo.ARC_HARVEST_ID));
 
         List<File> fs = inf.getMetadataArcFiles();
         assertEquals("Should have created exactly one file ", 1, fs.size());
