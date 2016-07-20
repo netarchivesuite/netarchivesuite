@@ -98,7 +98,13 @@ public abstract class MetadataFileWriter {
         String collectionName = "";
         boolean isPrefix = false;
         //try to retrieve settings for prefixing or not metadata files
-        if("prefix".equals(Settings.get(HarvesterSettings.METADATA_FILENAME_FORMAT))) {
+        String metadataFilenameFormat = "";
+        try {
+        	metadataFilenameFormat = Settings.get(HarvesterSettings.METADATA_FILENAME_FORMAT);
+        } catch (UnknownID e) {
+        	//nothing
+        }
+        if("prefix".equals(metadataFilenameFormat)) {
             try {
                //try to retrieve in both <heritrix> and <heritrix3> tags
                 collectionName = Settings.get(HarvesterSettings.HERITRIX_METADATA_PREFIX_COLLECTION_NAME);
@@ -107,7 +113,11 @@ public abstract class MetadataFileWriter {
                 }
                 isPrefix = true;
             } catch(UnknownID e) {
-                //nothing
+                try {
+                	collectionName = Settings.get(HarvesterSettings.HERITRIX3_METADATA_PREFIX_COLLECTION_NAME);
+                } catch(UnknownID f) {
+                	//nothing
+                }
             }
 		}
         if (metadataFormat == 0) {

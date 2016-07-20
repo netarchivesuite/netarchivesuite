@@ -646,6 +646,7 @@
                 	<fileHeader>[ARCHIVEFILE] [Opened] [Closed] [Size]</fileHeader>
                 </archiveFilesReport>
                 <metadataFormat>arc</metadataFormat>
+                <metadataFileNameFormat>default</metadataFileNameFormat>
             </metadata>
         </harvesting>
         <indexserver>

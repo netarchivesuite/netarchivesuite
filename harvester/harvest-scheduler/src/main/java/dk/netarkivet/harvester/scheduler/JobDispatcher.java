@@ -215,11 +215,8 @@ public class JobDispatcher {
         if (usingWarcAsArchiveFormat()) {
         	log.info("As we're using WARC as archiveFormat WarcInfoMetadata is now added to the template");
         	HeritrixTemplate ht = job.getOrderXMLdoc();
-        	if (job.getContinuationOf() != null ) {
-                ht.insertWarcInfoMetadata(job, origHarvestName, origHarvestSchedule,
-                        Settings.get(HarvesterSettings.PERFORMER));
-            }
-                job.setOrderXMLDoc(ht);
+        	ht.insertWarcInfoMetadata(job, origHarvestName, origHarvestSchedule,Settings.get(HarvesterSettings.PERFORMER));
+            job.setOrderXMLDoc(ht);
         } else {
         	log.info("As we're using ARC as archiveFormat no WarcInfoMetadata was added to the template");
         }

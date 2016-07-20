@@ -279,7 +279,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @param jobID The jobID we work on.
          * @throws IOException If an I/O error occurs, or the resultFile does not exist
          */
-        private void arcifyResultFile(File resultFile, long jobID long harvestID) throws IOException {
+        private void arcifyResultFile(File resultFile, long jobID, long harvestID) throws IOException {
             BufferedReader reader = new BufferedReader(new FileReader(resultFile));
 
             File outputFile = new File(MetadataFileWriter.getMetadataArchiveFileName(Long.toString(jobID), harvestID));

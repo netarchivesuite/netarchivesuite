@@ -201,6 +201,7 @@ National Library.
                 </archiveFilesReport>
                 <metadataFormat>warc</metadataFormat>
                 <compression>false</compression>
+                <metadataFileNameFormat>default</metadataFileNameFormat>
             </metadata>
         </harvesting>
         <indexserver>

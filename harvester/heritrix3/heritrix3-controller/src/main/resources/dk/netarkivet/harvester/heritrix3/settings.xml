@@ -111,6 +111,7 @@ National Library.
                 	<fileHeader>[ARCHIVEFILE] [Closed] [Size]</fileHeader>
                 </archiveFilesReport>
                 <metadataFormat>warc</metadataFormat>
+                <metadataFileNameFormat>default</metadataFileNameFormat>
             </metadata>
         </harvesting>
     </harvester>
