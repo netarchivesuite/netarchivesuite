@@ -106,18 +106,11 @@ public abstract class MetadataFileWriter {
         }
         if("prefix".equals(metadataFilenameFormat)) {
             try {
-               //try to retrieve in both <heritrix> and <heritrix3> tags
-                collectionName = Settings.get(HarvesterSettings.HERITRIX_METADATA_PREFIX_COLLECTION_NAME);
-                if(collectionName == null || collectionName.length() == 0) {
-                    collectionName = Settings.get(HarvesterSettings.HERITRIX3_METADATA_PREFIX_COLLECTION_NAME);
-                }
+                //try to retrieve in both <heritrix> and <heritrix3> tags
+                collectionName = Settings.get(HarvesterSettings.HERITRIX_PREFIX_COLLECTION_NAME);
                 isPrefix = true;
             } catch(UnknownID e) {
-                try {
-                	collectionName = Settings.get(HarvesterSettings.HERITRIX3_METADATA_PREFIX_COLLECTION_NAME);
-                } catch(UnknownID f) {
-                	//nothing
-                }
+                //nothing
             }
 		}
         if (metadataFormat == 0) {

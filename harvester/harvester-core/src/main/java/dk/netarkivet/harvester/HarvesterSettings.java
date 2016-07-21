@@ -539,9 +539,10 @@ public class HarvesterSettings {
     
     /**
      * <b>settings.harvester.harvesting.heritrix.archiveNaming.collectionName</b>
+     * prefix for archive file
      * if METADATA_FILENAME_FORMAT is "prefix", then check of a collection name to prefix metadata filename
      */
-     public static String HERITRIX_METADATA_PREFIX_COLLECTION_NAME = "settings.harvester.harvesting.heritrix.archiveNaming.collectionName";
+     public static String HERITRIX_PREFIX_COLLECTION_NAME = "settings.harvester.harvesting.heritrix.archiveNaming.collectionName";
 
     /**
      * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the
@@ -754,8 +755,6 @@ public class HarvesterSettings {
     public static String HERITRIX3_WARC_SKIP_IDENTICAL_DIGESTS = "settings.harvester.harvesting.heritrix3.warc.skipIdenticalDigests";
 
     public static String HERITRIX3_WARC_START_NEW_FILES_ON_CHECKPOINT = "settings.harvester.harvesting.heritrix3.warc.startNewFilesOnCheckpoint";
-
-    public static String HERITRIX3_METADATA_PREFIX_COLLECTION_NAME = "settings.harvester.harvesting.heritrix3.archiveNaming.collectionName";
 
     /**
      * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the
