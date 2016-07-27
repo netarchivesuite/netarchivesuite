@@ -558,7 +558,7 @@ public class HarvesterSettings {
     public static String HERITRIX_ARCHIVE_NAMING_CLASS = "settings.harvester.harvesting.heritrix.archiveNaming.class";
 
     /**
-     * <b>settings.harvester.harvesting.heritrix.warc.writeMetadataOutlinks</b> This paramater define NAS behaviour 
+     * <b>settings.harvester.harvesting.heritrix.warc.warcParametersOverride</b> This paramater define NAS behaviour 
      * regarding warc parameters (write request, write metadata, etc.) : if this parameter is true, the warc parameters
      * defined in harvester templates are not considered. The default is true.
      */
