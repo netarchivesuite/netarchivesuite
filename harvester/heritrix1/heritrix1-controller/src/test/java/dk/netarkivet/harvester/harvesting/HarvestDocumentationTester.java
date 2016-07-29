@@ -130,7 +130,7 @@ public class HarvestDocumentationTester {
         HarvestDocumentation.documentHarvest(inf);
 
         // Verify that the new file exists.
-        MetadataFileWriter.getMetadataArchiveFileName(Heritrix1ControllerTestInfo.ARC_JOB_ID);
+        MetadataFileWriter.getMetadataArchiveFileName(Heritrix1ControllerTestInfo.ARC_JOB_ID, Long.parseLong(Heritrix1ControllerTestInfo.ARC_HARVEST_ID));
 
         List<File> fs = inf.getMetadataArcFiles();
         assertEquals("Should have created exactly one file ", 1, fs.size());
@@ -209,7 +209,7 @@ public class HarvestDocumentationTester {
         List<File> metadataFiles = OkIngestables.getMetadataArcFiles();
         File metadataDir = new File(WORKING_DIR, "metadata");
         File target1 = new File(metadataDir, MetadataFileWriter.getMetadataArchiveFileName(Long
-                .toString(Heritrix1ControllerTestInfo.JOB_ID)));
+                .toString(Heritrix1ControllerTestInfo.JOB_ID), Heritrix1ControllerTestInfo.HARVEST_ID));
         assertEquals("Should generate exactly one metadata file", 1, metadataFiles.size());
         assertTrue("Should generate file " + target1 + " but found only " + metadataFiles.toString(),
                 metadataFiles.contains(target1));
@@ -217,7 +217,7 @@ public class HarvestDocumentationTester {
 
     @Test (expected = ArgumentNotValid.class)
     public void testGetMetadataARCNullFileName() {
-        MetadataFileWriter.getMetadataArchiveFileName(null);
+        MetadataFileWriter.getMetadataArchiveFileName(null, null);
     }
 
     /**
@@ -227,7 +227,8 @@ public class HarvestDocumentationTester {
     @Test
     public void testGetMetadataARCFileName() {
         String job = "7";
-        String fn = MetadataFileWriter.getMetadataArchiveFileName(job);
+        Long harvestId = 43L;
+        String fn = MetadataFileWriter.getMetadataArchiveFileName(job, harvestId);
         assertTrue("File name should end on '-1.arc' - was " + fn, fn.endsWith("-1.arc"));
         assertTrue("File name should contain jobID - was " + fn, fn.contains(job));
         assertTrue("File name should contain the string 'metadata' - was " + fn, fn.contains("metadata"));
@@ -434,7 +435,7 @@ public class HarvestDocumentationTester {
         FileUtils.remove(new File(arcsDir, "42-117-20051212141241-00001-sb-test-har-001.statsbiblioteket.dk.arc"));
 
         String metadataDirPath = new File(WORKING_DIR, IngestableFiles.METADATA_SUB_DIR).getAbsolutePath();
-        String filename = MetadataFileWriter.getMetadataArchiveFileName("" + Heritrix1ControllerTestInfo.JOB_ID);
+        String filename = MetadataFileWriter.getMetadataArchiveFileName("" + Heritrix1ControllerTestInfo.JOB_ID, Heritrix1ControllerTestInfo.HARVEST_ID);
 
         lr.assertLogContains("Should have issued warning about existing metadata-arcfile", "The metadata-file '"
                 + metadataDirPath + "/" + filename + "' already exists, so we don't make another one!");

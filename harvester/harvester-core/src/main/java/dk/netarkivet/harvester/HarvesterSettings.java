@@ -521,7 +521,15 @@ public class HarvesterSettings {
      * metadata associated with a given harvest job. default: arc (alternative: warc)
      */
     public static String METADATA_FORMAT = "settings.harvester.harvesting.metadata.metadataFormat";
-    
+
+    /**
+     * <b>settings.harvester.harvesting.metadata.metadataFileNameFormat</b> The format of the name of the metadata file :
+     * By default, it will be jobID-metadata.1.extension for example 3161-metadata-1.warc
+     * If the value is "prefix", it will be named like a warc file : Prefix-61-3161-metadata-1.warc
+     * default value : default (alternative: prefix) 
+     */
+    public static String METADATA_FILENAME_FORMAT = "settings.harvester.harvesting.metadata.metadataFileNameFormat";
+
     /**
      * <b>settings.harvester.harvesting.metadata.compression</b> Do we compress the
      * metadata associated with a given harvest job. 
@@ -529,6 +537,13 @@ public class HarvesterSettings {
      */
     public static String METADATA_COMPRESSION = "settings.harvester.harvesting.metadata.compression";
     
+    /**
+     * <b>settings.harvester.harvesting.heritrix.archiveNaming.collectionName</b>
+     * prefix for archive file
+     * if METADATA_FILENAME_FORMAT is "prefix", then check of a collection name to prefix metadata filename
+     */
+     public static String HERITRIX_PREFIX_COLLECTION_NAME = "settings.harvester.harvesting.heritrix.archiveNaming.collectionName";
+
     /**
      * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the
      * harvested data. default: warc (alternative: arc)
@@ -541,6 +556,13 @@ public class HarvesterSettings {
      * org.archive.crawler.writer.WARCWriterProcessor.
      */
     public static String HERITRIX_ARCHIVE_NAMING_CLASS = "settings.harvester.harvesting.heritrix.archiveNaming.class";
+
+    /**
+     * <b>settings.harvester.harvesting.heritrix.warc.warcParametersOverride</b> This paramater define NAS behaviour 
+     * regarding warc parameters (write request, write metadata, etc.) : if this parameter is true, the warc parameters
+     * defined in harvester templates are not considered. The default is true.
+     */
+    public static String HERITRIX_WARC_PARAMETERS_OVERRIDE = "settings.harvester.harvesting.heritrix.warc.warcParametersOverride";
 
     /**
      * <b>settings.harvester.harvesting.heritrix.warc.skipIdenticalDigests</b> Represents the 'skip-identical-digests'
@@ -557,6 +579,11 @@ public class HarvesterSettings {
      * Heritrix WARCWriterProcessor. The default is true.
      */
     public static String HERITRIX_WARC_WRITE_METADATA = "settings.harvester.harvesting.heritrix.warc.writeMetadata";
+    /**
+     * <b>settings.harvester.harvesting.heritrix.warc.writeMetadataOutlinks</b> Represents the 'write-metadata-outlinks' setting in the Heritrix 
+     * WARCWriterProcessor. The default is false.s
+     */
+    public static String HERITRIX_WARC_WRITE_METADATA_OUTLINKS = "settings.harvester.harvesting.heritrix.warc.writeMetadataOutlinks";
     /**
      * <b>settings.harvester.harvesting.heritrix.warc.writeRevisitForIdenticalDigests</b> Represents the
      * 'write-revisit-for-identical-digests' setting in the Heritrix WARCWriterProcessor. The default is true.
@@ -723,10 +750,12 @@ public class HarvesterSettings {
 
     public static String HERITRIX3_WARC_WRITE_METADATA = "settings.harvester.harvesting.heritrix3.warc.writeMetadata";
 
+    public static String HERITRIX3_WARC_WRITE_METADATA_OUTLINKS = "settings.harvester.harvesting.heritrix3.warc.writeMetadataOutlinks";
+
     public static String HERITRIX3_WARC_SKIP_IDENTICAL_DIGESTS = "settings.harvester.harvesting.heritrix3.warc.skipIdenticalDigests";
 
     public static String HERITRIX3_WARC_START_NEW_FILES_ON_CHECKPOINT = "settings.harvester.harvesting.heritrix3.warc.startNewFilesOnCheckpoint";
-    
+
     /**
      * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the
      * harvested data. default: warc (alternative: arc)
@@ -739,6 +768,13 @@ public class HarvesterSettings {
      * org.archive.crawler.writer.WARCWriterProcessor.
      */
     public static String HERITRIX3_ARCHIVE_NAMING_CLASS = "settings.harvester.harvesting.heritrix3.archiveNaming.class";
+ 
+     /**
+     * <b>settings.harvester.harvesting.heritrix.warc.writeMetadataOutlinks</b> This paramater define NAS behaviour 
+     * regarding warc parameters (write request, write metadata, etc.) : if this parameter is true, the warc parameters
+     * defined in harvester templates are not considered. The default is true.
+     */
+    public static String HERITRIX3_WARC_PARAMETERS_OVERRIDE = "settings.harvester.harvesting.heritrix3.warc.warcParametersOverride";
    
     /**
      * <b>settings.harvester.harvesting.heritrix.bundle</b>Points to the Heritrix3 zipfile bundled with 

@@ -228,7 +228,7 @@ public final class BatchGUI {
             }
 
             // get the regular expression.
-            String regex = jobId + "-";
+            String regex = ".*" + jobId + "-" + ".*";
             if (filetype.equals(BatchFileType.Metadata.toString())) {
                 regex += Constants.REGEX_METADATA;
             } else if (filetype.equals(BatchFileType.Content.toString())) {

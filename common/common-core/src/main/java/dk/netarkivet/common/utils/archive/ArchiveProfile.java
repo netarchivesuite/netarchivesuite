@@ -64,10 +64,10 @@ public class ArchiveProfile {
 
     /** ARC archive profile. */
     public static final ArchiveProfile ARC_PROFILE = new ArchiveProfile(FileUtils.ARCS_FILTER, FileUtils.ARC_PATTERN,
-            Pattern.compile("([0-9]+)-metadata-([0-9]+).arc"), Constants.ARCDIRECTORY_NAME);
+            Pattern.compile("([\\w]+)-metadata-([0-9]+).arc"), Constants.ARCDIRECTORY_NAME);
 
     /** WARC archive profile. */
     public static final ArchiveProfile WARC_PROFILE = new ArchiveProfile(FileUtils.WARCS_FILTER,
-            FileUtils.WARC_PATTERN, Pattern.compile("([0-9]+)-metadata-([0-9]+).warc"), Constants.WARCDIRECTORY_NAME);
+            FileUtils.WARC_PATTERN, Pattern.compile("([\\w]+)-metadata-([0-9]+).warc"), Constants.WARCDIRECTORY_NAME);
 
 }

@@ -118,6 +118,9 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
 
     /** Key for whether to write 'metadata' type records where possible */
     public static final String ATTR_WRITE_METADATA = "write-metadata";
+    
+    /** Key for whether to write 'metadata-outlinks' type records where possible */
+    public static final String ATTR_WRITE_METADATA_OUTLINKS = "write-metadata-outlinks";
 
     /**
      * Key for whether to write 'revisit' type records when consecutive identical digest
@@ -178,6 +181,10 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         e.setExpertSetting(true);
         e = addElementToDefinition(new SimpleType(ATTR_WRITE_METADATA,
                 "Whether to write 'metadata' type records. Default is true.", new Boolean(true)));
+        e.setOverrideable(true);
+        e.setExpertSetting(true);
+        e = addElementToDefinition(new SimpleType(ATTR_WRITE_METADATA_OUTLINKS,
+                "Whether to write 'metadata-outlinks' type records. Default is true.", new Boolean(true)));
         e.setOverrideable(true);
         e.setExpertSetting(true);
         e = addElementToDefinition(new SimpleType(ATTR_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS,
@@ -321,7 +328,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
         if (((Boolean) getUncheckedAttribute(curi, ATTR_WRITE_METADATA))) {
             headers = new ANVLRecord(1);
             headers.addLabelValue(HEADER_KEY_CONCURRENT_TO, '<' + rid.toString() + '>');
-            writeMetadata(w, timestamp, baseid, curi, headers);
+            writeMetadata(w, timestamp, baseid, curi, headers, ((Boolean) getUncheckedAttribute(curi, ATTR_WRITE_METADATA_OUTLINKS)));
         }
     }
 
@@ -374,7 +381,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
             writeRequest(w, timestamp, HTTP_REQUEST_MIMETYPE, baseid, curi, headers);
         }
         if (((Boolean) getUncheckedAttribute(curi, ATTR_WRITE_METADATA))) {
-            writeMetadata(w, timestamp, baseid, curi, headers);
+            writeMetadata(w, timestamp, baseid, curi, headers, ((Boolean) getUncheckedAttribute(curi, ATTR_WRITE_METADATA_OUTLINKS)));
         }
     }
 
@@ -493,7 +500,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
     }
 
     protected URI writeMetadata(final WARCWriter w, final String timestamp, final URI baseid, final CrawlURI curi,
-            final ANVLRecord namedFields) throws IOException {
+            final ANVLRecord namedFields, final boolean writeMetadataOutlinks) throws IOException {
         final URI uid = qualifyRecordID(baseid, TYPE, METADATA);
         // Get some metadata from the curi.
         // TODO: Get all curi metadata.
@@ -521,12 +528,15 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
             r.addLabelValue("ftpFetchStatus", curi.getString(A_FTP_FETCH_STATUS));
         }
 
-        // Add outlinks though they are effectively useless without anchor text.
-        Collection<Link> links = curi.getOutLinks();
-        if (links != null && links.size() > 0) {
-            for (Link link : links) {
-                r.addLabelValue("outlink", link.toString());
-            }
+        //only if parameter is true, add the outlinks
+        if (writeMetadataOutlinks == true) {
+	        // Add outlinks though they are effectively useless without anchor text.
+	        Collection<Link> links = curi.getOutLinks();
+	        if (links != null && links.size() > 0) {
+	            for (Link link : links) {
+	                r.addLabelValue("outlink", link.toString());
+	            }
+	        }
         }
 
         // TODO: Other curi fields to write to metadata.

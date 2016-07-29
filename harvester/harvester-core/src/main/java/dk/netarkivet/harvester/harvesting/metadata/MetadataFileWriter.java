@@ -92,8 +92,27 @@ public abstract class MetadataFileWriter {
      * file is ever made.
      * @throws ArgumentNotValid if any parameter was null.
      */
-    public static String getMetadataArchiveFileName(String jobID) throws ArgumentNotValid {
+    public static String getMetadataArchiveFileName(String jobID, Long harvestID) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jobID, "jobID");
+        //retrieving the collectionName
+        String collectionName = "";
+        boolean isPrefix = false;
+        //try to retrieve settings for prefixing or not metadata files
+        String metadataFilenameFormat = "";
+        try {
+        	metadataFilenameFormat = Settings.get(HarvesterSettings.METADATA_FILENAME_FORMAT);
+        } catch (UnknownID e) {
+        	//nothing
+        }
+        if("prefix".equals(metadataFilenameFormat)) {
+            try {
+                //try to retrieve in both <heritrix> and <heritrix3> tags
+                collectionName = Settings.get(HarvesterSettings.HERITRIX_PREFIX_COLLECTION_NAME);
+                isPrefix = true;
+            } catch(UnknownID e) {
+                //nothing
+            }
+		}
         if (metadataFormat == 0) {
             initializeMetadataFormat();
         }
@@ -104,9 +123,17 @@ public abstract class MetadataFileWriter {
         }
         switch (metadataFormat) {
         case MDF_ARC:
-            return jobID + "-metadata-" + 1 + ".arc" + possibleGzSuffix;
+            if(isPrefix) {
+                return collectionName + "-" + jobID + "-" + harvestID + "-metadata-" + 1 + possibleGzSuffix;
+            } else {
+                return jobID + "-metadata-" + 1 + ".arc" + possibleGzSuffix;
+            }
         case MDF_WARC:
-            return jobID + "-metadata-" + 1 + ".warc" + possibleGzSuffix;
+            if(isPrefix) {
+                return collectionName + "-" + jobID + "-" + harvestID + "-metadata-" + 1 + possibleGzSuffix;
+            } else {
+                return jobID + "-metadata-" + 1 + ".warc" + possibleGzSuffix;
+            }
         default:
             throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
         }

@@ -132,6 +132,7 @@ National Library.
      		</heritrix>
      		<metadata>
                 <metadataFormat>arc</metadataFormat>
+                <metadataFileNameFormat>default</metadataFileNameFormat>
             </metadata>
      		
      	</harvesting>
