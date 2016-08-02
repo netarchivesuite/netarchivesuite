@@ -16,6 +16,6 @@
 SET search_path TO netarchivesuite;
 
 INSERT INTO harvestchannel(name, isdefault, issnapshot, comments) 
-    VALUES ('CIBLEE', true, true, 'Canal par défaut pour les collectes ciblées');
+    VALUES ('CIBLEE', true, false, 'Canal par défaut pour les collectes ciblées');
 INSERT INTO harvestchannel(name, isdefault, issnapshot , comments) 
-    VALUES ('LARGE', true, false, 'Canal par défaut pour les collectes larges');
+    VALUES ('LARGE', true, true, 'Canal par défaut pour les collectes larges');
