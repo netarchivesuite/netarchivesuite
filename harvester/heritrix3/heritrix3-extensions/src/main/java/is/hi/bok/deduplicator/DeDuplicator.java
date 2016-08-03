@@ -88,9 +88,30 @@ import dk.netarkivet.common.utils.AllDocsCollector;
         <property name="originHandling" value="INDEX"/> Other options: NONE,PROCESSOR
         <property name="statsPerHost" value="true"/>
 
- * 
- * 
- */
+//          	/**
+//					(FROM deduplicator-commons/src/main/java/is/landsbokasafn/deduplicator/IndexFields.java)
+//        	       * These enums correspond to the names of fields in the Lucene index
+//        	     */
+//        	public enum IndexFields {
+//        	    /** The URL 
+//        	     *  This value is suitable for use in warc/revisit records as the WARC-Refers-To-Target-URI
+//        	     **/
+//        	        URL,
+//        	    /** The content digest as String **/
+//        	        DIGEST,
+//        	    /** The URLs timestamp (time of fetch). Suitable for use in WARC-Refers-To-Date. Encoded according to
+//        	     *  w3c-iso8601  
+//        	     */
+//        	    DATE,
+//        	    /** The document's etag **/
+//        	    ETAG,
+//        	    /** A canonicalized version of the URL **/
+//        	        URL_CANONICALIZED,
+//        	    /** WARC Record ID of original payload capture. Suitable for WARC-Refers-To field. **/
+//        	    ORIGINAL_RECORD_ID;
+//
+//        	}
+ 
 @SuppressWarnings({"unchecked"})
 public class DeDuplicator extends Processor implements InitializingBean {
 
@@ -301,8 +322,6 @@ public class DeDuplicator extends Processor implements InitializingBean {
 
     
     // Member variables.
-    
-    //protected IndexSearcher searcher = null;
     protected IndexSearcher indexSearcher = null;
     protected IndexReader indexReader = null;
     
@@ -448,15 +467,29 @@ public class DeDuplicator extends Processor implements InitializingBean {
 
         	duplicateRevisit.setRefersToTargetURI(
         			duplicate.get("url"));  // URL.name()
-        	duplicateRevisit.setRefersToDate(
-        			duplicate.get("date")); // DATE.name()
-
-        	/* TODO enable a ORIGINAL_RECORD_ID field during indexing
-        	 * Requires the record ID information to be available to the indexer.
-        	String refersToRecordID = duplicate.get(ORIGINAL_RECORD_ID.name());
+        	String indexedDate = duplicate.get("date"); // DATE.name()
+        	Date readDate = null;
+        	try {
+        		readDate = ArchiveDateConverter.getHeritrixDateFormat().parse(indexedDate);
+        	} catch (ParseException e) {
+        		logger.warning("Unable to parse the indexed date '" + indexedDate 
+        				+ "' as a 17-digit date: " + e); 
+        	}
+        	String refersToDateString = indexedDate;
+        	if (readDate != null) {
+        		refersToDateString = ArchiveDateConverter.getWarcDateFormat().format(readDate); 
+        	}
+        	
+        	duplicateRevisit.setRefersToDate(refersToDateString);
+        			
+        	
+        	//Check if the record ID information is available in the index.
+        	// This requires that record information is available during indexing
+        	String refersToRecordID = duplicate.get("orig_record_id"); // ORIGINAL_RECORD_ID.name()); 
+        
         	if (refersToRecordID!=null && !refersToRecordID.isEmpty()) {
        		duplicateRevisit.setRefersToRecordID(refersToRecordID);
-        	} */       	
+        	}        	
 
 
             // Increment statistics counters
