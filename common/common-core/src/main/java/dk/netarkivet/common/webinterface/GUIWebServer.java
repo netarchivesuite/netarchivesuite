@@ -96,7 +96,10 @@ public class GUIWebServer implements CleanupIF {
         System.setProperty("org.apache.catalina.startup.EXIT_ON_INIT_FAILURE", "true");
 
         // Use directory in commontempdir for cache
-        File basedir = FileUtils.getTempDir();
+        final File tempDir = FileUtils.getTempDir();
+        log.debug("GUI using tempdir " + tempDir);
+        File basedir = tempDir.getAbsoluteFile().getParentFile();
+        log.debug("GUI using basedir " + basedir);
         server.setBaseDir(basedir.getAbsolutePath());
 
         File webapps = new File(basedir, "/webapps");
@@ -125,7 +128,8 @@ public class GUIWebServer implements CleanupIF {
 
             try {
                 //add the jar file to tomcat
-                StandardContext ctx = (StandardContext) server.addWebapp(webbase, webApps[i]);
+                String warfile = new File(basedir, webApps[i]).getAbsolutePath();
+                StandardContext ctx = (StandardContext) server.addWebapp(webbase, warfile);
 
                 //Disable TLD scanning by default
                 if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {

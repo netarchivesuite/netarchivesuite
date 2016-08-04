@@ -121,7 +121,8 @@ public class HarvestStatusJobDetails {
         ArgumentNotValid.checkNotNull(I18N, "I18n I18N");
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
 
-        out.println("<h3 class=\"page_heading\">" + I18N.getString(locale, "pagetitle;details.for.job.0") + jobID + "</h3>");
+        //Job details table
+        out.println("<h3 class=\"page_heading\">" + I18N.getString(locale, "pagetitle;details.for.job.0", jobID) + "</h3>");
         out.println("<table class=\"selection_table\">");
         out.println("<tr>");
         out.println("<th>" + I18N.getString(locale, "table.job.jobid") + "</th>");
@@ -159,7 +160,7 @@ public class HarvestStatusJobDetails {
             out.println("<table class=\"selection_table\"><tr><td>");
             out.println("<p><a href=\"/" + Constants.QA_SITESECTION_DIRNAME + "/QA-changeIndex.jsp?" + Constants.JOB_PARAM + "=" +
             job.getJobID() + "&" + Constants.INDEXLABEL_PARAM + "=" + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(I18N.getString(
-                    locale, "job.0", job.getJobID()))) + ">" + I18N.getString(locale, "select.job.for.qa.with.viewerproxy") + "</a></p>");
+                    locale, "job.0", job.getJobID()))) + "\">" + I18N.getString(locale, "select.job.for.qa.with.viewerproxy") + "</a></p>");
             out.println("</td></tr>");
             out.println("<tr><td>" + I18N.getString(locale, "helptext;select.job.for.qa.with.viewerproxy") + "</td></tr></table>");
         }
@@ -232,7 +233,7 @@ public class HarvestStatusJobDetails {
             String shownSeed = StringUtils.makeEllipsis(seed,
                     Constants.MAX_SHOWN_SIZE_OF_URL);
 
-            out.println("<a target=\"viewerproxy\" href=\"" + HTMLUtils.escapeHtmlValues(url) + ">" +
+            out.println("<a target=\"viewerproxy\" href=\"" + HTMLUtils.escapeHtmlValues(url) + "\">" +
                     HTMLUtils.escapeHtmlValues(shownSeed) + "</a><br/>");
         }
         out.println("</p>");
@@ -244,8 +245,8 @@ public class HarvestStatusJobDetails {
             String harvestprefix = job.getHarvestFilenamePrefix();
 
             out.println("<h3>" +  I18N.getString(locale, "subtitle;reports.for.job") + "</h3>");
-            out.println("<p><a href=\"/QA/QA-getreports.jsp?jobid=" + jobID + "\">" + I18N.getString(locale, "harvest.reports") + "/></a></p>");
-            out.println("<p><a href=\"/QA/QA-getfiles.jsp?jobid=" + jobID + "&harvestprefix=" + harvestprefix + ">" + I18N.getString(locale, "harvest.files") + "/></a></p>");
+            out.println("<p><a href=\"/QA/QA-getreports.jsp?jobid=" + jobID + "\">" + I18N.getString(locale, "harvest.reports") + "</a></p>");
+            out.println("<p><a href=\"/QA/QA-getfiles.jsp?jobid=" + jobID + "&harvestprefix=" + harvestprefix + "\">" + I18N.getString(locale, "harvest.files") + "</a></p>");
 
             //search in crawl-logs
             out.println("<p>");
@@ -268,18 +269,20 @@ public class HarvestStatusJobDetails {
             out.println("</select>");
             out.println("</form>");
             out.println("</p>");
+        } else {
+            out.println(SiteSection.isDeployed(Constants.QA_SITESECTION_DIRNAME) + "<br/>"+job.getStatus().ordinal()+"<br/>"+JobStatus.STARTED.ordinal()+"<br/>");
         }
 
 
-        out.println("<h3>" + I18N.getString(locale, "subtitle.job.harvesttemplate") +
-        HTMLUtils.escapeHtmlValues((job.getOrderXMLName())) + "</h3>");
+        out.println("<h3>" + I18N.getString(locale, "subtitle.job.harvesttemplate",
+        HTMLUtils.escapeHtmlValues((job.getOrderXMLName()))) + "</h3>");
 
         // make link to harvest template for job
         String link = "/History/Harveststatus-download-job-harvest-template.jsp?"
                 + "JobID=" + job.getJobID();
         String linkWithrequestedType = link + "&requestedContentType=text/plain";
 
-        out.println("<a href=\"" + link + "\">" + I18N.getString(locale, "show.job.0.harvesttemplate") + " " + job.getJobID() + "</a>&nbsp;(<a href=\"" +
+        out.println("<a href=\"" + link + "\">" + I18N.getString(locale, "show.job.0.harvesttemplate", job.getJobID()) + "</a>&nbsp;(<a href=\"" +
                 linkWithrequestedType + "\">text/plain</a>)");
 
         if (job.getUploadErrors() != null && job.getUploadErrors().length() != 0) {

@@ -47,7 +47,7 @@ import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 
-public class DomainsPageTest extends AbstractSystemTest {
+public class  DomainsPageTest extends AbstractSystemTest {
     private String domainIDForTest;
     private int domainCounter = 0;
     private DateFormat dateFomatter = new SimpleDateFormat("HHmmss");
