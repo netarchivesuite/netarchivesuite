@@ -41,8 +41,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
-import dk.netarkivet.systemtest.environment.TestGUIController;
 import dk.netarkivet.systemtest.environment.TestEnvironmentController;
+import dk.netarkivet.systemtest.environment.TestGUIController;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
