@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.servlet.jsp.JspWriter;
@@ -100,8 +99,6 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     // PLACEHOLDERS for archiver beans (Maybe not necessary)
     final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";	
 	final String ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER = "%{ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER}";
-	
-	private static final SimpleDateFormat DEFAULT_DATE = new SimpleDateFormat(ArchiveDateConverter.WARC_DATE_FORMAT);
 	
     /**
      * Constructor for HeritrixTemplate class.
@@ -590,7 +587,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_HARVESTFILENAMEPREFIX + valuePart + ajob.getHarvestFilenamePrefix() + endMetadataEntry);
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_JOBSUBMITDATE + valuePart + DEFAULT_DATE.format(ajob.getSubmittedDate()) + endMetadataEntry);
+		sb.append(HARVESTINFO_JOBSUBMITDATE + valuePart + ArchiveDateConverter.getWarcDateFormat().format(ajob.getSubmittedDate()) + endMetadataEntry);
 		
 		/* optional HARVESTINFO_PERFORMER */
 		if (performer != null){
