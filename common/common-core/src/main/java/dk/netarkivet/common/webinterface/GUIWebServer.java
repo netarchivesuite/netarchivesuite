@@ -126,6 +126,13 @@ public class GUIWebServer implements CleanupIF {
                 webbase = "/" + webappFilename.substring(0, webappFilename.length() - warSuffix.length());
             }
 
+            for (SiteSection section : SiteSection.getSections()) {
+                if (webbase.equals("/" + section.getDirname())) {
+                    section.initialize();
+                    break;
+                }
+            }
+
             try {
                 //add the jar file to tomcat
                 String warfile = new File(basedir, webApps[i]).getAbsolutePath();
