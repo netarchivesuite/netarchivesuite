@@ -59,7 +59,7 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
         doIngestDomains();
     }
 
-    @Test  ( enabled = false )
+    @Test  ( enabled = true )
     public void testGenerateSnapshot() {
         addDescription("Test generating snapshot jobs with a maximum number of bytes per domain of 100 000. This takes about ten hours to complete. The" +
                 " number of jobs generated is determined roughly by the parameter settings.harvester.scheduler.jobGen.domainConfigSubsetSize which is" +
