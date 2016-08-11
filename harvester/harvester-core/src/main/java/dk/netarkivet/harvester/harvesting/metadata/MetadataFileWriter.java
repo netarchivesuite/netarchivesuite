@@ -124,13 +124,13 @@ public abstract class MetadataFileWriter {
         switch (metadataFormat) {
         case MDF_ARC:
             if(isPrefix) {
-                return collectionName + "-" + jobID + "-" + harvestID + "-metadata-" + 1 + possibleGzSuffix;
+                return collectionName + "-" + jobID + "-" + harvestID + "-metadata-" + 1 + ".arc" + possibleGzSuffix;
             } else {
                 return jobID + "-metadata-" + 1 + ".arc" + possibleGzSuffix;
             }
         case MDF_WARC:
             if(isPrefix) {
-                return collectionName + "-" + jobID + "-" + harvestID + "-metadata-" + 1 + possibleGzSuffix;
+                return collectionName + "-" + jobID + "-" + harvestID + "-metadata-" + 1 + ".warc" + possibleGzSuffix;
             } else {
                 return jobID + "-metadata-" + 1 + ".warc" + possibleGzSuffix;
             }
