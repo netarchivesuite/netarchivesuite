@@ -51,8 +51,11 @@ public class DomainnameQueueAssignmentPolicyTester {
         assertEquals("Should find IP address from URL", "192.168.0.10", getDomainName("https://192.168.0.10:20/foo"));
         assertEquals("Should not attempt to parse IP-like URL as IP", "11.dk", getDomainName("http://192.168.0.11.dk"));
         assertEquals("Should not attempt to parse IP-like URL as IP", "12.dk", getDomainName("http://168.0.12.dk:192"));
-        assertEquals("Should return original key on illegal hostname", "x.fnord.bar",
-                getDomainName("http://x.fnord.bar"));
+        // As of July 18th 'barbar' is not a public suffix but 'bar' is:  
+        // https://www.publicsuffix.org/list/public_suffix_list.dat
+        String illegalHostname = "x.fnord.barbar";
+        assertEquals("Should return original key on illegal hostname", illegalHostname,
+                getDomainName("http://" + illegalHostname));
         assertEquals("Should get domain name for DNS request", "foo.dk", getDomainName("dns:bar.foo.dk"));
         // See bug 649 for this test.
         assertEquals("Should return default key on illegal scheme", DEFAULT_CLASS_KEY, getDomainName("about:blank"));

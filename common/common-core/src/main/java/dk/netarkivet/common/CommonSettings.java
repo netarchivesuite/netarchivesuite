@@ -259,12 +259,7 @@ public class CommonSettings {
      * The default number of jobs to show in the harvest status section, on one result page.
      */
     public static String HARVEST_STATUS_DFT_PAGE_SIZE = "settings.common.webinterface.harvestStatus.defaultPageSize";
-    /**
-     * <b>settings.common.topLevelDomains.tld</b>: <br>
-     * Valid top level domain, like .co.uk, .dk, .org. Is part of repeated in settings for each top level domain
-     */
-    public static String TLDS = "settings.common.topLevelDomains.tld";
-
+    
     // TODO Currently only used by harvestscheduler - move to harvester
     // settings?
     /**

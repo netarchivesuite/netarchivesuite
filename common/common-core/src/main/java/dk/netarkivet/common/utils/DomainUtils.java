@@ -22,15 +22,19 @@
  */
 package dk.netarkivet.common.utils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -45,8 +49,8 @@ public final class DomainUtils {
     /** Valid characters in a domain name, according to RFC3490. */
     public static final String DOMAINNAME_CHAR_REGEX_STRING = "[^\\0000-,.-/:-@\\[-`{-\\0177]+";
 
-    /** A string for a regexp recognising a TLD read from settings. */
-    public static final String TLD_REGEX_STRING = "\\.(" + StringUtils.conjoin("|", readTlds()) + ")";
+    /** A string for a regexp recognising a TLD read from the public suffix file. */
+    public static final String TLD_REGEX_STRING = "\\.(" + StringUtils.conjoin("|", readTldsFromPublicSuffixFile(true)) + ")";
 
     /**
      * Regexp for matching a valid domain, that is a single domainnamepart followed by a TLD from settings, or an IP
@@ -65,27 +69,50 @@ public final class DomainUtils {
     private DomainUtils() {
     }
 
+    
     /**
-     * Helper method for reading TLDs from settings. Will read all settings, validate them as legal TLDs and warn and
-     * ignore them if any are invalid. Settings may be with or without prefix "."
-     *
+     * Helper method for reading TLDs from the embedded public suffix file. Will read all entries, validate them as legal TLDs and warn and
+     * ignore them if any are invalid.
+     * @param asPattern if true, return a list of quoted Strings using Pattern.quote
      * @return a List of TLDs as Strings
      */
-    private static List<String> readTlds() {
+    protected static List<String> readTldsFromPublicSuffixFile(boolean asPattern) {
         List<String> tlds = new ArrayList<String>();
-        for (String tld : Settings.getAll(CommonSettings.TLDS)) {
-            if (tld.startsWith(".")) {
-                tld = tld.substring(1);
-            }
-            if (!tld.matches(DOMAINNAME_CHAR_REGEX_STRING + "(" + DOMAINNAME_CHAR_REGEX_STRING + "|\\.)*")) {
-                log.warn("Invalid tld '{}', ignoring", tld);
-                continue;
-            }
-            tlds.add(Pattern.quote(tld));
-        }
+        String filePath = "dk/netarkivet/common/utils/public_suffix_list.dat";
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
+        
+        if (stream != null) {
+        	BufferedReader br = null;
+        	try {
+        		br = new BufferedReader(new InputStreamReader(stream));
+        		String line;
+        		while ((line = br.readLine()) != null) {
+        			String tld = line.trim();
+        			if (tld.isEmpty() || tld.startsWith("//")) {
+        				continue;
+        			} else {
+        	            if (!tld.matches(DOMAINNAME_CHAR_REGEX_STRING + "(" + DOMAINNAME_CHAR_REGEX_STRING + "|\\.)*")) {
+        	                log.warn("Invalid tld '{}', ignoring", tld);
+        	                continue;
+        	            }
+        	            if (asPattern) {
+        	            	tlds.add(Pattern.quote(tld));
+        	            } else {
+        	            	tlds.add(tld);
+        	            }
+        			}
+        		}
+        	} catch(IOException e) {
+        		e.printStackTrace();
+        	} finally {
+        		IOUtils.closeQuietly(br);
+        	}
+        } else {
+        	log.warn("Filepath '{}' to public suffix_list incorrect", filePath);
+        }        
         return tlds;
     }
-
+    
     /**
      * Check if a given domainName is valid domain. A valid domain is an IP address or a domain name part followed by a
      * TLD as defined in settings.
