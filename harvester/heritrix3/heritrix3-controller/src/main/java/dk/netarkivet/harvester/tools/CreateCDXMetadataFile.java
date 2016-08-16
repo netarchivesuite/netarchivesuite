@@ -307,7 +307,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             infoPayload.addLabelValue("ip", SystemUtils.getLocalIP());
             infoPayload.addLabelValue("hostname", SystemUtils.getLocalHostName());
             infoPayload
-                    .addLabelValue("conformsTo", "http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf");
+                    .addLabelValue("conformsTo", "http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1-1_latestdraft.pdf");
             infoPayload.addLabelValue("isPartOf", "" + jobID);
             writer.insertInfoRecord(infoPayload);
         }

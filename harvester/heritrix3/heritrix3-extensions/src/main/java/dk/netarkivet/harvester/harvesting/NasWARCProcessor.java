@@ -84,8 +84,8 @@ public class NasWARCProcessor extends WARCWriterProcessor {
         // conforms to ISO 28500:2009 as of May 2009
         // as described at http://bibnum.bnf.fr/WARC/ 
         // latest draft as of November 2008
-        record.addLabelValue("format","WARC File Format 1.0"); 
-        record.addLabelValue("conformsTo","http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf");
+        record.addLabelValue("format","WARC File Format 1.1"); 
+        record.addLabelValue("conformsTo","http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1-1_latestdraft.pdf");
         
         // Get other values from metadata provider
 
