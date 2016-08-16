@@ -110,7 +110,7 @@ public class HarvestDocumentation {
                 infoPayload.addLabelValue("ip", SystemUtils.getLocalIP());
                 infoPayload.addLabelValue("hostname", SystemUtils.getLocalHostName());
                 infoPayload.addLabelValue("conformsTo",
-                        "http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1_latestdraft.pdf");
+                        "http://bibnum.bnf.fr/WARC/WARC_ISO_28500_version1-1_latestdraft.pdf");
 
                 PersistentJobData psj = new PersistentJobData(crawlDir);
                 infoPayload.addLabelValue("isPartOf", "" + psj.getJobID());
