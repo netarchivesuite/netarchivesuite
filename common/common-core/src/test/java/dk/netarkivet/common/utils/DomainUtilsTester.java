@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +17,7 @@ public class DomainUtilsTester {
 	@Test
 	public void canRetrieveTLDsFromPublisuffixFile() {
 		final int tldcount = 7975;
-		List<String> tlds = DomainUtils.readTldsFromPublicSuffixFile(true);
+		List<String> tlds = TLD.readTldsFromPublicSuffixFile(true);
 		assertEquals(tlds.size(), tldcount);
 	}
 	
@@ -75,7 +77,40 @@ public class DomainUtilsTester {
         }
     }
     
+    @Test
+    public void testExtraTLDInSettingsFiles() {
+    	String oldprop = System.getProperty(Settings.SETTINGS_FILE_PROPERTY);
+    	if (oldprop == null) {
+    		oldprop = "";
+    	}
+    	int count = TLD.getInstance().getAllTlds(false).size();
+    	System.setProperty(Settings.SETTINGS_FILE_PROPERTY, 
+    			getTestResourceFile("settings_with_extra_tlds.xml").getAbsolutePath());
+    	Settings.reload();
+    	TLD.reset();
+    	List<String> tldfromsettings = TLD.readTldsFromSettings(false);
+    	assertTrue(tldfromsettings.size() == 2);
+        int newcount = TLD.getInstance().getAllTlds(false).size();
+        assertTrue(newcount == (count + 2));
+    	System.setProperty(Settings.SETTINGS_FILE_PROPERTY, oldprop);
+ 
+    	Settings.reload();
+    	TLD.reset();
+    }
     
+    
+    /**
+     * Find a test resource for a given path.
+     * @param path the path relative to resources directory eg. path is mypackage/YourFile.csv 
+     * if file is <project>/src/test/resources/mypackage/YourFile.csv
+     * @return the file corresponding to the given path 
+     */
+    public static File getTestResourceFile(String path) {
+            URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+            File file = new File(url.getPath());
+            return file;
+    }
+
     /**
      * Test that we have a sensible regexp for checking validity of domain names.
      */
@@ -103,7 +138,5 @@ public class DomainUtilsTester {
         assertFalse("Temporarily enabled domain names should eventually not be valid",
                 DomainUtils.isValidDomainName("bar.d"));
     }
-
-    
 
 } 

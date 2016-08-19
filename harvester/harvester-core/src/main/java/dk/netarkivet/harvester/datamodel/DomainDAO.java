@@ -348,4 +348,9 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
      * @return the name of the default configuration for the given domain.
      */
 	public abstract String getDefaultDomainConfigurationName(String domainName);
+	
+	
+	public abstract List<String> getAllDomainNames();
+	
+	
 }

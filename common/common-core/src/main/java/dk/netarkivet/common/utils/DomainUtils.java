@@ -22,18 +22,7 @@
  */
 package dk.netarkivet.common.utils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -43,74 +32,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public final class DomainUtils {
 
-    /** The class logger. */
-    private static final Logger log = LoggerFactory.getLogger(DomainUtils.class);
-
     /** Valid characters in a domain name, according to RFC3490. */
     public static final String DOMAINNAME_CHAR_REGEX_STRING = "[^\\0000-,.-/:-@\\[-`{-\\0177]+";
 
-    /** A string for a regexp recognising a TLD read from the public suffix file. */
-    public static final String TLD_REGEX_STRING = "\\.(" + StringUtils.conjoin("|", readTldsFromPublicSuffixFile(true)) + ")";
-
-    /**
-     * Regexp for matching a valid domain, that is a single domainnamepart followed by a TLD from settings, or an IP
-     * address.
-     */
-    public static final Pattern VALID_DOMAIN_MATCHER = Pattern.compile("^(" + Constants.IP_REGEX_STRING + "|"
-            + DOMAINNAME_CHAR_REGEX_STRING + "+" + TLD_REGEX_STRING + ")$");
-
-    /**
-     * A regular expression matching hostnames, and remembering the hostname in group 1 and the domain in group 2.
-     */
-    private static final Pattern HOSTNAME_REGEX = Pattern.compile("^(|.*?\\.)(" + DOMAINNAME_CHAR_REGEX_STRING + "+"
-            + TLD_REGEX_STRING + ")");
-
     /** Utility class, do not initialise. */
     private DomainUtils() {
-    }
-
-    
-    /**
-     * Helper method for reading TLDs from the embedded public suffix file. Will read all entries, validate them as legal TLDs and warn and
-     * ignore them if any are invalid.
-     * @param asPattern if true, return a list of quoted Strings using Pattern.quote
-     * @return a List of TLDs as Strings
-     */
-    protected static List<String> readTldsFromPublicSuffixFile(boolean asPattern) {
-        List<String> tlds = new ArrayList<String>();
-        String filePath = "dk/netarkivet/common/utils/public_suffix_list.dat";
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
-        
-        if (stream != null) {
-        	BufferedReader br = null;
-        	try {
-        		br = new BufferedReader(new InputStreamReader(stream));
-        		String line;
-        		while ((line = br.readLine()) != null) {
-        			String tld = line.trim();
-        			if (tld.isEmpty() || tld.startsWith("//")) {
-        				continue;
-        			} else {
-        	            if (!tld.matches(DOMAINNAME_CHAR_REGEX_STRING + "(" + DOMAINNAME_CHAR_REGEX_STRING + "|\\.)*")) {
-        	                log.warn("Invalid tld '{}', ignoring", tld);
-        	                continue;
-        	            }
-        	            if (asPattern) {
-        	            	tlds.add(Pattern.quote(tld));
-        	            } else {
-        	            	tlds.add(tld);
-        	            }
-        			}
-        		}
-        	} catch(IOException e) {
-        		e.printStackTrace();
-        	} finally {
-        		IOUtils.closeQuietly(br);
-        	}
-        } else {
-        	log.warn("Filepath '{}' to public suffix_list incorrect", filePath);
-        }        
-        return tlds;
     }
     
     /**
@@ -122,7 +48,7 @@ public final class DomainUtils {
      */
     public static boolean isValidDomainName(String domainName) {
         ArgumentNotValid.checkNotNull(domainName, "String domainName");
-        return VALID_DOMAIN_MATCHER.matcher(domainName).matches();
+        return TLD.getInstance().getValidDomainMatcher().matcher(domainName).matches();      
     }
 
     /**
@@ -141,7 +67,7 @@ public final class DomainUtils {
         String result = hostname;
         // IP addresses are kept as-is, others are trimmed down.
         if (!Constants.IP_KEY_REGEXP.matcher(hostname).matches()) {
-            Matcher matcher = HOSTNAME_REGEX.matcher(hostname);
+            Matcher matcher = TLD.getInstance().getHostnamePattern().matcher(hostname);
             if (matcher.matches()) {
                 result = matcher.group(2);
             }
@@ -164,5 +90,4 @@ public final class DomainUtils {
         String[] split = hostname.split("\\.", 2);
         return split[0];
     }
-
 }
