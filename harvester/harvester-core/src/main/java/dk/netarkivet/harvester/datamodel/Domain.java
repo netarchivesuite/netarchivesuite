@@ -52,6 +52,7 @@ import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
+import dk.netarkivet.harvester.utils.CrawlertrapsUtils;
 
 /**
  * Represents known information about a domain A domain is identified by a domain name (ex: kb.dk)
@@ -72,7 +73,7 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 @SuppressWarnings({"rawtypes"})
 public class Domain extends ExtendableEntity implements Named {
 
-    /** Prefix all domain names with this string. */
+    /** The logger for this class. */
     protected static final Logger log = LoggerFactory.getLogger(Domain.class);
 
     /** The identification used to lookup the domain. */
@@ -801,18 +802,27 @@ public class Domain extends ExtendableEntity implements Named {
             }
         }
         // Validate regexps
+        List<String> errMsgs = new ArrayList<String>();
         for (String regexp : cleanedListOfCrawlerTraps) {
+        	
+        	boolean wellformed = false;
             try {
                 Pattern.compile(regexp);
-            } catch (PatternSyntaxException e) {
-                final String errMsg = "The regular expression '" + regexp + "' is invalid. "
-                        + "Please correct the expression.";
-                if (strictMode) {
-                    throw new ArgumentNotValid(errMsg, e);
-                } else {
-                    log.warn(errMsg, e);
+                wellformed = CrawlertrapsUtils.isCrawlertrapsWellformedXML(regexp);
+                if (!wellformed){
+                	errMsgs.add("The expression '" + regexp + "' is not wellformed XML" 
+                    		+ " . Please correct the expression.");
                 }
+            } catch (PatternSyntaxException e) {
+                errMsgs.add("The expression '" + regexp + "' is not a proper regular expression: " 
+                		+ e.getDescription() + " . Please correct the expression.");
             }
+        }
+        if (strictMode) 
+        	if (errMsgs.size() > 0) {
+            throw new ArgumentNotValid(errMsgs.size() +  " errors were found: " + StringUtils.conjoin(",", errMsgs));
+        } else {
+            log.warn(errMsgs.size() +  " errors were found: " + StringUtils.conjoin(",", errMsgs));
         }
         crawlerTraps = Collections.unmodifiableList(cleanedListOfCrawlerTraps);
         log.debug("Domain {} has {} crawlertraps", domainName, crawlerTraps.size());
