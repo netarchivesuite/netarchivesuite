@@ -36,27 +36,43 @@ public class TLD {
     private final String TLD_REGEX_STRING; 
 	
     /**
-     * Regexp for matching a valid domain, that is a single domainnamepart followed by a TLD from settings, or an IP
+     * Regexp for matching a valid domain, that is a single domain-name part followed by a TLD from settings, or an IP
      * address.
      */
     private final Pattern VALID_DOMAIN_MATCHER;
-    
-    
-	public static TLD getInstance() {
+
+    /**
+     * GetInstance method for the TLD. Ensures singleton usage of the TLD class.
+     * @return the current instance of the TLD class.
+     */
+	public static synchronized TLD getInstance() {
 		if (tld == null) {
 			tld = new TLD();
 		}
 		return tld;
 	}
 	
+	/**
+	 * Reset TLD instance. primarily used for testing.
+	 */
 	public static void reset() {
 		tld = null;
 	}
-	
+	/**
+	 * List of quoted TLD read from both settings and public suffix file.
+	 */
 	private final List<String> tldListQuoted;
+	
+	/**
+	 * List of TLD read from both settings and public suffix file.
+	 */
 	private final List<String> tldList;
 	
-	public TLD() {
+	/**
+	 * Private constructor of the TLD class. This constructor reads the TLDs from both settings and public suffix file.
+	 * both quoted and unquoted. Sets the TLD_REGEX_STRING,HOSTNAME_REGEX, and  VALID_DOMAIN_MATCHER.
+	 */
+	private TLD() {
 		tldListQuoted = readTldsFromPublicSuffixFile(true);
 		tldListQuoted.addAll(readTldsFromSettings(true));
 		
@@ -143,14 +159,26 @@ public class TLD {
         return tlds;
     }
 
+    /**
+     * @return the VALID_DOMAIN_MATCHER pattern.
+     */
 	public Pattern getValidDomainMatcher() {
 		return VALID_DOMAIN_MATCHER;
 	}
 
+	/**
+	 * 
+	 * @return the HOSTNAME_REGEX pattern.
+	 */
 	public Pattern getHostnamePattern() {
 		return HOSTNAME_REGEX;
 	}
 	
+	/**
+	 * GetAllTlds method.
+	 * @param quoted do you want the quoted, or unquoted list.
+	 * @return the quoted list (if quoted=true), else the unquoted list.
+	 */
 	public List<String> getAllTlds(boolean quoted) {
 		if (quoted) {
 			return tldListQuoted; 
