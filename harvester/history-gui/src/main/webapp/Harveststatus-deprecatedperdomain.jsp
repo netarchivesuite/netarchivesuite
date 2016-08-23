@@ -42,7 +42,7 @@ displayed, if no domains are found a message is shown.
   HTMLUtils.generateHeader(pageContext);
 %>
 
-<h3 class="page_heading">Depricated</h3>
+<h3 class="page_heading">Deprecated</h3>
 
 Please find the domain harvest history by:
 <ol>
