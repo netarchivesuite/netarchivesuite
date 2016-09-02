@@ -329,15 +329,18 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	    arcWriterBeanBuilder.append(propertyName + "prefix" + valuePrefix
 	            + ARCHIVE_FILE_PREFIX_PLACEHOLDER
 	            + valueSuffix + propertyEnd);
-	    arcWriterBeanBuilder.append(propertyName + "suffix" + valuePrefix
-	            + Settings.get(HarvesterSettings.HERITRIX3_ARC_SUFFIX) 
-	            + valueSuffix + propertyEnd); 
+//	    arcWriterBeanBuilder.append(propertyName + "suffix" + valuePrefix
+//	            + Settings.get(HarvesterSettings.HERITRIX3_ARC_SUFFIX) 
+//	            + valueSuffix + propertyEnd); 
 	    arcWriterBeanBuilder.append(propertyName + "maxFileSizeBytes" + valuePrefix
 	            + Settings.get(HarvesterSettings.HERITRIX3_ARC_MAXSIZE) 
 	            + valueSuffix + propertyEnd); 
 	    arcWriterBeanBuilder.append(propertyName + "poolMaxActive" + valuePrefix
 	            + Settings.get(HarvesterSettings.HERITRIX3_ARC_POOL_MAXACTIVE) 
 	            + valueSuffix + propertyEnd); 
+	    arcWriterBeanBuilder.append(propertyName + "skipIdenticalDigests" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX3_ARC_SKIP_IDENTICAL_DIGESTS)
+  				+ valueSuffix + propertyEnd);
 
 
 
