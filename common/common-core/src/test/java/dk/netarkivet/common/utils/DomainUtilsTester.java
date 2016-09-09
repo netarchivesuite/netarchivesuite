@@ -98,7 +98,6 @@ public class DomainUtilsTester {
     	TLD.reset();
     }
     
-    
     /**
      * Find a test resource for a given path.
      * @param path the path relative to resources directory eg. path is mypackage/YourFile.csv 

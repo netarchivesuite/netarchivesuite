@@ -1,6 +1,9 @@
 package dk.netarkivet.common.utils;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,6 +29,9 @@ public class TLD {
 	/** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(TLD.class);
 	private static TLD tld;
+	
+	public final static String PUBLIC_SUFFIX_LIST_EMBEDDED_PATH = "dk/netarkivet/common/utils/public_suffix_list.dat";
+	public final static String PUBLIC_SUFFIX_LIST_EXTERNAL_FILE_PATH = "conf/public_suffix_list.dat";
 	
 	/**
      * A regular expression matching hostnames, and remembering the hostname in group 1 and the domain in group 2.
@@ -124,9 +130,7 @@ public class TLD {
      */
     protected static List<String> readTldsFromPublicSuffixFile(boolean asPattern) {
         List<String> tlds = new ArrayList<String>();
-        String filePath = "dk/netarkivet/common/utils/public_suffix_list.dat";
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
-        
+        InputStream stream = getPublicSuffixListDataStream();
         if (stream != null) {
         	BufferedReader br = null;
         	try {
@@ -154,12 +158,34 @@ public class TLD {
         		IOUtils.closeQuietly(br);
         	}
         } else {
-        	log.warn("Filepath '{}' to public suffix_list incorrect", filePath);
+        	log.warn("Unable to retrieve public suffix_list failed. Returned empty list!.");
         }        
         return tlds;
     }
 
-    /**
+    
+    private static InputStream getPublicSuffixListDataStream() {
+    	InputStream stream = null;
+    	File alternateExternalFile = new File(PUBLIC_SUFFIX_LIST_EXTERNAL_FILE_PATH);
+    	if (alternateExternalFile.isFile()) {
+    		try {
+    			stream = new FileInputStream(alternateExternalFile);
+    		} catch (FileNotFoundException e) {
+    			// Will never happen!
+    			e.printStackTrace();
+    		}
+    		log.info("Reading public suffixes list from external file '{}'", alternateExternalFile.getAbsolutePath());
+    	} else { // Read embedded copy
+    		log.info("Did not found external public suffix list at '{}'! Reading instead the public suffixes list from embedded file '{}' in common-core.jar-VERSION.jar.", 
+    				alternateExternalFile.getAbsolutePath(), PUBLIC_SUFFIX_LIST_EMBEDDED_PATH); 
+    		stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(PUBLIC_SUFFIX_LIST_EMBEDDED_PATH);
+    		
+    	}
+
+    	return stream;
+    }
+
+	/**
      * @return the VALID_DOMAIN_MATCHER pattern.
      */
 	public Pattern getValidDomainMatcher() {
