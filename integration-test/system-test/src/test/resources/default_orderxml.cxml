@@ -146,6 +146,7 @@ extractorSwf.enabled=true
 
 candidates.seedsRedirectNewSeeds=false
 statisticsTracker.intervalSeconds=20
+     warcWriter.compression=true
 
    </value>
   </property>
