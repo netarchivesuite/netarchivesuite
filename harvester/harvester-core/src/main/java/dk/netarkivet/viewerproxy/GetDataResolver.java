@@ -61,7 +61,7 @@ public class GetDataResolver extends CommandResolver {
     /** Command for getting a single file from the bitarchive. */
     public static final String GET_FILE_COMMAND = "/getFile";
     /**
-     * Command for getting a specific record (file+offset) from an ARC file in the bitarchive.
+     * Command for getting a specific record (file+offset) from an (W)ARC file in the bitarchive.
      */
     public static final String GET_RECORD_COMMAND = "/getRecord";
     /** Command for getting all metadata for a single job. */
@@ -136,8 +136,6 @@ public class GetDataResolver extends CommandResolver {
      */
     private void doGetMetadata(Request request, Response response) {
         String idString = getParameter(request, JOB_ID_PARAMETER);
-        // TODO in which case will getParameter return null (if ever)
-        // if yes, handle the case: idString==null
         if (idString != null) {
             try {
                 Long id = Long.parseLong(idString);
@@ -160,6 +158,8 @@ public class GetDataResolver extends CommandResolver {
                 log.warn(errMsg, e);
                 throw new IOFailure(errMsg, e);
             }
+        } else {
+        	log.warn("Ignoring GetMetadata request. Parameter {} is not set", JOB_ID_PARAMETER);
         }
     }
 
@@ -167,15 +167,13 @@ public class GetDataResolver extends CommandResolver {
      * Get a record from an ARC file, and write it to response. If the record has size greater than
      * settings.viewerproxy.maxSizeInBrowser then a header is added to turn the response into a file-download.
      *
-     * @param request A get metadata request; parameters arcFile and arcOffset are expected to be set.
+     * @param request A getRecord request; parameters arcFile and arcOffset are expected to be set.
      * @param response Metadata will be written to this response.
      * @throws IOFailure in any trouble.
      */
     private void doGetRecord(Request request, Response response) {
         String fileName = getParameter(request, FILE_NAME_PARAMETER);
         String offsetString = getParameter(request, FILE_OFFSET_PARAMETER);
-        // TODO in which case will getParameter return null if ever?
-        // If yes, handle the else case
         if (fileName != null && offsetString != null) {
             try {
                 Long offset = Long.parseLong(offsetString);
@@ -197,20 +195,22 @@ public class GetDataResolver extends CommandResolver {
                 log.warn(errMsg, e);
                 throw new IOFailure(errMsg, e);
             }
+        } else {
+        	log.warn("Ignoring GetRecord request. Bad arguments: (filename,offset)=(" + fileName + ", " + offsetString + ")");
         }
     }
 
     /**
      * Get a file from bitarchive, and write it to response.
      *
-     * @param request A get metadata request; parameter arcFile is expected to be set.
+     * @param request A getFile request; parameter arcFile is expected to be set.
      * @param response File will be written to this response.
      * @throws IOFailure in any trouble.
      */
     private void doGetFile(Request request, Response response) {
         String fileName = getParameter(request, FILE_NAME_PARAMETER);
-        // TODO in which case will getParameter return null?
         if (fileName != null) {
+        	long maxSize = Settings.getLong(HarvesterSettings.MAXIMUM_OBJECT_IN_BROWSER);
             try {
                 File tempFile = null;
                 try {
@@ -218,6 +218,12 @@ public class GetDataResolver extends CommandResolver {
                     client.getFile(fileName, Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)),
                             tempFile);
                     FileUtils.writeFileToStream(tempFile, response.getOutputStream());
+                    long size = tempFile.length();
+                    if (size > maxSize) {
+                    	log.info("Requested file {} of size {} is larger than maximum object in browser. Forcing browser to save file to disk");
+                    	response.addHeaderField("Content-Disposition", "Attachment; filename=" + fileName);
+                        response.addHeaderField("Content-Type", "application/octet-stream");
+                    }
                     response.setStatus(OK_RESPONSE_CODE);
                 } finally {
                     if (tempFile != null) {
@@ -229,11 +235,13 @@ public class GetDataResolver extends CommandResolver {
                 log.warn(errMsg, e);
                 throw new IOFailure(errMsg, e);
             }
+        } else {
+        	log.warn("Ignoring GetFile request. Parameter {} is not set", FILE_NAME_PARAMETER);
         }
     }
 
     /**
-     * Get a single parameter out of a parametermap, checking for errors.
+     * Get a single parameter out of a parameter-map, checking for errors.
      *
      * @param request The request with the parameters
      * @param name The name of the parameter
@@ -269,7 +277,7 @@ public class GetDataResolver extends CommandResolver {
          *
          * @param file File to write to output.
          * @param os Outputstream to write to.
-         * @return true.
+         * @return true always
          */
         public boolean processFile(File file, OutputStream os) {
             FileUtils.writeFileToStream(file, os);
