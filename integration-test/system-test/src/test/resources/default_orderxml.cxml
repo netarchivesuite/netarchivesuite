@@ -142,12 +142,10 @@ extractorHtml.extractValueAttributes=false
 extractorHtml.ignoreUnexpectedHtml=true
 extractorCss.enabled=true
 extractorJs.enabled=true
-extractorSwf.enabled=true
-
-candidates.seedsRedirectNewSeeds=false
-statisticsTracker.intervalSeconds=20
-     warcWriter.compression=true
-
+     extractorSwf.enabled=true
+     candidates.seedsRedirectNewSeeds=false
+     statisticsTracker.intervalSeconds=20
+     warcWriter.compress=true
    </value>
   </property>
  </bean>

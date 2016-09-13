@@ -603,6 +603,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		sb.append("\n</map>\n</property>\n");
 		
 		// Replace command
+		log.info("Adding WarcInfoMetadata " + sb.toString());
 		String templateNew = template.replace(METADATA_ITEMS_PLACEHOLDER, sb.toString());
 		this.template = templateNew;
 	}
