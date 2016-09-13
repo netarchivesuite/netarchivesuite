@@ -132,35 +132,31 @@ public class GetDataResolver extends CommandResolver {
      *
      * @param request A get metadata request; a parameter jobID is expected to be set.
      * @param response Metadata will be written to this response.
-     * @throws IOFailure in any trouble.
+     * @throws IOFailure in case of missing or bad parameters.
      */
     private void doGetMetadata(Request request, Response response) {
-        String idString = getParameter(request, JOB_ID_PARAMETER);
-        if (idString != null) {
-            try {
-                Long id = Long.parseLong(idString);
-                FileBatchJob job = new GetFileBatchJob();
-                job.processOnlyFilesMatching(".*" + id + ".*" + Constants.METADATA_FILE_PATTERN_SUFFIX);
-                BatchStatus b = client.batch(job, Settings.get(CommonSettings.USE_REPLICA_ID));
-                if (b.getNoOfFilesProcessed() > b.getFilesFailed().size() && b.hasResultFile()) {
-                    b.appendResults(response.getOutputStream());
-                    response.setStatus(OK_RESPONSE_CODE);
-                } else {
-                    if (b.getNoOfFilesProcessed() > 0) {
-                        throw new IOFailure("Error finding metadata for job " + id + ": Processed "
-                                + b.getNoOfFilesProcessed() + ", failed on files " + b.getFilesFailed());
-                    } else {
-                        throw new IOFailure("No metadata found for job " + id + " or error while fetching metadata");
-                    }
-                }
-            } catch (NumberFormatException e) {
-                String errMsg = "The value '" + idString + "' of Parameter jobID is not a parsable job id";
-                log.warn(errMsg, e);
-                throw new IOFailure(errMsg, e);
-            }
-        } else {
-        	log.warn("Ignoring GetMetadata request. Parameter {} is not set", JOB_ID_PARAMETER);
-        }
+    	String idString = getParameterOrThrowException(request, JOB_ID_PARAMETER);
+    	try {
+    		Long id = Long.parseLong(idString);
+    		FileBatchJob job = new GetFileBatchJob();
+    		job.processOnlyFilesMatching(".*" + id + ".*" + Constants.METADATA_FILE_PATTERN_SUFFIX);
+    		BatchStatus b = client.batch(job, Settings.get(CommonSettings.USE_REPLICA_ID));
+    		if (b.getNoOfFilesProcessed() > b.getFilesFailed().size() && b.hasResultFile()) {
+    			b.appendResults(response.getOutputStream());
+    			response.setStatus(OK_RESPONSE_CODE);
+    		} else {
+    			if (b.getNoOfFilesProcessed() > 0) {
+    				throw new IOFailure("Error finding metadata for job " + id + ": Processed "
+    						+ b.getNoOfFilesProcessed() + ", failed on files " + b.getFilesFailed());
+    			} else {
+    				throw new IOFailure("No metadata found for job " + id + " or error while fetching metadata");
+    			}
+    		}
+    	} catch (NumberFormatException e) {
+    		String errMsg = "The value '" + idString + "' of Parameter jobID is not a parsable job id";
+    		log.warn(errMsg, e);
+    		throw new IOFailure(errMsg, e);
+    	}
     }
 
     /**
@@ -169,35 +165,31 @@ public class GetDataResolver extends CommandResolver {
      *
      * @param request A getRecord request; parameters arcFile and arcOffset are expected to be set.
      * @param response Metadata will be written to this response.
-     * @throws IOFailure in any trouble.
+     * @throws IOFailure in case of missing or bad parameters.
      */
     private void doGetRecord(Request request, Response response) {
-        String fileName = getParameter(request, FILE_NAME_PARAMETER);
-        String offsetString = getParameter(request, FILE_OFFSET_PARAMETER);
-        if (fileName != null && offsetString != null) {
-            try {
-                Long offset = Long.parseLong(offsetString);
-                BitarchiveRecord record = client.get(fileName, offset);
-                if (record == null) {
-                    throw new IOFailure("Null record returned by " + "ViewerArcRepositoryClient.get(" + fileName + ","
-                            + offset + "),");
-                }
-                long maxSize = Settings.getLong(HarvesterSettings.MAXIMUM_OBJECT_IN_BROWSER);
-                // TODO: what happens if the record already has these headers defined?
-                if (record.getLength() > maxSize) {
-                    response.addHeaderField("Content-Disposition", "Attachment; filename=record.txt");
-                    response.addHeaderField("Content-Type", "application/octet-stream");
-                }
-                record.getData(response.getOutputStream());
-                response.setStatus(OK_RESPONSE_CODE);
-            } catch (NumberFormatException e) {
-                String errMsg = "Unable to parse offsetstring '" + offsetString + "' as long";
-                log.warn(errMsg, e);
-                throw new IOFailure(errMsg, e);
-            }
-        } else {
-        	log.warn("Ignoring GetRecord request. Bad arguments: (filename,offset)=(" + fileName + ", " + offsetString + ")");
-        }
+    	String fileName = getParameterOrThrowException(request, FILE_NAME_PARAMETER);
+    	String offsetString = getParameterOrThrowException(request, FILE_OFFSET_PARAMETER);
+    	try {
+    		Long offset = Long.parseLong(offsetString);
+    		BitarchiveRecord record = client.get(fileName, offset);
+    		if (record == null) {
+    			throw new IOFailure("Null record returned by " + "ViewerArcRepositoryClient.get(" + fileName + ","
+    					+ offset + "),");
+    		}
+    		long maxSize = Settings.getLong(HarvesterSettings.MAXIMUM_OBJECT_IN_BROWSER);
+    		// TODO: what happens if the record already has these headers defined?
+    		if (record.getLength() > maxSize) {
+    			response.addHeaderField("Content-Disposition", "Attachment; filename=record.txt");
+    			response.addHeaderField("Content-Type", "application/octet-stream");
+    		}
+    		record.getData(response.getOutputStream());
+    		response.setStatus(OK_RESPONSE_CODE);
+    	} catch (NumberFormatException e) {
+    		String errMsg = "Unable to parse offsetstring '" + offsetString + "' as long";
+    		log.warn(errMsg, e);
+    		throw new IOFailure(errMsg, e);
+    	}
     }
 
     /**
@@ -208,47 +200,43 @@ public class GetDataResolver extends CommandResolver {
      * @throws IOFailure in any trouble.
      */
     private void doGetFile(Request request, Response response) {
-        String fileName = getParameter(request, FILE_NAME_PARAMETER);
-        if (fileName != null) {
-        	long maxSize = Settings.getLong(HarvesterSettings.MAXIMUM_OBJECT_IN_BROWSER);
-            try {
-                File tempFile = null;
-                try {
-                    tempFile = File.createTempFile("getFile", "download", FileUtils.getTempDir());
-                    client.getFile(fileName, Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)),
-                            tempFile);
-                    FileUtils.writeFileToStream(tempFile, response.getOutputStream());
-                    long size = tempFile.length();
-                    if (size > maxSize) {
-                    	log.info("Requested file {} of size {} is larger than maximum object in browser. Forcing browser to save file to disk");
-                    	response.addHeaderField("Content-Disposition", "Attachment; filename=" + fileName);
-                        response.addHeaderField("Content-Type", "application/octet-stream");
-                    }
-                    response.setStatus(OK_RESPONSE_CODE);
-                } finally {
-                    if (tempFile != null) {
-                        FileUtils.remove(tempFile);
-                    }
-                }
-            } catch (IOException e) {
-                String errMsg = "Failure to getFile '" + fileName + "': ";
-                log.warn(errMsg, e);
-                throw new IOFailure(errMsg, e);
-            }
-        } else {
-        	log.warn("Ignoring GetFile request. Parameter {} is not set", FILE_NAME_PARAMETER);
-        }
+    	String fileName = getParameterOrThrowException(request, FILE_NAME_PARAMETER);
+    	long maxSize = Settings.getLong(HarvesterSettings.MAXIMUM_OBJECT_IN_BROWSER);
+    	try {
+    		File tempFile = null;
+    		try {
+    			tempFile = File.createTempFile("getFile", "download", FileUtils.getTempDir());
+    			client.getFile(fileName, Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)),
+    					tempFile);
+    			FileUtils.writeFileToStream(tempFile, response.getOutputStream());
+    			long size = tempFile.length();
+    			if (size > maxSize) {
+    				log.info("Requested file {} of size {} is larger than maximum object in browser. Forcing browser to save file to disk");
+    				response.addHeaderField("Content-Disposition", "Attachment; filename=" + fileName);
+    				response.addHeaderField("Content-Type", "application/octet-stream");
+    			}
+    			response.setStatus(OK_RESPONSE_CODE);
+    		} finally {
+    			if (tempFile != null) {
+    				FileUtils.remove(tempFile);
+    			}
+    		}
+    	} catch (IOException e) {
+    		String errMsg = "Failure to getFile '" + fileName + "': ";
+    		log.warn(errMsg, e);
+    		throw new IOFailure(errMsg, e);
+    	}
     }
 
     /**
-     * Get a single parameter out of a parameter-map, checking for errors.
+     * Get a single parameter out of a parameter-map, checking for errors, including empty string parameter value.
      *
      * @param request The request with the parameters
      * @param name The name of the parameter
-     * @return The single value found
+     * @return The single value found trimmed
      * @throws IOFailure if an error was encountered.
      */
-    private String getParameter(Request request, String name) {
+    private String getParameterOrThrowException(Request request, String name) {
         String[] values = request.getParameterMap().get(name);
         if (values == null || values.length == 0) {
             throw new IOFailure("Missing parameter '" + name + "'");
@@ -256,7 +244,12 @@ public class GetDataResolver extends CommandResolver {
         if (values.length > 1) {
             throw new IOFailure("Multiple parameters for '" + name + "': " + Arrays.asList(values));
         }
-        return values[0];
+        // Check that trimmed value is not empty string
+        String returnValue = values[0].trim();
+        if (returnValue.isEmpty()) {
+        	throw new IOFailure("Trimmed value of parameter '" + name + "' is empty string!");
+        }
+        return returnValue;
     }
 
     /**
