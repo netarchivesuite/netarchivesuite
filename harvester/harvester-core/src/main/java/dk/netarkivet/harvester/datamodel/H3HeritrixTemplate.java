@@ -550,6 +550,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 					+ "' was not found. Maybe the placeholder has already been replaced with the correct value. The template looks like this: " 
 					+ template); 
 		}
+		log.debug("Now in " + getClass().getName());
 		String startMetadataEntry = "\n<entry key=\"";
 		String endMetadataEntry = "\"/>";
 		String valuePart = "\" value=\"";
