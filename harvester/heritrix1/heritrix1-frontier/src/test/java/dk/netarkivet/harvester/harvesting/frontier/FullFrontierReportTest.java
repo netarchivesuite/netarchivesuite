@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.After;
 import org.junit.Before;
@@ -94,6 +95,17 @@ public class FullFrontierReportTest {
             report.dispose();
             in.close();
 
+            assertFalse(report.getStorageDir().exists());
+        }
+    }
+    
+    @Test
+    public final void testParseXML() throws IOException {
+    	for (File reportFile : TestInfo.getXMLFrontierReportSamples()) {
+    		byte[] b = FileUtils.readFile(reportFile).getBytes(StandardCharsets.UTF_8); // Java 7+ only
+            FullFrontierReport report = FullFrontierReport.parseContentsAsXML("test-" + System.currentTimeMillis(),
+                    b, "rawOutput");
+            report.dispose();
             assertFalse(report.getStorageDir().exists());
         }
     }
