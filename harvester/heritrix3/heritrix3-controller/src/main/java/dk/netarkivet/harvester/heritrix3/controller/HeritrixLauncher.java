@@ -152,8 +152,6 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
                 crawlIsOver = true;
                 return;
             }
-            //storing into database
-            HarvestMonitor.getInstance().visit(cpm);
             JMSConnectionFactory.getInstance().send(cpm);
 
             Heritrix3Files files = getHeritrixFiles();
