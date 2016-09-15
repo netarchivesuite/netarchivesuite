@@ -82,8 +82,9 @@ public interface ReplicaClient {
      * Uploads a file to the replica archive. This should create the UploadMessage and send it.
      *
      * @param rf The remote file
+     * @param precomputedChecksum A precomputed checksum 
      */
-    void sendUploadMessage(RemoteFile rf);
+    void sendUploadMessage(RemoteFile rf, String precomputedChecksum);
 
     /**
      * Retrieves the checksum for a specific arc file. The GetChecksumMessage is sent along to the archive.

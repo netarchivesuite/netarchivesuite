@@ -31,6 +31,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.ChecksumCalculator;
 
 /**
  * Messages requesting store of file. This message is sent to the arc repository which distributes the file to the known
@@ -40,7 +41,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class StoreMessage extends ArchiveMessage {
     /** The actual data. */
     private RemoteFile theRemoteFile;
-
+    private String precomputedChecksum;
     /**
      * Construct StoreMessage.
      *
@@ -51,6 +52,7 @@ public class StoreMessage extends ArchiveMessage {
         super(Channels.getTheRepos(), replyTo);
         ArgumentNotValid.checkNotNull(arcfile, "arcfile");
         theRemoteFile = RemoteFileFactory.getDistributefileInstance(arcfile);
+        precomputedChecksum = ChecksumCalculator.calculateMd5(arcfile);
     }
 
     /**
@@ -62,6 +64,10 @@ public class StoreMessage extends ArchiveMessage {
         return theRemoteFile.getName();
     }
 
+    public String getPrecomputedChecksum() {
+        return precomputedChecksum;
+    }
+    
     /**
      * Get method for field theRemoteFile.
      *
@@ -87,7 +93,8 @@ public class StoreMessage extends ArchiveMessage {
      * @return String representation of this object
      */
     public String toString() {
-        return super.toString() + " Arcfile: " + getArcfileName();
+        return super.toString() + " Arcfile: " + getArcfileName() + ", precomputed checksum: " 
+        		+ precomputedChecksum;
     }
 
 }

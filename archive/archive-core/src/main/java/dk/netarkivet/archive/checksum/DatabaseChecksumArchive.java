@@ -355,6 +355,30 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
             }
         }
     }
+    
+    public synchronized void upload(String checksum, String filename) {
+    	ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
+    	ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+
+    	if (hasEntry(filename)) {
+    		// fetch already stored checksum
+    		String oldChecksum = getChecksum(filename);
+    		if (checksum.equals(oldChecksum)) {
+    			log.warn(
+    					"Cannot upload archivefile '{}', " + "it is already archived with the same checksum: '{}'",
+    					filename, oldChecksum);
+    		} else {
+    			throw new IllegalState("Cannot upload archivefile '" + filename
+    					+ "', it is already archived with different checksum." + " Archive checksum: '"
+    					+ oldChecksum + "' and the uploaded file has: '" + checksum + "'.");
+    		}
+    		// It is considered a success that it already is within the archive,
+    		// thus do not throw an exception.
+    		return;
+    	} else {
+    		put(filename, checksum);
+    	}
+    }
 
     /**
      * Update the database with a new filename and its checksum.

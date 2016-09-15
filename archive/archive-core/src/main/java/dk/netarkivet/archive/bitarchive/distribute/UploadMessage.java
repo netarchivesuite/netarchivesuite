@@ -39,6 +39,9 @@ public class UploadMessage extends ArchiveMessage {
     /** The actual data. */
     private RemoteFile theRemoteFile;
 
+    /** precomputed checksum  */
+    private String precomputedChecksum;
+    
     /**
      * Construct UploadMessage.
      *
@@ -89,5 +92,13 @@ public class UploadMessage extends ArchiveMessage {
     public String toString() {
         return super.toString() + " Arcfile: " + arcfileName;
     }
+
+	public void setPrecomputedChecksum(String precomputedChecksum) {
+		this.precomputedChecksum = precomputedChecksum;
+	}
+	
+	public String getPrecomputedChecksum() {
+		return this.precomputedChecksum;
+	}
 
 }

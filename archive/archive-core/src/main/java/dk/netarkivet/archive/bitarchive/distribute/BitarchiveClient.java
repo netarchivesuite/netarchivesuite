@@ -174,12 +174,15 @@ public final class BitarchiveClient implements ReplicaClient {
      * Submit an upload request to the bitarchive.
      *
      * @param rf The file to upload.
+     * @param precomputedChecksum A precomputed checksum
+     * 		
      * @throws IOFailure If access to file denied.
      * @throws ArgumentNotValid If arcfile is null.
      */
-    public void sendUploadMessage(RemoteFile rf) throws IOFailure, ArgumentNotValid {
+    public void sendUploadMessage(RemoteFile rf, String precomputedChecksum) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(rf, "rf");
         UploadMessage up = new UploadMessage(anyBa, clientId, rf);
+        up.setPrecomputedChecksum(precomputedChecksum);
         log.debug("Sending upload message\n{}", up.toString());
         jmsCon.send(up);
     }

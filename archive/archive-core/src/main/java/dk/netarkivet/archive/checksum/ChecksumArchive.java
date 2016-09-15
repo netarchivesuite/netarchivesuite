@@ -84,7 +84,14 @@ public interface ChecksumArchive {
      * @param filename The name of the file.
      */
     public void upload(RemoteFile arcfile, String filename);
-
+    
+    /**
+     * Upload a filename with a pre-computed checksum.
+     * @param checksum
+     * @param filename
+     */
+    public void upload(String checksum, String filename);
+    
     /**
      * Method for calculating the checksum of a specific file.
      *

@@ -208,5 +208,12 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     public long getSize() {
         return filesize;
     }
+    
+    public String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("File= " + file.getName() + ", fileDeletable=" + fileDeletable + ", multipleDownloads=" 
+    			+ multipleDownloads + ", filesize=" + filesize);
+    	return sb.toString();
+    }
 
 }

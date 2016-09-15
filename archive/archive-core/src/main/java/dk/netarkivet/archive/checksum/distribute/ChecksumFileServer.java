@@ -62,6 +62,8 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     /** The character to separate the applicationInstanceId and the IP address. */
     public static final String APPLICATION_ID_SEPARATOR = "_";
 
+	private boolean usePrecomputedChecksumDuringUpload;
+
     /**
      * Returns the unique instance of this class.
      * <p>
@@ -102,8 +104,10 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
         // create the application identifier
         checksumAppId = createAppId();
 
+        usePrecomputedChecksumDuringUpload = Settings.getBoolean(ArchiveSettings.CHECKSUM_USE_PRECOMPUTED_CHECKSUM_DURING_UPLOAD);
+        
         // log that this instance has successfully been invoked.
-        log.info("ChecksumFileServer '{}' initialised.", checksumAppId);
+        log.info("ChecksumFileServer '{}' initialised. Using precomputedChecksums during upload: {}", checksumAppId, usePrecomputedChecksumDuringUpload);
     }
 
     /**
@@ -174,14 +178,22 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
         log.debug("Receiving UploadMessage: " + msg.toString());
         try {
             try {
-                cs.upload(msg.getRemoteFile(), msg.getArcfileName());
+            	if (usePrecomputedChecksumDuringUpload) {
+            		cs.upload(msg.getPrecomputedChecksum(), msg.getArcfileName());
+            	} else {
+            		cs.upload(msg.getRemoteFile(), msg.getArcfileName());
+            	}
             } catch (Throwable e) {
                 log.warn("Cannot process upload message '{}'", msg, e);
                 msg.setNotOk(e);
             } finally { // check if enough space
                 if (!cs.hasEnoughSpace()) {
-                    log.warn("Not enough space any more.");
                     jmsCon.removeListener(theCR, this);
+                	String errMsg = "Not enough space any more. Stopped listening to messages from " 
+                			+ theCR + ". Restart application after fixing problem";
+                	
+                    log.warn(errMsg);
+                    NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR);
                 }
             }
         } catch (Throwable e) {

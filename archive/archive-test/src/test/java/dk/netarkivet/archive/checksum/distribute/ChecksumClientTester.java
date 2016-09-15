@@ -157,7 +157,7 @@ public class ChecksumClientTester {
         assertEquals("A checksum replica should be of the type CHECKSUM", cc.getType(), ReplicaType.CHECKSUM);
 
         // check upload
-        cc.sendUploadMessage(RemoteFileFactory.getInstance(TestInfo.UPLOADMESSAGE_TESTFILE_1, true, false, true));
+        cc.sendUploadMessage(RemoteFileFactory.getInstance(TestInfo.UPLOADMESSAGE_TESTFILE_1, true, false, true), "dummy-checksum");
         con.waitForConcurrentTasksToFinish();
 
         assertEquals("One upload message expected to be sent.", 1, handler.uploadMsg.size());

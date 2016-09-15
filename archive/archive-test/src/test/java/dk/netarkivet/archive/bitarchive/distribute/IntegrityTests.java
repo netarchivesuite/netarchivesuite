@@ -320,7 +320,7 @@ public class IntegrityTests {
         for (int i = 0; i < LARGE_MESSAGE_COUNT; ++i) {
             // System.out.println("Sending message #" + i);
             bac.get(FILENAME_TO_GET, 0);
-            bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true)); // only
+            bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true), "dummy-precomputed-checksum"); // only
             // first
             // upload
             // will

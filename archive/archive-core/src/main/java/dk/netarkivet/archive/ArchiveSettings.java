@@ -287,6 +287,14 @@ public class ArchiveSettings {
      * default, it is stored in a file
      */
     public static String CHECKSUM_ARCHIVE_CLASS = "settings.archive.checksum.archive.class";
+    
+    /**
+     * <b>settings.archive.checksum.usePrecomputedChecksum</b>: This decides whether or not use the pre-computed checksum sent as part of the StoreMessage and UploadMessage
+     * The default is false
+     */
+    public static String CHECKSUM_USE_PRECOMPUTED_CHECKSUM_DURING_UPLOAD= "settings.archive.checksum.usePrecomputedChecksumDuringUpload";
+    
+    
     /**
      * <b>settings.archive.bitarchive.singleChecksumTimeout</b>: <br>
      * The path to the settings for the maximum time usage for the calculation of the checksum for a single file. Used

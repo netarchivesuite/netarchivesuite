@@ -92,13 +92,16 @@ public class ArcRepository implements CleanupIF {
 
     /** Map from MessageId to arcfiles for which there are outstanding checksum jobs. */
     private final Map<String, String> outstandingChecksumFiles = new HashMap<String, String>();
-
+    
     /**
      * Map from filenames to remote files. Used for retrieving a remote file reference while a store operation is in
      * process.
      */
     private final Map<String, RemoteFile> outstandingRemoteFiles = new HashMap<String, RemoteFile>();
 
+    private final Map<String, String> outstandingRemoteFilesC = new HashMap<String, String>();
+    
+    
     /**
      * Map from bitarchive names to Map from filenames to the number of times a file has been attempted uploaded to the
      * the bitarchive.
@@ -197,6 +200,7 @@ public class ArcRepository implements CleanupIF {
             log.info("File: '{}' was outstanding from the start.", filename);
         }
         outstandingRemoteFiles.put(filename, rf);
+        outstandingRemoteFilesC.put(filename, replyInfo.getPrecomputedChecksum()); // Hack
 
         if (ad.hasEntry(filename)) {
             // Any valid entry (and all existing entries are now
@@ -215,7 +219,7 @@ public class ArcRepository implements CleanupIF {
             ad.addEntry(filename, replyInfo, rf.getChecksum());
         }
         for (Map.Entry<Replica, ReplicaClient> entry : connectedReplicas.entrySet()) {
-            startUpload(rf, entry.getValue(), entry.getKey());
+            startUpload(rf, entry.getValue(), entry.getKey(), replyInfo);
         }
 
         // Check state and reply if needed
@@ -228,8 +232,9 @@ public class ArcRepository implements CleanupIF {
      * @param rf Remotefile to upload to replica.
      * @param replicaClient The replica client to upload to.
      * @param replica The replica where RemoteFile is to be stored.
+     * @param replyInfo 
      */
-    private synchronized void startUpload(RemoteFile rf, ReplicaClient replicaClient, Replica replica) {
+    private synchronized void startUpload(RemoteFile rf, ReplicaClient replicaClient, Replica replica, StoreMessage replyInfo) {
         final String filename = rf.getName();
         log.debug("Upload started of file '{}' to replica '{}'", filename, replica.getId());
 
@@ -238,7 +243,7 @@ public class ArcRepository implements CleanupIF {
         if (!ad.hasState(filename, replicaChannelId)) {
             // New upload
             ad.setState(filename, replicaChannelId, ReplicaStoreState.UPLOAD_STARTED);
-            replicaClient.sendUploadMessage(rf);
+            replicaClient.sendUploadMessage(rf, replyInfo.getPrecomputedChecksum()); // Updated to include checksum information
         } else {
             // Recovery from old upload
             ReplicaStoreState storeState = ad.getState(filename, replicaChannelId);
@@ -311,6 +316,7 @@ public class ArcRepository implements CleanupIF {
      */
     private synchronized void replyOK(String arcFileName, StoreMessage msg) {
         outstandingRemoteFiles.remove(arcFileName);
+        outstandingRemoteFilesC.remove(arcFileName);
         clearRetries(arcFileName);
         log.info("Store OK: '{}'", arcFileName);
         log.debug("Sending store OK reply to message '{}'", msg);
@@ -325,6 +331,7 @@ public class ArcRepository implements CleanupIF {
      */
     private synchronized void replyNotOK(String arcFileName, StoreMessage msg) {
         outstandingRemoteFiles.remove(arcFileName);
+        outstandingRemoteFilesC.remove(arcFileName);
         clearRetries(arcFileName);
         msg.setNotOk("Failure while trying to store ARC file: " + arcFileName);
         log.warn("Store NOT OK: '{}'", arcFileName);
@@ -749,6 +756,7 @@ public class ArcRepository implements CleanupIF {
                 if (retryOk(replicaChannelName, arcFileName)) { // we can retry
                     if (outstandingRemoteFiles.containsKey(arcFileName)) {
                         RemoteFile rf = outstandingRemoteFiles.get(arcFileName);
+                        String preComputedChecksum = outstandingRemoteFilesC.get(arcFileName);
                         // Retry upload only if allowed and in case we are sure
                         // that the empty checksum means that the arcfile is not
                         // in the archive
@@ -756,7 +764,7 @@ public class ArcRepository implements CleanupIF {
                         ad.setState(rf.getName(), replicaChannelName, ReplicaStoreState.UPLOAD_STARTED);
                         // retrieve the replica from the name of the channel.
                         Replica rep = Channels.retrieveReplicaFromIdentifierChannel(replicaChannelName);
-                        connectedReplicas.get(rep).sendUploadMessage(rf);
+                        connectedReplicas.get(rep).sendUploadMessage(rf, preComputedChecksum);
                         incRetry(replicaChannelName, arcFileName);
                         log.debug("Checksum processing for file '{}'... completed.", arcFileName);
                         return;

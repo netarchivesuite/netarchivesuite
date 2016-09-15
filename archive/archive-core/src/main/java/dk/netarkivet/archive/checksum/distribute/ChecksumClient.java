@@ -188,14 +188,16 @@ public class ChecksumClient implements ReplicaClient {
      * using the 'any' channel.
      *
      * @param rf The file to upload to the archive.
+     * @param precomputedChecksum A precomputed checksum 
      * @throws ArgumentNotValid If the remote file is null.
      */
-    public void sendUploadMessage(RemoteFile rf) throws ArgumentNotValid {
+    public void sendUploadMessage(RemoteFile rf, String precomputedChecksum) throws ArgumentNotValid {
         // validate arguments.
         ArgumentNotValid.checkNotNull(rf, "RemoteFile rf");
 
         // create and send message.
         UploadMessage up = new UploadMessage(theChecksumChannel, Channels.getTheRepos(), rf);
+        up.setPrecomputedChecksum(precomputedChecksum);
         jmsCon.send(up);
 
         // log message

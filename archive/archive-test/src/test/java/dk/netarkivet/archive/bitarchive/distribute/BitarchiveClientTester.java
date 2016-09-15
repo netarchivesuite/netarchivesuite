@@ -89,6 +89,7 @@ public class BitarchiveClientTester {
     private static final ChannelID THE_BAMON = Channels.getTheBamon();
     private static final ChannelID ALL_BA = Channels.getAllBa();
     private static final ChannelID ANY_BA = Channels.getAnyBa();
+    private static final String DUMMY_PRECOMPUTED_CHECKSUM = "dummy-checksum";
 
     /* The client and server used for testing. */
     BitarchiveClient bac;
@@ -165,7 +166,7 @@ public class BitarchiveClientTester {
     @Test
     public void testInvalidParams() {
         try {
-            bac.sendUploadMessage(null);
+            bac.sendUploadMessage(null, DUMMY_PRECOMPUTED_CHECKSUM);
             fail("null not a valid argument");
         } catch (ArgumentNotValid e) {
             // expected
@@ -201,7 +202,7 @@ public class BitarchiveClientTester {
     public void testUpload() {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME, FILE_TO_UPLOAD.exists());
 
-        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true));
+        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true), "dummy-checksum");
 
         con.waitForConcurrentTasksToFinish();
 
@@ -220,7 +221,7 @@ public class BitarchiveClientTester {
     public void testGetFile() {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME, FILE_TO_UPLOAD.exists());
 
-        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true));
+        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true), DUMMY_PRECOMPUTED_CHECKSUM);
         con.waitForConcurrentTasksToFinish();
         GetFileMessage msg = new GetFileMessage(ALL_BA, Channels.getTheRepos(), ARC_FILE_NAME, "ONE");
         bac.sendGetFileMessage(msg);
@@ -255,8 +256,8 @@ public class BitarchiveClientTester {
 
         assertTrue("File to upload must exist: " + ARC_FILE_NAME, FILE_TO_UPLOAD.exists());
 
-        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true));
-        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true));
+        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true), DUMMY_PRECOMPUTED_CHECKSUM);
+        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true), DUMMY_PRECOMPUTED_CHECKSUM);
 
         con.waitForConcurrentTasksToFinish();
 
@@ -288,7 +289,7 @@ public class BitarchiveClientTester {
     public void testGet() throws IOException {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME, FILE_TO_UPLOAD.exists());
 
-        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true));
+        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true), DUMMY_PRECOMPUTED_CHECKSUM);
         con.waitForConcurrentTasksToFinish();
 
         bac.get(ARC_FILE_NAME, 0);
@@ -375,7 +376,7 @@ public class BitarchiveClientTester {
      * Utility method for the batch tests. Uploads a file and waits for the operation to finish.
      */
     private void uploadInPreparationOfBatchTest() {
-        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true));
+        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true), DUMMY_PRECOMPUTED_CHECKSUM);
         con.waitForConcurrentTasksToFinish();
     }
 

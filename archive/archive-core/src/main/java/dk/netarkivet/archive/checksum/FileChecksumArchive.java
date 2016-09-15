@@ -556,7 +556,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
         // Validate arguments.
         ArgumentNotValid.checkNotNull(file, "RemoteFile file");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-
+        
         InputStream input = null;
 
         try {
@@ -588,6 +588,32 @@ public final class FileChecksumArchive implements ChecksumArchive {
             }
         }
 
+    }
+    
+    public void upload(String checksum, String filename) throws ArgumentNotValid, IllegalState {
+        // Validate arguments.
+        ArgumentNotValid.checkNotNull(checksum, "String checksum");
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+
+        synchronizeMemoryWithFile();
+        if (checksumArchive.containsKey(filename)) {
+        	if (checksumArchive.get(filename).equals(checksum)) {
+        		log.warn("Cannot upload arcfile '{}', it is already archived with the same checksum: '{}",
+        				filename, checksum);
+        	} else {
+        		throw new IllegalState("Cannot upload arcfile '" + filename
+        				+ "', it is already archived with different checksum." + " Archive checksum: '"
+        				+ checksumArchive.get(filename) + "' and the uploaded file has: '" + checksum + "'.");
+        	}
+
+        	// It is considered a success that it already is within the archive,
+        	// thus do not throw an exception.
+        	return;
+        }
+
+        // otherwise put the file into memory and file.
+        appendEntryToFile(filename, checksum);
+        checksumArchive.put(filename, checksum);
     }
 
     /**
