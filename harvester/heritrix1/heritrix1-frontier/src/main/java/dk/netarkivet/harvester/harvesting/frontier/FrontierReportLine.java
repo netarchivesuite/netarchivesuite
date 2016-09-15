@@ -32,7 +32,7 @@ import com.sleepycat.persist.model.Persistent;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Wraps a line of the frontier report. As of Heritrix 1.14.4, the format of a frontier report line sequentially lists
+ * Wraps a line of the frontier report. As of Heritrix 1.14.4 the format of a frontier report line sequentially lists
  * the following tokens, separated by a whitespace :
  * <p>
  * <ol>
@@ -48,6 +48,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * <li>lastPeekUri</li>
  * <li>lastQueuedUri</li>
  * </ol>
+ * <p>In Heritrix 3.2.0, there is a new field named <strong>precedence</strong> which comes after queue</p>
  * <p>
  * This class implements a natural order : comparisons are made : - first by decreasing values of totalEnqueues -
  * secondly by domain name (string natural order)
@@ -62,9 +63,14 @@ public class FrontierReportLine implements Serializable, Comparable<FrontierRepo
 	private static final Logger LOG = LoggerFactory.getLogger(FrontierReportLine.class);
 
     /**
-     * Expected size of string array when we split the line token across "\\s+".
+     * Expected size of string array when we split the line token across "\\s+" for heritrix 1 frontier format.
      */
-    private static final int EXPECTED_SPLIT_SEGMENTS = 11;
+    private static final int EXPECTED_SPLIT_SEGMENTS_H1 = 11;
+    
+    /**
+     * Expected size of string array when we split the line token across "\\s+" for heritrix 3 frontier format.
+     */
+    private static final int EXPECTED_SPLIT_SEGMENTS_H3 = 12;
 
     /**
      * Token used to signify an empty value.
@@ -78,6 +84,11 @@ public class FrontierReportLine implements Serializable, Comparable<FrontierRepo
 
     /** Number of URIs currently in the queue. */
     private long currentSize;
+    
+    /**
+     * new field in heritrix 3 frontier report
+     */
+    private long precedence;
 
     /**
      * Count of total times a URI has been enqueued to this queue; a measure of the total number of URI instances ever
@@ -176,47 +187,61 @@ public class FrontierReportLine implements Serializable, Comparable<FrontierRepo
 
     /**
      * Parses the given string.
+     * Handle both heritrix 1 and heritrix 3 frontier report line format
      *
      * @param lineToken the string to parse.
      */
     FrontierReportLine(String lineToken) {
 
         String[] split = lineToken.split("\\s+");
+        int heritrixVersion = 0;
 
-        if (split.length != EXPECTED_SPLIT_SEGMENTS) {
+        if(split.length == EXPECTED_SPLIT_SEGMENTS_H1) {
+        	heritrixVersion = 1;
+        } else if (split.length == EXPECTED_SPLIT_SEGMENTS_H3){
+        	heritrixVersion = 3;
+        }
+        else {
             throw new ArgumentNotValid("Format of line token '" + lineToken + "' is not a valid frontier report line!");
         }
 
         this.domainName = split[0];
-        try {
-            this.currentSize = parseLong(split[1]);
-        } catch (NumberFormatException e) {
-            LOG.warn("Found incorrect formatted currentsize " + split[1]);
+
+        int fIndex = 0;
+        if(heritrixVersion == 3) {
+        	fIndex = 1;
+        	this.precedence = parseLong(split[1]);
         }
-        this.totalEnqueues = parseLong(split[2]);
-        this.sessionBalance = parseLong(split[3]);
+        
+        try {
+            this.currentSize = parseLong(split[fIndex+1]);
+        } catch (NumberFormatException e) {
+            LOG.warn("Found incorrect formatted currentsize " + split[fIndex+1]);
+        }
+        this.totalEnqueues = parseLong(split[fIndex+2]);
+        this.sessionBalance = parseLong(split[fIndex+3]);
 
         // Cost token is lastCost(averageCost)
-        String costToken = split[4];
+        String costToken = split[fIndex+4];
         int leftParenIdx = costToken.indexOf("(");
         this.lastCost = parseDouble(costToken.substring(0, leftParenIdx));
         this.averageCost = parseDouble(costToken.substring(leftParenIdx + 1, costToken.indexOf(")")));
-        this.lastDequeueTime = split[5];
-        this.wakeTime = split[6];
+        this.lastDequeueTime = split[fIndex+5];
+        this.wakeTime = split[fIndex+6];
 
         // Budget token is totalSpend/totalBudget
-        String[] budgetTokens = split[7].split("/");
+        String[] budgetTokens = split[fIndex+7].split("/");
         if (budgetTokens.length != 2) {
-            LOG.warn("Found incorrect budget token '" + split[7]);
+            LOG.warn("Found incorrect budget token '" + split[fIndex+7]);
         } else {
             this.totalSpend = parseLong(budgetTokens[0]);
             this.totalBudget = parseLong(budgetTokens[1]);
         }
 
-        this.errorCount = parseLong(split[8]);
+        this.errorCount = parseLong(split[fIndex+8]);
 
-        this.lastPeekUri = split[9];
-        this.lastQueuedUri = split[10];
+        this.lastPeekUri = split[fIndex+9];
+        this.lastQueuedUri = split[fIndex+10];
 
     }
 
@@ -239,6 +264,20 @@ public class FrontierReportLine implements Serializable, Comparable<FrontierRepo
      */
     public long getCurrentSize() {
         return currentSize;
+    }
+
+    /**
+     * @param precedence the precedence to set
+     */
+    public void setPrecedence(long precedence) {
+        this.precedence = precedence;
+    }
+
+    /**
+     * @return the precedence
+     */
+    public long getPrecedence() {
+        return precedence;
     }
 
     /**
