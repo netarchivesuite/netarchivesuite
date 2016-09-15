@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.archive.format.warc.WARCConstants.WARCRecordType;
@@ -25,6 +27,8 @@ import org.archive.modules.writer.WARCWriterProcessor;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.anvl.ANVLRecord;
 
+
+
 /**
  * Custom NAS WARCWriterProcessor addding NetarchiveSuite metadata to the WARCInfo records written
  * by Heritrix by just extending the org.archive.modules.writer.WARCWriterProcessor;
@@ -34,7 +38,11 @@ import org.archive.util.anvl.ANVLRecord;
  */
 public class NasWARCProcessor extends WARCWriterProcessor {
 
-	// Constants for the contents of the WarcInfo record
+    /** Logger instance. */
+    private static final Logger logger = Logger.getLogger(NasWARCProcessor.class.getName());
+
+
+    // Constants for the contents of the WarcInfo record
 	private static final String HARVESTINFO_VERSION = "harvestInfo.version";
 	private static final String HARVESTINFO_JOBID = "harvestInfo.jobId";
 	private static final String HARVESTINFO_CHANNEL = "harvestInfo.channel";
@@ -141,43 +149,47 @@ public class NasWARCProcessor extends WARCWriterProcessor {
                 + dk.netarkivet.common.Constants.getVersionString();
         ANVLRecord recordNAS = new ANVLRecord(); // Previously new ANVLRecord(7); 
 
-	// Add the data from the metadataMap to the WarcInfoRecord.
-        recordNAS.addLabelValue(HARVESTINFO_VERSION, (String) metadataMap.get(HARVESTINFO_VERSION));
-        recordNAS.addLabelValue(HARVESTINFO_JOBID, (String) metadataMap.get(HARVESTINFO_JOBID));
-        recordNAS.addLabelValue(HARVESTINFO_CHANNEL, (String) metadataMap.get(HARVESTINFO_CHANNEL));
-        recordNAS.addLabelValue(HARVESTINFO_HARVESTNUM, (String) metadataMap.get(HARVESTINFO_HARVESTNUM));
-        recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONID, 
-		(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONID));
-        recordNAS.addLabelValue(HARVESTINFO_MAXBYTESPERDOMAIN, 
-		(String) metadataMap.get(HARVESTINFO_MAXBYTESPERDOMAIN));
+        try {
+            // Add the data from the metadataMap to the WarcInfoRecord.
+            recordNAS.addLabelValue(HARVESTINFO_VERSION, (String) metadataMap.get(HARVESTINFO_VERSION));
+            recordNAS.addLabelValue(HARVESTINFO_JOBID, (String) metadataMap.get(HARVESTINFO_JOBID));
+            recordNAS.addLabelValue(HARVESTINFO_CHANNEL, (String) metadataMap.get(HARVESTINFO_CHANNEL));
+            recordNAS.addLabelValue(HARVESTINFO_HARVESTNUM, (String) metadataMap.get(HARVESTINFO_HARVESTNUM));
+            recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONID,
+            (String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONID));
+            recordNAS.addLabelValue(HARVESTINFO_MAXBYTESPERDOMAIN,
+            (String) metadataMap.get(HARVESTINFO_MAXBYTESPERDOMAIN));
 
-        recordNAS.addLabelValue(HARVESTINFO_MAXOBJECTSPERDOMAIN, 
-		(String) metadataMap.get(HARVESTINFO_MAXOBJECTSPERDOMAIN));
-        recordNAS.addLabelValue(HARVESTINFO_ORDERXMLNAME, 
-		(String) metadataMap.get(HARVESTINFO_ORDERXMLNAME));
-        recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONNAME,
-		(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONNAME));
+            recordNAS.addLabelValue(HARVESTINFO_MAXOBJECTSPERDOMAIN,
+            (String) metadataMap.get(HARVESTINFO_MAXOBJECTSPERDOMAIN));
+            recordNAS.addLabelValue(HARVESTINFO_ORDERXMLNAME,
+            (String) metadataMap.get(HARVESTINFO_ORDERXMLNAME));
+            recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONNAME,
+            (String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONNAME));
 
-        if (metadataMap.containsKey(HARVESTINFO_SCHEDULENAME)) {
-            recordNAS.addLabelValue(HARVESTINFO_SCHEDULENAME, 
-		(String) metadataMap.get(HARVESTINFO_SCHEDULENAME));
-        }
-        recordNAS.addLabelValue(HARVESTINFO_HARVESTFILENAMEPREFIX,
-		(String) metadataMap.get(HARVESTINFO_HARVESTFILENAMEPREFIX));
- 
-        recordNAS.addLabelValue(HARVESTINFO_JOBSUBMITDATE, 
-		(String) metadataMap.get(HARVESTINFO_JOBSUBMITDATE));
-	
-        if (metadataMap.containsKey(HARVESTINFO_PERFORMER)) {
-		recordNAS.addLabelValue(HARVESTINFO_PERFORMER, 
-		(String) metadataMap.get(HARVESTINFO_PERFORMER));
+            if (metadataMap.containsKey(HARVESTINFO_SCHEDULENAME)) {
+                recordNAS.addLabelValue(HARVESTINFO_SCHEDULENAME,
+            (String) metadataMap.get(HARVESTINFO_SCHEDULENAME));
+            }
+            recordNAS.addLabelValue(HARVESTINFO_HARVESTFILENAMEPREFIX,
+            (String) metadataMap.get(HARVESTINFO_HARVESTFILENAMEPREFIX));
+
+            recordNAS.addLabelValue(HARVESTINFO_JOBSUBMITDATE,
+            (String) metadataMap.get(HARVESTINFO_JOBSUBMITDATE));
+
+            if (metadataMap.containsKey(HARVESTINFO_PERFORMER)) {
+            recordNAS.addLabelValue(HARVESTINFO_PERFORMER,
+            (String) metadataMap.get(HARVESTINFO_PERFORMER));
+            }
+
+            if (metadataMap.containsKey(HARVESTINFO_AUDIENCE)) {
+                recordNAS.addLabelValue(HARVESTINFO_AUDIENCE,
+            (String) metadataMap.get(HARVESTINFO_AUDIENCE));
+            }
+        } catch (Exception e) {
+                logger.log(Level.WARNING, "Error processing harvest info" , e);
         }
 
-        if (metadataMap.containsKey(HARVESTINFO_AUDIENCE)) { 
-            recordNAS.addLabelValue(HARVESTINFO_AUDIENCE, 
-		(String) metadataMap.get(HARVESTINFO_AUDIENCE));
-        }
-        
         // really ugly to return as List<String>, but changing would require 
         // larger refactoring
         cachedMetadata = Collections.singletonList(record.toString() 
