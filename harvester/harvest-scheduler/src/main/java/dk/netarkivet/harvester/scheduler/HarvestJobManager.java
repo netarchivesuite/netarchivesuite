@@ -71,7 +71,7 @@ public class HarvestJobManager extends LifeCycleComponent {
         super.shutdown();
         HarvestDBConnection.cleanup();
     }
-    /* Requires java 8:
+
     public static Provider<JMSConnection> getJMSConnectionProvider() {
         return () -> JMSConnectionFactory.getInstance();
     }
@@ -84,7 +84,9 @@ public class HarvestJobManager extends LifeCycleComponent {
     public static Provider<Notifications> getNotificationsProvider() {
         return () -> NotificationsFactory.getInstance();
     }
-    */
+
+
+    /*
     public static Provider<JMSConnection> getJMSConnectionProvider() {
         return new Provider<JMSConnection>() {
 
@@ -117,4 +119,5 @@ public class HarvestJobManager extends LifeCycleComponent {
                 return NotificationsFactory.getInstance();
             }};
     }
+    */
 }

@@ -161,9 +161,9 @@ Display all the form information for this domain
                                      .Constants.ALIAS_TIMEOUT_IN_MILLISECONDS);
             Date now = new Date();
             if (aliasTimeoutDate.before(now)) { %>
-                <fmt:message key="expired.0"> <fmt:param><fmt:formatDate type="both" value="<%=aliasTimeoutDate%>"/></fmt:param> </fmt:message>
+                <%=HTMLUtils.parseDate(aliasTimeoutDate)%>
     <%        } else { %>
-                <fmt:message key="valid.until.0"> <fmt:param><fmt:formatDate type="both" value="<%=aliasTimeoutDate%>"/></fmt:param> </fmt:message>
+                <%=HTMLUtils.parseDate(aliasTimeoutDate)%>
     <%        } %>
             <br/><input type='radio' name='<%=Constants.RENEW_ALIAS_PARAM%>'
                         value='no' checked="checked"/> <fmt:message key="dont.renew.alias"/>

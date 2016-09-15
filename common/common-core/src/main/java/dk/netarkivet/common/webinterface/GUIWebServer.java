@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -24,17 +24,19 @@ package dk.netarkivet.common.webinterface;
 
 import java.io.File;
 
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.DefaultHandler;
-import org.mortbay.jetty.handler.HandlerList;
-import org.mortbay.jetty.webapp.WebAppContext;
+import javax.servlet.ServletException;
+
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.startup.Tomcat;
+import org.apache.tomcat.util.scan.Constants;
+import org.apache.tomcat.util.scan.StandardJarScanFilter;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -49,9 +51,9 @@ public class GUIWebServer implements CleanupIF {
      */
     private static GUIWebServer instance;
     /**
-     * The Jetty server.
+     * The Tomcat server.
      */
-    private Server server;
+    private Tomcat server;
     /**
      * Logger for this class.
      */
@@ -70,6 +72,7 @@ public class GUIWebServer implements CleanupIF {
      */
     public GUIWebServer() {
         // Read and log settings.
+
         int port = Integer.parseInt(Settings.get(CommonSettings.HTTP_PORT_NUMBER));
         if (port < HTTP_PORT_NUMBER_LOWER_LIMIT || port > HTTP_PORT_NUMBER_UPPER_LIMIT) {
             throw new IOFailure("Port must be in the range [" + HTTP_PORT_NUMBER_LOWER_LIMIT + ", "
@@ -87,23 +90,68 @@ public class GUIWebServer implements CleanupIF {
         log.info("Starting webserver. Port: " + port + " deployment directories: '" + StringUtils.conjoin(",", webApps)
                 + "' classes: '" + StringUtils.conjoin(",", classes) + "'");
 
-        // Get a Jetty server.
-        server = new Server(port);
+        // Get a tomcat server.
+        server = new Tomcat();
 
-        HandlerList handlerList = new HandlerList();
-        // Add web applications
-        try {
-            for (int i = 0; i < webApps.length; i++) {
-                handlerList.addHandler(getWebApplication(webApps[i]));
-            }
-        } catch (Exception e) {
-            throw new IOFailure("Error deploying the webapplications", e);
+        System.setProperty("org.apache.catalina.startup.EXIT_ON_INIT_FAILURE", "true");
+
+        // Use directory in commontempdir for cache
+        final File tempDir = FileUtils.getTempDir();
+        log.debug("GUI using tempdir " + tempDir);
+        File basedir = tempDir.getAbsoluteFile().getParentFile();
+        log.debug("GUI using basedir " + basedir);
+        server.setBaseDir(basedir.getAbsolutePath());
+
+        File webapps = new File(basedir, "/webapps");
+        if (webapps.exists()) {
+            FileUtils.removeRecursively(webapps);
+            log.info("Deleted existing tempdir '" + webapps.getAbsolutePath() + "'");
         }
-        // Add default handler, giving 404 page that lists web contexts, and
-        // favicon.ico from Jetty
-        handlerList.addHandler(new DefaultHandler());
-        server.setHandler(handlerList);
+
+        webapps.mkdirs();
+
+        //set the port on which tomcat should run
+        server.setPort(port);
+
+        //add webapps to tomcat
+        for (int i = 0; i < webApps.length; i++) {
+
+            // Construct webbase from the name of the webapp.
+            // (1) If the webapp is webpages/History, the webbase is /History
+            // (2) If the webapp is webpages/History.war, the webbase is /History
+            String webappFilename = new File(webApps[i]).getName();
+            String webbase = "/" + webappFilename;
+            final String warSuffix = ".war";
+            if (webappFilename.toLowerCase().endsWith(warSuffix)) {
+                webbase = "/" + webappFilename.substring(0, webappFilename.length() - warSuffix.length());
+            }
+
+            for (SiteSection section : SiteSection.getSections()) {
+                if (webbase.equals("/" + section.getDirname())) {
+                    section.initialize();
+                    break;
+                }
+            }
+
+            try {
+                //add the jar file to tomcat
+                String warfile = new File(basedir, webApps[i]).getAbsolutePath();
+                StandardContext ctx = (StandardContext) server.addWebapp(webbase, warfile);
+
+                //Disable TLD scanning by default
+                if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
+                    System.out.println("disabling TLD scanning");
+                    StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) ctx.getJarScanner().getJarScanFilter();
+                    jarScanFilter.setTldSkip("*");
+                }
+            }
+            catch (ServletException e)
+            {
+                log.error("Unable to add webapp " + webApps[i], e);
+            }
+        }
     }
+
 
     /**
      * Returns the unique instance of this class. If instance is new, starts a GUI web server.
@@ -111,6 +159,7 @@ public class GUIWebServer implements CleanupIF {
      * @return the instance
      */
     public static synchronized GUIWebServer getInstance() {
+        log.debug("Inside getInstance");
         if (instance == null) {
             instance = new GUIWebServer();
             instance.startServer();
@@ -118,51 +167,6 @@ public class GUIWebServer implements CleanupIF {
         return instance;
     }
 
-    /**
-     * Adds a directory with jsp files on the given basepath of the web server. Note: This must be done BEFORE starting
-     * the server. The webbase is deduced from the name of the webapp.
-     *
-     * @param webapp a directory with jsp files or a war file.
-     * @throws IOFailure if directory is not found.
-     * @throws ArgumentNotValid if either argument is null or empty or if webbase doesn't start with '/'.
-     * @throws PermissionDenied if the server is already running.
-     */
-    private WebAppContext getWebApplication(String webapp) throws IOFailure, ArgumentNotValid, PermissionDenied {
-
-        if (!new File(webapp).exists()) {
-            throw new IOFailure("Web application '" + webapp + "' not found");
-        }
-
-        // Construct webbase from the name of the webapp.
-        // (1) If the webapp is webpages/History, the webbase is /History
-        // (2) If the webapp is webpages/History.war, the webbase is /History
-        String webappFilename = new File(webapp).getName();
-        String webbase = "/" + webappFilename;
-        final String warSuffix = ".war";
-        if (webappFilename.toLowerCase().endsWith(warSuffix)) {
-            webbase = "/" + webappFilename.substring(0, webappFilename.length() - warSuffix.length());
-        }
-
-        for (SiteSection section : SiteSection.getSections()) {
-            if (webbase.equals("/" + section.getDirname())) {
-                section.initialize();
-                break;
-            }
-        }
-        WebAppContext webApplication = new WebAppContext(webapp, webbase);
-        // Do not have a limit on the form size allowed
-        webApplication.setMaxFormContentSize(-1);
-        // Use directory in commontempdir for cache
-        File tmpdir = new File(FileUtils.getTempDir(), webbase);
-        if (tmpdir.exists()) {
-            FileUtils.removeRecursively(tmpdir);
-            log.info("Deleted existing tempdir '" + tmpdir.getAbsolutePath() + "'");
-        }
-        tmpdir.mkdirs();
-        webApplication.setTempDirectory(tmpdir);
-        log.info("The web application '" + webapp + "' is now deployed at '" + webbase + "'");
-        return webApplication;
-    }
 
     /**
      * Starts the jetty web server.
@@ -173,12 +177,10 @@ public class GUIWebServer implements CleanupIF {
         // start the server.
         try {
             server.start();
+
         } catch (Exception e) {
+            cleanup();
             log.warn("Could not start GUI", e);
-            if (server.isStarted()) {
-                cleanup();
-            }
-            throw new IOFailure("Could not start GUI", e);
         }
     }
 
@@ -186,16 +188,15 @@ public class GUIWebServer implements CleanupIF {
      * Closes the GUI webserver, and nullifies this instance.
      */
     public void cleanup() {
-        if (server.isStarted()) {
-            try {
-                server.stop();
-                server.destroy();
-                SiteSection.cleanup();
-            } catch (Exception e) {
-                throw new IOFailure("Error while stopping server", e);
-            }
-            log.info("HTTP server has been stopped.");
+
+        try {
+            server.stop();
+            server.destroy();
+            SiteSection.cleanup();
+        } catch (Exception e) {
+            throw new IOFailure("Error while stopping server", e);
         }
+        log.info("HTTP server has been stopped.");
 
         resetInstance();
     }

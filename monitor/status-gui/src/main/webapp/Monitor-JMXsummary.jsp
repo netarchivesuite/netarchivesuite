@@ -27,7 +27,7 @@ This page shows the status of all applications that were known to exist
 when the GUI-application was started. That information is currently taken from
 the 'deploy' element in the setting.xml assigned to the
 dk.netarkivet.common.webinterface.GUIApplication.
-But the actual reading is done in auxiliary class 
+But the actual reading is done in auxiliary class
 dk.netarkivet.monitor.jmx.HostForwarding
 
 If the application is down, this can be seen on this page. Furthermore,

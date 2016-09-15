@@ -72,7 +72,7 @@ believe they should be checked before renewed.
                 <tr class="<%= HTMLUtils.getRowClass(rowCount++) %>">
                     <td><%=DomainDefinition.makeDomainLink(alias.getDomain())%></td>
                     <td><%=DomainDefinition.makeDomainLink(alias.getAliasOf())%></td>
-                    <td><fmt:formatDate type="both" value="<%= alias.getExpirationDate() %>"/></td>
+                    <td><%=HTMLUtils.parseDate(alias.getExpirationDate())%></td>
                     </tr>
                 <%
                 }
@@ -94,7 +94,7 @@ believe they should be checked before renewed.
         <tr class="<%= HTMLUtils.getRowClass(rowCount++) %>">
             <td><%=DomainDefinition.makeDomainLink(alias.getDomain())%></td>
             <td><%=DomainDefinition.makeDomainLink(alias.getAliasOf())%></td>
-            <td><fmt:formatDate type="both" value="<%= alias.getExpirationDate() %>"/></td>
+            <td><%=HTMLUtils.parseDate(alias.getExpirationDate())%></td>
             </tr>
         <%
                 }

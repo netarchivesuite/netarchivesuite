@@ -57,6 +57,9 @@ import dk.netarkivet.common.utils.StringTree;
  * This is a utility class containing methods for use in the GUI for netarkivet.
  */
 public class HTMLUtils {
+    /** Date format for FMT timestamps */
+    private static final SimpleDateFormat DATE_FMT =
+            new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     /** Web page title placeholder. */
     private static String TITLE_PLACEHOLDER = "STRING_1";
@@ -901,5 +904,15 @@ public class HTMLUtils {
         } else {
             return defaultValue;
         }
+    }
+
+    /**
+     * Parse Date to be displayed in 24 Hour format.
+     *
+     * @param timestamp The given date to parse.
+     * @return the String value found in the timestamp
+     */
+    public static String parseDate(Date timestamp) {
+        return timestamp != null ? DATE_FMT.format(timestamp) : "-";
     }
 }

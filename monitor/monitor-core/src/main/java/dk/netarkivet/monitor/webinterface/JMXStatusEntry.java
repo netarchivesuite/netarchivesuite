@@ -38,6 +38,9 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.RuntimeMBeanException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.I18n;
@@ -49,6 +52,10 @@ import dk.netarkivet.monitor.logging.SingleLogRecord;
  * Implementation of StatusEntry, that receives its data from the MBeanServer (JMX).
  */
 public class JMXStatusEntry implements StatusEntry {
+
+    private static final Logger log = LoggerFactory.getLogger(JMXStatusEntry.class);
+
+
     /** The ObjectName assigned to the MBean for this JMXStatusEntry. */
     private ObjectName mBeanName;
     /** JMX Query to retrieve the logmessage associated with this Entry. */
@@ -293,11 +300,13 @@ public class JMXStatusEntry implements StatusEntry {
         HostForwarding.getInstance(SingleLogRecord.class, mBeanServer, LOGGING_QUERY);
         // The "null" in this case is used to indicate no further filters on the
         // query.
+        log.debug("Querying " + mBeanServer.toString());
         Set<ObjectName> resultSet = mBeanServer.queryNames(new ObjectName(query), null);
         for (ObjectName objectName : resultSet) {
             entries.add(new JMXStatusEntry(objectName));
         }
         Collections.sort(entries);
+        log.debug("Query returned " + entries.size() + " results.");
         return entries;
     }
 

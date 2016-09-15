@@ -32,14 +32,21 @@ import java.util.Random;
 
 import javax.management.MalformedObjectNameException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.monitor.Constants;
 import dk.netarkivet.monitor.MonitorSettings;
 
 /**
@@ -47,6 +54,10 @@ import dk.netarkivet.monitor.MonitorSettings;
  * Monitor-JMXsummary.jsp.
  */
 public class JMXSummaryUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(JMXSummaryUtils.class);
+
+
     /** JMX property for remove application button. */
     public static final String JMXRemoveApplication = dk.netarkivet.common.management.Constants.REMOVE_JMX_APPLICATION;
     /** JMX property for the physical location. */
@@ -277,6 +288,7 @@ public class JMXSummaryUtils {
         String query = null;
         try {
             query = createJMXQuery(parameters, request);
+            log.debug("Executing JMX query: " + query);
             return JMXStatusEntry.queryJMX(query);
         } catch (MalformedObjectNameException e) {
             if (query != null) {
@@ -466,5 +478,202 @@ public class JMXSummaryUtils {
                 return value;
             }
         }
+    }
+
+    /**
+     * Remove an application. Used by Monitor-JMXsummary.jsp. Code has been moved from the jsp to here to avoid compile errors at
+     * runtime in correlation with the upgrade to java 1.8 and introduction of embedded tomcat to handle jsp pages. This was previously done via jetty 6.
+     *
+     * @param request http request from selvlet
+     * @param response http session for page context Harveststatus-running.jsp
+     * @param pageContext http session for page context Harveststatus-running.jsp
+     */
+    public static void RemoveApplication(HttpServletRequest request, HttpServletResponse response, PageContext pageContext)
+            throws IOException, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(request, "ServletRequest request");
+        ArgumentNotValid.checkNotNull(response, "ServletRequest response");
+        ArgumentNotValid.checkNotNull(pageContext, "PageContext pageContext");
+
+        // remove application if parameter remove is set.
+        String remove = request.getParameter(Constants.REMOVE);
+        if(remove != null) {
+            JMXSummaryUtils.StarredRequest starredRequest =
+                    new JMXSummaryUtils.StarredRequest(request);
+            try {
+                JMXSummaryUtils.unregisterJMXInstance(
+                        JMXSummaryUtils.STARRABLE_PARAMETERS, starredRequest,
+                        pageContext);
+                StringBuilder builder = new StringBuilder("/");
+                builder.append(JMXSummaryUtils.STATUS_MONITOR_JMXSUMMARY);
+                builder.append("?");
+                /**
+                 * oldquery is set in the link to remove an application from the summary view. It is used to
+                 * enable us to return to the previous view after removing an application.
+                 */
+                String oldquery = starredRequest.getParameter("oldquery");
+                if (oldquery != null) {
+                    builder.append(java.net.URLDecoder.decode(oldquery));
+                }
+                response.sendRedirect(builder.toString());
+            } catch (ForwardedToErrorPage e) {
+                return;
+            }
+
+        }
+    }
+
+    /**
+     * Prints the content of Monitor-JMXsummary.jsp. Code has been moved from the jsp to here to avoid compile errors at
+     * runtime in correlation with the upgrade to java 1.8 and introduction of embedded tomcat to handle jsp pages. This was previously done via jetty 6.
+     *
+     * @param request http request from selvlet
+     * @param response http session for page context Harveststatus-running.jsp
+     * @param pageContext http session for page context Harveststatus-running.jsp
+     */
+    public static void PrintMonitorSummary(HttpServletRequest request,  HttpServletResponse response, PageContext pageContext, JspWriter out, I18n I18N)
+            throws IOException, ArgumentNotValid {
+
+        ArgumentNotValid.checkNotNull(request, "ServletRequest request");
+        ArgumentNotValid.checkNotNull(response, "ServletRequest response");
+        ArgumentNotValid.checkNotNull(pageContext, "PageContext pageContext");
+        ArgumentNotValid.checkNotNull(out, "JspWriter out");
+        ArgumentNotValid.checkNotNull(I18N, "I18n I18N");
+
+        Locale currentLocale = response.getLocale();
+        JMXSummaryUtils.StarredRequest starredRequest =
+                new JMXSummaryUtils.StarredRequest(request);
+        List<StatusEntry> result;
+        try {
+            result = JMXSummaryUtils.queryJMXFromRequest(
+                    JMXSummaryUtils.STARRABLE_PARAMETERS, starredRequest,
+                    pageContext);
+        } catch (ForwardedToErrorPage e) {
+            return;
+        }
+
+        JMXSummaryUtils.generateShowColumn(starredRequest, currentLocale);
+        out.println("<table id=\"system_state_table\">");
+        out.println("<tr>");
+
+        if (JMXSummaryUtils.showColumn(starredRequest,JMXSummaryUtils.JMXPhysLocationProperty)) {
+            out.println("<th>" + I18N.getString(currentLocale, "tablefield;location") +
+            JMXSummaryUtils.generateShowLink(starredRequest, JMXSummaryUtils.JMXPhysLocationProperty, currentLocale));
+            out.print("</th>");
+        }
+        if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXMachineNameProperty)) {
+            out.println("<th>" + I18N.getString(currentLocale, "tablefield;machine") +
+            JMXSummaryUtils.generateShowLink(starredRequest, JMXSummaryUtils.JMXMachineNameProperty, currentLocale));
+            out.print("</th>");
+        }
+        if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXApplicationNameProperty)) {
+            out.println("<th>" + I18N.getString(currentLocale, "tablefield;applicationname") +
+            JMXSummaryUtils.generateShowLink(starredRequest, JMXSummaryUtils.JMXApplicationNameProperty, currentLocale));
+            out.print("</th>");
+        }
+        if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXApplicationInstIdProperty)) {
+            out.println("<th>" + I18N.getString(currentLocale, "tablefield;applicationinstanceid") +
+            JMXSummaryUtils.generateShowLink(starredRequest, JMXSummaryUtils.JMXApplicationInstIdProperty, currentLocale));
+            out.print("</th>");
+        }
+        if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXHttpportProperty)) {
+            out.println("<th>" + I18N.getString(currentLocale, "tablefield;httpport") +
+            JMXSummaryUtils.generateShowLink(starredRequest, JMXSummaryUtils.JMXHttpportProperty, currentLocale));
+            out.print("</th>");
+        }
+        if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXHarvestChannelProperty)) {
+            out.println("<th>" + I18N.getString(currentLocale, "tablefield;channel") +
+            JMXSummaryUtils.generateShowLink(starredRequest, JMXSummaryUtils.JMXHarvestChannelProperty, currentLocale));
+            out.print("</th>");
+        }
+        if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXArchiveReplicaNameProperty)) {
+            out.println("<th>" + I18N.getString(currentLocale, "tablefield;replicaname") +
+            JMXSummaryUtils.generateShowLink(starredRequest, JMXSummaryUtils.JMXArchiveReplicaNameProperty, currentLocale));
+            out.print("</th>");
+        }
+
+        out.println("<th>" + I18N.getString(currentLocale, "tablefield;index") +
+        JMXSummaryUtils.generateShowAllLink(starredRequest, JMXSummaryUtils.JMXIndexProperty, currentLocale));
+        out.print("</th>");
+        out.println("<th>" + I18N.getString(currentLocale, "tablefield;logmessage") + "</th>");
+
+        if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXRemoveApplication)) {
+            out.println("<th>" + I18N.getString(currentLocale, "tablefield;removeapplication") +
+            JMXSummaryUtils.generateShowLink(starredRequest, JMXSummaryUtils.JMXRemoveApplication, currentLocale));
+            out.println("</th>");
+        }
+        out.println("</tr>");
+        for (StatusEntry entry : result) {
+            if (entry.getLogMessage(response.getLocale()).trim().length() > 0) {
+
+                out.println("<tr>");
+                if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXPhysLocationProperty)) {
+                    out.println("<td>");
+                    JMXSummaryUtils.generateLink(starredRequest, JMXSummaryUtils.JMXPhysLocationProperty,
+                            entry.getPhysicalLocation(), HTMLUtils.escapeHtmlValues(entry.getPhysicalLocation()));
+                    out.println("</td>");
+                }
+                if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXMachineNameProperty)) {
+                    out.println("<td>");
+                    JMXSummaryUtils.generateLink(starredRequest, JMXSummaryUtils.JMXMachineNameProperty,
+                            entry.getMachineName(), HTMLUtils.escapeHtmlValues(DomainUtils.reduceHostname(entry.getMachineName())));
+                    out.println("</td>");
+                }
+                if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXApplicationNameProperty)) {
+                    out.println("<td>");
+                    JMXSummaryUtils.generateLink(starredRequest, JMXSummaryUtils.JMXApplicationNameProperty, entry.getApplicationName(),
+                            HTMLUtils.escapeHtmlValues(JMXSummaryUtils.reduceApplicationName(entry.getApplicationName())));
+                    out.println("</td>");
+                }
+                if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXApplicationInstIdProperty)) {
+                    out.println("<td>");
+                    JMXSummaryUtils.generateLink(starredRequest, JMXSummaryUtils.JMXApplicationInstIdProperty,
+                            entry.getApplicationInstanceID(), HTMLUtils.escapeHtmlValues(entry.getApplicationInstanceID()));
+                    out.println("</td>");
+                }
+                if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXHttpportProperty)) {
+                    out.println("<td>");
+                    JMXSummaryUtils.generateLink(starredRequest, JMXSummaryUtils.JMXHttpportProperty, entry.getHTTPPort(),
+                            HTMLUtils.escapeHtmlValues(entry.getHTTPPort()));
+                    out.println("</td>");
+                }
+                if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXHarvestChannelProperty)) {
+                    out.println("<td>");
+                    JMXSummaryUtils.generateLink(starredRequest, JMXSummaryUtils.JMXHarvestChannelProperty, entry.getHarvestPriority(),
+                            HTMLUtils.escapeHtmlValues(entry.getHarvestPriority()));
+                    out.println("</td>");
+                }
+                if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXArchiveReplicaNameProperty)) {
+                    out.println("<td>");
+                    JMXSummaryUtils.generateLink(starredRequest, JMXSummaryUtils.JMXArchiveReplicaNameProperty,
+                            entry.getArchiveReplicaName(), HTMLUtils.escapeHtmlValues(entry.getArchiveReplicaName()));
+                    out.println("</td>");
+                }
+                out.println("<td>");
+                JMXSummaryUtils.generateLink(starredRequest, JMXSummaryUtils.JMXIndexProperty, entry.getIndex(),
+                        HTMLUtils.escapeHtmlValues(entry.getIndex()));
+                out.println("</td>");
+                out.println("<td>");
+                JMXSummaryUtils.generateMessage(entry.getLogMessage(response.getLocale()), currentLocale);
+                out.println("</td>");
+
+                if (JMXSummaryUtils.showColumn(starredRequest, JMXSummaryUtils.JMXRemoveApplication)) {
+                    out.println("<td>");
+                    out.println("<form>"
+                            + "<input onClick=\"parent.location='/"+ JMXSummaryUtils.STATUS_MONITOR_JMXSUMMARY + "?"
+                            + Constants.REMOVE + "=" + Constants.REMOVE
+                            + "&machine=" + HTMLUtils.escapeHtmlValues(entry.getMachineName())
+                            + "&httpport=" + HTMLUtils.escapeHtmlValues(entry.getHTTPPort())
+                            + "&applicationinstanceid=" + HTMLUtils.escapeHtmlValues(entry.getApplicationInstanceID())
+                            + "&applicationname=" + HTMLUtils.escapeHtmlValues(entry.getApplicationName())
+                            + "&oldquery=" + java.net.URLEncoder.encode("" + request.getQueryString())
+                            + "'\" type=\"button\" value=\"" + I18N.getString(currentLocale, "tablefield;removeapplication") + "\" />"
+                            + "</form>");
+
+                    out.println("</td>");
+                }
+                out.println("</tr>");
+            }
+        }
+        out.println("</table>");
     }
 }
