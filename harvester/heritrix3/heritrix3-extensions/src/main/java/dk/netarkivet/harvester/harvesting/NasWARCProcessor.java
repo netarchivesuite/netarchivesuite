@@ -14,8 +14,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.archive.format.warc.WARCConstants.WARCRecordType;
@@ -26,8 +24,8 @@ import org.archive.modules.CrawlURI;
 import org.archive.modules.writer.WARCWriterProcessor;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.anvl.ANVLRecord;
-
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Custom NAS WARCWriterProcessor addding NetarchiveSuite metadata to the WARCInfo records written
@@ -39,7 +37,7 @@ import org.archive.util.anvl.ANVLRecord;
 public class NasWARCProcessor extends WARCWriterProcessor {
 
     /** Logger instance. */
-    private static final Logger logger = Logger.getLogger(NasWARCProcessor.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(NasWARCProcessor.class);
 
 
     // Constants for the contents of the WarcInfo record
@@ -187,7 +185,7 @@ public class NasWARCProcessor extends WARCWriterProcessor {
             (String) metadataMap.get(HARVESTINFO_AUDIENCE));
             }
         } catch (Exception e) {
-                logger.log(Level.WARNING, "Error processing harvest info" , e);
+                logger.warn("Error processing harvest info" , e);
         }
 
         // really ugly to return as List<String>, but changing would require 
