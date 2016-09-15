@@ -64,9 +64,9 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFileWriterWarc;
  * bitarchive and processing the results to give a metadata file. Use option -w to select WARC output, and -a to select
  * ARC output: If no option available, then warc mode is selected
  * <p>
- * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile -w --jobID 2 --harvestnamePrefix 2-1 Usage: java
- * dk.netarkivet.harvester.tools.CreateCDXMetadataFile -a --jobID 2 --harvestnamePrefix 2-1 Usage: java
- * dk.netarkivet.harvester.tools.CreateCDXMetadataFile --jobID 2 --harvestnamePrefix 2-1
+ * Usage: java dk.netarkivet.harvester.tools.CreateCDXMetadataFile -w --jobID 2 --harvestID 5 --harvestnamePrefix 2-1 Usage: java
+ * dk.netarkivet.harvester.tools.CreateCDXMetadataFile -a --jobID 2 --harvestID 5 --harvestnamePrefix 2-1 Usage: java
+ * dk.netarkivet.harvester.tools.CreateCDXMetadataFile --jobID 2 --harvestID 5 --harvestnamePrefix 2-1
  * <p>
  * The CDX records is slightly different from the one produced normally. As we are not able to extract the timestamp,
  * and harvestID from the (W) arcfilenames, this information is not part of the CXDURI.
@@ -75,7 +75,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
 
     public static final String ARCMODE = "arc";
     public static final String WARCMODE = "warc";
-    public static final String usageString = "[-a|w] --jobID X --harvestnamePrefix somePrefix";
+    public static final String usageString = "[-a|w] --jobID X --harvestID Y --harvestnamePrefix somePrefix";
 
     /**
      * Main method. Creates and runs the tool object responsible for batching over the bitarchive and creating a
@@ -104,6 +104,8 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         private boolean isWarcOutputMode;
         /** Which jobId to process. */
         private long jobId;
+        /** The harvestID of the job to to process. */
+        private long harvestId;
         /** HarvestnamePrefix used to locate the files for the job. */
         private String harvestnamePrefix;
 
@@ -126,6 +128,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             final String ARC_OPTION_KEY = "a";
             final String WARC_OPTION_KEY = "w";
             final String JOBID_OPTION_KEY = "jobID";
+            final String HARVESTID_OPTION_KEY = "harvestID";
             final String HARVESTNAMEPREFIX_OPTION_KEY = "harvestnamePrefix";
 
             OptionGroup metadataGroup = new OptionGroup();
@@ -139,6 +142,11 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             jobIDGroup.addOption(jobIdOption);
             jobIDGroup.setRequired(true);
 
+            OptionGroup harvestIDGroup = new OptionGroup();
+            Option harvestIdOption = new Option(HARVESTID_OPTION_KEY, true, "The HarvestID");
+            harvestIDGroup.addOption(harvestIdOption);
+            harvestIDGroup.setRequired(true);
+
             Option harvestprefixOption = new Option(HARVESTNAMEPREFIX_OPTION_KEY, true, "The harvestnamePrefix");
             OptionGroup harvestnamePrefixGroup = new OptionGroup();
             harvestnamePrefixGroup.addOption(harvestprefixOption);
@@ -146,8 +154,10 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             Options options = new Options();
             options.addOptionGroup(metadataGroup);
             options.addOptionGroup(jobIDGroup);
+            options.addOptionGroup(harvestIDGroup);
             options.addOptionGroup(harvestnamePrefixGroup);
             String jobIdString = null;
+            String harvestIdString = null;
 
             CommandLineParser parser = new PosixParser();
             CommandLine cli = null;
@@ -170,6 +180,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                 isWarcOutputMode = false;
             }
             jobIdString = cli.getOptionValue(JOBID_OPTION_KEY);
+            harvestIdString = cli.getOptionValue(HARVESTID_OPTION_KEY);
             this.harvestnamePrefix = cli.getOptionValue(HARVESTNAMEPREFIX_OPTION_KEY);
 
             try {
@@ -180,6 +191,17 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                 }
             } catch (NumberFormatException e) {
                 System.err.println("'" + jobIdString + "' is not a valid job ID");
+                return false;
+            }
+
+            try {
+                this.harvestId = Long.parseLong(harvestIdString);
+                if (harvestId < 1) {
+                    System.err.println("'" + harvestIdString + "' is not a valid harvest ID");
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("'" + harvestIdString + "' is not a valid harvest ID");
                 return false;
             }
             return true;
@@ -218,6 +240,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          */
         public void run(String... args) {
             final long jobID = this.jobId;
+            final long harvestID = this.harvestId;
             final String harvestPrefix = this.harvestnamePrefix;
             FileBatchJob job = new ArchiveExtractCDXJob();
             Settings.set(HarvesterSettings.METADATA_FORMAT, (isWarcOutputMode) ? "warc" : "arc");
@@ -235,7 +258,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                     resultFile = File.createTempFile("extract-batch", ".cdx", FileUtils.getTempDir());
                     resultFile.deleteOnExit();
                     status.copyResults(resultFile);
-                    arcifyResultFile(resultFile, jobID);
+                    arcifyResultFile(resultFile, jobID, harvestId);
                 } catch (IOException e) {
                     throw new IOFailure("Error getting results for job " + jobID, e);
                 } finally {
@@ -256,10 +279,10 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @param jobID The jobID we work on.
          * @throws IOException If an I/O error occurs, or the resultFile does not exist
          */
-        private void arcifyResultFile(File resultFile, long jobID) throws IOException {
+        private void arcifyResultFile(File resultFile, long jobID, long harvestID) throws IOException {
             BufferedReader reader = new BufferedReader(new FileReader(resultFile));
 
-            File outputFile = new File(MetadataFileWriter.getMetadataArchiveFileName(Long.toString(jobID)));
+            File outputFile = new File(MetadataFileWriter.getMetadataArchiveFileName(Long.toString(jobID), harvestID));
             System.out.println("Writing cdx to file '" + outputFile.getAbsolutePath() + "'.");
             try {
                 MetadataFileWriter writer = MetadataFileWriter.createWriter(outputFile);

@@ -49,8 +49,7 @@ import dk.netarkivet.common.utils.DomainUtils;
  * nn.nn.nn.nn -> nn.nn.nn.nn
  * 
  */
-public class SeedUriDomainnameQueueAssignmentPolicy
-        extends HostnameQueueAssignmentPolicy {
+public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignmentPolicy {
     
     /** A key used for the cases when we can't figure out the URI.
      *  This is taken from parent, where it has private access.  Parent returns
@@ -58,10 +57,10 @@ public class SeedUriDomainnameQueueAssignmentPolicy
      */
     static final String DEFAULT_CLASS_KEY = "default...";
 
-    private Log log
-            = LogFactory.getLog(getClass());
+    private Log log = LogFactory.getLog(getClass());
 
-    /** Return a key for queue names based on domain names (last two parts of
+    /**
+     * Return a key for queue names based on domain names (last two parts of
      * host name) or IP address.  They key may include a #<portnr> at the end.
      *
      * @param cauri A potential URI.
@@ -69,41 +68,34 @@ public class SeedUriDomainnameQueueAssignmentPolicy
      * <domainOrIP>#<port>, or "default...".
      * @see HostnameQueueAssignmentPolicy#getClassKey(CrawlURI)
      */
-     public String getClassKey(CrawlURI cauri) {
+    public String getClassKey(CrawlURI cauri) {
         String candidate;
-        
-        boolean ignoreSourceSeed =
-                cauri != null &&
-        		cauri.getCanonicalString().startsWith("dns");
+        log.debug("Finding classKeý for cauri: " + cauri);
+        boolean ignoreSourceSeed = cauri != null; // don't igoreSourceSeed if it is a dns url
         try {
-            // Since getClassKey has no contract, we must encapsulate it from
-            // errors.
+            // Since getClassKey has no contract, we must encapsulate it from errors.
             candidate = super.getClassKey(cauri);
         } catch (NullPointerException e) {
-            log.debug("Heritrix broke getting class key candidate for "
-                      + cauri);
+            log.debug("Heritrix broke getting class key candidate for " + cauri);
             candidate = DEFAULT_CLASS_KEY;
         }
-        
+
         String sourceSeedCandidate = null;
         if (!ignoreSourceSeed) {
             sourceSeedCandidate = getCandidateFromSource(cauri);
         }
-        
+
         if (sourceSeedCandidate != null) {
             return sourceSeedCandidate;
-        } else {
-            // If sourceSeedCandidates are disabled, use the old method:
-        
+        } else { //sourceSeedCandidates are disabled, use the old method:
             String[] hostnameandportnr = candidate.split("#");
             if (hostnameandportnr.length == 0 || hostnameandportnr.length > 2) {
                 return candidate;
             }
-        
+
             String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
             if (domainName == null) { // Not valid according to our rules
-                log.debug("Illegal class key candidate '" + candidate
-                      + "' for '" + cauri + "'");
+                log.debug("Illegal class key candidate '" + candidate + "' for '" + cauri + "'");
                 return candidate;
             }
             return domainName;
@@ -115,23 +107,24 @@ public class SeedUriDomainnameQueueAssignmentPolicy
       * @param cauri A potential URI
       * @return a candidate from the source or null if none found
       */
-    private String getCandidateFromSource(CrawlURI cauri) {
-        String sourceCandidate = null;  
-        try {
-        	sourceCandidate = cauri.getSourceTag(); 
-        } catch (NoSuchElementException e) {
-            log.warn("source-tag-seeds not set in Heritrix template!");
-            return null;
-        }
-         
-        String hostname = null;
-        try {
+     private String getCandidateFromSource(CrawlURI cauri) {
+         String sourceCandidate = null;  
+         try {
+             sourceCandidate = cauri.getSourceTag(); 
+         } catch (NoSuchElementException e) {
+             log.warn("source-tag-seeds not set in Heritrix template!");
+             return null;
+         }
+
+         String hostname = null;
+         try {
              hostname = UURIFactory.getInstance(sourceCandidate).getHost();
-        } catch (URIException e) {
-            log.warn("Hostname could not be extracted from sourceCandidate: " 
-                    + sourceCandidate);
-            return null;
-        }
-        return DomainUtils.domainNameFromHostname(hostname);
-    }
+         } catch (URIException e) {
+             log.warn("Hostname could not be extracted from sourceCandidate: " + sourceCandidate);
+             return null;
+         }
+         String candidateKey = DomainUtils.domainNameFromHostname(hostname);
+         log.debug("CandidateKey for cauri '" + cauri + "':" + candidateKey);
+         return candidateKey;
+     }
 }

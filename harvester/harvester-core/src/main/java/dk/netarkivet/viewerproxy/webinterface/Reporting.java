@@ -78,7 +78,7 @@ public class Reporting {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob fileListJob = new FileListJob();
         List<String> acceptedPatterns = new ArrayList<String>();
-        acceptedPatterns.add(jobid + metadatafile_suffix);
+        acceptedPatterns.add(".*" + jobid + ".*" + metadatafile_suffix);
         acceptedPatterns.add(harvestprefix + archivefile_suffix);
         fileListJob.processOnlyFilesMatching(acceptedPatterns);
 
@@ -117,7 +117,7 @@ public class Reporting {
                 return ArchiveBatchFilter.EXCLUDE_NON_WARCINFO_RECORDS;
             }
         };
-        cdxJob.processOnlyFilesMatching(jobid + metadatafile_suffix);
+        cdxJob.processOnlyFilesMatching(".*"+jobid + ".*" + metadatafile_suffix);
 
         File f;
         try {
@@ -159,7 +159,7 @@ public class Reporting {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
         FileBatchJob urlsForDomainBatchJob = new HarvestedUrlsForDomainBatchJob(domain);
-        urlsForDomainBatchJob.processOnlyFilesMatching(jobid + metadatafile_suffix);
+        urlsForDomainBatchJob.processOnlyFilesMatching(".*"+jobid + ".*" + metadatafile_suffix);
         return getResultFile(urlsForDomainBatchJob);
     }
 
@@ -200,7 +200,7 @@ public class Reporting {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         ArgumentNotValid.checkNotNullOrEmpty(regexp, "String regexp");
         FileBatchJob crawlLogBatchJob = new CrawlLogLinesMatchingRegexp(regexp);
-        crawlLogBatchJob.processOnlyFilesMatching(jobid + metadatafile_suffix);
+        crawlLogBatchJob.processOnlyFilesMatching(".*"+jobid + ".*" + metadatafile_suffix);
         return getResultFile(crawlLogBatchJob);
     }
 

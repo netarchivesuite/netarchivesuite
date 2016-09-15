@@ -118,7 +118,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         final String replicaUsed = Settings.get(CommonSettings.USE_REPLICA_ID);
         log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}{}' on replica '{}'", job
                 .getClass().getName(), id, Constants.METADATA_FILE_PATTERN_SUFFIX, replicaUsed);
-        job.processOnlyFilesMatching(id + Constants.METADATA_FILE_PATTERN_SUFFIX);
+        job.processOnlyFilesMatching(".*" + id + ".*" + Constants.METADATA_FILE_PATTERN_SUFFIX);
         BatchStatus b = arcrep.batch(job, replicaUsed);
 
         // This check ensures that we got data from at least one file.

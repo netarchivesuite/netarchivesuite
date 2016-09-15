@@ -305,6 +305,7 @@ public final class HarvestDBConnection {
                     dataSource.getPreferredTestQuery(), dataSource.isTestConnectionOnCheckin());
         }
     }
+
     /**
      * Execute the sql to update a given table to a given version.  
      * The necessary scripts are bundled into the root of the harvester-core.jar in the directory sql-migration.
@@ -329,7 +330,7 @@ public final class HarvestDBConnection {
         HarvestDBConnection.release(conn);
         conn = null;
     }
-    
+
     /**
      * Look for the file sql-migration/${dbm}/${tableName}.${version}.sql inside in the harvester-core.jar file.
      * 
@@ -339,9 +340,9 @@ public final class HarvestDBConnection {
      * @param version The new version of the table
      */
     public static void executeSql(Connection conn, String dbm, String tableName, int version) {
-        String resource = "sql-migration/" + dbm +"/" + tableName + "." + version + ".sql";
+        String resource = "sql-migration/" + dbm + "/" + tableName + "." + version + ".sql";
         log.info("Fetching resource {} to update table '{}' to version {} using databasetype {}", resource, tableName, version, dbm);
-    	InputStream in = DerbySpecifics.class.getClassLoader().getResourceAsStream(resource);
+    	InputStream in = HarvestDBConnection.class.getClassLoader().getResourceAsStream(resource);
     	try {
         	List<Map.Entry<String, String>> statements = ExecuteSqlFile.splitSql(in, "UTF-8", 8192);
         	in.close();

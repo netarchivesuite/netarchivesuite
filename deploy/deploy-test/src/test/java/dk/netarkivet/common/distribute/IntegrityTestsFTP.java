@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.junit.Ignore;
@@ -198,6 +199,8 @@ public class IntegrityTestsFTP {
         /** try to store data to a file on the FTP-server */
         assertTrue("Store operation failed", theFTPClient.storeFile(nameOfUploadedFile2, in));
         upLoadedFiles.add(nameOfUploadedFile2);
+        IOUtils.closeQuietly(in);
+        IOUtils.closeQuietly(in2);
     }
 
     /**

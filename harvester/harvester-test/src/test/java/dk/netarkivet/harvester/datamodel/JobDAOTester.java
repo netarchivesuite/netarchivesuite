@@ -260,7 +260,7 @@ public class JobDAOTester extends DataModelTestCase {
         /* FIXME JAVA 8 lambda needed just now 
         Arrays.asList(JobStatus.values()).forEach(jobStatus -> {
             job.setStatus(jobStatus);
-            jobDAO.update(job);
+            jobDAO.update(job); 
             Arrays.asList(JobStatus.values()).forEach(queryStatus -> {
                 assertThat("Jobstatus: " + jobStatus + ", Querystatus: " + queryStatus,
                         jobDAO.getAll(queryStatus).hasNext(), equalTo(jobStatus == queryStatus));

@@ -1622,4 +1622,14 @@ public class DomainDBDAO extends DomainDAO {
             HarvestDBConnection.release(connection);
         }
 	}
+
+    @Override
+    public List<String> getAllDomainNames() {
+        Connection c = HarvestDBConnection.get();
+        try {
+            return DBUtils.selectStringList(c, "SELECT name FROM domains");
+        } finally {
+            HarvestDBConnection.release(c);
+        }   
+    }
 }

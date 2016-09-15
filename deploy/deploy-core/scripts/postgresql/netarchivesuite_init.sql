@@ -654,6 +654,10 @@ ALTER TABLE eav_attribute ADD CONSTRAINT eav_attribute_pkey PRIMARY KEY (tree_id
 
 CREATE INDEX eav_attribute_idx on eav_attribute(tree_id, entity_id) TABLESPACE tsindex;
 
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE eav_attribute TO netarchivesuite;
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE eav_type_attribute TO netarchivesuite;
+GRANT USAGE ON SEQUENCE eav_attribute_seq TO netarchivesuite;
+
 --
 -- INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
 -- VALUES(1, 1, 'MAX_HOPS', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 1, 20, null, null, null);

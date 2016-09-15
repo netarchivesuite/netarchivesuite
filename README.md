@@ -12,14 +12,14 @@ domains) to harvesting and archiving the content of an entire national domain. T
 preservation functionality. The systems architecture allows for the software to be distributed among several 
 machines, possibly on more than one geographical location. 
 
-See the [wiki documantation](https://sbforge.org/display/NAS/Documentation) for further details.
+See the [wiki documentation](https://sbforge.org/display/NAS/Documentation) for further details.
 
 History
 =======
 NetarchiveSuite was initially developed by The Royal Danish Library (KB) and The Danish State and University 
 Library (SB) together as part of the National [Netarkivet.dk](http://netarkivet.dk">http://netarkivet.dk) initialtiv.
-The first release of the platform was done in July 2005 and NetarchiveSuite has since been using NetarchiveSuite 
-to harvestDanish websites as authorized by the latest Danish Legal Deposit Act.
+The first release of the platform was in July 2005 and Netarkivet.dk has since used NetarchiveSuite 
+to harvest Danish websites as required by the latest Danish Legal Deposit Act.
 
 NetarchiveSuite was released on July 2007 as Open Source under the LGPL license. The French National Library (BnF) 
 and the Austrian National Libraries (ONB) joined the project in 2008.

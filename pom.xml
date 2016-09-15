@@ -20,7 +20,8 @@
     <webarchive-commons.version>1.1.5</webarchive-commons.version>
     <!--heritrix3.version>3.2.0</heritrix3.version-->
     <!-- Islandic special brew of H3. -->
-    <heritrix3.version>3.3.0-LBS-2014-03</heritrix3.version>
+    <!--heritrix3.version>3.3.0-LBS-2015-01</heritrix3.version-->
+    <heritrix3.version>3.3.0-LBS-2016-02</heritrix3.version>
     <heritrix3-wrapper.version>1.0.0</heritrix3-wrapper.version>
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>

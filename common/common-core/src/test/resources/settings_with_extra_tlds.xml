@@ -131,6 +131,8 @@ National Library.
         <!-- add extra top level domains not included in embedded https://publicsuffix.org/list/public_suffix_list.dat
         	e.g: <tld> anothertld </tld> 
          -->
+        <tld>dummytld.domain</tld>
+	<tld>anotherdummytld.domain</tld>
         </topLevelDomains>
         <database>
             <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>

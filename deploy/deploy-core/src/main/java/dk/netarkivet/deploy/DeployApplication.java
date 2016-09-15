@@ -451,15 +451,12 @@ public final class DeployApplication {
     public static void initBundlerZip(String defaultBundlerZipName) {
         if (defaultBundlerZipName != null) {
             defaultBundlerZip = new File(defaultBundlerZipName);
-
             if (!defaultBundlerZip.exists()) {
                 System.err.print(Constants.MSG_ERROR_NO_BUNDLER_ZIP_FILE);
                 System.out.println();
                 System.out.println("Couldn't find the default bundler file: " + defaultBundlerZip.getAbsolutePath());
                 System.exit(1);
             }
-        } else {
-            defaultBundlerZip = null;
         }
     }
 

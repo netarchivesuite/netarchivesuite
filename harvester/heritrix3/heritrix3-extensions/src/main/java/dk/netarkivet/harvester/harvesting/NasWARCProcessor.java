@@ -1,16 +1,31 @@
 package dk.netarkivet.harvester.harvesting;
 
+import static org.archive.format.warc.WARCConstants.TYPE;
+import static org.archive.modules.CoreAttributeConstants.A_FTP_FETCH_STATUS;
+import static org.archive.modules.CoreAttributeConstants.A_SOURCE_TAG;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.archive.format.warc.WARCConstants.WARCRecordType;
+import org.archive.io.warc.WARCRecordInfo;
+import org.archive.io.warc.WARCWriter;
 import org.archive.modules.CrawlMetadata;
+import org.archive.modules.CrawlURI;
 import org.archive.modules.writer.WARCWriterProcessor;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.anvl.ANVLRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Custom NAS WARCWriterProcessor addding NetarchiveSuite metadata to the WARCInfo records written
@@ -21,7 +36,11 @@ import org.archive.util.anvl.ANVLRecord;
  */
 public class NasWARCProcessor extends WARCWriterProcessor {
 
-	// Constants for the contents of the WarcInfo record
+    /** Logger instance. */
+    private static final Logger logger = LoggerFactory.getLogger(NasWARCProcessor.class);
+
+
+    // Constants for the contents of the WarcInfo record
 	private static final String HARVESTINFO_VERSION = "harvestInfo.version";
 	private static final String HARVESTINFO_JOBID = "harvestInfo.jobId";
 	private static final String HARVESTINFO_CHANNEL = "harvestInfo.channel";
@@ -36,6 +55,13 @@ public class NasWARCProcessor extends WARCWriterProcessor {
 	private static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";
 	private static final String HARVESTINFO_PERFORMER = "harvestInfo.performer";
 	private static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
+
+	public boolean getWriteMetadataOutlinks() {
+        return (Boolean) kp.get("writeMetadataOutlinks");
+    }
+    public void setWriteMetadataOutlinks(boolean writeMetadataOutlinks) {
+        kp.put("writeMetadataOutlinks",writeMetadataOutlinks);
+    }
 
 	public NasWARCProcessor() {
 		super();
@@ -121,48 +147,143 @@ public class NasWARCProcessor extends WARCWriterProcessor {
                 + dk.netarkivet.common.Constants.getVersionString();
         ANVLRecord recordNAS = new ANVLRecord(); // Previously new ANVLRecord(7); 
 
-	// Add the data from the metadataMap to the WarcInfoRecord.
-        recordNAS.addLabelValue(HARVESTINFO_VERSION, (String) metadataMap.get(HARVESTINFO_VERSION));
-        recordNAS.addLabelValue(HARVESTINFO_JOBID, (String) metadataMap.get(HARVESTINFO_JOBID));
-        recordNAS.addLabelValue(HARVESTINFO_CHANNEL, (String) metadataMap.get(HARVESTINFO_CHANNEL));
-        recordNAS.addLabelValue(HARVESTINFO_HARVESTNUM, (String) metadataMap.get(HARVESTINFO_HARVESTNUM));
-        recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONID, 
-		(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONID));
-        recordNAS.addLabelValue(HARVESTINFO_MAXBYTESPERDOMAIN, 
-		(String) metadataMap.get(HARVESTINFO_MAXBYTESPERDOMAIN));
+        try {
+            // Add the data from the metadataMap to the WarcInfoRecord.
+            recordNAS.addLabelValue(HARVESTINFO_VERSION, (String) metadataMap.get(HARVESTINFO_VERSION));
+            recordNAS.addLabelValue(HARVESTINFO_JOBID, (String) metadataMap.get(HARVESTINFO_JOBID));
+            recordNAS.addLabelValue(HARVESTINFO_CHANNEL, (String) metadataMap.get(HARVESTINFO_CHANNEL));
+            recordNAS.addLabelValue(HARVESTINFO_HARVESTNUM, (String) metadataMap.get(HARVESTINFO_HARVESTNUM));
+            recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONID,
+            (String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONID));
+            recordNAS.addLabelValue(HARVESTINFO_MAXBYTESPERDOMAIN,
+            (String) metadataMap.get(HARVESTINFO_MAXBYTESPERDOMAIN));
 
-        recordNAS.addLabelValue(HARVESTINFO_MAXOBJECTSPERDOMAIN, 
-		(String) metadataMap.get(HARVESTINFO_MAXOBJECTSPERDOMAIN));
-        recordNAS.addLabelValue(HARVESTINFO_ORDERXMLNAME, 
-		(String) metadataMap.get(HARVESTINFO_ORDERXMLNAME));
-        recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONNAME,
-		(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONNAME));
+            recordNAS.addLabelValue(HARVESTINFO_MAXOBJECTSPERDOMAIN,
+            (String) metadataMap.get(HARVESTINFO_MAXOBJECTSPERDOMAIN));
+            recordNAS.addLabelValue(HARVESTINFO_ORDERXMLNAME,
+            (String) metadataMap.get(HARVESTINFO_ORDERXMLNAME));
+            recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONNAME,
+            (String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONNAME));
 
-        if (metadataMap.containsKey(HARVESTINFO_SCHEDULENAME)) {
-            recordNAS.addLabelValue(HARVESTINFO_SCHEDULENAME, 
-		(String) metadataMap.get(HARVESTINFO_SCHEDULENAME));
-        }
-        recordNAS.addLabelValue(HARVESTINFO_HARVESTFILENAMEPREFIX,
-		(String) metadataMap.get(HARVESTINFO_HARVESTFILENAMEPREFIX));
- 
-        recordNAS.addLabelValue(HARVESTINFO_JOBSUBMITDATE, 
-		(String) metadataMap.get(HARVESTINFO_JOBSUBMITDATE));
-	
-        if (metadataMap.containsKey(HARVESTINFO_PERFORMER)) {
-		recordNAS.addLabelValue(HARVESTINFO_PERFORMER, 
-		(String) metadataMap.get(HARVESTINFO_PERFORMER));
+            if (metadataMap.containsKey(HARVESTINFO_SCHEDULENAME)) {
+                recordNAS.addLabelValue(HARVESTINFO_SCHEDULENAME,
+            (String) metadataMap.get(HARVESTINFO_SCHEDULENAME));
+            }
+            recordNAS.addLabelValue(HARVESTINFO_HARVESTFILENAMEPREFIX,
+            (String) metadataMap.get(HARVESTINFO_HARVESTFILENAMEPREFIX));
+
+            recordNAS.addLabelValue(HARVESTINFO_JOBSUBMITDATE,
+            (String) metadataMap.get(HARVESTINFO_JOBSUBMITDATE));
+
+            if (metadataMap.containsKey(HARVESTINFO_PERFORMER)) {
+            recordNAS.addLabelValue(HARVESTINFO_PERFORMER,
+            (String) metadataMap.get(HARVESTINFO_PERFORMER));
+            }
+
+            if (metadataMap.containsKey(HARVESTINFO_AUDIENCE)) {
+                recordNAS.addLabelValue(HARVESTINFO_AUDIENCE,
+            (String) metadataMap.get(HARVESTINFO_AUDIENCE));
+            }
+        } catch (Exception e) {
+                logger.warn("Error processing harvest info" , e);
         }
 
-        if (metadataMap.containsKey(HARVESTINFO_AUDIENCE)) { 
-            recordNAS.addLabelValue(HARVESTINFO_AUDIENCE, 
-		(String) metadataMap.get(HARVESTINFO_AUDIENCE));
-        }
-        
         // really ugly to return as List<String>, but changing would require 
         // larger refactoring
         cachedMetadata = Collections.singletonList(record.toString() 
         		+ netarchiveSuiteComment + "\n" + recordNAS.toString());
         return cachedMetadata;
+    }
+	
+	/**
+	 * modify default writeMetadata method to handle the write of outlinks
+	 * in metadata or not
+	 */
+	@Override
+	protected URI writeMetadata(final WARCWriter w,
+            final String timestamp,
+            final URI baseid, final CrawlURI curi,
+            final ANVLRecord namedFields) 
+    throws IOException {
+	    WARCRecordInfo recordInfo = new WARCRecordInfo();
+        recordInfo.setType(WARCRecordType.metadata);
+        recordInfo.setUrl(curi.toString());
+        recordInfo.setCreate14DigitDate(timestamp);
+        recordInfo.setMimetype(ANVLRecord.MIMETYPE);
+        recordInfo.setExtraHeaders(namedFields);
+        recordInfo.setEnforceLength(true);
+	    
+        recordInfo.setRecordId(qualifyRecordID(baseid, TYPE, WARCRecordType.metadata.toString()));
+
+        // Get some metadata from the curi.
+        // TODO: Get all curi metadata.
+        // TODO: Use other than ANVL (or rename ANVL as NameValue or use
+        // RFC822 (commons-httpclient?).
+        ANVLRecord r = new ANVLRecord();
+        if (curi.isSeed()) {
+            r.addLabel("seed");
+        } else {
+        	if (curi.forceFetch()) {
+        		r.addLabel("force-fetch");
+        	}
+            if(StringUtils.isNotBlank(flattenVia(curi))) {
+                r.addLabelValue("via", flattenVia(curi));
+            }
+            if(StringUtils.isNotBlank(curi.getPathFromSeed())) {
+                r.addLabelValue("hopsFromSeed", curi.getPathFromSeed());
+            }
+            if (curi.containsDataKey(A_SOURCE_TAG)) {
+                r.addLabelValue("sourceTag", 
+                        (String)curi.getData().get(A_SOURCE_TAG));
+            }
+        }
+        long duration = curi.getFetchCompletedTime() - curi.getFetchBeginTime();
+        if (duration > -1) {
+            r.addLabelValue("fetchTimeMs", Long.toString(duration));
+        }
+        
+        if (curi.getData().containsKey(A_FTP_FETCH_STATUS)) {
+            r.addLabelValue("ftpFetchStatus", curi.getData().get(A_FTP_FETCH_STATUS).toString());
+        }
+
+        if (curi.getRecorder() != null && curi.getRecorder().getCharset() != null) {
+            r.addLabelValue("charsetForLinkExtraction", curi.getRecorder().getCharset().name());
+        }
+        
+        for (String annotation: curi.getAnnotations()) {
+            if (annotation.startsWith("usingCharsetIn") || annotation.startsWith("inconsistentCharsetIn")) {
+                String[] kv = annotation.split(":", 2);
+                r.addLabelValue(kv[0], kv[1]);
+            }
+        }
+
+        //only if parameter is true, add the outlinks
+        if (getWriteMetadataOutlinks() == true) {
+        	// Add outlinks though they are effectively useless without anchor text.
+            Collection<CrawlURI> links = curi.getOutLinks();
+            if (links != null && links.size() > 0) {
+                for (CrawlURI link: links) {
+                    r.addLabelValue("outlink", link.getURI()+" "+link.getLastHop()+" "+link.getViaContext());
+                }
+            }
+        }
+
+        // TODO: Other curi fields to write to metadata.
+        // 
+        // Credentials
+        // 
+        // fetch-began-time: 1154569278774
+        // fetch-completed-time: 1154569281816
+        //
+        // Annotations.
+        
+        byte [] b = r.getUTF8Bytes();
+        recordInfo.setContentStream(new ByteArrayInputStream(b));
+        recordInfo.setContentLength((long) b.length);
+        
+        w.writeRecord(recordInfo);
+        
+        return recordInfo.getRecordId();
     }
 	
 }

@@ -45,6 +45,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 
@@ -391,6 +392,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   		propertyBuilder.append(propertyName + "writeMetadata" + valuePrefix 
   				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_WRITE_METADATA)
   				+ valueSuffix + propertyEnd);
+  		propertyBuilder.append(propertyName + "writeMetadataOutlinks" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_WRITE_METADATA_OUTLINKS)
+  				+ valueSuffix + propertyEnd);
   		propertyBuilder.append(propertyName + "skipIdenticalDigests" + valuePrefix 
   				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_SKIP_IDENTICAL_DIGESTS)
   				+ valueSuffix + propertyEnd);
@@ -546,6 +550,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 					+ "' was not found. Maybe the placeholder has already been replaced with the correct value. The template looks like this: " 
 					+ template); 
 		}
+		log.debug("Now in " + getClass().getName());
 		String startMetadataEntry = "\n<entry key=\"";
 		String endMetadataEntry = "\"/>";
 		String valuePart = "\" value=\"";
@@ -583,7 +588,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_HARVESTFILENAMEPREFIX + valuePart + ajob.getHarvestFilenamePrefix() + endMetadataEntry);
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_JOBSUBMITDATE + valuePart + ajob.getSubmittedDate() + endMetadataEntry);
+		sb.append(HARVESTINFO_JOBSUBMITDATE + valuePart + ArchiveDateConverter.getWarcDateFormat().format(ajob.getSubmittedDate()) + endMetadataEntry);
 		
 		/* optional HARVESTINFO_PERFORMER */
 		if (performer != null){
@@ -599,6 +604,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		sb.append("\n</map>\n</property>\n");
 		
 		// Replace command
+		log.info("Adding WarcInfoMetadata " + sb.toString());
 		String templateNew = template.replace(METADATA_ITEMS_PLACEHOLDER, sb.toString());
 		this.template = templateNew;
 	}
