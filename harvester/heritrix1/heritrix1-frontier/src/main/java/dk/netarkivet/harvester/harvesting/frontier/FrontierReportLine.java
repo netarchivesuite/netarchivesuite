@@ -48,7 +48,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * <li>lastPeekUri</li>
  * <li>lastQueuedUri</li>
  * </ol>
- * <p>In Heritrix 3.2.0, there is a new field named <strong>precedence</strong> which comes after queue</p>
+ * <p>In Heritrix 3.2.0, there is a new field named <strong>precedence</strong> which comes after queue.
+ * More information here : https://webarchive.jira.com/wiki/display/Heritrix/Precedence+Feature+Notes
+ * </p>
  * <p>
  * This class implements a natural order : comparisons are made : - first by decreasing values of totalEnqueues -
  * secondly by domain name (string natural order)
@@ -87,6 +89,7 @@ public class FrontierReportLine implements Serializable, Comparable<FrontierRepo
     
     /**
      * new field in heritrix 3 frontier report
+     * @see https://webarchive.jira.com/wiki/display/Heritrix/Precedence+Feature+Notes
      */
     private long precedence;
 

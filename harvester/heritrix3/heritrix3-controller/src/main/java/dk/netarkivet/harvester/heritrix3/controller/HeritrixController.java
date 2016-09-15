@@ -25,7 +25,6 @@ package dk.netarkivet.harvester.heritrix3.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -511,7 +510,6 @@ public class HeritrixController extends AbstractRestHeritrixController {
      * @return a Full frontier report.
      */
     public FullFrontierReport getFullFrontierReport() {
-    	//.
     	//construct script request to send
     	HttpPost postRequest = new HttpPost(baseUrl + "job/" + jobName + "/script");
         StringEntity postEntity = null;
