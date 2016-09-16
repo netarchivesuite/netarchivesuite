@@ -37,6 +37,7 @@ import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper.CrawlControllerState;
 import org.netarchivesuite.heritrix3wrapper.JobResult;
 import org.netarchivesuite.heritrix3wrapper.ResultStatus;
+import org.netarchivesuite.heritrix3wrapper.ScriptResult;
 import org.netarchivesuite.heritrix3wrapper.jaxb.JobShort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -521,7 +522,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
         postEntity.setContentType("application/x-www-form-urlencoded");
         postRequest.addHeader("Accept", "application/xml");
         postRequest.setEntity(postEntity);
-    	JobResult result = h3wrapper.jobResult(postRequest);
+    	ScriptResult result = h3wrapper.scriptResult(postRequest);
         return FullFrontierReport.parseContentsAsXML(
                 jobName, result.response, dk.netarkivet.harvester.heritrix3.Constants.XML_RAWOUT_TAG);
     }
