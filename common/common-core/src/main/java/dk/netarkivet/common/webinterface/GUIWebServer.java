@@ -139,30 +139,27 @@ public class GUIWebServer implements CleanupIF {
                 String warfile = new File(basedir, webApps[i]).getAbsolutePath();
                 StandardContext ctx = (StandardContext) server.addWebapp(webbase, warfile);
 
-                //Disable TLD scanning by default
                 if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
-                    System.out.println("disabling TLD scanning");
+                    log.info("Scanning for taglibs is disabled as " + Constants.SKIP_JARS_PROPERTY + " is unset.");
                     StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) ctx.getJarScanner().getJarScanFilter();
+                    // Disable scanning for taglibs
                     jarScanFilter.setTldSkip("*");
                 }
                 if (i==0) {
                     //Re-add the 1st context as also the root context
                     StandardContext rootCtx = (StandardContext) server.addWebapp("/", warfile);
-
                     //Disable TLD scanning by default
                     if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
-                        System.out.println("disabling TLD scanning");
-                        StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx .getJarScanner().getJarScanFilter();
+                        StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx.getJarScanner().getJarScanFilter();
+                        // Disable scanning for taglibs
                         jarScanFilter.setTldSkip("*");
                     }
                 }
             }
-            catch (ServletException e)
-            {
+            catch (ServletException e) {
                 log.error("Unable to add webapp " + webApps[i], e);
             }
         }
-
     }
 
 
@@ -210,7 +207,7 @@ public class GUIWebServer implements CleanupIF {
         } catch (Exception e) {
             throw new IOFailure("Error while stopping server", e);
         }
-        log.info("HTTP server has been stopped.");
+        log.info("GUI webserver has been stopped.");
 
         resetInstance();
     }
