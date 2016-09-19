@@ -26,6 +26,7 @@ import java.io.File;
 
 import javax.servlet.ServletException;
 
+import org.apache.catalina.Context;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.Constants;
@@ -144,12 +145,24 @@ public class GUIWebServer implements CleanupIF {
                     StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) ctx.getJarScanner().getJarScanFilter();
                     jarScanFilter.setTldSkip("*");
                 }
+                if (i==0) {
+                    //Re-add the 1st context as also the root context
+                    StandardContext rootCtx = (StandardContext) server.addWebapp("/", warfile);
+
+                    //Disable TLD scanning by default
+                    if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
+                        System.out.println("disabling TLD scanning");
+                        StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx .getJarScanner().getJarScanFilter();
+                        jarScanFilter.setTldSkip("*");
+                    }
+                }
             }
             catch (ServletException e)
             {
                 log.error("Unable to add webapp " + webApps[i], e);
             }
         }
+
     }
 
 
@@ -166,6 +179,7 @@ public class GUIWebServer implements CleanupIF {
         }
         return instance;
     }
+
 
 
     /**
