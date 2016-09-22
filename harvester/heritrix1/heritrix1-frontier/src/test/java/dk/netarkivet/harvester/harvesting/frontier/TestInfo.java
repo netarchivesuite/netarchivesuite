@@ -53,5 +53,15 @@ public class TestInfo {
             }
         });
     }
+    
+    static File[] getXMLFrontierReportSamples() {
+        return BASEDIR.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.isFile() && f.getName().startsWith("frontierReport_all_xml_sample_")
+                        && f.getName().endsWith(".xml");
+            }
+        });
+    }
 
 }
