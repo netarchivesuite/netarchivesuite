@@ -251,7 +251,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY) {
 			maxBytesStringValue = Long.toString(( forceMaxBytesPerDomain 
 					/ Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1);
-					log.debug("MaxbytesPerDomain set to {} Kbytes per domain", maxBytesStringValue);
+			log.debug("MaxbytesPerDomain set to {} Kbytes per domain", maxBytesStringValue);
 		} else {
 			log.debug("MaxbytesPerDomain set to infinite number of Kbytes per domain");	
 		}
