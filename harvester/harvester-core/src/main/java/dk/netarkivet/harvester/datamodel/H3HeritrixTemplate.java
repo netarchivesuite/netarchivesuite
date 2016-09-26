@@ -249,14 +249,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		// and add 1 to avoid to low limit due to rounding.
 		String maxBytesStringValue = "-1";
 		if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY) {
-			// "Maximum number of bytes" in
-			// https://github.com/kris-sigur/heritrix3/blob/master/engine/src/main/java/org/archive/crawler/framework/CrawlLimitEnforcer.java#L39
-			
-			maxBytesStringValue = Long.toString(forceMaxBytesPerDomain); 
-			log.debug("MaxbytesPerDomain set to {} Bytes per domain", maxBytesStringValue);
-			
+			maxBytesStringValue = Long.toString(( forceMaxBytesPerDomain 
+					/ Constants.BYTES_PER_HERITRIX_BYTELIMIT_UNIT) + 1);
+					log.debug("MaxbytesPerDomain set to {} Kbytes per domain", maxBytesStringValue);
 		} else {
-			log.debug("MaxbytesPerDomain set to infinite number of Bytes per domain");	
+			log.debug("MaxbytesPerDomain set to infinite number of Kbytes per domain");	
 		}
 		
 		this.template = tmp.replace(QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER, maxBytesStringValue);
