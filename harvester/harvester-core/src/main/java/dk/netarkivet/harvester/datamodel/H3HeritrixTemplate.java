@@ -342,9 +342,6 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   				+ Settings.get(HarvesterSettings.HERITRIX3_ARC_SKIP_IDENTICAL_DIGESTS)
   				+ valueSuffix + propertyEnd);
 
-
-
-
 	    arcWriterBeanBuilder.append("</bean>");
 
 	    return arcWriterBeanBuilder.toString();  			      
@@ -538,11 +535,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 //        <entry key="harvestInfo.maxObjectsPerDomain" value="-1"/>
 //        <entry key="harvestInfo.orderXMLName" value="defaultOrderXml"/>
 //        <entry key="harvestInfo.origHarvestDefinitionName" value="ddddddddd"/>
-//        <entry key="harvestInfo.scheduleName" value="EveryHour"/> <!-- Optional. only relevant for Selective Harvests -->
+//        <entry key="harvestInfo.scheduleName" value="EveryHour"/> <!-- Optional. only relevant for Selective Harvests -- only inserted if not null and not-empty.->
 //        <entry key="harvestInfo.harvestFilenamePrefix" value="netarkivet-1-1"/>
 //        <entry key="harvestInfo.jobSubmitDate" value="22. 10. 2014"/>
-//        <entry key="harvestInfo.performer" value="performer"/> <!-- Optional. -->
-//        <entry key="harvestInfo.audience" value="audience"/> <!-- Optional. -->
+//        <entry key="harvestInfo.performer" value="performer"/> <!-- Optional - only inserted if not null and not-empty. -->
+//        <entry key="harvestInfo.audience" value="audience"/> <!-- Optional - only inserted if not null and not-empty. -->
 //  </map>
 //  </property>
 
@@ -583,8 +580,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + valuePart + 
 				origHarvestdefinitionName + endMetadataEntry);
 		
-		/* optional schedule-name. */
-		if (scheduleName != null) {
+		/* optional schedule-name - only inserted if not null and not-empty. */
+		if (scheduleName != null && !scheduleName.isEmpty()) {
 			sb.append(startMetadataEntry);
 			sb.append(HARVESTINFO_SCHEDULENAME + valuePart + scheduleName + endMetadataEntry);
 		}
@@ -593,14 +590,14 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_JOBSUBMITDATE + valuePart + ArchiveDateConverter.getWarcDateFormat().format(ajob.getSubmittedDate()) + endMetadataEntry);
 		
-		/* optional HARVESTINFO_PERFORMER */
-		if (performer != null){
+		/* optional HARVESTINFO_PERFORMER - only inserted if not null and not-empty. */
+		if (performer != null && !performer.isEmpty()){
 			sb.append(startMetadataEntry);
 			sb.append(HARVESTINFO_PERFORMER + valuePart + performer  + endMetadataEntry);
 		}
 		
-		/* optional HARVESTINFO_PERFORMER */
-		if (ajob.getHarvestAudience() != null) {
+		/* optional HARVESTINFO_AUDIENCE - only inserted if not null and not-empty. */
+		if (ajob.getHarvestAudience() != null && !ajob.getHarvestAudience().isEmpty()) {
 			sb.append(startMetadataEntry);
 			sb.append(HARVESTINFO_AUDIENCE + valuePart + ajob.getHarvestAudience() + endMetadataEntry);
 		}
