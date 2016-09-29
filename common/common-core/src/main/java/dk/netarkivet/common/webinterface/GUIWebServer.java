@@ -26,7 +26,6 @@ import java.io.File;
 
 import javax.servlet.ServletException;
 
-import org.apache.catalina.Context;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.Constants;
@@ -113,7 +112,13 @@ public class GUIWebServer implements CleanupIF {
 
         //set the port on which tomcat should run
         server.setPort(port);
-
+        boolean taglibsScanningDisabled = false;
+        
+        if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
+            log.info("Scanning for taglibs is disabled as " + Constants.SKIP_JARS_PROPERTY + " is unset."); // Only log this once for all contexts
+            taglibsScanningDisabled = true;
+        }
+        
         //add webapps to tomcat
         for (int i = 0; i < webApps.length; i++) {
 
@@ -138,9 +143,7 @@ public class GUIWebServer implements CleanupIF {
                 //add the jar file to tomcat
                 String warfile = new File(basedir, webApps[i]).getAbsolutePath();
                 StandardContext ctx = (StandardContext) server.addWebapp(webbase, warfile);
-
-                if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
-                    log.info("Scanning for taglibs is disabled as " + Constants.SKIP_JARS_PROPERTY + " is unset.");
+                if (taglibsScanningDisabled) {
                     StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) ctx.getJarScanner().getJarScanFilter();
                     // Disable scanning for taglibs
                     jarScanFilter.setTldSkip("*");
@@ -148,9 +151,8 @@ public class GUIWebServer implements CleanupIF {
                 if (i==0) {
                     //Re-add the 1st context as also the root context
                     StandardContext rootCtx = (StandardContext) server.addWebapp("/", warfile);
-                    //Disable TLD scanning by default
-                    if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
-                        StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx.getJarScanner().getJarScanFilter();
+                    if (taglibsScanningDisabled) {
+                    	StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx.getJarScanner().getJarScanFilter();
                         // Disable scanning for taglibs
                         jarScanFilter.setTldSkip("*");
                     }
@@ -180,7 +182,7 @@ public class GUIWebServer implements CleanupIF {
 
 
     /**
-     * Starts the jetty web server.
+     * Starts a Tomcat server.
      *
      * @throws IOFailure if the server for any reason cannot be started.
      */
@@ -204,10 +206,12 @@ public class GUIWebServer implements CleanupIF {
             server.stop();
             server.destroy();
             SiteSection.cleanup();
+            log.info("GUI webserver has been stopped.");
         } catch (Exception e) {
-            throw new IOFailure("Error while stopping server", e);
+            //throw new IOFailure("Error while stopping server", e);
+        	log.warn("Error while stopping server, Trying to ignore it", e);
         }
-        log.info("GUI webserver has been stopped.");
+        
 
         resetInstance();
     }
