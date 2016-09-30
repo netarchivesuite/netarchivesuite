@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.utils.CrawlertrapsUtils;
 
 /**
  * Class representing one or more global crawler traps, modeled as a set of regular expressions.
@@ -74,7 +76,7 @@ public class GlobalCrawlerTrapList {
      * @param traps the set of trap expressions.
      * @param description A textual description of this list (may be null).
      * @param isActive flag indicating whether this list is isActive.
-     * @throws ArgumentNotValid if the name is empty or null.
+     * @throws ArgumentNotValid if the name is empty or null
      */
     protected GlobalCrawlerTrapList(int id, List<String> traps, String name, String description, boolean isActive)
             throws ArgumentNotValid {
@@ -97,7 +99,7 @@ public class GlobalCrawlerTrapList {
      * @param description A textual description of this list.
      * @param isActive flag indicating whether this list is isActive.
      * @throws IOFailure if the input stream cannot be found or read.
-     * @throws ArgumentNotValid if the input stream is null or the name is null or empty.
+     * @throws ArgumentNotValid if the input stream is null, the name is null or empty, or the list contains invalid expressions
      */
     public GlobalCrawlerTrapList(InputStream is, String name, String description, boolean isActive) throws IOFailure,
             ArgumentNotValid {
@@ -121,7 +123,7 @@ public class GlobalCrawlerTrapList {
      * @param listName the name of the list being constructed
      * @throws IOFailure if the input stream cannot be read.
      * @throws ArgumentNotValid if the input stream is null or if any of the specified traps are not valid regular
-     * expressions.
+     * expressions and valid XML
      */
     public void setTrapsFromInputStream(InputStream is, String listName) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(is, "is");
@@ -130,6 +132,7 @@ public class GlobalCrawlerTrapList {
         String line;
         int trapsAdded=0;
         int skippedEmptyLines=0;
+        Set<String> errors = new HashSet<String>();
         try {
             while ((line = reader.readLine()) != null) {
                 final String trap = line.trim();
@@ -140,9 +143,11 @@ public class GlobalCrawlerTrapList {
                 } else {
                     try {
                         Pattern.compile(trap);
+                        if (!CrawlertrapsUtils.isCrawlertrapsWellformedXML(trap)) {
+                        	errors.add("The trap '" + trap + "' is not wellformed XML.");
+                        }
                     } catch (PatternSyntaxException e) {
-                        throw new ArgumentNotValid("Cannot parse the string '" + trap + "' as a Java regular expression.",
-                                e);
+                    	errors.add("The trap '" + trap + "' is not a valid Java regular expression: " + e + " .");
                     }
                     traps.add(trap);
                     trapsAdded++;
@@ -152,6 +157,13 @@ public class GlobalCrawlerTrapList {
         } catch (IOException e) {
             throw new IOFailure("Could not read crawler traps", e);
         }
+        // See if any errors have been found 
+        if (errors.size() > 0) {
+        	throw new ArgumentNotValid("The traplist '" + listName + "' contains invalid expressions: " + StringUtils.conjoin(
+        			",", errors));
+        }
+        
+        
         log.info("GlobalCrawlertraps list '{}' with {} unique traps (non-unique={}, skipped emptyLines={})", listName, traps.size(), trapsAdded, skippedEmptyLines);
     }
 
