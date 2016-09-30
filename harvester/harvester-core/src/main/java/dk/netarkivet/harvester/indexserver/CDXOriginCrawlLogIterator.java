@@ -157,7 +157,7 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
                 return null;
             }
 
-            String origin = foundRecord.getArcfile() + "," + foundRecord.getOffset();
+            String origin = foundRecord.getArcfile() + "," + foundRecord.getOffset() + "," + item.getTimestamp(); // Combined with item.getTimestamp()
             item.setOrigin(origin);
             log.trace("URL '{}' combined with origin '{}'.", item.getURL(), origin);
         }
