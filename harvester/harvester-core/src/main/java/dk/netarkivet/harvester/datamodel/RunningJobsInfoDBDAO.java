@@ -229,7 +229,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             if (!shouldSample) {
                 return; // we're done
             }
-
+            log.debug("Adding history Record for job {} to runningJobsHistory table", startedJobInfo.getJobId());
             try {
                 c.setAutoCommit(false);
 
@@ -491,7 +491,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 sji.setActiveToeCount(rs.getInt(HM_COLUMN.activeToeCount.rank()));
                 sji.setStatus(CrawlStatus.values()[rs.getInt(HM_COLUMN.status.rank())]);
                 sji.setTimestamp(new Date(rs.getTimestamp(HM_COLUMN.tstamp.rank()).getTime()));
-
+                log.debug("getMostRecentByJobId for {}:{}", jobId, sji);
                 return sji;
             }
 

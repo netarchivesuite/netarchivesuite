@@ -31,6 +31,7 @@ import java.util.TreeSet;
 
 import javax.jms.MessageListener;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +65,8 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
 
     /** Singleton instance of the monitor. */
     private static HarvestMonitor instance;
+    /** Harvest Monitor refresh Interval. */
+    private int refreshInterval;
 
     /** The JMS channel on which to listen for {@link CrawlProgressMessage}s. */
     public static final ChannelID HARVEST_MONITOR_CHANNEL_ID = HarvesterChannels.getHarvestMonitorChannel();
@@ -71,11 +74,15 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     private Map<Long, StartedJobHistoryChartGen> chartGenByJobId = new HashMap<Long, StartedJobHistoryChartGen>();
 
     private HarvestMonitor() {
+    	refreshInterval = Settings.getInt(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL);
+    	LOG.info("Initializing HarvestMonitor with refreshInterval={} seconds", refreshInterval);
+    	
         // Perform initial cleanup (in case apps crashed)
         cleanOnStartup();
 
         // Register for listening JMS messages
         JMSConnectionFactory.getInstance().setListener(HARVEST_MONITOR_CHANNEL_ID, this);
+        LOG.info("Started listening to queue {}", HARVEST_MONITOR_CHANNEL_ID);
     }
 
     /**
@@ -97,7 +104,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     /**
      * @return the singleton instance for this class.
      */
-    public static HarvestMonitor getInstance() {
+    public static synchronized HarvestMonitor getInstance() {
         if (instance == null) {
             instance = new HarvestMonitor();
         }
@@ -107,15 +114,16 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     @Override
     public void visit(CrawlProgressMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
-
         Long jobId = Long.valueOf(msg.getJobID());
-
+        
         JobStatus jobStatus = JobDAO.getInstance().read(jobId).getStatus();
         if (!JobStatus.STARTED.equals(jobStatus)) {
+        	LOG.warn("Receiving CrawlProgressMessage for job {} registered as state {} instead of STARTED. Ignoring message", jobId, jobStatus);
             return;
         }
-
+        
         StartedJobInfo info = StartedJobInfo.build(msg);
+        LOG.trace("Received CrawlProgressMessage for jobId {}: {}", jobId, info);
         RunningJobsInfoDAO.getInstance().store(info);
 
         // Start a chart generator if none has been started yet
@@ -139,7 +147,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
         // Delete records in the DB
         RunningJobsInfoDAO dao = RunningJobsInfoDAO.getInstance();
         int delCount = dao.removeInfoForJob(jobId);
-        LOG.info("Deleted {} running job info records for job ID {} on transition to status {}", delCount, jobId,
+        LOG.info("Processing JobEndedMessage. Deleted {} running job info records for job ID {} on transition to status {}", delCount, jobId,
                 newStatus.name());
 
         // Stop chart generation
@@ -267,7 +275,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
             delCount += dao.deleteFrontierReports(jobId);
         }
         if (delCount > 0) {
-            LOG.info("Cleaned up {} obsolete history records.", delCount);
+            LOG.info("Cleaned up {} obsolete history records for finished jobs {}", delCount, StringUtils.join(idsToRemove, ","));
         }
 
     }
