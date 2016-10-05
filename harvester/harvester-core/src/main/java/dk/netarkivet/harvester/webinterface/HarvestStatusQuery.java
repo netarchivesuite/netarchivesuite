@@ -114,6 +114,11 @@ public class HarvestStatusQuery {
         START_DATE(""),
         /** The harvest end date. No default. */
         END_DATE(""),
+        /** The first job id. No default. */
+        JOB_ID_START(""),
+        /** The last job id. No default. */
+        JOB_ID_END(""),
+        
         /**
          * The number of results on each page. The default is read from the setting
          * {@link CommonSettings#HARVEST_STATUS_DFT_PAGE_SIZE}.
@@ -187,6 +192,10 @@ public class HarvestStatusQuery {
     private Date startDate;
     /** The end date. */
     private Date endDate;
+    /** The first job id. */
+    private Long jobIdStart;
+    /** The last job id. */
+    private Long jobIdEnd;
     /** The sort order. */
     private SORT_ORDER sortingOrder;
     /** The page-size. */
@@ -273,6 +282,20 @@ public class HarvestStatusQuery {
             if (endDate.before(this.startDate)) {
                 throw new ArgumentNotValid("End date is set after start date!");
             }
+        }
+        
+        String jobIdStartStr = UI_FIELD.JOB_ID_START.getValue(req);
+        try {
+            this.jobIdStart = Long.parseLong(jobIdStartStr);
+        } catch (NumberFormatException e) {
+            this.jobIdStart = null;
+        }
+        
+        String jobIdEndStr = UI_FIELD.JOB_ID_END.getValue(req);
+        try {
+            this.jobIdEnd = Long.parseLong(jobIdEndStr);
+        } catch (NumberFormatException e) {
+            this.jobIdEnd = null;
         }
 
         String orderStr = UI_FIELD.JOB_ID_ORDER.getValue(req);
@@ -362,6 +385,40 @@ public class HarvestStatusQuery {
     }
 
     /**
+     * @return the first job id to search from
+     */
+    public Long getJobIdStart() {
+		return jobIdStart;
+	}
+
+    /**
+     * @return the last job id to search to
+     */
+	public Long getJobIdEnd() {
+		return jobIdEnd;
+	}
+	
+	/**
+     * @return the first job id to search from
+     */
+    public String getJobIdStartAsString() {
+    	if (jobIdStart == null) {
+            return "";
+        }
+		return jobIdStart.toString();
+	}
+
+    /**
+     * @return the last job id to search to
+     */
+	public String getJobIdEndAsString() {
+		if (jobIdEnd == null) {
+            return "";
+        }
+		return jobIdEnd.toString();
+	}
+
+	/**
      * @return the start date as a string, or an empty string if start date is undefined
      */
     public String getStartDateAsString() {

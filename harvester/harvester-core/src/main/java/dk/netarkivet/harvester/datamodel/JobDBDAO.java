@@ -1091,6 +1091,18 @@ public class JobDBDAO extends JobDAO {
             cal.roll(Calendar.DAY_OF_YEAR, 1);
             sq.addParameter(java.sql.Date.class, new java.sql.Date(cal.getTimeInMillis()));
         }
+        
+        Long jobIdStart = query.getJobIdStart();
+        if (jobIdStart != null) {
+            sql.append(" AND jobs.job_id >= ?");
+            sq.addParameter(Long.class, jobIdStart);
+        }
+
+        Long jobIdEnd = query.getJobIdEnd();
+        if (jobIdEnd != null) {
+        	sql.append(" AND jobs.job_id <= ?");
+        	sq.addParameter(Long.class, jobIdEnd);
+        }
 
         if (!count) {
             sql.append(" ORDER BY jobs.job_id");

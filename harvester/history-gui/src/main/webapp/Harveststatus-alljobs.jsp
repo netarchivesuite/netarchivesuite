@@ -169,6 +169,8 @@ function resetForm() {
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.HARVEST_NAME.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_DATE.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.END_DATE.name()%>.value = "";
+	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_ID_START.name()%>.value = "";
+	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_ID_END.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.PAGE_SIZE.name()%>.value = "";	
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX.name()%>.value = "";
 }
@@ -250,6 +252,20 @@ setupCalendar("<%=HarvestStatusQuery.UI_FIELD.START_DATE%>", "<%=HarvestStatusQu
 <script type="text/javascript">
 setupCalendar("<%=HarvestStatusQuery.UI_FIELD.END_DATE%>", "<%=HarvestStatusQuery.CALENDAR_UI_DATE_FORMAT%>");
 </script>
+</fmt:param>
+
+<fmt:param>
+<input name="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_START%>"
+       id="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_START%>" 
+       size="10"
+       value="<%=query.getJobIdStartAsString()%>"/>
+</fmt:param>
+
+<fmt:param>
+<input name="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_END%>"
+       id="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_END%>" 
+       size="10"
+       value="<%=query.getJobIdEndAsString()%>"/>
 </fmt:param>
 </fmt:message>
 <br/>
