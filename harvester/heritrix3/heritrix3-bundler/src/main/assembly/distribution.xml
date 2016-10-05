@@ -41,7 +41,7 @@
                 <include>is.landsbokasafn.crawl-rss:crawl-rss:zip:dist</include>
             </includes>
             <unpack>true</unpack>
-            <outputDirectory>/heritrix-${heritrix3.version}/lib/</outputDirectory>
+            <outputDirectory>/heritrix-${heritrix3.version}/</outputDirectory>
         </dependencySet>
 
         <dependencySet>
