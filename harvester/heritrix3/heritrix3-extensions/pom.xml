@@ -138,11 +138,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>is.landsbokasafn.crawl-rss</groupId>
-      <artifactId>crawl-rss</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
 
   </dependencies>
 
