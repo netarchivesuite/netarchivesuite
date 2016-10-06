@@ -306,6 +306,7 @@ public class HarvestStatusQuery {
 	        		}
 	        		jobIdRangeList.add(s);
 	        	}
+	        	this.jobIdRange = jobIdRange;
 	        } catch (NumberFormatException e) {
 	            this.jobIdRange = null;
 	            throw new ArgumentNotValid("Somes values in job ids range are not correct numbers", e);
