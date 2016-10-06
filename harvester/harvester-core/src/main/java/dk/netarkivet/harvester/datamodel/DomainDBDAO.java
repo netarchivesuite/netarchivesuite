@@ -49,6 +49,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.datamodel.eav.EAV;
@@ -1091,16 +1092,25 @@ public class DomainDBDAO extends DomainDAO {
             List<String> domainNamesWithAttributes = DBUtils.selectStringList(c, // Don't order this - it will be ordered later
                     "SELECT DISTINCT domains.name"
                             + " FROM domains, configurations, eav_attribute"
-                            + " WHERE domains.defaultconfig=configurations.config_id" 
+                            + " WHERE domains.defaultconfig=configurations.config_id"
                             + " AND configurations.config_id=eav_attribute.entity_id");
             log.info("Retrieved all {} domains used for Snapshot harvesting that has attributes for their default configs", domainNamesWithAttributes.size());
-            //  Remove the content of domainNamesWithAttributes from domainNames              
+            List<String> invalidDomainNames = new ArrayList<String>();
+            for (String domainName: domainNames) {
+                if (!DomainUtils.isValidDomainName(domainName)) {
+                    invalidDomainNames.add(domainName);
+                    log.info("Removing invalid domain {} from total list.", domainName);
+                }
+            }
+            domainNames.removeAll(invalidDomainNames);
+            log.info("Removed {} invalid domain names." + invalidDomainNames.size());
+            //  Remove the content of domainNamesWithAttributes from domainNames
             domainNames.removeAll(domainNamesWithAttributes);
             log.info("Removed all {} domains with attributes from the total list, reducing total-list to {}", domainNamesWithAttributes.size(), domainNames.size());
             // Add the remainder of domainNames to domainNamesWithAttributes, so the domain configs with attributes will be handled first.
             domainNamesWithAttributes.addAll(domainNames);
             log.info("Remainder of total list merged with list of domains w/ attributes");
-            
+
             return new FilterIterator<String, Domain>(domainNamesWithAttributes.iterator()) {
                 public Domain filter(String s) {
                     return readKnown(s);
