@@ -1092,17 +1092,33 @@ public class JobDBDAO extends JobDAO {
             sq.addParameter(java.sql.Date.class, new java.sql.Date(cal.getTimeInMillis()));
         }
         
-        Long jobIdStart = query.getJobIdStart();
-        if (jobIdStart != null) {
-            sql.append(" AND jobs.job_id >= ?");
-            sq.addParameter(Long.class, jobIdStart);
+        List<String> jobIdRangeIds = query.getPartialJobIdRangeAsList(false);
+        List<String> jobIdRanges = query.getPartialJobIdRangeAsList(true);
+        if (!jobIdRangeIds.isEmpty()) {
+        	StringBuilder ids = new StringBuilder();
+        	for(String id : jobIdRangeIds) {
+        		//id
+        		ids.append(',');
+        		ids.append(id);
+        	}
+        	sql.append(" AND (jobs.job_id IN (?)");
+        	// we remove the first comma
+            sq.addParameter(String.class, ids.deleteCharAt(0));
         }
-
-        Long jobIdEnd = query.getJobIdEnd();
-        if (jobIdEnd != null) {
-        	sql.append(" AND jobs.job_id <= ?");
-        	sq.addParameter(Long.class, jobIdEnd);
+        if(!jobIdRanges.isEmpty()) {
+        	String andOr = "AND";
+        	if (!jobIdRangeIds.isEmpty()) {
+        		andOr = "OR";
+        	}
+        	//TODO
+        	sql.append(" AND jobs.job_id >= ?");
+        	
+            //sq.addParameter(Long.class, jobIdStart);
         }
+        if (!jobIdRangeIds.isEmpty()) {
+    		sql.append(")");
+    	}
+        
 
         if (!count) {
             sql.append(" ORDER BY jobs.job_id");

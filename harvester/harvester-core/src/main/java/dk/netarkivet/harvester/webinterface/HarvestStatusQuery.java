@@ -24,8 +24,10 @@ package dk.netarkivet.harvester.webinterface;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletRequest;
@@ -114,10 +116,9 @@ public class HarvestStatusQuery {
         START_DATE(""),
         /** The harvest end date. No default. */
         END_DATE(""),
-        /** The first job id. No default. */
-        JOB_ID_START(""),
-        /** The last job id. No default. */
-        JOB_ID_END(""),
+        /** The job id range : list of job ids or range separated by commas, for instance:  2,4,8-14. No default. */
+        JOB_ID_RANGE(""),
+
         
         /**
          * The number of results on each page. The default is read from the setting
@@ -192,10 +193,9 @@ public class HarvestStatusQuery {
     private Date startDate;
     /** The end date. */
     private Date endDate;
-    /** The first job id. */
-    private Long jobIdStart;
-    /** The last job id. */
-    private Long jobIdEnd;
+    /** The job id range : list of job ids or range separated by commas, for instance:  2,4,8-14. No default. */
+    private String jobIdRange;
+    private List<String> jobIdRangeList;
     /** The sort order. */
     private SORT_ORDER sortingOrder;
     /** The page-size. */
@@ -209,7 +209,7 @@ public class HarvestStatusQuery {
      * Builds a default query that will select all jobs.
      */
     public HarvestStatusQuery() {
-
+    	jobIdRangeList = new ArrayList<String>();
     }
 
     /**
@@ -221,6 +221,7 @@ public class HarvestStatusQuery {
     public HarvestStatusQuery(long harvestId, long harvestRunNumber) {
         this.harvestId = harvestId;
         this.harvestRunNumber = harvestRunNumber;
+        jobIdRangeList = new ArrayList<String>();
     }
 
     /**
@@ -284,18 +285,31 @@ public class HarvestStatusQuery {
             }
         }
         
-        String jobIdStartStr = UI_FIELD.JOB_ID_START.getValue(req);
-        try {
-            this.jobIdStart = Long.parseLong(jobIdStartStr);
-        } catch (NumberFormatException e) {
-            this.jobIdStart = null;
-        }
-        
-        String jobIdEndStr = UI_FIELD.JOB_ID_END.getValue(req);
-        try {
-            this.jobIdEnd = Long.parseLong(jobIdEndStr);
-        } catch (NumberFormatException e) {
-            this.jobIdEnd = null;
+        jobIdRangeList = new ArrayList<String>();
+        String jobIdRange = UI_FIELD.JOB_ID_RANGE.getValue(req);
+        if(!jobIdRange.isEmpty()) {
+	        try {
+	        	String[] splittedRange = jobIdRange.replaceAll("\\s+","").split(",");
+	        	for(String s : splittedRange) {
+	        		if(s.contains("-")) {
+	        			//if it's a range eg 11-27
+	        			String[] range = s.split("-");
+	        			if(s.length() != 2) {
+	        				throw new ArgumentNotValid("The range for job ids is incorrect!");
+	                    }
+	        			//check if it's a number
+	        			Long.parseLong(range[0]);
+	        			Long.parseLong(range[1]);
+	        		} else {
+	        			//check if it's a number
+	        			Long.parseLong(s);
+	        		}
+	        		jobIdRangeList.add(s);
+	        	}
+	        } catch (NumberFormatException e) {
+	            this.jobIdRange = null;
+	            throw new ArgumentNotValid("Somes values in job ids range are not correct numbers", e);
+	        }
         }
 
         String orderStr = UI_FIELD.JOB_ID_ORDER.getValue(req);
@@ -385,37 +399,29 @@ public class HarvestStatusQuery {
     }
 
     /**
-     * @return the first job id to search from
+     * @return the job ids range as String
      */
-    public Long getJobIdStart() {
-		return jobIdStart;
+    public String getJobIdRange() {
+    	if(jobIdRange == null) {
+    		return "";
+    	}
+		return jobIdRange;
 	}
 
     /**
-     * @return the last job id to search to
+     * return only the ids or only the range
+     * if isRange is true : 2,3,5-9,14-18 -> 5-9,14-18
+     * if isRange is false : 2,3,5-9,14-18 -> 2,3
+     * @return the job ids range as List, only the ids or only the ranges
      */
-	public Long getJobIdEnd() {
-		return jobIdEnd;
-	}
-	
-	/**
-     * @return the first job id to search from
-     */
-    public String getJobIdStartAsString() {
-    	if (jobIdStart == null) {
-            return "";
-        }
-		return jobIdStart.toString();
-	}
-
-    /**
-     * @return the last job id to search to
-     */
-	public String getJobIdEndAsString() {
-		if (jobIdEnd == null) {
-            return "";
-        }
-		return jobIdEnd.toString();
+    public List<String> getPartialJobIdRangeAsList(boolean isRange) {
+    	List<String> list = new ArrayList<String>();
+    	for(String s : jobIdRangeList) {
+    		if(s.contains("-") == isRange) {
+    			list.add(s);
+    		}
+    	}
+		return list;
 	}
 
 	/**

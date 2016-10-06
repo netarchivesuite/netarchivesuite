@@ -255,18 +255,12 @@ setupCalendar("<%=HarvestStatusQuery.UI_FIELD.END_DATE%>", "<%=HarvestStatusQuer
 </fmt:param>
 
 <fmt:param>
-<input name="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_START%>"
-       id="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_START%>" 
+<input name="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_RANGE%>"
+       id="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_RANGE%>" 
        size="10"
-       value="<%=query.getJobIdStartAsString()%>"/>
+       value="<%=query.getJobIdRange()%>"/>
 </fmt:param>
 
-<fmt:param>
-<input name="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_END%>"
-       id="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_END%>" 
-       size="10"
-       value="<%=query.getJobIdEndAsString()%>"/>
-</fmt:param>
 </fmt:message>
 <br/>
 <fmt:message key="status.job.filters.group2">
