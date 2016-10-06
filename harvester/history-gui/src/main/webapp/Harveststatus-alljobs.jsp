@@ -169,8 +169,7 @@ function resetForm() {
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.HARVEST_NAME.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_DATE.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.END_DATE.name()%>.value = "";
-	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_ID_START.name()%>.value = "";
-	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_ID_END.name()%>.value = "";
+	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_ID_RANGE.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.PAGE_SIZE.name()%>.value = "";	
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX.name()%>.value = "";
 }

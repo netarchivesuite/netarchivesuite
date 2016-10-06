@@ -294,7 +294,7 @@ public class HarvestStatusQuery {
 	        		if(s.contains("-")) {
 	        			//if it's a range eg 11-27
 	        			String[] range = s.split("-");
-	        			if(s.length() != 2) {
+	        			if(range.length != 2) {
 	        				throw new ArgumentNotValid("The range for job ids is incorrect!");
 	                    }
 	        			//check if it's a number
