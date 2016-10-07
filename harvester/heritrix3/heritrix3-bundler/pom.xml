@@ -32,6 +32,16 @@
       <groupId>org.archive.heritrix</groupId>
       <artifactId>heritrix-contrib</artifactId>
     </dependency>
+
+
+    <dependency>
+      <groupId>is.landsbokasafn.crawl-rss</groupId>
+      <artifactId>crawl-rss</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <classifier>dist</classifier>
+      <type>zip</type>
+    </dependency>
+
   </dependencies>
 
   <build>
