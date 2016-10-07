@@ -205,13 +205,13 @@ public class GetDataResolver extends CommandResolver {
     	try {
     		File tempFile = null;
     		try {
-    			tempFile = File.createTempFile("getFile", "download", FileUtils.getTempDir());
+    			tempFile = File.createTempFile(fileName, "download", FileUtils.getTempDir());
     			client.getFile(fileName, Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)),
     					tempFile);
     			long size = tempFile.length();
+                response.addHeaderField("Content-Disposition", "Attachment; filename=" + fileName);
     			if (size > maxSize) {
     				log.info("Requested file {} of size {} is larger than maximum object in browser. Forcing browser to save file to disk");
-    				response.addHeaderField("Content-Disposition", "Attachment; filename=" + fileName);
     				response.addHeaderField("Content-Type", "application/octet-stream");
     			}
     			response.setStatus(OK_RESPONSE_CODE);
