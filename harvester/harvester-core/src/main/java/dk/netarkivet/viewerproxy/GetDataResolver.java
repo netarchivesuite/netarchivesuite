@@ -215,6 +215,7 @@ public class GetDataResolver extends CommandResolver {
     				response.addHeaderField("Content-Type", "application/octet-stream");
     			}
     			response.setStatus(OK_RESPONSE_CODE);
+                response.getOutputStream().flush();
                 FileUtils.writeFileToStream(tempFile, response.getOutputStream());
     		} finally {
     			if (tempFile != null) {

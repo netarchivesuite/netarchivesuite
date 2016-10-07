@@ -254,6 +254,9 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
          * @param value The value of the header
          */
         public void addHeaderField(String name, String value) {
+            if (hr.isCommitted()) {
+                log.warn("Writing a header {}:{} after the http response is committed.", name, value);
+            }
             hr.addHeader(name, value);
         }
 
