@@ -114,7 +114,7 @@ public class GUIWebServer implements CleanupIF {
         server.setPort(port);
         boolean taglibsScanningDisabled = false;
         
-        if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
+        if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
             log.info("Scanning for taglibs is disabled as " + Constants.SKIP_JARS_PROPERTY + " is unset."); // Only log this once for all contexts
             taglibsScanningDisabled = true;
         }
