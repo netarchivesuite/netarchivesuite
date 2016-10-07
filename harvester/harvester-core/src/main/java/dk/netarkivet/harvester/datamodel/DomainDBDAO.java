@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +104,7 @@ public class DomainDBDAO extends DomainDAO {
     protected void create(Connection connection, Domain d) {
         ArgumentNotValid.checkNotNull(d, "d");
         ArgumentNotValid.checkNotNullOrEmpty(d.getName(), "d.getName()");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(d.getName()),"Not creating domain wth invalid name " + d.getName());
 
         if (exists(connection, d.getName())) {
             String msg = "Cannot create already existing domain " + d;
@@ -736,6 +738,7 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     protected synchronized Domain read(Connection c, String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Invalid domain name " + domainName);
         if (!exists(c, domainName)) {
             throw new UnknownID("No domain by the name '" + domainName + "'");
         }
@@ -745,6 +748,7 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     protected synchronized Domain readKnown(Connection c, String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Invalid domain name " + domainName);
         Domain result;
         PreparedStatement s = null;
         try {
@@ -1031,7 +1035,9 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     public synchronized boolean exists(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
-
+        if (!DomainUtils.isValidDomainName(domainName)) {
+            return false;
+        }
         Connection c = HarvestDBConnection.get();
         try {
             return exists(c, domainName);
@@ -1048,6 +1054,9 @@ public class DomainDBDAO extends DomainDAO {
      * @return true if a domain with the given name exists, otherwise false.
      */
     private synchronized boolean exists(Connection c, String domainName) {
+        if (!DomainUtils.isValidDomainName(domainName)) {
+            return false;
+        }
         return 1 == DBUtils.selectIntValue(c, "SELECT COUNT(*) FROM domains WHERE name = ?", domainName);
     }
 
@@ -1068,7 +1077,9 @@ public class DomainDBDAO extends DomainDAO {
             List<String> domainNames = DBUtils.selectStringList(c, "SELECT name FROM domains ORDER BY name");
             List<Domain> orderedDomains = new LinkedList<Domain>();
             for (String name : domainNames) {
-                orderedDomains.add(read(c, name));
+                if (DomainUtils.isValidDomainName(name)) {
+                    orderedDomains.add(read(c, name));
+                }
             }
             return orderedDomains.iterator();
         } finally {
@@ -1095,15 +1106,7 @@ public class DomainDBDAO extends DomainDAO {
                             + " WHERE domains.defaultconfig=configurations.config_id"
                             + " AND configurations.config_id=eav_attribute.entity_id");
             log.info("Retrieved all {} domains used for Snapshot harvesting that has attributes for their default configs", domainNamesWithAttributes.size());
-            List<String> invalidDomainNames = new ArrayList<String>();
-            for (String domainName: domainNames) {
-                if (!DomainUtils.isValidDomainName(domainName)) {
-                    invalidDomainNames.add(domainName);
-                    log.info("Removing invalid domain {} from total list.", domainName);
-                }
-            }
-            domainNames.removeAll(invalidDomainNames);
-            log.info("Removed {} invalid domain names." + invalidDomainNames.size());
+            domainNames = domainNames.stream().filter(DomainUtils::isValidDomainName).collect(Collectors.toList());
             //  Remove the content of domainNamesWithAttributes from domainNames
             domainNames.removeAll(domainNamesWithAttributes);
             log.info("Removed all {} domains with attributes from the total list, reducing total-list to {}", domainNamesWithAttributes.size(), domainNames.size());
@@ -1126,10 +1129,10 @@ public class DomainDBDAO extends DomainDAO {
         ArgumentNotValid.checkNotNullOrEmpty(glob, "glob");
         // SQL uses % and _ instead of * and ?
         String sqlGlob = DBUtils.makeSQLGlob(glob);
-
         Connection c = HarvestDBConnection.get();
         try {
-            return DBUtils.selectStringList(c, "SELECT name FROM domains WHERE name LIKE ? ORDER BY name", sqlGlob);
+            List<String> names = DBUtils.selectStringList(c, "SELECT name FROM domains WHERE name LIKE ? ORDER BY name", sqlGlob);
+            return names.stream().filter(DomainUtils::isValidDomainName).collect(Collectors.toList());
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -1152,6 +1155,7 @@ public class DomainDBDAO extends DomainDAO {
 
     @Override
     public String getDefaultDomainConfigurationName(String domainName) {
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         Connection c = HarvestDBConnection.get();
         try {
             return DBUtils.selectStringValue(c, "SELECT configurations.name " + "FROM domains, configurations "
@@ -1164,7 +1168,7 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     public synchronized SparseDomain readSparse(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
-
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         Connection c = HarvestDBConnection.get();
         try {
             List<String> domainConfigurationNames = DBUtils.selectStringList(c, "SELECT configurations.name "
@@ -1182,6 +1186,7 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     public List<AliasInfo> getAliases(String domain) {
         ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domain), "Cannot read invalid domain name " + domain);
         List<AliasInfo> resultSet = new ArrayList<AliasInfo>();
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
@@ -1228,9 +1233,10 @@ public class DomainDBDAO extends DomainDAO {
                 String aliasOf = res.getString(2);
                 Date lastchanged = DBUtils.getDateMaybeNull(res, 3);
                 AliasInfo ai = new AliasInfo(domainName, aliasOf, lastchanged);
-                resultSet.add(ai);
+                if (DomainUtils.isValidDomainName(domainName) && DomainUtils.isValidDomainName(aliasOf)) {
+                    resultSet.add(ai);
+                }
             }
-
             return resultSet;
         } catch (SQLException e) {
             throw new IOFailure("Failure getting alias-information" + "\n", e);
@@ -1259,24 +1265,26 @@ public class DomainDBDAO extends DomainDAO {
             ResultSet res = s.executeQuery();
             while (res.next()) {
                 String domain = res.getString(1);
-                // getting the TLD level of the domain
-                int domainTLDLevel = TLDInfo.getTLDLevel(domain);
+                if (DomainUtils.isValidDomainName(domain)) {
+                    // getting the TLD level of the domain
+                    int domainTLDLevel = TLDInfo.getTLDLevel(domain);
 
-                // restraining to max level
-                if (domainTLDLevel > level) {
-                    domainTLDLevel = level;
-                }
-
-                // looping from level 1 to level max of the domain
-                for (int currentLevel = 1; currentLevel <= domainTLDLevel; currentLevel++) {
-                    // getting the tld of the domain by level
-                    String tld = TLDInfo.getMultiLevelTLD(domain, currentLevel);
-                    TLDInfo i = resultMap.get(tld);
-                    if (i == null) {
-                        i = new TLDInfo(tld);
-                        resultMap.put(tld, i);
+                    // restraining to max level
+                    if (domainTLDLevel > level) {
+                        domainTLDLevel = level;
                     }
-                    i.addSubdomain(domain);
+
+                    // looping from level 1 to level max of the domain
+                    for (int currentLevel = 1; currentLevel <= domainTLDLevel; currentLevel++) {
+                        // getting the tld of the domain by level
+                        String tld = TLDInfo.getMultiLevelTLD(domain, currentLevel);
+                        TLDInfo i = resultMap.get(tld);
+                        if (i == null) {
+                            i = new TLDInfo(tld);
+                            resultMap.put(tld, i);
+                        }
+                        i.addSubdomain(domain);
+                    }
                 }
             }
 
@@ -1296,6 +1304,7 @@ public class DomainDBDAO extends DomainDAO {
     public HarvestInfo getDomainJobInfo(Job j, String domainName, String configName) {
         ArgumentNotValid.checkNotNull(j, "j");
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         ArgumentNotValid.checkNotNullOrEmpty(configName, "configName");
         HarvestInfo resultInfo = null;
 
@@ -1338,6 +1347,7 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     public List<DomainHarvestInfo> listDomainHarvestInfo(String domainName, String orderBy, boolean asc) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         final ArrayList<DomainHarvestInfo> domainHarvestInfos = new ArrayList<DomainHarvestInfo>();
@@ -1409,6 +1419,7 @@ public class DomainDBDAO extends DomainDAO {
 
     @Override
     public DomainConfiguration getDomainConfiguration(String domainName, String configName) {
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         DomainHistory history = getDomainHistory(domainName);
         List<String> crawlertraps = getCrawlertraps(domainName);
 
@@ -1500,6 +1511,7 @@ public class DomainDBDAO extends DomainDAO {
      * @return the crawlertraps for given domain.
      */
     private List<String> getCrawlertraps(String domainName) {
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         Connection c = HarvestDBConnection.get();
         String traps = null;
         PreparedStatement s = null;
@@ -1545,6 +1557,7 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     public DomainHistory getDomainHistory(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "String domainName");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         Connection c = HarvestDBConnection.get();
         DomainHistory history = new DomainHistory();
         // Read history info
@@ -1596,7 +1609,7 @@ public class DomainDBDAO extends DomainDAO {
         Connection c = HarvestDBConnection.get();
         try {
             return DBUtils.selectStringList(c, "SELECT name FROM domains WHERE " + searchField.toLowerCase()
-                    + " LIKE ?", sqlGlob);
+                    + " LIKE ?", sqlGlob).stream().filter(DomainUtils::isValidDomainName).collect(Collectors.toList());
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -1637,7 +1650,8 @@ public class DomainDBDAO extends DomainDAO {
     public List<String> getAllDomainNames() {
         Connection c = HarvestDBConnection.get();
         try {
-            return DBUtils.selectStringList(c, "SELECT name FROM domains");
+            return DBUtils.selectStringList(c, "SELECT name FROM domains").stream().filter(DomainUtils::isValidDomainName).collect(
+                    Collectors.toList());
         } finally {
             HarvestDBConnection.release(c);
         }   
