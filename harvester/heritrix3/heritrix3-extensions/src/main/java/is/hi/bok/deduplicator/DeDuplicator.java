@@ -87,6 +87,7 @@ import dk.netarkivet.common.utils.AllDocsCollector;
         <property name="origin" value=""/>
         <property name="originHandling" value="INDEX"/> Other options: NONE,PROCESSOR
         <property name="statsPerHost" value="true"/>
+        <property name="revisitInWarcs" value="true"/>
 
 //          	/**
 //					(FROM deduplicator-commons/src/main/java/is/landsbokasafn/deduplicator/IndexFields.java)
@@ -307,7 +308,18 @@ public class DeDuplicator extends Processor implements InitializingBean {
     	kp.put(ATTR_ORIGIN_HANDLING, originHandling);
     }
 
-       
+    public final static String ATTR_REVISIT_IN_WARCS = "revisit-in-warcs";
+    {
+    	setRevisitInWarcs(Boolean.TRUE); // the default is true
+    }   
+    
+    public void setRevisitInWarcs(Boolean revisitOn) {
+    	kp.put(ATTR_REVISIT_IN_WARCS, revisitOn);
+	}
+    public Boolean getRevisitInWarcs() {
+        return (Boolean) kp.get(ATTR_REVISIT_IN_WARCS);
+    }
+    
     // Spring configured access to Heritrix resources
     
     // Gain access to the ServerCache for host based statistics.
@@ -315,7 +327,8 @@ public class DeDuplicator extends Processor implements InitializingBean {
     public ServerCache getServerCache() {
         return this.serverCache;
     }
-    @Autowired
+    
+	@Autowired
     public void setServerCache(ServerCache serverCache) {
         this.serverCache = serverCache;
     }
@@ -426,7 +439,37 @@ public class DeDuplicator extends Processor implements InitializingBean {
     	throw new AssertionError();
     }
 
-	
+    /**
+     * Return date from 'date' field if date absent in 'origin' field or origin-field-absent
+     * @param duplicate
+     * @return
+     */
+    private String getRefersToDate(Document duplicate) {
+    	String indexedDate = duplicate.get("date"); // DATE.name()
+    	// look for the indexeddate of the revisit date in the origin "arcfile,offset,timestamp" 
+    	String duplicateOrigin = duplicate.get(DigestIndexer.FIELD_ORIGIN);
+    	if (duplicateOrigin != null && !duplicateOrigin.isEmpty()) {
+    		String[] parts = duplicateOrigin.split(",");
+    		if (parts.length == 3)  { // Detect new field-origin format 
+    			indexedDate = parts[2];
+    		}
+    	}
+    	Date readDate = null;
+    	try {
+    		readDate = ArchiveDateConverter.getHeritrixDateFormat().parse(indexedDate);
+    	} catch (ParseException e) {
+    		logger.warning("Unable to parse the indexed date '" + indexedDate 
+    				+ "' as a 17-digit date: " + e); 
+    	}
+    	String refersToDateString = indexedDate;
+    	if (readDate != null) {
+    		refersToDateString = ArchiveDateConverter.getWarcDateFormat().format(readDate); 
+    	}
+    	return refersToDateString;
+    }
+
+
+
 	@Override
 	protected ProcessResult innerProcessResult(CrawlURI curi) throws InterruptedException {
         ProcessResult processResult = ProcessResult.PROCEED; // Default. Continue as normal
@@ -467,20 +510,9 @@ public class DeDuplicator extends Processor implements InitializingBean {
 
         	duplicateRevisit.setRefersToTargetURI(
         			duplicate.get("url"));  // URL.name()
-        	String indexedDate = duplicate.get("date"); // DATE.name()
-        	Date readDate = null;
-        	try {
-        		readDate = ArchiveDateConverter.getHeritrixDateFormat().parse(indexedDate);
-        	} catch (ParseException e) {
-        		logger.warning("Unable to parse the indexed date '" + indexedDate 
-        				+ "' as a 17-digit date: " + e); 
-        	}
-        	String refersToDateString = indexedDate;
-        	if (readDate != null) {
-        		refersToDateString = ArchiveDateConverter.getWarcDateFormat().format(readDate); 
-        	}
+
         	
-        	duplicateRevisit.setRefersToDate(refersToDateString);
+        	duplicateRevisit.setRefersToDate(getRefersToDate(duplicate));
         			
         	
         	//Check if the record ID information is available in the index.
@@ -488,7 +520,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
         	String refersToRecordID = duplicate.get("orig_record_id"); // ORIGINAL_RECORD_ID.name()); 
         
         	if (refersToRecordID!=null && !refersToRecordID.isEmpty()) {
-       		duplicateRevisit.setRefersToRecordID(refersToRecordID);
+        		duplicateRevisit.setRefersToRecordID(refersToRecordID);
         	}        	
 
 
@@ -514,7 +546,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
                 if(useOriginFromIndex && 
                     duplicate.get(DigestIndexer.FIELD_ORIGIN)!=null){
                     // Index contains origin, use it.
-                    annotation += ":\"" + duplicate.get(DigestIndexer.FIELD_ORIGIN) + "\""; 
+                    annotation += ":\"" + duplicate.get(DigestIndexer.FIELD_ORIGIN) + "\""; // If 
                 } else {
                     String tmp = getOrigin();
                     // Check if an origin value is actually available
@@ -526,8 +558,10 @@ public class DeDuplicator extends Processor implements InitializingBean {
             } 
             // Make duplicate-note in crawl-log
             curi.getAnnotations().add(annotation);
-            // Notify Heritrix that this is a revisit
-            curi.setRevisitProfile(duplicateRevisit);
+            // Notify Heritrix that this is a revisit if we want revisit records to be written
+            if (getRevisitInWarcs()) {
+            	curi.setRevisitProfile(duplicateRevisit);
+            }
             
             /* TODO enable this when moving to indexing based on this data
             // Add annotation to crawl.log 

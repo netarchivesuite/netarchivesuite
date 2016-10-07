@@ -30,11 +30,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.netarchivesuite.heritrix3wrapper.EngineResult;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper.CrawlControllerState;
 import org.netarchivesuite.heritrix3wrapper.JobResult;
 import org.netarchivesuite.heritrix3wrapper.ResultStatus;
+import org.netarchivesuite.heritrix3wrapper.ScriptResult;
 import org.netarchivesuite.heritrix3wrapper.jaxb.JobShort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +73,8 @@ public class HeritrixController extends AbstractRestHeritrixController {
 
     private int heritrix3EngineRetries;
     private int heritrix3EngineIntervalBetweenRetriesInMillis;
+    
+    private String baseUrl;
     
     /**
      * Create a BnfHeritrixController object.
@@ -119,6 +124,8 @@ public class HeritrixController extends AbstractRestHeritrixController {
         } else {
         	throw new IOFailure("Unexpected error: Heritrix3 wrapper returned null engine result.");
         }
+        
+        baseUrl = "https://" + getHostName() + ":" + Integer.toString(getGuiPort()) + "/engine/";
 
         // POST: Heritrix3 is up and running and responds nicely
         log.info("Heritrix3 REST interface up and running");
@@ -499,23 +506,25 @@ public class HeritrixController extends AbstractRestHeritrixController {
     }
 
     /**
-     * Generates a full frontier report.
+     * Generates a full frontier report from H3 using an REST call (Groovy script)
      *
      * @return a Full frontier report.
      */
     public FullFrontierReport getFullFrontierReport() {
-    	//FIXME get frontier report from H3 using an appropriate REST call.
-    	// Is the following OK: No!!!
-    	//https://localhost:8444/engine/job/testjob/jobdir/20150210135411/reports/frontier-summary-report.txt
-    	
-    	return null;
-    	/*		
-        return FullFrontierReport.parseContentsAsString(
-                jobName,
-                (String) executeOperationNoRetry(crawlServiceJobBeanName,
-                        CrawlServiceJobOperation.frontierReport.name(), "all"));
-                        
-        */                
+    	//construct script request to send
+    	HttpPost postRequest = new HttpPost(baseUrl + "job/" + jobName + "/script");
+        StringEntity postEntity = null;
+		try {
+			postEntity = new StringEntity("engine=beanshell&script="+dk.netarkivet.harvester.heritrix3.Constants.FRONTIER_REPORT_GROOVY_SCRIPT);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+        postEntity.setContentType("application/x-www-form-urlencoded");
+        postRequest.addHeader("Accept", "application/xml");
+        postRequest.setEntity(postEntity);
+    	ScriptResult result = h3wrapper.scriptResult(postRequest);
+        return FullFrontierReport.parseContentsAsXML(
+                jobName, result.response, dk.netarkivet.harvester.heritrix3.Constants.XML_RAWOUT_TAG);
     }
 
     @Override

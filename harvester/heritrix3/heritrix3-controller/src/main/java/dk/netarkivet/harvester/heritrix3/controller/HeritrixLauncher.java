@@ -106,6 +106,8 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
             while (!crawlIsOver) {
                 CrawlControl cc = new CrawlControl();
                 cc.run();
+                FrontierReportAnalyzer fra = new FrontierReportAnalyzer(heritrixController);
+                fra.run();
                 if (!crawlIsOver) {
                     try {
                     Thread.sleep(CRAWL_CONTROL_WAIT_PERIOD*1000L);
@@ -150,7 +152,6 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
                 crawlIsOver = true;
                 return;
             }
-
             JMSConnectionFactory.getInstance().send(cpm);
 
             Heritrix3Files files = getHeritrixFiles();
@@ -166,4 +167,5 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
         }
 
     }
+
 }

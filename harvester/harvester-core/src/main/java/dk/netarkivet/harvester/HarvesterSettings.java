@@ -731,6 +731,8 @@ public class HarvesterSettings {
     public static String HERITRIX3_ARC_MAXSIZE = "settings.harvester.harvesting.heritrix3.arc.maxFileSizeBytes";
 
     public static String HERITRIX3_ARC_POOL_MAXACTIVE = "settings.harvester.harvesting.heritrix3.arc.poolMaxActive";
+
+    public static String HERITRIX3_ARC_SKIP_IDENTICAL_DIGESTS = "settings.harvester.harvesting.heritrix3.arc.skipIdenticalDigests";
     
     /**
      * <b>settings.harvester.harvesting.heritrix3.warc.template</b>: <br>

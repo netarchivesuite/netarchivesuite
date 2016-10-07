@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.harvesting.frontier;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -31,8 +32,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
@@ -371,6 +379,34 @@ public class FullFrontierReport extends AbstractFrontierReport {
         } catch (DatabaseException e) {
             throw new IOFailure("Failed to read frontier BDB for job " + getJobName(), e);
         }
+    }
+    
+    /**
+     * Generates an Heritrix frontier report wrapper object by parsing the frontier report returned by the REST API
+     * controller as XML
+     *
+     * @param jobName the Heritrix job name
+     * @param contentsAsString the text returned by the http REST call
+     * @return the report wrapper object
+     */
+    public static FullFrontierReport parseContentsAsXML(String jobName, byte[] contentsAsXML, String tagName) {
+    	//FIXME : instanciate an unique dBuilder
+    	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+    	DocumentBuilder dBuilder;
+		try {
+			dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse((new ByteArrayInputStream(contentsAsXML)));
+			
+			Element e = doc.getDocumentElement();
+	    	NodeList nList = e.getElementsByTagName(tagName);
+	    	//get first (and normally unique) item
+	    	Node nNode = nList.item(0);
+	    	String contentAsString = nNode.getTextContent();
+	    	return FullFrontierReport.parseContentsAsString(jobName, contentAsString);
+		} catch (Exception e) {
+			LOG.error("Failed to parse XML content", e);
+			return new FullFrontierReport(jobName);
+		}
     }
 
     /**

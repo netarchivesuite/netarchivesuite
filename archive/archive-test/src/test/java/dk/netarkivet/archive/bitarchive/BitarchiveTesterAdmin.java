@@ -83,6 +83,10 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
     public void testUploadAdminAdded() throws PermissionDenied, IOException {
         BitarchiveAdmin admin = BitarchiveAdmin.getInstance();
         assertNotNull("Must have admin object.", admin);
+        if (!admin.hasEnoughSpace()) {
+        	System.err.println("Skipping test. Not enough space on disk to perform test");
+        	return;
+        }
         // check that the record does not exist in the admin data before upload
         BitarchiveARCFile arcfile = admin.lookup(ARC_FILE_NAME);
         assertNull("Lookup should fail before adding file.", arcfile);

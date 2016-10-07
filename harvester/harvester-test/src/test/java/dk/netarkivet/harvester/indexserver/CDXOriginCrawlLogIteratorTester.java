@@ -81,7 +81,7 @@ public class CDXOriginCrawlLogIteratorTester {
         CrawlDataItem item1 = it.next();
         StringAsserts.assertStringContains("Must have found expected url", "fag_www_front.intro", item1.getURL());
         assertEquals("Must have right origin from CDXReader for " + item1.getURL(),
-                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95054220", item1.getOrigin());
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95054220,20050506114817950", item1.getOrigin());
         // Second item found in both cdx and crawl.log
         CrawlDataItem item2 = it.next();
         StringAsserts.assertStringContains("Must have found expected url", "purl.org/robots.txt", item2.getURL());
@@ -101,7 +101,7 @@ public class CDXOriginCrawlLogIteratorTester {
             assertNotNull("Should have origin", last.getOrigin());
         }
         assertEquals("Last item must have origin from CDXReader",
-                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95086720", last.getOrigin());
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95086720,20050506114822579", last.getOrigin());
         assertFalse("Should have no more items now", it.hasNext());
         try {
             it.next();
@@ -110,7 +110,7 @@ public class CDXOriginCrawlLogIteratorTester {
             assertEquals("Should have right message", "No more items", e.getMessage());
         }
 
-        // Pathalogical cases
+        // Pathological cases
         try {
             new CDXOriginCrawlLogIterator(new File("dummy"), cdx);
             fail("Should die on missing log file");
@@ -234,8 +234,8 @@ public class CDXOriginCrawlLogIteratorTester {
             }
         }
         assertTrue("Should have found the private url", foundPrivateUrl);
-        String correctOrigin = "1-1-20071206233504-00000-dhcppc1.arc,10204";
-        assertTrue("Wrong origin", item.getOrigin().equals(correctOrigin));
+        String correctOrigin = "1-1-20071206233504-00000-dhcppc1.arc,10204,20071206233509132";
+        assertTrue("Wrong origin. Excepted: " + correctOrigin + ", Found: " + item.getOrigin(), item.getOrigin().equals(correctOrigin));
 
         // Introducing new set of testfiles based on job 9 run 27-12-2007
 
@@ -261,7 +261,7 @@ public class CDXOriginCrawlLogIteratorTester {
             }
         }
         assertTrue("Should have found the private url", foundPrivateUrl);
-        correctOrigin = "9-2-20071227125128-00000-kb-test-har-002.kb.dk.arc,9167";
+        correctOrigin = "9-2-20071227125128-00000-kb-test-har-002.kb.dk.arc,9167,20071227125134951";
         assertTrue("Wrong Origin. Should have been '" + correctOrigin + "', but was '" + item.getOrigin() + "'.", item
                 .getOrigin().equals(correctOrigin));
 

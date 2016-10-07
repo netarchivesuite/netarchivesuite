@@ -28,6 +28,9 @@ import java.util.TreeSet;
 
 import javax.servlet.ServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -40,6 +43,8 @@ import dk.netarkivet.harvester.datamodel.JobStatusInfo;
  */
 public class FindRunningJobQuery {
 
+	static final Logger log = LoggerFactory.getLogger(FindRunningJobQuery.class);
+	
     /**
      * Defines the UI fields and their default values.
      */
@@ -84,7 +89,7 @@ public class FindRunningJobQuery {
     private Set<Long> runningJobIds = new TreeSet<Long>();
 
     /**
-     * Builds a request to find a running job. UI fileds values will be extracted from the given {@link ServletRequest}.
+     * Builds a request to find a running job. UI field values will be extracted from the given {@link ServletRequest}.
      *
      * @param req the {@link ServletRequest} to parse.
      */
@@ -107,6 +112,7 @@ public class FindRunningJobQuery {
             if (domains.contains(domainName)) {
                 runningJobIds.add(jobId);
             }
+            log.info("Found {} jobs in status STARTED harvesting domain {}", runningJobIds.size(), domainName);
         }
     }
 

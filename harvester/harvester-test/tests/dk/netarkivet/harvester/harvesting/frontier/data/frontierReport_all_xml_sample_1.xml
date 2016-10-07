@@ -1,0 +1,59 @@
+<?xml version="1.0" standalone='yes'?>
+
+<script>
+  <crawlJobUrl>https://vpfvdx60.pfvd.nt.bnf.fr:8074/engine/job/27_1473863062704/</crawlJobUrl>
+  <crawlJobShortName>27_1473863062704</crawlJobShortName>
+  <availableScriptEngines>
+    <value>
+      <engine>beanshell</engine>
+      <language>BeanShell</language>
+    </value>
+    <value>
+      <engine>groovy</engine>
+      <language>Groovy</language>
+    </value>
+    <value>
+      <engine>js</engine>
+      <language>ECMAScript</language>
+    </value>
+  </availableScriptEngines>
+  <script>job.crawlController.frontier.allQueuesReportTo(rawOut)</script>
+  <linesExecuted>1</linesExecuted>
+  <rawOutput>queue precedence currentSize totalEnqueues sessionBalance lastCost (averageCost) lastDequeueTime wakeTime totalSpend/totalBudget errorCount lastPeekUri lastQueuedUri
+ajax.googleapis.com 3 0 4 2996 1(1) 2016-09-14T14:26:03.094Z - 4/5000 0 http://ajax.googleapis.com/favicon.ico http://ajax.googleapis.com/favicon.ico
+bnf.fr 3 912 1325 2586 1(1) 2016-09-14T14:41:07.880Z -23m893ms 414/5000 0 http://www.bnf.fr/fr/collections_et_services/reproductions_document/a.reproduction_document_tarifs.html http://www.bnf.fr/documents/conditions_utilisation_reproduction.pdf
+creativecommons.org 3 0 4 2996 1(1) 2016-09-14T14:26:02.774Z - 4/5000 0 http://i.creativecommons.org/favicon.ico http://i.creativecommons.org/favicon.ico
+dublincore.org 3 0 22 2978 1(1) 2016-09-14T14:26:24.669Z - 22/5000 0 http://dublincore.org/images/logos/vcss-blue.gif http://dublincore.org/documents/2012/06/14/dcmi-terms/?v=dcam
+html5media.info 3 0 3 2795 1(41) 2016-09-14T14:35:43.939Z - 205/5000 2 https://api.html5media.info/1.1.8/html5media.min.js https://api.html5media.info/robots.txt
+licensebuttons.net 3 0 4 2695 1(61) 2016-09-14T14:31:02.782Z - 305/5000 3 https://licensebuttons.net/favicon.ico https://licensebuttons.net/favicon.ico
+logp 3 0 2 2796 1(51) 2016-09-14T14:35:40.254Z - 204/5000 2 http://logp/ dns:logp
+maps.googleapis.com 3 0 4 2996 1(1) 2016-09-14T14:30:29.652Z - 4/5000 0 http://maps.googleapis.com/favicon.ico http://maps.googleapis.com/favicon.ico
+purl.org 3 0 7 2997 1(1) 2016-09-14T14:26:02.414Z - 7/5000 0 http://purl.org/dc/dcam/ http://purl.org/dc/dcam/
+readspeaker.com 3 0 4 2998 0(0.5) 2016-09-14T14:25:45.540Z - 2/5000 0 http://f1.eu.readspeaker.com/favicon.ico http://f1.eu.readspeaker.com/favicon.ico
+vianavigo.com 3 0 3 2795 1(41) 2016-09-14T14:35:48.078Z - 205/5000 2 https://www.vianavigo.com/typo3conf/ext/mrq_grise/img/v2/vsprite1.png https://www.vianavigo.com/robots.txt
+xiti.com 3 0 96 2999 1(1) 2016-09-14T14:41:07.943Z - 96/5000 0 http://logp.xiti.com/hit.xiti?s=18798&amp;s2=3&amp;p=Repro_Sommaire::Tarifs&amp; http://logp.xiti.com/hit.xiti?s=18798&amp;s2=3&amp;p=Repro_Sommaire::Tarifs&amp;
+</rawOutput>
+  <availableGlobalVariables>
+    <value>
+      <variable>rawOut</variable>
+      <description>a PrintWriter for arbitrary text output to this page</description>
+    </value>
+    <value>
+      <variable>htmlOut</variable>
+      <description>a PrintWriter for HTML output to this page</description>
+    </value>
+    <value>
+      <variable>job</variable>
+      <description>the current CrawlJob instance</description>
+    </value>
+    <value>
+      <variable>appCtx</variable>
+      <description>current job ApplicationContext, if any</description>
+    </value>
+    <value>
+      <variable>scriptResource</variable>
+      <description>the ScriptResource implementing this page, which offers utility methods</description>
+    </value>
+  </availableGlobalVariables>
+  <failure>false</failure>
+</script>
