@@ -300,13 +300,13 @@ public class JMXStatusEntry implements StatusEntry {
         HostForwarding.getInstance(SingleLogRecord.class, mBeanServer, LOGGING_QUERY);
         // The "null" in this case is used to indicate no further filters on the
         // query.
-        log.debug("Querying " + mBeanServer.toString());
+        log.debug("Querying mbean server {} with {}.", mBeanServer.toString(), LOGGING_QUERY);
         Set<ObjectName> resultSet = mBeanServer.queryNames(new ObjectName(query), null);
         for (ObjectName objectName : resultSet) {
             entries.add(new JMXStatusEntry(objectName));
         }
         Collections.sort(entries);
-        log.debug("Query returned " + entries.size() + " results.");
+        log.debug("Query returned {} results.", entries.size());
         return entries;
     }
 

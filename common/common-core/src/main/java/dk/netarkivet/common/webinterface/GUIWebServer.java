@@ -113,19 +113,17 @@ public class GUIWebServer implements CleanupIF {
         //set the port on which tomcat should run
         server.setPort(port);
         boolean taglibsScanningDisabled = false;
-        
+
         if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
             log.info("Scanning for taglibs is disabled as " + Constants.SKIP_JARS_PROPERTY + " is unset."); // Only log this once for all contexts
             taglibsScanningDisabled = true;
         }
-        
-        //add webapps to tomcat
-        for (int i = 0; i < webApps.length; i++) {
 
+        //add webapps to tomcat
+        for (String webappFilename: webApps) {
             // Construct webbase from the name of the webapp.
             // (1) If the webapp is webpages/History, the webbase is /History
             // (2) If the webapp is webpages/History.war, the webbase is /History
-            String webappFilename = new File(webApps[i]).getName();
             String webbase = "/" + webappFilename;
             final String warSuffix = ".war";
             if (webappFilename.toLowerCase().endsWith(warSuffix)) {
@@ -141,25 +139,25 @@ public class GUIWebServer implements CleanupIF {
 
             try {
                 //add the jar file to tomcat
-                String warfile = new File(basedir, webApps[i]).getAbsolutePath();
+                String warfile = new File(basedir, webappFilename).getAbsolutePath();
                 StandardContext ctx = (StandardContext) server.addWebapp(webbase, warfile);
                 if (taglibsScanningDisabled) {
                     StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) ctx.getJarScanner().getJarScanFilter();
                     // Disable scanning for taglibs
                     jarScanFilter.setTldSkip("*");
                 }
-                if (i==0) {
+                if (webappFilename.equals(webApps[0])) {
                     //Re-add the 1st context as also the root context
                     StandardContext rootCtx = (StandardContext) server.addWebapp("/", warfile);
                     if (taglibsScanningDisabled) {
-                    	StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx.getJarScanner().getJarScanFilter();
+                        StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx.getJarScanner().getJarScanFilter();
                         // Disable scanning for taglibs
                         jarScanFilter.setTldSkip("*");
                     }
                 }
             }
             catch (ServletException e) {
-                log.error("Unable to add webapp " + webApps[i], e);
+                log.error("Unable to add webapp " + webappFilename, e);
             }
         }
     }
@@ -171,7 +169,6 @@ public class GUIWebServer implements CleanupIF {
      * @return the instance
      */
     public static synchronized GUIWebServer getInstance() {
-        log.debug("Inside getInstance");
         if (instance == null) {
             instance = new GUIWebServer();
             instance.startServer();
