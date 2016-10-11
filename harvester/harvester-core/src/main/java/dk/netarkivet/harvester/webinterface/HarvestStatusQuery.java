@@ -102,10 +102,10 @@ public class HarvestStatusQuery {
      * Defines the UI fields and their default values.
      */
     public static enum UI_FIELD {
-        /** jobstatus with default status STARTED. */
-        JOB_STATUS(JobStatus.STARTED.name()),
+        /** jobstatus with default status ALL. */
+        JOB_STATUS("ALL"),
         /** JOB ID order. default is ascending. */
-        JOB_ID_ORDER("ASC"),
+        JOB_ID_ORDER("DESC"),
         /** harvest name. default is ALL (i.e all harvests). */
         HARVEST_NAME(HARVEST_NAME_ALL),
         /** The harvest ID. No default. */
