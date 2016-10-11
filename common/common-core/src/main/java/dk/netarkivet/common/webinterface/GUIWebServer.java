@@ -120,10 +120,11 @@ public class GUIWebServer implements CleanupIF {
         }
 
         //add webapps to tomcat
-        for (String webappFilename: webApps) {
+        for (String webapp: webApps) {
             // Construct webbase from the name of the webapp.
             // (1) If the webapp is webpages/History, the webbase is /History
             // (2) If the webapp is webpages/History.war, the webbase is /History
+            String webappFilename = new File(webapp).getName();
             String webbase = "/" + webappFilename;
             final String warSuffix = ".war";
             if (webappFilename.toLowerCase().endsWith(warSuffix)) {
@@ -136,10 +137,10 @@ public class GUIWebServer implements CleanupIF {
                     break;
                 }
             }
-
             try {
                 //add the jar file to tomcat
-                String warfile = new File(basedir, webappFilename).getAbsolutePath();
+                String warfile = new File(basedir, webapp).getAbsolutePath();
+                log.info("Deploying webapp with context {} at docbase {}.", webbase, warfile);
                 StandardContext ctx = (StandardContext) server.addWebapp(webbase, warfile);
                 if (taglibsScanningDisabled) {
                     StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) ctx.getJarScanner().getJarScanFilter();
@@ -148,7 +149,7 @@ public class GUIWebServer implements CleanupIF {
                 }
                 if (webappFilename.equals(webApps[0])) {
                     //Re-add the 1st context as also the root context
-                    StandardContext rootCtx = (StandardContext) server.addWebapp("/", warfile);
+                    StandardContext rootCtx = (StandardContext) server.addWebapp("", warfile);
                     if (taglibsScanningDisabled) {
                         StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx.getJarScanner().getJarScanFilter();
                         // Disable scanning for taglibs
@@ -157,7 +158,7 @@ public class GUIWebServer implements CleanupIF {
                 }
             }
             catch (ServletException e) {
-                log.error("Unable to add webapp " + webappFilename, e);
+                log.error("Unable to add webapp " + webapp, e);
             }
         }
     }
