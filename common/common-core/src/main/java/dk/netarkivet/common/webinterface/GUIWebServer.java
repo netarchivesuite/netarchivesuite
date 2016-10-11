@@ -102,7 +102,8 @@ public class GUIWebServer implements CleanupIF {
         log.debug("GUI using basedir " + basedir);
         server.setBaseDir(basedir.getAbsolutePath());
 
-        File webapps = new File(basedir, "/webapps");
+        //File webapps = new File(basedir, "/webapps");
+        File webapps = tempDir;
         if (webapps.exists()) {
             FileUtils.removeRecursively(webapps);
             log.info("Deleted existing tempdir '" + webapps.getAbsolutePath() + "'");
@@ -149,7 +150,7 @@ public class GUIWebServer implements CleanupIF {
                 }
                 if (webappFilename.equals(webApps[0])) {
                     //Re-add the 1st context as also the root context
-                    StandardContext rootCtx = (StandardContext) server.addWebapp("", warfile);
+                    StandardContext rootCtx = (StandardContext) server.addWebapp("/", warfile);
                     if (taglibsScanningDisabled) {
                         StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx.getJarScanner().getJarScanFilter();
                         // Disable scanning for taglibs
