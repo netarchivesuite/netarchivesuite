@@ -152,7 +152,7 @@ public class GUIWebServer implements CleanupIF {
                     // Disable scanning for taglibs
                     jarScanFilter.setTldSkip("*");
                 }
-                if (webappFilename.equals(webApps[0])) {
+                if (webapp.equals(webApps[0])) {
                     //Re-add the 1st context as also the root context
                     StandardContext rootCtx = (StandardContext) server.addWebapp("/", warfile);
                     if (taglibsScanningDisabled) {
