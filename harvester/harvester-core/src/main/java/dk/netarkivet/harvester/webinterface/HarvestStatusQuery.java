@@ -295,7 +295,7 @@ public class HarvestStatusQuery {
 	        			//if it's a range eg 11-27
 	        			String[] range = s.split("-");
 	        			if(range.length != 2) {
-	        				throw new ArgumentNotValid("The range for job ids is incorrect!");
+	        				throw new ArgumentNotValid("Invalid Job IDs range (1-10 or 1,2,3)");
 	                    }
 	        			//check if it's a number
 	        			Long.parseLong(range[0]);
@@ -309,7 +309,7 @@ public class HarvestStatusQuery {
 	        	this.jobIdRange = jobIdRange;
 	        } catch (NumberFormatException e) {
 	            this.jobIdRange = null;
-	            throw new ArgumentNotValid("Somes values in job ids range are not correct numbers", e);
+	            throw new ArgumentNotValid("Job IDs must be digits", e);
 	        }
         }
 
