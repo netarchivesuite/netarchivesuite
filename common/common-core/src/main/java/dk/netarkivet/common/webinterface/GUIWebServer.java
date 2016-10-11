@@ -27,6 +27,7 @@ import java.io.File;
 import javax.servlet.ServletException;
 
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.Constants;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
@@ -93,6 +94,7 @@ public class GUIWebServer implements CleanupIF {
         // Get a tomcat server.
         server = new Tomcat();
 
+
         System.setProperty("org.apache.catalina.startup.EXIT_ON_INIT_FAILURE", "true");
 
         // Use directory in commontempdir for cache
@@ -110,7 +112,9 @@ public class GUIWebServer implements CleanupIF {
         }
 
         webapps.mkdirs();
-
+        server.getHost().setAppBase(webapps.getAbsolutePath());
+        server.getHost().setAutoDeploy(true);
+        ((StandardHost) server.getHost()).setUnpackWARs(true);
         //set the port on which tomcat should run
         server.setPort(port);
         boolean taglibsScanningDisabled = false;
