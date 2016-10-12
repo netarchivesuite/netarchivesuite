@@ -60,8 +60,11 @@ public final class Constants {
     // Version string. */
     private static String version;
 
-    /** Current version of Heritrix used by netarkivet-code. */
+    /** Current version of Heritrix 1 used by netarkivet-code. */
     private static final String HERITRIX_VERSION = "1.14.4";
+    
+    /** Current version of Heritrix 3 used by netarkivet-code. */
+    private static final String HERITRIX3_VERSION = "3.3.0-LBS-2016-02";
 
     /**
      * Read this much data when copying data from a file channel. Note that due to a bug in java, this should never be
@@ -151,6 +154,6 @@ public final class Constants {
     public static final String PROJECT_WEBSITE = "https://sbforge.org/display/NAS";
 
     public static String getHeritrix3VersionString() {
-        return "3.3.0-LBS-2014-03"; 
+        return HERITRIX3_VERSION;
     }
 }

@@ -169,6 +169,7 @@ function resetForm() {
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.HARVEST_NAME.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_DATE.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.END_DATE.name()%>.value = "";
+	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_ID_RANGE.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.PAGE_SIZE.name()%>.value = "";	
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX.name()%>.value = "";
 }
@@ -222,16 +223,18 @@ function resetPagination() {
 </select>
 </fmt:param>
 <fmt:param>
-
-
 <input name="<%=HarvestStatusQuery.UI_FIELD.HARVEST_NAME%>"
        id="<%=HarvestStatusQuery.UI_FIELD.HARVEST_NAME%>" 
        style="width:200px;"
        value="<%=query.getHarvestName()%>"/>
-
-
-  
-  
+</fmt:param>
+<fmt:message key="status.job.or" var="orString"/>
+<fmt:param>
+<input name="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_RANGE%>"
+       id="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_RANGE%>" 
+       style="width:200px;"
+       placeholder="1 ${orString} 1-10 ${orString} 1,2,3"
+       value="<%=query.getJobIdRange()%>"/>
 </fmt:param>
 <fmt:param>
 <input name="<%=HarvestStatusQuery.UI_FIELD.START_DATE%>"
@@ -251,6 +254,7 @@ setupCalendar("<%=HarvestStatusQuery.UI_FIELD.START_DATE%>", "<%=HarvestStatusQu
 setupCalendar("<%=HarvestStatusQuery.UI_FIELD.END_DATE%>", "<%=HarvestStatusQuery.CALENDAR_UI_DATE_FORMAT%>");
 </script>
 </fmt:param>
+
 </fmt:message>
 <br/>
 <fmt:message key="status.job.filters.group2">
