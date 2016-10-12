@@ -99,9 +99,12 @@ public class GUIWebServer implements CleanupIF {
 
         // Use directory in commontempdir for cache
         final File tempDir = FileUtils.getTempDir();
-        log.debug("GUI using tempdir " + tempDir);
+        log.debug("GUI using tempdir " + tempDir.getAbsolutePath());
         File basedir = tempDir.getAbsoluteFile().getParentFile();
-        log.debug("GUI using basedir " + basedir);
+        if(tempDir.isAbsolute()) {
+        	basedir = new File("");
+        }
+        log.debug("GUI using basedir " + basedir.getAbsolutePath());
         server.setBaseDir(basedir.getAbsolutePath());
 
         //File webapps = new File(basedir, "/webapps");
@@ -144,7 +147,7 @@ public class GUIWebServer implements CleanupIF {
             }
             try {
                 //add the jar file to tomcat
-                String warfile = new File(basedir, webapp).getAbsolutePath();
+                String warfile = new File(basedir.getAbsolutePath(), webapp).getAbsolutePath();
                 log.info("Deploying webapp with context {} at docbase {}.", webbase, warfile);
                 StandardContext ctx = (StandardContext) server.addWebapp(webbase, warfile);
                 if (taglibsScanningDisabled) {
