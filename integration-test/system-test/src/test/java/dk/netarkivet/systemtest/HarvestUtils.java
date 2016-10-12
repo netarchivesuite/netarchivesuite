@@ -138,7 +138,7 @@ public class HarvestUtils {
     public static void waitForJobGeneration(String harvestName) {
         boolean keepWaiting = true;
         int secondsWaitingForJob = 0;
-        int maxSecondsToWaitForAllHarvests = 60;
+        int maxSecondsToWaitForAllHarvests = 180;
         while (keepWaiting) {
             System.err.print(".");
 
