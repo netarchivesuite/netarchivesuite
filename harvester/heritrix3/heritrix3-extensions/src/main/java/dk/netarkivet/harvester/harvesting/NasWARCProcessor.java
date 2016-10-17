@@ -48,12 +48,15 @@ public class NasWARCProcessor extends WARCWriterProcessor {
 	private static final String HARVESTINFO_ORIGHARVESTDEFINITIONID = "harvestInfo.origHarvestDefinitionID";
 	private static final String HARVESTINFO_MAXBYTESPERDOMAIN = "harvestInfo.maxBytesPerDomain";
 	private static final String HARVESTINFO_MAXOBJECTSPERDOMAIN = "harvestInfo.maxObjectsPerDomain";
-	private static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.orderXMLName";
+	private static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.templateName";
+	private static final String HARVESTINFO_ORDERXMLUPDATEDATE = "harvestInfo.templateUpdateDate";
+	private static final String HARVESTINFO_ORDERXMLDESCRIPTION = "harvestInfo.templateDescription";
 	private static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
 	private static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
 	private static final String HARVESTINFO_HARVESTFILENAMEPREFIX = "harvestInfo.harvestFilenamePrefix";
 	private static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";
 	private static final String HARVESTINFO_PERFORMER = "harvestInfo.performer";
+	private static final String HARVESTINFO_OPERATOR = "harvestInfo.operator";
 	private static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
 
 	public boolean getWriteMetadataOutlinks() {
@@ -162,6 +165,12 @@ public class NasWARCProcessor extends WARCWriterProcessor {
             (String) metadataMap.get(HARVESTINFO_MAXOBJECTSPERDOMAIN));
             recordNAS.addLabelValue(HARVESTINFO_ORDERXMLNAME,
             (String) metadataMap.get(HARVESTINFO_ORDERXMLNAME));
+            if (metadataMap.containsKey(HARVESTINFO_ORDERXMLUPDATEDATE)) {
+            	recordNAS.addLabelValue(HARVESTINFO_ORDERXMLUPDATEDATE, (String) metadataMap.get(HARVESTINFO_ORDERXMLUPDATEDATE));
+            }
+            if (metadataMap.containsKey(HARVESTINFO_ORDERXMLDESCRIPTION)) {
+            	recordNAS.addLabelValue(HARVESTINFO_ORDERXMLDESCRIPTION, (String) metadataMap.get(HARVESTINFO_ORDERXMLDESCRIPTION));
+            }
             recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONNAME,
             (String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONNAME));
 
@@ -178,6 +187,9 @@ public class NasWARCProcessor extends WARCWriterProcessor {
             if (metadataMap.containsKey(HARVESTINFO_PERFORMER)) {
             recordNAS.addLabelValue(HARVESTINFO_PERFORMER,
             (String) metadataMap.get(HARVESTINFO_PERFORMER));
+            }
+            if (metadataMap.containsKey(HARVESTINFO_OPERATOR)) {
+            	recordNAS.addLabelValue(HARVESTINFO_OPERATOR, (String) metadataMap.get(HARVESTINFO_OPERATOR));
             }
 
             if (metadataMap.containsKey(HARVESTINFO_AUDIENCE)) {

@@ -35,6 +35,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.H3HeritrixTemplate;
+import dk.netarkivet.harvester.datamodel.H3HeritrixTemplate.MetadataInfo;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.PersistentJobData.XmlState.OKSTATE;
@@ -68,7 +70,11 @@ public class PersistentJobData implements JobInfo {
      */
     private static final String MAXOBJECTSPERDOMAIN_KEY = ROOT_ELEMENT + ".maxObjectsPerDomain";
     /** Key in harvestinfo file for the orderXMLName of the job. */
-    private static final String ORDERXMLNAME_KEY = ROOT_ELEMENT + ".orderXMLName";
+    private static final String ORDERXMLNAME_KEY = ROOT_ELEMENT + ".templateName";
+    /** Key in harvestinfo file for the orderXMLName update date. */
+    private static final String ORDERXML_UPDATE_DATE_KEY = ROOT_ELEMENT + ".templateUpdateDate";
+    /** Key in harvestinfo file for the orderXMLName description. */
+    private static final String ORDERXML_DESCRIPTION_KEY = ROOT_ELEMENT + ".templateDescription";
     /** Key in harvestinfo file for the harvestID of the job. */
     private static final String ORIGHARVESTDEFINITIONID_KEY = ROOT_ELEMENT + ".origHarvestDefinitionID";
     /** Key in harvestinfo file for the harvest channel of the job. */
@@ -96,6 +102,9 @@ public class PersistentJobData implements JobInfo {
     private static final String HARVEST_PERFORMER_KEY = ROOT_ELEMENT + ".performer";
     /** The audience of this harvest. */
     private static final String HARVEST_AUDIENCE_KEY = ROOT_ELEMENT + ".audience";
+    /** The operator of this harvest. */
+    private static final String HARVEST_OPERATOR_KEY = ROOT_ELEMENT + ".operator";
+    
 
     /** Key in harvestinfo file for the file version. */
     private static final String HARVESTINFO_VERSION_KEY = "harvestInfo.version";
@@ -215,6 +224,20 @@ public class PersistentJobData implements JobInfo {
         sx.add(MAXBYTESPERDOMAIN_KEY, Long.toString(harvestJob.getMaxBytesPerDomain()));
         sx.add(MAXOBJECTSPERDOMAIN_KEY, Long.toString(harvestJob.getMaxObjectsPerDomain()));
         sx.add(ORDERXMLNAME_KEY, harvestJob.getOrderXMLName());
+        // insert fields got from crawler-beans.cxml and add them into
+        // harvestInfo.xml for preservation purpose
+        if(harvestJob.getOrderXMLdoc() instanceof H3HeritrixTemplate) {
+        	H3HeritrixTemplate template = (H3HeritrixTemplate) harvestJob.getOrderXMLdoc();
+        	String tmp = null;
+        	tmp = template.getMetadataInfo(MetadataInfo.TEMPLATE_UPDATE_DATE);
+        	if (tmp != null && !tmp.isEmpty()) {
+                sx.add(ORDERXML_UPDATE_DATE_KEY, tmp);
+            }
+        	tmp = template.getMetadataInfo(MetadataInfo.TEMPLATE_DESCRIPTION);
+        	if (tmp != null && !tmp.isEmpty()) {
+                sx.add(ORDERXML_DESCRIPTION_KEY, tmp);
+            }
+        }
 
         sx.add(HARVEST_NAME_KEY, hdi.getOrigHarvestName());
 
@@ -235,6 +258,16 @@ public class PersistentJobData implements JobInfo {
         // if performer set to something different from the empty String
         if (!Settings.get(HarvesterSettings.PERFORMER).isEmpty()) {
             sx.add(HARVEST_PERFORMER_KEY, Settings.get(HarvesterSettings.PERFORMER));
+        }
+        // insert fields got from crawler-beans.cxml and add them into
+        // harvestInfo.xml for preservation purpose
+        if(harvestJob.getOrderXMLdoc() instanceof H3HeritrixTemplate) {
+        	H3HeritrixTemplate template = (H3HeritrixTemplate) harvestJob.getOrderXMLdoc();
+        	String temp = null;
+        	temp = template.getMetadataInfo(MetadataInfo.OPERATOR);
+        	if (temp != null && !temp.isEmpty()) {
+                sx.add(HARVEST_OPERATOR_KEY, temp);
+            }
         }
         if (harvestJob.getHarvestAudience() != null && !harvestJob.getHarvestAudience().isEmpty()) {
             sx.add(HARVEST_AUDIENCE_KEY, harvestJob.getHarvestAudience());
