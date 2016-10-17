@@ -32,6 +32,7 @@ import javax.persistence.Id;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
@@ -190,7 +191,7 @@ public class ArchiveFile {
         // This more-flexible approach
         // may be of value when we begin to add warc support.
         FileBatchJob theJob = null;
-        if (filename.contains("metadata")) {
+        if (filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX))) {
             theJob = new DeduplicationCDXExtractionBatchJob();
         } else if (ARCUtils.isARC(filename)) {
             theJob = new WaybackCDXExtractionARCBatchJob();

@@ -139,7 +139,7 @@ public class GetDataResolver extends CommandResolver {
     	try {
     		Long id = Long.parseLong(idString);
     		FileBatchJob job = new GetFileBatchJob();
-    		job.processOnlyFilesMatching(".*" + id + ".*" + Constants.METADATA_FILE_PATTERN_SUFFIX);
+    		job.processOnlyFilesMatching(".*" + id + ".*" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
     		BatchStatus b = client.batch(job, Settings.get(CommonSettings.USE_REPLICA_ID));
     		if (b.getNoOfFilesProcessed() > b.getFilesFailed().size() && b.hasResultFile()) {
     			b.appendResults(response.getOutputStream());

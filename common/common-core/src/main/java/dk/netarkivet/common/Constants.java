@@ -46,11 +46,7 @@ public final class Constants {
     public static final Pattern IP_KEY_REGEXP = Pattern.compile("^" + IP_REGEX_STRING + "$");
     /** A full string matcher for an IPv6-address. */
     public static final Pattern IPv6_KEY_REGEXP = Pattern.compile("^([0-9A-F]{1,2}\\:){5}[0-9A-F]{1,2}$");
-    /**
-     * The suffix of a regular expression that matches the metadata files. Add job IDs to the front as necessary.
-     */
-    public static final String METADATA_FILE_PATTERN_SUFFIX = "-metadata-[0-9]+.(w)?arc(\\.gz)?";
-    
+
     /** The mimetype for a list of CDX entries. */
     public static final String CDX_MIME_TYPE = "application/x-cdx";
 

@@ -179,7 +179,7 @@ public class LocalCDXCache implements JobIndexCache {
     private void retrieveIndex(Set<Long> jobIDs, OutputStream out) {
         List<String> metadataFiles = new ArrayList<String>();
         for (Long jobID : jobIDs) {
-            metadataFiles.add(".*" + jobID + ".*" + Constants.METADATA_FILE_PATTERN_SUFFIX);
+            metadataFiles.add(".*" + jobID + ".*" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
         }
         ARCBatchJob job = new CDXCacheBatchJob();
         job.processOnlyFilesMatching(metadataFiles);

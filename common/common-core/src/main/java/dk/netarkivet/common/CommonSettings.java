@@ -534,4 +534,10 @@ public class CommonSettings {
      */
     public static String ORGANIZATION = "settings.common.organization";
 
+    /**
+     * Specifies the suffix of a regex which can identify valid metadata files by job number. Thus preceding
+     * the value of this setting with .* will find all metadata files.
+     */
+    public static String METADATAFILE_REGEX_SUFFIX = "settings.common.metadata.fileregexsuffix";
+
 }
