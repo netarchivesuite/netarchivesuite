@@ -70,7 +70,7 @@ public class ArchiveFileTester extends IndexerTestCase {
     @Test
     public void testIndexerMetadata() {
         ArchiveFile file = new ArchiveFile();
-        file.setFilename("duplicate.metadata.arc");
+        file.setFilename("12345-metadata-4.arc");
         (new ArchiveFileDAO()).create(file);
         file.index();
         File outputFile = new File(destDir, file.getOriginalIndexFileName());
