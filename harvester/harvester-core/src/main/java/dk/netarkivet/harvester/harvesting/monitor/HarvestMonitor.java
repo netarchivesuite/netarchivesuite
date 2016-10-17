@@ -23,6 +23,7 @@
 package dk.netarkivet.harvester.harvesting.monitor;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -69,6 +70,8 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
     public static final ChannelID HARVEST_MONITOR_CHANNEL_ID = HarvesterChannels.getHarvestMonitorChannel();
 
     private Map<Long, StartedJobHistoryChartGen> chartGenByJobId = new HashMap<Long, StartedJobHistoryChartGen>();
+
+    private Set<Long> runningJobs = new TreeSet<Long>();
 
     private HarvestMonitor() {
         // Perform initial cleanup (in case apps crashed)
@@ -118,6 +121,8 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
         StartedJobInfo info = StartedJobInfo.build(msg);
         RunningJobsInfoDAO.getInstance().store(info);
 
+        runningJobs.add(jobId);
+
         // Start a chart generator if none has been started yet
         if (chartGenByJobId.get(jobId) == null) {
             chartGenByJobId.put(jobId, new StartedJobHistoryChartGen(jobId));
@@ -141,6 +146,8 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
         int delCount = dao.removeInfoForJob(jobId);
         LOG.info("Deleted {} running job info records for job ID {} on transition to status {}", delCount, jobId,
                 newStatus.name());
+
+        runningJobs.remove(jobId);
 
         // Stop chart generation
         StartedJobHistoryChartGen gen = chartGenByJobId.get(jobId);
@@ -269,7 +276,10 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
         if (delCount > 0) {
             LOG.info("Cleaned up {} obsolete history records.", delCount);
         }
+    }
 
+    public Set getRunningJobs() {
+    	return Collections.unmodifiableSet(runningJobs);
     }
 
 }

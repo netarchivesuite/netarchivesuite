@@ -33,6 +33,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     <display-name>
         Harvest History
     </display-name>
+    <servlet>
+        <servlet-name>HistoryServlet</servlet-name>
+        <display-name>HistoryServlet</display-name>
+        <servlet-class>dk.netarkivet.harvester.webinterface.servlet.HistoryServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <init-param>
+            <param-name>name</param-name>
+            <param-value>value</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HistoryServlet</servlet-name>
+        <url-pattern>/history/*</url-pattern>
+    </servlet-mapping>
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>
         <location>/error.jsp</location>
