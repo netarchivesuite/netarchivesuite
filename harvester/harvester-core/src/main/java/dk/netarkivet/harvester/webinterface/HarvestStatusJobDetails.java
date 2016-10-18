@@ -269,8 +269,6 @@ public class HarvestStatusJobDetails {
             out.println("</select>");
             out.println("</form>");
             out.println("</p>");
-        } else {
-            out.println(SiteSection.isDeployed(Constants.QA_SITESECTION_DIRNAME) + "<br/>"+job.getStatus().ordinal()+"<br/>"+JobStatus.STARTED.ordinal()+"<br/>");
         }
 
 
