@@ -26,8 +26,8 @@ import java.io.File;
 
 import javax.servlet.ServletException;
 
-import org.apache.catalina.Context;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.Constants;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
@@ -94,33 +94,45 @@ public class GUIWebServer implements CleanupIF {
         // Get a tomcat server.
         server = new Tomcat();
 
+
         System.setProperty("org.apache.catalina.startup.EXIT_ON_INIT_FAILURE", "true");
 
         // Use directory in commontempdir for cache
         final File tempDir = FileUtils.getTempDir();
-        log.debug("GUI using tempdir " + tempDir);
+        log.debug("GUI using tempdir " + tempDir.getAbsolutePath());
         File basedir = tempDir.getAbsoluteFile().getParentFile();
-        log.debug("GUI using basedir " + basedir);
+        if(tempDir.isAbsolute()) {
+        	basedir = new File("");
+        }
+        log.debug("GUI using basedir " + basedir.getAbsolutePath());
         server.setBaseDir(basedir.getAbsolutePath());
 
-        File webapps = new File(basedir, "/webapps");
+        //File webapps = new File(basedir, "/webapps");
+        File webapps = tempDir;
         if (webapps.exists()) {
             FileUtils.removeRecursively(webapps);
             log.info("Deleted existing tempdir '" + webapps.getAbsolutePath() + "'");
         }
 
         webapps.mkdirs();
-
+        server.getHost().setAppBase(webapps.getAbsolutePath());
+        server.getHost().setAutoDeploy(true);
+        ((StandardHost) server.getHost()).setUnpackWARs(true);
         //set the port on which tomcat should run
         server.setPort(port);
+        boolean taglibsScanningDisabled = false;
+
+        if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
+            log.info("Scanning for taglibs is disabled as " + Constants.SKIP_JARS_PROPERTY + " is unset."); // Only log this once for all contexts
+            taglibsScanningDisabled = true;
+        }
 
         //add webapps to tomcat
-        for (int i = 0; i < webApps.length; i++) {
-
+        for (String webapp: webApps) {
             // Construct webbase from the name of the webapp.
             // (1) If the webapp is webpages/History, the webbase is /History
             // (2) If the webapp is webpages/History.war, the webbase is /History
-            String webappFilename = new File(webApps[i]).getName();
+            String webappFilename = new File(webapp).getName();
             String webbase = "/" + webappFilename;
             final String warSuffix = ".war";
             if (webappFilename.toLowerCase().endsWith(warSuffix)) {
@@ -133,23 +145,24 @@ public class GUIWebServer implements CleanupIF {
                     break;
                 }
             }
-
             try {
                 //add the jar file to tomcat
-                String warfile = new File(basedir, webApps[i]).getAbsolutePath();
+                final File warfileFile = new File(basedir.getAbsolutePath(), webapp);
+                if (!warfileFile.exists() || !warfileFile.isFile()) {
+                    throw new IOFailure("Could not find expected file " + warfileFile.getAbsolutePath());
+                }
+                String warfile = warfileFile.getAbsolutePath();
+                log.info("Deploying webapp with context {} at docbase {}.", webbase, warfile);
                 StandardContext ctx = (StandardContext) server.addWebapp(webbase, warfile);
-
-                if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
-                    log.info("Scanning for taglibs is disabled as " + Constants.SKIP_JARS_PROPERTY + " is unset.");
+                if (taglibsScanningDisabled) {
                     StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) ctx.getJarScanner().getJarScanFilter();
                     // Disable scanning for taglibs
                     jarScanFilter.setTldSkip("*");
                 }
-                if (i==0) {
+                if (webapp.equals(webApps[0])) {
                     //Re-add the 1st context as also the root context
                     StandardContext rootCtx = (StandardContext) server.addWebapp("/", warfile);
-                    //Disable TLD scanning by default
-                    if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
+                    if (taglibsScanningDisabled) {
                         StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx.getJarScanner().getJarScanFilter();
                         // Disable scanning for taglibs
                         jarScanFilter.setTldSkip("*");
@@ -157,7 +170,7 @@ public class GUIWebServer implements CleanupIF {
                 }
             }
             catch (ServletException e) {
-                log.error("Unable to add webapp " + webApps[i], e);
+                log.error("Unable to add webapp " + webapp, e);
             }
         }
     }
@@ -169,7 +182,6 @@ public class GUIWebServer implements CleanupIF {
      * @return the instance
      */
     public static synchronized GUIWebServer getInstance() {
-        log.debug("Inside getInstance");
         if (instance == null) {
             instance = new GUIWebServer();
             instance.startServer();
@@ -180,7 +192,7 @@ public class GUIWebServer implements CleanupIF {
 
 
     /**
-     * Starts the jetty web server.
+     * Starts a Tomcat server.
      *
      * @throws IOFailure if the server for any reason cannot be started.
      */
@@ -204,10 +216,12 @@ public class GUIWebServer implements CleanupIF {
             server.stop();
             server.destroy();
             SiteSection.cleanup();
+            log.info("GUI webserver has been stopped.");
         } catch (Exception e) {
-            throw new IOFailure("Error while stopping server", e);
+            //throw new IOFailure("Error while stopping server", e);
+        	log.warn("Error while stopping server, Trying to ignore it", e);
         }
-        log.info("GUI webserver has been stopped.");
+        
 
         resetInstance();
     }

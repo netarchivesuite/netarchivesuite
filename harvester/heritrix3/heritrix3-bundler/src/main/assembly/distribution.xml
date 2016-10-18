@@ -38,6 +38,15 @@
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
+                <include>is.landsbokasafn.crawl-rss:crawl-rss:zip:dist</include>
+            </includes>
+            <unpack>true</unpack>
+            <outputDirectory>/heritrix-${heritrix3.version}/</outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
                 <include>*:jar</include>
             </includes>
             <excludes>

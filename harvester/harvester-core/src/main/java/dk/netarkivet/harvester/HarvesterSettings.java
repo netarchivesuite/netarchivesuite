@@ -712,6 +712,12 @@ public class HarvesterSettings {
     public static String MAXIMUM_OBJECT_IN_BROWSER = "settings.harvester.viewerproxy.maxSizeInBrowser";
 
     /**
+     * <b>settings.harvester.viewerproxy.allowFileDownloads</b> If set to false, there will be no links to
+     * allow download of warcfiles via the Viewerproxy GUI.
+     */
+    public static String ALLOW_FILE_DOWNLOADS = "settings.harvester.viewerproxy.allowFileDownloads";
+
+    /**
      * The maximum length (in lines) of crawllog to be displayed in a browser window.
      */
     public static String MAX_CRAWLLOG_IN_BROWSER = "settings.harvester.webinterface.maxCrawlLogInBrowser";

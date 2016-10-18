@@ -239,7 +239,7 @@ class StartedJobHistoryChartGen {
     /** The dimension of the chart axis. */
     private static final double CHART_AXIS_DIMENSION = 10.0;
     /** The relative path of the output. */
-    private static final String OUTPUT_REL_PATH = "History" + File.separator + "webapp";
+    private static final String OUTPUT_REL_PATH = "History";
 
     /** The job id. */
     private final long jobId;

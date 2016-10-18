@@ -36,6 +36,9 @@ National Library.
         <environmentName>DEV</environmentName>
         <organization>netarkivet.dk</organization>
         <tempDir>./tests/commontempdir</tempDir>
+        <metadata>
+            <fileregexsuffix>-metadata-[0-9]+.(w)?arc(.gz)?</fileregexsuffix>
+        </metadata>
         <remoteFile>
             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
         </remoteFile>

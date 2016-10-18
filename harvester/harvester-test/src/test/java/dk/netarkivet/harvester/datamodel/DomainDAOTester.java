@@ -683,15 +683,22 @@ public class DomainDAOTester extends DataModelTestCase {
         DomainDAO dao = DomainDAO.getInstance();
         try {
             dao.readSparse(null);
-            fail("Should throw exception on null");
+            fail("Should throw exception on null.");
         } catch (ArgumentNotValid e) {
             // expected
         }
 
         try {
-            dao.readSparse("Fnord");
-            fail("Should throw exception on unknown");
+            dao.readSparse("Fnord.dk");
+            fail("Should throw exception on unknown.");
         } catch (UnknownID e) {
+            // expected
+        }
+
+        try {
+            dao.readSparse("Fnord");
+            fail("Should throw exception on invalid.");
+        } catch (ArgumentNotValid e) {
             // expected
         }
 

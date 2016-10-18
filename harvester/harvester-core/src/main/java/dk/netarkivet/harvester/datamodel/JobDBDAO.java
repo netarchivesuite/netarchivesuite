@@ -1091,6 +1091,39 @@ public class JobDBDAO extends JobDAO {
             cal.roll(Calendar.DAY_OF_YEAR, 1);
             sq.addParameter(java.sql.Date.class, new java.sql.Date(cal.getTimeInMillis()));
         }
+        
+        List<String> jobIdRangeIds = query.getPartialJobIdRangeAsList(false);
+        List<String> jobIdRanges = query.getPartialJobIdRangeAsList(true);
+        if (!jobIdRangeIds.isEmpty()) {
+        	String comma = "";
+        	sql.append(" AND (jobs.job_id IN (");
+        	for(String id : jobIdRangeIds) {
+        		//id
+        		sql.append(comma);
+        		comma = ",";
+        		sql.append("?");
+                sq.addParameter(Long.class, Long.parseLong(id));
+        	}
+        	sql.append(") ");
+
+        	
+        }
+        if(!jobIdRanges.isEmpty()) {
+        	String andOr = "AND";
+        	if (!jobIdRangeIds.isEmpty()) {
+        		andOr = "OR";
+        	}
+        	
+        	for(String range : jobIdRanges) {
+        		String[] r = range.split("-");
+        		sql.append(" "+andOr+" jobs.job_id BETWEEN ? AND ? ");
+            	sq.addParameter(Long.class, Long.parseLong(r[0]));
+            	sq.addParameter(Long.class, Long.parseLong(r[1]));
+        	}
+        }
+        if (!jobIdRangeIds.isEmpty()) {
+    		sql.append(")");
+    	}
 
         if (!count) {
             sql.append(" ORDER BY jobs.job_id");

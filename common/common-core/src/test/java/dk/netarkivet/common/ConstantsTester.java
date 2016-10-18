@@ -31,6 +31,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import dk.netarkivet.common.utils.Settings;
+
 /**
  * Unit tests for methods in class dk.netarkivet.common.Constants.
  */
@@ -39,7 +41,7 @@ public class ConstantsTester {
     @Test
     public void checkMetadataPattern() {
         Long id = 1L;
-        String pattern = id + Constants.METADATA_FILE_PATTERN_SUFFIX;
+        String pattern = id + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
         String[] matchingFiles = new String[]{
                 "1-metadata-1.warc", "1-metadata-1.arc", "1-metadata-1.warc.gz", "1-metadata-1.arc.gz"
         };

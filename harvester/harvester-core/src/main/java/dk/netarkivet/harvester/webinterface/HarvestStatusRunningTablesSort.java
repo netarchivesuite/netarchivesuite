@@ -28,7 +28,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.TableSort;
 
 /**
- * class used to manage the sort of tables in the harvest status running screen.
+ * Class used to manage the sort of tables in the harvest status running screen.
+ * Used only by History/Harveststatus-running.jsp
  */
 public class HarvestStatusRunningTablesSort {
     /** list of the column id. */

@@ -47,7 +47,7 @@ import dk.netarkivet.wayback.TestInfo;
  */
 public class DeduplicationCDXExtractionBatchJobTester {
 
-    public static final String METADATA_FILENAME = "duplicate.metadata.arc";
+    public static final String METADATA_FILENAME = "12345-metadata-4.arc";
     /** The two next files doesn't exist, therefore renamed from REAL to UNREAL */
     public static final String METADATA_FILENAME_UNREAL_1 = "124412-metadata-1.arc";
     public static final String METADATA_FILENAME_UNREAL_2 = "124399-metadata-1.arc";

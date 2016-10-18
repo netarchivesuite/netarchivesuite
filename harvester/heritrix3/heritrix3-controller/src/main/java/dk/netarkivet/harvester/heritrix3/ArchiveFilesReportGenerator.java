@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
@@ -44,6 +45,7 @@ class ArchiveFilesReportGenerator {
 
     public ArchiveFilesReportGenerator(IngestableFiles ingestableFiles) {
         this.ingestablefiles = ingestableFiles;
+        ISO_8601_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
     }   
 
     /**
