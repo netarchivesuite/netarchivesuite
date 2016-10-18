@@ -225,6 +225,9 @@ public class Heritrix3JobMonitor {
         return bytes;
     }
 
+    public void search() {
+    }
+
     public synchronized void dispose() {
         bActive = false;
         bInitialized = false;

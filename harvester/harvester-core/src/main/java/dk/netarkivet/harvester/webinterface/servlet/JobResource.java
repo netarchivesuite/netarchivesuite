@@ -3,6 +3,8 @@ package dk.netarkivet.harvester.webinterface.servlet;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -53,7 +55,7 @@ public class JobResource implements ResourceAbstract {
             }
         }
         else if (resource_id == R_CRAWLLOG) {
-            if ("GET".equals(method)) {
+            if ("GET".equals(method) || "POST".equals(method)) {
                 crawllog_list(req, resp, numerics);
             }
         }
@@ -192,6 +194,12 @@ public class JobResource implements ResourceAbstract {
         }
         if (linesPerPage > 1000) {
             linesPerPage = 1000;
+        }
+        tmpStr = req.getParameter("q");
+        if (tmpStr != null && tmpStr.length() > 0) {
+        	Pattern p = Pattern.compile(tmpStr);
+        	Matcher m = p.matcher("aaaaab");
+        	boolean b = m.matches();
         }
 
         StringBuilder sb = new StringBuilder();
