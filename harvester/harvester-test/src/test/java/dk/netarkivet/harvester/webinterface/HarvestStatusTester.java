@@ -215,8 +215,8 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         HarvestStatusQuery query = new HarvestStatusQuery(servletRequest);
 
-        // check default
-        assertTrue("Expected other default sort order", query.isSortAscending());
+        // check default sorting, which from NAS 5.2 is Descending.
+        assertFalse("Expected other default sort order", query.isSortAscending());
 
         // check error on faulty parameter
         Map<String, String[]> parms = new HashMap<String, String[]>();
@@ -233,10 +233,10 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         // check set order parameter
         parms = new HashMap<String, String[]>();
         parms.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(),
-                new String[] {HarvestStatusQuery.SORT_ORDER.DESC.name()});
+                new String[] {HarvestStatusQuery.SORT_ORDER.ASC.name()});
         servletRequest.setParameterMap(parms);
         query = new HarvestStatusQuery(servletRequest);
-        assertFalse("Expected descending sort order", query.isSortAscending());
+        assertTrue("Expected ascending sort order", query.isSortAscending());
     }
 
     @Test
@@ -247,9 +247,9 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         // check default
         JobStatus[] selectedStatuses = query.getSelectedJobStatuses();
-        assertTrue("Only one statuscode should have selected", selectedStatuses.length == 1);
+        assertTrue("No statuscode (same as ALL) should have selected.", selectedStatuses.length == 0);
 
-        assertTrue("Expected other default sort order", query.isSortAscending());
+        //assertTrue("Expected other default sort order", query.isSortAscending());
 
         // check error on faulty parameter
         Map<String, String[]> parms = new HashMap<String, String[]>();

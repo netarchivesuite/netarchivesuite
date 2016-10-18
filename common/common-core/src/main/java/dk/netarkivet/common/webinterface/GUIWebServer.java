@@ -147,7 +147,11 @@ public class GUIWebServer implements CleanupIF {
             }
             try {
                 //add the jar file to tomcat
-                String warfile = new File(basedir.getAbsolutePath(), webapp).getAbsolutePath();
+                final File warfileFile = new File(basedir.getAbsolutePath(), webapp);
+                if (!warfileFile.exists() || !warfileFile.isFile()) {
+                    throw new IOFailure("Could not find expected file " + warfileFile.getAbsolutePath());
+                }
+                String warfile = warfileFile.getAbsolutePath();
                 log.info("Deploying webapp with context {} at docbase {}.", webbase, warfile);
                 StandardContext ctx = (StandardContext) server.addWebapp(webbase, warfile);
                 if (taglibsScanningDisabled) {
