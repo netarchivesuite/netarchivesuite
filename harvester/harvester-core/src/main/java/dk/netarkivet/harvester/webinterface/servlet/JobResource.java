@@ -1,10 +1,9 @@
 package dk.netarkivet.harvester.webinterface.servlet;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.InputStream;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -114,12 +113,25 @@ public class JobResource implements ResourceAbstract {
             regex =".*";
         }
 
+        String resource = "dk/netarkivet/harvester/webinterface/servlet/nas.groovy";
+        InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        byte[] tmpArr = new byte[8192];
+        int read;
+        while ((read = in.read(tmpArr)) != -1) {
+            bOut.write(tmpArr, 0, read);
+        }
+        in.close();
+        String script = new String(bOut.toByteArray(), "UTF-8");
+
+        /*
         //RandomAccessFile raf = new RandomAccessFile("/home/nicl/workspace-nas-h3/heritrix3-scripts/src/main/java/view-frontier-url.groovy", "r");
         RandomAccessFile raf = new RandomAccessFile("/home/nicl/workspace-nas-h3/heritrix3-scripts/src/main/java/nas.groovy", "r");
         byte[] src = new byte[(int)raf.length()];
         raf.readFully(src);
         raf.close();
         String script = new String(src, "UTF-8");
+        */
 
         String tmpStr = req.getParameter("delete");
         if (tmpStr != null && "1".equals(tmpStr) ) {
@@ -147,12 +159,12 @@ public class JobResource implements ResourceAbstract {
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
             //System.out.println(new String(scriptResult.response, "UTF-8"));
             if (scriptResult != null && scriptResult.script != null) {
-            	if (scriptResult.script.htmlOutput != null) {
+                if (scriptResult.script.htmlOutput != null) {
                     sb.append(scriptResult.script.htmlOutput);
-            	}
-            	if (scriptResult.script.rawOutput != null) {
+                }
+                if (scriptResult.script.rawOutput != null) {
                     sb.append(scriptResult.script.rawOutput);
-            	}
+                }
             }
         } else {
             sb.append("Job ");
@@ -173,6 +185,7 @@ public class JobResource implements ResourceAbstract {
         long linesPerPage = 100;
         long page = 1;
         long pages = 0;
+        String q = null;
 
         String tmpStr;
         tmpStr = req.getParameter("page");
@@ -195,19 +208,29 @@ public class JobResource implements ResourceAbstract {
         if (linesPerPage > 1000) {
             linesPerPage = 1000;
         }
+
         tmpStr = req.getParameter("q");
-        if (tmpStr != null && tmpStr.length() > 0) {
-        	Pattern p = Pattern.compile(tmpStr);
-        	Matcher m = p.matcher("aaaaab");
-        	boolean b = m.matches();
+        if (tmpStr != null && tmpStr.length() > 0 && tmpStr.equalsIgnoreCase(".*")) {
+            q = tmpStr;
+        }
+        if (q == null) {
+            q = ".*";
         }
 
         StringBuilder sb = new StringBuilder();
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
+        Pageable pageable = h3Job;
 
         if (h3Job != null && h3Job.isReady()) {
-            lines = h3Job.idxFile.length();
+            SearchResult searchResult = null;
+            if (q != null) {
+                searchResult = h3Job.getSearchResult(q);
+                searchResult.update();
+                pageable = searchResult;
+            }
+
+            lines = pageable.getIndexSize();
             if (lines > 0) {
                 lines = (lines / 8) - 1;
                 pages = Pagination.getPages(lines, linesPerPage);
@@ -223,11 +246,18 @@ public class JobResource implements ResourceAbstract {
             sb.append(" of ");
             sb.append(pages);
             sb.append("<br />\n");
+
+            sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">");
+            sb.append("<input type=<\"text\" id=\"regex\" name=\"regex\" value=\"" + q + "\" placeholder=\"content-type\">\n");
+            sb.append("<button type=\"submit\" name=\"search\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Search</button>\n");
+            sb.append("</form>");
+
+            sb.append("<br />\n");
             sb.append("<br />\n");
             sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
             sb.append("<pre>\n");
             if (lines > 0) {
-                byte[] bytes = h3Job.readPage(page, linesPerPage, true);
+                byte[] bytes = pageable.readPage(page, linesPerPage, true);
                 sb.append(new String(bytes, "UTF-8"));
             }
             sb.append("</pre>\n");

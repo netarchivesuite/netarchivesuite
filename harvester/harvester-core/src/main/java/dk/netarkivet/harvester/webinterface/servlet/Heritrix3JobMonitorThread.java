@@ -106,7 +106,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
                     jobmonitor = jobmonitorIter.next();
                     oldFilesList.add(jobmonitor.logFile);
                     oldFilesList.add(jobmonitor.idxFile);
-                    jobmonitor.dispose();
+                    jobmonitor.cleanup();
                 }
                 jobmonitorIter = runningJobMonitorMap.values().iterator();
                 while (jobmonitorIter.hasNext()) {
