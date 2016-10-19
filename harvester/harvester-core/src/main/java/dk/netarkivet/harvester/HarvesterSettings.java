@@ -504,6 +504,11 @@ public class HarvesterSettings {
     public static String METADATA_ARCHIVE_FILES_REPORT_HEADER = "settings.harvester.harvesting.metadata.archiveFilesReport.fileHeader";
 
     /**
+     * The version number which goes in metadata file names like 12345-metadata-&lt;version number&gt;.warc.gz
+     */
+    public static String METADATA_FILE_VERSION_NUMBER = "settings.harvester.harvesting.metadata.filename.versionnumber";
+
+    /**
      * <b>settings.harvester.aliases.timeout</b> The amount of time in seconds before an alias times out, and needs to
      * be re-evaluated. The default value is one year, i.e 31536000 seconds.
      */

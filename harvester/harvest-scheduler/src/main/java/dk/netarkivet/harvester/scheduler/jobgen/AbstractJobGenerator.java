@@ -41,6 +41,7 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
@@ -74,7 +75,10 @@ abstract class AbstractJobGenerator implements JobGenerator {
         log.info("Generating jobs for harvestdefinition #{}", harvest.getOid());
         int jobsMade = 0;
         final Iterator<DomainConfiguration> domainConfigurations = harvest.getDomainConfigurations();
-
+        harvest.setNumEvents(harvest.getNumEvents() + 1);
+        if (harvest.isSnapShot()) {
+            HarvestDefinitionDAO.getInstance().update(harvest);
+        }
         while (domainConfigurations.hasNext()) {
             List<DomainConfiguration> subset = new ArrayList<DomainConfiguration>();
             while (domainConfigurations.hasNext() && subset.size() < DOMAIN_CONFIG_SUBSET_SIZE) {
@@ -89,7 +93,6 @@ abstract class AbstractJobGenerator implements JobGenerator {
                     harvest.getOid());
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
         }
-        harvest.setNumEvents(harvest.getNumEvents() + 1);
 
         if (!harvest.isSnapShot()) {
             PartialHarvest focused = (PartialHarvest) harvest;

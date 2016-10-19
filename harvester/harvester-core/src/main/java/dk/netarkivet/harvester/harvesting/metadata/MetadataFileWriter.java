@@ -121,18 +121,19 @@ public abstract class MetadataFileWriter {
         if (compressionOn) {
             possibleGzSuffix = ".gz";
         }
+        int versionNumber = Settings.getInt(HarvesterSettings.METADATA_FILE_VERSION_NUMBER);
         switch (metadataFormat) {
         case MDF_ARC:
             if(isPrefix) {
-                return collectionName + "-" + jobID + "-" + harvestID + "-metadata-" + 1 + ".arc" + possibleGzSuffix;
+                return collectionName + "-" + jobID + "-" + harvestID + "-metadata-" + versionNumber + ".arc" + possibleGzSuffix;
             } else {
-                return jobID + "-metadata-" + 1 + ".arc" + possibleGzSuffix;
+                return jobID + "-metadata-" + versionNumber + ".arc" + possibleGzSuffix;
             }
         case MDF_WARC:
             if(isPrefix) {
-                return collectionName + "-" + jobID + "-" + harvestID + "-metadata-" + 1 + ".warc" + possibleGzSuffix;
+                return collectionName + "-" + jobID + "-" + harvestID + "-metadata-" + versionNumber + ".warc" + possibleGzSuffix;
             } else {
-                return jobID + "-metadata-" + 1 + ".warc" + possibleGzSuffix;
+                return jobID + "-metadata-" + versionNumber + ".warc" + possibleGzSuffix;
             }
         default:
             throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
