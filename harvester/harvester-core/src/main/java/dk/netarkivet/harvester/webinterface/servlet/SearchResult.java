@@ -17,20 +17,20 @@ public class SearchResult implements Pageable {
     protected Pattern p;
     protected Matcher m;
 
-    protected File idxFile;
-
-    protected long lastIndex;
+    protected File srIdxFile;
 
     protected RandomAccessFile idxRaf;
 
-    public SearchResult(Heritrix3JobMonitor h3Job, String q) throws IOException {
+    protected long lastIndex;
+
+    public SearchResult(Heritrix3JobMonitor h3Job, String q, int searchResultNr) throws IOException {
         this.h3Job = h3Job;
         p = Pattern.compile(q, Pattern.CASE_INSENSITIVE);
         m = p.matcher("42");
-        idxFile = new File("crwawllog-" + h3Job.jobId + "-" + "1" + ".idx");
-        lastIndex = 0;
-        idxRaf = new RandomAccessFile(idxFile, "rw");
+        srIdxFile = new File("crawllog-" + h3Job.jobId + "-" + searchResultNr + ".idx");
+        idxRaf = new RandomAccessFile(srIdxFile, "rw");
         idxRaf.setLength(0);
+        lastIndex = 0;
     }
 
     public synchronized void update() throws IOException {
@@ -80,7 +80,7 @@ public class SearchResult implements Pageable {
 
     @Override
     public long getIndexSize() {
-        return idxFile.length();
+        return srIdxFile.length();
     }
 
     @Override

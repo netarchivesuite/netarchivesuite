@@ -3,6 +3,10 @@ package dk.netarkivet.harvester.webinterface.servlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.netarchivesuite.heritrix3wrapper.AnypathResult;
@@ -49,8 +53,8 @@ public class Heritrix3JobMonitor implements Pageable {
     public static Heritrix3JobMonitor getInstance(Long jobId) throws IOException {
         Heritrix3JobMonitor jobmonitor = new Heritrix3JobMonitor();
         jobmonitor.jobId = jobId;
-        jobmonitor.logFile = new File("crwawllog-" + jobId + ".log");
-        jobmonitor.idxFile = new File("crwawllog-" + jobId + ".idx");
+        jobmonitor.logFile = new File("crawllog-" + jobId + ".log");
+        jobmonitor.idxFile = new File("crawllog-" + jobId + ".idx");
         jobmonitor.init();
         return jobmonitor;
     }
@@ -153,11 +157,20 @@ public class Heritrix3JobMonitor implements Pageable {
         return (bActive && bInitialized);
     }
 
+    protected Map<String, SearchResult> qSearchResultMap = new HashMap<String, SearchResult>();
+
+    protected int searchResultNr = 0;
+
     public synchronized SearchResult getSearchResult(String q) throws IOException {
-        return new SearchResult(this, q);
+        SearchResult searchResult = qSearchResultMap.get(q);
+        if (searchResult == null) {
+            searchResult = new SearchResult(this, q, searchResultNr++);
+            qSearchResultMap.put(q, searchResult);
+        }
+        return searchResult;
     }
 
-    public synchronized void cleanup() {
+    public synchronized void cleanup(List<File> oldFilesList) {
         bActive = false;
         bInitialized = false;
         hostUrl = null;
@@ -167,6 +180,16 @@ public class Heritrix3JobMonitor implements Pageable {
         crawlLogFilePath = null;
         IOUtils.closeQuietly(logRaf);
         IOUtils.closeQuietly(idxRaf);
+        oldFilesList.add(logFile);
+        oldFilesList.add(idxFile);
+        Iterator<SearchResult> srIter = qSearchResultMap.values().iterator();
+        SearchResult sr;
+        while (srIter.hasNext()) {
+            sr = srIter.next();
+            oldFilesList.add(sr.srIdxFile);
+            sr.cleanup();
+        }
+        qSearchResultMap.clear();
     }
 
 }

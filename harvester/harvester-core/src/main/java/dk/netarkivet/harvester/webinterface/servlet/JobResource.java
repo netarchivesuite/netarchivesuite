@@ -14,6 +14,8 @@ import org.netarchivesuite.heritrix3wrapper.ScriptResult;
 
 public class JobResource implements ResourceAbstract {
 
+    private static final String NAS_GROOVY_RESOURCE_PATH = "dk/netarkivet/harvester/webinterface/servlet/nas.groovy";
+
     private NASEnvironment environment;
 
     protected int R_JOB = -1;
@@ -113,7 +115,7 @@ public class JobResource implements ResourceAbstract {
             regex =".*";
         }
 
-        String resource = "dk/netarkivet/harvester/webinterface/servlet/nas.groovy";
+        String resource = NAS_GROOVY_RESOURCE_PATH;
         InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         byte[] tmpArr = new byte[8192];

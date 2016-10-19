@@ -62,7 +62,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
             File[] oldFiles = tmpFolder.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
-                    if (name.startsWith("crwawllog-")) {
+                    if (name.startsWith("crawllog-")) {
                         if (name.endsWith(".log") || name.endsWith(".idx")) {
                             return true;
                         }
@@ -104,9 +104,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
                 jobmonitorIter = filterJobMonitorMap.values().iterator();
                 while (jobmonitorIter.hasNext()) {
                     jobmonitor = jobmonitorIter.next();
-                    oldFilesList.add(jobmonitor.logFile);
-                    oldFilesList.add(jobmonitor.idxFile);
-                    jobmonitor.cleanup();
+                    jobmonitor.cleanup(oldFilesList);
                 }
                 jobmonitorIter = runningJobMonitorMap.values().iterator();
                 while (jobmonitorIter.hasNext()) {
