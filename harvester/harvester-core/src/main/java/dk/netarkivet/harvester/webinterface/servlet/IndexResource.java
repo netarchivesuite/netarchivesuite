@@ -1,6 +1,7 @@
 package dk.netarkivet.harvester.webinterface.servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,6 +9,16 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.antiaction.common.filter.Caching;
+import com.antiaction.common.templateengine.Template;
+import com.antiaction.common.templateengine.TemplateParts;
+import com.antiaction.common.templateengine.TemplatePlaceBase;
+import com.antiaction.common.templateengine.TemplatePlaceHolder;
+
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.Constants;
+import dk.netarkivet.common.utils.Settings;
 
 public class IndexResource implements ResourceAbstract {
 
@@ -44,6 +55,25 @@ public class IndexResource implements ResourceAbstract {
     public void index(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
+
+        Caching.caching_disable_headers(resp);
+
+        Template template = environment.templateMaster.getTemplate("master.tpl");
+
+        TemplatePlaceHolder titlePlace = TemplatePlaceBase.getTemplatePlaceHolder("title");
+        TemplatePlaceHolder headingPlace = TemplatePlaceBase.getTemplatePlaceHolder("heading");
+        TemplatePlaceHolder contentPlace = TemplatePlaceBase.getTemplatePlaceHolder("content");
+        TemplatePlaceHolder versionPlace = TemplatePlaceBase.getTemplatePlaceHolder("version");
+        TemplatePlaceHolder environmentPlace = TemplatePlaceBase.getTemplatePlaceHolder("environment");
+
+        List<TemplatePlaceBase> placeHolders = new ArrayList<TemplatePlaceBase>();
+        placeHolders.add(titlePlace);
+        placeHolders.add(headingPlace);
+        placeHolders.add(contentPlace);
+        placeHolders.add(versionPlace);
+        placeHolders.add(environmentPlace);
+
+        TemplateParts templateParts = template.filterTemplate(placeHolders, resp.getCharacterEncoding());
 
         StringBuilder sb = new StringBuilder();
 
@@ -90,30 +120,49 @@ public class IndexResource implements ResourceAbstract {
             sb.append(lines);
             sb.append("<br />\n");
             sb.append("<br />\n");
-
-            /*
-            sb.append("<pre>");
-
-            AnypathResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, null, null);
-            byte[] tmpBuf = new byte[8192];
-            int read;
-            try {
-                while ((read = anypathResult.in.read(tmpBuf)) != -1) {
-                    sb.append(new String(tmpBuf, 0, read));
-                }
-                anypathResult.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            sb.append("</pre>");
-*/
-
         }
 
-        out.write(sb.toString().getBytes("UTF-8"));
+        if (titlePlace != null) {
+            titlePlace.setText("Runnings job monitor");
+        }
+
+        if (headingPlace != null) {
+            headingPlace.setText("Runnings job monitor");
+        }
+
+        if (contentPlace != null) {
+            contentPlace.setText(sb.toString());
+        }
+
+        if (versionPlace != null) {
+            versionPlace.setText(Constants.getVersionString());
+        }
+
+        if (environmentPlace != null) {
+            environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
+        }
+
+        for (int i = 0; i < templateParts.parts.size(); ++i) {
+            out.write(templateParts.parts.get(i).getBytes());
+        }
         out.flush();
         out.close();
+
+        /*
+        sb.append("<pre>");
+        AnypathResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, null, null);
+        byte[] tmpBuf = new byte[8192];
+        int read;
+        try {
+            while ((read = anypathResult.in.read(tmpBuf)) != -1) {
+                sb.append(new String(tmpBuf, 0, read));
+            }
+            anypathResult.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        sb.append("</pre>");
+        */
     }
 
 }
