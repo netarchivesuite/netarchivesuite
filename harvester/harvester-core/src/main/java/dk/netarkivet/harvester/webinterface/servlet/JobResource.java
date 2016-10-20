@@ -212,11 +212,8 @@ public class JobResource implements ResourceAbstract {
         }
 
         tmpStr = req.getParameter("q");
-        if (tmpStr != null && tmpStr.length() > 0 && tmpStr.equalsIgnoreCase(".*")) {
+        if (tmpStr != null && tmpStr.length() > 0 && !tmpStr.equalsIgnoreCase(".*")) {
             q = tmpStr;
-        }
-        if (q == null) {
-            q = ".*";
         }
 
         StringBuilder sb = new StringBuilder();
@@ -249,8 +246,11 @@ public class JobResource implements ResourceAbstract {
             sb.append(pages);
             sb.append("<br />\n");
 
+            if (q == null) {
+                q = ".*";
+            }
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">");
-            sb.append("<input type=<\"text\" id=\"regex\" name=\"regex\" value=\"" + q + "\" placeholder=\"content-type\">\n");
+            sb.append("<input type=<\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"content-type\">\n");
             sb.append("<button type=\"submit\" name=\"search\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Search</button>\n");
             sb.append("</form>");
 

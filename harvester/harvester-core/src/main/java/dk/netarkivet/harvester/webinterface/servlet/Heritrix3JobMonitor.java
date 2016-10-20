@@ -159,7 +159,7 @@ public class Heritrix3JobMonitor implements Pageable {
 
     protected Map<String, SearchResult> qSearchResultMap = new HashMap<String, SearchResult>();
 
-    protected int searchResultNr = 0;
+    protected int searchResultNr = 1;
 
     public synchronized SearchResult getSearchResult(String q) throws IOException {
         SearchResult searchResult = qSearchResultMap.get(q);
@@ -187,6 +187,7 @@ public class Heritrix3JobMonitor implements Pageable {
         while (srIter.hasNext()) {
             sr = srIter.next();
             oldFilesList.add(sr.srIdxFile);
+            oldFilesList.add(sr.srLogFile);
             sr.cleanup();
         }
         qSearchResultMap.clear();

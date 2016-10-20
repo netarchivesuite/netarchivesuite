@@ -17,9 +17,13 @@ public class SearchResult implements Pageable {
     protected Pattern p;
     protected Matcher m;
 
+    protected File srLogFile;
+
+    protected RandomAccessFile srLogRaf;
+
     protected File srIdxFile;
 
-    protected RandomAccessFile idxRaf;
+    protected RandomAccessFile srIdxRaf;
 
     protected long lastIndex;
 
@@ -27,21 +31,27 @@ public class SearchResult implements Pageable {
         this.h3Job = h3Job;
         p = Pattern.compile(q, Pattern.CASE_INSENSITIVE);
         m = p.matcher("42");
+        srLogFile = new File("crawllog-" + h3Job.jobId + "-" + searchResultNr + ".log");
+        srLogRaf = new RandomAccessFile(srLogFile, "rw");
+        srLogRaf.setLength(0);
         srIdxFile = new File("crawllog-" + h3Job.jobId + "-" + searchResultNr + ".idx");
-        idxRaf = new RandomAccessFile(srIdxFile, "rw");
-        idxRaf.setLength(0);
+        srIdxRaf = new RandomAccessFile(srIdxFile, "rw");
+        srIdxRaf.setLength(0);
+        srIdxRaf.writeLong(0);
         lastIndex = 0;
     }
 
     public synchronized void update() throws IOException {
         RandomAccessFile logRaf = new RandomAccessFile(h3Job.logFile, "r");
-        idxRaf.seek(idxRaf.length());
         logRaf.seek(lastIndex);
+        srLogRaf.seek(srLogRaf.length());
+        srIdxRaf.seek(srIdxRaf.length());
         FileChannel logChannel = logRaf.getChannel();
         byte[] bytes = new byte[1024*1024];
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
         String tmpStr;
-        long index = lastIndex;
+        //long index = lastIndex;
+        long index = srLogRaf.length();
         int pos;
         int to;
         int mark;
@@ -63,17 +73,22 @@ public class SearchResult implements Pageable {
                         tmpStr = new String(bytes, mark, to - mark, "UTF-8");
                         m.reset(tmpStr);
                         if (m.matches()) {
-                            idxRaf.writeLong(index);
+                            srLogRaf.write(bytes, mark, pos - mark);
+                            index += pos - mark;
+                            srIdxRaf.writeLong(index);
                         }
                         // next
                         mark = pos;
-                        index += mark - pos;
-                        lastIndex = index;
+                        //index += mark - pos;
+                        //lastIndex = index;
+                        lastIndex += mark - pos;
                     }
                 } else {
                     b = false;
                 }
             }
+            byteBuffer.position(mark);
+            byteBuffer.compact();
         }
         logRaf.close();
     }
@@ -85,12 +100,11 @@ public class SearchResult implements Pageable {
 
     @Override
     public synchronized byte[] readPage(long page, long itemsPerPage, boolean descending) throws IOException {
-        RandomAccessFile logRaf = new RandomAccessFile(h3Job.logFile, "r");
-        return StringIndexFile.readPage(idxRaf, logRaf, page, itemsPerPage, descending);
+        return StringIndexFile.readPage(srIdxRaf, srLogRaf, page, itemsPerPage, descending);
     }
 
     public synchronized void cleanup() {
-        IOUtils.closeQuietly(idxRaf);
+        IOUtils.closeQuietly(srIdxRaf);
     }
 
 }
