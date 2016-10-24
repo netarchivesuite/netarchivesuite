@@ -53,6 +53,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.datamodel.eav.EAV;
 import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
@@ -320,6 +321,14 @@ public class SnapshotHarvestDefinition {
         HarvestStatus hs1 = jobDaoProvider.get().getStatusInfo(hsq1);
         HarvestStatus hs2 = jobDaoProvider.get().getStatusInfo(hsq2);
         if (hs1.getJobStatusInfo().isEmpty() || !hs2.getJobStatusInfo().isEmpty()) {
+            if (hs1.getJobStatusInfo().isEmpty()) {
+                log.debug("Cannot base snapshot job on old job, because no jobs generated for " + preHd.getName());
+            }
+            if (!hs2.getJobStatusInfo().isEmpty()) {
+                for (JobStatusInfo jobStatusInfo: hs2.getJobStatusInfo()) {
+                     log.debug("Cannot activate new jobs for {} because found job {} in state  {}.", hd.getName(), jobStatusInfo.getJobID(),jobStatusInfo.getStatus().name());
+                }
+            }
             HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvestdefinition.0.is.based.on."
                     + "unfinished.definition.1", hd.getName(), preHd.getName());
             throw new ForwardedToErrorPage("Harvest definition " + hd.getName() + " is based on unfinished definition "
