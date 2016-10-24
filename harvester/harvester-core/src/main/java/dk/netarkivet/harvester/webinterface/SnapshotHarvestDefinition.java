@@ -309,9 +309,9 @@ public class SnapshotHarvestDefinition {
         }
 
         // This query represents check one
-        HarvestStatusQuery hsq1 = new HarvestStatusQuery(preHd.getOid(), 0);
+        HarvestStatusQuery hsq1 = new HarvestStatusQuery(preHd.getOid(), 1);
         // This query represents check two
-        HarvestStatusQuery hsq2 = new HarvestStatusQuery(preHd.getOid(), 0);
+        HarvestStatusQuery hsq2 = new HarvestStatusQuery(preHd.getOid(), 1);
         // States needed to update the query for check two.
         Set<JobStatus> chosenStates = new HashSet<JobStatus>();
         chosenStates.add(JobStatus.NEW);
