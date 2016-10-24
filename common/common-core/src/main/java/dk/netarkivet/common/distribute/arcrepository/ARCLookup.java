@@ -224,7 +224,7 @@ public class ARCLookup {
                         continue;
                     }
                     String[] originParts = origin.split(",");
-                    if (originParts.length != 2) {
+                    if (originParts.length < 2) {
                         throw new IllegalState("Bad origin for URL '" + uri + "': '" + origin + "'");
                     }
                     log.debug("Found document with origin: {}", origin);
