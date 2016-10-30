@@ -605,7 +605,7 @@ public class HarvesterSettings {
      * 'startNewFilesOnCheckpoint' setting in the Heritrix WARCWriterProcessor. Only available with H3. The default is true.
      */
     public static String HERITRIX_WARC_START_NEW_FILES_ON_CHECKPOINT 
-    	= "settings.harvester.harvesting.heritrix.warc.startNewFilesOnCheckpoint";
+        = "settings.harvester.harvesting.heritrix.warc.startNewFilesOnCheckpoint";
     
     /**
      * Currently UNUSED.
@@ -805,5 +805,7 @@ public class HarvesterSettings {
      * Heritrix3 rest api.
      */
     public static String HERITRIX3_CERTIFICATE_PASSWORD = "settings.harvester.harvesting.heritrix3.certificatePassword";
+
+    public static String HERITRIX3_MONITOR_TEMP_PATH = "settings.harvester.harvesting.monitor.tempPath";
 
 }

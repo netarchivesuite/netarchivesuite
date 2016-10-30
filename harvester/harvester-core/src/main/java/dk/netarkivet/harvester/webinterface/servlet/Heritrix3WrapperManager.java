@@ -18,7 +18,7 @@ public class Heritrix3WrapperManager {
 
     public static Map<String, Heritrix3Wrapper> h3wrapperMap = new HashMap<String, Heritrix3Wrapper>();
 
-    public static Heritrix3Wrapper getHeritrix3Wrapper(String h3EngineUrl) {
+    public static Heritrix3Wrapper getHeritrix3Wrapper(String h3EngineUrl, String username, String password) {
         Heritrix3Wrapper h3wrapper = null;
         if (h3EngineUrl != null) {
             synchronized (h3wrapperMap) {
@@ -35,7 +35,7 @@ public class Heritrix3WrapperManager {
                             port = 80;
                         }
                     }
-                    h3wrapper = Heritrix3Wrapper.getInstance(hostname, port, null, null, "admin", "adminPassword");
+                    h3wrapper = Heritrix3Wrapper.getInstance(hostname, port, null, null, username, password);
                     h3wrapperMap.put(h3EngineUrl, h3wrapper);
                 }
             }
@@ -75,12 +75,12 @@ public class Heritrix3WrapperManager {
 
     public static Map<Long, Heritrix3JobMonitor> h3JobmonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
 
-    public static Heritrix3JobMonitor getJobMonitor(long jobId) throws IOException {
+    public static Heritrix3JobMonitor getJobMonitor(long jobId, NASEnvironment environment) throws IOException {
         Heritrix3JobMonitor jobmonitor;
         synchronized (h3JobmonitorMap) {
             jobmonitor = h3JobmonitorMap.get(jobId);
             if (jobmonitor == null) {
-                jobmonitor = Heritrix3JobMonitor.getInstance(jobId);
+                jobmonitor = Heritrix3JobMonitor.getInstance(jobId, environment);
                 h3JobmonitorMap.put(jobId, jobmonitor);
             }
         }

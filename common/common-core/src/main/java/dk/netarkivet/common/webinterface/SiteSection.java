@@ -152,9 +152,17 @@ public abstract class SiteSection {
                 out.print("<td>&nbsp; &nbsp; <a href=\"/" + HTMLUtils.encode(dirname) + "/"
                         + HTMLUtils.encode(pageAndTitle.getKey()) + "\"> "
                         + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, pageAndTitle.getValue()))
-                        + "</a></td>\n");
-                out.print("</tr>");
+                        + "</a></td>");
+                out.print("</tr>\n");
                 i++;
+            }
+            if (this.getClass().getName().equalsIgnoreCase("dk.netarkivet.harvester.webinterface.HistorySiteSection")) {
+                out.print("<tr>");
+                out.print("<td>&nbsp; &nbsp; <a href=\"/" + HTMLUtils.encode(dirname) + "/"
+                        + HTMLUtils.encode("history") + "/\"> "
+                        + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, "H3 remote access"))
+                        + "</a></td>");
+                out.print("</tr>\n");
             }
         }
     }

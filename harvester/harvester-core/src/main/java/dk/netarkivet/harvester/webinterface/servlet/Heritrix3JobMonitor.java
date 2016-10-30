@@ -19,7 +19,11 @@ import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 
 public class Heritrix3JobMonitor implements Pageable {
 
+    protected NASEnvironment environment;
+
     public boolean bActive = true;
+
+    public boolean bPull = false;
 
     public boolean bInitialized;
 
@@ -28,6 +32,8 @@ public class Heritrix3JobMonitor implements Pageable {
     public Job job;
 
     public Heritrix3Wrapper h3wrapper;
+
+    public String h3HostnamePort;
 
     public String hostUrl;
 
@@ -50,11 +56,12 @@ public class Heritrix3JobMonitor implements Pageable {
     protected Heritrix3JobMonitor() {
     }
 
-    public static Heritrix3JobMonitor getInstance(Long jobId) throws IOException {
+    public static Heritrix3JobMonitor getInstance(Long jobId, NASEnvironment environment) throws IOException {
         Heritrix3JobMonitor jobmonitor = new Heritrix3JobMonitor();
+        jobmonitor.environment = environment;
         jobmonitor.jobId = jobId;
-        jobmonitor.logFile = new File("crawllog-" + jobId + ".log");
-        jobmonitor.idxFile = new File("crawllog-" + jobId + ".idx");
+        jobmonitor.logFile = new File(environment.tempPath, "crawllog-" + jobId + ".log");
+        jobmonitor.idxFile = new File(environment.tempPath, "crawllog-" + jobId + ".idx");
         jobmonitor.init();
         return jobmonitor;
     }
@@ -69,7 +76,7 @@ public class Heritrix3JobMonitor implements Pageable {
                 if (startedInfo != null) {
                     hostUrl = startedInfo.getHostUrl();
                     if (hostUrl != null && hostUrl.length() > 0) {
-                        h3wrapper = Heritrix3WrapperManager.getHeritrix3Wrapper(hostUrl);
+                        h3wrapper = Heritrix3WrapperManager.getHeritrix3Wrapper(hostUrl, environment.h3AdminName, environment.h3AdminPassword);
                     }
                 }
             }
@@ -87,6 +94,21 @@ public class Heritrix3JobMonitor implements Pageable {
                 idxRaf = new RandomAccessFile(idxFile, "rw");
                 idxRaf.writeLong(0);
                 bInitialized = true;
+            }
+        }
+    }
+
+    public synchronized void update() throws IOException {
+        if (job != null) {
+            Job tmpJob = job = Heritrix3JobMonitorThread.jobDAO.read(jobId);
+            if (tmpJob != null) {
+                job = tmpJob;
+            }
+        }
+        if (jobResult != null && jobResult.job != null && jobname != null) {
+            JobResult tmpJobResult = h3wrapper.job(jobname);
+            if (tmpJobResult != null) {
+                jobResult = tmpJobResult;
             }
         }
     }
@@ -122,6 +144,7 @@ public class Heritrix3JobMonitor implements Pageable {
                                     --read;
                                     if (tmpBuf[idx++] == '\n') {
                                         idxRaf.writeLong(pos);
+                                        lastIndexed = pos;
                                     }
                                 }
                             }
@@ -146,6 +169,11 @@ public class Heritrix3JobMonitor implements Pageable {
     @Override
     public synchronized long getIndexSize() {
         return idxFile.length();
+    }
+
+    @Override
+    public long getLastIndexed() {
+        return lastIndexed;
     }
 
     @Override

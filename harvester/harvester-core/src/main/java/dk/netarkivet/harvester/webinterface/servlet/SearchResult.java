@@ -25,25 +25,25 @@ public class SearchResult implements Pageable {
 
     protected RandomAccessFile srIdxRaf;
 
-    protected long lastIndex;
+    protected long lastIndexed;
 
     public SearchResult(Heritrix3JobMonitor h3Job, String q, int searchResultNr) throws IOException {
         this.h3Job = h3Job;
         p = Pattern.compile(q, Pattern.CASE_INSENSITIVE);
         m = p.matcher("42");
-        srLogFile = new File("crawllog-" + h3Job.jobId + "-" + searchResultNr + ".log");
+        srLogFile = new File(HistoryServlet.environment.tempPath, "crawllog-" + h3Job.jobId + "-" + searchResultNr + ".log");
         srLogRaf = new RandomAccessFile(srLogFile, "rw");
         srLogRaf.setLength(0);
-        srIdxFile = new File("crawllog-" + h3Job.jobId + "-" + searchResultNr + ".idx");
+        srIdxFile = new File(HistoryServlet.environment.tempPath, "crawllog-" + h3Job.jobId + "-" + searchResultNr + ".idx");
         srIdxRaf = new RandomAccessFile(srIdxFile, "rw");
         srIdxRaf.setLength(0);
         srIdxRaf.writeLong(0);
-        lastIndex = 0;
+        lastIndexed = 0;
     }
 
     public synchronized void update() throws IOException {
         RandomAccessFile logRaf = new RandomAccessFile(h3Job.logFile, "r");
-        logRaf.seek(lastIndex);
+        logRaf.seek(lastIndexed);
         srLogRaf.seek(srLogRaf.length());
         srIdxRaf.seek(srIdxRaf.length());
         FileChannel logChannel = logRaf.getChannel();
@@ -81,7 +81,7 @@ public class SearchResult implements Pageable {
                         mark = pos;
                         //index += mark - pos;
                         //lastIndex = index;
-                        lastIndex += mark - pos;
+                        lastIndexed += mark - pos;
                     }
                 } else {
                     b = false;
@@ -96,6 +96,11 @@ public class SearchResult implements Pageable {
     @Override
     public long getIndexSize() {
         return srIdxFile.length();
+    }
+
+    @Override
+    public long getLastIndexed() {
+        return lastIndexed;
     }
 
     @Override
