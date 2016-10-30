@@ -706,7 +706,10 @@ public class JobDBDAO extends JobDAO {
             // NB this will be a performance bottleneck if the table gets big
             long totalRowsCount = 0;
 
-            s = buildSqlQuery(query, true).getPopulatedStatement(c);
+            final HarvestStatusQueryBuilder harvestStatusQueryBuilder = buildSqlQuery(query, true);
+            log.debug("Unpopulated query is {}.", harvestStatusQueryBuilder);
+            s = harvestStatusQueryBuilder.getPopulatedStatement(c);
+            log.debug("Query is {}.", s);
             ResultSet res = s.executeQuery();
             res.next();
             totalRowsCount = res.getLong(1);
@@ -943,6 +946,10 @@ public class JobDBDAO extends JobDAO {
             super();
         }
 
+        @Override public String toString() {
+            return sqlString;
+        }
+
         /**
          * @param sqlString the sqlString to set
          */
@@ -995,6 +1002,7 @@ public class JobDBDAO extends JobDAO {
             }
             return stm;
         }
+
 
     }
 
@@ -1067,12 +1075,14 @@ public class JobDBDAO extends JobDAO {
         Long harvestRun = query.getHarvestRunNumber();
         if (harvestRun != null) {
             sql.append(" AND jobs.harvest_num = ?");
+            log.debug("Added harvest run number param {}.", harvestRun);
             sq.addParameter(Long.class, harvestRun);
         }
 
         Long harvestId = query.getHarvestId();
         if (harvestId != null) {
             sql.append(" AND harvestdefinitions.harvest_id = ?");
+            log.debug("Added harvest_id param {}.", harvestId);
             sq.addParameter(Long.class, harvestId);
         }
 
