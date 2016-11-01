@@ -60,7 +60,12 @@ public class NASEnvironment {
         loginHandler.title = "Webdanica - Login";
         loginHandler.adminPath = "/";
 
-        tempPath = Settings.getFile(HarvesterSettings.HERITRIX3_MONITOR_TEMP_PATH);
+        try {
+            tempPath = Settings.getFile(HarvesterSettings.HERITRIX3_MONITOR_TEMP_PATH);
+        } catch (Exception e) {
+            //This is normal if tempPath is unset, so system directory is used.
+            tempPath = new File(System.getProperty("java.io.tmpdir"));
+        }
         if (tempPath == null || !tempPath.isDirectory() || !tempPath.isDirectory()) {
             tempPath = new File(System.getProperty("java.io.tmpdir"));
         }
