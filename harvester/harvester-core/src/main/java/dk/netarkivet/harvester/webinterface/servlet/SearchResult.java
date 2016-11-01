@@ -27,14 +27,14 @@ public class SearchResult implements Pageable {
 
     protected long lastIndexed;
 
-    public SearchResult(Heritrix3JobMonitor h3Job, String q, int searchResultNr) throws IOException {
+    public SearchResult(NASEnvironment environment, Heritrix3JobMonitor h3Job, String q, int searchResultNr) throws IOException {
         this.h3Job = h3Job;
         p = Pattern.compile(q, Pattern.CASE_INSENSITIVE);
         m = p.matcher("42");
-        srLogFile = new File(HistoryServlet.environment.tempPath, "crawllog-" + h3Job.jobId + "-" + searchResultNr + ".log");
+        srLogFile = new File(environment.tempPath, "crawllog-" + h3Job.jobId + "-" + searchResultNr + ".log");
         srLogRaf = new RandomAccessFile(srLogFile, "rw");
         srLogRaf.setLength(0);
-        srIdxFile = new File(HistoryServlet.environment.tempPath, "crawllog-" + h3Job.jobId + "-" + searchResultNr + ".idx");
+        srIdxFile = new File(environment.tempPath, "crawllog-" + h3Job.jobId + "-" + searchResultNr + ".idx");
         srIdxRaf = new RandomAccessFile(srIdxFile, "rw");
         srIdxRaf.setLength(0);
         srIdxRaf.writeLong(0);

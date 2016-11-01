@@ -192,7 +192,7 @@ public class Heritrix3JobMonitor implements Pageable {
     public synchronized SearchResult getSearchResult(String q) throws IOException {
         SearchResult searchResult = qSearchResultMap.get(q);
         if (searchResult == null) {
-            searchResult = new SearchResult(this, q, searchResultNr++);
+            searchResult = new SearchResult(environment, this, q, searchResultNr++);
             qSearchResultMap.put(q, searchResult);
         }
         return searchResult;
