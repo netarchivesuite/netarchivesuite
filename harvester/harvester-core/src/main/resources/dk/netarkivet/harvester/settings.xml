@@ -206,6 +206,9 @@ National Library.
                     <versionnumber>1</versionnumber>
                 </filename>
             </metadata>
+            <monitor>
+                <tempPath></tempPath>
+            </monitor>
         </harvesting>
         <indexserver>
             <listeningcheckinterval>30000</listeningcheckinterval>
