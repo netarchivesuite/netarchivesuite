@@ -74,7 +74,7 @@ public class NASEnvironment {
         h3AdminPassword = Settings.get(HarvesterSettings.HERITRIX_ADMIN_PASSWORD);
 
         this.servletConfig = theServletConfig;
-        h3JobMonitorThread = new Heritrix3JobMonitorThread();
+        h3JobMonitorThread = new Heritrix3JobMonitorThread(this);
     }
 
     public void start() {

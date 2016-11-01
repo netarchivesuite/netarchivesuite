@@ -28,6 +28,8 @@ public class Heritrix3JobMonitorThread implements Runnable {
     /** The logger for this class. */
     private static final Logger LOG = LoggerFactory.getLogger(Heritrix3JobMonitorThread.class);
 
+    protected NASEnvironment environment;
+
     protected static HarvestMonitor harvestMonitor;
 
     protected static JobDAO jobDAO;
@@ -59,6 +61,10 @@ public class Heritrix3JobMonitorThread implements Runnable {
 
     public List<String> h3HostnamePortDisabledList = new ArrayList<String>();
 
+    public Heritrix3JobMonitorThread(NASEnvironment environment) {
+        this.environment = environment;
+    }
+
     public void start() {
         thread = new Thread(this, "Heritrix3 Job Monitor Thread");
         thread.start();
@@ -73,7 +79,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
             LOG.info("CrawlLog Thread started.");
 
             //File tmpFolder = new File("/tmp/");
-            File tmpFolder = HistoryServlet.environment.tempPath;;
+            File tmpFolder = environment.tempPath;;
             File[] oldFiles = tmpFolder.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
@@ -107,7 +113,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
                         if (jobmonitor == null) {
                             try {
                                 // New H3 job.
-                                jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId, HistoryServlet.environment);
+                                jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId, environment);
                             } catch (IOException e) {
                             }
                         }
@@ -206,7 +212,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
             Iterator<String> iter = h3HostPortSet.iterator();
             while (iter.hasNext()) {
                 h3HostnamePort = iter.next();
-                if (HistoryServlet.environment.isH3HostnamePortEnabled(h3HostnamePort)) {
+                if (environment.isH3HostnamePortEnabled(h3HostnamePort)) {
                     enabledList.add(h3HostnamePort);
                 } else {
                     disabledList.add(h3HostnamePort);
