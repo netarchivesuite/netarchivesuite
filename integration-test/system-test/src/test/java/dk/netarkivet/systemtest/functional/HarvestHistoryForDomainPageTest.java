@@ -233,9 +233,9 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
                 "Only 2 harvests should be listed and the next link should be enabled.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         assertEquals(
-                "Didn't find the expected 2 harvests on the first page",
+                "Didn't find the expected 2 harvests on the first page", 2,
                 PageHelper.getWebDriver()
-                        .findElements(By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
+                        .findElements(By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size());
 
         addStep("Click the 'End time' header link twice",
                 "The table should now again be sorted descending according to End time.");
@@ -321,7 +321,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
             getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                     "if [ -f conf/settings_GUIApplication.xml.original ]; then "
                             + "echo conf/settings_GUIApplication.xml.original exist, moving back.; "
-                            + "conf/kill_GUIApplication.sh; "
+                            + "conf/kill_GUIApplication.sh; sleep 20;"
                             + "cp conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
                             + " conf/start_GUIApplication.sh; " + "fi");
             TestGUIController.waitForGUIToStart(120);
