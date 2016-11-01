@@ -77,11 +77,11 @@ public class SearchResult implements Pageable {
                             index += pos - mark;
                             srIdxRaf.writeLong(index);
                         }
+                        lastIndexed += pos - mark;
                         // next
                         mark = pos;
-                        //index += mark - pos;
+                        //index += pos - mark;
                         //lastIndex = index;
-                        lastIndexed += mark - pos;
                     }
                 } else {
                     b = false;
@@ -100,7 +100,7 @@ public class SearchResult implements Pageable {
 
     @Override
     public long getLastIndexed() {
-        return lastIndexed;
+        return srLogFile.length();
     }
 
     @Override

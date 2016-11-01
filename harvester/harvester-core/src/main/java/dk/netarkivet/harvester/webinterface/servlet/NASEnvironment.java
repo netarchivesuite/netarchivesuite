@@ -70,6 +70,9 @@ public class NASEnvironment {
 
         this.servletConfig = theServletConfig;
         h3JobMonitorThread = new Heritrix3JobMonitorThread();
+    }
+
+    public void start() {
         h3JobMonitorThread.start();
     }
 

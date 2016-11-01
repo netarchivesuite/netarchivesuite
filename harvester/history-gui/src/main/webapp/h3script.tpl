@@ -11,7 +11,7 @@
 								</select>
 								<input class="small inline button" type="submit" value="execute">
 							</div>
-							<textarea rows='20' style='width:100%' name='script' id='editor'></textarea>
+							<textarea rows='20' style='width:100%' name='script' id='editor'><placeholder id="script" /></textarea>
 						</form>
 
 <div class="row">

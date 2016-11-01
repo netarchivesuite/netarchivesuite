@@ -11,10 +11,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.netarchivesuite.heritrix3wrapper.ScriptResult;
+import org.netarchivesuite.heritrix3wrapper.StreamResult;
 import org.netarchivesuite.heritrix3wrapper.jaxb.Job;
+import org.netarchivesuite.heritrix3wrapper.jaxb.Report;
 
 import com.antiaction.common.filter.Caching;
 import com.antiaction.common.templateengine.TemplateBuilderFactory;
+import com.antiaction.common.templateengine.TemplateBuilderPlaceHolder;
+import com.antiaction.common.templateengine.TemplatePlaceHolder;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -221,6 +225,7 @@ public class JobResource implements ResourceAbstract {
 
             if (h3Job.jobResult != null && h3Job.jobResult.job != null) {
                 job = h3Job.jobResult.job;
+                sb.append("<br />\n");
                 for (int i=0; i<job.availableActions.size(); ++i) {
                     if (i > 0) {
                         sb.append("&nbsp;");
@@ -234,10 +239,7 @@ public class JobResource implements ResourceAbstract {
                 }
                 sb.append("<br />\n");
                 sb.append("<br />\n");
-            }
 
-            if (h3Job.jobResult != null && h3Job.jobResult.job != null) {
-                job = h3Job.jobResult.job;
                 sb.append("shortName: ");
                 sb.append(job.shortName);
                 sb.append("<br />\n");
@@ -556,7 +558,7 @@ public class JobResource implements ResourceAbstract {
             sb.append(lines);
             sb.append("<br />\n");
             sb.append("Cached size: ");
-            sb.append(h3Job.lastIndexed);
+            sb.append(pageable.getLastIndexed());
             sb.append("<br />\n");
 
             sb.append("<a href=\"");
@@ -564,15 +566,15 @@ public class JobResource implements ResourceAbstract {
             sb.append("\" class=\"btn btn-default\">");
             sb.append("Update cache");
             sb.append("</a>");
+            sb.append("the cache manually ");
             sb.append("<br />\n");
 
             if (q == null) {
                 q = ".*";
             }
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">");
-            sb.append("<input type=<\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"content-type\">\n");
+            sb.append("<input type=\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"content-type\">\n");
             sb.append("<button type=\"submit\" name=\"search\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Search</button>\n");
-            sb.append("</form>");
 
             sb.append("<br />\n");
             sb.append("<br />\n");
@@ -586,6 +588,7 @@ public class JobResource implements ResourceAbstract {
             sb.append("</pre>\n");
             sb.append("</div>\n");
             sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
+            sb.append("</form>");
         } else {
             sb.append("Job ");
             sb.append(numerics.get(0));
@@ -636,6 +639,18 @@ public class JobResource implements ResourceAbstract {
         if (regex == null || regex.length() == 0) {
             regex =".*";
         }
+        long limit = 1000;
+        String limitStr = req.getParameter("limit");
+        if (limitStr != null && limitStr.length() > 0) {
+            try {
+                limit = Long.parseLong(limitStr);
+            } catch (NumberFormatException e) {
+            }
+        }
+        String initials = req.getParameter("initials");
+        if (initials == null) {
+            initials = "";
+        }
 
         String resource = NAS_GROOVY_RESOURCE_PATH;
         InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
@@ -657,11 +672,14 @@ public class JobResource implements ResourceAbstract {
         String script = new String(src, "UTF-8");
         */
 
-        String tmpStr = req.getParameter("delete");
-        if (tmpStr != null && "1".equals(tmpStr) ) {
-            script += "\n\ndeleteFromFrontier '" + regex + "'\n";
+        String deleteStr = req.getParameter("delete");
+        if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
+            script += "\n";
+            script += "\ninitials = \"" + initials + "\"";
+            script += "\ndeleteFromFrontier '" + regex + "'\n";
         } else {
-            script += "\n\nlistFrontier '" + regex + "'\n";
+            script += "\n";
+            script += "\nlistFrontier '" + regex + "', " + limit + "\n";
         }
 
         // To use, just remove the initial "//" from any one of these lines.
@@ -683,22 +701,37 @@ public class JobResource implements ResourceAbstract {
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
 
-            sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">");
-            sb.append("<input type=<\"text\" id=\"regex\" name=\"regex\" value=\"" + regex + "\" placeholder=\"content-type\">\n");
+            if (deleteStr != null && "1".equals(deleteStr) && (initials == null || initials.length() == 0)) {
+                //sb.append("<span style=\"text-color: red;\">Initials required to delete from the frontier queue!</span><br />\n");
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to delete from the frontier queue!</div>");
+            }
+
+            sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
+            sb.append("<label for=\"limit\">Limit:</label>");
+            sb.append("<input type=\"text\" id=\"limit\" name=\"limit\" value=\"" + limit + "\" placeholder=\"return limit\">\n");
+            sb.append("<label for=\"regex\">Filter regex:</label>");
+            sb.append("<input type=\"text\" id=\"regex\" name=\"regex\" value=\"" + regex + "\" placeholder=\"regex\">\n");
             sb.append("<button type=\"submit\" name=\"show\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Show</button>\n");
+            sb.append("&nbsp;");
+            sb.append("<label for=\"initials\">Deleter initials:</label>");
+            sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
             sb.append("<button type=\"submit\" name=\"delete\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Delete</button>\n");
-            sb.append("</form>");
+            sb.append("</form>\n");
 
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
             //System.out.println(new String(scriptResult.response, "UTF-8"));
             if (scriptResult != null && scriptResult.script != null) {
                 if (scriptResult.script.htmlOutput != null) {
+                    sb.append("<fieldset><legend>htmlOut</legend>");
                     sb.append(scriptResult.script.htmlOutput);
+                    sb.append("</fieldset><br />\n");
                 }
                 if (scriptResult.script.rawOutput != null) {
+                    sb.append("<fieldset><legend>rawOut</legend>");
                     sb.append("<pre>");
                     sb.append(scriptResult.script.rawOutput);
                     sb.append("</pre>");
+                    sb.append("</fieldset><br />\n");
                 }
             }
         } else {
@@ -737,15 +770,25 @@ public class JobResource implements ResourceAbstract {
         out.close();
     }
 
+    public static class ScriptTemplateBuilder extends MasterTemplateBuilder {
+
+        @TemplateBuilderPlaceHolder("script")
+        public TemplatePlaceHolder scriptPlace;
+
+    }
+
     public void script(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
 
-        TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "h3script.tpl", "UTF-8", MasterTemplateBuilder.class);
-        MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
+        TemplateBuilderFactory<ScriptTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "h3script.tpl", "UTF-8", ScriptTemplateBuilder.class);
+        ScriptTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
 
         String engineStr = req.getParameter("engine");
         String scriptStr = req.getParameter("script");
+        if (scriptStr == null) {
+            scriptStr = "";
+        }
 
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
@@ -774,6 +817,9 @@ public class JobResource implements ResourceAbstract {
                         sb.append(scriptResult.script.rawOutput);
                         sb.append("</pre>");
                     }
+                    sb.append("<pre>");
+                    sb.append(new String(scriptResult.response, "UTF-8"));
+                    sb.append("</pre>");
                 }
             }
         }
@@ -788,6 +834,10 @@ public class JobResource implements ResourceAbstract {
 
         if (masterTplBuilder.headingPlace != null) {
             masterTplBuilder.headingPlace.setText("Scripting console");
+        }
+
+        if (masterTplBuilder.scriptPlace != null) {
+            masterTplBuilder.scriptPlace.setText(scriptStr);
         }
 
         if (masterTplBuilder.contentPlace != null) {
@@ -808,22 +858,6 @@ public class JobResource implements ResourceAbstract {
         out.close();
     }
 
-    /*
-    sb.append("<pre>");
-    AnypathResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, null, null);
-    byte[] tmpBuf = new byte[8192];
-    int read;
-    try {
-        while ((read = anypathResult.in.read(tmpBuf)) != -1) {
-            sb.append(new String(tmpBuf, 0, read));
-        }
-        anypathResult.close();
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-    sb.append("</pre>");
-    */
-
     public void report(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
@@ -834,7 +868,10 @@ public class JobResource implements ResourceAbstract {
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
 
+        String reportStr = req.getParameter("report");
+
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
+        Job job;
 
         if (h3Job != null && h3Job.isReady()) {
             menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
@@ -845,6 +882,45 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("\"> ");
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
+
+            if (h3Job.jobResult != null && h3Job.jobResult.job != null) {
+                job = h3Job.jobResult.job;
+                Report report;
+                for (int i=0; i<job.reports.size(); ++i) {
+                    report = job.reports.get(i);
+                    if (i > 0) {
+                        sb.append("&nbsp;");
+                    }
+                    sb.append("<a href=\"");
+                    sb.append(NASEnvironment.servicePath);
+                    sb.append("job/");
+                    sb.append(h3Job.jobId);
+                    sb.append("/report/?report=");
+                    sb.append(report.className);
+                    sb.append("\" class=\"btn btn-default\">");
+                    sb.append(report.shortName);
+                    sb.append("</a>");
+                }
+                if (reportStr != null && reportStr.length() > 0) {
+                    sb.append("<br />\n");
+                    sb.append("<h5>");
+                    sb.append(reportStr);
+                    sb.append("</h5>");
+                    sb.append("<pre>");
+                    StreamResult anypathResult = h3Job.h3wrapper.path("job/" + h3Job.jobname + "/report/" + reportStr, null, null);
+                    byte[] tmpBuf = new byte[8192];
+                    int read;
+                    try {
+                        while ((read = anypathResult.in.read(tmpBuf)) != -1) {
+                            sb.append(new String(tmpBuf, 0, read));
+                        }
+                        anypathResult.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    sb.append("</pre>");
+                }
+            }
         }
 
         if (masterTplBuilder.titlePlace != null) {

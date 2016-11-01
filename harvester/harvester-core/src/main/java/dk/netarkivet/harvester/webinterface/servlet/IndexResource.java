@@ -122,7 +122,7 @@ public class IndexResource implements ResourceAbstract {
 
         for (int i=0; i<hcList.size(); ++i) {
             hcs = hcList.get(i);
-            sb.append("<h3>");
+            sb.append("<h5>");
             sb.append(hcs.hc.getName());
             if (hcs.hc.isDefault()) {
                 sb.append("*");
@@ -135,26 +135,30 @@ public class IndexResource implements ResourceAbstract {
                 sb.append("focused");
             }
             sb.append(")");
-            sb.append("</h3>");
-            for (int j=0; j<hcs.h3JobList.size(); ++j) {
-                h3Job = hcs.h3JobList.get(j);
-                if (j > 0) {
-                    sb.append("&nbsp;");
+            sb.append("</h5>\n");
+            if (hcs.h3JobList.size() > 0) {
+                for (int j=0; j<hcs.h3JobList.size(); ++j) {
+                    h3Job = hcs.h3JobList.get(j);
+                    if (j > 0) {
+                        sb.append("&nbsp;");
+                    }
+                    sb.append("<a href=\"");
+                    sb.append(NASEnvironment.servicePath);
+                    sb.append("job/");
+                    sb.append(h3Job.jobId);
+                    sb.append("/");
+                    sb.append("\" class=\"btn btn-default\">");
+                    sb.append(h3Job.jobId);
+                    long lines = (h3Job.idxFile.length() / 8) - 1;
+                    if (lines > 0) {
+                        sb.append(" (");
+                        sb.append(lines);
+                        sb.append(")");
+                    }
+                    sb.append("</a>\n");
                 }
-                sb.append("<a href=\"");
-                sb.append(NASEnvironment.servicePath);
-                sb.append("job/");
-                sb.append(h3Job.jobId);
-                sb.append("/");
-                sb.append("\" class=\"btn btn-default\">");
-                sb.append(h3Job.jobId);
-                long lines = (h3Job.idxFile.length() / 8) - 1;
-                if (lines > 0) {
-                    sb.append(" (");
-                    sb.append(lines);
-                    sb.append(")");
-                }
-                sb.append("</a>");
+            } else {
+                sb.append("<p>No jobs running for this channel.</p>");
             }
         }
 

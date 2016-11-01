@@ -39,6 +39,7 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
         super.init(servletConfig);
 
         environment = new NASEnvironment(getServletContext(), servletConfig);
+        environment.start();
 
         pathMap = new PathMap<Resource>();
 

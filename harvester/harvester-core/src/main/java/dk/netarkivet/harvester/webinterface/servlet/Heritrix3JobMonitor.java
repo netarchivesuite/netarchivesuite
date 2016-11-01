@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.netarchivesuite.heritrix3wrapper.AnypathResult;
 import org.netarchivesuite.heritrix3wrapper.ByteRange;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
 import org.netarchivesuite.heritrix3wrapper.JobResult;
+import org.netarchivesuite.heritrix3wrapper.StreamResult;
 
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
@@ -128,7 +128,7 @@ public class Heritrix3JobMonitor implements Pageable {
                 idxRaf.seek(idxRaf.length());
                 pos = logRaf.length();
                 to = pos;
-                AnypathResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, pos, pos + tmpBuf.length - 1);
+                StreamResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, pos, pos + tmpBuf.length - 1);
                 if (anypathResult != null && anypathResult.byteRange != null && anypathResult.in != null) {
                     byteRange = anypathResult.byteRange;
                     if (byteRange.contentLength > 0) {

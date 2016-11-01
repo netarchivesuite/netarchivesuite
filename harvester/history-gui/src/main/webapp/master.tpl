@@ -8,6 +8,48 @@
 <title><placeholder id ="title" /></title>
 <link type="text/css" rel="stylesheet" href="/History/css/bootstrap.css" />
 <link type="text/css" rel="stylesheet" href="/History/css/bootstrap-responsive.css" />
+
+<style type="text/css">
+<!--
+.symbol {
+	font-size: 0.9em;
+	font-family: Times New Roman;
+	border-radius: 1em;
+	padding: .1em .6em .1em .6em;
+	font-weight: bolder;
+	color: white;
+	background-color: #4E5A56;
+}
+
+.icon-info { background-color: #3229CF; }
+.icon-error { background: #e64943; font-family: Consolas; }
+.icon-tick { background: #13c823; }
+.icon-excl { background: #ffd54b; color: black; }
+
+.icon-info:before { content: 'i'; }
+.icon-error:before { content: 'x'; }
+.icon-tick:before { content: '\002713'; }
+.icon-excl:before { content: '!'; }
+
+.notify {
+	background-color:#e3f7fc; 
+	color:#555; 
+    border:.1em solid;
+	border-color: #8ed9f6;
+    border-radius:10px;
+    font-family:Tahoma,Geneva,Arial,sans-serif;
+    font-size:1.1em;
+    padding:10px 10px 10px 10px;
+    margin:10px;
+    cursor: default;
+}
+
+.notify-yellow { background: #fff8c4; border-color: #f7deae; }
+.notify-red { background: #ffecec; border-color: #fad9d7; }
+.notify-green { background: #e9ffd9; border-color: #D1FAB6; }
+-->
+</style>
+
 <script type="text/javascript">
 <!--
 function giveFocus() {
