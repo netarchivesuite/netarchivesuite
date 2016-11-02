@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
 *$Id$
 * $Revision$
 * $Author$
@@ -27,15 +27,15 @@ National Library.
 *
 -->
 <!--
-        This file contains an example of a deploy configuration file for the 
-        one machine scenario. Kind of running 'quickstart' on another machine. 
-        Uses HTTP as file transport agent. Requires the availability of 
+        This file contains an example of a deploy configuration file for the
+        one machine scenario. Kind of running 'quickstart' on another machine.
+        Uses HTTP as file transport agent. Requires the availability of
         port 7676: JMS broker
-        port 8040-8050 for the http filetransport servers serving the HTTPRemoteFile;         
+        port 8040-8050 for the http filetransport servers serving the HTTPRemoteFile;
         port 8070 for the viewerproxy.
         port 8074 for the GUIApplication webinterface
-        port 8090-8093 for the Heritrix1 GUI 
-        port 8094-8097 for the Heritrix3 GUI 
+        port 8090-8093 for the Heritrix1 GUI
+        port 8094-8097 for the Heritrix3 GUI
         port 8110-8120: JMX ports
         port 8210-8220: RMI ports
         port 8120-8121: databases
@@ -122,21 +122,29 @@ National Library.
           <admin>
             <class>dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin</class>
             <database>
-              <class>dk.netarkivet.archive.arcrepositoryadmin.DerbyServerSpecifics</class>
-              <baseUrl>jdbc:derby</baseUrl>
+              <class>dk.netarkivet.archive.arcrepositoryadmin.PostgreSQLSpecifics</class>
+              <baseUrl>jdbc:postgresql</baseUrl>
               <machine>localhost</machine>
-              <port>48120</port>
-              <dir>adminDB</dir>
+              <port>5432</port>
+              <dir>admindb</dir>
+              <username>devel</username>
+              <password>develpass</password>
+              <pool>
+                <idleConnTestQuery>SELECT COUNT(*) FROM replica</idleConnTestQuery>
+                <idleConnTestOnCheckin>false</idleConnTestOnCheckin>
+              </pool>
             </database>
           </admin>
         </archive>
         <common>
           <database>
-            <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
-            <baseUrl>jdbc:derby</baseUrl>
+            <class>dk.netarkivet.harvester.datamodel.PostgreSQLSpecifics</class>
+            <baseUrl>jdbc:postgresql</baseUrl>
             <machine>localhost</machine>
-            <port>48121</port>
-            <dir>harvestDatabase/fullhddb</dir>
+            <port>5432</port>
+            <dir>harvestdb</dir>
+            <username>devel</username>
+            <password>develpass</password>
           </database>
         </common>
       </settings>
