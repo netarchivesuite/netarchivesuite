@@ -155,7 +155,7 @@
     <dependency>
       <groupId>com.antiaction</groupId>
       <artifactId>common-template-engine</artifactId>
-      <version>0.2.0-NAS</version>
+      <version>0.3.0-NAS</version>
     </dependency>
 
     <dependency>

@@ -1,19 +1,38 @@
 package dk.netarkivet.harvester.webinterface.servlet;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.antiaction.common.filter.Caching;
+import com.antiaction.common.templateengine.TemplateBuilderFactory;
+import com.antiaction.common.templateengine.TemplateBuilderPlaceHolder;
+import com.antiaction.common.templateengine.TemplatePlaceHolder;
+
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.Constants;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
+import dk.netarkivet.harvester.webinterface.servlet.NASEnvironment.StringMatcher;
+
 public class IndexResource implements ResourceAbstract {
 
     private NASEnvironment environment;
 
     protected int R_INDEX = -1;
+
+    protected int R_CONFIG = -1;
 
     @Override
     public void resources_init(NASEnvironment environment) {
@@ -23,6 +42,7 @@ public class IndexResource implements ResourceAbstract {
     @Override
     public void resources_add(ResourceManagerAbstract resourceManager) {
         R_INDEX = resourceManager.resource_add(this, "/", false);
+        R_CONFIG = resourceManager.resource_add(this, "/config/", false);
     }
 
     @Override
@@ -39,79 +59,235 @@ public class IndexResource implements ResourceAbstract {
                 index(req, resp, numerics);
             }
         }
+        if (resource_id == R_CONFIG) {
+            if ("GET".equals(method) || "POST".equals(method)) {
+                config(req, resp, numerics);
+            }
+        }
+    }
+
+    public static class HarvestChannelStructure {
+        public HarvestChannel hc;
+        public List<Heritrix3JobMonitor> h3JobList = new ArrayList<Heritrix3JobMonitor>();
+        public HarvestChannelStructure(HarvestChannel hc) {
+            this.hc = hc;
+        }
     }
 
     public void index(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
 
+        Caching.caching_disable_headers(resp);
+
+        TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
+        MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
+
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Heritrix3 command control center.");
-        sb.append("<br />\n");
-        sb.append("<br />\n");
-
         List<Heritrix3JobMonitor> h3JobsList = environment.h3JobMonitorThread.getRunningH3Jobs();
-        Heritrix3JobMonitor h3Jobmonitor;
+        Heritrix3JobMonitor h3Job;
 
-        sb.append("Runnings jobs:");
-        sb.append(h3JobsList.size());
+        sb.append("<a href=\"");
+        sb.append(NASEnvironment.servicePath);
+        sb.append("config/");
+        sb.append("\" class=\"btn btn-default\">");
+        sb.append("Configure");
+        sb.append("</a>");
+        sb.append("<br />\n");
         sb.append("<br />\n");
 
-        Iterator<Heritrix3JobMonitor> iter = h3JobsList.iterator();
-        while (iter.hasNext()) {
-            h3Jobmonitor = iter.next();
-            sb.append("jobId: ");
-            sb.append("<a href=\"");
-            sb.append(NASEnvironment.servicePath);
-            sb.append("job/");
-            sb.append(h3Jobmonitor.jobId);
-            sb.append("/");
-            sb.append("\">");
-            sb.append(h3Jobmonitor.jobId);
-            sb.append("</a>");
-            sb.append("<br />\n");
-            sb.append("Channel: ");
-            sb.append(h3Jobmonitor.job.getChannel());
-            sb.append("<br />\n");
-            sb.append("isSnapshop: ");
-            sb.append(h3Jobmonitor.job.isSnapshot());
-            sb.append("<br />\n");
-            sb.append("Heritrix3 WebUI: ");
-            sb.append("<a href=\"");
-            sb.append(h3Jobmonitor.hostUrl);
-            sb.append("/");
-            sb.append("\">");
-            sb.append(h3Jobmonitor.hostUrl);
-            sb.append("</a>");
-            sb.append("<br />\n");
-            long lines = (h3Jobmonitor.idxFile.length() / 8) - 1;
-            sb.append("CrawlLog number of cached lines: ");
-            sb.append(lines);
-            sb.append("<br />\n");
-            sb.append("<br />\n");
+        List<HarvestChannelStructure> hcList = new ArrayList<HarvestChannelStructure>();
+        Map<String, HarvestChannelStructure> hcMap = new HashMap<String, HarvestChannelStructure>();
 
-            /*
-            sb.append("<pre>");
-
-            AnypathResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, null, null);
-            byte[] tmpBuf = new byte[8192];
-            int read;
-            try {
-                while ((read = anypathResult.in.read(tmpBuf)) != -1) {
-                    sb.append(new String(tmpBuf, 0, read));
-                }
-                anypathResult.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            sb.append("</pre>");
-*/
-
+        Iterator<HarvestChannel> hcIter = Heritrix3JobMonitorThread.harvestChannelDAO.getAll(true);
+        HarvestChannel hc;
+        HarvestChannelStructure hcs;
+        while (hcIter.hasNext()) {
+            hc = hcIter.next();
+            hcs = new HarvestChannelStructure(hc);
+            hcList.add(hcs);
+            hcMap.put(hc.getName(), hcs);
         }
 
-        out.write(sb.toString().getBytes("UTF-8"));
+        Iterator<Heritrix3JobMonitor> j3JobIter = h3JobsList.iterator();
+        while (j3JobIter.hasNext()) {
+            h3Job = j3JobIter.next();
+            if (!h3Job.bInitialized) {
+                h3Job.init();
+            }
+            hcs = hcMap.get(h3Job.job.getChannel());
+            hcs.h3JobList.add(h3Job);
+        }
+
+        for (int i=0; i<hcList.size(); ++i) {
+            hcs = hcList.get(i);
+            sb.append("<h5>");
+            sb.append(hcs.hc.getName());
+            if (hcs.hc.isDefault()) {
+                sb.append("*");
+            }
+            sb.append("&nbsp;");
+            sb.append("(type=");
+            if (hcs.hc.isSnapshot()) {
+                sb.append("snapshot");
+            } else {
+                sb.append("focused");
+            }
+            sb.append(")");
+            sb.append("</h5>\n");
+            if (hcs.h3JobList.size() > 0) {
+                for (int j=0; j<hcs.h3JobList.size(); ++j) {
+                    h3Job = hcs.h3JobList.get(j);
+                    if (j > 0) {
+                        sb.append("&nbsp;");
+                    }
+                    sb.append("<a href=\"");
+                    sb.append(NASEnvironment.servicePath);
+                    sb.append("job/");
+                    sb.append(h3Job.jobId);
+                    sb.append("/");
+                    sb.append("\" class=\"btn btn-default\">");
+                    sb.append(h3Job.jobId);
+                    long lines = (h3Job.idxFile.length() / 8) - 1;
+                    if (lines > 0) {
+                        sb.append(" (");
+                        sb.append(lines);
+                        sb.append(")");
+                    }
+                    sb.append("</a>\n");
+                }
+            } else {
+                sb.append("<p>No jobs running for this channel.</p>");
+            }
+        }
+
+        if (masterTplBuilder.titlePlace != null) {
+            masterTplBuilder.titlePlace.setText("H3 remote access");
+        }
+
+        if (masterTplBuilder.headingPlace != null) {
+            masterTplBuilder.headingPlace.setText("H3 remote access");
+        }
+
+        if (masterTplBuilder.contentPlace != null) {
+            masterTplBuilder.contentPlace.setText(sb.toString());
+        }
+
+        if (masterTplBuilder.versionPlace != null) {
+            masterTplBuilder.versionPlace.setText(Constants.getVersionString());
+        }
+
+        if (masterTplBuilder.environmentPlace != null) {
+            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
+        }
+
+        masterTplBuilder.write(out);
+
+        out.flush();
+        out.close();
+    }
+
+    public static class ConfigTemplateBuilder extends MasterTemplateBuilder {
+
+        @TemplateBuilderPlaceHolder("enabledhosts")
+        public TemplatePlaceHolder enabledhostsPlace;
+
+    }
+
+    public void config(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+        resp.setContentType("text/html; charset=UTF-8");
+        ServletOutputStream out = resp.getOutputStream();
+
+        Caching.caching_disable_headers(resp);
+
+        TemplateBuilderFactory<ConfigTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "h3config.tpl", "UTF-8", ConfigTemplateBuilder.class);
+        ConfigTemplateBuilder configTplBuilder = tplBuilder.getTemplateBuilder();
+
+        StringBuilder sb = new StringBuilder();
+        StringBuilder enabledhostsSb = new StringBuilder();
+
+        String method = req.getMethod().toUpperCase();
+        if ("POST".equals(method)) {
+            String enabledhostsStr = req.getParameter("enabledhosts");
+            String tmpStr;
+            if (enabledhostsStr != null) {
+                BufferedReader reader = new BufferedReader(new StringReader(enabledhostsStr));
+                List<String> enabledhostsList = new LinkedList<String>();
+                while ((tmpStr = reader.readLine()) != null) {
+                    enabledhostsList.add(tmpStr);
+                }
+                reader.close();
+                environment.replaceH3HostnamePortRegexList(enabledhostsList);
+                environment.h3JobMonitorThread.updateH3HostnamePortFilter();
+            }
+        }
+
+        synchronized (environment.h3HostPortAllowRegexList) {
+            StringMatcher stringMatcher;
+            for (int i=0; i<environment.h3HostPortAllowRegexList.size(); ++i) {
+                stringMatcher = environment.h3HostPortAllowRegexList.get(i);
+                enabledhostsSb.append(stringMatcher.str);
+                enabledhostsSb.append("\n");
+            }
+        }
+
+        synchronized (environment.h3JobMonitorThread.h3HostnamePortEnabledList) {
+            sb.append("H3 crawllog caching enabled for:");
+            sb.append("<br />\n");
+            sb.append("<br />\n");
+            if (environment.h3JobMonitorThread.h3HostnamePortEnabledList.size() > 0) {
+                for (int i=0; i<environment.h3JobMonitorThread.h3HostnamePortEnabledList.size(); ++i) {
+                    sb.append(environment.h3JobMonitorThread.h3HostnamePortEnabledList.get(i));
+                    sb.append("<br />\n");
+                }
+            } else {
+                sb.append("No host enabled.");
+                sb.append("<br />\n");
+            }
+        }
+        sb.append("<br />\n");
+        synchronized (environment.h3JobMonitorThread.h3HostnamePortDisabledList) {
+            sb.append("H3 crawllog caching disabled for:");
+            sb.append("<br />\n");
+            sb.append("<br />\n");
+            if (environment.h3JobMonitorThread.h3HostnamePortDisabledList.size() > 0) {
+                for (int i=0; i<environment.h3JobMonitorThread.h3HostnamePortDisabledList.size(); ++i) {
+                    sb.append(environment.h3JobMonitorThread.h3HostnamePortDisabledList.get(i));
+                    sb.append("<br />\n");
+                }
+            } else {
+                sb.append("No host disabled.");
+                sb.append("<br />\n");
+            }
+        }
+
+        if (configTplBuilder.titlePlace != null) {
+            configTplBuilder.titlePlace.setText("H3 remote access config");
+        }
+
+        if (configTplBuilder.headingPlace != null) {
+            configTplBuilder.headingPlace.setText("H3 remote access config");
+        }
+
+        if (configTplBuilder.enabledhostsPlace != null) {
+            configTplBuilder.enabledhostsPlace.setText(enabledhostsSb.toString());
+        }
+
+        if (configTplBuilder.contentPlace != null) {
+            configTplBuilder.contentPlace.setText(sb.toString());
+        }
+
+        if (configTplBuilder.versionPlace != null) {
+            configTplBuilder.versionPlace.setText(Constants.getVersionString());
+        }
+
+        if (configTplBuilder.environmentPlace != null) {
+            configTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
+        }
+
+        configTplBuilder.write(out);
+
         out.flush();
         out.close();
     }
