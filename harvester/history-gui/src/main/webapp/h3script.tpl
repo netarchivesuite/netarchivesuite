@@ -1,20 +1,20 @@
 <@master file="master.tpl">
 
 <place placeholder="content">
-<form method="POST">
-							<div style="margin-bottom:1em">
-								<label class="inline" for="engine">Script Engine: </label>
-								<select class="inline" style="width:auto" name="engine" id="selectEngine">
-									<option value='beanshell'>BeanShell</option>
-									<option selected='selected' value='groovy'>Groovy</option>
-									<option value='nashorn'>ECMAScript</option>
-								</select>
-								<input class="small inline button" type="submit" value="execute">
-							</div>
-							<textarea rows='20' style='width:100%' name='script' id='editor'><placeholder id="script" /></textarea>
-						</form>
+	<form method="POST">
+		<div style="margin-bottom:1em">
+			<label class="inline" for="engine">Script Engine: </label>
+			<select class="inline" style="width:auto" name="engine" id="selectEngine">
+				<option value='beanshell'>BeanShell</option>
+				<option selected='selected' value='groovy'>Groovy</option>
+				<option value='nashorn'>ECMAScript</option>
+			</select>
+			<input class="small inline button" type="submit" value="execute">
+		</div>
+		<textarea rows='20' style='width:100%' name='script' id='editor'><placeholder id="script" /></textarea>
+	</form>
 
-<div class="row">
+	<div class="row">
 		<div class="large-12 columns">
 			The script will be executed in an engine preloaded with (global) variables:
 			<ul class="no-bullet">
@@ -26,6 +26,5 @@
 			</ul>
 		</div>
 	</div>
-
-<placeholder id="content">
+<placeholder id="content" />
 </place>

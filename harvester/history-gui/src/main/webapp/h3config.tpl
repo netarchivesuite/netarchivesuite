@@ -7,5 +7,5 @@
 		<input class="small inline button" type="submit" value="update">
 	</div>
 </form>
-<placeholder id="content">
+<placeholder id="content" />
 </place>

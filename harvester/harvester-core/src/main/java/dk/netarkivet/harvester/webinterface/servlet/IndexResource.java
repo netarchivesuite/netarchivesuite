@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -75,9 +76,10 @@ public class IndexResource implements ResourceAbstract {
     }
 
     public void index(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+        Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
-
+        
         Caching.caching_disable_headers(resp);
 
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
@@ -92,7 +94,7 @@ public class IndexResource implements ResourceAbstract {
         sb.append(NASEnvironment.servicePath);
         sb.append("config/");
         sb.append("\" class=\"btn btn-default\">");
-        sb.append("Configure");
+        sb.append(environment.I18N.getString(locale, "configure"));
         sb.append("</a>");
         sb.append("<br />\n");
         sb.append("<br />\n");
@@ -128,11 +130,13 @@ public class IndexResource implements ResourceAbstract {
                 sb.append("*");
             }
             sb.append("&nbsp;");
-            sb.append("(type=");
+            sb.append("(");
+            sb.append(environment.I18N.getString(locale, "harvest.channel.type"));
+            sb.append(": ");
             if (hcs.hc.isSnapshot()) {
-                sb.append("snapshot");
+                sb.append(environment.I18N.getString(locale, "harvest.channel.type.broad"));
             } else {
-                sb.append("focused");
+                sb.append(environment.I18N.getString(locale, "harvest.channel.type.focused"));
             }
             sb.append(")");
             sb.append("</h5>\n");
@@ -158,26 +162,27 @@ public class IndexResource implements ResourceAbstract {
                     sb.append("</a>\n");
                 }
             } else {
-                sb.append("<p>No jobs running for this channel.</p>");
+                sb.append("<p>");
+                sb.append(environment.I18N.getString(locale, "running.jobs.monitor.not.on.this.channel"));
+                sb.append("</p>\n");
             }
         }
 
         if (masterTplBuilder.titlePlace != null) {
             masterTplBuilder.titlePlace.setText("H3 remote access");
         }
-
+        if (masterTplBuilder.languagesPlace != null) {
+            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
+        }
         if (masterTplBuilder.headingPlace != null) {
             masterTplBuilder.headingPlace.setText("H3 remote access");
         }
-
         if (masterTplBuilder.contentPlace != null) {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
-
         if (masterTplBuilder.versionPlace != null) {
             masterTplBuilder.versionPlace.setText(Constants.getVersionString());
         }
-
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
         }
@@ -196,6 +201,7 @@ public class IndexResource implements ResourceAbstract {
     }
 
     public void config(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+        Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
 
@@ -233,7 +239,9 @@ public class IndexResource implements ResourceAbstract {
         }
 
         synchronized (environment.h3JobMonitorThread.h3HostnamePortEnabledList) {
-            sb.append("H3 crawllog caching enabled for:");
+            sb.append("<h5>");
+            sb.append(environment.I18N.getString(locale, "running.jobs.monitor.crawllog.cache.enabled.for"));
+            sb.append(":</h5>\n");
             sb.append("<br />\n");
             sb.append("<br />\n");
             if (environment.h3JobMonitorThread.h3HostnamePortEnabledList.size() > 0) {
@@ -242,13 +250,15 @@ public class IndexResource implements ResourceAbstract {
                     sb.append("<br />\n");
                 }
             } else {
-                sb.append("No host enabled.");
+                sb.append(environment.I18N.getString(locale, "running.jobs.monitor.no.hosts.enabled"));
                 sb.append("<br />\n");
             }
         }
         sb.append("<br />\n");
         synchronized (environment.h3JobMonitorThread.h3HostnamePortDisabledList) {
-            sb.append("H3 crawllog caching disabled for:");
+            sb.append("<h5>");
+            sb.append(environment.I18N.getString(locale, "running.jobs.monitor.crawllog.cache.disabled.for"));
+            sb.append("</h5>\n");
             sb.append("<br />\n");
             sb.append("<br />\n");
             if (environment.h3JobMonitorThread.h3HostnamePortDisabledList.size() > 0) {
@@ -257,7 +267,7 @@ public class IndexResource implements ResourceAbstract {
                     sb.append("<br />\n");
                 }
             } else {
-                sb.append("No host disabled.");
+                sb.append(environment.I18N.getString(locale, "running.jobs.monitor.no.hosts.disable"));
                 sb.append("<br />\n");
             }
         }
@@ -265,23 +275,21 @@ public class IndexResource implements ResourceAbstract {
         if (configTplBuilder.titlePlace != null) {
             configTplBuilder.titlePlace.setText("H3 remote access config");
         }
-
+        if (configTplBuilder.languagesPlace != null) {
+            configTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
+        }
         if (configTplBuilder.headingPlace != null) {
             configTplBuilder.headingPlace.setText("H3 remote access config");
         }
-
         if (configTplBuilder.enabledhostsPlace != null) {
             configTplBuilder.enabledhostsPlace.setText(enabledhostsSb.toString());
         }
-
         if (configTplBuilder.contentPlace != null) {
             configTplBuilder.contentPlace.setText(sb.toString());
         }
-
         if (configTplBuilder.versionPlace != null) {
             configTplBuilder.versionPlace.setText(Constants.getVersionString());
         }
-
         if (configTplBuilder.environmentPlace != null) {
             configTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
         }
