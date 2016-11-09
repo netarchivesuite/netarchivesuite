@@ -3,7 +3,6 @@
 
 $shellinit = <<SHELLINIT
 	# NOTICE: This script is run as user root
-echo "XYZ0A"
 
 	# Fix so that precise64 (which NetArchive Suite uses) maps to right ip
 	sed -ri 's/127\.0\.1\.1/192.168.0.64/g' /etc/hosts
@@ -26,8 +25,6 @@ echo "XYZ0A"
 	echo "alias m='man'" >>/home/vagrant/.bashrc
 	echo "alias sshte='ssh test@precise64'" >>/home/vagrant/.bashrc
 	echo '' >>/home/vagrant/.bashrc
-
-echo "XYZ0b"
 
 	# Quick update of apt-get repository
 	apt-get -q -y update
@@ -52,42 +49,25 @@ echo "XYZ0b"
 
 	# Install postgres
 	DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get --option Dpkg::Options::=--force-confold -q -y install 'postgresql-8.4'
-echo "XYZ0"
 SHELLINIT
 
 
 
 $javainstall = <<JAVAINSTALL
-	echo "Vagrantfile: javainstall 1"
-
 	# Install java 7
 	apt-get install -y python-software-properties
 
-	echo "Vagrantfile: javainstall 2"
-
 	add-apt-repository -y ppa:webupd8team/java
-
-	echo "Vagrantfile: javainstall 3"
 
 	apt-get update > /dev/null
 
-	echo "Vagrantfile: javainstall 4"
-
 	echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-
-	echo "Vagrantfile: javainstall 5"
 
 	echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
 
-	echo "Vagrantfile: javainstall 6"
-
 	apt-get install -qq -y oracle-java7-installer oracle-java7-set-default
 
-	echo "Vagrantfile: javainstall 7"
-
 	echo 'export JAVA_HOME=/usr/lib/jvm/java-7-oracle/' >>/home/vagrant/.bashrc
-
-	echo "Vagrantfile: javainstall 8"
 JAVAINSTALL
 
 
