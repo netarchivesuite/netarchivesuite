@@ -150,7 +150,6 @@ $netarchiveinstall = <<NETARCHIVEINSTALL
 	cd /home/vagrant/netarchive
 
 	# Netarchive: Download deploy_standalone_example and RunNetarchiveSuite
-	#wget -N https://raw.githubusercontent.com/netarchivesuite/netarchivesuite/master/deploy/distribution/src/main/resources/examples/deploy_standalone_example.xml
 	wget -N https://raw.githubusercontent.com/netarchivesuite/netarchivesuite/for-vagrant-quickstart/deploy/distribution/src/main/resources/examples/deploy_standalone_example.xml
 
 	wget -N https://raw.githubusercontent.com/netarchivesuite/netarchivesuite/master/deploy/deploy-core/scripts/RunNetarchiveSuite.sh
