@@ -54,7 +54,7 @@ SHELLINIT
 
 
 $javainstall = <<JAVAINSTALL
-	# Install java 7
+	# Install java 8
 	apt-get install -y python-software-properties
 
 	add-apt-repository -y ppa:webupd8team/java
@@ -65,9 +65,9 @@ $javainstall = <<JAVAINSTALL
 
 	echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
 
-	apt-get install -qq -y oracle-java7-installer oracle-java7-set-default
+	apt-get install -qq -y oracle-java8-installer oracle-java8-set-default
 
-	echo 'export JAVA_HOME=/usr/lib/jvm/java-7-oracle/' >>/home/vagrant/.bashrc
+	echo 'export JAVA_HOME=/usr/lib/jvm/java-8-oracle/' >>/home/vagrant/.bashrc
 JAVAINSTALL
 
 
@@ -142,10 +142,10 @@ $netarchiveinstall = <<NETARCHIVEINSTALL
 	cd /vagrant
 
 	# Netarchive: Download NetarchiveSuite, latest release
-	wget -N -O NetarchiveSuite.zip https://sbforge.org/nexus/service/local/repositories/releases/content/org/netarchivesuite/distribution/5.1/distribution-5.1.zip
+	wget -N -O NetarchiveSuite.zip https://sbforge.org/nexus/service/local/repositories/releases/content/org/netarchivesuite/distribution/5.2/distribution-5.2.zip
 
 	# Netarchive: Download latest bundles harvester
-	wget -N -O NetarchiveSuite-heritrix3-bundler.zip https://sbforge.org/nexus/service/local/repositories/releases/content/org/netarchivesuite/heritrix3-bundler/5.1/heritrix3-bundler-5.1.zip
+	wget -N -O NetarchiveSuite-heritrix3-bundler.zip https://sbforge.org/nexus/service/local/repositories/releases/content/org/netarchivesuite/heritrix3-bundler/5.2/heritrix3-bundler-5.2.zip
 
 	cd /home/vagrant/netarchive
 
@@ -258,12 +258,11 @@ $netarchivedeploy = <<NETARCHIVEDEPLOY
 	# Netarchive: Deploy
 	cd /home/vagrant/netarchive
 	./RunNetarchiveSuite.sh NetarchiveSuite.zip deploy_standalone_example.xml deploy NetarchiveSuite-heritrix3-bundler.zip
-
+     /sbin/ifconfig
 	# For convenience of testing in Firefox, extract and report the IP-addy
 	echo 'You can now TEST the NetarchiveSuite installation in a browser with:'
-	printf 'http://'
-	ifconfig | grep -A 1 '^eth1' | grep 'inet addr:' | sed -r 's/[ \t]*inet\ addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)[ \t].*/\1/' | tr -d '\n'
-	echo ':8074/HarvestDefinition/'
+echo http://`/sbin/ifconfig eth1 | grep -Eo 'inet addr:([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})'|cut -s -d":" -f 2| tr -d '[:space:]'`:8074/HarvestDefinition/
+
 NETARCHIVEDEPLOY
 
 
