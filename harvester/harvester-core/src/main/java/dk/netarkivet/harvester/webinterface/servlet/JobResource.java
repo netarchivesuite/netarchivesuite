@@ -36,6 +36,10 @@ public class JobResource implements ResourceAbstract {
     protected int R_CRAWLLOG = -1;
 
     protected int R_FRONTIER = -1;
+    
+    protected int R_FILTER = -1;
+    
+    protected int R_BUDGET = -1;
 
     protected int R_SCRIPT = -1;
 
@@ -51,6 +55,8 @@ public class JobResource implements ResourceAbstract {
         R_JOB = resourceManager.resource_add(this, "/job/<numeric>/", false);
         R_CRAWLLOG = resourceManager.resource_add(this, "/job/<numeric>/crawllog/", false);
         R_FRONTIER = resourceManager.resource_add(this, "/job/<numeric>/frontier/", false);
+        R_FILTER = resourceManager.resource_add(this, "/job/<numeric>/filter/", false);
+        R_BUDGET = resourceManager.resource_add(this, "/job/<numeric>/budget/", false);
         R_SCRIPT = resourceManager.resource_add(this, "/job/<numeric>/script/", false);
         R_REPORT = resourceManager.resource_add(this, "/job/<numeric>/report/", false);
     }
@@ -76,7 +82,15 @@ public class JobResource implements ResourceAbstract {
             if ("GET".equals(method) || "POST".equals(method)) {
                 frontier_list(req, resp, numerics);
             }
-        } else if (resource_id == R_SCRIPT) {
+        } else if(resource_id == R_FILTER) {
+        	if ("GET".equals(method) || "POST".equals(method)) {
+                filter_add(req, resp, numerics);
+            }
+        } else if(resource_id == R_BUDGET) {
+        	if ("GET".equals(method) || "POST".equals(method)) {
+                budget_change(req, resp, numerics);
+            }
+        }else if (resource_id == R_SCRIPT) {
             if ("GET".equals(method) || "POST".equals(method)) {
                 script(req, resp, numerics);
             }
@@ -191,6 +205,28 @@ public class JobResource implements ResourceAbstract {
             sb.append("/frontier/");
             sb.append("\" class=\"btn btn-default\">");
             sb.append("Show/delete frontier queue");
+            sb.append("</a>");
+
+            sb.append("&nbsp;");
+            
+            sb.append("<a href=\"");
+            sb.append(NASEnvironment.servicePath);
+            sb.append("job/");
+            sb.append(h3Job.jobId);
+            sb.append("/filter/");
+            sb.append("\" class=\"btn btn-default\">");
+            sb.append("Add filter");
+            sb.append("</a>");
+
+            sb.append("&nbsp;");
+            
+            sb.append("<a href=\"");
+            sb.append(NASEnvironment.servicePath);
+            sb.append("job/");
+            sb.append(h3Job.jobId);
+            sb.append("/budget/");
+            sb.append("\" class=\"btn btn-default\">");
+            sb.append("Change budget");
             sb.append("</a>");
 
             sb.append("&nbsp;");
@@ -758,6 +794,228 @@ public class JobResource implements ResourceAbstract {
         if (masterTplBuilder.versionPlace != null) {
             masterTplBuilder.versionPlace.setText(Constants.getVersionString());
         }
+        if (masterTplBuilder.environmentPlace != null) {
+            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
+        }
+
+        masterTplBuilder.write(out);
+
+        out.flush();
+        out.close();
+    }
+    
+    public void filter_add(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+        resp.setContentType("text/html; charset=UTF-8");
+        ServletOutputStream out = resp.getOutputStream();
+
+        TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
+        MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
+
+        StringBuilder sb = new StringBuilder();
+        StringBuilder menuSb = new StringBuilder();
+
+        String regex = req.getParameter("regex");
+        if (regex == null || regex.length() == 0) {
+            regex = null;
+        }
+
+        String resource = NAS_GROOVY_RESOURCE_PATH;
+        InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        byte[] tmpArr = new byte[8192];
+        int read;
+        while ((read = in.read(tmpArr)) != -1) {
+            bOut.write(tmpArr, 0, read);
+        }
+        in.close();
+        String script = new String(bOut.toByteArray(), "UTF-8");
+
+        if (regex != null) {
+        	script += "\n";
+            script += "\naddFilter '" + regex + "'\n";
+        } else {
+        	//if no regex, we only show the filters
+        	script += "\nshowFilters()\n";
+        }
+
+        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
+
+        if (h3Job != null && h3Job.isReady()) {
+            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
+            menuSb.append(NASEnvironment.servicePath);
+            menuSb.append("job/");
+            menuSb.append(h3Job.jobId);
+            menuSb.append("/");
+            menuSb.append("\"> ");
+            menuSb.append(h3Job.jobId);
+            menuSb.append("</a></td></tr>");
+
+            if (regex == null || regex.length() == 0) {
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Regex required to be added as a filter!</div>");
+            }
+
+            sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
+            sb.append("<label for=\"regex\">Filter regex:</label>");
+            sb.append("<input type=\"text\" id=\"regex\" name=\"regex\" value=\"" + regex + "\" placeholder=\"regex\">\n");
+            sb.append("<button type=\"submit\" name=\"add-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Add</button>\n");
+            sb.append("&nbsp;");
+            sb.append("</form>\n");
+
+            ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
+
+            if (scriptResult != null && scriptResult.script != null) {
+                if (scriptResult.script.htmlOutput != null) {
+                    sb.append("<fieldset><legend>htmlOut</legend>");
+                    sb.append(scriptResult.script.htmlOutput);
+                    sb.append("</fieldset><br />\n");
+                }
+                if (scriptResult.script.rawOutput != null) {
+                    sb.append("<fieldset><legend>rawOut</legend>");
+                    sb.append("<pre>");
+                    sb.append(scriptResult.script.rawOutput);
+                    sb.append("</pre>");
+                    sb.append("</fieldset><br />\n");
+                }
+            }
+        } else {
+            sb.append("Job ");
+            sb.append(numerics.get(0));
+            sb.append(" is not running.");
+        }
+
+        if (masterTplBuilder.titlePlace != null) {
+            masterTplBuilder.titlePlace.setText("Frontier queue");
+        }
+
+        if (masterTplBuilder.menuPlace != null) {
+            masterTplBuilder.menuPlace.setText(menuSb.toString());
+        }
+
+        if (masterTplBuilder.headingPlace != null) {
+            masterTplBuilder.headingPlace.setText("Frontier queue");
+        }
+
+        if (masterTplBuilder.contentPlace != null) {
+            masterTplBuilder.contentPlace.setText(sb.toString());
+        }
+
+        if (masterTplBuilder.versionPlace != null) {
+            masterTplBuilder.versionPlace.setText(Constants.getVersionString());
+        }
+
+        if (masterTplBuilder.environmentPlace != null) {
+            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
+        }
+
+        masterTplBuilder.write(out);
+
+        out.flush();
+        out.close();
+    }
+    
+    public void budget_change(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+        resp.setContentType("text/html; charset=UTF-8");
+        ServletOutputStream out = resp.getOutputStream();
+
+        TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
+        MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
+
+        StringBuilder sb = new StringBuilder();
+        StringBuilder menuSb = new StringBuilder();
+
+        String budget = req.getParameter("budget");
+        if (budget == null || budget.length() == 0) {
+        	budget = null;
+        }
+
+        String resource = NAS_GROOVY_RESOURCE_PATH;
+        InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        byte[] tmpArr = new byte[8192];
+        int read;
+        while ((read = in.read(tmpArr)) != -1) {
+            bOut.write(tmpArr, 0, read);
+        }
+        in.close();
+        String script = new String(bOut.toByteArray(), "UTF-8");
+
+        if (budget != null) {
+        	script += "\n";
+            script += "\nchangeBudget (" + budget + ")\n";
+        } else {
+        	script += "\n";
+            script += "\nshowBudget()\n";
+        }
+
+        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
+
+        if (h3Job != null && h3Job.isReady()) {
+            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
+            menuSb.append(NASEnvironment.servicePath);
+            menuSb.append("job/");
+            menuSb.append(h3Job.jobId);
+            menuSb.append("/");
+            menuSb.append("\"> ");
+            menuSb.append(h3Job.jobId);
+            menuSb.append("</a></td></tr>");
+
+            if (budget == null || budget.length() == 0) {
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> New budget required!</div>");
+            }
+
+            sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
+            sb.append("<label for=\"budget\">New budget:</label>");
+            if (budget == null || budget.length() == 0) {
+            	sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"\" placeholder=\"budget\">\n");
+            } else {
+            	sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"" + budget + "\" placeholder=\"budget\">\n");
+            }
+            sb.append("<button type=\"submit\" name=\"add-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Change budget</button>\n");
+            sb.append("&nbsp;");
+            sb.append("</form>\n");
+
+            ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
+
+            if (scriptResult != null && scriptResult.script != null) {
+                if (scriptResult.script.htmlOutput != null) {
+                    sb.append("<fieldset><legend>htmlOut</legend>");
+                    sb.append(scriptResult.script.htmlOutput);
+                    sb.append("</fieldset><br />\n");
+                }
+                if (scriptResult.script.rawOutput != null) {
+                    sb.append("<fieldset><legend>rawOut</legend>");
+                    sb.append("<pre>");
+                    sb.append(scriptResult.script.rawOutput);
+                    sb.append("</pre>");
+                    sb.append("</fieldset><br />\n");
+                }
+            }
+        } else {
+            sb.append("Job ");
+            sb.append(numerics.get(0));
+            sb.append(" is not running.");
+        }
+
+        if (masterTplBuilder.titlePlace != null) {
+            masterTplBuilder.titlePlace.setText("Frontier queue");
+        }
+
+        if (masterTplBuilder.menuPlace != null) {
+            masterTplBuilder.menuPlace.setText(menuSb.toString());
+        }
+
+        if (masterTplBuilder.headingPlace != null) {
+            masterTplBuilder.headingPlace.setText("Frontier queue");
+        }
+
+        if (masterTplBuilder.contentPlace != null) {
+            masterTplBuilder.contentPlace.setText(sb.toString());
+        }
+
+        if (masterTplBuilder.versionPlace != null) {
+            masterTplBuilder.versionPlace.setText(Constants.getVersionString());
+        }
+
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
         }
