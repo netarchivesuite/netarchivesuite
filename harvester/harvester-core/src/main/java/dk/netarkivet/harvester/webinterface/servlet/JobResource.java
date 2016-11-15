@@ -815,8 +815,8 @@ public class JobResource implements ResourceAbstract {
         StringBuilder menuSb = new StringBuilder();
 
         String regex = req.getParameter("regex");
-        if (regex == null || regex.length() == 0) {
-            regex = null;
+        if (regex == null) {
+            regex = "";
         }
 
         String resource = NAS_GROOVY_RESOURCE_PATH;
@@ -830,7 +830,7 @@ public class JobResource implements ResourceAbstract {
         in.close();
         String script = new String(bOut.toByteArray(), "UTF-8");
 
-        if (regex != null) {
+        if (regex.length() >= 0) {
         	script += "\n";
             script += "\naddFilter '" + regex + "'\n";
         } else {
@@ -849,10 +849,12 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("\"> ");
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
-
+            
+            /*
             if (regex == null || regex.length() == 0) {
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Regex required to be added as a filter!</div>");
             }
+            */
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
             sb.append("<label for=\"regex\">Filter regex:</label>");
@@ -924,8 +926,8 @@ public class JobResource implements ResourceAbstract {
         StringBuilder menuSb = new StringBuilder();
 
         String budget = req.getParameter("budget");
-        if (budget == null || budget.length() == 0) {
-        	budget = null;
+        if (budget == null) {
+        	budget = "";
         }
 
         String resource = NAS_GROOVY_RESOURCE_PATH;
@@ -939,7 +941,7 @@ public class JobResource implements ResourceAbstract {
         in.close();
         String script = new String(bOut.toByteArray(), "UTF-8");
 
-        if (budget != null) {
+        if (budget.length() > 0) {
         	script += "\n";
             script += "\nchangeBudget (" + budget + ")\n";
         } else {
@@ -959,8 +961,17 @@ public class JobResource implements ResourceAbstract {
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
 
+            /*
             if (budget == null || budget.length() == 0) {
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> New budget required!</div>");
+            }
+            */
+            try {
+            	if (budget.length() == 0) {
+            		Integer.parseInt(budget);
+            	}
+            } catch(NumberFormatException e) {
+            	sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Budget must be a number!</div>");
             }
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
