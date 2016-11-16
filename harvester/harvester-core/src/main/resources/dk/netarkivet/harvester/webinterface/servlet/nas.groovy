@@ -160,14 +160,17 @@ void printCrawlLog(String regex) {
 }
 
 void showModBudgets() {
-	style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
-    htmlOut.println '<pre style="' + style +'">'
-    htmlOut.println 'queue --> modified budget :'
 	def modQueues = job.jobContext.data.get("manually-added-queues");
-	modQueues.each { key, value ->
-		htmlOut.println(key + ' --> ' + value )
+	if(modQueues.size() > 0) {
+		htmlOut.println('<p>Budgets of following domains/hosts have been changed in the current job :</p>')
 	}
-	htmlOut.println '</pre>'
+	htmlOut.println('<ul>')
+	modQueues.each { key, value ->
+		htmlOut.println('<li>'+key)
+		htmlOut.println('<input type="text" name="'+key+'-budget" value="'+value+'"/>')
+		htmlOut.println('<button type="submit" name="submitButton" value="'+key+'" class="btn btn-success"><i class="icon-white icon-thumbs-up"></i> Save</button></li>')
+	}
+	htmlOut.println('</ul>')
 }
 
 void changeBudget(String key, int value) {
@@ -185,17 +188,19 @@ void changeBudget(String key, int value) {
 	logToScriptingEventsLogFile("manual budget change : "+ key + " -> "+value)
 }
 
+void getQueueTotalBudget() {
+	htmlOut.println appCtx.getBean("frontier").queueTotalBudget
+}
+
 
 void showFilters() {
 	def filters = job.jobContext.data.get("manually-added-rejected-filters")
-	def showButton = false
 	htmlOut.println('<ul>')
 	filters.eachWithIndex{ val, idx -> 
 		htmlOut.println('<li><input type="checkbox" name="removeIndex" value="'+idx+'" />&nbsp;'+val+'</li>')
-		showButton = true
 	}
 	htmlOut.println('</ul>')
-	if(showButton) {
+	if(filters.size() > 0) {
 		htmlOut.println('<button type="submit" name="remove-filter" value="1" class="btn btn-success"><i class="icon-white icon-remove"></i> Remove</button>')
 	}
 }

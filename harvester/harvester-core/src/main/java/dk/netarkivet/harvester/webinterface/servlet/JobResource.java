@@ -836,8 +836,11 @@ public class JobResource implements ResourceAbstract {
         String script = new String(bOut.toByteArray(), "UTF-8");
 
         if (regex.length() > 0) {
-        	script += "\n";
-            script += "\naddFilter '" + regex + "'\n";
+        	String[] lines = regex.split(System.getProperty("line.separator"));
+        	for(String line : lines) {
+	        	script += "\n";
+	            script += "\naddFilter '" + line + "'\n";
+        	}
         }
         if(removeIndexes != null && removeIndexes.length > 0) {
         	script += "\ndef ref = "+Arrays.toString(removeIndexes)+"\n";
@@ -862,10 +865,13 @@ public class JobResource implements ResourceAbstract {
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Regex required to be added as a filter!</div>");
             }
             */
+            
+            sb.append("<h4>Job "+h3Job.jobId+" status "+h3Job.jobResult.job.crawlControllerState+"</h4>");
+            sb.append("<p>All URIs matching any of the following regular expressions will be rejected from the current job.</p>");
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
-            sb.append("<label for=\"regex\">Filter regex:</label>");
-            sb.append("<input type=\"text\" id=\"regex\" name=\"regex\" value=\"\" placeholder=\"regex\">\n");
+            sb.append("<label for=\"regex\">Regular expressions :</label>");
+            sb.append("<textarea rows=\"4\" cols=\"50\" id=\"regex\" name=\"regex\" placeholder=\"regex\"></textarea>\n");
             sb.append("<button type=\"submit\" name=\"add-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Add</button>\n");
             sb.append("&nbsp;");
 
@@ -883,7 +889,7 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Filters");
+            masterTplBuilder.titlePlace.setText("Add filters on current job");
         }
 
         if (masterTplBuilder.menuPlace != null) {
@@ -891,7 +897,7 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Filters");
+            masterTplBuilder.headingPlace.setText("Add filters on current job");
         }
 
         if (masterTplBuilder.contentPlace != null) {
@@ -930,6 +936,8 @@ public class JobResource implements ResourceAbstract {
         if (key == null) {
         	key = "";
         }
+        String submitValue = req.getParameter("submitButton");
+        
 
         String resource = NAS_GROOVY_RESOURCE_PATH;
         InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
@@ -941,13 +949,19 @@ public class JobResource implements ResourceAbstract {
         }
         in.close();
         String script = new String(bOut.toByteArray(), "UTF-8");
+        String originalScript = script;
 
-        if (budget.length() > 0) {
-        	script += "\n";
+        script += "\n";
+        if (submitValue != null && submitValue == "1" && budget.length() > 0 && key.length() > 0) {
             script += "\nchangeBudget ('" + key+ "',"+ budget +")\n";
-        } 
+        } else if(submitValue != null) {
+        	budget = req.getParameter(submitValue+"-budget");
+        	script += "\nchangeBudget ('" + submitValue+ "',"+ budget +")\n";
+        }
         script += "\n";
         script += "\nshowModBudgets()\n";
+        
+        originalScript += "\ngetQueueTotalBudget()\n";
 
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
@@ -967,6 +981,16 @@ public class JobResource implements ResourceAbstract {
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> New budget required!</div>");
             }
             */
+            
+            sb.append("<h4>Job "+h3Job.jobId+" status "+h3Job.jobResult.job.crawlControllerState+"</h4>");
+            
+            ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", originalScript);
+            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
+            	sb.append("<p>Budget defined in job configuration: queue-total-budget of ");
+            	sb.append(scriptResult.script.htmlOutput);
+            	sb.append(" URIs.</p>");
+            }
+            
             try {
             	if (budget.length() > 0) {
             		Integer.parseInt(budget);
@@ -976,31 +1000,22 @@ public class JobResource implements ResourceAbstract {
             }
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
-            sb.append("<label for=\"budget\">New budget:</label>");
+
+            scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
+
+            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
+            	sb.append(scriptResult.script.htmlOutput);
+            }
+            
+            sb.append("<label for=\"budget\">New domain/host :</label>");
             sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"\" placeholder=\"key\">\n");
             sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"\" placeholder=\"budget\">\n");
   
             
-            sb.append("<button type=\"submit\" name=\"add-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Change/add budget</button>\n");
+            sb.append("<button type=\"submit\" name=\"submitButton\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Save</button>\n");
             sb.append("&nbsp;");
+            
             sb.append("</form>\n");
-
-            ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
-
-            if (scriptResult != null && scriptResult.script != null) {
-                if (scriptResult.script.htmlOutput != null) {
-                    sb.append("<fieldset><legend>htmlOut</legend>");
-                    sb.append(scriptResult.script.htmlOutput);
-                    sb.append("</fieldset><br />\n");
-                }
-                if (scriptResult.script.rawOutput != null) {
-                    sb.append("<fieldset><legend>rawOut</legend>");
-                    sb.append("<pre>");
-                    sb.append(scriptResult.script.rawOutput);
-                    sb.append("</pre>");
-                    sb.append("</fieldset><br />\n");
-                }
-            }
         } else {
             sb.append("Job ");
             sb.append(numerics.get(0));
