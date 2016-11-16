@@ -952,7 +952,7 @@ public class JobResource implements ResourceAbstract {
         String originalScript = script;
 
         script += "\n";
-        if (submitValue != null && submitValue == "1" && budget.length() > 0 && key.length() > 0) {
+        if (submitValue != null && submitValue == "1" && budget != null && budget.length() > 0 && key != null && key.length() > 0) {
             script += "\nchangeBudget ('" + key+ "',"+ budget +")\n";
         } else if(submitValue != null) {
         	budget = req.getParameter(submitValue+"-budget");
@@ -992,7 +992,7 @@ public class JobResource implements ResourceAbstract {
             }
             
             try {
-            	if (budget.length() > 0) {
+            	if (budget != null && budget.length() > 0) {
             		Integer.parseInt(budget);
             	}
             } catch(NumberFormatException e) {
