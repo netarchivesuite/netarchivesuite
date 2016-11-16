@@ -53,8 +53,10 @@ void writeToFile(def directory, def fileName, def extension, def infoList) {
 }
 
 /* to log some lines in a changelog.txt file (will be in the metadata.warc */
-void logToChangeLogFile(def logLines) {
-	writeToFile(job.jobDir.absolutePath, "changelog", ".txt", logLines)
+void logToScriptingEventsLogFile(def logLine) {
+	def text = []
+	text << logLine
+	writeToFile(job.jobDir.absolutePath, "scripting_events", ".log", text)
 }
 
 void deleteFromFrontier(String regex) {
@@ -157,53 +159,76 @@ void printCrawlLog(String regex) {
     htmlOut.println '<p>'+ matchingCount + " matching lines found </p>"
 }
 
-void showBudget() {
+void showModBudgets() {
 	style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     htmlOut.println '<pre style="' + style +'">'
-    frontier = appCtx.getBean("frontier")
-	frontier.reconsiderRetiredQueues()
-	htmlOut.println 'queueTotalBudget = '+frontier.queueTotalBudget
-    htmlOut.println '</pre>'
-}
-
-void changeBudget(int newBudget) {
-    frontier = appCtx.getBean("frontier")
-	frontier.reconsiderRetiredQueues()
-	frontier.queueTotalBudget = newBudget
-	
-	def txtFileInfo = []
-	String a = "change budget : "+ newBudget
-	txtFileInfo << a
-	logToChangeLogFile(txtFileInfo)
-	
-	showBudget()
-}
-
-void showFilters() {
-	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
-	style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
-	htmlOut.println '<pre style="' + style +'">'
-	htmlOut.println("all DecideResult.REJECT filters: "+ regexRuleObj.regexList)
-	htmlOut.println("manually added DecideResult.REJECT filters : "+job.jobContext.data.get("manual-add-reject-filters"))
+    htmlOut.println 'queue --> modified budget :'
+	def modQueues = job.jobContext.data.get("manually-added-queues");
+	modQueues.each { key, value ->
+		htmlOut.println(key + ' --> ' + value )
+	}
 	htmlOut.println '</pre>'
 }
 
-void addFilter(String pat) {
-	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
-	regexRuleObj.regexList.add(pat)
-	def filters = job.jobContext.data.get("manual-add-reject-filters");
-	if(filters == null) {
-		filters = [pat]
-		job.jobContext.data.put("manual-add-reject-filters", filters)
-	} else {
-		filters = filters + pat
-		job.jobContext.data.put("manual-add-reject-filters", filters)
+void changeBudget(String key, int value) {
+	queue = appCtx.getBean("frontier").getQueueFor(key)
+	queue.totalBudget = value
+
+	//to store our manually added budget changes, we have to put them in a map
+	def modQueues = job.jobContext.data.get("manually-added-queues");
+	if(modQueues == null) {
+		modQueues = [:]
 	}
+	modQueues.put(key, queue.totalBudget)
+	job.jobContext.data.put("manually-added-queues", modQueues)
 	
-	def txtFileInfo = []
-	String a = "manual add of a DecideResult.REJECT filter : "+ pat
-	txtFileInfo << a
-	logToChangeLogFile(txtFileInfo)
-	
-	showFilters()
+	logToScriptingEventsLogFile("manual budget change : "+ key + " -> "+value)
 }
+
+
+void showFilters() {
+	def filters = job.jobContext.data.get("manually-added-rejected-filters")
+	def showButton = false
+	htmlOut.println('<ul>')
+	filters.eachWithIndex{ val, idx -> 
+		htmlOut.println('<li><input type="checkbox" name="removeIndex" value="'+idx+'" />&nbsp;'+val+'</li>')
+		showButton = true
+	}
+	htmlOut.println('</ul>')
+	if(showButton) {
+		htmlOut.println('<button type="submit" name="remove-filter" value="1" class="btn btn-success"><i class="icon-white icon-remove"></i> Remove</button>')
+	}
+}
+
+void addFilter(String pat) {
+	if(pat.length() > 0) {
+		regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
+		regexRuleObj.regexList.add(pat)
+		//to store our manually added filters, we have to put them in a map
+		def filters = job.jobContext.data.get("manually-added-rejected-filters");
+		if(filters == null) {
+			filters = [] as ArrayList
+		}
+		filters << pat
+		job.jobContext.data.put("manually-added-rejected-filters", filters)
+	
+		logToScriptingEventsLogFile("manual add of a DecideResult.REJECT filter : "+ pat)
+	}
+}
+
+void removeFilters(def indexesOFiltersToRemove) {
+	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
+	def filters = job.jobContext.data.get("manually-added-rejected-filters")
+	indexesOFiltersToRemove.each {
+		//remove from the manually added filters map
+		regex = filters.get(it)
+		index = regexRuleObj.regexList.indexOf(regex)
+		if(index != -1) {
+			regexRuleObj.regexList.remove(index)
+			filters.remove(it)
+			logToScriptingEventsLogFile("removing DecideResult.REJECT filter : "+ regex)
+		}
+		
+	}
+}
+
