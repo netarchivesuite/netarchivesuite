@@ -838,6 +838,9 @@ public class JobResource implements ResourceAbstract {
         if (regex.length() > 0) {
         	String[] lines = regex.split(System.getProperty("line.separator"));
         	for(String line : lines) {
+        		if(line.endsWith(System.getProperty("line.separator")) || line.endsWith("\r") || line.endsWith("\n")) {
+        			line = line.substring(0, line.length() - 1);
+        		}
 	        	script += "\n";
 	            script += "\naddFilter '" + line + "'\n";
         	}
@@ -871,7 +874,7 @@ public class JobResource implements ResourceAbstract {
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
             sb.append("<label for=\"regex\">Regular expressions :</label>");
-            sb.append("<textarea rows=\"4\" cols=\"50\" id=\"regex\" name=\"regex\" placeholder=\"regex\"></textarea>\n");
+            sb.append("<textarea rows=\"4\" cols=\"100\" id=\"regex\" name=\"regex\" placeholder=\"regex\"></textarea>\n");
             sb.append("<button type=\"submit\" name=\"add-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Add</button>\n");
             sb.append("&nbsp;");
 
@@ -952,11 +955,13 @@ public class JobResource implements ResourceAbstract {
         String originalScript = script;
 
         script += "\n";
-        if (submitValue != null && submitValue == "1" && budget != null && budget.length() > 0 && key != null && key.length() > 0) {
-            script += "\nchangeBudget ('" + key+ "',"+ budget +")\n";
-        } else if(submitValue != null) {
-        	budget = req.getParameter(submitValue+"-budget");
-        	script += "\nchangeBudget ('" + submitValue+ "',"+ budget +")\n";
+        if(submitValue != null) {
+	        if (submitValue.equals("1") && budget != null && !budget.trim().isEmpty() && key != null && !key.trim().isEmpty()) {
+	            script += "\nchangeBudget ('" + key+ "',"+ budget +")\n";
+	        } else {
+	        	budget = req.getParameter(submitValue+"-budget");
+	        	script += "\nchangeBudget ('" + submitValue+ "',"+ budget +")\n";
+	        }
         }
         script += "\n";
         script += "\nshowModBudgets()\n";
