@@ -59,6 +59,11 @@ public class DeduplicateToCDXAdapterTester {
             + "sha1:KBHBHEUCX5CN7KB3P2ZVBHGCCIFJNIWH - le:IOException@ExtractorSWF,duplicate:"
             + "\"118657-119-20110428163750-00001-kb-prod-har-004.kb.dk.arc,69676377\",content-size:50842";
 
+
+    public static final String DEDUP_CRAWL_STRING3 = "2016-11-21T13:10:51.640Z   200       5430 http://maps.google.com/favicon.ico"
+            + " REPI http://maps.google.com/robots.txt image/x-icon #040 20161121131051607+18 sha1:JETDNFPWWDG5OL2FZ4NXOXTGB7ODNRQG"
+            + " http://skraedderiet.dk duplicate:\"6646-248-20161114122816274-00000-kb-test-har-003.kb.dk.warc,93364,20161114122823282\",content-size:5776";
+
     @Before
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -78,6 +83,20 @@ public class DeduplicateToCDXAdapterTester {
 
     @Test
     public void testAdaptLine() {
+        DeduplicateToCDXAdapterInterface adapter = new DeduplicateToCDXAdapter();
+        String cdx_line = adapter.adaptLine(DEDUP_CRAWL_STRING3);
+        CDXLineToSearchResultAdapter adapter2 = new CDXLineToSearchResultAdapter();
+        CaptureSearchResult result = adapter2.adapt(cdx_line);
+        assertEquals("Should get the arcfilename back out of the cdx line",
+                "6646-248-20161114122816274-00000-kb-test-har-003.kb.dk.warc", result.getFile());
+        assertEquals("Should get the right http code out of the cdx line", "200", result.getHttpCode());
+
+
+
+    }
+
+    @Test
+    public void testAdaptLineExtended() {
         DeduplicateToCDXAdapterInterface adapter = new DeduplicateToCDXAdapter();
         String cdx_line = adapter.adaptLine(DEDUP_CRAWL_STRING);
         CDXLineToSearchResultAdapter adapter2 = new CDXLineToSearchResultAdapter();
