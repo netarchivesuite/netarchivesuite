@@ -52,9 +52,9 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     private static final SimpleDateFormat cdxDateFormat = new SimpleDateFormat(cdxDateFormatString);
 
     /** Pattern representing the part of a crawl log entry describing a duplicate record. */
-    private static final String duplicateRecordPatternString = "duplicate:\"(.*),(.*)\",(.*)";	//e.g. duplicate:"arcfile,offset"
+    private static final String duplicateRecordPatternString = "duplicate:\"([^,]*),([^,]*)\",(.*)";	//e.g. duplicate:"arcfile,offset"
     // The extended format is made to preserve the date of the record pointed to by arcfile,offset argument
-    private static final String extendedDuplicateRecordPatternString = "duplicate:\"(.*),(.*),(.*)\",(.*)"; //e.g. duplicate:"arcfile,offset,timestamp"
+    private static final String extendedDuplicateRecordPatternString = "duplicate:\"([^,]*),([^,]*),([^,]*)\",(.*)"; //e.g. duplicate:"arcfile,offset,timestamp"
     
     private static final Pattern duplicateRecordPattern = Pattern.compile(duplicateRecordPatternString);
     private static final Pattern extendedDuplicateRecordPattern = Pattern.compile(extendedDuplicateRecordPatternString);

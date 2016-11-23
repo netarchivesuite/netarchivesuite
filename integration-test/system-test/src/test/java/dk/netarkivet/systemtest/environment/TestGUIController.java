@@ -38,7 +38,7 @@ public class TestGUIController {
     public void restartGUI() {
         try {
             log.info("Restarting GUI");
-            testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/kill_GUIApplication.sh");
+            testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/kill_GUIApplication.sh; sleep 10");
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/start_GUIApplication.sh");
             waitForGUIToStart(120);
         } catch (Exception e) {
