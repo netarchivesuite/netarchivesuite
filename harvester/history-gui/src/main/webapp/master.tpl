@@ -87,7 +87,7 @@ function submitForm(formId) {
 <tr>
 <td valign="top" id="menu">
 <table id="menu_table">
-<tr><td><a class="sidebarHeader" href="index.jsp"><img src="/History/transparent_menu_logo.png" alt="Menu"/> Menu</a></td></tr>
+<tr><td><a class="sidebarHeader" href="/"><img src="/History/transparent_menu_logo.png" alt="Menu"/> Menu</a></td></tr>
 <tr><td><a href="/HarvestDefinition/Definitions-selective-harvests.jsp">Definitions</a></td></tr>
 <tr><td><a href="/History/Harveststatus-alljobs.jsp">Harvest status</a></td></tr>
 <tr><td>&nbsp; &nbsp; <a href="/History/Harveststatus-alljobs.jsp"> All Jobs</a></td></tr>
