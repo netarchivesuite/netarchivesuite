@@ -242,16 +242,15 @@ public class IndexResource implements ResourceAbstract {
             sb.append("<h5>");
             sb.append(environment.I18N.getString(locale, "running.jobs.monitor.crawllog.cache.enabled.for"));
             sb.append(":</h5>\n");
-            sb.append("<br />\n");
-            sb.append("<br />\n");
             if (environment.h3JobMonitorThread.h3HostnamePortEnabledList.size() > 0) {
                 for (int i=0; i<environment.h3JobMonitorThread.h3HostnamePortEnabledList.size(); ++i) {
                     sb.append(environment.h3JobMonitorThread.h3HostnamePortEnabledList.get(i));
                     sb.append("<br />\n");
                 }
             } else {
+                sb.append("<p>");
                 sb.append(environment.I18N.getString(locale, "running.jobs.monitor.no.hosts.enabled"));
-                sb.append("<br />\n");
+                sb.append("</p>\n");
             }
         }
         sb.append("<br />\n");
@@ -259,16 +258,15 @@ public class IndexResource implements ResourceAbstract {
             sb.append("<h5>");
             sb.append(environment.I18N.getString(locale, "running.jobs.monitor.crawllog.cache.disabled.for"));
             sb.append("</h5>\n");
-            sb.append("<br />\n");
-            sb.append("<br />\n");
             if (environment.h3JobMonitorThread.h3HostnamePortDisabledList.size() > 0) {
                 for (int i=0; i<environment.h3JobMonitorThread.h3HostnamePortDisabledList.size(); ++i) {
                     sb.append(environment.h3JobMonitorThread.h3HostnamePortDisabledList.get(i));
                     sb.append("<br />\n");
                 }
             } else {
+                sb.append("<p>");
                 sb.append(environment.I18N.getString(locale, "running.jobs.monitor.no.hosts.disable"));
-                sb.append("<br />\n");
+                sb.append("</p>\n");
             }
         }
 

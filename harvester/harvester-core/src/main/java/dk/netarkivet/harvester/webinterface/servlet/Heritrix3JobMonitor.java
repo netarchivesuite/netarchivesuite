@@ -66,104 +66,143 @@ public class Heritrix3JobMonitor implements Pageable {
         return jobmonitor;
     }
 
-    public synchronized void init() throws IOException {
-        if (bActive && !bInitialized) {
-            if (job == null) {
-                job = Heritrix3JobMonitorThread.jobDAO.read(jobId);
-            }
-            if (h3wrapper == null) {
-                StartedJobInfo startedInfo = Heritrix3JobMonitorThread.runningJobsInfoDAO.getMostRecentByJobId(jobId);
-                if (startedInfo != null) {
-                    hostUrl = startedInfo.getHostUrl();
-                    if (hostUrl != null && hostUrl.length() > 0) {
-                        h3wrapper = Heritrix3WrapperManager.getHeritrix3Wrapper(hostUrl, environment.h3AdminName, environment.h3AdminPassword);
+    public synchronized void init() {
+    	try {
+            if (bActive && !bInitialized) {
+                if (job == null) {
+                    job = Heritrix3JobMonitorThread.jobDAO.read(jobId);
+                }
+                if (h3wrapper == null) {
+                    StartedJobInfo startedInfo = Heritrix3JobMonitorThread.runningJobsInfoDAO.getMostRecentByJobId(jobId);
+                    if (startedInfo != null) {
+                        hostUrl = startedInfo.getHostUrl();
+                        if (hostUrl != null && hostUrl.length() > 0) {
+                            h3wrapper = Heritrix3WrapperManager.getHeritrix3Wrapper(hostUrl, environment.h3AdminName, environment.h3AdminPassword);
+                        }
                     }
                 }
+                if (jobname == null && h3wrapper != null) {
+                    jobname = Heritrix3WrapperManager.getJobname(h3wrapper, jobId);
+                }
+                if ((jobResult == null || jobResult.job == null) && jobname != null) {
+                    jobResult = h3wrapper.job(jobname);
+                }
+                if (jobResult != null && jobResult.job != null) {
+                    crawlLogFilePath = jobResult.job.crawlLogFilePath;
+                }
+                if (crawlLogFilePath != null) {
+                    logRaf = new RandomAccessFile(logFile, "rw");
+                    idxRaf = new RandomAccessFile(idxFile, "rw");
+                    idxRaf.writeLong(0);
+                    bInitialized = true;
+                }
             }
-            if (jobname == null && h3wrapper != null) {
-                jobname = Heritrix3WrapperManager.getJobname(h3wrapper, jobId);
-            }
-            if ((jobResult == null || jobResult.job == null) && jobname != null) {
-                jobResult = h3wrapper.job(jobname);
-            }
-            if (jobResult != null && jobResult.job != null) {
-                crawlLogFilePath = jobResult.job.crawlLogFilePath;
-            }
-            if (crawlLogFilePath != null) {
-                logRaf = new RandomAccessFile(logFile, "rw");
-                idxRaf = new RandomAccessFile(idxFile, "rw");
-                idxRaf.writeLong(0);
-                bInitialized = true;
-            }
-        }
+    	} catch (Throwable t) {
+    	}
     }
 
-    public synchronized void update() throws IOException {
-        if (job != null) {
-            Job tmpJob = job = Heritrix3JobMonitorThread.jobDAO.read(jobId);
-            if (tmpJob != null) {
-                job = tmpJob;
+    public synchronized void update() {
+    	try {
+            if (job != null) {
+                Job tmpJob = job = Heritrix3JobMonitorThread.jobDAO.read(jobId);
+                if (tmpJob != null) {
+                    job = tmpJob;
+                }
             }
-        }
-        if (jobResult != null && jobResult.job != null && jobname != null) {
-            JobResult tmpJobResult = h3wrapper.job(jobname);
-            if (tmpJobResult != null) {
-                jobResult = tmpJobResult;
+            if (jobResult != null && jobResult.job != null && jobname != null) {
+                JobResult tmpJobResult = h3wrapper.job(jobname);
+                if (tmpJobResult != null) {
+                    jobResult = tmpJobResult;
+                }
             }
-        }
+    	} catch (Throwable t) {
+    	}
     }
 
-    public synchronized void updateCrawlLog(byte[] tmpBuf) throws IOException {
+    public synchronized void updateCrawlLog(byte[] tmpBuf) {
         long pos;
         long to;
         int idx;
         boolean bLoop;
         ByteRange byteRange;
-        if (bActive && !bInitialized) {
-            init();
-        }
-        if (bActive && bInitialized) {
-            bLoop = true;
-            while (bLoop) {
-                idxRaf.seek(idxRaf.length());
-                pos = logRaf.length();
-                to = pos;
-                StreamResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, pos, pos + tmpBuf.length - 1);
-                if (anypathResult != null && anypathResult.byteRange != null && anypathResult.in != null) {
-                    byteRange = anypathResult.byteRange;
-                    if (byteRange.contentLength > 0) {
-                        logRaf.seek(pos);
-                        int read;
-                        try {
-                            while ((read = anypathResult.in.read(tmpBuf)) != -1) {
-                                logRaf.write(tmpBuf, 0, read);
-                                to += read;
-                                idx = 0;
-                                while (read > 0) {
-                                    ++pos;
-                                    --read;
-                                    if (tmpBuf[idx++] == '\n') {
-                                        idxRaf.writeLong(pos);
-                                        lastIndexed = pos;
+        try {
+            if (bActive && !bInitialized) {
+                init();
+            }
+            if (bActive && bInitialized) {
+                bLoop = true;
+                while (bLoop) {
+                    idxRaf.seek(idxRaf.length());
+                    pos = logRaf.length();
+                    to = pos;
+                    if (jobResult != null && jobResult.job != null && jobResult.job.crawlLogFilePath != null) {
+                        StreamResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, pos, pos + tmpBuf.length - 1);
+                        if (anypathResult != null && anypathResult.byteRange != null && anypathResult.in != null) {
+                            byteRange = anypathResult.byteRange;
+                            if (byteRange.contentLength > 0) {
+                                logRaf.seek(pos);
+                                int read;
+                                try {
+                                    while ((read = anypathResult.in.read(tmpBuf)) != -1) {
+                                        logRaf.write(tmpBuf, 0, read);
+                                        to += read;
+                                        idx = 0;
+                                        while (read > 0) {
+                                            ++pos;
+                                            --read;
+                                            if (tmpBuf[idx++] == '\n') {
+                                                idxRaf.writeLong(pos);
+                                                lastIndexed = pos;
+                                            }
+                                        }
                                     }
                                 }
+                                catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                IOUtils.closeQuietly(anypathResult);
+                                if (byteRange.contentLength == to) {
+                                    bLoop = false;
+                                }
+                            } else {
+                                bLoop = false;
                             }
-                        }
-                        catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        IOUtils.closeQuietly(anypathResult);
-                        if (byteRange.contentLength == to) {
+                        } else {
                             bLoop = false;
                         }
                     } else {
                         bLoop = false;
                     }
-                } else {
-                    bLoop = false;
                 }
             }
+        } catch (Throwable t) {
         }
+    }
+
+    public synchronized void cleanup(List<File> oldFilesList) {
+    	try {
+            bActive = false;
+            bInitialized = false;
+            hostUrl = null;
+            h3wrapper = null;
+            jobname = null;
+            jobResult = null;
+            crawlLogFilePath = null;
+            IOUtils.closeQuietly(logRaf);
+            IOUtils.closeQuietly(idxRaf);
+            oldFilesList.add(logFile);
+            oldFilesList.add(idxFile);
+            Iterator<SearchResult> srIter = qSearchResultMap.values().iterator();
+            SearchResult sr;
+            while (srIter.hasNext()) {
+                sr = srIter.next();
+                oldFilesList.add(sr.srIdxFile);
+                oldFilesList.add(sr.srLogFile);
+                sr.cleanup();
+            }
+            qSearchResultMap.clear();
+    	} catch (Throwable t) {
+    	}
     }
 
     @Override
@@ -196,29 +235,6 @@ public class Heritrix3JobMonitor implements Pageable {
             qSearchResultMap.put(q, searchResult);
         }
         return searchResult;
-    }
-
-    public synchronized void cleanup(List<File> oldFilesList) {
-        bActive = false;
-        bInitialized = false;
-        hostUrl = null;
-        h3wrapper = null;
-        jobname = null;
-        jobResult = null;
-        crawlLogFilePath = null;
-        IOUtils.closeQuietly(logRaf);
-        IOUtils.closeQuietly(idxRaf);
-        oldFilesList.add(logFile);
-        oldFilesList.add(idxFile);
-        Iterator<SearchResult> srIter = qSearchResultMap.values().iterator();
-        SearchResult sr;
-        while (srIter.hasNext()) {
-            sr = srIter.next();
-            oldFilesList.add(sr.srIdxFile);
-            oldFilesList.add(sr.srLogFile);
-            sr.cleanup();
-        }
-        qSearchResultMap.clear();
     }
 
 }

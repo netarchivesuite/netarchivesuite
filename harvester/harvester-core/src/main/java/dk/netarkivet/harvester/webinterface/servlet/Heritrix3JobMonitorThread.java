@@ -65,9 +65,11 @@ public class Heritrix3JobMonitorThread implements Runnable {
         this.environment = environment;
     }
 
-    public void start() {
-        thread = new Thread(this, "Heritrix3 Job Monitor Thread");
-        thread.start();
+    public synchronized void start() {
+    	if (thread == null || !thread.isAlive()) {
+            thread = new Thread(this, "Heritrix3 Job Monitor Thread");
+            thread.start();
+    	}
     }
 
     @Override
