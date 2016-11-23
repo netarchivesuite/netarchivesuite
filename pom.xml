@@ -310,6 +310,10 @@
             <groupId>*</groupId>
             <artifactId>*</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>com.antiaction</groupId>
+            <artifactId>common</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
 <!--
@@ -456,6 +460,7 @@
           <!-- Note: This fails with a JVM older than Java 8 -->
           <!-- <additionalparam>-Xdoclint:none</additionalparam> --> 
           <additionalparam>${javadoc.doclint.none}</additionalparam>
+          <aggregate>true</aggregate>
         </configuration>
         <executions>
           <execution>
