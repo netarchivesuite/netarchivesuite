@@ -149,7 +149,8 @@ $netarchiveinstall = <<NETARCHIVEINSTALL
 
 	cd /home/vagrant/netarchive
 
-	# Netarchive: Download deploy_standalone_example and RunNetarchiveSuite
+	# Netarchive: Download deploy_standalone_vagrant_example and
+	# RunNetarchiveSuite
 	wget -N https://raw.githubusercontent.com/netarchivesuite/netarchivesuite/for-vagrant-quickstart/deploy/distribution/src/main/resources/examples/deploy_standalone_vagrant_example.xml
 
 	wget -N https://raw.githubusercontent.com/netarchivesuite/netarchivesuite/master/deploy/deploy-core/scripts/RunNetarchiveSuite.sh
@@ -257,7 +258,7 @@ POSTGRESSETUP
 $netarchivedeploy = <<NETARCHIVEDEPLOY
 	# Netarchive: Deploy
 	cd /home/vagrant/netarchive
-	./RunNetarchiveSuite.sh NetarchiveSuite.zip deploy_standalone_example.xml deploy NetarchiveSuite-heritrix3-bundler.zip
+	./RunNetarchiveSuite.sh NetarchiveSuite.zip deploy_standalone_vagrant_example.xml deploy NetarchiveSuite-heritrix3-bundler.zip
      /sbin/ifconfig
 	# For convenience of testing in Firefox, extract and report the IP-addy
 	echo 'You can now TEST the NetarchiveSuite installation in a browser with:'
@@ -326,7 +327,9 @@ Vagrant.configure("2") do |config|
 	#   vb.gui = true
 	#
 	#   # Customize the amount of memory on the VM:
-		vb.memory = "512"
+		# As of November 2016, a memory setting of 1024 is needed for NAS,
+		# if less than 1024 is used, NetArchive Suite will not start
+		vb.memory = "1024"
 	 end
 	#
 	# View the documentation for the provider you are using for more
