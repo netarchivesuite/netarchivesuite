@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -87,6 +88,7 @@ public class JobResource implements ResourceAbstract {
     }
 
     public void job(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+        Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
 
@@ -446,25 +448,23 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Running job");
+            masterTplBuilder.titlePlace.setText("Job details");
         }
-
         if (masterTplBuilder.menuPlace != null) {
             masterTplBuilder.menuPlace.setText(menuSb.toString());
         }
-
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Running job");
+        if (masterTplBuilder.languagesPlace != null) {
+            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
         }
-
+        if (masterTplBuilder.headingPlace != null) {
+            masterTplBuilder.headingPlace.setText("Job details");
+        }
         if (masterTplBuilder.contentPlace != null) {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
-
         if (masterTplBuilder.versionPlace != null) {
             masterTplBuilder.versionPlace.setText(Constants.getVersionString());
         }
-
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
         }
@@ -476,6 +476,7 @@ public class JobResource implements ResourceAbstract {
     }
 
     public void crawllog_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+        Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
 
@@ -598,23 +599,21 @@ public class JobResource implements ResourceAbstract {
         if (masterTplBuilder.titlePlace != null) {
             masterTplBuilder.titlePlace.setText("Crawllog");
         }
-
         if (masterTplBuilder.menuPlace != null) {
             masterTplBuilder.menuPlace.setText(menuSb.toString());
         }
-
+        if (masterTplBuilder.languagesPlace != null) {
+            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
+        }
         if (masterTplBuilder.headingPlace != null) {
             masterTplBuilder.headingPlace.setText("Crawllog");
         }
-
         if (masterTplBuilder.contentPlace != null) {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
-
         if (masterTplBuilder.versionPlace != null) {
             masterTplBuilder.versionPlace.setText(Constants.getVersionString());
         }
-
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
         }
@@ -626,6 +625,7 @@ public class JobResource implements ResourceAbstract {
     }
 
     public void frontier_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+        Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
 
@@ -743,23 +743,21 @@ public class JobResource implements ResourceAbstract {
         if (masterTplBuilder.titlePlace != null) {
             masterTplBuilder.titlePlace.setText("Frontier queue");
         }
-
         if (masterTplBuilder.menuPlace != null) {
             masterTplBuilder.menuPlace.setText(menuSb.toString());
         }
-
+        if (masterTplBuilder.languagesPlace != null) {
+            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
+        }
         if (masterTplBuilder.headingPlace != null) {
             masterTplBuilder.headingPlace.setText("Frontier queue");
         }
-
         if (masterTplBuilder.contentPlace != null) {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
-
         if (masterTplBuilder.versionPlace != null) {
             masterTplBuilder.versionPlace.setText(Constants.getVersionString());
         }
-
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
         }
@@ -778,6 +776,7 @@ public class JobResource implements ResourceAbstract {
     }
 
     public void script(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+        Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
 
@@ -827,27 +826,24 @@ public class JobResource implements ResourceAbstract {
         if (masterTplBuilder.titlePlace != null) {
             masterTplBuilder.titlePlace.setText("Scripting console");
         }
-
         if (masterTplBuilder.menuPlace != null) {
             masterTplBuilder.menuPlace.setText(menuSb.toString());
         }
-
+        if (masterTplBuilder.languagesPlace != null) {
+            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
+        }
         if (masterTplBuilder.headingPlace != null) {
             masterTplBuilder.headingPlace.setText("Scripting console");
         }
-
         if (masterTplBuilder.scriptPlace != null) {
             masterTplBuilder.scriptPlace.setText(scriptStr);
         }
-
         if (masterTplBuilder.contentPlace != null) {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
-
         if (masterTplBuilder.versionPlace != null) {
             masterTplBuilder.versionPlace.setText(Constants.getVersionString());
         }
-
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
         }
@@ -859,6 +855,7 @@ public class JobResource implements ResourceAbstract {
     }
 
     public void report(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+        Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
 
@@ -924,25 +921,23 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Scripting console");
+            masterTplBuilder.titlePlace.setText("Reports");
         }
-
         if (masterTplBuilder.menuPlace != null) {
             masterTplBuilder.menuPlace.setText(menuSb.toString());
         }
-
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Scripting console");
+        if (masterTplBuilder.languagesPlace != null) {
+            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
         }
-
+        if (masterTplBuilder.headingPlace != null) {
+            masterTplBuilder.headingPlace.setText("Reports");
+        }
         if (masterTplBuilder.contentPlace != null) {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
-
         if (masterTplBuilder.versionPlace != null) {
             masterTplBuilder.versionPlace.setText(Constants.getVersionString());
         }
-
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
         }

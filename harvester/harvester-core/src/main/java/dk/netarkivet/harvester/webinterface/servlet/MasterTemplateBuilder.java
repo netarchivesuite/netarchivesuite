@@ -12,6 +12,9 @@ public class MasterTemplateBuilder extends TemplateBuilderBase {
     @TemplateBuilderPlaceHolder("menu")
     public TemplatePlaceHolder menuPlace;
 
+    @TemplateBuilderPlaceHolder("languages")
+    public TemplatePlaceHolder languagesPlace;
+
     @TemplateBuilderPlaceHolder("heading")
     public TemplatePlaceHolder headingPlace;
 
