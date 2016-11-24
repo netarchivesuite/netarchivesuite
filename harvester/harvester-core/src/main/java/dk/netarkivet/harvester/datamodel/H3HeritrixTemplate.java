@@ -531,7 +531,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	}
 
 	@Override public void enableOrDisableDeduplication(boolean enabled) {
-		template = template.replace(DEDUPLICATION_ENABLED_PLACEHOLDER, Boolean.toString(enabled).toLowerCase());
+		final String replacement = Boolean.toString(enabled).toLowerCase();
+		log.debug("Replacing deduplication enabled placeholder {} with {}.", DEDUPLICATION_ENABLED_PLACEHOLDER, replacement);
+		this.template = template.replace(DEDUPLICATION_ENABLED_PLACEHOLDER, replacement);
 	}
 
 	//<property name="metadataItems">
