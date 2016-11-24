@@ -767,6 +767,11 @@ public class DeDuplicator extends Processor implements InitializingBean {
         StringBuffer ret = new StringBuffer();
         ret.append("Processor: is.hi.bok.digest.DeDuplicator\n");
         ret.append("  Function:          Abort processing of duplicate records\n");
+        if (!getEnabled()) {
+            ret.append("Processor is disabled by configuration");
+            ret.append("\n");
+            return ret.toString();
+        }
         ret.append("                     - Lookup by " + 
         		(lookupByURL?"url":"digest") + " in use\n");
         ret.append("  Total handled:     " + stats.handledNumber + "\n");
