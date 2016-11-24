@@ -78,7 +78,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     public final static String METADATA_ITEMS_PLACEHOLDER = "%{METADATA_ITEMS_PLACEHOLDER}";
     public static final String MAX_TIME_SECONDS_PLACEHOLDER = "%{MAX_TIME_SECONDS_PLACEHOLDER}";
     public static final String CRAWLERTRAPS_PLACEHOLDER = "%{CRAWLERTRAPS_PLACEHOLDER}";
-    
+
+    /**
+	 * ##TODO These next two are very fragile patterns! One whitespace and they don't match.
+	 * Replace with more robust regexp match e.g. ".*ref.*bean.*DeDuplicator.*"
+	 */
     public static final String DEDUPLICATION_BEAN_REFERENCE_PATTERN = "<ref bean=\"DeDuplicator\"/>";
     public static final String DEDUPLICATION_BEAN_PATTERN =  "<bean id=\"DeDuplicator\"";
     public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER 
@@ -93,7 +97,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     		"%{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER}";
     
     public static final String QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER 
-    	= "%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}"; 
+    	= "%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}";
+
+	public static final String DEDUPLICATION_ENABLED_PLACEHOLDER = "%{DEDUPLICATION_ENABLED_PLACEHOLDER}";
     
     
     // PLACEHOLDERS for archiver beans (Maybe not necessary)
@@ -521,10 +527,14 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	@Override
 	public void removeDeduplicatorIfPresent() {
 		//NOP
-		log.warn("Removing the Deduplicator is not possible with the H3 templates and should not be required with the H3 template.");
+		log.debug("In H3 we don't remove the deduplicator, but just disable it.");
 	}
-	
-//<property name="metadataItems">
+
+	@Override public void enableOrDisableDeduplication(boolean enabled) {
+		template = template.replace(DEDUPLICATION_ENABLED_PLACEHOLDER, Boolean.toString(enabled).toLowerCase());
+	}
+
+	//<property name="metadataItems">
 //  <map>
 //        <entry key="harvestInfo.version" value="1.03"/> <!-- TODO maybe not add this one -->
 //        <entry key="harvestInfo.jobId" value="1"/>

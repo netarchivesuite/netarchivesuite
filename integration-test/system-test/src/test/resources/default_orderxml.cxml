@@ -358,8 +358,23 @@ extractorJs.enabled=true
    </list>
   </property>
  </bean>
-  
- <!-- DISPOSITION CHAIN -->
+
+  <bean id="DeDuplicator" class="is.hi.bok.deduplicator.DeDuplicator">
+    <!-- DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER is replaced by path on harvest-server -->
+    <property name="indexLocation" value="%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}"/>
+    <property name="matchingMethod" value="URL"/>
+    <property name="tryEquivalent" value="TRUE"/>
+    <property name="changeContentSize" value="false"/>
+    <property name="mimeFilter" value="^text/.*"/>
+    <property name="filterMode" value="BLACKLIST"/>
+    <!--  <property name="analysisMode" value="TIMESTAMP"/> TODO does not work. but isn't a problem, as the default is always USED -->
+    <property name="origin" value=""/>
+    <property name="originHandling" value="INDEX"/>
+    <property name="statsPerHost" value="true"/>
+    <property name="enabled" value="%{DEDUPLICATION_ENABLED_PLACEHOLDER}" />
+  </bean>
+
+  <!-- DISPOSITION CHAIN -->
  <!-- processors declared as named beans -->
 
 <!-- Here the (W)arc writer is inserted -->
@@ -377,6 +392,8 @@ extractorJs.enabled=true
  <bean id="dispositionProcessors" class="org.archive.modules.DispositionChain">
   <property name="processors">
    <list>
+     <!-- remove the reference below, and the DeDuplicator bean itself to disable Deduplication -->
+     <ref bean="DeDuplicator"/>
     <!-- write to aggregate archival files... -->
     <!-- Here the reference to the (w)arcWriter bean is inserted -->	
 

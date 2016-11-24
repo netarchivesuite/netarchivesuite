@@ -255,6 +255,11 @@ public abstract class HeritrixTemplate implements Serializable {
 	public abstract void removeDeduplicatorIfPresent();
 
 	/**
+	 *
+	 */
+	public abstract void enableOrDisableDeduplication(boolean enabled);
+
+	/**
 	 * Method to add settings to the WARCWriterProcesser, so that it can generate a proper WARCINFO record. 
 	 * @param ajob a HarvestJob
 	 * @param origHarvestdefinitionName The name of the harvestdefinition behind this job
