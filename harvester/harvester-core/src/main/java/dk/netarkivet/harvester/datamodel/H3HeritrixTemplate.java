@@ -79,12 +79,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     public static final String MAX_TIME_SECONDS_PLACEHOLDER = "%{MAX_TIME_SECONDS_PLACEHOLDER}";
     public static final String CRAWLERTRAPS_PLACEHOLDER = "%{CRAWLERTRAPS_PLACEHOLDER}";
 
-    /**
-	 * ##TODO These next two are very fragile patterns! One whitespace and they don't match.
-	 * Replace with more robust regexp match e.g. ".*ref.*bean.*DeDuplicator.*"
-	 */
-    public static final String DEDUPLICATION_BEAN_REFERENCE_PATTERN = "<ref bean=\"DeDuplicator\"/>";
-    public static final String DEDUPLICATION_BEAN_PATTERN =  "<bean id=\"DeDuplicator\"";
+    public static final String DEDUPLICATION_BEAN_REFERENCE_PATTERN = ".*ref.*bean.*DeDuplicator.*/>";
+    public static final String DEDUPLICATION_BEAN_PATTERN =  ".*bean.*id.*DeDuplicator.*";
     public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER 
     	= "%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}"; 
 
@@ -211,8 +207,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	//   - a DeDuplicator reference bean is present in the template
 	public boolean IsDeduplicationEnabled() {
 		return (template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER) 
-				&& template.contains(DEDUPLICATION_BEAN_PATTERN)
-				&& template.contains(DEDUPLICATION_BEAN_REFERENCE_PATTERN)); 
+				&& template.matches(DEDUPLICATION_BEAN_PATTERN)
+				&& template.matches(DEDUPLICATION_BEAN_REFERENCE_PATTERN));
 	}	
 
 	/**
