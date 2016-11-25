@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.jsp.JspWriter;
 
@@ -79,8 +80,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     public static final String MAX_TIME_SECONDS_PLACEHOLDER = "%{MAX_TIME_SECONDS_PLACEHOLDER}";
     public static final String CRAWLERTRAPS_PLACEHOLDER = "%{CRAWLERTRAPS_PLACEHOLDER}";
 
-    public static final String DEDUPLICATION_BEAN_REFERENCE_PATTERN = ".*ref.*bean.*DeDuplicator.*/>";
-    public static final String DEDUPLICATION_BEAN_PATTERN =  ".*bean.*id.*DeDuplicator.*";
+    public static final Pattern DEDUPLICATION_BEAN_REFERENCE_PATTERN = Pattern.compile(".*ref.*bean.*DeDuplicator.*", Pattern.DOTALL);
+
+    public static final Pattern DEDUPLICATION_BEAN_PATTERN =  Pattern.compile(".*bean.*id.*DeDuplicator.*", Pattern.DOTALL);
     public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER 
     	= "%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}"; 
 
@@ -207,8 +209,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	//   - a DeDuplicator reference bean is present in the template
 	public boolean IsDeduplicationEnabled() {
 		return (template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER) 
-				&& template.matches(DEDUPLICATION_BEAN_PATTERN)
-				&& template.matches(DEDUPLICATION_BEAN_REFERENCE_PATTERN));
+				&& DEDUPLICATION_BEAN_PATTERN.matcher(template).matches()
+				&& DEDUPLICATION_BEAN_REFERENCE_PATTERN.matcher(template).matches());
 	}	
 
 	/**

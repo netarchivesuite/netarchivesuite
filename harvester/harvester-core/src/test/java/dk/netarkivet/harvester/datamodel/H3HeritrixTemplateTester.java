@@ -3,12 +3,14 @@ package dk.netarkivet.harvester.datamodel;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.FileUtils;
 
 public class H3HeritrixTemplateTester {
 
@@ -16,7 +18,25 @@ public class H3HeritrixTemplateTester {
 	String correctTemplateName = "crawler-beans_with_placeholders.cxml";
 	String incorrectTemplateName = "crawler-beans_no_placeholders.cxml";
 	String incorrectSignature = "crawler-beans_without_h3_signature.cxml";
-	
+
+	@Test
+	public void testIsDeduplicationEnabled() throws IOException {
+		URL url = this.getClass().getClassLoader().getResource("heritrix3");
+	    File basedir = new File(url.getFile());
+	    File beansWithPlaceholders = new File(basedir, correctTemplateName);
+		H3HeritrixTemplate template = new H3HeritrixTemplate(100L, FileUtils.readFile(beansWithPlaceholders));
+		assertTrue("Should be dedup enabled.", template.IsDeduplicationEnabled());
+	}
+
+	@Test
+	public void testIsDeduplicationEnabledNot() throws IOException {
+		URL url = this.getClass().getClassLoader().getResource("heritrix3");
+	    File basedir = new File(url.getFile());
+	    File beansWithPlaceholders = new File(basedir, incorrectTemplateName);
+		H3HeritrixTemplate template = new H3HeritrixTemplate(100L, FileUtils.readFile(beansWithPlaceholders));
+		assertFalse("Should not be dedup enabled", template.IsDeduplicationEnabled());
+	}
+
 	@Test
 	public void testArchiveFilePrefixSetter() {
 		URL url = this.getClass().getClassLoader().getResource("heritrix3");
