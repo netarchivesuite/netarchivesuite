@@ -35,6 +35,7 @@ import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecordHeader;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
+import org.archive.resource.arc.ARCResource;
 import org.archive.wayback.ResourceStore;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.core.Resource;
@@ -77,12 +78,11 @@ public class NetarchiveResourceStore implements ResourceStore {
      */
     public Resource retrieveResource(CaptureSearchResult captureSearchResult) throws ResourceNotAvailableException {
         long offset;
-        String responseCode = null;
         Map<String, Object> metadata = new HashMap<String, Object>();
         ARCRecord arcRecord;
-        ArchiveRecordHeader header;
+        ArchiveRecordHeader arcRecordMetaData;
 
-        String arcfile = captureSearchResult.getFile();
+        String filename = captureSearchResult.getFile();
         try {
             offset = captureSearchResult.getOffset();
         } catch (NumberFormatException e) {
@@ -94,58 +94,18 @@ public class NetarchiveResourceStore implements ResourceStore {
             throw new ResourceNotAvailableException("NetarchiveResourceStore "
                     + "throws NullPointerException when accessing " + "CaptureResult given from Wayback.");
         }
-        logger.info("Received request for resource from file '" + arcfile + "' at offset '" + offset + "'");
-        BitarchiveRecord bitarchiveRecord = client.get(arcfile, offset);
+        logger.info("Received request for resource from file '" + filename + "' at offset '" + offset + "'");
+        BitarchiveRecord bitarchiveRecord = client.get(filename, offset);
         if (bitarchiveRecord == null) {
             throw new ResourceNotAvailableException("NetarchiveResourceStore: "
                     + "Bitarchive didn't return the requested record.");
         }
-        logger.info("Retrieved resource from file '" + arcfile + "' at offset '" + offset + "'");
+        logger.info("Retrieved resource from file '" + filename + "' at offset '" + offset + "'");
 
+        // This InputStream is just the http-response, starting with the HTTP arcRecordMetaData.
         InputStream is = bitarchiveRecord.getData();
-        // Match header-lines (until empty line).
-        try {
-            for (String line = InputStreamUtils.readLine(is); line != null && line.length() > 0; line = InputStreamUtils
-                    .readLine(is)) {
-                Matcher m = HTTP_HEADER_PATTERN.matcher(line);
-                if (m.matches()) {
-                    responseCode = m.group(1);
-                    logger.debug("Setting response code '" + responseCode + "'");
 
-                } else {
-                    String[] parts = line.split(":", 2);
-                    if (parts.length != 2) {
-                        logger.debug("Malformed header line '" + line + "'");
-                    } else {
-                        String name = parts[0];
-                        String contents = parts[1].trim();
-                        if (contents != null) {
-                            if (name.equals("Content-Length")) {
-                                logger.info("Setting length header to '" + contents + "'");
-                                metadata.put(ARCRecordMetaData.LENGTH_FIELD_KEY, contents);
-                            } else if (name.equals("Content-Type")) {
-                                logger.info("Setting Content-Type header to '" + contents + "'");
-                                metadata.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY, contents);
-                            } else if (name.equals("Location")) {
-                                logger.info("Setting redirect Location header to '" + contents + "'");
-                                metadata.put("Location", contents);
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            logger.error("Error looking for empty line", e);
-            throw new ResourceNotAvailableException(e.getMessage());
-        }
-        // fill metadata for ARC record.
-        metadata.put(ARCRecordMetaData.URL_FIELD_KEY, captureSearchResult.getUrlKey());
-        // TODO the following is the correct way to set the URL. If we do
-        // things this way then we should be able to get arcrecord to parse
-        // the headers for us.
-        /*
-         * metadata.put(ARCRecordMetaData.URL_FIELD_KEY, captureSearchResult.getOriginalUrl());
-         */
+        metadata.put(ARCRecordMetaData.URL_FIELD_KEY, captureSearchResult.getOriginalUrl());
         try {
             metadata.put(ARCRecordMetaData.IP_HEADER_FIELD_KEY, captureSearchResult.getOriginalHost());
         } catch (NullPointerException ex) {
@@ -156,24 +116,22 @@ public class NetarchiveResourceStore implements ResourceStore {
         metadata.put(ARCRecordMetaData.VERSION_FIELD_KEY, captureSearchResult.getHttpCode());
         metadata.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, "" + offset);
         metadata.put(ARCRecordMetaData.LENGTH_FIELD_KEY, "" + bitarchiveRecord.getLength());
-        if (responseCode != null) {
-            metadata.put(ARCRecordMetaData.STATUSCODE_FIELD_KEY, responseCode);
-        }
-
-        // create header.
+        metadata.put(ARCRecordMetaData.STATUSCODE_FIELD_KEY, captureSearchResult.getHttpCode());
+        // create arcRecordMetaData.
         try {
-            header = new ARCRecordMetaData(arcfile, metadata);
+            arcRecordMetaData = new ARCRecordMetaData(filename, metadata);
         } catch (IOException e) {
-            logger.error("Could not create header", e);
+            logger.error("Could not create arcRecordMetaData", e);
             throw new ResourceNotAvailableException(e.getMessage());
         }
 
         // create ARCRecord.
         try {
-            arcRecord = new ARCRecord(is, header, 0, false, false, true);
-            int code = arcRecord.getStatusCode();
-            logger.debug("ARCRecord created with code '" + code + "'");
-            arcRecord.skipHttpHeader();
+            arcRecord = new ARCRecord(is, arcRecordMetaData, 0, false, false, true);
+            //arcRecord.getHttpHeaders();
+            //arcRecord.skipHttpHeader();
+            logger.debug("ARCRecord created with code '" + arcRecord.getStatusCode() + "'");
+            logger.debug("Headers: " + arcRecord.getHeaderString());
         } catch (NullPointerException e) {
             logger.error("Could not create ARCRecord", e);
             throw new ResourceNotAvailableException("ARC record doesn't contain" + " valid http URL");
@@ -181,22 +139,12 @@ public class NetarchiveResourceStore implements ResourceStore {
             logger.error("Could not create ARCRecord", e);
             throw new ResourceNotAvailableException(e.getMessage());
         }
-        final String statusCode = responseCode;
-        final Map<String, Object> metadataF = metadata;
-        // TODO This the sleaziest thing in this class. Why does the
-        // ARCRecord give the wrong status code if we don't override this method?
-        Resource resource = new ArcResource(arcRecord, (ArchiveReader) null) {
-            public int getStatusCode() {
-                return Integer.parseInt(statusCode);
-            }
-            // FIXME incompatible, needed?
-            /*
-            @Override
-            public Map<String, String> getHttpHeaders() {
-                return metadataF;
-            }
-            */
-        };
+        Resource resource = new ArcResource(arcRecord, null);
+        try {
+            resource.parseHeaders();
+        } catch (IOException e) {
+            logger.debug(e);
+        }
         logger.info("Returning resource '" + resource + "'");
         return resource;
     }
