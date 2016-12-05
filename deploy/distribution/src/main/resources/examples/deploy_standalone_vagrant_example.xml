@@ -122,21 +122,29 @@ National Library.
           <admin>
             <class>dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin</class>
             <database>
-              <class>dk.netarkivet.archive.arcrepositoryadmin.DerbyServerSpecifics</class>
-              <baseUrl>jdbc:derby</baseUrl>
+              <class>dk.netarkivet.archive.arcrepositoryadmin.PostgreSQLSpecifics</class>
+              <baseUrl>jdbc:postgresql</baseUrl>
               <machine>localhost</machine>
-              <port>48120</port>
-              <dir>adminDB</dir>
+              <port>5432</port>
+              <dir>admindb</dir>
+              <username>devel</username>
+              <password>develpass</password>
+              <pool>
+                <idleConnTestQuery>SELECT COUNT(*) FROM replica</idleConnTestQuery>
+                <idleConnTestOnCheckin>false</idleConnTestOnCheckin>
+              </pool>
             </database>
           </admin>
         </archive>
         <common>
           <database>
-            <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
-            <baseUrl>jdbc:derby</baseUrl>
+            <class>dk.netarkivet.harvester.datamodel.PostgreSQLSpecifics</class>
+            <baseUrl>jdbc:postgresql</baseUrl>
             <machine>localhost</machine>
-            <port>48121</port>
-            <dir>harvestDatabase/fullhddb</dir>
+            <port>5432</port>
+            <dir>harvestdb</dir>
+            <username>devel</username>
+            <password>develpass</password>
           </database>
         </common>
       </settings>
