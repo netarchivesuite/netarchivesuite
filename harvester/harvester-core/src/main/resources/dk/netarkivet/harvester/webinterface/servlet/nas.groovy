@@ -175,15 +175,30 @@ void showModBudgets() {
 }
 
 void changeBudget(String key, int value) {
-	queue = appCtx.getBean("frontier").getQueueFor(key)
-	queue.totalBudget = value
+	surtDomain = ""
+	for(str in key.split('\\.')) {
+		surtDomain = str+","+surtDomain
+	}
+	surtDomain = "http://("+surtDomain
+	
+	mgr = appCtx.getBean("sheetOverlaysManager")
+	newSheetName = "budget-"+value
+	//get existing sheet for value
+	sheet = mgr.sheetsByName.get(newSheetName)
+	if(sheet == null) {
+		mgr.putSheetOverlay(newSheetName, "frontier.queueTotalBudget", value)
+	}
+	mgr.addSurtAssociation(surtDomain, newSheetName)
+	
+	//if frontier related settings have changed (for instance, budget), this can bring queues out of retirement
+	appCtx.getBean("frontier").reconsiderRetiredQueues()
 
 	//to store our manually added budget changes, we have to put them in a map
 	def modQueues = job.jobContext.data.get("manually-added-queues");
 	if(modQueues == null) {
 		modQueues = [:]
 	}
-	modQueues.put(key, queue.totalBudget)
+	modQueues.put(key, value)
 	job.jobContext.data.put("manually-added-queues", modQueues)
 	
 	logToScriptingEventsLogFile("manual budget change : "+ key + " -> "+value)
@@ -194,14 +209,14 @@ void getQueueTotalBudget() {
 }
 
 void showFilters() {
-	def originalIndex = job.jobContext.data.get("original-filters-size")
+	def originalIndexSize = job.jobContext.data.get("original-filters-size")
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
 	htmlOut.println('<ul>')
-	for (i = originalIndex; i < regexRuleObj.regexList.size(); i++) {
-		htmlOut.println('<li><input type="checkbox" name="removeIndex" value="'+i+'" />&nbsp;'+regexRuleObj.regexList.get(i).pattern()+'</li>')
+	for (i = originalIndexSize; i < regexRuleObj.regexList.size(); i++) {
+		htmlOut.println('<li><input type="checkbox" name="removeIndex" value="'+i+'" /> '+regexRuleObj.regexList.get(i).pattern()+'</li>')
 	}
 	htmlOut.println('</ul>')
-	if(originalIndex < regexRuleObj.regexList.size()) {
+	if(originalIndexSize < regexRuleObj.regexList.size()) {
 		htmlOut.println('<button type="submit" name="remove-filter" value="1" class="btn btn-success"><i class="icon-white icon-remove"></i> Remove</button>')
 	}
 }
@@ -211,8 +226,8 @@ void addFilter(String pat) {
 		Pattern myRegex = Pattern.compile(pat)
 		regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
 		//to store our manually added filters, we have to put them in a map
-		def originalIndex = job.jobContext.data.get("original-filters-size")
-		if(originalIndex == null) {
+		def originalIndexSize = job.jobContext.data.get("original-filters-size")
+		if(originalIndexSize == null) {
 			job.jobContext.data.put("original-filters-size", regexRuleObj.regexList.size())
 		}
 		regexRuleObj.regexList.add(myRegex)
@@ -222,11 +237,11 @@ void addFilter(String pat) {
 
 void removeFilters(def indexesOFiltersToRemove) {
 	indexesOFiltersToRemove = indexesOFiltersToRemove.sort().reverse()
-	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.arschive.modules.deciderules.MatchesListRegexDecideRule }
-	def originalIndex = job.jobContext.data.get("original-filters-size");
+	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
+	def originalIndexSize = job.jobContext.data.get("original-filters-size")
 	indexesOFiltersToRemove.eachWithIndex { num, idx ->
-		regexRuleObj.regexList.remove(num+originalIndex)
-		logToScriptingEventsLogFile("removing DecideResult.REJECT filter : "+ regex)
+		logToScriptingEventsLogFile("removing DecideResult.REJECT filter : "+ regexRuleObj.regexList[num+originalIndexSize])
+		regexRuleObj.regexList.remove(num+originalIndexSize)
 	}
 }
 

@@ -241,10 +241,10 @@ This page displays a list of running jobs.
 
    int rowcount = 0;
 
-   //recup list
+   //get list
    List<StartedJobInfo> infoList = infos.get(harvestName);
 
-   //trie de la List
+   //sort List
    HarvestStatusRunningTablesSort.ColumnId cidSort=
        tbs.getSortedColumnIdentByHarvestName(harvestName);
 

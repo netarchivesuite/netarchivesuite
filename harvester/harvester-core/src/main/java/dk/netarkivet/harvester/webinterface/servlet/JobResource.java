@@ -846,8 +846,7 @@ public class JobResource implements ResourceAbstract {
         	}
         }
         if(removeIndexes != null && removeIndexes.length > 0) {
-        	script += "\ndef ref = "+Arrays.toString(removeIndexes)+"\n";
-            script += "\nremoveFilters(ref)\n";
+            script += "\nremoveFilters("+Arrays.toString(removeIndexes)+")\n";
         }
         script += "\nshowFilters()\n";
 
