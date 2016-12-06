@@ -500,7 +500,7 @@ public class JobResource implements ResourceAbstract {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
         if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString());
+            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
         }
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
@@ -649,7 +649,7 @@ public class JobResource implements ResourceAbstract {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
         if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString());
+            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
         }
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
@@ -744,7 +744,7 @@ public class JobResource implements ResourceAbstract {
             }
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
-            sb.append("<label for=\"limit\">Limit:</label>");
+            sb.append("<label for=\"limit\">Lines to show:</label>");
             sb.append("<input type=\"text\" id=\"limit\" name=\"limit\" value=\"" + limit + "\" placeholder=\"return limit\">\n");
             sb.append("<label for=\"regex\">Filter regex:</label>");
             sb.append("<input type=\"text\" id=\"regex\" name=\"regex\" value=\"" + regex + "\" placeholder=\"regex\">\n");
@@ -759,7 +759,7 @@ public class JobResource implements ResourceAbstract {
             //System.out.println(new String(scriptResult.response, "UTF-8"));
             if (scriptResult != null && scriptResult.script != null) {
                 if (scriptResult.script.htmlOutput != null) {
-                    sb.append("<fieldset><legend>htmlOut</legend>");
+                    sb.append("<fieldset><!--<legend>htmlOut</legend>-->");
                     sb.append(scriptResult.script.htmlOutput);
                     sb.append("</fieldset><br />\n");
                 }
@@ -778,7 +778,7 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Frontier queue");
+            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" Frontier");
         }
         if (masterTplBuilder.menuPlace != null) {
             masterTplBuilder.menuPlace.setText(menuSb.toString());
@@ -787,13 +787,13 @@ public class JobResource implements ResourceAbstract {
             masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
         }
         if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Frontier queue");
+            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" Frontier");
         }
         if (masterTplBuilder.contentPlace != null) {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
         if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString());
+            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
         }
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
@@ -907,7 +907,7 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString());
+            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
         }
 
         if (masterTplBuilder.environmentPlace != null) {
@@ -1043,7 +1043,7 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString());
+            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
         }
 
         if (masterTplBuilder.environmentPlace != null) {
@@ -1130,7 +1130,7 @@ public class JobResource implements ResourceAbstract {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
         if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString());
+            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
         }
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
@@ -1224,7 +1224,7 @@ public class JobResource implements ResourceAbstract {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
         if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString());
+            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
         }
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));

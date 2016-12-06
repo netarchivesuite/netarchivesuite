@@ -72,11 +72,12 @@ void deleteFromFrontier(String regex) {
 void listFrontier(String regex, long limit) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
-    htmlOut.println '<pre>'
+    
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
-    htmlOut.println 'queue items: ' + pendingUris.pendingUrisDB.count()
+    htmlOut.println '<p>Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
+    content = '<pre>'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
     cursor = pendingUris.pendingUrisDB.openCursor(null, null);
     key = new DatabaseEntry();
@@ -90,7 +91,7 @@ void listFrontier(String regex, long limit) {
             curi = pendingUris.crawlUriBinding.entryToObject(value);
             if (pattern.matcher(curi.toString())) {
                 //htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
-                htmlOut.println curi
+                content = content + curi + '\n'
                 matchingCount++
                 --limit;
             }
@@ -98,12 +99,13 @@ void listFrontier(String regex, long limit) {
     } finally {
         cursor.close();
     }
-    htmlOut.println '</pre>'
+    content = content +  '</pre>'
     if (limit > 0) {
-        htmlOut.println '<p>'+ matchingCount + " matching uris found </p>"
+        content = 'Matching URIs: '+ matchingCount + '</p>' + content
     } else {
-        htmlOut.println '<p>The first ' + matchingCount + " matching uris found. (Return limit reached)</p>"
+        content = 'First matching URIs (return limit reached): ' + matchingCount + '</p>' + content
     }
+    htmlOut.println content
 }
 
 void pageFrontier(long skip, int items) {
