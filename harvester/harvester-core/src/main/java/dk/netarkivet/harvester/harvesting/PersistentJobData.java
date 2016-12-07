@@ -72,7 +72,7 @@ public class PersistentJobData implements JobInfo {
     /** Key in harvestinfo file for the orderXMLName of the job. */
     private static final String ORDERXMLNAME_KEY = ROOT_ELEMENT + ".templateName";
     /** Key in harvestinfo file for the orderXMLName update date. */
-    private static final String ORDERXML_UPDATE_DATE_KEY = ROOT_ELEMENT + ".templateUpdateDate";
+    private static final String ORDERXML_UPDATE_DATE_KEY = ROOT_ELEMENT + ".templateLastUpdateDate";
     /** Key in harvestinfo file for the orderXMLName description. */
     private static final String ORDERXML_DESCRIPTION_KEY = ROOT_ELEMENT + ".templateDescription";
     /** Key in harvestinfo file for the harvestID of the job. */
