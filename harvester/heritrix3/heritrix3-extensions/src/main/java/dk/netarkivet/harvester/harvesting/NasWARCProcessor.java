@@ -147,7 +147,7 @@ public class NasWARCProcessor extends WARCWriterProcessor {
         
         
         String netarchiveSuiteComment = "#added by NetarchiveSuite "
-                + dk.netarkivet.common.Constants.getVersionString();
+                + dk.netarkivet.common.Constants.getVersionString(false);
         ANVLRecord recordNAS = new ANVLRecord(); // Previously new ANVLRecord(7); 
 
         try {

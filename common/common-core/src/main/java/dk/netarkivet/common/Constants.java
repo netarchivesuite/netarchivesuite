@@ -92,21 +92,27 @@ public final class Constants {
 
     /**
      * Get a human-readable version string.
-     *
+     * @param isHtmlFormat if true, return a html format for the human-readable version string.
      * @return A string telling current version and status of code.
      */
-    public static String getVersionString() {
+    public static String getVersionString(boolean isHtmlFormat) {
         if (version == null) {
             StringBuilder sb = new StringBuilder();
             sb.append("Version: ");
             sb.append(Constants.class.getPackage().getSpecificationVersion());
             String implementationVersion = Constants.class.getPackage().getImplementationVersion();
             if (implementationVersion != null && implementationVersion.length() == 40) {
-                sb.append(" (<a href=\"https://github.com/netarchivesuite/netarchivesuite/commit/");
-                sb.append(implementationVersion);
-                sb.append("\">");
-                sb.append(implementationVersion.substring(0, 10));
-                sb.append("</a>)");
+            	if(isHtmlFormat) {
+            		sb.append(" (<a href=\"https://github.com/netarchivesuite/netarchivesuite/commit/");
+            		sb.append(implementationVersion);
+                    sb.append("\">");
+                    sb.append(implementationVersion.substring(0, 10));
+                    sb.append("</a>)");
+            	} else {
+            		sb.append(" (https://github.com/netarchivesuite/netarchivesuite/commit/");
+            		sb.append(implementationVersion);
+            		sb.append(")");
+            	}
             }
             version = sb.toString();
         }

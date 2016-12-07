@@ -181,7 +181,7 @@ public class IndexResource implements ResourceAbstract {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
         if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString());
+            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
         }
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
@@ -286,7 +286,7 @@ public class IndexResource implements ResourceAbstract {
             configTplBuilder.contentPlace.setText(sb.toString());
         }
         if (configTplBuilder.versionPlace != null) {
-            configTplBuilder.versionPlace.setText(Constants.getVersionString());
+            configTplBuilder.versionPlace.setText(Constants.getVersionString(true));
         }
         if (configTplBuilder.environmentPlace != null) {
             configTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
