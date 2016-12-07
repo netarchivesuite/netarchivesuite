@@ -54,6 +54,7 @@ public final class Constants {
     public static final String XML_EXTENSION = ".xml";
 
     // Version string. */
+    private static String versionHtml;
     private static String version;
 
     /** Current version of Heritrix 1 used by netarkivet-code. */
@@ -96,27 +97,31 @@ public final class Constants {
      * @return A string telling current version and status of code.
      */
     public static String getVersionString(boolean isHtmlFormat) {
-        if (version == null) {
+        if (version == null || versionHtml == null) {
             StringBuilder sb = new StringBuilder();
             sb.append("Version: ");
             sb.append(Constants.class.getPackage().getSpecificationVersion());
             String implementationVersion = Constants.class.getPackage().getImplementationVersion();
+            StringBuilder sbHtml = new StringBuilder(sb);
             if (implementationVersion != null && implementationVersion.length() == 40) {
-            	if(isHtmlFormat) {
-            		sb.append(" (<a href=\"https://github.com/netarchivesuite/netarchivesuite/commit/");
-            		sb.append(implementationVersion);
-                    sb.append("\">");
-                    sb.append(implementationVersion.substring(0, 10));
-                    sb.append("</a>)");
-            	} else {
-            		sb.append(" (https://github.com/netarchivesuite/netarchivesuite/commit/");
-            		sb.append(implementationVersion);
-            		sb.append(")");
-            	}
+            	sbHtml.append(" (<a href=\"https://github.com/netarchivesuite/netarchivesuite/commit/");
+            	sbHtml.append(implementationVersion);
+            	sbHtml.append("\">");
+            	sbHtml.append(implementationVersion.substring(0, 10));
+            	sbHtml.append("</a>)");
+
+            	sb.append(" (https://github.com/netarchivesuite/netarchivesuite/commit/");
+            	sb.append(implementationVersion);
+            	sb.append(")");
             }
             version = sb.toString();
+            versionHtml = sbHtml.toString();
         }
-        return version;
+        if(isHtmlFormat) {
+        	return versionHtml;
+        } else {
+        	return version;
+        }
     }
 
     /**
