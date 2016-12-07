@@ -52,6 +52,8 @@ public class Heritrix3JobMonitor implements Pageable {
     public RandomAccessFile idxRaf;
 
     public long lastIndexed = 0;
+    
+    public long totalCachedLines = 0;
 
     protected Heritrix3JobMonitor() {
     }
@@ -153,6 +155,7 @@ public class Heritrix3JobMonitor implements Pageable {
                                             if (tmpBuf[idx++] == '\n') {
                                                 idxRaf.writeLong(pos);
                                                 lastIndexed = pos;
+                                                totalCachedLines++;
                                             }
                                         }
                                     }
@@ -188,6 +191,7 @@ public class Heritrix3JobMonitor implements Pageable {
             jobname = null;
             jobResult = null;
             crawlLogFilePath = null;
+            totalCachedLines = 0;
             IOUtils.closeQuietly(logRaf);
             IOUtils.closeQuietly(idxRaf);
             oldFilesList.add(logFile);
@@ -213,6 +217,10 @@ public class Heritrix3JobMonitor implements Pageable {
     @Override
     public long getLastIndexed() {
         return lastIndexed;
+    }
+    
+    public long getTotalCachedLines() {
+    	return totalCachedLines;
     }
 
     @Override
