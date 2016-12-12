@@ -25,6 +25,8 @@ import com.antiaction.common.templateengine.TemplatePlaceHolder;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 
 public class JobResource implements ResourceAbstract {
 
@@ -117,6 +119,8 @@ public class JobResource implements ResourceAbstract {
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
         Job job;
+        
+        HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();   
 
         if (h3Job != null && !h3Job.bInitialized) {
             h3Job.init();
@@ -154,25 +158,38 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("job/");
             menuSb.append(h3Job.jobId);
             menuSb.append("/");
-            menuSb.append("\"> ");
+            menuSb.append("\"> Job ");
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
+            
+            sb.append("<div>\n");
+            
+            
+            
+            sb.append("<div style=\"float:left;width: 20%;min-width: 300px;}\">\n");
 
-            sb.append("JobId: ");
+            sb.append("JobId: <a href=\"/History/Harveststatus-jobdetails.jsp?jobID="+h3Job.jobId+"\">");
             sb.append(h3Job.jobId);
+            sb.append("</a><br />\n");
+            sb.append("JobState: ");
+            sb.append(h3Job.job.getStatus().getLocalizedString(Locale.ENGLISH).toUpperCase());
             sb.append("<br />\n");
+            String harvestName = dao.getHarvestName(h3Job.job.getOrigHarvestDefinitionID());
+            sb.append("OrigHarvestDefinitionName: <a href=\"/HarvestDefinition/Definitions-edit-selective-harvest.jsp?harvestname="+harvestName.replace(' ', '+')+"\">");
+            sb.append(harvestName);
+            sb.append("</a><br />\n");
             sb.append("HarvestNum: ");
             sb.append(h3Job.job.getHarvestNum());
             sb.append("<br />\n");
-            sb.append("Snapshop: ");
+            sb.append("Snapshot: ");
             sb.append(h3Job.job.isSnapshot());
             sb.append("<br />\n");
             sb.append("Channel: ");
             sb.append(h3Job.job.getChannel());
             sb.append("<br />\n");
-            sb.append("OrderXMLName: ");
+            sb.append("TemplateName: <a href=\"/History/Harveststatus-download-job-harvest-template.jsp?JobID="+h3Job.jobId+"\">");
             sb.append(h3Job.job.getOrderXMLName());
-            sb.append("<br />\n");
+            sb.append("</a><br />\n");
             sb.append("CountDomains: ");
             sb.append(h3Job.job.getCountDomains());
             sb.append("<br />\n");
@@ -185,86 +202,116 @@ public class JobResource implements ResourceAbstract {
             sb.append("MaxJobRunningTime: ");
             sb.append(h3Job.job.getMaxJobRunningTime());
             sb.append(" ms.<br />\n");
+            
+            sb.append("</div>\n");
+            
+            /* Heritrix3 WebUI */
+            sb.append("<div style=\"float:left;\">\n");
+            sb.append("<a href=\"");
+            sb.append(h3Job.hostUrl+"/job/"+h3Job.jobname+"/job/"+h3Job.jobname);
+            sb.append("\" class=\"btn btn-default\">");
+            sb.append("Heritrix3 WebUI");
+            sb.append("</a>");
+            
+            sb.append("</div>\n");
+            
+            sb.append("<div style=\"clear:both;\"></div>");
+            sb.append("</div>");
+            
+            
+            /* line 1 */
+            
+            sb.append("<h4>Job details</h4>\n");
+            sb.append("<div>\n");
+            
+            /* Progression/Queues */
+            sb.append("<a href=\"");
+            sb.append("/History/Harveststatus-download-job-harvest-template.jsp?JobID=");
+            sb.append(h3Job.jobId);
+            sb.append("\" class=\"btn btn-default\">");
+            sb.append("Progression/Queues");
+            sb.append("</a>");
 
-            sb.append("<br />\n");
+            sb.append("&nbsp;");
 
+            /* Crawllog */
             sb.append("<a href=\"");
             sb.append(NASEnvironment.servicePath);
             sb.append("job/");
             sb.append(h3Job.jobId);
             sb.append("/crawllog/");
             sb.append("\" class=\"btn btn-default\">");
-            sb.append("Show/filter crawllog");
-            sb.append("</a>");
-
-            sb.append("&nbsp;");
-
-            sb.append("<a href=\"");
-            sb.append(NASEnvironment.servicePath);
-            sb.append("job/");
-            sb.append(h3Job.jobId);
-            sb.append("/frontier/");
-            sb.append("\" class=\"btn btn-default\">");
-            sb.append("Show/delete frontier queue");
+            sb.append("Crawllog");
             sb.append("</a>");
 
             sb.append("&nbsp;");
             
-            sb.append("<a href=\"");
-            sb.append(NASEnvironment.servicePath);
-            sb.append("job/");
-            sb.append(h3Job.jobId);
-            sb.append("/filter/");
-            sb.append("\" class=\"btn btn-default\">");
-            sb.append("Add filter");
-            sb.append("</a>");
-
-            sb.append("&nbsp;");
-            
-            sb.append("<a href=\"");
-            sb.append(NASEnvironment.servicePath);
-            sb.append("job/");
-            sb.append(h3Job.jobId);
-            sb.append("/budget/");
-            sb.append("\" class=\"btn btn-default\">");
-            sb.append("Change budget");
-            sb.append("</a>");
-
-            sb.append("&nbsp;");
-
-            sb.append("<a href=\"");
-            sb.append(NASEnvironment.servicePath);
-            sb.append("job/");
-            sb.append(h3Job.jobId);
-            sb.append("/script/");
-            sb.append("\" class=\"btn btn-default\">");
-            sb.append("Open scripting console");
-            sb.append("</a>");
-
-            sb.append("&nbsp;");
-
+            /* Reports */
             sb.append("<a href=\"");
             sb.append(NASEnvironment.servicePath);
             sb.append("job/");
             sb.append(h3Job.jobId);
             sb.append("/report/");
             sb.append("\" class=\"btn btn-default\">");
-            sb.append("Show report");
+            sb.append("Reports");
             sb.append("</a>");
 
             sb.append("&nbsp;");
 
+            sb.append("</div>\n");
+            
+            /* line 2 */
+            
+            sb.append("<h4>Queue actions</h4>\n");
+            sb.append("<div>\n");
+            
+            /* Show/delete Frontier */
             sb.append("<a href=\"");
-            sb.append(h3Job.hostUrl);
+            sb.append(NASEnvironment.servicePath);
+            sb.append("job/");
+            sb.append(h3Job.jobId);
+            sb.append("/frontier/");
             sb.append("\" class=\"btn btn-default\">");
-            sb.append("Heritrix3 WebUI");
+            sb.append("Show/delete Frontier");
             sb.append("</a>");
 
-            sb.append("<br />\n");
+            sb.append("&nbsp;");
+            
+            /* Add RejectRules */
+            sb.append("<a href=\"");
+            sb.append(NASEnvironment.servicePath);
+            sb.append("job/");
+            sb.append(h3Job.jobId);
+            sb.append("/filter/");
+            sb.append("\" class=\"btn btn-default\">");
+            sb.append("Add RejectRules");
+            sb.append("</a>");
+
+            sb.append("&nbsp;");
+            
+            /* Modify Budget */
+            sb.append("<a href=\"");
+            sb.append(NASEnvironment.servicePath);
+            sb.append("job/");
+            sb.append(h3Job.jobId);
+            sb.append("/budget/");
+            sb.append("\" class=\"btn btn-default\">");
+            sb.append("Modify budget");
+            sb.append("</a>");
+
+            sb.append("&nbsp;");
+            
+            sb.append("</div>\n");
 
             if (h3Job.jobResult != null && h3Job.jobResult.job != null) {
+            	
+            	/* line 3 */
+                
+                sb.append("<h4>Job actions</h4>\n");
+                sb.append("<div style=\"margin-bottom:30px;\">\n");
+            	
                 job = h3Job.jobResult.job;
-                sb.append("<br />\n");
+
                 for (int i=0; i<job.availableActions.size(); ++i) {
                     if (i > 0) {
                         sb.append("&nbsp;");
@@ -273,11 +320,25 @@ public class JobResource implements ResourceAbstract {
                     sb.append("<a href=\"?action=");
                     sb.append(job.availableActions.get(i));
                     sb.append("\" class=\"btn btn-default\">");
-                    sb.append(job.availableActions.get(i));
+                    sb.append(job.availableActions.get(i).substring(0, 1).toUpperCase()+job.availableActions.get(i).substring(1));
                     sb.append("</a>");
                 }
-                sb.append("<br />\n");
-                sb.append("<br />\n");
+                
+                sb.append("&nbsp;");
+                
+                /* Open Scripting Console */
+                sb.append("<a href=\"");
+                sb.append(NASEnvironment.servicePath);
+                sb.append("job/");
+                sb.append(h3Job.jobId);
+                sb.append("/script/");
+                sb.append("\" class=\"btn btn-default\">");
+                sb.append("Open Scripting Console");
+                sb.append("</a>");
+
+                sb.append("&nbsp;");
+                
+                sb.append("</div>\n");
 
                 sb.append("shortName: ");
                 sb.append(job.shortName);
@@ -485,7 +546,7 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Job details");
+            masterTplBuilder.titlePlace.setText("Details and Actions on Running Job "+h3Job.jobId);
         }
         if (masterTplBuilder.menuPlace != null) {
             masterTplBuilder.menuPlace.setText(menuSb.toString());
@@ -494,7 +555,7 @@ public class JobResource implements ResourceAbstract {
             masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
         }
         if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Job details");
+            masterTplBuilder.headingPlace.setText("Details and Actions on Running Job "+h3Job.jobId);
         }
         if (masterTplBuilder.contentPlace != null) {
             masterTplBuilder.contentPlace.setText(sb.toString());
@@ -504,6 +565,9 @@ public class JobResource implements ResourceAbstract {
         }
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
+        }
+        if (masterTplBuilder.refreshInterval != null) {
+            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
         }
 
         masterTplBuilder.write(out);
@@ -567,7 +631,7 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("job/");
             menuSb.append(h3Job.jobId);
             menuSb.append("/");
-            menuSb.append("\"> ");
+            menuSb.append("\"> Job ");
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
 
@@ -672,6 +736,9 @@ public class JobResource implements ResourceAbstract {
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
         }
+        if (masterTplBuilder.refreshInterval != null) {
+            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
+        }
 
         masterTplBuilder.write(out);
 
@@ -752,7 +819,7 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("job/");
             menuSb.append(h3Job.jobId);
             menuSb.append("/");
-            menuSb.append("\"> ");
+            menuSb.append("\"> Job ");
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
 
@@ -816,6 +883,9 @@ public class JobResource implements ResourceAbstract {
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
         }
+        if (masterTplBuilder.refreshInterval != null) {
+            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
+        }
 
         masterTplBuilder.write(out);
 
@@ -876,7 +946,7 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("job/");
             menuSb.append(h3Job.jobId);
             menuSb.append("/");
-            menuSb.append("\"> ");
+            menuSb.append("\"> Job ");
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
             
@@ -909,7 +979,7 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Add filters on current job");
+            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" RejectRules");
         }
 
         if (masterTplBuilder.menuPlace != null) {
@@ -917,7 +987,7 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Add filters on current job");
+            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" RejectRules");
         }
 
         if (masterTplBuilder.contentPlace != null) {
@@ -930,6 +1000,10 @@ public class JobResource implements ResourceAbstract {
 
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
+        }
+        
+        if (masterTplBuilder.refreshInterval != null) {
+            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
         }
 
         masterTplBuilder.write(out);
@@ -994,7 +1068,7 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("job/");
             menuSb.append(h3Job.jobId);
             menuSb.append("/");
-            menuSb.append("\"> ");
+            menuSb.append("\"> Job ");
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
 
@@ -1045,7 +1119,7 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Budget");
+            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" Budget");
         }
 
         if (masterTplBuilder.menuPlace != null) {
@@ -1053,7 +1127,7 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Budget");
+            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" Budget");
         }
 
         if (masterTplBuilder.contentPlace != null) {
@@ -1066,6 +1140,10 @@ public class JobResource implements ResourceAbstract {
 
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
+        }
+        
+        if (masterTplBuilder.refreshInterval != null) {
+            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
         }
 
         masterTplBuilder.write(out);
@@ -1106,7 +1184,7 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("job/");
             menuSb.append(h3Job.jobId);
             menuSb.append("/");
-            menuSb.append("\"> ");
+            menuSb.append("\"> Job ");
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
 
@@ -1153,6 +1231,10 @@ public class JobResource implements ResourceAbstract {
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
         }
+        
+        if (masterTplBuilder.refreshInterval != null) {
+            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
+        }
 
         masterTplBuilder.write(out);
 
@@ -1182,7 +1264,7 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("job/");
             menuSb.append(h3Job.jobId);
             menuSb.append("/");
-            menuSb.append("\"> ");
+            menuSb.append("\"> Job ");
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
 
@@ -1246,6 +1328,9 @@ public class JobResource implements ResourceAbstract {
         }
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
+        }
+        if (masterTplBuilder.refreshInterval != null) {
+            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
         }
 
         masterTplBuilder.write(out);
