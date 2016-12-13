@@ -153,6 +153,7 @@ public class IndexResource implements ResourceAbstract {
                     sb.append(h3Job.jobId);
                     sb.append("/");
                     sb.append("\" class=\"btn btn-default\">");
+                    sb.append("Job ");
                     sb.append(h3Job.jobId);
                     long lines = (h3Job.idxFile.length() / 8) - 1;
                     if (lines > 0) {
