@@ -293,6 +293,12 @@ public class HarvesterSettings {
      * Maximum number of most recent history records displayed on the running job details page.
      */
     public static String HARVEST_MONITOR_DISPLAYED_HISTORY_SIZE = "settings.harvester.monitor.displayedHistorySize";
+    
+    /**
+     * <b>settings.harvester.monitor.displayedFrontierQueuesSize</b>:<br>
+     * Maximum number of frontier queues displayed on the running job details page.
+     */
+    public static String HARVEST_MONITOR_DISPLAYED_FRONTIER_QUEUE_SIZE = "settings.harvester.monitor.displayedFrontierQueuesSize";
 
     /**
      * <b>settings.harvester.harvesting.heritrix.crawlLoopWaitTime</b>:<br>
