@@ -772,6 +772,61 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
 
         return report;
     }
+    
+    /**
+     * Retrieve a frontier report from a job id, with limited results and possibility to sort by totalenqueues DESC
+     *
+     * @param jobId the job id
+     * @param limit the limit of result to query
+     * @param sort if true, sort the results by totalenqueues DESC
+     * @return a frontier report
+     */
+    public InMemoryFrontierReport getFrontierReport(long jobId, int limit, boolean sort) {
+
+        ArgumentNotValid.checkNotNull(jobId, "jobId");
+        ArgumentNotValid.checkNotNull(limit, "limit");
+        ArgumentNotValid.checkNotNull(sort, "sort");
+
+        InMemoryFrontierReport report = new InMemoryFrontierReport(Long.toString(jobId));
+
+        Connection c = HarvestDBConnection.get();
+        PreparedStatement stm = null;
+        try {
+        	String sqlString = "SELECT " + FR_COLUMN.getColumnsInOrder() + " FROM frontierReportMonitor"
+                    + " WHERE jobId=? ";
+        	if(sort) {
+        		sqlString = sqlString + " ORDER BY totalenqueues DESC ";
+        	}
+        	if(limit > 0) {
+        		sqlString = sqlString + " LIMIT ? ";
+        	}
+            stm = c.prepareStatement(sqlString);
+            stm.setLong(1, jobId);
+            stm.setInt(2, limit);
+
+            ResultSet rs = stm.executeQuery();
+
+            // Process first line to get report timestamp
+            if (rs.next()) {
+                report.setTimestamp(rs.getTimestamp(FR_COLUMN.tstamp.rank()).getTime());
+                report.addLine(getLine(rs));
+
+                while (rs.next()) {
+                    report.addLine(getLine(rs));
+                }
+            }
+
+        } catch (SQLException e) {
+            String message = "SQL error fetching report for job ID " + jobId + " and limit " + limit + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(stm);
+            HarvestDBConnection.release(c);
+        }
+
+        return report;
+    }
 
     /**
      * Deletes all frontier report data pertaining to the given job id from the persistent storage.
