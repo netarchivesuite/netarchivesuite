@@ -77,7 +77,7 @@ public class NasWARCProcessor extends WARCWriterProcessor {
      * Add to bean WARCProcessor bean as as
      * <property name="metadataItems"> 
      * <map>
-     * 	<entry key="harvestInfo.version" value="0.5"/>
+     * 	<entry key="harvestInfo.version" value="0.6"/>
 	 *	<entry key="harvestInfo.jobId" value="23"/>
 	 *  <entry key="harvestInfo.channel" value="FOCUSED"/>
 	 * ...	
