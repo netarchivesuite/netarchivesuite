@@ -49,7 +49,7 @@ public class NasWARCProcessor extends WARCWriterProcessor {
 	private static final String HARVESTINFO_MAXBYTESPERDOMAIN = "harvestInfo.maxBytesPerDomain";
 	private static final String HARVESTINFO_MAXOBJECTSPERDOMAIN = "harvestInfo.maxObjectsPerDomain";
 	private static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.templateName";
-	private static final String HARVESTINFO_ORDERXMLUPDATEDATE = "harvestInfo.templateUpdateDate";
+	private static final String HARVESTINFO_ORDERXMLUPDATEDATE = "harvestInfo.templateLastUpdateDate";
 	private static final String HARVESTINFO_ORDERXMLDESCRIPTION = "harvestInfo.templateDescription";
 	private static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
 	private static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";

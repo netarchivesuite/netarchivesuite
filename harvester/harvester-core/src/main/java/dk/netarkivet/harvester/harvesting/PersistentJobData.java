@@ -109,7 +109,7 @@ public class PersistentJobData implements JobInfo {
     /** Key in harvestinfo file for the file version. */
     private static final String HARVESTINFO_VERSION_KEY = "harvestInfo.version";
     /** Value for current version number. */
-    private static final String HARVESTINFO_VERSION_NUMBER = "0.5";
+    private static final String HARVESTINFO_VERSION_NUMBER = "0.6";
 
     /**
      * Also support for version 0.4 of harvestInfo xml. In the previous format the channel and snapshot keys were
