@@ -240,10 +240,9 @@ void addFilter(String pat) {
 void removeFilters(def indexesOFiltersToRemove) {
 	indexesOFiltersToRemove = indexesOFiltersToRemove.sort().reverse()
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
-	def originalIndexSize = job.jobContext.data.get("original-filters-size")
 	indexesOFiltersToRemove.eachWithIndex { num, idx ->
-		logToScriptingEventsLogFile("removing DecideResult.REJECT filter : "+ regexRuleObj.regexList[num+originalIndexSize])
-		regexRuleObj.regexList.remove(num+originalIndexSize)
+		logToScriptingEventsLogFile("removing DecideResult.REJECT filter : "+ regexRuleObj.regexList[num])
+		regexRuleObj.regexList.remove(num)
 	}
 }
 
