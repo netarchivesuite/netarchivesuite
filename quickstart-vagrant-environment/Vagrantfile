@@ -261,8 +261,14 @@ $netarchivedeploy = <<NETARCHIVEDEPLOY
 	./RunNetarchiveSuite.sh NetarchiveSuite.zip deploy_standalone_vagrant_example.xml deploy NetarchiveSuite-heritrix3-bundler.zip
      /sbin/ifconfig
 	# For convenience of testing in Firefox, extract and report the IP-addy
-	echo 'You can now TEST the NetarchiveSuite installation in a browser with:'
-echo http://`/sbin/ifconfig eth1 | grep -Eo 'inet addr:([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})'|cut -s -d":" -f 2| tr -d '[:space:]'`:8074/HarvestDefinition/
+	echo 'You can TEST the NetarchiveSuite installation in a browser with:'
+	echo http://`/sbin/ifconfig eth1 | grep -Eo 'inet addr:([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})'|cut -s -d":" -f 2| tr -d '[:space:]'`:8074/HarvestDefinition/
+	echo "This may only work once you've done the following:"
+	echo 'To make the Viewerproxy accessible through Firefox, do this:'
+	echo 'Go to Edit > Preferences > Advanced > Network > Settings...'
+	echo 'Choose Manual proxy configuration.'
+	echo 'Under HTTP-proxy, add the above IP address and Port number.'
+	echo 'Under "No proxy for", add the above IP, and press OK.'
 
 NETARCHIVEDEPLOY
 
