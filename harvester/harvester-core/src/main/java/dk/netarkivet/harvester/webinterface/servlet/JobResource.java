@@ -171,9 +171,11 @@ public class JobResource implements ResourceAbstract {
             sb.append("JobId: <a href=\"/History/Harveststatus-jobdetails.jsp?jobID="+h3Job.jobId+"\">");
             sb.append(h3Job.jobId);
             sb.append("</a><br />\n");
-            sb.append("JobState: ");
-            sb.append(h3Job.job.getStatus().getLocalizedString(Locale.ENGLISH).toUpperCase());
-            sb.append("<br />\n");
+            if (h3Job.jobResult != null && h3Job.jobResult.job != null) {
+            	sb.append("JobState: ");
+            	sb.append(h3Job.jobResult.job.crawlControllerState);
+            	sb.append("<br />\n");
+            }
             String harvestName = dao.getHarvestName(h3Job.job.getOrigHarvestDefinitionID());
             sb.append("OrigHarvestDefinitionName: <a href=\"/HarvestDefinition/Definitions-edit-selective-harvest.jsp?harvestname="+harvestName.replace(' ', '+')+"\">");
             sb.append(harvestName);
@@ -208,7 +210,7 @@ public class JobResource implements ResourceAbstract {
             /* Heritrix3 WebUI */
             sb.append("<div style=\"float:left;\">\n");
             sb.append("<a href=\"");
-            sb.append(h3Job.hostUrl+"/job/"+h3Job.jobname+"/job/"+h3Job.jobname);
+            sb.append(h3Job.hostUrl+"/job/"+h3Job.jobname);
             sb.append("\" class=\"btn btn-default\">");
             sb.append("Heritrix3 WebUI");
             sb.append("</a>");
@@ -226,7 +228,7 @@ public class JobResource implements ResourceAbstract {
             
             /* Progression/Queues */
             sb.append("<a href=\"");
-            sb.append("/History/Harveststatus-download-job-harvest-template.jsp?JobID=");
+            sb.append("/History/Harveststatus-running-jobdetails.jsp?JobID=");
             sb.append(h3Job.jobId);
             sb.append("\" class=\"btn btn-default\">");
             sb.append("Progression/Queues");
@@ -354,10 +356,10 @@ public class JobResource implements ResourceAbstract {
                 sb.append("<br />\n");
                 sb.append("url: ");
                 sb.append("<a href=\"");
-                sb.append(job.url);
+                sb.append(h3Job.hostUrl+"/job/"+h3Job.jobname);
                 sb.append("/");
                 sb.append("\">");
-                sb.append(job.url);
+                sb.append(h3Job.hostUrl+"/job/"+h3Job.jobname);
                 sb.append("</a>");
                 sb.append("<br />\n");
                 if (job.jobLogTail != null) {
