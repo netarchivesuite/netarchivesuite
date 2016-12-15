@@ -782,7 +782,7 @@ public class JobResource implements ResourceAbstract {
                     sb.append("</fieldset><br />\n");
                 }
                 if (scriptResult.script.rawOutput != null) {
-                    sb.append("<fieldset><legend>rawOut</legend>");
+                    sb.append("<fieldset><!--<legend>rawOut</legend>-->");
                     sb.append("<pre>");
                     sb.append(scriptResult.script.rawOutput);
                     sb.append("</pre>");

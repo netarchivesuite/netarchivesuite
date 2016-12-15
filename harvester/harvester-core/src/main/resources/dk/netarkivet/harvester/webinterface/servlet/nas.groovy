@@ -65,7 +65,7 @@ void deleteFromFrontier(String regex) {
     count = job.crawlController.frontier.deleteURIs(".*", regex)
     rawOut.println "REMINDER: This job is now in a Paused state."
     logEvent("Deleted " + count + " uris matching regex '" + regex + "'")
-    rawOut.println count + " uris deleted from frontier."
+    rawOut.println count + " URIs were deleted from frontier."
     rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
 
