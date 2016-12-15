@@ -1090,8 +1090,6 @@ public class JobResource implements ResourceAbstract {
             }
             */
             
-            sb.append("<h4>Job "+h3Job.jobId+" status "+h3Job.jobResult.job.crawlControllerState+"</h4>");
-            
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", originalScript);
             if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
             	sb.append("<p>Budget defined in job configuration: queue-total-budget of ");
@@ -1115,9 +1113,9 @@ public class JobResource implements ResourceAbstract {
             	sb.append(scriptResult.script.htmlOutput);
             }
             
-            sb.append("<label for=\"budget\">New domain/host :</label>");
-            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"\" placeholder=\"key\">\n");
-            sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"\" placeholder=\"budget\">\n");
+            sb.append("<label for=\"budget\">New domain/host:</label>");
+            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"\" placeholder=\"name\">\n");
+            sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"\" placeholder=\"number of URIs\">\n");
   
             
             sb.append("<button type=\"submit\" name=\"submitButton\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Save</button>\n");

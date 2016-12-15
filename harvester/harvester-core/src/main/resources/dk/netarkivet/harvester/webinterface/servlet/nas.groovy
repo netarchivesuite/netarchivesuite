@@ -43,12 +43,29 @@ void logEvent(String e) {
     getLogger().info("Action from user " + initials + ": " +e)
 }
 
+/* write some lines in a file, in a directory with an extension */
+void writeToFile(def directory, def fileName, def extension, def infoList) {
+    String dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" 
+    new File("$directory/$fileName$extension").withWriterAppend { out ->
+        infoList.each {
+            out.println new Date().format(dateFormat) + " " + it
+        }
+    }
+}
+
+/* to log some lines in a changelog.txt file (will be in the metadata.warc */
+void logToScriptingEventsLogFile(def logLine) {
+	def text = []
+	text << logLine
+	writeToFile(job.jobDir.absolutePath, "scripting_events", ".log", text)
+}
+
 void deleteFromFrontier(String regex) {
     job.crawlController.requestCrawlPause()
     count = job.crawlController.frontier.deleteURIs(".*", regex)
     rawOut.println "REMINDER: This job is now in a Paused state."
     logEvent("Deleted " + count + " uris matching regex '" + regex + "'")
-    rawOut.println count + " uris deleted from frontier."
+    rawOut.println count + " URIs were deleted from frontier."
     rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
 
@@ -186,7 +203,7 @@ void changeBudget(String key, int value) {
 	modQueues.put(key, value)
 	job.jobContext.data.put("manually-added-queues", modQueues)
 	
-	logEvent("manual budget change : "+ key + " -> "+value)
+	logToScriptingEventsLogFile("manual budget change : "+ key + " -> "+value)
 }
 
 void getQueueTotalBudget() {
@@ -198,7 +215,7 @@ void showFilters() {
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
 	htmlOut.println('<ul>')
 	for (i = originalIndexSize; i < regexRuleObj.regexList.size(); i++) {
-		htmlOut.println('<li><input type="checkbox" name="removeIndex" value="'+i+'" /> '+regexRuleObj.regexList.get(i).pattern()+'</li>')
+		htmlOut.println('<li><input type="checkbox" name="removeIndex" value="'+i+'" /> '+regexRuleObj.regexList.get(i).pattern().substring(1)+'</li>')
 	}
 	htmlOut.println('</ul>')
 	if(originalIndexSize < regexRuleObj.regexList.size()) {
@@ -216,17 +233,16 @@ void addFilter(String pat) {
 			job.jobContext.data.put("original-filters-size", regexRuleObj.regexList.size())
 		}
 		regexRuleObj.regexList.add(myRegex)
-		logEvent("manual add of a DecideResult.REJECT filter : "+ pat)
+		logToScriptingEventsLogFile("manual add of a DecideResult.REJECT filter : "+ pat)
 	}
 }
 
 void removeFilters(def indexesOFiltersToRemove) {
 	indexesOFiltersToRemove = indexesOFiltersToRemove.sort().reverse()
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
-	def originalIndexSize = job.jobContext.data.get("original-filters-size")
 	indexesOFiltersToRemove.eachWithIndex { num, idx ->
-		logEvent("removing DecideResult.REJECT filter : "+ regexRuleObj.regexList[num+originalIndexSize])
-		regexRuleObj.regexList.remove(num+originalIndexSize)
+		logToScriptingEventsLogFile("removing DecideResult.REJECT filter : "+ regexRuleObj.regexList[num])
+		regexRuleObj.regexList.remove(num)
 	}
 }
 
