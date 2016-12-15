@@ -603,7 +603,7 @@ public class JobResource implements ResourceAbstract {
             }
             
             sb.append("<div style=\"margin-bottom:20px;\">\n");
-            sb.append("<div style=\"float:left;\">\n");
+            sb.append("<div style=\"float:left;min-width:390px;\">\n");
             sb.append("Total cached lines: ");
             sb.append(totalCachedLines);
             sb.append(" URIs<br />\n");
@@ -631,7 +631,7 @@ public class JobResource implements ResourceAbstract {
             sb.append("<div style=\"margin-bottom:20px;\">\n");
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">");
-            sb.append("<label for=\"itemsperpage\">Lines per page to show:</label>");
+            sb.append("<label for=\"itemsperpage\">Lines to show:</label>");
             sb.append("<input type=\"text\" id=\"itemsperpage\" name=\"itemsperpage\" value=\"" + linesPerPage + "\" placeholder=\"must be &gt; 25 and &lt; 1000 \">\n");
             sb.append("<label for=\"q\">Filter regex:</label>");
             sb.append("<input type=\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"content-type\" style=\"display:inline;width:350px;\">\n");
@@ -639,7 +639,7 @@ public class JobResource implements ResourceAbstract {
 
             sb.append("</div>\n");
             
-            sb.append("<div style=\"float:left\">\n");
+            sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
             sb.append("<span>Matching lines: ");
             sb.append(lines);
             sb.append(" URIs</span>\n");
