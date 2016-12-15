@@ -43,23 +43,6 @@ void logEvent(String e) {
     getLogger().info("Action from user " + initials + ": " +e)
 }
 
-/* write some lines in a file, in a directory with an extension */
-void writeToFile(def directory, def fileName, def extension, def infoList) {
-    String dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" 
-    new File("$directory/$fileName$extension").withWriterAppend { out ->
-        infoList.each {
-            out.println new Date().format(dateFormat) + " " + it
-        }
-    }
-}
-
-/* to log some lines in a changelog.txt file (will be in the metadata.warc */
-void logToScriptingEventsLogFile(def logLine) {
-	def text = []
-	text << logLine
-	writeToFile(job.jobDir.absolutePath, "scripting_events", ".log", text)
-}
-
 void deleteFromFrontier(String regex) {
     job.crawlController.requestCrawlPause()
     count = job.crawlController.frontier.deleteURIs(".*", regex)
@@ -203,7 +186,7 @@ void changeBudget(String key, int value) {
 	modQueues.put(key, value)
 	job.jobContext.data.put("manually-added-queues", modQueues)
 	
-	logToScriptingEventsLogFile("manual budget change : "+ key + " -> "+value)
+	logEvent("manual budget change : "+ key + " -> "+value)
 }
 
 void getQueueTotalBudget() {
@@ -233,7 +216,7 @@ void addFilter(String pat) {
 			job.jobContext.data.put("original-filters-size", regexRuleObj.regexList.size())
 		}
 		regexRuleObj.regexList.add(myRegex)
-		logToScriptingEventsLogFile("manual add of a DecideResult.REJECT filter : "+ pat)
+		logEvent("manual add of a DecideResult.REJECT filter : "+ pat)
 	}
 }
 
@@ -242,7 +225,7 @@ void removeFilters(def indexesOFiltersToRemove) {
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
 	def originalIndexSize = job.jobContext.data.get("original-filters-size")
 	indexesOFiltersToRemove.eachWithIndex { num, idx ->
-		logToScriptingEventsLogFile("removing DecideResult.REJECT filter : "+ regexRuleObj.regexList[num+originalIndexSize])
+		logEvent("removing DecideResult.REJECT filter : "+ regexRuleObj.regexList[num+originalIndexSize])
 		regexRuleObj.regexList.remove(num+originalIndexSize)
 	}
 }

@@ -1,6 +1,7 @@
 package dk.netarkivet.harvester.webinterface.servlet;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -339,6 +340,15 @@ public class JobResource implements ResourceAbstract {
                 sb.append("</a>");
 
                 sb.append("&nbsp;");
+                
+                /* View scripting_events.log */
+                File logDir = new File(h3Job.crawlLogFilePath);
+                
+                sb.append("<a href=\"");
+                sb.append(h3Job.hostUrl+"/anypath//"+logDir.getParentFile().getAbsolutePath()+"/scripting_events.log");
+                sb.append("\" class=\"btn btn-default\">");
+                sb.append("View scripting_events.log");
+                sb.append("</a>");
                 
                 sb.append("</div>\n");
 
