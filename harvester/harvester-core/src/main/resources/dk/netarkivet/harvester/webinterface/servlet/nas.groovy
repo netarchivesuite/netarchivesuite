@@ -215,7 +215,7 @@ void showFilters() {
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
 	htmlOut.println('<ul>')
 	for (i = originalIndexSize; i < regexRuleObj.regexList.size(); i++) {
-		htmlOut.println('<li><input type="checkbox" name="removeIndex" value="'+i+'" /> '+regexRuleObj.regexList.get(i).pattern()+'</li>')
+		htmlOut.println('<li><input type="checkbox" name="removeIndex" value="'+i+'" /> '+regexRuleObj.regexList.get(i).pattern().substring(1)+'</li>')
 	}
 	htmlOut.println('</ul>')
 	if(originalIndexSize < regexRuleObj.regexList.size()) {
