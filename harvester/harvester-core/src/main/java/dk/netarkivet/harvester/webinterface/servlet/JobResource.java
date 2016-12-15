@@ -601,38 +601,49 @@ public class JobResource implements ResourceAbstract {
             if (page > pages) {
                 page = pages;
             }
+            
+            sb.append("<div style=\"margin-bottom:20px;\">\n");
+            sb.append("<div style=\"float:left;\">\n");
             sb.append("Total cached lines: ");
             sb.append(totalCachedLines);
             sb.append(" URIs<br />\n");
             sb.append("Total cached size: ");
             sb.append(totalCachedSize);
-            sb.append(" bytes<br />\n");
+            sb.append(" bytes\n");
+            sb.append("</div>\n");
             
-
+            sb.append("<div style=\"float:left;\">\n");
             sb.append("<a href=\"");
             sb.append("?action=update");
             sb.append("\" class=\"btn btn-default\">");
             sb.append("Update cache");
             sb.append("</a>");
             //sb.append("the cache manually ");
-            sb.append("<br />\n");
+            sb.append("</div>\n");
+            
+            sb.append("<div style=\"clear:both;\"></div>\n");
+            sb.append("</div>\n");
 
             if (q == null) {
                 q = ".*";
             }
+            
+            sb.append("<div style=\"margin-bottom:20px;\">\n");
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">");
             sb.append("<label for=\"itemsperpage\">Lines per page to show:</label>");
             sb.append("<input type=\"text\" id=\"itemsperpage\" name=\"itemsperpage\" value=\"" + linesPerPage + "\" placeholder=\"must be &gt; 25 and &lt; 1000 \">\n");
             sb.append("<label for=\"q\">Filter regex:</label>");
-            sb.append("<input type=\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"content-type\">\n");
+            sb.append("<input type=\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"content-type\" style=\"display:inline;width:350px;\">\n");
             sb.append("<button type=\"submit\" name=\"search\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Search</button>\n");
 
-            sb.append("<br />\n");
+            sb.append("</div>\n");
+            
+            sb.append("<div style=\"float:left\">\n");
             sb.append("<span>Matching lines: ");
             sb.append(lines);
             sb.append(" URIs</span>\n");
-            sb.append("<br />\n");
+            sb.append("</div>\n");
             sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
             sb.append("<div style=\"clear:both;\"></div>");
             sb.append("<div>\n");
