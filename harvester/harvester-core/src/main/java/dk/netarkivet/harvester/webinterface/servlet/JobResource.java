@@ -345,7 +345,7 @@ public class JobResource implements ResourceAbstract {
                 File logDir = new File(h3Job.crawlLogFilePath);
                 
                 sb.append("<a href=\"");
-                sb.append(h3Job.hostUrl+"/anypath//"+logDir.getParentFile().getAbsolutePath()+"/scripting_events.log");
+                sb.append(h3Job.hostUrl+"/anypath/"+logDir.getParentFile().getAbsolutePath()+"/scripting_events.log");
                 sb.append("\" class=\"btn btn-default\">");
                 sb.append("View scripting_events.log");
                 sb.append("</a>");
