@@ -229,7 +229,7 @@ public class JobResource implements ResourceAbstract {
             
             /* Progression/Queues */
             sb.append("<a href=\"");
-            sb.append("/History/Harveststatus-running-jobdetails.jsp?JobID=");
+            sb.append("/History/Harveststatus-running-jobdetails.jsp?jobID=");
             sb.append(h3Job.jobId);
             sb.append("\" class=\"btn btn-default\">");
             sb.append("Progression/Queues");
