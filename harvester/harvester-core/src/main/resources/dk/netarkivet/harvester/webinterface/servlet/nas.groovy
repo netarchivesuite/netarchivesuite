@@ -40,7 +40,11 @@ Logger getLogger() {
 }
 
 void logEvent(String e) {
-    getLogger().info("Action from user " + initials + ": " +e)
+    if(initials != null && !initials.isEmpty()) {
+        getLogger().info("Action from user " + initials + ": " +e)
+    } else {
+        getLogger().info("Action from user: " +e)
+    }
 }
 
 void deleteFromFrontier(String regex) {
