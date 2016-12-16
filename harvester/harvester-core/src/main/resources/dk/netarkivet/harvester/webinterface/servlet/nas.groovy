@@ -196,7 +196,7 @@ void getQueueTotalBudget() {
 void showFilters() {
 	def originalIndexSize = job.jobContext.data.get("original-filters-size")
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
-	if(originalIndexSize < regexRuleObj.regexList.size()) {
+	if(originalIndexSize != null && originalIndexSize < regexRuleObj.regexList.size()) {
 		htmlOut.println('<ul>')
 		for (i = originalIndexSize; i < regexRuleObj.regexList.size(); i++) {
 			htmlOut.println('<li>')
