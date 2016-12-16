@@ -40,9 +40,9 @@ Logger getLogger() {
 }
 
 void logEvent(String e) {
-    if(initials != null && !initials.isEmpty()) {
+    try { 
         getLogger().info("Action from user " + initials + ": " +e)
-    } else {
+    } catch(groovy.lang.MissingPropertyException e1) {
         getLogger().info("Action from user: " +e)
     }
 }
