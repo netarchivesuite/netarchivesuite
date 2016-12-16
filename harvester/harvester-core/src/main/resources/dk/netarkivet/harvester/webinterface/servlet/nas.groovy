@@ -196,14 +196,15 @@ void getQueueTotalBudget() {
 void showFilters() {
 	def originalIndexSize = job.jobContext.data.get("original-filters-size")
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
-	htmlOut.println('<ul>')
-	for (i = originalIndexSize; i < regexRuleObj.regexList.size(); i++) {
-		htmlOut.println('<li>')
-        htmlOut.println('<input type="checkbox" name="removeIndex" value="'+i+'" />&nbsp;')
-		htmlOut.println(regexRuleObj.regexList.get(i).pattern()+'</li>')
-	}
-	htmlOut.println('</ul>')
 	if(originalIndexSize < regexRuleObj.regexList.size()) {
+		htmlOut.println('<ul>')
+		for (i = originalIndexSize; i < regexRuleObj.regexList.size(); i++) {
+			htmlOut.println('<li>')
+   		    htmlOut.println('<input type="checkbox" name="removeIndex" value="'+i+'" />&nbsp;')
+			htmlOut.println(regexRuleObj.regexList.get(i).pattern()+'</li>')
+		}
+		htmlOut.println('</ul>')
+	
 		htmlOut.println('<button type="submit" name="remove-filter" value="1" class="btn btn-success"><i class="icon-white icon-remove"></i> Remove</button>')
 	}
 }
