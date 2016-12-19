@@ -168,7 +168,7 @@ public class JobResource implements ResourceAbstract {
             
             
             
-            sb.append("<div style=\"float:left;width: 20%;min-width: 300px;}\">\n");
+            sb.append("<div style=\"float:left;min-width: 300px;\">\n");
 
             sb.append("JobId: <a href=\"/History/Harveststatus-jobdetails.jsp?jobID="+h3Job.jobId+"\">");
             sb.append(h3Job.jobId);
@@ -210,7 +210,7 @@ public class JobResource implements ResourceAbstract {
             sb.append("</div>\n");
             
             /* Heritrix3 WebUI */
-            sb.append("<div style=\"float:left;\">\n");
+            sb.append("<div style=\"float:left;position: absolute;left:600px;\">\n");
             sb.append("<a href=\"");
             sb.append(h3Job.hostUrl+"/job/"+h3Job.jobname);
             sb.append("\" class=\"btn btn-default\">");
