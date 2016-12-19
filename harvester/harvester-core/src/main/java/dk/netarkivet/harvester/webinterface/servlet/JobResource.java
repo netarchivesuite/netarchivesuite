@@ -123,7 +123,6 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (h3Job != null && h3Job.isReady()) {
-            h3Job.update();
             String action = req.getParameter("action");
             if (action != null && action.length() > 0) {
                 if ("build".equalsIgnoreCase(action)) {
@@ -149,6 +148,15 @@ public class JobResource implements ResourceAbstract {
                 }
             }
 
+            // sleep 1 second to wait for intermediate status to end
+            // (for example : PAUSING)
+            try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// nothing
+			}
+            h3Job.update();
+            
             menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
             menuSb.append(NASEnvironment.servicePath);
             menuSb.append("job/");
@@ -603,7 +611,7 @@ public class JobResource implements ResourceAbstract {
             }
             
             sb.append("<div style=\"margin-bottom:20px;\">\n");
-            sb.append("<div style=\"float:left;min-width:390px;\">\n");
+            sb.append("<div style=\"float:left;min-width:180px;\">\n");
             sb.append("Total cached lines: ");
             sb.append(totalCachedLines);
             sb.append(" URIs<br />\n");
@@ -835,7 +843,8 @@ public class JobResource implements ResourceAbstract {
     }
     
     public void filter_add(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        resp.setContentType("text/html; charset=UTF-8");
+    	Locale locale = resp.getLocale();
+    	resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
 
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
@@ -897,18 +906,19 @@ public class JobResource implements ResourceAbstract {
             }
             */
             
-            sb.append("<h4>Job "+h3Job.jobId+" status "+h3Job.jobResult.job.crawlControllerState+"</h4>");
             sb.append("<p>All URIs matching any of the following regular expressions will be rejected from the current job.</p>");
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
-            sb.append("<label for=\"regex\">Regular expressions :</label>");
+            sb.append("<label for=\"regex\" style=\"cursor: default;\">Expressions to reject:</label>");
             sb.append("<textarea rows=\"4\" cols=\"100\" id=\"regex\" name=\"regex\" placeholder=\"regex\"></textarea>\n");
             sb.append("<button type=\"submit\" name=\"add-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Add</button>\n");
-            sb.append("&nbsp;");
+            sb.append("<br/>\n");
 
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
 
             if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
+            	
+            	sb.append("<p>Rejected regex:</p>\n");
             	sb.append(scriptResult.script.htmlOutput);
             }
             
@@ -925,6 +935,10 @@ public class JobResource implements ResourceAbstract {
 
         if (masterTplBuilder.menuPlace != null) {
             masterTplBuilder.menuPlace.setText(menuSb.toString());
+        }
+        
+        if (masterTplBuilder.languagesPlace != null) {
+            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
         }
 
         if (masterTplBuilder.headingPlace != null) {
@@ -950,7 +964,8 @@ public class JobResource implements ResourceAbstract {
     }
     
     public void budget_change(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        resp.setContentType("text/html; charset=UTF-8");
+    	Locale locale = resp.getLocale();
+    	resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
 
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
@@ -988,7 +1003,9 @@ public class JobResource implements ResourceAbstract {
 	            script += "\nchangeBudget ('" + key+ "',"+ budget +")\n";
 	        } else {
 	        	budget = req.getParameter(submitValue+"-budget");
-	        	script += "\nchangeBudget ('" + submitValue+ "',"+ budget +")\n";
+	        	if(budget != null && !budget.trim().isEmpty() && submitValue != null && !submitValue.trim().isEmpty()) {
+	        		script += "\nchangeBudget ('" + submitValue+ "',"+ budget +")\n";
+	        	}
 	        }
         }
         script += "\n";
@@ -1061,6 +1078,10 @@ public class JobResource implements ResourceAbstract {
 
         if (masterTplBuilder.menuPlace != null) {
             masterTplBuilder.menuPlace.setText(menuSb.toString());
+        }
+        
+        if (masterTplBuilder.languagesPlace != null) {
+            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
         }
 
         if (masterTplBuilder.headingPlace != null) {
