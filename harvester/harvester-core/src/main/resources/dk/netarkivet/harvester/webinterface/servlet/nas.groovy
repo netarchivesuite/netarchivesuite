@@ -47,7 +47,7 @@ void deleteFromFrontier(String regex) {
     job.crawlController.requestCrawlPause()
     count = job.crawlController.frontier.deleteURIs(".*", regex)
     rawOut.println "REMINDER: This job is now in a Paused state."
-    logEvent("Deleted " + count + " uris matching regex '" + regex + "'")
+    logEvent("Deleted " + count + " URIs from frontier matching regex '" + regex + "'")
     rawOut.println count + " URIs were deleted from the frontier."
     rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
@@ -186,7 +186,7 @@ void changeBudget(String key, int value) {
 	modQueues.put(key, value)
 	job.jobContext.data.put("manually-added-queues", modQueues)
 	
-	logEvent("manual budget change : "+ key + " -> "+value)
+	logEvent("Changed budget for "+ key + " -> "+value+" URIs")
 }
 
 void getQueueTotalBudget() {
@@ -219,7 +219,7 @@ void addFilter(String pat) {
 			job.jobContext.data.put("original-filters-size", regexRuleObj.regexList.size())
 		}
 		regexRuleObj.regexList.add(myRegex)
-		logEvent("manual add of a DecideResult.REJECT filter : "+ pat)
+		logEvent("Added a RejectDecideRule matching regex '"+ pat + "'")
 	}
 }
 
@@ -227,7 +227,7 @@ void removeFilters(def indexesOFiltersToRemove) {
 	indexesOFiltersToRemove = indexesOFiltersToRemove.sort().reverse()
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
 	indexesOFiltersToRemove.each ({ num ->
-		logEvent("removing DecideResult.REJECT filter : "+ regexRuleObj.regexList[num])
+		logEvent("Removeed a RejectDecideRule matching regex '"+ regexRuleObj.regexList[num] + "'")
 		regexRuleObj.regexList.remove(num)
 	})
 }

@@ -994,6 +994,8 @@ public class JobResource implements ResourceAbstract {
         if(submit2 == null) {
         	submit2 = "";
         }
+        
+        boolean isNumber = true;
 
         String resource = NAS_GROOVY_RESOURCE_PATH;
         InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
@@ -1021,7 +1023,12 @@ public class JobResource implements ResourceAbstract {
 		        		for(int i = 0; i < queues.length; i++) {
 		        			budget = req.getParameter(queues[i]+"-budget");
 		        			if(budget != null && !budget.isEmpty()) {
-		        				script += "\nchangeBudget ('" + queues[i]+ "',"+ budget +")\n";
+			        			try {
+			        				Integer.parseInt(budget);
+			        				script += "\nchangeBudget ('" + queues[i]+ "',"+ budget +")\n";
+			        			} catch(NumberFormatException e) {
+			        				isNumber = false;
+			        			}
 		        			}
 		        		}
 	        		}
@@ -1045,33 +1052,29 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("\"> ");
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
-
-            /*
-            if (budget == null || budget.length() == 0) {
-                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> New budget required!</div>");
-            }
-            */
             
-            sb.append("<h4>Job "+h3Job.jobId+" status "+h3Job.jobResult.job.crawlControllerState+"</h4>");
-            
+            /* form control */
             if ((!submit1.isEmpty() || !submit2.isEmpty()) && initials.isEmpty()) {
-                //sb.append("<span style=\"text-color: red;\">Initials required to delete from the frontier queue!</span><br />\n");
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to modify a queue budget!</div>");
             }
-            
-            ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", originalScript);
-            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
-            	sb.append("<p>Budget defined in job configuration: queue-total-budget of ");
-            	sb.append(scriptResult.script.htmlOutput);
-            	sb.append(" URIs.</p>");
-            }
-            
+
             try {
             	if (budget != null && budget.length() > 0) {
             		Integer.parseInt(budget);
             	}
             } catch(NumberFormatException e) {
             	sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Budget must be a number!</div>");
+            }
+            
+            if(isNumber == false) {
+            	sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Budget must be a number!</div>");
+            }
+
+            ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", originalScript);
+            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
+            	sb.append("<p>Budget defined in job configuration: queue-total-budget of ");
+            	sb.append(scriptResult.script.htmlOutput);
+            	sb.append(" URIs.</p>");
             }
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
@@ -1080,8 +1083,8 @@ public class JobResource implements ResourceAbstract {
 
             /* New domain/host */
             sb.append("<label for=\"budget\">New domain/host :</label>");
-            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"\" placeholder=\"key\">\n");
-            sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"\" placeholder=\"budget\">\n");
+            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"\" placeholder=\"name\">\n");
+            sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"\" placeholder=\"number of URIs\">\n");
             
             /* User initials */
             sb.append("<label for=\"initials\">Deleter initials:</label>");
@@ -1093,16 +1096,14 @@ public class JobResource implements ResourceAbstract {
             
             if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
             	sb.append(scriptResult.script.htmlOutput);
+            	/* User initials */
+                sb.append("<label for=\"initials\">Deleter initials:</label>");
+                sb.append("<input type=\"text\" id=\"initials2\" name=\"initials2\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
+                
+                /* save button*/
+                sb.append("<button type=\"submit\" name=\"submitButton2\" value=\"submitButton2\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Save</button>\n");
             }
-            
 
-            /* User initials */
-            sb.append("<label for=\"initials\">Deleter initials:</label>");
-            sb.append("<input type=\"text\" id=\"initials2\" name=\"initials2\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
-            
-            /* save button*/
-            sb.append("<button type=\"submit\" name=\"submitButton2\" value=\"submitButton2\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Save</button>\n");
-            
             sb.append("</form>\n");
         } else {
             sb.append("Job ");
