@@ -148,13 +148,6 @@ public class JobResource implements ResourceAbstract {
                 }
             }
 
-            // sleep 1 second to wait for intermediate status to end
-            // (for example : PAUSING)
-            try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// nothing
-			}
             h3Job.update();
             
             menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
