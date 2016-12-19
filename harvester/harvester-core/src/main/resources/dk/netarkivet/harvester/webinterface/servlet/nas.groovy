@@ -153,8 +153,8 @@ void showModBudgets() {
 	htmlOut.println('<ul>')
 	modQueues.each { key, value ->
 		htmlOut.println('<li>'+key)
-		htmlOut.println('<input type="text" name="'+key+'-budget" value="'+value+'"/>')
-		htmlOut.println('<button type="submit" name="submitButton" value="'+key+'" class="btn btn-success"><i class="icon-white icon-thumbs-up"></i> Save</button></li>')
+		htmlOut.println('<input type="hidden" name="queueName" value="'+key+'"/>')
+		htmlOut.println('<input type="text" name="'+key+'-budget" value="'+value+'"/></li>')
 	}
 	htmlOut.println('</ul>')
 }

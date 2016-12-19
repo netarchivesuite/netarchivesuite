@@ -975,8 +975,25 @@ public class JobResource implements ResourceAbstract {
         if (key == null) {
         	key = "";
         }
-        String submitValue = req.getParameter("submitButton");
         
+        String submit1 = req.getParameter("submitButton1");
+        String submit2 = req.getParameter("submitButton2");
+        
+        String initials = "";
+        if(submit1 != null) {
+        	initials = req.getParameter("initials1");
+        } else if(submit2 != null) {
+        	initials = req.getParameter("initials2");
+        }
+        if (initials == null) {
+    		initials = "";
+    	}
+        if(submit1 == null) {
+        	submit1 = "";
+        }
+        if(submit2 == null) {
+        	submit2 = "";
+        }
 
         String resource = NAS_GROOVY_RESOURCE_PATH;
         InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
@@ -991,13 +1008,23 @@ public class JobResource implements ResourceAbstract {
         String originalScript = script;
 
         script += "\n";
-        if(submitValue != null) {
-	        if (submitValue.equals("1") && budget != null && !budget.trim().isEmpty() && key != null && !key.trim().isEmpty()) {
+        if((!submit1.isEmpty() || !submit2.isEmpty()) && !initials.isEmpty()) {
+        	/* case new budget change */
+	        if (!submit1.isEmpty() && !budget.trim().isEmpty() && !key.trim().isEmpty()) {
+	        	script += "\ninitials = \"" + initials + "\"";
 	            script += "\nchangeBudget ('" + key+ "',"+ budget +")\n";
 	        } else {
-	        	budget = req.getParameter(submitValue+"-budget");
-	        	if(budget != null && !budget.trim().isEmpty() && submitValue != null && !submitValue.trim().isEmpty()) {
-	        		script += "\nchangeBudget ('" + submitValue+ "',"+ budget +")\n";
+	        	if(!submit2.isEmpty()) {
+	        		String[] queues = req.getParameterValues("queueName");
+	        		if(queues != null && queues.length > 0) {
+	        			script += "\ninitials = \"" + initials + "\"";
+		        		for(int i = 0; i < queues.length; i++) {
+		        			budget = req.getParameter(queues[i]+"-budget");
+		        			if(budget != null && !budget.isEmpty()) {
+		        				script += "\nchangeBudget ('" + queues[i]+ "',"+ budget +")\n";
+		        			}
+		        		}
+	        		}
 	        	}
 	        }
         }
@@ -1027,6 +1054,11 @@ public class JobResource implements ResourceAbstract {
             
             sb.append("<h4>Job "+h3Job.jobId+" status "+h3Job.jobResult.job.crawlControllerState+"</h4>");
             
+            if ((!submit1.isEmpty() || !submit2.isEmpty()) && initials.isEmpty()) {
+                //sb.append("<span style=\"text-color: red;\">Initials required to delete from the frontier queue!</span><br />\n");
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to modify a queue budget!</div>");
+            }
+            
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", originalScript);
             if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
             	sb.append("<p>Budget defined in job configuration: queue-total-budget of ");
@@ -1046,17 +1078,30 @@ public class JobResource implements ResourceAbstract {
 
             scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
 
+            /* New domain/host */
+            sb.append("<label for=\"budget\">New domain/host :</label>");
+            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"\" placeholder=\"key\">\n");
+            sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"\" placeholder=\"budget\">\n");
+            
+            /* User initials */
+            sb.append("<label for=\"initials\">Deleter initials:</label>");
+            sb.append("<input type=\"text\" id=\"initials1\" name=\"initials1\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
+  
+            
+            sb.append("<button type=\"submit\" name=\"submitButton1\" value=\"submitButton1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Save</button>\n");
+            sb.append("<br/>\n");
+            
             if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
             	sb.append(scriptResult.script.htmlOutput);
             }
             
-            sb.append("<label for=\"budget\">New domain/host :</label>");
-            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"\" placeholder=\"key\">\n");
-            sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"\" placeholder=\"budget\">\n");
-  
+
+            /* User initials */
+            sb.append("<label for=\"initials\">Deleter initials:</label>");
+            sb.append("<input type=\"text\" id=\"initials2\" name=\"initials2\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
             
-            sb.append("<button type=\"submit\" name=\"submitButton\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Save</button>\n");
-            sb.append("&nbsp;");
+            /* save button*/
+            sb.append("<button type=\"submit\" name=\"submitButton2\" value=\"submitButton2\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Save</button>\n");
             
             sb.append("</form>\n");
         } else {
