@@ -148,13 +148,13 @@ void printCrawlLog(String regex) {
 void showModBudgets() {
 	def modQueues = job.jobContext.data.get("manually-added-queues");
 	if(modQueues.size() > 0) {
-		htmlOut.println('<p>Budgets of following domains/hosts have been changed in the current job :</p>')
+		htmlOut.println('<p style="margin-top: 50px;">Budgets of following domains/hosts have been changed in the current job :</p>')
 	}
 	htmlOut.println('<ul>')
 	modQueues.each { key, value ->
 		htmlOut.println('<li>'+key)
 		htmlOut.println('<input type="hidden" name="queueName" value="'+key+'"/>')
-		htmlOut.println('<input type="text" name="'+key+'-budget" value="'+value+'"/></li>')
+		htmlOut.println('<input type="text" name="'+key+'-budget" style="width:100px" value="'+value+'"/></li>')
 	}
 	htmlOut.println('</ul>')
 }

@@ -780,7 +780,7 @@ public class JobResource implements ResourceAbstract {
             sb.append("<input type=\"text\" id=\"regex\" name=\"regex\" value=\"" + regex + "\" placeholder=\"regex\" style=\"display:inline;width:350px;\">\n");
             sb.append("<button type=\"submit\" name=\"show\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Show</button>\n");
             sb.append("&nbsp;");
-            sb.append("<label for=\"initials\">Deleter initials:</label>");
+            sb.append("<label for=\"initials\">User initials:</label>");
             sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
             sb.append("<button type=\"submit\" name=\"delete\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Delete</button>\n");
             sb.append("</form>\n");
@@ -911,7 +911,7 @@ public class JobResource implements ResourceAbstract {
 
             if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
             	
-            	sb.append("<p>Rejected regex:</p>\n");
+            	sb.append("<p style=\"margin-top: 30px;\">Rejected regex:</p>\n");
             	sb.append(scriptResult.script.htmlOutput);
             }
             
@@ -1083,11 +1083,11 @@ public class JobResource implements ResourceAbstract {
 
             /* New domain/host */
             sb.append("<label for=\"budget\">New domain/host :</label>");
-            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"\" placeholder=\"name\">\n");
-            sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"\" placeholder=\"number of URIs\">\n");
+            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"\" style=\"width: 306px;\" placeholder=\"name\">\n");
+            sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"\" style=\"width:100px\" placeholder=\"number of URIs\">\n");
             
             /* User initials */
-            sb.append("<label for=\"initials\">Deleter initials:</label>");
+            sb.append("<label for=\"initials\">User initials:</label>");
             sb.append("<input type=\"text\" id=\"initials1\" name=\"initials1\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
   
             
@@ -1097,7 +1097,7 @@ public class JobResource implements ResourceAbstract {
             if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
             	sb.append(scriptResult.script.htmlOutput);
             	/* User initials */
-                sb.append("<label for=\"initials\">Deleter initials:</label>");
+                sb.append("<label for=\"initials\">User initials:</label>");
                 sb.append("<input type=\"text\" id=\"initials2\" name=\"initials2\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
                 
                 /* save button*/
