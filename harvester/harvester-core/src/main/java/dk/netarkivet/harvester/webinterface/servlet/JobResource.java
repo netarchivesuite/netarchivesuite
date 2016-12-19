@@ -128,7 +128,6 @@ public class JobResource implements ResourceAbstract {
         }
 
         if (h3Job != null && h3Job.isReady()) {
-            h3Job.update();
             String action = req.getParameter("action");
             if (action != null && action.length() > 0) {
                 if ("build".equalsIgnoreCase(action)) {
@@ -153,7 +152,9 @@ public class JobResource implements ResourceAbstract {
                     h3Job.h3wrapper.teardownJob(h3Job.jobname);
                 }
             }
-
+            
+            h3Job.update();
+            
             menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
             menuSb.append(NASEnvironment.servicePath);
             menuSb.append("job/");
