@@ -854,6 +854,16 @@ public class JobResource implements ResourceAbstract {
         if(removeIndexes == null) {
         	removeIndexes = new String[0];
         }
+        
+        String initials = "";
+        if(req.getParameter("add-filter") != null) {
+        	initials = req.getParameter("initials1");
+        } else if(req.getParameter("remove-filter") != null) {
+        	initials = req.getParameter("initials2");
+        }
+        if (initials == null) {
+    		initials = "";
+    	}
 
         String resource = NAS_GROOVY_RESOURCE_PATH;
         InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
@@ -866,17 +876,18 @@ public class JobResource implements ResourceAbstract {
         in.close();
         String script = new String(bOut.toByteArray(), "UTF-8");
 
-        if (regex.length() > 0) {
+        if (regex.length() > 0 && !initials.isEmpty()) {
         	String[] lines = regex.split(System.getProperty("line.separator"));
         	for(String line : lines) {
         		if(line.endsWith(System.getProperty("line.separator")) || line.endsWith("\r") || line.endsWith("\n")) {
         			line = line.substring(0, line.length() - 1);
         		}
-	        	script += "\n";
+	        	script += "\ninitials = \"" + initials + "\"";
 	            script += "\naddFilter '" + line + "'\n";
         	}
         }
-        if(removeIndexes != null && removeIndexes.length > 0) {
+        if(removeIndexes.length > 0 && !initials.isEmpty()) {
+        	script += "\ninitials = \"" + initials + "\"";
             script += "\nremoveFilters("+Arrays.toString(removeIndexes)+")\n";
         }
         script += "\nshowFilters()\n";
@@ -893,17 +904,27 @@ public class JobResource implements ResourceAbstract {
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
             
-            /*
-            if (regex == null || regex.length() == 0) {
-                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Regex required to be added as a filter!</div>");
+            /* form control */
+            /* case submit for delete but no checked regex */
+            if (req.getParameter("remove-filter") != null && removeIndexes.length == 0) {
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> RejectRules cannot be empty!</div>");
             }
-            */
+            /* case submit for add but no text */
+            if (req.getParameter("add-filter") != null && regex.isEmpty()) {
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Check RejectRules to delete!</div>");
+            }
+            /* case no initials */
+            if ((req.getParameter("remove-filter") != null || req.getParameter("add-filter") != null) && initials.isEmpty()) {
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to add/delete RejectRules!</div>");
+            }
             
             sb.append("<p>All URIs matching any of the following regular expressions will be rejected from the current job.</p>");
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
             sb.append("<label for=\"regex\" style=\"cursor: default;\">Expressions to reject:</label>");
             sb.append("<textarea rows=\"4\" cols=\"100\" id=\"regex\" name=\"regex\" placeholder=\"regex\"></textarea>\n");
+            sb.append("<label for=\"initials\">User initials:</label>");
+            sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
             sb.append("<button type=\"submit\" name=\"add-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Add</button>\n");
             sb.append("<br/>\n");
 
@@ -911,8 +932,11 @@ public class JobResource implements ResourceAbstract {
 
             if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
             	
-            	sb.append("<p style=\"margin-top: 30px;\">Rejected regex:</p>\n");
+                sb.append("<p style=\"margin-top: 30px;\">Rejected regex:</p>\n");
             	sb.append(scriptResult.script.htmlOutput);
+            	sb.append("<label for=\"initials\">User initials:</label>");
+                sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
+                sb.append("<button type=\"submit\" name=\"remove-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-remove\"></i> Remove</button>");
             }
             
             sb.append("</form>\n");
