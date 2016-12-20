@@ -906,6 +906,7 @@ public class JobResource implements ResourceAbstract {
             
             /* form control */
             /* case submit for delete but no checked regex */
+            boolean keepRegexTextArea = false;
             if (req.getParameter("remove-filter") != null && removeIndexes.length == 0) {
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> RejectRules cannot be empty!</div>");
             }
@@ -916,15 +917,20 @@ public class JobResource implements ResourceAbstract {
             /* case no initials */
             if ((req.getParameter("remove-filter") != null || req.getParameter("add-filter") != null) && initials.isEmpty()) {
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to add/delete RejectRules!</div>");
+                keepRegexTextArea = true;
             }
             
             sb.append("<p>All URIs matching any of the following regular expressions will be rejected from the current job.</p>");
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
             sb.append("<label for=\"regex\" style=\"cursor: default;\">Expressions to reject:</label>");
-            sb.append("<textarea rows=\"4\" cols=\"100\" id=\"regex\" name=\"regex\" placeholder=\"regex\"></textarea>\n");
+            sb.append("<textarea rows=\"4\" cols=\"100\" id=\"regex\" name=\"regex\" ");
+            if(keepRegexTextArea) {
+            	sb.append("value=\""+regex+"\"");
+            }
+            sb.append(" placeholder=\"regex\"></textarea>\n");
             sb.append("<label for=\"initials\">User initials:</label>");
-            sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
+            sb.append("<input type=\"text\" id=\"initials1\" name=\"initials1\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
             sb.append("<button type=\"submit\" name=\"add-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Add</button>\n");
             sb.append("<br/>\n");
 
@@ -935,7 +941,7 @@ public class JobResource implements ResourceAbstract {
                 sb.append("<p style=\"margin-top: 30px;\">Rejected regex:</p>\n");
             	sb.append(scriptResult.script.htmlOutput);
             	sb.append("<label for=\"initials\">User initials:</label>");
-                sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
+                sb.append("<input type=\"text\" id=\"initials2\" name=\"initials2\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
                 sb.append("<button type=\"submit\" name=\"remove-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-remove\"></i> Remove</button>");
             }
             
