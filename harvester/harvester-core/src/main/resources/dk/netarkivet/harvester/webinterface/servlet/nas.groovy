@@ -228,7 +228,7 @@ void removeFilters(def indexesOFiltersToRemove) {
 	indexesOFiltersToRemove = indexesOFiltersToRemove.sort().reverse()
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
 	indexesOFiltersToRemove.each ({ num ->
-		logEvent("Removeed a RejectDecideRule matching regex '"+ regexRuleObj.regexList[num] + "'")
+		logEvent("Removed a RejectDecideRule matching regex '"+ regexRuleObj.regexList[num] + "'")
 		regexRuleObj.regexList.remove(num)
 	})
 }
