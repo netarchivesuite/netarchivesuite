@@ -183,10 +183,13 @@ void changeBudget(String key, int value) {
 	if(modQueues == null) {
 		modQueues = [:]
 	}
+	oldValue = modQueues.get(key)	
 	modQueues.put(key, value)
 	job.jobContext.data.put("manually-added-queues", modQueues)
 	
-	logEvent("Changed budget for "+ key + " -> "+value+" URIs")
+	if(oldValue == null || (oldValue != null && oldValue != value)) {
+		logEvent("Changed budget for "+ key + " -> "+value+" URIs")
+	}
 }
 
 void getQueueTotalBudget() {
@@ -204,8 +207,6 @@ void showFilters() {
 			htmlOut.println(regexRuleObj.regexList.get(i).pattern()+'</li>')
 		}
 		htmlOut.println('</ul>')
-	
-		htmlOut.println('<button type="submit" name="remove-filter" value="1" class="btn btn-success"><i class="icon-white icon-remove"></i> Remove</button>')
 	}
 }
 

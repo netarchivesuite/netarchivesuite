@@ -908,11 +908,11 @@ public class JobResource implements ResourceAbstract {
             /* case submit for delete but no checked regex */
             boolean keepRegexTextArea = false;
             if (req.getParameter("remove-filter") != null && removeIndexes.length == 0) {
-                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> RejectRules cannot be empty!</div>");
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Check RejectRules to delete!</div>");
             }
             /* case submit for add but no text */
             if (req.getParameter("add-filter") != null && regex.isEmpty()) {
-                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Check RejectRules to delete!</div>");
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> RejectRules cannot be empty!</div>");
             }
             /* case no initials */
             if ((req.getParameter("remove-filter") != null || req.getParameter("add-filter") != null) && initials.isEmpty()) {
@@ -924,11 +924,11 @@ public class JobResource implements ResourceAbstract {
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
             sb.append("<label for=\"regex\" style=\"cursor: default;\">Expressions to reject:</label>");
-            sb.append("<textarea rows=\"4\" cols=\"100\" id=\"regex\" name=\"regex\" ");
+            sb.append("<textarea rows=\"4\" cols=\"100\" id=\"regex\" name=\"regex\" placeholder=\"regex\">");
             if(keepRegexTextArea) {
-            	sb.append("value=\""+regex+"\"");
+            	sb.append(regex);
             }
-            sb.append(" placeholder=\"regex\"></textarea>\n");
+            sb.append("</textarea>\n");
             sb.append("<label for=\"initials\">User initials:</label>");
             sb.append("<input type=\"text\" id=\"initials1\" name=\"initials1\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
             sb.append("<button type=\"submit\" name=\"add-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Add</button>\n");
