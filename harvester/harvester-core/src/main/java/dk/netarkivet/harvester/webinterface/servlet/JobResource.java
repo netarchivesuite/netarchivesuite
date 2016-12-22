@@ -1120,12 +1120,12 @@ public class JobResource implements ResourceAbstract {
             /* Budget to modify */
             sb.append("<label style=\"cursor: default;\">Budget to modify:</label>");
             sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"");
-            if(submitWithInitials) {
+            if(!submitWithInitials) {
             	sb.append(key);
             }
             sb.append("\" style=\"width: 306px;\" placeholder=\"domain/host name\">\n");
             sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"");
-            if(submitWithInitials) {
+            if(!submitWithInitials) {
             	sb.append(budget);
             }
             sb.append("\" style=\"width:100px\" placeholder=\"new budget\">\n");
