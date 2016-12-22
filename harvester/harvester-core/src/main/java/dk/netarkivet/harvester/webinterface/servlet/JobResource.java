@@ -937,9 +937,10 @@ public class JobResource implements ResourceAbstract {
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
 
             if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
-            	
+            	sb.append("<div style=\"font-size: 14px; font-weight: normal; line-height: 20px;\">\n");
                 sb.append("<p style=\"margin-top: 30px;\">Rejected regex:</p>\n");
             	sb.append(scriptResult.script.htmlOutput);
+            	sb.append("</div>\n");
             	sb.append("<label for=\"initials\">User initials:</label>");
                 sb.append("<input type=\"text\" id=\"initials2\" name=\"initials2\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
                 sb.append("<button type=\"submit\" name=\"remove-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-remove\"></i> Remove</button>");
@@ -1084,8 +1085,13 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("</a></td></tr>");
             
             /* form control */
+            boolean submitWithInitials = true;
             if ((!submit1.isEmpty() || !submit2.isEmpty()) && initials.isEmpty()) {
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to modify a queue budget!</div>");
+
+            }
+            if(!submit1.isEmpty() && initials.isEmpty()) {
+                submitWithInitials = false;
             }
 
             try {
@@ -1111,13 +1117,21 @@ public class JobResource implements ResourceAbstract {
 
             scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
 
-            /* New domain/host */
-            sb.append("<label for=\"budget\">New domain/host :</label>");
-            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"\" style=\"width: 306px;\" placeholder=\"name\">\n");
-            sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"\" style=\"width:100px\" placeholder=\"number of URIs\">\n");
+            /* Budget to modify */
+            sb.append("<label style=\"cursor: default;\">Budget to modify:</label>");
+            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"");
+            if(submitWithInitials) {
+            	sb.append(key);
+            }
+            sb.append("\" style=\"width: 306px;\" placeholder=\"domain/host name\">\n");
+            sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"");
+            if(submitWithInitials) {
+            	sb.append(budget);
+            }
+            sb.append("\" style=\"width:100px\" placeholder=\"new budget\">\n");
             
             /* User initials */
-            sb.append("<label for=\"initials\">User initials:</label>");
+            sb.append("<label style=\"cursor: default;\">User initials:</label>");
             sb.append("<input type=\"text\" id=\"initials1\" name=\"initials1\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
   
             
@@ -1125,9 +1139,11 @@ public class JobResource implements ResourceAbstract {
             sb.append("<br/>\n");
             
             if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
+            	sb.append("<div style=\"font-size: 14px; font-weight: normal; line-height: 20px;\">\n");
             	sb.append(scriptResult.script.htmlOutput);
+            	sb.append("<div>\n");
             	/* User initials */
-                sb.append("<label for=\"initials\">User initials:</label>");
+                sb.append("<label style=\"cursor: default;\">User initials:</label>");
                 sb.append("<input type=\"text\" id=\"initials2\" name=\"initials2\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
                 
                 /* save button*/
