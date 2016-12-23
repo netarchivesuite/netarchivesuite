@@ -160,6 +160,15 @@ void showModBudgets() {
 }
 
 void changeBudget(String key, int value) {
+	//case quotaenforcer
+	if(appCtx.getBean("quotaenforcer") != null && appCtx.getBean("frontier").queueTotalBudget == -1) {
+		propertyName = "quotaenforcer.groupMaxAllKb"
+	}
+	//case frontier.queueTotalBudget
+	else {
+		propertyName = "frontier.queueTotalBudget"
+	}
+
 	surtDomain = ""
 	for(str in key.split('\\.')) {
 		surtDomain = str+","+surtDomain
@@ -171,7 +180,7 @@ void changeBudget(String key, int value) {
 	//get existing sheet for value
 	sheet = mgr.sheetsByName.get(newSheetName)
 	if(sheet == null) {
-		mgr.putSheetOverlay(newSheetName, "frontier.queueTotalBudget", value)
+		mgr.putSheetOverlay(newSheetName, propertyName, value)
 	}
 	mgr.addSurtAssociation(surtDomain, newSheetName)
 	
