@@ -160,8 +160,19 @@ void showModBudgets() {
 }
 
 void changeBudget(String key, int value) {
+	isQuotaEnforcer = false
+	try { 
+	   quotaEnforcerBean = appCtx.getBean("quotaenforcer")
+	   if(quotaEnforcerBean != null) {
+	   		if(quotaEnforcerBean.queueTotalBudget == -1) {
+	   			isQuotaEnforcer = true
+	   		}
+	   }
+	} catch(Exception e1) {
+	   //Catch block 
+	}
 	//case quotaenforcer
-	if(appCtx.getBean("quotaenforcer") != null && appCtx.getBean("frontier").queueTotalBudget == -1) {
+	if(isQuotaEnforcer == true) {
 		propertyName = "quotaenforcer.groupMaxAllKb"
 	}
 	//case frontier.queueTotalBudget
