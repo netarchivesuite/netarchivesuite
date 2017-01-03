@@ -268,7 +268,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
      * @return the URL for monitoring this instance.
      */
     public String getHeritrixConsoleURL() {
-        return "https://" + SystemUtils.getLocalHostName() + ":" + getGuiPort() + "/engine";
+        return "https://" + SystemUtils.getLocalHostName() + ":" + getGuiPort() + "/engine/job/" + heritrixBaseDir.getName();
     }
 
     /**

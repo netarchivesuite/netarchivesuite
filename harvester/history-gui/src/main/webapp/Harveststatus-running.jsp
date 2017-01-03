@@ -295,7 +295,7 @@ This page displays a list of running jobs.
 
 %>
    <tr class="<%=HTMLUtils.getRowClass(rowcount++)%>">
-        <td><a href="<%=jobDetailsLink%>"><%=jobId%></a></td>
+        <td><a href="history/job/<%=jobId%>/"><%=jobId%></a></td>
         <td class="crawlerHost">
             &nbsp;
             <%
@@ -328,15 +328,6 @@ This page displays a list of running jobs.
             <img src="<%=bullet%>" alt="<%=I18N.getString(request.getLocale(), altStatus)%>"/>
             &nbsp;
             <a href="<%=info.getHostUrl()%>" target="_blank"><%=info.getHostName()%></a>
-            <%
-                String h3Hostname = info.getHostName();
-                if (h3Hostname != null && h3Hostname.length() > 0) {
-                	%>
-            &nbsp;
-            <a href="history/job/<%=jobId%>/"><img src="gear-icon.png" /></a>
-                	<%
-                }
-            %>
         </td>
         <td align="right"><%=StringUtils.formatPercentage(info.getProgress())%></td>
         <td align="right"><%=info.getElapsedTime()%></td>
