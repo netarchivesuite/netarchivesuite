@@ -883,7 +883,7 @@ public class JobResource implements ResourceAbstract {
         			line = line.substring(0, line.length() - 1);
         		}
 	        	script += "\ninitials = \"" + initials + "\"";
-	            script += "\naddFilter '" + line + "'\n";
+	            script += "\naddFilter '" + line.replace("\\", "\\\\") + "'\n";
         	}
         }
         if(removeIndexes.length > 0 && !initials.isEmpty()) {
