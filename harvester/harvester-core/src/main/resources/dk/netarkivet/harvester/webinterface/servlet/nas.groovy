@@ -164,7 +164,7 @@ void changeBudget(String key, int value) {
 	try { 
 	   quotaEnforcerBean = appCtx.getBean("quotaenforcer")
 	   if(quotaEnforcerBean != null) {
-	   		if(quotaEnforcerBean.queueTotalBudget == -1) {
+	   		if(appCtx.getBean("frontier").queueTotalBudget == -1) {
 	   			isQuotaEnforcer = true
 	   		}
 	   }
