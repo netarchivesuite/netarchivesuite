@@ -257,6 +257,9 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
 
     /** The URL to the host Heritrix admin UI. */
     private String hostUrl;
+    
+    /** The URL to the job on Heritrix admin UI. */
+    private String hostJobUrl;
 
     /** The job's status. */
     private CrawlStatus status;
@@ -307,6 +310,14 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
 
     public void setHostUrl(String hostUrl) {
         this.hostUrl = hostUrl;
+    }
+    
+    public String getHostJobUrl() {
+        return hostJobUrl;
+    }
+
+    public void setHostJobUrl(String hostJobUrl) {
+        this.hostJobUrl = hostJobUrl;
     }
 
     public CrawlStatus getStatus() {

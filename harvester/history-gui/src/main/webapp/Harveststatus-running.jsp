@@ -327,7 +327,7 @@ This page displays a list of running jobs.
             %>
             <img src="<%=bullet%>" alt="<%=I18N.getString(request.getLocale(), altStatus)%>"/>
             &nbsp;
-            <a href="<%=info.getHostUrl()%>" target="_blank"><%=info.getHostName()%></a>
+            <a href="<%=info.getHostJobUrl()%>" target="_blank"><%=info.getHostName()%></a>
         </td>
         <td align="right"><%=StringUtils.formatPercentage(info.getProgress())%></td>
         <td align="right"><%=info.getElapsedTime()%></td>
