@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -212,7 +213,7 @@ public class JobResource implements ResourceAbstract {
             /* Heritrix3 WebUI */
             sb.append("<div style=\"float:left;position: absolute;left:600px;\">\n");
             sb.append("<a href=\"");
-            sb.append(h3Job.hostUrl+"/job/"+h3Job.jobname);
+            sb.append(h3Job.hostUrl);
             sb.append("\" class=\"btn btn-default\">");
             sb.append("Heritrix3 WebUI");
             sb.append("</a>");
@@ -346,7 +347,8 @@ public class JobResource implements ResourceAbstract {
                 File logDir = new File(h3Job.crawlLogFilePath);
                 
                 sb.append("<a href=\"");
-                sb.append(h3Job.hostUrl+"/anypath/"+logDir.getParentFile().getAbsolutePath()+"/scripting_events.log");
+                URL url = new URL(h3Job.hostUrl);
+                sb.append("https://"+url.getHost()+":"+url.getPort()+"/engine/anypath"+logDir.getParentFile().getAbsolutePath()+"/scripting_events.log");
                 sb.append("\" class=\"btn btn-default\">");
                 sb.append("View scripting_events.log");
                 sb.append("</a>");

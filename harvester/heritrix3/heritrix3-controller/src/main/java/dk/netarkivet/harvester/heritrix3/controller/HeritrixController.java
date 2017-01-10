@@ -277,7 +277,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
      * @return the URL for monitoring the job of this instance.
      */
     public String getHeritrixJobConsoleURL() {
-        return "https://" + SystemUtils.getLocalHostName() + ":" + getGuiPort() + "/engine/job/" + files.getCrawlDir().getName();
+        return getHeritrixConsoleURL() + files.getCrawlDir().getName();
     }
 
     /**
@@ -374,8 +374,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
         Heritrix3Files files = getHeritrixFiles();
         CrawlProgressMessage cpm = new CrawlProgressMessage(files.getHarvestID(), files.getJobID(),
                 progressStatisticsLegend);
-        cpm.setHostUrl(getHeritrixConsoleURL());
-        cpm.setHostJobUrl(getHeritrixJobConsoleURL());
+        cpm.setHostUrl(getHeritrixJobConsoleURL());
         JobResult jobResult = h3wrapper.job(jobName);
         if (jobResult != null) {
         	getCrawlServiceAttributes(cpm, jobResult);

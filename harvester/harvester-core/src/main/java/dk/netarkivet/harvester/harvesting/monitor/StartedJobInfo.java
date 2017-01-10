@@ -77,9 +77,6 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /** URL to the Heritrix admin console. */
     private String hostUrl;
-    
-    /** URL to the Heritrix job admin console. */
-    private String hostJobUrl;
 
     /** A percentage indicating the crawl progress. */
     private double progress;
@@ -147,7 +144,6 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         this.jobId = jobId;
         this.harvestName = harvestName;
         this.hostUrl = NOT_AVAILABLE_STRING;
-        this.hostJobUrl = NOT_AVAILABLE_STRING;
         this.progress = NOT_AVAILABLE_NUM;
         this.queuedFilesCount = NOT_AVAILABLE_NUM;
         this.totalQueuesCount = NOT_AVAILABLE_NUM;
@@ -205,10 +201,6 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
      */
     public String getHostUrl() {
         return hostUrl;
-    }
-    
-    public String getHostJobUrl() {
-    	return hostJobUrl;
     }
 
     /**
@@ -438,7 +430,6 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             sji.downloadedFilesCount = jobInfo.getDownloadedFilesCount();
             sji.elapsedSeconds = jobInfo.getElapsedSeconds();
             sji.hostUrl = msg.getHostUrl();
-            sji.hostJobUrl = msg.getHostJobUrl();
             sji.processedDocsPerSec = jobInfo.getProcessedDocsPerSec();
             sji.processedKBPerSec = jobInfo.getProcessedKBPerSec();
             sji.queuedFilesCount = jobInfo.getQueuedUriCount();
@@ -447,7 +438,6 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             // Set progress to 100 %, and reset the other values .
             sji.progress = 100;
             sji.hostUrl = "";
-            sji.hostJobUrl = "";
             sji.activeQueuesCount = 0;
             sji.activeToeCount = 0;
             sji.currentProcessedDocsPerSec = 0;
@@ -470,14 +460,8 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
      * @param hostUrl the hostUrl to set
      */
     public void setHostUrl(String hostUrl) {
-        this.hostUrl = hostUrl;
-    }
-    
-    /**
-     * @param hostJobUrl the hostJobUrl to set
-     */
-    public void setHostJobUrl(String hostJobUrl) {
-        this.hostJobUrl = hostJobUrl;
+
+    	this.hostUrl = hostUrl;
     }
 
     /**
