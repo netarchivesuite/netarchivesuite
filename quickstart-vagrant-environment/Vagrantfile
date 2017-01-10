@@ -47,7 +47,12 @@ $shellinit = <<SHELLINIT
 	# Install git
 	apt-get -q -y install git
 
+	# Install Maven
+	echo 'Installing Maven...'
+	apt-get -q -y install maven
+
 	# Install postgres
+	echo 'Installing postgres...'
 	DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get --option Dpkg::Options::=--force-confold -q -y install 'postgresql-8.4'
 SHELLINIT
 
@@ -142,10 +147,18 @@ $netarchiveinstall = <<NETARCHIVEINSTALL
 	cd /vagrant
 
 	# Netarchive: Download NetarchiveSuite, latest release
-	wget -N -O NetarchiveSuite.zip https://sbforge.org/nexus/service/local/repositories/releases/content/org/netarchivesuite/distribution/5.2/distribution-5.2.zip
+	#wget -N -O NetarchiveSuite.zip https://sbforge.org/nexus/service/local/repositories/releases/content/org/netarchivesuite/distribution/5.2/distribution-5.2.zip
+	mvn org.apache.maven.plugins:maven-dependency-plugin:2.9:get \
+		-DrepoUrl=https://sbforge.org/nexus/content/repositories/snapshots/ \
+		-Dartifact=org.netarchivesuite:distribution:LATEST:zip \
+		-Dtransitive=false -Ddest=NetarchiveSuite.zip
 
 	# Netarchive: Download latest bundles harvester
-	wget -N -O NetarchiveSuite-heritrix3-bundler.zip https://sbforge.org/nexus/service/local/repositories/releases/content/org/netarchivesuite/heritrix3-bundler/5.2/heritrix3-bundler-5.2.zip
+	#wget -N -O NetarchiveSuite-heritrix3-bundler.zip https://sbforge.org/nexus/service/local/repositories/releases/content/org/netarchivesuite/heritrix3-bundler/5.2/heritrix3-bundler-5.2.zip
+	mvn org.apache.maven.plugins:maven-dependency-plugin:2.9:get \
+		-DrepoUrl=https://sbforge.org/nexus/content/repositories/snapshots/ \
+		-Dartifact=org.netarchivesuite:heritrix3-bundler:LATEST:zip \
+		-Dtransitive=false -Ddest=NetarchiveSuite-heritrix3-bundler.zip
 
 	cd /home/vagrant/netarchive
 
