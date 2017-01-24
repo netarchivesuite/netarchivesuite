@@ -71,6 +71,8 @@ public class PersistentJobData implements JobInfo {
     private static final String MAXOBJECTSPERDOMAIN_KEY = ROOT_ELEMENT + ".maxObjectsPerDomain";
     /** Key in harvestinfo file for the orderXMLName of the job. */
     private static final String ORDERXMLNAME_KEY = ROOT_ELEMENT + ".templateName";
+    /** Key in harvestinfo file for the orderXMLName of the job. */
+    private static final String OLDORDERXMLNAME_KEY = ROOT_ELEMENT + ".orderXMLName";
     /** Key in harvestinfo file for the orderXMLName update date. */
     private static final String ORDERXML_UPDATE_DATE_KEY = ROOT_ELEMENT + ".templateLastUpdateDate";
     /** Key in harvestinfo file for the orderXMLName description. */
@@ -115,22 +117,35 @@ public class PersistentJobData implements JobInfo {
      * Also support for version 0.4 of harvestInfo xml. In the previous format the channel and snapshot keys were
      * absent. Instead there was the priority key.
      */
-    private static final String OLD_HARVESTINFO_VERSION_NUMBER = "0.4";
+    private static final String OLD_HARVESTINFO_VERSION_NUMBER_4 = "0.4";
+    
+    /**
+     * Also support for version 0.5 of harvestInfo xml. In this previous format, templateName was named orderXMLName
+     * and fields templateLastUpdateDate & templateDescription didn't exist.
+     */
+    private static final String OLD_HARVESTINFO_VERSION_NUMBER_5 = "0.5";
 
-    /** String array containing all mandatory keys contained in valid version 0.5 xml. */
+    /** String array containing all mandatory keys contained in valid version 0.6 xml.
+     *  ORDERXML_UPDATE_DATE_KEY, ORDERXML_DESCRIPTION_KEY are optionals 
+     */
     private static final String[] ALL_KEYS = {JOBID_KEY, HARVESTNUM_KEY, MAXBYTESPERDOMAIN_KEY,
-            MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY, ORIGHARVESTDEFINITIONID_KEY, CHANNEL_KEY,
+            MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY,  ORIGHARVESTDEFINITIONID_KEY, CHANNEL_KEY,
             HARVESTINFO_VERSION_KEY, HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY};
 
     /**
      * Optional keys are HARVEST_DESC_KEY representing harvest comments, and HARVEST_SCHED_KEY representing the
      * scheduleName behind the harvest, only applicable for selective harvests.
      */
+    
+    /** String array containing all mandatory keys contained in valid version 0.5 xml. */
+    private static final String[] ALL_KEYS_5 = {JOBID_KEY, HARVESTNUM_KEY, MAXBYTESPERDOMAIN_KEY,
+            MAXOBJECTSPERDOMAIN_KEY, OLDORDERXMLNAME_KEY, ORIGHARVESTDEFINITIONID_KEY, CHANNEL_KEY,
+            HARVESTINFO_VERSION_KEY, HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY};
 
     /**
      * String array containing all mandatory keys contained in old valid version 0.4 xml.
      */
-    private static final String[] ALL_KEYS_OLD = {JOBID_KEY, HARVESTNUM_KEY, MAXBYTESPERDOMAIN_KEY,
+    private static final String[] ALL_KEYS_4 = {JOBID_KEY, HARVESTNUM_KEY, MAXBYTESPERDOMAIN_KEY,
             MAXOBJECTSPERDOMAIN_KEY, ORDERXMLNAME_KEY, ORIGHARVESTDEFINITIONID_KEY, PRIORITY_KEY,
             HARVESTINFO_VERSION_KEY, HARVEST_NAME_KEY, HARVEST_FILENAME_PREFIX_KEY, JOB_SUBMIT_DATE_KEY};
 
@@ -298,11 +313,13 @@ public class PersistentJobData implements JobInfo {
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
 
-        final String[] keysToCheck;
+        String[] keysToCheck = new String[0];
         if (version.equals(HARVESTINFO_VERSION_NUMBER)) {
             keysToCheck = ALL_KEYS;
-        } else if (version.equals(OLD_HARVESTINFO_VERSION_NUMBER)) {
-            keysToCheck = ALL_KEYS_OLD;
+        } else if (version.equals(OLD_HARVESTINFO_VERSION_NUMBER_5)) {
+            keysToCheck = ALL_KEYS_5;
+        } else if(version.equals(OLD_HARVESTINFO_VERSION_NUMBER_4)) {
+        	version.equals(OLD_HARVESTINFO_VERSION_NUMBER_4);
         } else {
             final String errMsg = "Invalid version: " + version;
             return new XmlState(OKSTATE.NOTOK, errMsg);
@@ -327,24 +344,32 @@ public class PersistentJobData implements JobInfo {
         }
 
         // Verify, that the job channel and snapshot elements are not the empty String (version 0.5+)
-        if (version.equals(HARVESTINFO_VERSION_NUMBER) && sx.getString(CHANNEL_KEY).isEmpty()) {
+        if ((version.equals(HARVESTINFO_VERSION_NUMBER) || version.equals(OLD_HARVESTINFO_VERSION_NUMBER_5))
+        		&& sx.getString(CHANNEL_KEY).isEmpty()) {
             final String errMsg = "The channel and/or the snapshot value of the job is undefined";
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
 
-        if (version.equals(OLD_HARVESTINFO_VERSION_NUMBER) && sx.getString(PRIORITY_KEY).isEmpty()) {
+        if (version.equals(OLD_HARVESTINFO_VERSION_NUMBER_4) && sx.getString(PRIORITY_KEY).isEmpty()) {
             final String errMsg = "The priority value of the job is undefined";
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
 
         // Verify, that the job channel element is not the empty String
-        if (version.equals(HARVESTINFO_VERSION_NUMBER) && sx.getString(CHANNEL_KEY).isEmpty()) {
+        if ((version.equals(HARVESTINFO_VERSION_NUMBER) || version.equals(OLD_HARVESTINFO_VERSION_NUMBER_5))
+        		&& sx.getString(CHANNEL_KEY).isEmpty()) {
             final String errMsg = "The channel and/or the snapshot value of the job is undefined";
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
 
-        // Verify, that the ORDERXMLNAME element is not the empty String
-        if (sx.getString(ORDERXMLNAME_KEY).isEmpty()) {
+        // Verify, that the ORDERXMLNAME element is not the empty String (V.0.6)
+        if (version.equals(HARVESTINFO_VERSION_NUMBER) && sx.getString(ORDERXMLNAME_KEY).isEmpty()) {
+            final String errMsg = "The orderxmlname of the job is undefined";
+            return new XmlState(OKSTATE.NOTOK, errMsg);
+        }
+        
+        // Verify, that the ORDERXMLNAME element is not the empty String (V.0.5)
+        if (version.equals(OLD_HARVESTINFO_VERSION_NUMBER_5) && sx.getString(OLDORDERXMLNAME_KEY).isEmpty()) {
             final String errMsg = "The orderxmlname of the job is undefined";
             return new XmlState(OKSTATE.NOTOK, errMsg);
         }
