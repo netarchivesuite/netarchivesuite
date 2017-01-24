@@ -22,6 +22,13 @@
     </dependency>
 
     <dependency>
+         <groupId>org.netarchivesuite</groupId>
+         <artifactId>archive-core</artifactId>
+         <version>${project.version}</version>
+    </dependency>
+
+
+    <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-core</artifactId>
       <scope>test</scope>
@@ -92,6 +99,11 @@
       <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
       <version>${mockobjects-core.version}</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>mockobjects</groupId>
+      <artifactId>mockobjects-core</artifactId>
     </dependency>
 
     <dependency>

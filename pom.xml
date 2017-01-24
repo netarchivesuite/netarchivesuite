@@ -227,6 +227,19 @@
       </dependency>
 
       <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-firefox-driver</artifactId>
+        <version>${selenium-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-support</artifactId>
+        <version>${selenium-api.version}</version>
+      </dependency>
+
+
+      <dependency>
         <groupId>org.jaccept</groupId>
         <artifactId>jaccept-core</artifactId>
         <version>${jaccept-core.version}</version>
