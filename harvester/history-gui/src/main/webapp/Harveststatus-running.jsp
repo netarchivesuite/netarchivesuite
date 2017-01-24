@@ -334,7 +334,7 @@ This page displays a list of running jobs.
         <td align="right"><%=info.getQueuedFilesCount()%></td>
         <td align="right"><%=info.getTotalQueuesCount()%></td>
         <td align="right"><%=info.getActiveQueuesCount()%></td>
-        <td align="right"><%=info.getRetiredQueuesCount()%></td>
+        <td align="right"><%=info.getInactiveQueuesCount()%></td>
         <td align="right"><%=info.getExhaustedQueuesCount()%></td>
         <td align="right">
             <%= StringUtils.formatNumber(info.getCurrentProcessedDocsPerSec())
