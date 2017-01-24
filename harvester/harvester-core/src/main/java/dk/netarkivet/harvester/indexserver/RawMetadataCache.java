@@ -122,6 +122,9 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         job.processOnlyFilesMatching(".*" + id + ".*" + metadataFilePatternSuffix);
         BatchStatus b = arcrep.batch(job, replicaUsed);
 
+        //TODO for crawl log data, we here call a 2nd batchjob which looks for the ifile data, and apply that
+        //to modify the data in b.
+
         // This check ensures that we got data from at least one file.
         // Mind you, the data may be empty, but at least one file was
         // successfully processed.
