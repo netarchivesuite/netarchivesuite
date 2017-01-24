@@ -9,6 +9,20 @@ jdk:
 
 script: mvn test -B -fae
 
+sudo: false
+
+cache:
+  directories:
+     - $HOME/.m2
+
+
+
+# whitelist
+branches:
+  only:
+     - travisbuild
+     - master
+
 #before_install:
 #  -   mvn install:install-file -Dfile=sb-nexus/mg4j-1.0.1.jar -DpomFile=sb-nexus/mg4j-1.0.1.pom
 #  -   mvn install:install-file -Dfile=sb-nexus/je-3.3.82.jar -DpomFile=sb-nexus/je-3.3.82.pom
