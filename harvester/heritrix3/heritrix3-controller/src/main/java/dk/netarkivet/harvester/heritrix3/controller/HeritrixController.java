@@ -200,7 +200,11 @@ public class HeritrixController extends AbstractRestHeritrixController {
       		ScriptResult scriptResult = h3wrapper.ExecuteShellScriptInJob(jobName, "groovy", "rawOut.println crawlController.pauseAtStart\n");
       		boolean pauseAtStart = false;
       		if (scriptResult != null && scriptResult.script != null) {
-      			pauseAtStart = Boolean.parseBoolean(scriptResult.script.rawOutput);
+      			String rawOutput = scriptResult.script.rawOutput; //false\n or true\n
+      			if(rawOutput.endsWith("\n")) {
+      				rawOutput = rawOutput.substring(0, rawOutput.length()-1);
+      			}
+      			pauseAtStart = Boolean.parseBoolean(rawOutput);
       		}
       		log.info("The parameter pauseAtStart is {}", pauseAtStart);
       		//if param pauseAtStart is false
