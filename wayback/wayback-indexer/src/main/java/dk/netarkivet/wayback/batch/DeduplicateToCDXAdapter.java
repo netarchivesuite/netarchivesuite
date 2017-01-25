@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,7 +89,13 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 String originalUrl = crawlElements[3];
                 String canonicalUrl = canonicalizer.urlStringToKey(originalUrl);
                 result.append(canonicalUrl).append(' ');
-                String cdxDate = cdxDateFormat.format(crawlDateFormat.parse(crawlElements[0]));
+                String cdxDate = null;
+                try {
+                    cdxDate = cdxDateFormat.format(crawlDateFormat.parse(crawlElements[0]));
+                } catch (ParseException e) {
+                    log.warn("Error parsing " + crawlElements[0] + " from " + line, e);
+                    throw e;
+                }
                 result.append(cdxDate).append(' ').append(originalUrl).append(' ');
                 String mimetype = crawlElements[6];
                 result.append(mimetype).append(' ');
@@ -98,13 +105,14 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 result.append(digest).append(" - ");
                 String duplicateRecord = crawlElements[11];
                 if (!duplicateRecord.startsWith(DUPLICATE_MATCHING_STRING)) {
-                    // Probably an Exception starting with "le:" is injected before the
+                    // Probably some other annotation is injected before the
                     // DUPLICATE_MATCHING_STRING, Try splitting on duplicate:
                     String[] parts = duplicateRecord.split(DUPLICATE_MATCHING_STRING);
                     if (parts.length == 2) {
                         String newDuplicateRecord = DUPLICATE_MATCHING_STRING + parts[1];
-                        log.warn("Duplicate-record changed from '{}' to '{}'", duplicateRecord, newDuplicateRecord);
                         duplicateRecord = newDuplicateRecord;
+                    } else {
+                        log.warn("Could not parse duplicate record from ", duplicateRecord);
                     }
                 }
                 Matcher m = duplicateRecordPattern.matcher(duplicateRecord);
