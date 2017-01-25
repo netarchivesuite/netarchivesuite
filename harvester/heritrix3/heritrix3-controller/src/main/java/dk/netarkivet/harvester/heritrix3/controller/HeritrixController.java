@@ -196,12 +196,23 @@ public class HeritrixController extends AbstractRestHeritrixController {
       		    log.warn("The job state is now {}. Should have been CrawlControllerState.PAUSED",  jobResult.job.crawlControllerState);
       		}
       		
-      		jobResult = h3wrapper.unpauseJob(jobName);
-      		log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
-      		
-      		// POST: h3 is running, and the job with name 'jobName' is running
-            log.trace("h3-State after unpausing job '{}': {}", jobName, new String(jobResult.response, "UTF-8"));
-      		
+      		//check if param pauseAtStart is true
+      		ScriptResult scriptResult = h3wrapper.ExecuteShellScriptInJob(jobName, "groovy", "rawOut.println crawlController.pauseAtStart\n");
+      		boolean pauseAtStart = false;
+      		if (scriptResult != null && scriptResult.script != null) {
+      			pauseAtStart = Boolean.parseBoolean(scriptResult.script.rawOutput);
+      		}
+      		log.info("The parameter pauseAtStart is {}", pauseAtStart);
+      		//if param pauseAtStart is false
+      		if(pauseAtStart == false) {
+      			jobResult = h3wrapper.unpauseJob(jobName);
+	      		log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
+	      		
+	      		// POST: h3 is running, and the job with name 'jobName' is running
+	            log.trace("h3-State after unpausing job '{}': {}", jobName, new String(jobResult.response, "UTF-8"));
+      		} else {
+      			log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
+      		}
             
             
       	} catch (UnsupportedEncodingException e) {
