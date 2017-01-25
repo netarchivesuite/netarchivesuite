@@ -323,8 +323,15 @@ public class JobResource implements ResourceAbstract {
                     }
                     //  disabled="disabled"
                     sb.append("<a href=\"?action=");
-                    sb.append(job.availableActions.get(i));
-                    sb.append("\" class=\"btn btn-default\">");
+                    String thisAction = job.availableActions.get(i);
+                    sb.append(thisAction);
+                    sb.append("\"");
+                    if("terminate".equals(thisAction) || "teardown".equals(thisAction)) {
+                    	sb.append("onclick=\"return confirm('WARNING ! Are you sure you wish to ");
+                    	sb.append(thisAction.toUpperCase());
+                    	sb.append(" the job currently being crawled ?')\"");
+                    }
+                    sb.append(" class=\"btn btn-default\">");
                     sb.append(job.availableActions.get(i).substring(0, 1).toUpperCase()+job.availableActions.get(i).substring(1));
                     sb.append("</a>");
                 }
