@@ -23,8 +23,13 @@
 package dk.netarkivet.harvester.indexserver;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Hashtable;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +41,13 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.common.utils.archive.GetMetadataArchiveBatchJob;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 
 /**
  * This is an implementation of the RawDataCache specialized for data out of metadata files. It uses regular expressions
@@ -62,6 +70,9 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     /** The job that we use to dig through metadata files. */
     private final ArchiveBatchJob job;
 
+    /** The actual pattern to be used for matching the url in the metadata record */
+    private Pattern urlPattern;
+
     /**
      * Create a new RawMetadataCache. For a given job ID, this will fetch and cache selected content from metadata files
      * (&lt;ID&gt;-metadata-[0-9]+.arc). Any entry in a metadata file that matches both patterns will be returned. The
@@ -82,6 +93,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         } else {
             urlMatcher1 = MATCH_ALL_PATTERN;
         }
+        urlPattern = urlMatcher1;
         Pattern mimeMatcher1;
         if (mimeMatcher != null) {
             mimeMatcher1 = mimeMatcher;
@@ -119,18 +131,69 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         final String metadataFilePatternSuffix = Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
         log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}{}' on replica '{}'", job
                 .getClass().getName(), id, metadataFilePatternSuffix, replicaUsed);
-        job.processOnlyFilesMatching(".*" + id + ".*" + metadataFilePatternSuffix);
+        final String specifiedPattern = ".*" + id + ".*" + metadataFilePatternSuffix;
+        job.processOnlyFilesMatching(specifiedPattern);
         BatchStatus b = arcrep.batch(job, replicaUsed);
 
         //TODO for crawl log data, we here call a 2nd batchjob which looks for the ifile data, and apply that
         //to modify the data in b.
 
+
         // This check ensures that we got data from at least one file.
         // Mind you, the data may be empty, but at least one file was
         // successfully processed.
+        Pattern duplicatePattern = Pattern.compile(".*duplicate:\"([^,]+),([0-9]+),.*");
         if (b.hasResultFile() && b.getNoOfFilesProcessed() > b.getFilesFailed().size()) {
             File cacheFileName = getCacheFile(id);
-            b.copyResults(cacheFileName);
+            if (urlPattern.pattern().equals(MetadataFile.CRAWL_LOG_PATTERN)) {
+                File crawllog = null;
+                try {
+                    crawllog = File.createTempFile("dedup","txt");
+                } catch (IOException e) {
+                    throw new IOFailure("Could not create temprary output file.");
+                }
+                b.copyResults(crawllog);
+                GetMetadataArchiveBatchJob job2 = new GetMetadataArchiveBatchJob(Pattern.compile(".*duplicationmigration.*"), Pattern.compile("text/plain"));
+                job2.processOnlyFilesMatching(specifiedPattern);
+                BatchStatus b2 = arcrep.batch(job2, replicaUsed);
+                File migration = null;
+                try {
+                    migration = File.createTempFile("migration", "txt");
+                } catch (IOException e) {
+                    throw new IOFailure("Could not create temprary output file.");
+                }
+                b2.copyResults(migration);
+                Hashtable<Pair<String,Long>, Long> lookup = new Hashtable<>();
+                try {
+                    for (String line: org.apache.commons.io.FileUtils.readLines(migration) ){
+                        String[] splitLine = StringUtils.split(line);
+                        lookup.put(new Pair<String,Long>(splitLine[0], Long.parseLong(splitLine[1])), Long.parseLong(splitLine[2]));
+                    }
+                } catch (IOException e) {
+                    throw new IOFailure("Could not read " + migration.getAbsolutePath());
+                } finally {
+                    migration.delete();
+                }
+                try {
+                    for (String line: org.apache.commons.io.FileUtils.readLines(crawllog)) {
+                        Matcher m = duplicatePattern.matcher(line);
+                        if (m.matches()) {
+                            Long newOffset = lookup.get(new Pair<String, Long>(m.group(1), Long.parseLong(m.group(2))));
+                            String newLine = line.substring(0, m.start(2)) + newOffset + line.substring(m.end(2));
+                            newLine = newLine.replace(m.group(1), m.group(1)+".gz");
+                            FileUtils.appendToFile(cacheFileName, newLine);
+                        } else {
+                            FileUtils.appendToFile(cacheFileName, line);
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new IOFailure("Could not read " + crawllog.getAbsolutePath());
+                } finally {
+                    crawllog.delete();
+                }
+            } else {
+                b.copyResults(cacheFileName);
+            }
             log.debug("Cached data for job '{}' for '{}'", id, prefix);
             return id;
         } else {
