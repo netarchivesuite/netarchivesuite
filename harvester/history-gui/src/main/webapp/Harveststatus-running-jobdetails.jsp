@@ -120,7 +120,7 @@ This page displays details about a running job.
             HarvestMonitor.getAutoRefreshDelay()); // Autorefresh every x seconds
 
     InMemoryFrontierReport frontierReport =
-        HarvestMonitor.getFrontierReport(jobID, true);
+        HarvestMonitor.getFrontierActiveAndInactiveQueuesReport(jobID, true);
 
 %>
 
