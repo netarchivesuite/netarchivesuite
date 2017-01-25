@@ -588,7 +588,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
 	public long getInactiveQueuesCount() {
-		return inactiveQueuesCount;
+		return inactiveQueuesCount < 0 ? 0L:inactiveQueuesCount;
 	}
 
 	public void setInactiveQueuesCount(long inactiveQueuesCount) {
