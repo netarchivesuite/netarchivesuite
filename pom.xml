@@ -27,6 +27,8 @@
     <openwayback.version>2.0.0</openwayback.version>
     <jwat.version>1.0.4</jwat.version>
     <derby.version>10.12.1.1</derby.version>
+    <maven-release-plugin.version>2.5.2</maven-release-plugin.version>
+    <commons-lang3.version>3.4</commons-lang3.version>
   </properties>
 
   <modules>
@@ -316,6 +318,11 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>
 <!--
       <dependency>
         <groupId>xerces</groupId>
@@ -374,7 +381,7 @@
 
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.5.2</version>
+          <version>${maven-release-plugin.version}</version>
         </plugin>
 
         <plugin>
@@ -523,8 +530,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
+        <version>${maven-release-plugin.version}</version>
         <configuration>
-          <autoversionsubmodules>true</autoversionsubmodules>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
         </configuration>
       </plugin>
     </plugins>
