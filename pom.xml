@@ -81,6 +81,7 @@
     <logback-core.version>1.0.13</logback-core.version>
     <je.version>3.2.76</je.version>
     <mockobjects-core.version>0.09</mockobjects-core.version>
+    <commons-lang3.version>3.5</commons-lang3.version>
   </properties>
 
   <modules>
@@ -734,6 +735,12 @@
         <groupId>org.gnu.inet</groupId>
         <artifactId>libidn</artifactId>
         <version>${libidn.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
       </dependency>
 
     </dependencies>
