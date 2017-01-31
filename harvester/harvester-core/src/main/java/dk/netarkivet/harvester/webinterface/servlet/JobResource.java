@@ -262,6 +262,17 @@ public class JobResource implements ResourceAbstract {
             sb.append("</a>");
 
             sb.append("&nbsp;");
+            
+            /* Show Crawllog on H3 GUI*/
+            sb.append("<a href=\"");
+            sb.append(h3Job.hostUrl);
+            sb.append("/anypath/");
+            sb.append(getCrawlLogPath(h3Job));
+            sb.append("?format=paged&pos=-1&lines=-1000&reverse=y");
+            sb.append("\" class=\"btn btn-default\">");
+            sb.append("Crawllog on H3 GUI");
+            sb.append("</a>");
+            
 
             sb.append("</div>\n");
             
@@ -327,8 +338,8 @@ public class JobResource implements ResourceAbstract {
                     sb.append(thisAction);
                     sb.append("\"");
                     if("terminate".equals(thisAction) || "teardown".equals(thisAction)) {
-                    	sb.append("onclick=\"return confirm('WARNING ! Are you sure you wish to ");
-                    	sb.append(thisAction.toUpperCase());
+                    	sb.append("onclick=\"return confirm('Are you sure you wish to ");
+                    	sb.append(thisAction);
                     	sb.append(" the job currently being crawled ?')\"");
                     }
                     sb.append(" class=\"btn btn-default\">");
@@ -1357,6 +1368,17 @@ public class JobResource implements ResourceAbstract {
 
         out.flush();
         out.close();
+    }
+    
+    String getCrawlLogPath(Heritrix3JobMonitor h3Job) {
+    	ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", "rawOut.println job.crawlController.frontier.loggerModule.crawlLogPath.file");
+        //System.out.println(new String(scriptResult.response, "UTF-8"));
+        if (scriptResult != null && scriptResult.script != null) {
+            if (scriptResult.script.rawOutput != null) {
+            	return scriptResult.script.rawOutput;
+            }
+        }
+        return "";
     }
 
 }
