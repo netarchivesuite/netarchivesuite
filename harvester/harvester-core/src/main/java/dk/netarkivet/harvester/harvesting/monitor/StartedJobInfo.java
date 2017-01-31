@@ -426,7 +426,8 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
                     sji.totalQueuesCount = Long.parseLong((String) params[0]);
                     sji.activeQueuesCount = Long.parseLong((String) params[1]);
                     sji.inactiveQueuesCount = Long.parseLong((String) params[5]);
-                    sji.retiredQueuesCount = Long.parseLong((String) params[6]);
+                    //FIXME : delete retiredQueuesCount to keep only inactiveQueuesCount
+                    sji.retiredQueuesCount = Long.parseLong((String) params[5]);
                     sji.exhaustedQueuesCount = Long.parseLong((String) params[7]);
                 } catch (ParseException e) {
                     throw new ArgumentNotValid(frontierShortReport, e);
@@ -464,6 +465,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         }
         sji.status = newStatus;
 
+        //FIXME : save inactiveQueuesCount in database
         return sji;
     }
 
@@ -588,7 +590,10 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
 	public long getInactiveQueuesCount() {
-		return inactiveQueuesCount < 0 ? 0L:inactiveQueuesCount;
+		//FIXME : delete retiredQueuesCount from code and database
+		//and use only inactiveQueuesCount
+		//return inactiveQueuesCount;
+		return retiredQueuesCount;
 	}
 
 	public void setInactiveQueuesCount(long inactiveQueuesCount) {
