@@ -27,11 +27,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.archive.wayback.UrlCanonicalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +48,8 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     /** Define SimpleDateFormat objects for the representation of timestamps in crawl logs and cdx files respectively. */
     private static final String crawlDateFormatString = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final String cdxDateFormatString = "yyyyMMddHHmmss";
-    private static final SimpleDateFormat crawlDateFormat = new SimpleDateFormat(crawlDateFormatString);
-    private static final SimpleDateFormat cdxDateFormat = new SimpleDateFormat(cdxDateFormatString);
+    private static final FastDateFormat crawlDateFormat = FastDateFormat.getInstance(crawlDateFormatString);
+    private static final FastDateFormat cdxDateFormat = FastDateFormat.getInstance(cdxDateFormatString);
 
     /** Pattern representing the part of a crawl log entry describing a duplicate record. */
     private static final String duplicateRecordPatternString = "duplicate:\"([^,]*),([^,]*)\",(.*)";	//e.g. duplicate:"arcfile,offset"
@@ -89,13 +88,7 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 String originalUrl = crawlElements[3];
                 String canonicalUrl = canonicalizer.urlStringToKey(originalUrl);
                 result.append(canonicalUrl).append(' ');
-                String cdxDate = null;
-                try {
-                    cdxDate = cdxDateFormat.format(crawlDateFormat.parse(crawlElements[0]));
-                } catch (ParseException e) {
-                    log.warn("Error parsing " + crawlElements[0] + " from " + line, e);
-                    throw e;
-                }
+                String cdxDate = cdxDateFormat.format(crawlDateFormat.parse(crawlElements[0]));
                 result.append(cdxDate).append(' ').append(originalUrl).append(' ');
                 String mimetype = crawlElements[6];
                 result.append(mimetype).append(' ');
@@ -105,14 +98,13 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 result.append(digest).append(" - ");
                 String duplicateRecord = crawlElements[11];
                 if (!duplicateRecord.startsWith(DUPLICATE_MATCHING_STRING)) {
-                    // Probably some other annotation is injected before the
+                    // Probably an Exception starting with "le:" is injected before the
                     // DUPLICATE_MATCHING_STRING, Try splitting on duplicate:
                     String[] parts = duplicateRecord.split(DUPLICATE_MATCHING_STRING);
                     if (parts.length == 2) {
                         String newDuplicateRecord = DUPLICATE_MATCHING_STRING + parts[1];
+                        log.warn("Duplicate-record changed from '{}' to '{}'", duplicateRecord, newDuplicateRecord);
                         duplicateRecord = newDuplicateRecord;
-                    } else {
-                        log.warn("Could not parse duplicate record from ", duplicateRecord);
                     }
                 }
                 Matcher m = duplicateRecordPattern.matcher(duplicateRecord);
