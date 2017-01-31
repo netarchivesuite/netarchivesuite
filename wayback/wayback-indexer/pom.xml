@@ -16,7 +16,7 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>common-core</artifactId>
-      <version>5.3-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -47,7 +47,6 @@
     <dependency>
       <groupId>org.gnu.inet</groupId>
       <artifactId>libidn</artifactId>
-      <version>0.6.5</version>
     </dependency>
 
     <!-- Hibernate -->
@@ -55,34 +54,29 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
-      <version>3.3.0.SP1</version>
       <type>pom</type>
     </dependency>
 
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
-      <version>3.3.0.SP1</version>
     </dependency>
 
     <!-- bad version? -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-annotations</artifactId>
-      <version>3.3.0.ga</version>
     </dependency>
 
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-commons-annotations</artifactId>
-      <version>3.3.0.ga</version>
     </dependency>
 
     <!-- good guess -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>ejb3-persistence</artifactId>
-      <version>1.0.2.GA</version>
     </dependency>
 
     <!-- Used by hibernate. -->
@@ -90,13 +84,11 @@
     <dependency>
       <groupId>javassist</groupId>
       <artifactId>javassist</artifactId>
-      <version>3.9.0.GA</version>
     </dependency>
 
     <dependency>
       <groupId>org.htmlparser</groupId>
       <artifactId>htmlparser</artifactId>
-      <version>1.6</version>
     </dependency>
 
     <dependency>

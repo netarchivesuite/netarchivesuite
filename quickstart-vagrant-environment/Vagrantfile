@@ -151,7 +151,7 @@ $netarchiveinstall = <<NETARCHIVEINSTALL
 
 	# Netarchive: Download deploy_standalone_vagrant_example and
 	# RunNetarchiveSuite
-	wget -N https://raw.githubusercontent.com/netarchivesuite/netarchivesuite/for-vagrant-quickstart/deploy/distribution/src/main/resources/examples/deploy_standalone_vagrant_example.xml
+	wget -N https://raw.githubusercontent.com/netarchivesuite/netarchivesuite/master/deploy/distribution/src/main/resources/examples/deploy_standalone_vagrant_example.xml
 
 	wget -N https://raw.githubusercontent.com/netarchivesuite/netarchivesuite/master/deploy/deploy-core/scripts/RunNetarchiveSuite.sh
 
@@ -329,7 +329,7 @@ Vagrant.configure("2") do |config|
 	#   # Customize the amount of memory on the VM:
 		# As of November 2016, a memory setting of 1024 is needed for NAS,
 		# if less than 1024 is used, NetArchive Suite will not start
-		vb.memory = "1024"
+		vb.memory = "1624"
 	 end
 	#
 	# View the documentation for the provider you are using for more
