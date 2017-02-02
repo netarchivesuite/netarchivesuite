@@ -49,7 +49,7 @@ public class NasWARCProcessor extends WARCWriterProcessor {
 	private static final String HARVESTINFO_MAXBYTESPERDOMAIN = "harvestInfo.maxBytesPerDomain";
 	private static final String HARVESTINFO_MAXOBJECTSPERDOMAIN = "harvestInfo.maxObjectsPerDomain";
 	private static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.templateName";
-	private static final String HARVESTINFO_ORDERXMLUPDATEDATE = "harvestInfo.templateUpdateDate";
+	private static final String HARVESTINFO_ORDERXMLUPDATEDATE = "harvestInfo.templateLastUpdateDate";
 	private static final String HARVESTINFO_ORDERXMLDESCRIPTION = "harvestInfo.templateDescription";
 	private static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
 	private static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
@@ -77,7 +77,7 @@ public class NasWARCProcessor extends WARCWriterProcessor {
      * Add to bean WARCProcessor bean as as
      * <property name="metadataItems"> 
      * <map>
-     * 	<entry key="harvestInfo.version" value="0.5"/>
+     * 	<entry key="harvestInfo.version" value="0.6"/>
 	 *	<entry key="harvestInfo.jobId" value="23"/>
 	 *  <entry key="harvestInfo.channel" value="FOCUSED"/>
 	 * ...	

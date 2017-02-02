@@ -47,14 +47,16 @@ void logEvent(String e) {
     }
 }
 
+
 void deleteFromFrontier(String regex) {
     job.crawlController.requestCrawlPause()
     count = job.crawlController.frontier.deleteURIs(".*", regex)
     rawOut.println "REMINDER: This job is now in a Paused state."
-    logEvent("Deleted " + count + " uris matching regex '" + regex + "'")
-    rawOut.println count + " URIs were deleted from frontier."
+    logEvent("Deleted " + count + " URIs from frontier matching regex '" + regex + "'")
+    rawOut.println count + " URIs were deleted from the frontier."
     rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
+
 
 void listFrontier(String regex, long limit) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
@@ -152,18 +154,38 @@ void printCrawlLog(String regex) {
 void showModBudgets() {
 	def modQueues = job.jobContext.data.get("manually-added-queues");
 	if(modQueues.size() > 0) {
-		htmlOut.println('<p>Budgets of following domains/hosts have been changed in the current job :</p>')
+		htmlOut.println('<p style="margin-top: 50px;">Budgets of following domains/hosts have been changed in the current job :</p>')
 	}
 	htmlOut.println('<ul>')
 	modQueues.each { key, value ->
 		htmlOut.println('<li>'+key)
-		htmlOut.println('<input type="text" name="'+key+'-budget" value="'+value+'"/>')
-		htmlOut.println('<button type="submit" name="submitButton" value="'+key+'" class="btn btn-success"><i class="icon-white icon-thumbs-up"></i> Save</button></li>')
+		htmlOut.println('<input type="hidden" name="queueName" value="'+key+'"/>')
+		htmlOut.println('<input type="text" name="'+key+'-budget" style="width:100px" value="'+value+'"/></li>')
 	}
 	htmlOut.println('</ul>')
 }
 
 void changeBudget(String key, int value) {
+	isQuotaEnforcer = false
+	try { 
+	   quotaEnforcerBean = appCtx.getBean("quotaenforcer")
+	   if(quotaEnforcerBean != null) {
+	   		if(appCtx.getBean("frontier").queueTotalBudget == -1) {
+	   			isQuotaEnforcer = true
+	   		}
+	   }
+	} catch(Exception e1) {
+	   //Catch block 
+	}
+	//case quotaenforcer
+	if(isQuotaEnforcer == true) {
+		propertyName = "quotaenforcer.groupMaxAllKb"
+	}
+	//case frontier.queueTotalBudget
+	else {
+		propertyName = "frontier.queueTotalBudget"
+	}
+
 	surtDomain = ""
 	for(str in key.split('\\.')) {
 		surtDomain = str+","+surtDomain
@@ -175,7 +197,7 @@ void changeBudget(String key, int value) {
 	//get existing sheet for value
 	sheet = mgr.sheetsByName.get(newSheetName)
 	if(sheet == null) {
-		mgr.putSheetOverlay(newSheetName, "frontier.queueTotalBudget", value)
+		mgr.putSheetOverlay(newSheetName, propertyName, value)
 	}
 	mgr.addSurtAssociation(surtDomain, newSheetName)
 	
@@ -187,10 +209,13 @@ void changeBudget(String key, int value) {
 	if(modQueues == null) {
 		modQueues = [:]
 	}
+	oldValue = modQueues.get(key)	
 	modQueues.put(key, value)
 	job.jobContext.data.put("manually-added-queues", modQueues)
 	
-	logEvent("manual budget change : "+ key + " -> "+value)
+	if(oldValue == null || (oldValue != null && oldValue != value)) {
+		logEvent("Changed budget for "+ key + " -> "+value+" URIs")
+	}
 }
 
 void getQueueTotalBudget() {
@@ -200,13 +225,14 @@ void getQueueTotalBudget() {
 void showFilters() {
 	def originalIndexSize = job.jobContext.data.get("original-filters-size")
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
-	htmlOut.println('<ul>')
-	for (i = originalIndexSize; i < regexRuleObj.regexList.size(); i++) {
-		htmlOut.println('<li><input type="checkbox" name="removeIndex" value="'+i+'" /> '+regexRuleObj.regexList.get(i).pattern().substring(1)+'</li>')
-	}
-	htmlOut.println('</ul>')
-	if(originalIndexSize < regexRuleObj.regexList.size()) {
-		htmlOut.println('<button type="submit" name="remove-filter" value="1" class="btn btn-success"><i class="icon-white icon-remove"></i> Remove</button>')
+	if(originalIndexSize != null && originalIndexSize < regexRuleObj.regexList.size()) {
+		htmlOut.println('<ul>')
+		for (i = originalIndexSize; i < regexRuleObj.regexList.size(); i++) {
+			htmlOut.println('<li>')
+   		    htmlOut.println('<input type="checkbox" name="removeIndex" value="'+i+'" />&nbsp;')
+			htmlOut.println(regexRuleObj.regexList.get(i).pattern()+'</li>')
+		}
+		htmlOut.println('</ul>')
 	}
 }
 
@@ -220,7 +246,7 @@ void addFilter(String pat) {
 			job.jobContext.data.put("original-filters-size", regexRuleObj.regexList.size())
 		}
 		regexRuleObj.regexList.add(myRegex)
-		logEvent("manual add of a DecideResult.REJECT filter : "+ pat)
+		logEvent("Added a RejectDecideRule matching regex '"+ pat + "'")
 	}
 }
 
@@ -228,7 +254,7 @@ void removeFilters(def indexesOFiltersToRemove) {
 	indexesOFiltersToRemove = indexesOFiltersToRemove.sort().reverse()
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
 	indexesOFiltersToRemove.each ({ num ->
-		logEvent("removing DecideResult.REJECT filter : "+ regexRuleObj.regexList[num])
+		logEvent("Removed a RejectDecideRule matching regex '"+ regexRuleObj.regexList[num] + "'")
 		regexRuleObj.regexList.remove(num)
 	})
 }

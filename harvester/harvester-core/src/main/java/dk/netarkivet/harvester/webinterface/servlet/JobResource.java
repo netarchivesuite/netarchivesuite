@@ -152,7 +152,7 @@ public class JobResource implements ResourceAbstract {
                     h3Job.h3wrapper.teardownJob(h3Job.jobname);
                 }
             }
-            
+
             h3Job.update();
             
             menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
@@ -678,38 +678,49 @@ public class JobResource implements ResourceAbstract {
             if (page > pages) {
                 page = pages;
             }
+            
+            sb.append("<div style=\"margin-bottom:20px;\">\n");
+            sb.append("<div style=\"float:left;min-width:180px;\">\n");
             sb.append("Total cached lines: ");
             sb.append(totalCachedLines);
             sb.append(" URIs<br />\n");
             sb.append("Total cached size: ");
             sb.append(totalCachedSize);
-            sb.append(" bytes<br />\n");
+            sb.append(" bytes\n");
+            sb.append("</div>\n");
             
-
+            sb.append("<div style=\"float:left;\">\n");
             sb.append("<a href=\"");
             sb.append("?action=update");
             sb.append("\" class=\"btn btn-default\">");
             sb.append("Update cache");
             sb.append("</a>");
             //sb.append("the cache manually ");
-            sb.append("<br />\n");
+            sb.append("</div>\n");
+            
+            sb.append("<div style=\"clear:both;\"></div>\n");
+            sb.append("</div>\n");
 
             if (q == null) {
                 q = ".*";
             }
+            
+            sb.append("<div style=\"margin-bottom:20px;\">\n");
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">");
-            sb.append("<label for=\"itemsperpage\">Lines per page to show:</label>");
+            sb.append("<label for=\"itemsperpage\">Lines to show:</label>");
             sb.append("<input type=\"text\" id=\"itemsperpage\" name=\"itemsperpage\" value=\"" + linesPerPage + "\" placeholder=\"must be &gt; 25 and &lt; 1000 \">\n");
             sb.append("<label for=\"q\">Filter regex:</label>");
-            sb.append("<input type=\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"content-type\">\n");
+            sb.append("<input type=\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"content-type\" style=\"display:inline;width:350px;\">\n");
             sb.append("<button type=\"submit\" name=\"search\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Search</button>\n");
 
-            sb.append("<br />\n");
+            sb.append("</div>\n");
+            
+            sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
             sb.append("<span>Matching lines: ");
             sb.append(lines);
             sb.append(" URIs</span>\n");
-            sb.append("<br />\n");
+            sb.append("</div>\n");
             sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
             sb.append("<div style=\"clear:both;\"></div>");
             sb.append("<div>\n");
@@ -848,7 +859,7 @@ public class JobResource implements ResourceAbstract {
             sb.append("<input type=\"text\" id=\"regex\" name=\"regex\" value=\"" + regex + "\" placeholder=\"regex\" style=\"display:inline;width:350px;\">\n");
             sb.append("<button type=\"submit\" name=\"show\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Show</button>\n");
             sb.append("&nbsp;");
-            sb.append("<label for=\"initials\">Deleter initials:</label>");
+            sb.append("<label for=\"initials\">User initials:</label>");
             sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
             sb.append("<button type=\"submit\" name=\"delete\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Delete</button>\n");
             sb.append("</form>\n");
@@ -862,7 +873,7 @@ public class JobResource implements ResourceAbstract {
                     sb.append("</fieldset><br />\n");
                 }
                 if (scriptResult.script.rawOutput != null) {
-                    sb.append("<fieldset><legend>rawOut</legend>");
+                    sb.append("<fieldset><!--<legend>rawOut</legend>-->");
                     sb.append("<pre>");
                     sb.append(scriptResult.script.rawOutput);
                     sb.append("</pre>");
@@ -907,7 +918,8 @@ public class JobResource implements ResourceAbstract {
     }
     
     public void filter_add(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        resp.setContentType("text/html; charset=UTF-8");
+    	Locale locale = resp.getLocale();
+    	resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
 
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
@@ -924,6 +936,16 @@ public class JobResource implements ResourceAbstract {
         if(removeIndexes == null) {
         	removeIndexes = new String[0];
         }
+        
+        String initials = "";
+        if(req.getParameter("add-filter") != null) {
+        	initials = req.getParameter("initials1");
+        } else if(req.getParameter("remove-filter") != null) {
+        	initials = req.getParameter("initials2");
+        }
+        if (initials == null) {
+    		initials = "";
+    	}
 
         String resource = NAS_GROOVY_RESOURCE_PATH;
         InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
@@ -936,17 +958,18 @@ public class JobResource implements ResourceAbstract {
         in.close();
         String script = new String(bOut.toByteArray(), "UTF-8");
 
-        if (regex.length() > 0) {
+        if (regex.length() > 0 && !initials.isEmpty()) {
         	String[] lines = regex.split(System.getProperty("line.separator"));
         	for(String line : lines) {
         		if(line.endsWith(System.getProperty("line.separator")) || line.endsWith("\r") || line.endsWith("\n")) {
         			line = line.substring(0, line.length() - 1);
         		}
-	        	script += "\n";
-	            script += "\naddFilter '" + line + "'\n";
+	        	script += "\ninitials = \"" + initials + "\"";
+	            script += "\naddFilter '" + line.replace("\\", "\\\\") + "'\n";
         	}
         }
-        if(removeIndexes != null && removeIndexes.length > 0) {
+        if(removeIndexes.length > 0 && !initials.isEmpty()) {
+        	script += "\ninitials = \"" + initials + "\"";
             script += "\nremoveFilters("+Arrays.toString(removeIndexes)+")\n";
         }
         script += "\nshowFilters()\n";
@@ -963,25 +986,46 @@ public class JobResource implements ResourceAbstract {
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
             
-            /*
-            if (regex == null || regex.length() == 0) {
-                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Regex required to be added as a filter!</div>");
+            /* form control */
+            /* case submit for delete but no checked regex */
+            boolean keepRegexTextArea = false;
+            if (req.getParameter("remove-filter") != null && removeIndexes.length == 0) {
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Check RejectRules to delete!</div>");
             }
-            */
+            /* case submit for add but no text */
+            if (req.getParameter("add-filter") != null && regex.isEmpty()) {
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> RejectRules cannot be empty!</div>");
+            }
+            /* case no initials */
+            if ((req.getParameter("remove-filter") != null || req.getParameter("add-filter") != null) && initials.isEmpty()) {
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to add/delete RejectRules!</div>");
+                keepRegexTextArea = true;
+            }
             
-            sb.append("<h4>Job "+h3Job.jobId+" status "+h3Job.jobResult.job.crawlControllerState+"</h4>");
             sb.append("<p>All URIs matching any of the following regular expressions will be rejected from the current job.</p>");
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
-            sb.append("<label for=\"regex\">Regular expressions :</label>");
-            sb.append("<textarea rows=\"4\" cols=\"100\" id=\"regex\" name=\"regex\" placeholder=\"regex\"></textarea>\n");
+            sb.append("<label for=\"regex\" style=\"cursor: default;\">Expressions to reject:</label>");
+            sb.append("<textarea rows=\"4\" cols=\"100\" id=\"regex\" name=\"regex\" placeholder=\"regex\">");
+            if(keepRegexTextArea) {
+            	sb.append(regex);
+            }
+            sb.append("</textarea>\n");
+            sb.append("<label for=\"initials\">User initials:</label>");
+            sb.append("<input type=\"text\" id=\"initials1\" name=\"initials1\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
             sb.append("<button type=\"submit\" name=\"add-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Add</button>\n");
-            sb.append("&nbsp;");
+            sb.append("<br/>\n");
 
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
 
             if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
+            	sb.append("<div style=\"font-size: 14px; font-weight: normal; line-height: 20px;\">\n");
+                sb.append("<p style=\"margin-top: 30px;\">Rejected regex:</p>\n");
             	sb.append(scriptResult.script.htmlOutput);
+            	sb.append("</div>\n");
+            	sb.append("<label for=\"initials\">User initials:</label>");
+                sb.append("<input type=\"text\" id=\"initials2\" name=\"initials2\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
+                sb.append("<button type=\"submit\" name=\"remove-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-remove\"></i> Remove</button>");
             }
             
             sb.append("</form>\n");
@@ -997,6 +1041,10 @@ public class JobResource implements ResourceAbstract {
 
         if (masterTplBuilder.menuPlace != null) {
             masterTplBuilder.menuPlace.setText(menuSb.toString());
+        }
+        
+        if (masterTplBuilder.languagesPlace != null) {
+            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
         }
 
         if (masterTplBuilder.headingPlace != null) {
@@ -1026,7 +1074,8 @@ public class JobResource implements ResourceAbstract {
     }
     
     public void budget_change(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        resp.setContentType("text/html; charset=UTF-8");
+    	Locale locale = resp.getLocale();
+    	resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
 
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
@@ -1043,8 +1092,27 @@ public class JobResource implements ResourceAbstract {
         if (key == null) {
         	key = "";
         }
-        String submitValue = req.getParameter("submitButton");
         
+        String submit1 = req.getParameter("submitButton1");
+        String submit2 = req.getParameter("submitButton2");
+        
+        String initials = "";
+        if(submit1 != null) {
+        	initials = req.getParameter("initials1");
+        } else if(submit2 != null) {
+        	initials = req.getParameter("initials2");
+        }
+        if (initials == null) {
+    		initials = "";
+    	}
+        if(submit1 == null) {
+        	submit1 = "";
+        }
+        if(submit2 == null) {
+        	submit2 = "";
+        }
+        
+        boolean isNumber = true;
 
         String resource = NAS_GROOVY_RESOURCE_PATH;
         InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
@@ -1059,12 +1127,29 @@ public class JobResource implements ResourceAbstract {
         String originalScript = script;
 
         script += "\n";
-        if(submitValue != null) {
-	        if (submitValue.equals("1") && budget != null && !budget.trim().isEmpty() && key != null && !key.trim().isEmpty()) {
+        if((!submit1.isEmpty() || !submit2.isEmpty()) && !initials.isEmpty()) {
+        	/* case new budget change */
+	        if (!submit1.isEmpty() && !budget.trim().isEmpty() && !key.trim().isEmpty()) {
+	        	script += "\ninitials = \"" + initials + "\"";
 	            script += "\nchangeBudget ('" + key+ "',"+ budget +")\n";
 	        } else {
-	        	budget = req.getParameter(submitValue+"-budget");
-	        	script += "\nchangeBudget ('" + submitValue+ "',"+ budget +")\n";
+	        	if(!submit2.isEmpty()) {
+	        		String[] queues = req.getParameterValues("queueName");
+	        		if(queues != null && queues.length > 0) {
+	        			script += "\ninitials = \"" + initials + "\"";
+		        		for(int i = 0; i < queues.length; i++) {
+		        			budget = req.getParameter(queues[i]+"-budget");
+		        			if(budget != null && !budget.isEmpty()) {
+			        			try {
+			        				Integer.parseInt(budget);
+			        				script += "\nchangeBudget ('" + queues[i]+ "',"+ budget +")\n";
+			        			} catch(NumberFormatException e) {
+			        				isNumber = false;
+			        			}
+		        			}
+		        		}
+	        		}
+	        	}
 	        }
         }
         script += "\n";
@@ -1084,20 +1169,18 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("\"> Job ");
             menuSb.append(h3Job.jobId);
             menuSb.append("</a></td></tr>");
+            
+            /* form control */
+            boolean submitWithInitials = true;
+            if ((!submit1.isEmpty() || !submit2.isEmpty()) && initials.isEmpty()) {
+                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to modify a queue budget!</div>");
 
-            /*
-            if (budget == null || budget.length() == 0) {
-                sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> New budget required!</div>");
             }
-            */
-            
-            ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", originalScript);
-            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
-            	sb.append("<p>Budget defined in job configuration: queue-total-budget of ");
-            	sb.append(scriptResult.script.htmlOutput);
-            	sb.append(" URIs.</p>");
+
+            if(!submit1.isEmpty() && initials.isEmpty()) {
+                submitWithInitials = false;
             }
-            
+
             try {
             	if (budget != null && budget.length() > 0) {
             		Integer.parseInt(budget);
@@ -1105,23 +1188,55 @@ public class JobResource implements ResourceAbstract {
             } catch(NumberFormatException e) {
             	sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Budget must be a number!</div>");
             }
+            
+            if(isNumber == false) {
+            	sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Budget must be a number!</div>");
+            }
+
+            ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", originalScript);
+            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
+            	sb.append("<p>Budget defined in job configuration: queue-total-budget of ");
+            	sb.append(scriptResult.script.htmlOutput);
+            	sb.append(" URIs.</p>");
+            }
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
 
             scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
 
-            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
-            	sb.append(scriptResult.script.htmlOutput);
+            /* Budget to modify */
+            sb.append("<label style=\"cursor: default;\">Budget to modify:</label>");
+            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"");
+            if(!submitWithInitials) {
+            	sb.append(key);
             }
+            sb.append("\" style=\"width: 306px;\" placeholder=\"domain/host name\">\n");
+            sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"");
+            if(!submitWithInitials) {
+            	sb.append(budget);
+            }
+            sb.append("\" style=\"width:100px\" placeholder=\"new budget\">\n");
             
-            sb.append("<label for=\"budget\">New domain/host:</label>");
-            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"\" placeholder=\"name\">\n");
-            sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"\" placeholder=\"number of URIs\">\n");
+            /* User initials */
+            sb.append("<label style=\"cursor: default;\">User initials:</label>");
+            sb.append("<input type=\"text\" id=\"initials1\" name=\"initials1\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
   
             
-            sb.append("<button type=\"submit\" name=\"submitButton\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Save</button>\n");
-            sb.append("&nbsp;");
+            sb.append("<button type=\"submit\" name=\"submitButton1\" value=\"submitButton1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Save</button>\n");
+            sb.append("<br/>\n");
             
+            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
+            	sb.append("<div style=\"font-size: 14px; font-weight: normal; line-height: 20px;\">\n");
+            	sb.append(scriptResult.script.htmlOutput);
+            	sb.append("<div>\n");
+            	/* User initials */
+                sb.append("<label style=\"cursor: default;\">User initials:</label>");
+                sb.append("<input type=\"text\" id=\"initials2\" name=\"initials2\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
+                
+                /* save button*/
+                sb.append("<button type=\"submit\" name=\"submitButton2\" value=\"submitButton2\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Save</button>\n");
+            }
+
             sb.append("</form>\n");
         } else {
             sb.append("Job ");
@@ -1135,6 +1250,10 @@ public class JobResource implements ResourceAbstract {
 
         if (masterTplBuilder.menuPlace != null) {
             masterTplBuilder.menuPlace.setText(menuSb.toString());
+        }
+        
+        if (masterTplBuilder.languagesPlace != null) {
+            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
         }
 
         if (masterTplBuilder.headingPlace != null) {

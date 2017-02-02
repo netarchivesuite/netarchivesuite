@@ -40,7 +40,7 @@ public abstract class HeritrixTemplate implements Serializable {
 
 	// Constants for the metadata added to the warcinfo record when using WARC
 
-	protected static final String HARVESTINFO_VERSION_NUMBER = "0.5";
+	protected static final String HARVESTINFO_VERSION_NUMBER = "0.6";
 	protected static final String HARVESTINFO_VERSION = "harvestInfo.version";
 	protected static final String HARVESTINFO_JOBID = "harvestInfo.jobId";
 	protected static final String HARVESTINFO_CHANNEL = "harvestInfo.channel";	

@@ -376,14 +376,15 @@ statisticsTracker.intervalSeconds=20
 <property name="metadataItems">
 <map>
 
-<entry key="harvestInfo.version" value="0.5"/>
+<entry key="harvestInfo.version" value="0.6"/>
 <entry key="harvestInfo.jobId" value="8"/>
 <entry key="harvestInfo.channel" value="FOCUSED"/>
 <entry key="harvestInfo.harvestNum" value="0"/>
 <entry key="harvestInfo.origHarvestDefinitionID" value="5"/>
 <entry key="harvestInfo.maxBytesPerDomain" value="1000000000"/>
 <entry key="harvestInfo.maxObjectsPerDomain" value="-1"/>
-<entry key="harvestInfo.orderXMLName" value="default_orderxml_h3_nodedup"/>
+<entry key="harvestInfo.templateName" value="default_orderxml_h3_nodedup"/>
+<entry key="harvestInfo.templateLastUpdateDate" value="20161215150000"/>
 <entry key="harvestInfo.origHarvestDefinitionName" value="testHarvestNoDedupA"/>
 <entry key="harvestInfo.scheduleName" value="Once a day"/>
 <entry key="harvestInfo.harvestFilenamePrefix" value="8-5"/>
