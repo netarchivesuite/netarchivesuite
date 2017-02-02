@@ -15,7 +15,7 @@ machines, possibly on more than one geographical location.
 See the [wiki documentation](https://sbforge.org/display/NAS/Documentation) for further details.
 
 History
-=======
+========
 NetarchiveSuite was initially developed by The Royal Danish Library (KB) and The Danish State and University 
 Library (SB) together as part of the National [Netarkivet.dk](http://netarkivet.dk">http://netarkivet.dk) initialtiv.
 The first release of the platform was in July 2005 and Netarkivet.dk has since used NetarchiveSuite 
