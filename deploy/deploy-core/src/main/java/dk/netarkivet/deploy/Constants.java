@@ -323,6 +323,25 @@ public final class Constants {
     static final String ARCHIVE_DATABASE_BASE_FILE = "archivedb.jar";
 
     public static final String ARCHIVE_DATABASE_BASE_DIR = "archivedatabasedir";
+    
+
+    /** The default logo filename */
+    public static final String DEFAULT_LOGO_FILENAME = "transparent_logo.png";
+    /** The default menulogo filename */
+    public static final String DEFAULT_MENULOGO_FILENAME = "transparent_menu_logo.png";
+
+    /** The webpages directory */
+    public static final String WEBPAGESDIR = "webpages";
+    
+    /** The war filenames in the webpages directory */
+    public static final String WARFILENAMES[] = {
+    		"BitPreservation.war",
+    		"HarvestDefinition.war",
+    		"QA.war",
+    		"HarvestChannel.war",
+    		"History.war",
+    		"Status.war"
+    };
 
     /**
      * The path to the base archive database (the one above combined with the base database dir). This is the default
@@ -445,6 +464,10 @@ public final class Constants {
     public static final String ARG_DEFAULT_HERITRIX3_CERTIFICATE = "H";
     /** Encoding to use for source files. */
     public static final String ARG_SOURCE_ENCODING = "sourceEncoding";
+    /** Optional definition of a Logo png file. */
+    public static final String ARG_LOGO = "l";
+    /** Optional definition of a Menulogo png file. */
+    public static final String ARG_MENULOGO = "m";
 
     // Argument values
     /** The long yes argument. */
@@ -487,7 +510,7 @@ public final class Constants {
     /** The error message when no security file is given. */
     public static final String MSG_ERROR_NO_SECURITY_FILE_ARG = "No security file argument: -S (Must end with '.policy').\n";
     /** The error message when no slf4j log property file is given. */
-    public static final String MSG_ERROR_NO_SLF4J_CONFIG_FILE_ARG = "No SLF4J configuration file argument: -B (Must end with '.xml').\n";
+    public static final String MSG_ERROR_NO_SLF4J_CONFIG_FILE_ARG = "No SLF4J configuration file argument: -L (Must end with '.xml').\n";
     /** The error message when config file does not exist. */
     public static final String MSG_ERROR_NO_CONFIG_FILE_FOUND = "Reference to non-existing config file (-C argument).";
     /** The error message when NetarchiveSuite file does not exist. */
@@ -495,7 +518,7 @@ public final class Constants {
     /** The error message when security file does not exist. */
     public static final String MSG_ERROR_NO_SECURITY_FILE_FOUND = "Reference to non-existing security file (-S argument).";
    /** The error message when SLF4J config file does not exist. */
-    public static final String MSG_ERROR_NO_SLF4J_CONFIG_FILE_FOUND = "Reference to non-existing SLF4J config file (-B argument).";
+    public static final String MSG_ERROR_NO_SLF4J_CONFIG_FILE_FOUND = "Reference to non-existing SLF4J config file (-L argument).";
     /** The error message when database file does not exist. */
     public static final String MSG_ERROR_NO_DATABASE_FILE_FOUND = "Reference to non-existing database file (-D argument).";
     /** The error message when archive database file does not exist. */
@@ -555,7 +578,7 @@ public final class Constants {
      * The warning when the NetarchiveSuite file will be overridden, since another file with same name exists.
      */
     public static final String MSG_WARN_ZIPFILE_ALREADY_EXISTS = "Warning: A NetarchiveSuite file already exists. It will be overridden. ";
-
+    
     /**
      * Private constructor to avoid instantiation.
      */
