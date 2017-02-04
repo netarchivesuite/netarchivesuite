@@ -160,7 +160,7 @@ public abstract class SiteSection {
                 out.print("<tr>");
                 out.print("<td>&nbsp; &nbsp; <a href=\"/" + HTMLUtils.encode(dirname) + "/"
                         + HTMLUtils.encode("history") + "/\"> "
-                        + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, "H3 remote access"))
+                        + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, "H3 Remote Access"))
                         + "</a></td>");
                 out.print("</tr>\n");
             }

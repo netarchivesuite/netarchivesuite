@@ -157,7 +157,7 @@ public class HTMLUtilsTester {
         HTMLUtils.generateHeader("TestTitle", pageContext);
         HTMLUtils.generateFooter(out);
         String result = out.sw.toString();
-        StringAsserts.assertStringContains("The version string must be present", Constants.getVersionString(false), result);
+        StringAsserts.assertStringContains("The version string must be present", Constants.getVersionString(true), result);
         StringAsserts.assertStringContains("The environment name must be there", "DEV", result);
     }
 

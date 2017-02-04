@@ -219,6 +219,45 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
         // Right now there's only one filter and it's not user controlled.
         return RunningJobsInfoDAO.getInstance().getFrontierReport(jobId, new TopTotalEnqueuesFilter().getFilterId());
     }
+    
+    /**
+     * Retrieve a frontier report from a job id, with limited results and possibility to sort by totalenqueues DESC
+     *
+     * @param jobId the job id
+     * @param limit the limit of result to query
+     * @param sort if true, sort the results by totalenqueues DESC
+     * @return a frontier report
+     */
+    public static InMemoryFrontierReport getFrontierReport(long jobId, boolean sort) {
+    	int displayedHistorySize = 100; //default value
+    	try {
+    		displayedHistorySize = Settings.getInt(HarvesterSettings.HARVEST_MONITOR_DISPLAYED_FRONTIER_QUEUE_SIZE);
+    	} catch (Exception e) {
+    		//nothing
+    	}
+        // Right now there's only one filter and it's not user controlled.
+        return RunningJobsInfoDAO.getInstance().getFrontierReport(jobId, displayedHistorySize, sort);
+    }
+    
+    /**
+     * Retrieve a frontier report from a job id, with limited results and possibility to sort by totalenqueues DESC
+     *
+     * @param jobId the job id
+     * @param limit the limit of result to query
+     * @param sort if true, sort the results by totalenqueues DESC
+     * @return a frontier report
+     */
+    public static InMemoryFrontierReport getFrontierActiveAndInactiveQueuesReport(long jobId, boolean sort) {
+    	int displayedHistorySize = 100; //default value
+    	try {
+    		displayedHistorySize = Settings.getInt(HarvesterSettings.HARVEST_MONITOR_DISPLAYED_FRONTIER_QUEUE_SIZE);
+    	} catch (Exception e) {
+    		//nothing
+    	}
+        // Right now there's only one filter and it's not user controlled.
+        return RunningJobsInfoDAO.getInstance().getFrontierReport(jobId, new TopTotalEnqueuesFilter().getFilterId(),
+        		displayedHistorySize, sort);
+    }
 
     /**
      * Retrieves the latest frontier extract report stored for the given job ID, that contains only retired queues.

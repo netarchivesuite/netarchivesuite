@@ -40,8 +40,13 @@ Logger getLogger() {
 }
 
 void logEvent(String e) {
-    getLogger().info("Action from user " + initials + ": " +e)
+    try { 
+        getLogger().info("Action from user " + initials + ": " +e)
+    } catch(groovy.lang.MissingPropertyException e1) {
+        getLogger().info("Action from user: " +e)
+    }
 }
+
 
 void deleteFromFrontier(String regex) {
     job.crawlController.requestCrawlPause()
@@ -51,6 +56,7 @@ void deleteFromFrontier(String regex) {
     rawOut.println count + " URIs were deleted from the frontier."
     rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
+
 
 void listFrontier(String regex, long limit) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'

@@ -137,6 +137,27 @@ public abstract class RunningJobsInfoDAO implements DAO {
      * @return a frontier report
      */
     public abstract InMemoryFrontierReport getFrontierReport(long jobId, String filterId);
+    
+    /**
+     * Retrieve a frontier report from a job id, with limited results and possibility to sort by totalenqueues DESC
+     *
+     * @param jobId the job id
+     * @param limit the limit of result to query
+     * @param sort if true, sort the results by totalenqueues DESC
+     * @return a frontier report
+     */
+    public abstract InMemoryFrontierReport getFrontierReport(long jobId, int limit, boolean sort);
+    
+    /**
+     * Retrieve a frontier report from a job id, with limited results and possibility to sort by totalenqueues DESC
+     *
+     * @param jobId the job id
+     * @param limit the limit of result to query
+     * @param filterId the id of the filter that produced the report
+     * @param sort if true, sort the results by totalenqueues DESC
+     * @return a frontier report
+     */
+    public abstract InMemoryFrontierReport getFrontierReport(long jobId, String filterId, int limit, boolean sort);
 
     /**
      * Deletes all frontier report data pertaining to the given job id from the persistent storage.

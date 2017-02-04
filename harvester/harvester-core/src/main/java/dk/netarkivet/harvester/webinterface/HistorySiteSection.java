@@ -37,10 +37,10 @@ public class HistorySiteSection extends SiteSection {
     public HistorySiteSection() {
         super("sitesection;history",
         		"Harveststatus",
-        		3,
+        		2,
         		new String[][] {
         			{"alljobs", "pagetitle;all.jobs"},
-                    {"deprecatedperdomain", "pagetitle;all.jobs.per.domain"},
+                    //{"deprecatedperdomain", "pagetitle;all.jobs.per.domain"},
                     {"running", "pagetitle;all.jobs.running"},
                     {"running-jobdetails", "pagetitle;running.job.details"},
                     {"perhd", "pagetitle;all.jobs.per.harvestdefinition"},

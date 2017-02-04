@@ -4,7 +4,8 @@
     <meta content="text/html; charset=UTF-8" http-equiv= "content-type" /><meta http-equiv="Expires" content="0"/>
     <meta http-equiv="Cache-Control" content="no-cache"/>
     <meta http-equiv="Pragma" content="no-cache"/>
-    <meta http-equiv="refresh" content="60"/>
+    <!-- <meta http-equiv="refresh" content="60"/> -->
+    <placeholder id ="refresh" />
     <title><placeholder id ="title" /></title>
     <link type="text/css" rel="stylesheet" href="/History/css/bootstrap.css" />
     <link type="text/css" rel="stylesheet" href="/History/css/bootstrap-responsive.css" />
@@ -91,9 +92,9 @@ function submitForm(formId) {
 <tr><td><a href="/HarvestDefinition/Definitions-selective-harvests.jsp">Definitions</a></td></tr>
 <tr><td><a href="/History/Harveststatus-alljobs.jsp">Harvest status</a></td></tr>
 <tr><td>&nbsp; &nbsp; <a href="/History/Harveststatus-alljobs.jsp"> All Jobs</a></td></tr>
-<tr><td>&nbsp; &nbsp; <a href="/History/Harveststatus-deprecatedperdomain.jsp"> All Jobs per domain</a></td></tr>
-<tr><td>&nbsp; &nbsp; <a href="/History/Harveststatus-running.jsp"> Running Jobs</a></td></tr>
-<tr><td>&nbsp; &nbsp; <a href="/History/history/"> H3 remote access</a></td></tr>
+<!--<tr><td>&nbsp; &nbsp; <a href="/History/Harveststatus-deprecatedperdomain.jsp"> All Jobs per domain</a></td></tr>-->
+<tr><td>&nbsp; &nbsp; <a href="/History/Harveststatus-running.jsp"> All Running Jobs</a></td></tr>
+<tr><td>&nbsp; &nbsp; <a href="/History/history/"> H3 Remote Access</a></td></tr>
 <placeholder id="menu" />
 <tr><td><a href="/HarvestChannel/HarvestChannel-edit-harvest-mappings.jsp">Harvest Channels</a></td></tr>
 <tr><td><a href="/BitPreservation/Bitpreservation-filestatus.jsp">Bitpreservation</a></td></tr>
