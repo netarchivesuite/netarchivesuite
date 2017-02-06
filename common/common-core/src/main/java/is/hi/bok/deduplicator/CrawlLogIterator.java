@@ -40,10 +40,11 @@ import java.util.NoSuchElementException;
  */
 public class CrawlLogIterator extends CrawlDataIterator {
 
+    protected final String crawlDateFormatStr = "yyyyMMddHHmmss";
     /**
      * The date format used in crawl.log files.
      */
-    protected final SimpleDateFormat crawlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    protected final SimpleDateFormat crawlDateFormat = new SimpleDateFormat(crawlDateFormatStr);
     /**
      * The date format specified by the {@link CrawlDataItem} for dates entered into it (and eventually into the index)
      */
@@ -143,7 +144,10 @@ public class CrawlLogIterator extends CrawlDataIterator {
             try {
                 // Convert from crawl.log format to the format specified by
                 // CrawlDataItem
-                timestamp = crawlDataItemFormat.format(crawlDateFormat.parse(lineParts[0]));
+                // the 9th item, for example 20170116161421526+52
+                // -> we keep the numbers until the seconds : 20170116161421
+                String timestampTrunc = lineParts[9].substring(0, crawlDateFormatStr.length());
+                timestamp = crawlDataItemFormat.format(crawlDateFormat.parse(timestampTrunc));
             } catch (ParseException e) {
                 System.err.println("Error parsing date for: " + line);
                 e.printStackTrace();
