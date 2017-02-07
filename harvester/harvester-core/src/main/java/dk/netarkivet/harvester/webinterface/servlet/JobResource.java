@@ -238,6 +238,18 @@ public class JobResource implements ResourceAbstract {
             sb.append("</a>");
 
             sb.append("&nbsp;");
+            
+            /* Show Crawllog on H3 GUI*/
+            URL url1 = new URL(h3Job.hostUrl);
+            sb.append("<a href=\"");
+            sb.append("https://"+url1.getHost()+":"+url1.getPort()+"/engine/anypath/");
+            sb.append(getCrawlLogPath(h3Job));
+            sb.append("?format=paged&pos=-1&lines=-1000&reverse=y");
+            sb.append("\" class=\"btn btn-default\">");
+            sb.append("H3 Crawllog");
+            sb.append("</a>");
+            
+            sb.append("&nbsp;");
 
             /* Crawllog */
             sb.append("<a href=\"");
@@ -262,17 +274,6 @@ public class JobResource implements ResourceAbstract {
             sb.append("</a>");
 
             sb.append("&nbsp;");
-            
-            /* Show Crawllog on H3 GUI*/
-            URL url1 = new URL(h3Job.hostUrl);
-            sb.append("<a href=\"");
-            sb.append("https://"+url1.getHost()+":"+url1.getPort()+"/engine/anypath/");
-            sb.append(getCrawlLogPath(h3Job));
-            sb.append("?format=paged&pos=-1&lines=-1000&reverse=y");
-            sb.append("\" class=\"btn btn-default\">");
-            sb.append("Crawllog on H3 GUI");
-            sb.append("</a>");
-            
 
             sb.append("</div>\n");
             
