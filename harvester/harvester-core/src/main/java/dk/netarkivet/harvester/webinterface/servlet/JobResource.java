@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -212,7 +213,7 @@ public class JobResource implements ResourceAbstract {
             /* Heritrix3 WebUI */
             sb.append("<div style=\"float:left;position: absolute;left:600px;\">\n");
             sb.append("<a href=\"");
-            sb.append(h3Job.hostUrl+"/job/"+h3Job.jobname);
+            sb.append(h3Job.hostUrl);
             sb.append("\" class=\"btn btn-default\">");
             sb.append("Heritrix3 WebUI");
             sb.append("</a>");
@@ -236,6 +237,18 @@ public class JobResource implements ResourceAbstract {
             sb.append("Progression/Queues");
             sb.append("</a>");
 
+            sb.append("&nbsp;");
+            
+            /* Show Crawllog on H3 GUI*/
+            URL url1 = new URL(h3Job.hostUrl);
+            sb.append("<a href=\"");
+            sb.append("https://"+url1.getHost()+":"+url1.getPort()+"/engine/anypath/");
+            sb.append(getCrawlLogPath(h3Job));
+            sb.append("?format=paged&pos=-1&lines=-1000&reverse=y");
+            sb.append("\" class=\"btn btn-default\">");
+            sb.append("H3 Crawllog");
+            sb.append("</a>");
+            
             sb.append("&nbsp;");
 
             /* Crawllog */
@@ -322,8 +335,15 @@ public class JobResource implements ResourceAbstract {
                     }
                     //  disabled="disabled"
                     sb.append("<a href=\"?action=");
-                    sb.append(job.availableActions.get(i));
-                    sb.append("\" class=\"btn btn-default\">");
+                    String thisAction = job.availableActions.get(i);
+                    sb.append(thisAction);
+                    sb.append("\"");
+                    if("terminate".equals(thisAction) || "teardown".equals(thisAction)) {
+                    	sb.append("onclick=\"return confirm('Are you sure you wish to ");
+                    	sb.append(thisAction);
+                    	sb.append(" the job currently being crawled ?')\"");
+                    }
+                    sb.append(" class=\"btn btn-default\">");
                     sb.append(job.availableActions.get(i).substring(0, 1).toUpperCase()+job.availableActions.get(i).substring(1));
                     sb.append("</a>");
                 }
@@ -346,7 +366,8 @@ public class JobResource implements ResourceAbstract {
                 File logDir = new File(h3Job.crawlLogFilePath);
                 
                 sb.append("<a href=\"");
-                sb.append(h3Job.hostUrl+"/anypath/"+logDir.getParentFile().getAbsolutePath()+"/scripting_events.log");
+                URL url = new URL(h3Job.hostUrl);
+                sb.append("https://"+url.getHost()+":"+url.getPort()+"/engine/anypath"+logDir.getParentFile().getAbsolutePath()+"/scripting_events.log");
                 sb.append("\" class=\"btn btn-default\">");
                 sb.append("View scripting_events.log");
                 sb.append("</a>");
@@ -1467,6 +1488,17 @@ public class JobResource implements ResourceAbstract {
 
         out.flush();
         out.close();
+    }
+    
+    String getCrawlLogPath(Heritrix3JobMonitor h3Job) {
+    	ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", "rawOut.println job.crawlController.frontier.loggerModule.crawlLogPath.file");
+        //System.out.println(new String(scriptResult.response, "UTF-8"));
+        if (scriptResult != null && scriptResult.script != null) {
+            if (scriptResult.script.rawOutput != null) {
+            	return scriptResult.script.rawOutput;
+            }
+        }
+        return "";
     }
 
 }
