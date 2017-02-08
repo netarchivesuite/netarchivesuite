@@ -101,4 +101,25 @@ public class GetMetadataArchiveBatchJobTester {
         assertEquals("Expected no files to fail, but " + job.getFilesFailed().size() + " failed", 0, job
                 .getFilesFailed().size());
     }
+
+    //@Test
+    public void testCompressedArcfile() throws FileNotFoundException {
+        File f = new File(metadataDir, "2-metadata-4.arc.gz");
+        Pattern CdxUrlpattern = Pattern.compile(MetadataFile.CDX_PATTERN);
+        Pattern xCDXMimepattern = Pattern.compile("application/x-cdx");
+
+        Pattern CrawlLogUrlpattern = Pattern.compile(MetadataFile.CRAWL_LOG_PATTERN);
+        Pattern textPlainMimepattern = Pattern.compile("text/plain");
+
+
+        GetMetadataArchiveBatchJob job = new GetMetadataArchiveBatchJob(CrawlLogUrlpattern, textPlainMimepattern);
+
+        File[] files = new File[] {f};
+        BatchLocalFiles blf = new BatchLocalFiles(files);
+        OutputStream os = new FileOutputStream("tmp");
+        blf.run(job, os);
+        assertEquals("Expected no files to fail, but " + job.getFilesFailed().size() + " failed", 0, job
+                     .getFilesFailed().size());
+    }
+
 }

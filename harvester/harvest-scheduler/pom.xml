@@ -62,43 +62,41 @@
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-      <version>1.1</version>
     </dependency>
 
     <dependency>
       <groupId>commons-pool</groupId>
       <artifactId>commons-pool</artifactId>
-      <version>1.6</version>
     </dependency>
 
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>2.3</version>
+      <version>${commons-lang.version}</version>
     </dependency>
 
     <dependency>
       <groupId>jfree</groupId>
       <artifactId>jfreechart</artifactId>
-      <version>1.0.13</version>
+      <version>${jfreechart.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.gnu.inet</groupId>
       <artifactId>libidn</artifactId>
-      <version><!-- FIXME: 0.5.9 -->0.6.5</version>
+      <version><!-- FIXME: 0.5.9 -->${libidn.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.hp.gagawa</groupId>
       <artifactId>gagawa</artifactId>
-      <version>1.0.1</version>
+      <version>${gagawa.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>17.0</version>
+      <version>${guava.version}</version>
     </dependency>
 
     <dependency>
@@ -117,19 +115,17 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-c3p0</artifactId>
-      <version>3.3.0.SP1</version>
+      <!--<version>3.3.0.SP1</version>-->
     </dependency>
 
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>9.2-1003-jdbc4</version>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
       <scope>test</scope>
     </dependency>
 
@@ -146,6 +142,13 @@
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

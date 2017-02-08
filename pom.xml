@@ -16,17 +16,72 @@
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <slf4j.version>1.7.7</slf4j.version>
-    <logback.version>1.0.13</logback.version>
+    <logback.version>${logback-core.version}</logback.version>
     <webarchive-commons.version>1.1.5</webarchive-commons.version>
-    <!--heritrix3.version>3.2.0</heritrix3.version-->
-    <!-- Islandic special brew of H3. -->
-    <!--heritrix3.version>3.3.0-LBS-2015-01</heritrix3.version-->
+    <!-- Icelandic special brew of H3. -->
     <heritrix3.version>3.3.0-LBS-2016-02</heritrix3.version>
     <heritrix3-wrapper.version>1.0.3</heritrix3-wrapper.version>
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
     <jwat.version>1.0.4</jwat.version>
     <derby.version>10.12.1.1</derby.version>
+    <antiaction.version>0.1.0-RC2</antiaction.version>
+    <hibernate-c3p0.version>4.3.6.Final</hibernate-c3p0.version>
+    <postgresql.version>9.2-1003-jdbc4</postgresql.version>
+    <jaxen.version>1.1</jaxen.version>
+    <commons-io.version>2.0.1</commons-io.version>
+    <commons-cli.version>1.2</commons-cli.version>
+    <commons-net.version>3.0.1</commons-net.version>
+    <commons-codec.version>1.3</commons-codec.version>
+    <commons-lang.version>2.3</commons-lang.version>
+    <servlet-api.version>2.3</servlet-api.version>
+    <jetty.version>6.1.26</jetty.version>
+    <jsp-2.1-glassfish.version>2.1.v20091210</jsp-2.1-glassfish.version>
+    <ecj.version>4.4.2</ecj.version>
+    <dom4j.version>1.6.1</dom4j.version>
+    <jetty-servlet-api.version>2.5-20081211</jetty-servlet-api.version>
+    <commons-fileupload.version>1.2.1</commons-fileupload.version>
+    <jms.version>4.4.1</jms.version>
+    <lucene-core.version>4.4.0</lucene-core.version>
+    <junit.version>4.11</junit.version>
+    <fastutil.version>5.0.4</fastutil.version>
+    <maven-assembly-plugin.version>2.4.1</maven-assembly-plugin.version>
+    <mysql-connector-java.version>5.1.13</mysql-connector-java.version>
+    <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
+    <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
+    <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
+    <maven-deploy-plugin.version>2.8.1</maven-deploy-plugin.version>
+    <maven-release-plugin.version>2.5.2</maven-release-plugin.version>
+    <license-maven-plugin.version>1.7</license-maven-plugin.version>
+    <maven-java-formatter-plugin.version>0.4</maven-java-formatter-plugin.version>
+    <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+    <maven-source-plugin.version>2.2.1</maven-source-plugin.version>
+    <maven-jgit-buildnumber-plugin.version>1.2.9</maven-jgit-buildnumber-plugin.version>
+    <commons-pool.version>1.6</commons-pool.version>
+    <jfreechart.version>1.0.13</jfreechart.version>
+    <gagawa.version>1.0.1</gagawa.version>
+    <guava.version>17.0</guava.version>
+    <javax.inject.version>1</javax.inject.version>
+    <commons-logging.version>1.2</commons-logging.version>
+    <mg4j.version>1.0.1</mg4j.version>
+    <h2.version>1.4.178</h2.version>
+    <commons-httpclient.version>3.1</commons-httpclient.version>
+    <libidn.version>0.6.5</libidn.version>
+    <hibernate.version>3.3.0.SP1</hibernate.version>
+    <hibernate-annotations.version>3.3.0.ga</hibernate-annotations.version>
+    <ejb3-persistence.version>1.0.2.GA</ejb3-persistence.version>
+    <javassist.version>3.9.0.GA</javassist.version>
+    <htmlparser.version>1.6</htmlparser.version>
+    <cthul-matchers.version>1.1.0</cthul-matchers.version>
+    <testng.version>6.8.21</testng.version>
+    <selenium-api.version>2.53.0</selenium-api.version>
+    <jaccept-core.version>0.4</jaccept-core.version>
+    <hamcrest-all.version>1.3</hamcrest-all.version>
+    <tomcat-embed-core.version>8.0.32</tomcat-embed-core.version>
+    <logback-core.version>1.0.13</logback-core.version>
+    <je.version>3.2.76</je.version>
+    <mockobjects-core.version>0.09</mockobjects-core.version>
+    <commons-lang3.version>3.5</commons-lang3.version>
   </properties>
 
   <modules>
@@ -97,15 +152,6 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.9.5</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
   <repositories>
     <repository>
       <id>sbforge-nexus</id>
@@ -133,28 +179,78 @@
   <dependencyManagement>
     <dependencies>
 
-     <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbyclient</artifactId>
-      <version>${derby.version}</version>
-     </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-all</artifactId>
+        <version>1.9.5</version>
+        <scope>test</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>${derby.version}</version>
-    </dependency>
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derbyclient</artifactId>
+        <version>${derby.version}</version>
+      </dependency>
 
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbytools</artifactId>
-      <version>${derby.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbynet</artifactId>
-      <version>${derby.version}</version>
-    </dependency>
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <version>${derby.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derbytools</artifactId>
+        <version>${derby.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derbynet</artifactId>
+        <version>${derby.version}</version>
+      </dependency>
+
+      <dependency>
+           <groupId>org.testng</groupId>
+           <artifactId>testng</artifactId>
+           <version>${testng.version}</version>
+         </dependency>
+
+      <dependency>
+        <groupId>berkeleydb</groupId>
+        <artifactId>je</artifactId>
+        <version>${je.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-api</artifactId>
+        <version>${selenium-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-firefox-driver</artifactId>
+        <version>${selenium-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-support</artifactId>
+        <version>${selenium-api.version}</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>org.jaccept</groupId>
+        <artifactId>jaccept-core</artifactId>
+        <version>${jaccept-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-all</artifactId>
+        <version>${hamcrest-all.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -189,9 +285,57 @@
       </dependency>
 
       <dependency>
+        <groupId>mockobjects</groupId>
+        <artifactId>mockobjects-core</artifactId>
+        <version>${mockobjects-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.mchange</groupId>
+        <artifactId>c3p0</artifactId>
+        <version>0.9.2.1</version>
+      </dependency>
+
+      <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
         <version>${logback.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>${tomcat-embed-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-servlet-api</artifactId>
+        <version>${tomcat-embed-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-jasper</artifactId>
+        <version>${tomcat-embed-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jsp-api</artifactId>
+        <version>${tomcat-embed-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.1</version>
       </dependency>
 
       <dependency>
@@ -304,43 +448,301 @@
       <dependency>
         <groupId>com.antiaction</groupId>
         <artifactId>raptor-dbl</artifactId>
-        <version>0.1.0-RC2</version>
+        <version>${antiaction.version}</version>
         <exclusions>
-          <exclusion>
-            <groupId>*</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
           <exclusion>
             <groupId>com.antiaction</groupId>
             <artifactId>common</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
-<!--
+
       <dependency>
-        <groupId>xerces</groupId>
-        <artifactId>xercesImpl</artifactId>
-        <version>2.11.0</version>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-c3p0</artifactId>
+        <version>${hibernate-c3p0.version}</version>
+      </dependency>
+
+      <!-- Hibernate -->
+
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate</artifactId>
+        <version>${hibernate.version}</version>
+        <type>pom</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>${hibernate.version}</version>
+      </dependency>
+
+      <!-- bad version? -->
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-annotations</artifactId>
+        <version>${hibernate-annotations.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-commons-annotations</artifactId>
+        <version>${hibernate-annotations.version}</version>
+      </dependency>
+
+      <!-- good guess -->
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>ejb3-persistence</artifactId>
+        <version>${ejb3-persistence.version}</version>
+      </dependency>
+
+      <dependency>
+         <groupId>org.postgresql</groupId>
+         <artifactId>postgresql</artifactId>
+         <version>${postgresql.version}</version>
+       </dependency>
+
+      <dependency>
+        <groupId>javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>${javassist.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.htmlparser</groupId>
+        <artifactId>htmlparser</artifactId>
+        <version>${htmlparser.version}</version>
       </dependency>
 
       <dependency>
         <groupId>jaxen</groupId>
         <artifactId>jaxen</artifactId>
-        <version>1.1.6</version>
+        <version>${jaxen.version}</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>${servlet-api.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>xalan</groupId>
-        <artifactId>xalan</artifactId>
-        <version>2.7.2</version>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>commons-cli</groupId>
+        <artifactId>commons-cli</artifactId>
+        <version>${commons-cli.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-net</groupId>
+        <artifactId>commons-net</artifactId>
+        <version>${commons-net.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>${commons-codec.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-pool</groupId>
+        <artifactId>commons-pool</artifactId>
+        <version>${commons-pool.version}</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty</artifactId>
+        <version>${jetty.version}</version>
+        <scope>compile</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-util</artifactId>
+        <version>${jetty.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-sslengine</artifactId>
+        <version>${jetty.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-ajp</artifactId>
+        <version>${jetty.version}</version>
+        <scope>compile</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>${jetty-servlet-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jsp-2.1-glassfish</artifactId>
+        <version>${jsp-2.1-glassfish.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jsp-2.1-jetty</artifactId>
+        <version>${jetty.version}</version>
+        <exclusions>
+          <exclusion>  <!-- Excluded because it conflicts with dependency on later version of ecj -->
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>core</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jsp-api-2.1-glassfish</artifactId>
+        <version>${jsp-2.1-glassfish.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jdt.core.compiler</groupId>
+        <artifactId>ecj</artifactId>
+        <version>${ecj.version}</version>
+      </dependency>
       <dependency>
         <groupId>dom4j</groupId>
         <artifactId>dom4j</artifactId>
-        <version>1.6.1</version>
+        <version>${dom4j.version}</version>
       </dependency>
--->
+      <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>${commons-fileupload.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.messaging.mq</groupId>
+        <artifactId>jms</artifactId>
+        <version>${jms.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.sun.messaging.mq</groupId>
+        <artifactId>imq</artifactId>
+        <version>${jms.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-core</artifactId>
+        <version>${lucene-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-analyzers-common</artifactId>
+        <version>${lucene-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.cthul</groupId>
+        <artifactId>cthul-matchers</artifactId>
+        <version>${cthul-matchers.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>fastutil</groupId>
+        <artifactId>fastutil</artifactId>
+        <version>${fastutil.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql-connector-java.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>jfree</groupId>
+        <artifactId>jfreechart</artifactId>
+        <version>${jfreechart.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.hp.gagawa</groupId>
+        <artifactId>gagawa</artifactId>
+        <version>${gagawa.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.inject</groupId>
+        <artifactId>javax.inject</artifactId>
+        <version>${javax.inject.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>${commons-logging.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>it.unimi.dsi</groupId>
+        <artifactId>mg4j</artifactId>
+        <version>${mg4j.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>${h2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-httpclient</groupId>
+        <artifactId>commons-httpclient</artifactId>
+        <version>${commons-httpclient.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.gnu.inet</groupId>
+        <artifactId>libidn</artifactId>
+        <version>${libidn.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -349,45 +751,45 @@
       <plugins>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.4</version>
+          <version>${maven-jar-plugin.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.17</version>
+          <version>${maven-surefire-plugin.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.10.3</version>
+          <version>${maven-javadoc-plugin.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.1</version>
+          <version>${maven-deploy-plugin.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.4.1</version>
+          <version>${maven-assembly-plugin.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.5.2</version>
+          <version>${maven-release-plugin.version}</version>
         </plugin>
 
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>license-maven-plugin</artifactId>
-          <version>1.7</version>
+          <version>${license-maven-plugin.version}</version>
         </plugin>
 
         <!-- mvn com.googlecode.maven-java-formatter-plugin:maven-java-formatter-plugin:format -->
         <plugin>
           <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
           <artifactId>maven-java-formatter-plugin</artifactId>
-          <version>0.4</version>
+          <version>${maven-java-formatter-plugin.version}</version>
 
           <configuration>
             <!-- found as classpath resource -->
@@ -402,13 +804,22 @@
             </dependency>
           </dependencies>
         </plugin>
+
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+            <source>${maven.compiler.source}</source>
+            <target>${maven.compiler.target}</target>
+          </configuration>
+        </plugin>
+
       </plugins>
     </pluginManagement>
 
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
         <configuration>
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>
@@ -439,7 +850,7 @@
       <plugin>
         <!-- install source jars to maven repo http://maven.apache.org/plugins/maven-source-plugin/usage.html -->
         <artifactId>maven-source-plugin</artifactId>
-        <version>2.2.1</version>
+        <version>${maven-source-plugin.version}</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -458,7 +869,7 @@
           <linksource>true</linksource>
           <quiet>true</quiet>
           <!-- Note: This fails with a JVM older than Java 8 -->
-          <!-- <additionalparam>-Xdoclint:none</additionalparam> --> 
+          <!-- <additionalparam>-Xdoclint:none</additionalparam> -->
           <additionalparam>${javadoc.doclint.none}</additionalparam>
           <aggregate>true</aggregate>
         </configuration>
@@ -487,7 +898,7 @@
       <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.9</version>
+        <version>${maven-jgit-buildnumber-plugin.version}</version>
         <executions>
           <execution>
             <id>git-buildnumber</id>
@@ -497,13 +908,12 @@
             <phase>prepare-package</phase>
           </execution>
         </executions>
-      </plugin> 
+      </plugin>
 
       <!-- specify manifest fields -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.2</version>
         <configuration>
           <archive>
             <manifestEntries>
@@ -524,7 +934,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
-          <autoversionsubmodules>true</autoversionsubmodules>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
         </configuration>
       </plugin>
     </plugins>
@@ -566,14 +976,14 @@
         </plugins>
       </build>
     </profile>
-	<profile>
-            <id>java8-disable-strict-javadoc</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
-            </properties>
-        </profile>
+    <profile>
+      <id>java8-disable-strict-javadoc</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <properties>
+        <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
+      </properties>
+    </profile>
   </profiles>
 </project>
