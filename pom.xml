@@ -82,6 +82,12 @@
     <je.version>3.2.76</je.version>
     <mockobjects-core.version>0.09</mockobjects-core.version>
     <commons-lang3.version>3.5</commons-lang3.version>
+    <mail.version>1.4</mail.version>
+    <javax.inject.version>1</javax.inject.version>
+    <common-html.version>0.1.0-NAS</common-html.version>
+    <common-template-engine.version>0.3.0-NAS</common-template-engine.version>
+    <twitter4j-core.version>2.2.6</twitter4j-core.version>
+    <json.version>20131018</json.version>
   </properties>
 
   <modules>
@@ -178,6 +184,42 @@
 
   <dependencyManagement>
     <dependencies>
+
+      <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>${json.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.twitter4j</groupId>
+        <artifactId>twitter4j-core</artifactId>
+        <version>${twitter4j-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.antiaction</groupId>
+        <artifactId>common-html</artifactId>
+        <version>${common-html.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.antiaction</groupId>
+        <artifactId>common-template-engine</artifactId>
+        <version>${common-template-engine.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.inject</groupId>
+        <artifactId>javax.inject</artifactId>
+        <version>${javax.inject.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>${mail.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.mockito</groupId>
@@ -741,6 +783,12 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${commons-lang3.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>mockobjects</groupId>
+        <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
+        <version>${mockobjects-core.version}</version>
       </dependency>
 
     </dependencies>

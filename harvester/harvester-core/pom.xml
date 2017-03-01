@@ -79,7 +79,6 @@
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>${commons-lang.version}</version>
     </dependency>
 
     <dependency>
@@ -90,7 +89,7 @@
     <dependency>
       <groupId>org.gnu.inet</groupId>
       <artifactId>libidn</artifactId>
-      <version><!-- FIXME: 0.5.9 -->${libidn.version}</version>
+      <version>${libidn.version}</version>
     </dependency>
 
     <dependency>
@@ -134,19 +133,17 @@
     <dependency>
       <groupId>com.antiaction</groupId>
       <artifactId>common-servlet</artifactId>
-      <version>0.1.0-NAS</version>
+      <version>${common-html.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.antiaction</groupId>
       <artifactId>common-html</artifactId>
-      <version>0.1.0-NAS</version>
     </dependency>
 
     <dependency>
       <groupId>com.antiaction</groupId>
       <artifactId>common-template-engine</artifactId>
-      <version>0.3.0-NAS</version>
     </dependency>
 
     <dependency>
