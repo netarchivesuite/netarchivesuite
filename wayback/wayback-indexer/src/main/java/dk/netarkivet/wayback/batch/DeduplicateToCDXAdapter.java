@@ -103,7 +103,7 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                     String[] parts = duplicateRecord.split(DUPLICATE_MATCHING_STRING);
                     if (parts.length == 2) {
                         String newDuplicateRecord = DUPLICATE_MATCHING_STRING + parts[1];
-                        log.warn("Duplicate-record changed from '{}' to '{}'", duplicateRecord, newDuplicateRecord);
+                        log.debug("Duplicate-record changed from '{}' to '{}'", duplicateRecord, newDuplicateRecord);
                         duplicateRecord = newDuplicateRecord;
                     }
                 }

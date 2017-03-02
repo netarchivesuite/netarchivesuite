@@ -72,37 +72,31 @@
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>${commons-lang.version}</version>
     </dependency>
 
     <dependency>
       <groupId>jfree</groupId>
       <artifactId>jfreechart</artifactId>
-      <version>${jfreechart.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.gnu.inet</groupId>
       <artifactId>libidn</artifactId>
-      <version><!-- FIXME: 0.5.9 -->${libidn.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.hp.gagawa</groupId>
       <artifactId>gagawa</artifactId>
-      <version>${gagawa.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>${guava.version}</version>
     </dependency>
 
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
-      <version>1</version>
     </dependency>
 
     <dependency>
