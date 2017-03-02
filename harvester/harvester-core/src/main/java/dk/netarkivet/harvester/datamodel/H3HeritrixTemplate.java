@@ -29,7 +29,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,11 +109,23 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	
 	//match theses properties in crawler-beans.cxml to add them into harvestInfo.xml
 	//for preservation purpose
-	public static final String METADATA_TEMPLATE_DESCRIPTION_REGEX = "metadata\\.description=.+[\\r\\n]";
-	public static final String METADATA_TEMPLATE_UPDATE_DATE_REGEX = "metadata\\.date=.+[\\r\\n]";
-	public static final String METADATA_OPERATOR_REGEX = "metadata\\.operator=.+[\\r\\n]";
+	public enum MetadataInfo {
+		TEMPLATE_DESCRIPTION("metadata\\.description=.+[\\r\\n]"),
+		TEMPLATE_UPDATE_DATE("metadata\\.date=.+[\\r\\n]"),
+		OPERATOR("metadata\\.operator=.+[\\r\\n]");
+		
+		private final String regex;
+		
+		private MetadataInfo(String regex) {
+			this.regex = regex;
+		}
+		
+		public String toString() {
+			return this.regex;
+		}
+	};
 	
-	public enum MetadataInfo {TEMPLATE_DESCRIPTION, TEMPLATE_UPDATE_DATE, OPERATOR};
+	public Map<MetadataInfo, String> metadataInfoMap;
 	
     /**
      * Constructor for HeritrixTemplate class.
@@ -124,6 +138,17 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
         ArgumentNotValid.checkNotNull(template, "String template");
         this.template_id = template_id;
         this.template = template;
+        
+        metadataInfoMap = new HashMap<MetadataInfo, String> ();
+        for(MetadataInfo metadataInfo : MetadataInfo.values()) {
+            Pattern p = Pattern.compile(metadataInfo.regex);
+            Matcher m = p.matcher(this.template);
+            if(m.find()) {
+    	        String operator = this.template.substring(m.start(), m.end()).trim();
+    	        //return the value of the property after the =
+    	        metadataInfoMap.put(metadataInfo, operator.split("=")[1]);
+            }
+        }
     }
     
 	/**
@@ -463,21 +488,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
  	}
 	
 	public String getMetadataInfo(MetadataInfo info) {
-		String regex = null;
-		switch (info){
-			case TEMPLATE_UPDATE_DATE : regex = METADATA_TEMPLATE_UPDATE_DATE_REGEX; break;
-			case TEMPLATE_DESCRIPTION : regex = METADATA_TEMPLATE_DESCRIPTION_REGEX; break;
-			case OPERATOR : regex = METADATA_OPERATOR_REGEX; break;
-			default : regex = null;
+		String infoStr = null;
+		if(metadataInfoMap.containsKey(info)) {
+			infoStr = metadataInfoMap.get(info);
 		}
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(this.template);
-		if(m.find()) {
-			String operator = this.template.substring(m.start(), m.end()).trim();
-			//return the value of the property after the =
-			return operator.split("=")[1];
-		}
-		return null;
+		return infoStr;
 	}
 
 	@Override

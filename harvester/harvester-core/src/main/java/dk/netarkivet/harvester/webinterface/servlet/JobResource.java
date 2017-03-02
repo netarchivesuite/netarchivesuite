@@ -243,7 +243,7 @@ public class JobResource implements ResourceAbstract {
             URL url1 = new URL(h3Job.hostUrl);
             sb.append("<a href=\"");
             sb.append("https://"+url1.getHost()+":"+url1.getPort()+"/engine/anypath/");
-            sb.append(getCrawlLogPath(h3Job));
+            sb.append(h3Job.crawlLogFilePath);
             sb.append("?format=paged&pos=-1&lines=-1000&reverse=y");
             sb.append("\" class=\"btn btn-default\">");
             sb.append("H3 Crawllog");
@@ -1488,17 +1488,6 @@ public class JobResource implements ResourceAbstract {
 
         out.flush();
         out.close();
-    }
-    
-    String getCrawlLogPath(Heritrix3JobMonitor h3Job) {
-    	ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", "rawOut.println job.crawlController.frontier.loggerModule.crawlLogPath.file");
-        //System.out.println(new String(scriptResult.response, "UTF-8"));
-        if (scriptResult != null && scriptResult.script != null) {
-            if (scriptResult.script.rawOutput != null) {
-            	return scriptResult.script.rawOutput;
-            }
-        }
-        return "";
     }
 
 }

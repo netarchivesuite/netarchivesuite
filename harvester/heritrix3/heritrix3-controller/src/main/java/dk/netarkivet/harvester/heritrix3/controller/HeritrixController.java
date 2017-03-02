@@ -201,7 +201,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
       		boolean pauseAtStart = false;
       		if (scriptResult != null && scriptResult.script != null) {
       			String rawOutput = scriptResult.script.rawOutput; //false\n or true\n
-      			if(rawOutput.endsWith("\n")) {
+      			if(rawOutput.endsWith("\n") || rawOutput.endsWith("\r")) {
       				rawOutput = rawOutput.substring(0, rawOutput.length()-1);
       			}
       			pauseAtStart = Boolean.parseBoolean(rawOutput);
