@@ -79,6 +79,10 @@ public abstract class Machine {
     protected File jarFolder;
     /** The encoding to use when writing files. */
     protected String targetEncoding;
+    /** user specific logo png file */
+    protected File logoFile;
+    /** user specific menulogo png file */
+    protected File menulogoFile;
 
     /**
      * A machine is referring to an actual computer at a physical location, which can have independent applications from
@@ -98,7 +102,7 @@ public abstract class Machine {
      */
     public Machine(Element subTreeRoot, XmlStructure parentSettings, Parameters param, String netarchiveSuiteSource,
             File slf4JConfig, File securityPolicy, File dbFileName, File archiveDbFileName,
-            boolean resetDir, File externalJarFolder) throws ArgumentNotValid {
+            boolean resetDir, File externalJarFolder, File aLogoFile, File aMenulogoFile) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element subTreeRoot");
         ArgumentNotValid.checkNotNull(parentSettings, "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
@@ -116,6 +120,8 @@ public abstract class Machine {
         arcDatabaseFile = archiveDbFileName;
         resetTempDir = resetDir;
         jarFolder = externalJarFolder;
+        logoFile = aLogoFile;
+        menulogoFile = aMenulogoFile;
 
         // Retrieve machine encoding
         targetEncoding = machineRoot.attributeValue(Constants.MACHINE_ENCODING_ATTRIBUTE);
@@ -643,6 +649,18 @@ public abstract class Machine {
         }
         return res.toString();
     }
+    
+    protected StringBuilder updateLogofileInWarFiles(StringBuilder aRes, File aLogofile, String aDestinationFilename) {
+    	aRes.append("scp " + aLogofile.getAbsolutePath() + " " + machineUserLogin() + ":" + getInstallDirPath() + "/" + Constants.WEBPAGESDIR + "/" + aDestinationFilename + Constants.NEWLINE);
+
+        for (String war : Constants.WARFILENAMES) {
+        	aRes.append("ssh " + machineUserLogin() + "  \"cd " + getInstallDirPath() + "/" + Constants.WEBPAGESDIR + "; zip -r " + war + " " + aDestinationFilename + "\"" + Constants.NEWLINE);
+        }
+    	
+    	aRes.append("ssh " + machineUserLogin() + " \"rm " + getInstallDirPath() + "/" + Constants.WEBPAGESDIR + "/" + aDestinationFilename + "\"" + Constants.NEWLINE);
+    	
+    	return aRes;
+    }
 
     /**
      * The string for accessing this machine through SSH.
@@ -734,6 +752,13 @@ public abstract class Machine {
      */
     protected abstract String osInstallScriptCreateDir();
 
+    /**
+     * Updates user specific Logos in all war files.
+     *
+     * @return The script for updating logos in all war files.
+     */
+    protected abstract String osUpdateLogos();
+        
     /**
      * Creates the operation system specific starting script for this machine.
      *
