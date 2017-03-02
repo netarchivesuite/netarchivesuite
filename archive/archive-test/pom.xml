@@ -97,7 +97,6 @@
     <dependency>
       <groupId>mockobjects</groupId>
       <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
-      <version>${mockobjects-core.version}</version>
       <scope>test</scope>
     </dependency>
 
