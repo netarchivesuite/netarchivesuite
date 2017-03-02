@@ -24,6 +24,7 @@ import com.antiaction.common.templateengine.TemplatePlaceHolder;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.webinterface.servlet.NASEnvironment.StringMatcher;
 
@@ -152,6 +153,7 @@ public class IndexResource implements ResourceAbstract {
                     sb.append(h3Job.jobId);
                     sb.append("/");
                     sb.append("\" class=\"btn btn-default\">");
+                    sb.append("Job ");
                     sb.append(h3Job.jobId);
                     long lines = (h3Job.idxFile.length() / 8) - 1;
                     if (lines > 0) {
@@ -169,22 +171,25 @@ public class IndexResource implements ResourceAbstract {
         }
 
         if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("H3 remote access");
+            masterTplBuilder.titlePlace.setText("H3 Remote Access");
         }
         if (masterTplBuilder.languagesPlace != null) {
             masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
         }
         if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("H3 remote access");
+            masterTplBuilder.headingPlace.setText("H3 Remote Access");
         }
         if (masterTplBuilder.contentPlace != null) {
             masterTplBuilder.contentPlace.setText(sb.toString());
         }
         if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString());
+            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
         }
         if (masterTplBuilder.environmentPlace != null) {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
+        }
+        if (masterTplBuilder.refreshInterval != null) {
+            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
         }
 
         masterTplBuilder.write(out);
@@ -271,13 +276,13 @@ public class IndexResource implements ResourceAbstract {
         }
 
         if (configTplBuilder.titlePlace != null) {
-            configTplBuilder.titlePlace.setText("H3 remote access config");
+            configTplBuilder.titlePlace.setText("H3 Remote Access Config");
         }
         if (configTplBuilder.languagesPlace != null) {
             configTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
         }
         if (configTplBuilder.headingPlace != null) {
-            configTplBuilder.headingPlace.setText("H3 remote access config");
+            configTplBuilder.headingPlace.setText("H3 Remote Access Config");
         }
         if (configTplBuilder.enabledhostsPlace != null) {
             configTplBuilder.enabledhostsPlace.setText(enabledhostsSb.toString());
@@ -286,7 +291,7 @@ public class IndexResource implements ResourceAbstract {
             configTplBuilder.contentPlace.setText(sb.toString());
         }
         if (configTplBuilder.versionPlace != null) {
-            configTplBuilder.versionPlace.setText(Constants.getVersionString());
+            configTplBuilder.versionPlace.setText(Constants.getVersionString(true));
         }
         if (configTplBuilder.environmentPlace != null) {
             configTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));

@@ -36,7 +36,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import dk.netarkivet.common.arcrepository.TestArcRepositoryClient;
+import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
@@ -81,6 +83,34 @@ public class RawMetadataCacheTester extends CacheTestCase {
         assertEquals("Should get dirname for cache files based on prefix", "test2", cache.getCacheDir().getName());
         assertEquals("Should get dirname for cache files in cache dir", "cache", cache.getCacheDir().getAbsoluteFile()
                 .getParentFile().getName());
+    }
+
+    /**
+     * Check that in migrated metadata files, RawMetadataCache updates deduplicate records to reflect migrated values
+     * @throws Exception
+     */
+    @Test
+    public void testCacheMigratedMetadata() throws Exception {
+        TestArcRepositoryClient tarc = new TestArcRepositoryClient(new File(TestInfo.WORKING_DIR, "arcfiles"));
+        Field arcrepfield = ReflectUtils.getPrivateField(RawMetadataCache.class, "arcrep");
+        // Try one with just URL pattern.
+        RawMetadataCache rmc = new RawMetadataCache("test30", Pattern.compile(MetadataFile.CRAWL_LOG_PATTERN), null);
+        arcrepfield.set(rmc, tarc);
+        Long id1 = rmc.cache(30L);
+        assertEquals("Should have exactly the one id asked for", (Long) 30L, id1);
+        File cacheFile1 = rmc.getCacheFile(id1);
+        assertNotNull("Should have the file asked for", cacheFile1.exists());
+        String newFileName = "2-1-20161205100306320-00000-4320~kb-test-har-004.kb.dk~8173.arc.gz";
+        for(String line: org.apache.commons.io.FileUtils.readLines(cacheFile1) ){
+              if (line.contains("http://www.kaarefc.dk/avatar.png")) {
+                  String newDuplicate = "duplicate:\"" + newFileName + ",4434,20161205100310384\"";
+                  assertTrue(line + " should contain new duplicate record " + newDuplicate ,line.contains(newDuplicate));
+              }
+            if (line.contains("http://jigsaw.w3.org/css-validator/images/vcss-blue.gif")) {
+                String newDuplicate = "duplicate:\"" + newFileName + ",142487,20161205100318947\"";
+                assertTrue(line + " should contain new duplicate record " + newDuplicate ,line.contains(newDuplicate));
+            }
+        }
     }
 
     @Test

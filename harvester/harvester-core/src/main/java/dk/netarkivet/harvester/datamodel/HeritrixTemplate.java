@@ -40,7 +40,7 @@ public abstract class HeritrixTemplate implements Serializable {
 
 	// Constants for the metadata added to the warcinfo record when using WARC
 
-	protected static final String HARVESTINFO_VERSION_NUMBER = "0.5";
+	protected static final String HARVESTINFO_VERSION_NUMBER = "0.6";
 	protected static final String HARVESTINFO_VERSION = "harvestInfo.version";
 	protected static final String HARVESTINFO_JOBID = "harvestInfo.jobId";
 	protected static final String HARVESTINFO_CHANNEL = "harvestInfo.channel";	
@@ -48,12 +48,15 @@ public abstract class HeritrixTemplate implements Serializable {
 	protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONID = "harvestInfo.origHarvestDefinitionID";
 	protected static final String HARVESTINFO_MAXBYTESPERDOMAIN = "harvestInfo.maxBytesPerDomain";
 	protected static final String HARVESTINFO_MAXOBJECTSPERDOMAIN = "harvestInfo.maxObjectsPerDomain";
-	protected static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.orderXMLName";
+	protected static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.templateName";
+	protected static final String HARVESTINFO_ORDERXMLUPDATEDATE = "harvestInfo.templateLastUpdateDate";
+	protected static final String HARVESTINFO_ORDERXMLDESCRIPTION = "harvestInfo.templateDescription";
 	protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
 	protected static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
 	protected static final String HARVESTINFO_HARVESTFILENAMEPREFIX = "harvestInfo.harvestFilenamePrefix";
 	protected static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";
 	protected static final String HARVESTINFO_PERFORMER = "harvestInfo.performer";
+	protected static final String HARVESTINFO_OPERATOR = "harvestInfo.operator";
 	protected static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
 
 

@@ -5,7 +5,7 @@ package dk.netarkivet.harvester.webinterface.servlet;
  *
  * <div class="pagination pull-right">
  *   <ul>
- *     <li class="disabled"><span>Forrige</span></li>
+ *     <li class="disabled"><span>Previous</span></li>
  *     <li class="active"><span>1</span></li>
  *     <li><a href="#">2</a></li>
  *     <li><a href="#">3</a></li>
@@ -13,7 +13,7 @@ package dk.netarkivet.harvester.webinterface.servlet;
  *     <li><a href="#">8</a></li>
  *     <li><a href="#">9</a></li>
  *     <li><a href="#">10</a></li>
- *     <li><a href="#">NÃ¦ste</a></li>
+ *     <li><a href="#">Next</a></li>
  *   </ul>
  * </div>
  */
@@ -57,9 +57,9 @@ public class Pagination {
         // Previous
         if (page > 1) {
             sb.append("<li><a href=\"?page=" + (page - 1) + "&itemsperpage="
-                    + itemsPerPage + "\">Forrige</a></li>");
+                    + itemsPerPage + "\">Previous</a></li>");
         } else {
-            sb.append("<li class=\"disabled\"><span>Forrige</span></li>");
+            sb.append("<li class=\"disabled\"><span>Previous</span></li>");
         }
         // First.
         if (page == 1) {
@@ -106,9 +106,9 @@ public class Pagination {
         // Next.
         if (page < pages) {
             sb.append("<li><a href=\"?page=" + (page + 1) + "&itemsperpage="
-                    + itemsPerPage + "\">Næste</a></li>");
+                    + itemsPerPage + "\">Next</a></li>");
         } else {
-            sb.append("<li class=\"disabled\"><span>Næste</span></li>");
+            sb.append("<li class=\"disabled\"><span>Next</span></li>");
         }
         // Items per page.
         sb.append("<li>");
@@ -134,6 +134,7 @@ public class Pagination {
             }
         }
         //sb.append("<select name=\"organization\" class=\"input-mini\" onchange=\"submitForm('myform');\">");
+        /*
         sb.append("<select name=\"itemsperpage\" class=\"input-mini\" onchange=\"this.form.submit();\">");
         for (int i=0; i<options.length; ++i) {
             sb.append("<option value=\"");
@@ -147,6 +148,7 @@ public class Pagination {
             sb.append("</option>");
         }
         sb.append("</select>");
+        */
         sb.append("</li>");
         sb.append("</ul>\n");
         sb.append("</div>\n");

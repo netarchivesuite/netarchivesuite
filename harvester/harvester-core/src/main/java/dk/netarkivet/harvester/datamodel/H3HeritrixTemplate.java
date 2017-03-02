@@ -29,7 +29,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.jsp.JspWriter;
@@ -104,6 +107,26 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";	
 	final String ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER = "%{ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER}";
 	
+	//match theses properties in crawler-beans.cxml to add them into harvestInfo.xml
+	//for preservation purpose
+	public enum MetadataInfo {
+		TEMPLATE_DESCRIPTION("metadata\\.description=.+[\\r\\n]"),
+		TEMPLATE_UPDATE_DATE("metadata\\.date=.+[\\r\\n]"),
+		OPERATOR("metadata\\.operator=.+[\\r\\n]");
+		
+		private final String regex;
+		
+		private MetadataInfo(String regex) {
+			this.regex = regex;
+		}
+		
+		public String toString() {
+			return this.regex;
+		}
+	};
+	
+	public Map<MetadataInfo, String> metadataInfoMap;
+	
     /**
      * Constructor for HeritrixTemplate class.
      *
@@ -115,6 +138,17 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
         ArgumentNotValid.checkNotNull(template, "String template");
         this.template_id = template_id;
         this.template = template;
+        
+        metadataInfoMap = new HashMap<MetadataInfo, String> ();
+        for(MetadataInfo metadataInfo : MetadataInfo.values()) {
+            Pattern p = Pattern.compile(metadataInfo.regex);
+            Matcher m = p.matcher(this.template);
+            if(m.find()) {
+    	        String operator = this.template.substring(m.start(), m.end()).trim();
+    	        //return the value of the property after the =
+    	        metadataInfoMap.put(metadataInfo, operator.split("=")[1]);
+            }
+        }
     }
     
 	/**
@@ -452,6 +486,14 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     		this.template = templateNew;
     	}
  	}
+	
+	public String getMetadataInfo(MetadataInfo info) {
+		String infoStr = null;
+		if(metadataInfoMap.containsKey(info)) {
+			infoStr = metadataInfoMap.get(info);
+		}
+		return infoStr;
+	}
 
 	@Override
 	public void writeTemplate(OutputStream os) throws IOFailure {
@@ -586,6 +628,22 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		sb.append(HARVESTINFO_MAXOBJECTSPERDOMAIN + valuePart + ajob.getMaxObjectsPerDomain() + endMetadataEntry);
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_ORDERXMLNAME + valuePart + ajob.getOrderXMLName() + endMetadataEntry);
+
+		/* orderxml update date - only inserted if not null and not-empty. */
+		/* take info from crawler-beans.cxml */
+		String tmp = getMetadataInfo(MetadataInfo.TEMPLATE_UPDATE_DATE);
+		if (tmp != null && !tmp.isEmpty()){
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_ORDERXMLUPDATEDATE + valuePart + tmp  + endMetadataEntry);
+		}
+		/* orderxml description - only inserted if not null and not-empty. */
+		/* take info from crawler-beans.cxml */
+		tmp = getMetadataInfo(MetadataInfo.TEMPLATE_DESCRIPTION);
+		if (tmp != null && !tmp.isEmpty()){
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_ORDERXMLDESCRIPTION + valuePart + tmp  + endMetadataEntry);
+		}
+
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + valuePart + 
 				origHarvestdefinitionName + endMetadataEntry);
@@ -604,6 +662,14 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		if (performer != null && !performer.isEmpty()){
 			sb.append(startMetadataEntry);
 			sb.append(HARVESTINFO_PERFORMER + valuePart + performer  + endMetadataEntry);
+		}
+		
+		/* optional OPERATOR - only inserted if not null and not-empty. */
+		/* take info from crawler-beans.cxml */
+		String operator = getMetadataInfo(MetadataInfo.OPERATOR);
+		if (operator != null && !operator.isEmpty()){
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_OPERATOR + valuePart + operator  + endMetadataEntry);
 		}
 		
 		/* optional HARVESTINFO_AUDIENCE - only inserted if not null and not-empty. */

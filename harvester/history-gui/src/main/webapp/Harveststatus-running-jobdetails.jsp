@@ -120,13 +120,7 @@ This page displays details about a running job.
             HarvestMonitor.getAutoRefreshDelay()); // Autorefresh every x seconds
 
     InMemoryFrontierReport frontierReport =
-        HarvestMonitor.getFrontierReport(jobID);
-
-    InMemoryFrontierReport retiredQueues =
-        HarvestMonitor.getFrontierRetiredQueues(jobID);
-
-    InMemoryFrontierReport exhaustedQueues =
-        HarvestMonitor.getFrontierExhaustedQueues(jobID);
+        HarvestMonitor.getFrontierActiveAndInactiveQueuesReport(jobID, true);
 
 %>
 
@@ -141,91 +135,9 @@ This page displays details about a running job.
 
     <tr class="spacerRowBig"><td>&nbsp;</td></tr>
     <tr><th colspan="2">
-        <fmt:message key="table.running.jobs.harvestName"/>
-        &nbsp;<%= harvestLink %>
+        <fmt:message key="running.job.details.progression"/>
     </th></tr>
-    <tr>
-	    <td colspan="2"><ul>
-	       <!-- Link to Heritrix console -->
-	       <li>
-	           <fmt:message key="running.job.details.heritrixConsoleLink">
-	               <fmt:param>
-                       <a href="<%=latest.getHostUrl()%>" target="_blank">
-                       <fmt:message key="running.job.details.display"/>
-                       </a>
-                   </fmt:param>
-	               <fmt:param>
-	                   <a href="<%=latest.getHostUrl()%>" target="_blank">
-	                   <%=latest.getHostName()%>
-	                   </a>
-	               </fmt:param>
-	           </fmt:message>
-	       </li>
-	       <!-- Link to job definition page -->
-	       <li>
-	           <fmt:message key="running.job.details.jobDefinitionLink">
-	                <fmt:param>
-	                    <a href="Harveststatus-jobdetails.jsp?jobID=<%= jobID %>">
-	                    <fmt:message key="running.job.details.display"/>
-	                    </a>
-	                </fmt:param>
-	           </fmt:message>
-           </li>
-
-	       <% if (frontierReport.getSize() > 0 )  { %>
-	       <!-- Link to frontier section within the page -->
-	       <li>
-           <fmt:message key="running.job.details.heritrixFrontierLinks">
-
-                <fmt:param>
-                    <a href="#frontierReport">
-                        <fmt:message key="running.job.details.display"/>
-                    </a>
-                </fmt:param>
-
-                <fmt:param>
-                    <a href="./Harveststatus-frontier-csvexport.jsp?<%= ExportFrontierReportCsvQuery.UI_FIELD.JOB_ID.name() %>=<%= jobID %>">
-                        <fmt:message key="running.job.details.export"/>
-                    </a>
-                </fmt:param>
-
-                <fmt:param>
-	            <%= StringUtils.formatDate(
-	                    frontierReport.getTimestamp(), "yyyy/MM/dd HH:mm") %>
-	            </fmt:param>
-
-           </fmt:message>
-           </li>
-           <% } %>
-
-           <% if (exhaustedQueues.getSize() > 0 )  { %>
-           <!-- Link to frontier section within the page -->
-           <li>
-               <fmt:message key="running.job.details.exhaustededQueuesLink">
-                    <fmt:param>
-                        <a href="#frontierReportExhausted">
-                            <fmt:message key="running.job.details.display"/>
-                        </a>
-                    </fmt:param>
-               </fmt:message>
-           </li>
-           <% } %>
-
-           <% if (retiredQueues.getSize() > 0 )  { %>
-           <!-- Link to frontier section within the page -->
-           <li>
-	           <fmt:message key="running.job.details.retiredQueuesLink">
-	                <fmt:param>
-	                    <a href="#frontierReportRetired">
-	                        <fmt:message key="running.job.details.display"/>
-	                    </a>
-	                </fmt:param>
-	           </fmt:message>
-           </li>
-           <% } %>
-
-	    </ul></td>
-    </tr>
+    
     <tr class="spacerRowBig"><td>&nbsp;</td></tr>
 
     <tr>
@@ -315,124 +227,6 @@ This page displays details about a running job.
                <%  } %>
          </table>
 	    </td>
-    </tr>
-
-
-
-<% } %>
-
-    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
-
-<%
-
-    if (exhaustedQueues.getSize() > 0) {
-
-%>
-
-    <tr><th width="15%" colspan="2">
-        <a id="frontierReportExhausted" name="frontierReportExhausted">&nbsp;</a>
-        <fmt:message key="running.job.details.frontier.title.ExhaustedQueuesFilter">
-            <fmt:param>
-            <%= StringUtils.formatDate(
-                    exhaustedQueues.getTimestamp(), "yyyy/MM/dd HH:mm") %>
-            </fmt:param>
-        </fmt:message>
-    </th></tr>
-    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
-    <tr>
-        <td colspan="2">
-        <table class="selection_table">
-               <tr>
-                   <th rowspan="2"><fmt:message key="running.job.details.frontier.queueName"/></th>
-                   <th rowspan="2"><fmt:message key="running.job.details.frontier.totalEnqueues"/></th>
-                   <th rowspan="2"><fmt:message key="running.job.details.frontier.currentSize"/></th>
-                   <th colspan="2"><fmt:message key="running.job.details.frontier.budget"/></th>
-                   <th rowspan="2"><fmt:message key="running.job.details.frontier.lastQueuedUri"/></th>
-               </tr>
-               <tr>
-                   <th><fmt:message key="running.job.details.frontier.totalSpent"/></th>
-                   <th><fmt:message key="running.job.details.frontier.totalBudget"/></th>
-               </tr>
-               <%
-                   for (FrontierReportLine l : exhaustedQueues.getLines()) {
-               %>
-               <tr>
-                <td><%= l.getDomainName() %></td>
-                <td align="right">
-                    <fmt:formatNumber type="number" value="<%= l.getTotalEnqueues() %>"/></td>
-                <td align="right">
-                    <fmt:formatNumber type="number" value="<%= l.getCurrentSize() %>"/></td>
-                <td align="right">
-                    <fmt:formatNumber type="number" value="<%= l.getTotalSpend()%>"/>
-                </td>
-                <td align="right">
-                    <fmt:formatNumber type="number" value="<%= l.getTotalBudget()%>"/>
-                </td>
-                <td><a href="<%= l.getLastQueuedUri() %>" target="_blank">
-                <%= StringUtils.makeEllipsis(l.getLastQueuedUri(), 30) %></a></td>
-               </tr>
-               <%  } %>
-         </table>
-        </td>
-    </tr>
-
-
-
-<% } %>
-
-    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
-
-<%
-
-    if (retiredQueues.getSize() > 0) {
-
-%>
-
-    <tr><th width="15%" colspan="2">
-        <a id="frontierReportRetired" name="frontierReportRetired">&nbsp;</a>
-        <fmt:message key="running.job.details.frontier.title.RetiredQueuesFilter">
-            <fmt:param>
-            <%= StringUtils.formatDate(
-                    retiredQueues.getTimestamp(), "yyyy/MM/dd HH:mm") %>
-            </fmt:param>
-        </fmt:message>
-    </th></tr>
-    <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
-    <tr>
-        <td colspan="2">
-        <table class="selection_table">
-               <tr>
-                   <th rowspan="2"><fmt:message key="running.job.details.frontier.queueName"/></th>
-                   <th rowspan="2"><fmt:message key="running.job.details.frontier.totalEnqueues"/></th>
-                   <th rowspan="2"><fmt:message key="running.job.details.frontier.currentSize"/></th>
-                   <th colspan="2"><fmt:message key="running.job.details.frontier.budget"/></th>
-                   <th rowspan="2"><fmt:message key="running.job.details.frontier.lastQueuedUri"/></th>
-               </tr>
-               <tr>
-                   <th><fmt:message key="running.job.details.frontier.totalSpent"/></th>
-                   <th><fmt:message key="running.job.details.frontier.totalBudget"/></th>
-               </tr>
-               <%
-                   for (FrontierReportLine l : retiredQueues.getLines()) {
-               %>
-               <tr>
-                <td><%= l.getDomainName() %></td>
-                <td align="right">
-                    <fmt:formatNumber type="number" value="<%= l.getTotalEnqueues() %>"/></td>
-                <td align="right">
-                    <fmt:formatNumber type="number" value="<%= l.getCurrentSize() %>"/></td>
-                <td align="right">
-                    <fmt:formatNumber type="number" value="<%= l.getTotalSpend()%>"/>
-                </td>
-                <td align="right">
-                    <fmt:formatNumber type="number" value="<%= l.getTotalBudget()%>"/>
-                </td>
-                <td><a href="<%= l.getLastQueuedUri() %>" target="_blank">
-                <%= StringUtils.makeEllipsis(l.getLastQueuedUri(), 30) %></a></td>
-               </tr>
-               <%  } %>
-         </table>
-        </td>
     </tr>
 
 

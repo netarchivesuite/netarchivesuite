@@ -196,12 +196,27 @@ public class HeritrixController extends AbstractRestHeritrixController {
       		    log.warn("The job state is now {}. Should have been CrawlControllerState.PAUSED",  jobResult.job.crawlControllerState);
       		}
       		
-      		jobResult = h3wrapper.unpauseJob(jobName);
-      		log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
-      		
-      		// POST: h3 is running, and the job with name 'jobName' is running
-            log.trace("h3-State after unpausing job '{}': {}", jobName, new String(jobResult.response, "UTF-8"));
-      		
+      		//check if param pauseAtStart is true
+      		ScriptResult scriptResult = h3wrapper.ExecuteShellScriptInJob(jobName, "groovy", "rawOut.println crawlController.pauseAtStart\n");
+      		boolean pauseAtStart = false;
+      		if (scriptResult != null && scriptResult.script != null) {
+      			String rawOutput = scriptResult.script.rawOutput; //false\n or true\n
+      			if(rawOutput.endsWith("\n") || rawOutput.endsWith("\r")) {
+      				rawOutput = rawOutput.substring(0, rawOutput.length()-1);
+      			}
+      			pauseAtStart = Boolean.parseBoolean(rawOutput);
+      		}
+      		log.info("The parameter pauseAtStart is {}", pauseAtStart);
+      		//if param pauseAtStart is false
+      		if(pauseAtStart == false) {
+      			jobResult = h3wrapper.unpauseJob(jobName);
+	      		log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
+	      		
+	      		// POST: h3 is running, and the job with name 'jobName' is running
+	            log.trace("h3-State after unpausing job '{}': {}", jobName, new String(jobResult.response, "UTF-8"));
+      		} else {
+      			log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
+      		}
             
             
       	} catch (UnsupportedEncodingException e) {
@@ -268,7 +283,16 @@ public class HeritrixController extends AbstractRestHeritrixController {
      * @return the URL for monitoring this instance.
      */
     public String getHeritrixConsoleURL() {
-        return "https://" + SystemUtils.getLocalHostName() + ":" + getGuiPort() + "/engine";
+        return "https://" + SystemUtils.getLocalHostName() + ":" + getGuiPort() + "/engine/job/";
+    }
+    
+    /**
+     * Return the URL for monitoring the job of this instance.
+     *
+     * @return the URL for monitoring the job of this instance.
+     */
+    public String getHeritrixJobConsoleURL() {
+        return getHeritrixConsoleURL() + files.getCrawlDir().getName();
     }
 
     /**
@@ -365,7 +389,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
         Heritrix3Files files = getHeritrixFiles();
         CrawlProgressMessage cpm = new CrawlProgressMessage(files.getHarvestID(), files.getJobID(),
                 progressStatisticsLegend);
-        cpm.setHostUrl(getHeritrixConsoleURL());
+        cpm.setHostUrl(getHeritrixJobConsoleURL());
         JobResult jobResult = h3wrapper.job(jobName);
         if (jobResult != null) {
         	getCrawlServiceAttributes(cpm, jobResult);

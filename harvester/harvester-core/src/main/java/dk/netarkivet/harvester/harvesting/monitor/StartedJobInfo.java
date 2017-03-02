@@ -51,7 +51,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /** list of the compare criteria. */
     public enum Criteria {
-        JOBID, HOST, PROGRESS, ELAPSED, QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ
+        JOBID, HOST, PROGRESS, ELAPSED, QFILES, TOTALQ, ACTIVEQ, INACTIVEQ, EXHAUSTEDQ
     }
 
     ;
@@ -96,6 +96,9 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /** The number of queues in process. */
     private long activeQueuesCount;
+    
+    /** The number of inactive queues in process. */
+    private long inactiveQueuesCount;
 
     /** The number of queues that have been retired when they hit their quota. */
     private long retiredQueuesCount;
@@ -148,6 +151,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         this.queuedFilesCount = NOT_AVAILABLE_NUM;
         this.totalQueuesCount = NOT_AVAILABLE_NUM;
         this.activeQueuesCount = NOT_AVAILABLE_NUM;
+        this.inactiveQueuesCount = NOT_AVAILABLE_NUM;
         this.retiredQueuesCount = NOT_AVAILABLE_NUM;
         this.exhaustedQueuesCount = NOT_AVAILABLE_NUM;
         this.elapsedSeconds = NOT_AVAILABLE_NUM;
@@ -341,6 +345,9 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         if (compareCriteria == StartedJobInfo.Criteria.ACTIVEQ) {
             return Long.valueOf(activeQueuesCount).compareTo(Long.valueOf(o.activeQueuesCount));
         }
+        if (compareCriteria == StartedJobInfo.Criteria.INACTIVEQ) {
+            return Long.valueOf(inactiveQueuesCount).compareTo(Long.valueOf(o.inactiveQueuesCount));
+        }
         if (compareCriteria == StartedJobInfo.Criteria.EXHAUSTEDQ) {
             return Long.valueOf(exhaustedQueuesCount).compareTo(Long.valueOf(o.exhaustedQueuesCount));
         }
@@ -365,7 +372,8 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
                 + currentProcessedKBPerSec + "\n\tprocessedKBPerSec=" + processedKBPerSec
                 + "\n\tcurrentProcessedDocsPerSec=" + currentProcessedDocsPerSec + "\n\tprocessedDocsPerSec="
                 + processedDocsPerSec + "\n\tdownloadedFilesCount=" + downloadedFilesCount + "\n\tqueuedFilesCount="
-                + queuedFilesCount + "\n\tactiveQueuesCount=" + activeQueuesCount + "\n\texhaustedQueuesCount="
+                + queuedFilesCount + "\n\tactiveQueuesCount=" + activeQueuesCount + "\n\tinactiveQueuesCount="
+                + inactiveQueuesCount + "\n\texhaustedQueuesCount="
                 + exhaustedQueuesCount + "\n\ttotalQueuesCount=" + totalQueuesCount + "\n}";
     }
 
@@ -389,6 +397,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         case PRE_CRAWL:
             // Initialize statistics-variables before starting the crawl.
             sji.activeQueuesCount = 0;
+            sji.inactiveQueuesCount = 0;
             sji.activeToeCount = 0;
             sji.alertsCount = 0;
             sji.currentProcessedDocsPerSec = 0;
@@ -416,7 +425,9 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
                     Object[] params = FRONTIER_SHORT_FMT.parse(frontierShortReport);
                     sji.totalQueuesCount = Long.parseLong((String) params[0]);
                     sji.activeQueuesCount = Long.parseLong((String) params[1]);
-                    sji.retiredQueuesCount = Long.parseLong((String) params[6]);
+                    sji.inactiveQueuesCount = Long.parseLong((String) params[5]);
+                    //FIXME : delete retiredQueuesCount to keep only inactiveQueuesCount
+                    sji.retiredQueuesCount = Long.parseLong((String) params[5]);
                     sji.exhaustedQueuesCount = Long.parseLong((String) params[7]);
                 } catch (ParseException e) {
                     throw new ArgumentNotValid(frontierShortReport, e);
@@ -439,6 +450,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             sji.progress = 100;
             sji.hostUrl = "";
             sji.activeQueuesCount = 0;
+            sji.inactiveQueuesCount = 0;
             sji.activeToeCount = 0;
             sji.currentProcessedDocsPerSec = 0;
             sji.currentProcessedKBPerSec = 0;
@@ -453,6 +465,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         }
         sji.status = newStatus;
 
+        //FIXME : save inactiveQueuesCount in database
         return sji;
     }
 
@@ -460,7 +473,8 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
      * @param hostUrl the hostUrl to set
      */
     public void setHostUrl(String hostUrl) {
-        this.hostUrl = hostUrl;
+
+    	this.hostUrl = hostUrl;
     }
 
     /**
@@ -574,5 +588,16 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     public void setRetiredQueuesCount(long retiredQueuesCount) {
         this.retiredQueuesCount = retiredQueuesCount;
     }
+
+	public long getInactiveQueuesCount() {
+		//FIXME : delete retiredQueuesCount from code and database
+		//and use only inactiveQueuesCount
+		//return inactiveQueuesCount;
+		return retiredQueuesCount;
+	}
+
+	public void setInactiveQueuesCount(long inactiveQueuesCount) {
+		this.inactiveQueuesCount = inactiveQueuesCount;
+	}
 
 }

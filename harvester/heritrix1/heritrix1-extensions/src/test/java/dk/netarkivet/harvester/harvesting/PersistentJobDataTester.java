@@ -82,10 +82,18 @@ public class PersistentJobDataTester {
         assertEquals(testJob.getOrigHarvestDefinitionID(), pjdNew.getOrigHarvestDefinitionID());
         assertEquals(pjdNew.getPerformer(), null);
     }
+    
+    @Test
+    public void testReadCurrentVersion0_6() {
+        File hiVersion03 = new File(TestResourceUtils.getFilePath("harvestInfo.xml"));
+        FileUtils.copyFile(hiVersion03, new File(CRAWL_DIR, HARVEST_INFO_XML));
+        PersistentJobData pjd = new PersistentJobData(CRAWL_DIR);
+        pjd.getVersion();
+    }
 
     @Test
-    public void testReadCurrentVersion0_5() {
-        File hiVersion03 = new File(TestResourceUtils.getFilePath("harvestInfo.xml"));
+    public void testReadVersion0_5() {
+        File hiVersion03 = new File(TestResourceUtils.getFilePath("harvestInfo-0.5.xml"));
         FileUtils.copyFile(hiVersion03, new File(CRAWL_DIR, HARVEST_INFO_XML));
         PersistentJobData pjd = new PersistentJobData(CRAWL_DIR);
         pjd.getVersion();

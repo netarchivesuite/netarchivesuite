@@ -26,5 +26,8 @@ public class MasterTemplateBuilder extends TemplateBuilderBase {
 
     @TemplateBuilderPlaceHolder("environment")
     public TemplatePlaceHolder environmentPlace;
+    
+    @TemplateBuilderPlaceHolder("refresh")
+    public TemplatePlaceHolder refreshInterval;
 
 }

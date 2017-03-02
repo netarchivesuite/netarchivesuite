@@ -326,7 +326,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         private void insertWarcInfo(MetadataFileWriterWarc writer, Long jobID) {
             ANVLRecord infoPayload = new ANVLRecord();
             infoPayload.addLabelValue("software",
-                    "NetarchiveSuite/" + dk.netarkivet.common.Constants.getVersionString() + "/"
+                    "NetarchiveSuite/" + dk.netarkivet.common.Constants.getVersionString(false) + "/"
                             + dk.netarkivet.common.Constants.PROJECT_WEBSITE);
             infoPayload.addLabelValue("ip", SystemUtils.getLocalIP());
             infoPayload.addLabelValue("hostname", SystemUtils.getLocalHostName());

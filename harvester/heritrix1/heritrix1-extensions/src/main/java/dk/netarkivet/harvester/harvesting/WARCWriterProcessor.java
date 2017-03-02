@@ -690,7 +690,7 @@ public class WARCWriterProcessor extends WriterPoolProcessor implements CoreAttr
          * <performer>undefined</performer> </harvestInfo>
          */
         String netarchiveSuiteComment = "#added by NetarchiveSuite "
-                + dk.netarkivet.common.Constants.getVersionString();
+                + dk.netarkivet.common.Constants.getVersionString(false);
         ANVLRecord recordNAS = new ANVLRecord(7);
 
         if (metadataMap != null) {
