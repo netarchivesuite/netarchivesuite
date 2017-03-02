@@ -141,6 +141,7 @@ public class NetarchiveResourceStore implements ResourceStore {
         }
         Resource resource = new ArcResource(arcRecord, null);
         try {
+            //This call has the side-effect of queueing up the resource at the start of the response-body, after the http headers.
             resource.parseHeaders();
         } catch (IOException e) {
             logger.debug(e);
