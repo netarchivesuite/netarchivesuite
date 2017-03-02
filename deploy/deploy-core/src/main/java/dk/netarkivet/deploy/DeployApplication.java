@@ -76,6 +76,12 @@ public final class DeployApplication {
     
     //private static Optional<File> defaultBundlerZip;
     private static File defaultBundlerZip;
+    
+    /** The logo png file. */
+    private static File logoFile;
+    /** The menulogo png file. */
+    private static File menulogoFile;
+    
     /**
      * Private constructor to disallow instantiation of this class.
      */
@@ -93,7 +99,8 @@ public final class DeployApplication {
      * (httpportoffset, port, environmentName, mailReceiver) -R [OPTIONAL] For resetting the tempDir (takes arguments
      * 'y' or 'yes') -E [OPTIONAL] Evaluating the deployConfig file (arguments: 'y' or 'yes') -A [OPTIONAL] For archive
      * database. -J [OPTIONAL] For deploying with external jar files. Must be the total path to the directory containing
-     * jar-files. These external files will be placed on every machine, and they have to manually be put into the
+     * jar-files. -l [OPTIONAL] for logo png file. -m [OPTIONAL] for menulogo png file 
+     * These external files will be placed on every machine, and they have to manually be put into the
      * classpath, where they should be used.
      */
     public static void main(String[] args) {
@@ -144,7 +151,11 @@ public final class DeployApplication {
             String arcDbFileName = ap.getCommandLine().getOptionValue(Constants.ARG_ARC_DB);
             // Retrieves the jar-folder name.
             String jarFolderName = ap.getCommandLine().getOptionValue(Constants.ARG_JAR_FOLDER);
-
+            // Retrieves the logo filename.
+            String logoFilename = ap.getCommandLine().getOptionValue(Constants.ARG_LOGO);
+            // Retrieves the menulogo filename.
+            String menulogoFilename = ap.getCommandLine().getOptionValue(Constants.ARG_MENULOGO);
+            
             // Retrieves the source encoding.
             // If not specified get system default
             String sourceEncoding = ap.getCommandLine().getOptionValue(Constants.ARG_SOURCE_ENCODING);
@@ -187,11 +198,14 @@ public final class DeployApplication {
             //initBundlerZip(Optional.ofNullable(
             //        ap.getCommandLine().getOptionValue(Constants.ARG_DEFAULT_BUNDLER_ZIP)));
             initBundlerZip(ap.getCommandLine().getOptionValue(Constants.ARG_DEFAULT_BUNDLER_ZIP));
-
+            
+            // check the logo files
+            initLogos(logoFilename, menulogoFilename);
+            
             // Make the configuration based on the input data
             deployConfig = new DeployConfiguration(deployConfigFile, netarchiveSuiteFile, secPolicyFile,
                     slf4jConfigFile, outputDir, dbFile, arcDbFile, resetDirectory, externalJarFolder, sourceEncoding,
-                    defaultBundlerZip);
+                    defaultBundlerZip, logoFile, menulogoFile);
 
             // Write the scripts, directories and everything
             deployConfig.write();
@@ -461,6 +475,28 @@ public final class DeployApplication {
     }
 
     /**
+     * Checks if the logo files exists
+     *
+     * @param logoFilename The absolute path to the logo png file.
+     * @param menulogoFilename The absoluet path to the menu logo png file.
+     */
+    public static void initLogos(String logoFilename, String menulogoFilename) {
+    	if (logoFilename != null) {
+        	logoFile = new File(logoFilename);
+        	if (!logoFile.exists()) {
+        		logoFile = null;
+        	}
+    	}
+    	
+    	if (menulogoFilename != null) {
+        	menulogoFile = new File(menulogoFilename);
+        	if (!menulogoFile.exists()) {
+        		menulogoFile = null;
+        	}
+    	}
+    }
+    
+    /**
      * Applies the test arguments.
      * <p>
      * If the test arguments are given correctly, the configuration file is loaded and changed appropriately, then
@@ -548,6 +584,10 @@ public final class DeployApplication {
             options.addOption(Constants.ARG_SOURCE_ENCODING, HAS_ARG, "[OPTIONAL] Encoding to use for source files.");
             options.addOption(Constants.ARG_DEFAULT_BUNDLER_ZIP, HAS_ARG, "[OPTIONAL] The bundled harvester to use. "
                     + "If not provided here the bundler needs to be provided in the settings for each (H3) harvester");
+            options.addOption(null, Constants.ARG_LOGO, HAS_ARG, "[OPTIONAL] The Logo png file to use. "
+                    + "(this is only working for Linux)");
+            options.addOption(null, Constants.ARG_MENULOGO, HAS_ARG, "[OPTIONAL] The Menulogo png file to use. "
+                    + "(this is only working for Linux)");
         }
 
         /**

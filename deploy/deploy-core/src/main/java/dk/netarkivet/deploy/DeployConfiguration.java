@@ -67,6 +67,10 @@ public class DeployConfiguration {
     private File jarFolder;
     //private final Optional<File> defaultBundlerZip;
     private final File defaultBundlerZip;
+    /** The optional choice for a logo png file */
+    private File logoFile;
+    /** The optional choice for a menulogo png file */
+    private File menulogoFile;
 
     /**
      * Constructor. Initialise everything.
@@ -95,7 +99,9 @@ public class DeployConfiguration {
             File externalJarFolder,
             String sourceEncoding,
             //Optional<File defaultBundlerZip
-            File defaultBundlerZip)
+            File defaultBundlerZip,
+            File logoFile,
+            File menulogoFile)
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(deployConfigFileName, "No config file");
         ArgumentNotValid.checkNotNull(netarchiveSuiteFileName, "No installation file");
@@ -111,6 +117,8 @@ public class DeployConfiguration {
         resetDirectory = resetDir;
         jarFolder = externalJarFolder;
         this.defaultBundlerZip = defaultBundlerZip;
+        this.logoFile = logoFile;
+        this.menulogoFile = menulogoFile;
 
         // get configuration tree, settings and parameters
         config = new XmlStructure(deployConfigFile, sourceEncoding);
@@ -151,7 +159,7 @@ public class DeployConfiguration {
         // get all physical locations into the list
         for (Element elem : physList) {
             physLocs.add(new PhysicalLocation(elem, settings, machineParam, netarchiveSuiteFile.getName(),
-                    slf4jConfigFile, secPolicyFile, databaseFileName, arcDatabaseFileName, resetDirectory, jarFolder,
+                    slf4jConfigFile, secPolicyFile, databaseFileName, arcDatabaseFileName, resetDirectory, jarFolder, logoFile, menulogoFile,
                     this));
         }
     }

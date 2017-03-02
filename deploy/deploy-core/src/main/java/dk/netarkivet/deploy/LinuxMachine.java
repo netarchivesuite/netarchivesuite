@@ -59,14 +59,16 @@ public class LinuxMachine extends Machine {
      * @param arcdbFile The name of the archive file.
      * @param resetDir Whether the temporary directory should be reset.
      * @param externalJarFolder The folder containing the external jar library files.
+     * @param logoFile user specific logo png file.
+     * @param menulogoFile user specific menulogo png file.
      * @param deployConfiguration The general deployment configuration.
      */
     public LinuxMachine(Element subTreeRoot, XmlStructure parentSettings, Parameters param,
             String netarchiveSuiteSource, File slf4JConfig, File securityPolicy, File dbFile,
-            File arcdbFile, boolean resetDir, File externalJarFolder,
+            File arcdbFile, boolean resetDir, File externalJarFolder, File logoFile, File menulogoFile,
             DeployConfiguration deployConfiguration) {
         super(subTreeRoot, parentSettings, param, netarchiveSuiteSource, slf4JConfig, securityPolicy, dbFile,
-                arcdbFile, resetDir, externalJarFolder);
+                arcdbFile, resetDir, externalJarFolder, logoFile, menulogoFile);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_LINUX;
@@ -155,6 +157,8 @@ public class LinuxMachine extends Machine {
             "echo unzipping ${netarchiveSuiteFileName} at:${name}",
             // ssh dev@kb-test-adm-001.kb.dk unzip -q -o /home/dev/null.zip -d /home/dev/TEST
             "ssh ${machineUserLogin} \"unzip -q -o ${installDirValue}/${netarchiveSuiteFileName} -d ${installDirValue}/${environmentName}\"",
+            // update Logos.
+            "${osUpdateLogos}",
             // create other directories.
             "${osInstallScriptCreateDir}",
             // echo preparing for copying of settings and scripts
@@ -228,6 +232,7 @@ public class LinuxMachine extends Machine {
         env.put("machineUserLogin", machineUserLogin());
         env.put("installDirValue", machineParameters.getInstallDirValue());
         env.put("environmentName", getEnvironmentName());
+        env.put("osUpdateLogos", osUpdateLogos());
         env.put("osInstallScriptCreateDir", osInstallScriptCreateDir());
         env.put("osInstallExternalJarFiles", osInstallExternalJarFiles());
         env.put("osInstallDatabase", osInstallDatabase());
@@ -1684,5 +1689,27 @@ public class LinuxMachine extends Machine {
     protected String getLibDirPath() {
         return getInstallDirPath() + Constants.LIB_DIR_LINUX;
     }
+
+	@Override
+	protected String osUpdateLogos() {
+		if (logoFile == null && menulogoFile == null) {
+			return "";
+		}
+		
+		StringBuilder res = new StringBuilder();
+		
+        res.append(ScriptConstants.ECHO_CHANGING_LOGOS);
+        res.append(Constants.NEWLINE);
+
+        if (logoFile != null) {
+        	res = updateLogofileInWarFiles(res, logoFile, Constants.DEFAULT_LOGO_FILENAME);        	
+        }
+        
+        if (menulogoFile != null) {
+        	res = updateLogofileInWarFiles(res, menulogoFile, Constants.DEFAULT_MENULOGO_FILENAME);        	
+        }
+        
+        return res.toString();
+	}
 
 }
