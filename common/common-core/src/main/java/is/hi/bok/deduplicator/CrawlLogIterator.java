@@ -31,6 +31,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * An implementation of a {@link is.hi.bok.deduplicator.CrawlDataIterator} capable of iterating over a Heritrix's style
  * <code>crawl.log</code>.
@@ -40,11 +43,16 @@ import java.util.NoSuchElementException;
  */
 public class CrawlLogIterator extends CrawlDataIterator {
 
+    private Log logger = LogFactory.getLog(getClass().getName());
+
     protected final String crawlDateFormatStr = "yyyyMMddHHmmss";
+    protected final String fallbackCrawlDateFormatStr = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     /**
      * The date format used in crawl.log files.
      */
     protected final SimpleDateFormat crawlDateFormat = new SimpleDateFormat(crawlDateFormatStr);
+    protected final SimpleDateFormat fallbackCrawlDateFormat = new SimpleDateFormat(fallbackCrawlDateFormatStr);
+
     /**
      * The date format specified by the {@link CrawlDataItem} for dates entered into it (and eventually into the index)
      */
@@ -148,10 +156,14 @@ public class CrawlLogIterator extends CrawlDataIterator {
                 // -> we keep the numbers until the seconds : 20170116161421
                 String timestampTrunc = lineParts[8].substring(0, crawlDateFormatStr.length());
                 timestamp = crawlDataItemFormat.format(crawlDateFormat.parse(timestampTrunc));
-            } catch (ParseException e) {
-                System.err.println("Error parsing date for: " + line);
-                e.printStackTrace();
-                return null;
+            } catch (Exception e) {
+                try {
+                    timestamp = crawlDataItemFormat.format(fallbackCrawlDateFormat.parse(lineParts[0]));
+                } catch (ParseException e1) {
+                    logger.debug("Error parsing date for crawl log entry: " + line);
+                    return null;
+                }
+
             }
 
             // Index 1: status return code (ignore)
