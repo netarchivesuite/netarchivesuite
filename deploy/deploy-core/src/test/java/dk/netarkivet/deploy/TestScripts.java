@@ -29,6 +29,10 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class TestScripts {
 
+    /**
+     * This test method is not a real test, is more a helper for debugging the DeployApplication. 
+     * All used resources from src/test/resources are dummy parameters to make it possible to debug 
+     */
     @Test
     public void test_template() {
         String[] args = {
