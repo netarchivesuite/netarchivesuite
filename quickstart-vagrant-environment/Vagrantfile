@@ -4,8 +4,22 @@
 $shellinit = <<SHELLINIT
 	# NOTICE: This script is run as user root
 
+
+	###precise64ip='http://'`/sbin/ifconfig eth1 | grep -Eo 'inet addr:([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})'|cut -s -d":" -f 2| tr -d '[:space:]'`
+	precise64ip=`/sbin/ifconfig eth1 | grep -Eo 'inet addr:([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})'|cut -s -d":" -f 2| tr -d '[:space:]'`
+
+	echo "precise64 has ip: $precise64ip"
+
 	# Fix so that precise64 (which NetArchive Suite uses) maps to right ip
-	sed -ri 's/127\.0\.1\.1/192.168.0.64/g' /etc/hosts
+	# by: first removing any precise64 definition, if it exists
+	sed -ri 's/^127\.0\.1\.1.+precise64.*$//' /etc/hosts
+	# then prepending the correct precise64 line
+	sed -ri '1s;^;'"$precise64ip"' precise64\\n;' /etc/hosts
+
+	echo 'Fixed /etc/hosts which now looks like:'
+	echo '----------'
+	cat /etc/hosts
+	echo '----------'
 
 	# Ensure .bashrc ends with a newline...
 	echo '' >>/home/vagrant/.bashrc
@@ -101,17 +115,22 @@ $testuserssh = <<TESTUSERSSH
 	# Enable ssh-access from user vagrant to user test
 	# Generate ssh-key with empty passphrase for 'vagrant' user
 	ssh-keygen -t rsa -N '' -f '/home/vagrant/.ssh/id_rsa'
+	echo "ssh-keygen exit status: $?"
 	chown -R vagrant:vagrant /home/vagrant/.ssh
 	mkdir /home/test/.ssh
 	cat /home/vagrant/.ssh/id_rsa.pub >>/home/test/.ssh/authorized_keys
 	chown -R test:test /home/test/.ssh
 	chmod 700 /home/test/.ssh
 
+	echo 'Running ssh as user vagrant...'
+
 	# Run command ssh as user vagrant, from vagrant user's home dir, and
 	# without asking for a 'yes' upon login, ssh running the dummy true cmd
 	# (this is to get rid of the yes/no question for later ssh'ings)
-	su - vagrant -c 'ssh -oStrictHostKeyChecking=no test@precise64 true'
-	su - vagrant -c 'ssh -oStrictHostKeyChecking=no test@localhost true'
+	su - vagrant -c 'ssh -oStrictHostKeyChecking=no test@precise64 true ; echo "ssh exit status: $?"'
+	echo "ssh exit status: $?"
+	su - vagrant -c 'ssh -oStrictHostKeyChecking=no test@localhost true ; echo "ssh exit status: $?"'
+	echo "ssh exit status: $?"
 
 
 	mkdir /root/.ssh
@@ -121,15 +140,19 @@ $testuserssh = <<TESTUSERSSH
 
 	cat /root/.ssh/id_rsa.pub >>/home/test/.ssh/authorized_keys
 
+	echo 'Running ssh as user root...'
+
 	# Run command ssh as user root, from root user's home dir, and
 	# without asking for a 'yes' upon login, ssh running the dummy true cmd
 	# (this is to get rid of the yes/no question for later ssh'ings)
 	ssh -v -oStrictHostKeyChecking=no test@precise64 true
+	echo "ssh exit status: $?"
 	ssh -v -oStrictHostKeyChecking=no test@localhost true
+	echo "ssh exit status: $?"
 TESTUSERSSH
 
 
-$netarchiveinstall = <<NETARCHIVEINSTALL
+$netarchiveinstallopenmq = <<NETARCHIVEINSTALLOPENMQ
 	cd /home/vagrant
 	mkdir netarchive
 	cd netarchive
@@ -144,21 +167,18 @@ $netarchiveinstall = <<NETARCHIVEINSTALL
 	./mq.sh install
 	./mq.sh start
 
-	cd /vagrant
 
-	# Netarchive: Download NetarchiveSuite, latest release
-	#wget -N -O NetarchiveSuite.zip https://sbforge.org/nexus/service/local/repositories/releases/content/org/netarchivesuite/distribution/5.2/distribution-5.2.zip
-	mvn org.apache.maven.plugins:maven-dependency-plugin:2.9:get \
-		-DrepoUrl=https://sbforge.org/nexus/content/repositories/snapshots/ \
-		-Dartifact=org.netarchivesuite:distribution:LATEST:zip \
-		-Dtransitive=false -Ddest=NetarchiveSuite.zip
+	#cd /vagrant
+
+	echo 'Running Vagrantfile-include...'
+NETARCHIVEINSTALLOPENMQ
+
+
+$netarchiveinstalltherest = <<NETARCHIVEINSTALLTHEREST
+	echo 'Vagrantfile-include done.'
 
 	# Netarchive: Download latest bundles harvester
-	#wget -N -O NetarchiveSuite-heritrix3-bundler.zip https://sbforge.org/nexus/service/local/repositories/releases/content/org/netarchivesuite/heritrix3-bundler/5.2/heritrix3-bundler-5.2.zip
-	mvn org.apache.maven.plugins:maven-dependency-plugin:2.9:get \
-		-DrepoUrl=https://sbforge.org/nexus/content/repositories/snapshots/ \
-		-Dartifact=org.netarchivesuite:heritrix3-bundler:LATEST:zip \
-		-Dtransitive=false -Ddest=NetarchiveSuite-heritrix3-bundler.zip
+	#mvn org.apache.maven.plugins:maven-dependency-plugin:2.9:get -DrepoUrl=https://sbforge.org/nexus/content/repositories/snapshots/ -Dartifact=org.netarchivesuite:heritrix3-bundler:LATEST:zip -Dtransitive=false -Ddest=NetarchiveSuite-heritrix3-bundler.zip
 
 	cd /home/vagrant/netarchive
 
@@ -170,8 +190,14 @@ $netarchiveinstall = <<NETARCHIVEINSTALL
 
 	chmod +x RunNetarchiveSuite.sh
 
-	cp /vagrant/NetarchiveSuite.zip ./
-	cp /vagrant/NetarchiveSuite-heritrix3-bundler.zip ./
+
+	#cp /vagrant/NetarchiveSuite.zip ./
+	#cp /vagrant/NetarchiveSuite-heritrix3-bundler.zip ./
+
+	# TODO what about when the below 5.4 version number changes??????
+	cp /home/vagrant/gitting/netarchivesuite/deploy/distribution/target/NetarchiveSuite-5.4-SNAPSHOT.zip ./NetarchiveSuite.zip
+	cp /home/vagrant/gitting/netarchivesuite/harvester/heritrix3/heritrix3-bundler/target/NetarchiveSuite-heritrix3-bundler-5.4-SNAPSHOT.zip ./NetarchiveSuite-heritrix3-bundler.zip
+
 
 	# Before deploying Netarchive...
 	mkdir -p /home/vagrant/tmp
@@ -181,8 +207,9 @@ $netarchiveinstall = <<NETARCHIVEINSTALL
 	unzip -j /home/vagrant/netarchive/NetarchiveSuite.zip scripts/sql/createArchiveDB.pgsql -d /home/vagrant/tmp/
 
 	# Copy in testdata
-	cp /vagrant/harvestdb.testdata.sql /home/vagrant/tmp/
-NETARCHIVEINSTALL
+	#cp /vagrant/harvestdb.testdata.sql /home/vagrant/tmp/
+	cp /home/vagrant/gitting/netarchivesuite/quickstart-vagrant-environment/harvestdb.testdata.sql /home/vagrant/tmp/
+NETARCHIVEINSTALLTHEREST
 
 
 $postgressetup = <<POSTGRESSETUP
@@ -313,9 +340,6 @@ Vagrant.configure("2") do |config|
 	# accessing "localhost:8080" will access port 80 on the guest machine.
 	# config.vm.network "forwarded_port", guest: 80, host: 8080
 	#
-	# In Firefox, we want to access the Net Archive Suite Main menu on
-	# http://192.168.0.64:8074/HarvestDefinition/
-	# ... how to make this work? TODO
 	#
 	#config.vm.network "forwarded_port", guest: 8074, host: 8074
 	#config.vm.network "forwarded_port", guest: 8070, host: 8070
@@ -375,7 +399,11 @@ Vagrant.configure("2") do |config|
 
 	config.vm.provision "shell", inline: $testuserssh, name: "testuserssh"
 
-	config.vm.provision "shell", inline: $netarchiveinstall, name: "netarchiveinstall"
+
+	config.vm.provision "shell", inline: $netarchiveinstallopenmq, name: "netarchiveinstallopenmq"
+	config.vm.provision "shell", path: "Vagrantfile-include"
+	config.vm.provision "shell", inline: $netarchiveinstalltherest, name: "netarchiveinstalltherest"
+
 
 	config.vm.provision "shell", inline: $postgressetup, name: "postgressetup"
 
