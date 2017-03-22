@@ -81,8 +81,8 @@ SELECT setval('configurations_id_seq', 17);
 SELECT setval('domains_id_seq', 17);
 
  COPY harvestchannel (id, name, issnapshot, isdefault, comments) FROM stdin;
-1	LOWPRIORITY	t	t	Channel for snapshot harvests
-2	HIGHPRIORITY	f	t	Channel for selective harvests
+1	SNAPSHOT	t	t	Channel for snapshot harvests
+2	FOCUSED	f	t	Channel for selective harvests
 \.
 SELECT setval('harvestchannel_id_seq', 17);
 
