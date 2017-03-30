@@ -5,16 +5,9 @@ $shellinit = <<SHELLINIT
 	# NOTICE: This script is run as user root
 
 
-	###precise64ip='http://'`/sbin/ifconfig eth1 | grep -Eo 'inet addr:([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})'|cut -s -d":" -f 2| tr -d '[:space:]'`
-	precise64ip=`/sbin/ifconfig eth1 | grep -Eo 'inet addr:([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})'|cut -s -d":" -f 2| tr -d '[:space:]'`
+	vagrantip=`/sbin/ifconfig eth1 | grep -Eo 'inet addr:([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})'|cut -s -d":" -f 2| tr -d '[:space:]'`
 
-	echo "precise64 has ip: $precise64ip"
-
-	# Fix so that precise64 (which NetArchive Suite uses) maps to right ip
-	# by: first removing any precise64 definition, if it exists
-	sed -ri 's/^127\.0\.1\.1.+precise64.*$//' /etc/hosts
-	# then prepending the correct precise64 line
-	sed -ri '1s;^;'"$precise64ip"' precise64\\n;' /etc/hosts
+	echo "vagrant-netarchivesuite has ip: $vagrantip"
 
 	echo 'Fixed /etc/hosts which now looks like:'
 	echo '----------'
@@ -37,7 +30,7 @@ $shellinit = <<SHELLINIT
 	echo "alias gr='grep -E --color=auto'" >>/home/vagrant/.bashrc
 	echo "alias untgz='tar -xzf'" >>/home/vagrant/.bashrc
 	echo "alias m='man'" >>/home/vagrant/.bashrc
-	echo "alias sshte='ssh test@precise64'" >>/home/vagrant/.bashrc
+	echo "alias sshte='ssh test@vagrant-netarchivesuite'" >>/home/vagrant/.bashrc
 	echo '' >>/home/vagrant/.bashrc
 
 	# Quick update of apt-get repository
@@ -127,7 +120,7 @@ $testuserssh = <<TESTUSERSSH
 	# Run command ssh as user vagrant, from vagrant user's home dir, and
 	# without asking for a 'yes' upon login, ssh running the dummy true cmd
 	# (this is to get rid of the yes/no question for later ssh'ings)
-	su - vagrant -c 'ssh -oStrictHostKeyChecking=no test@precise64 true ; echo "ssh exit status: $?"'
+	su - vagrant -c 'ssh -oStrictHostKeyChecking=no test@vagrant-netarchivesuite true ; echo "ssh exit status: $?"'
 	echo "ssh exit status: $?"
 	su - vagrant -c 'ssh -oStrictHostKeyChecking=no test@localhost true ; echo "ssh exit status: $?"'
 	echo "ssh exit status: $?"
@@ -145,7 +138,7 @@ $testuserssh = <<TESTUSERSSH
 	# Run command ssh as user root, from root user's home dir, and
 	# without asking for a 'yes' upon login, ssh running the dummy true cmd
 	# (this is to get rid of the yes/no question for later ssh'ings)
-	ssh -v -oStrictHostKeyChecking=no test@precise64 true
+	ssh -v -oStrictHostKeyChecking=no test@vagrant-netarchivesuite true
 	echo "ssh exit status: $?"
 	ssh -v -oStrictHostKeyChecking=no test@localhost true
 	echo "ssh exit status: $?"
@@ -167,18 +160,12 @@ $netarchiveinstallopenmq = <<NETARCHIVEINSTALLOPENMQ
 	./mq.sh install
 	./mq.sh start
 
-
-	#cd /vagrant
-
 	echo 'Running Vagrantfile-include...'
 NETARCHIVEINSTALLOPENMQ
 
 
 $netarchiveinstalltherest = <<NETARCHIVEINSTALLTHEREST
 	echo 'Vagrantfile-include done.'
-
-	# Netarchive: Download latest bundles harvester
-	#mvn org.apache.maven.plugins:maven-dependency-plugin:2.9:get -DrepoUrl=https://sbforge.org/nexus/content/repositories/snapshots/ -Dartifact=org.netarchivesuite:heritrix3-bundler:LATEST:zip -Dtransitive=false -Ddest=NetarchiveSuite-heritrix3-bundler.zip
 
 	cd /home/vagrant/netarchive
 
@@ -190,13 +177,9 @@ $netarchiveinstalltherest = <<NETARCHIVEINSTALLTHEREST
 
 	chmod +x RunNetarchiveSuite.sh
 
-
-	#cp /vagrant/NetarchiveSuite.zip ./
-	#cp /vagrant/NetarchiveSuite-heritrix3-bundler.zip ./
-
-	# TODO what about when the below 5.4 version number changes??????
-	cp /home/vagrant/gitting/netarchivesuite/deploy/distribution/target/NetarchiveSuite-5.4-SNAPSHOT.zip ./NetarchiveSuite.zip
-	cp /home/vagrant/gitting/netarchivesuite/harvester/heritrix3/heritrix3-bundler/target/NetarchiveSuite-heritrix3-bundler-5.4-SNAPSHOT.zip ./NetarchiveSuite-heritrix3-bundler.zip
+	# The wildcard below is to take whatever version is there
+	cp /home/vagrant/gitting/netarchivesuite/deploy/distribution/target/NetarchiveSuite-*.zip ./NetarchiveSuite.zip
+	cp /home/vagrant/gitting/netarchivesuite/harvester/heritrix3/heritrix3-bundler/target/NetarchiveSuite-heritrix3-bundler-*.zip ./NetarchiveSuite-heritrix3-bundler.zip
 
 
 	# Before deploying Netarchive...
@@ -207,7 +190,6 @@ $netarchiveinstalltherest = <<NETARCHIVEINSTALLTHEREST
 	unzip -j /home/vagrant/netarchive/NetarchiveSuite.zip scripts/sql/createArchiveDB.pgsql -d /home/vagrant/tmp/
 
 	# Copy in testdata
-	#cp /vagrant/harvestdb.testdata.sql /home/vagrant/tmp/
 	cp /home/vagrant/gitting/netarchivesuite/quickstart-vagrant-environment/harvestdb.testdata.sql /home/vagrant/tmp/
 NETARCHIVEINSTALLTHEREST
 
@@ -216,9 +198,6 @@ $postgressetup = <<POSTGRESSETUP
 	PG_DATA=/var/lib/postgresql/8.4/main
 	sudo mkdir $PG_DATA/tsindex
 	sudo chown postgres:postgres $PG_DATA/tsindex
-
-	# Start psql
-	#psql -U postgres -W
 
 	echo "Vagrantfile: postgressetup - create roles'n'databases..."
 
@@ -289,29 +268,37 @@ host    harvestdb   devel       0.0.0.0/0             md5" \\
 		# Create, init, populate admin database
 		psql -h localhost -U devel -d admindb \\
 			</home/vagrant/tmp/createArchiveDB.pgsql
-		# TODO...
 
 		echo "Vagrantfile: postgressetup - done"
 END
 POSTGRESSETUP
+
 
 $netarchivedeploy = <<NETARCHIVEDEPLOY
 	# Netarchive: Deploy
 	cd /home/vagrant/netarchive
 	./RunNetarchiveSuite.sh NetarchiveSuite.zip deploy_standalone_vagrant_example.xml deploy NetarchiveSuite-heritrix3-bundler.zip
      /sbin/ifconfig
+
 	# For convenience of testing in Firefox, extract and report the IP-addy
+	echo '----------------------------------------------------------------'
 	echo 'You can TEST the NetarchiveSuite installation in a browser with:'
-	echo http://`/sbin/ifconfig eth1 | grep -Eo 'inet addr:([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})'|cut -s -d":" -f 2| tr -d '[:space:]'`:8074/HarvestDefinition/
+	echo http://vagrant-netarchivesuite:8074/HarvestDefinition/
 	echo "This may only work once you've done the following:"
-	echo 'To make the Viewerproxy accessible through Firefox, do this:'
-	echo 'Go to Edit > Preferences > Advanced > Network > Settings...'
-	echo 'Choose Manual proxy configuration.'
-	echo 'Under HTTP-proxy, add the above IP address and Port number.'
-	echo 'Under "No proxy for", add the above IP, and press OK.'
+	echo '   On this machine, add the following line:'
+	echo '      192.168.64.128 vagrant-netarchivesuite'
+	echo '   To the file /etc/hosts'
 
 NETARCHIVEDEPLOY
 
+
+$ip = "192.168.64.128"
+$hostname = "vagrant-netarchivesuite"
+
+$networksetup = <<NETWORKSETUP
+	echo '192.168.64.128 vagrant-netarchivesuite' > /etc/hosts
+	echo '127.0.0.1 localhost' >> /etc/hosts
+NETWORKSETUP
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -328,22 +315,21 @@ Vagrant.configure("2") do |config|
 	#config.vm.box_version = "1.1.0"
 
 	# These network things are nessesary to make ubuntu work fast
-	config.vm.network :public_network, :nictype => 'virtio', :type => "dhcp", :use_dhcp_assigned_default_route => true
-
-	# Disable automatic box update checking. If you disable this, then
-	# boxes will only be checked for updates when the user runs
-	# `vagrant box outdated`. This is not recommended.
-	# config.vm.box_check_update = false
+	config.vm.network :private_network, :ip => $ip
+    config.vm.hostname = $hostname
 
 	# Create a forwarded port mapping which allows access to a specific port
 	# within the machine from a port on the host machine. In the example below,
 	# accessing "localhost:8080" will access port 80 on the guest machine.
 	# config.vm.network "forwarded_port", guest: 80, host: 8080
 	#
-	#
-	#config.vm.network "forwarded_port", guest: 8074, host: 8074
-	#config.vm.network "forwarded_port", guest: 8070, host: 8070
-	#config.vm.network "forwarded_port", guest_ip: "127.0.1.1", guest: 8192, host: 8192
+	config.vm.network "forwarded_port", guest: 8074, host: 8074
+
+	config.vm.network "forwarded_port", guest: 8192, host: 8192
+
+
+	config.vm.provision "shell", inline: $networksetup, name: "networksetup"
+
 
 	# Create a private network, which allows host-only access to the machine
 	# using a specific IP.
@@ -354,6 +340,11 @@ Vagrant.configure("2") do |config|
 	# Bridged networks make the machine appear as another physical device on
 	# your network.
 	#config.vm.network "public_network"
+
+	# Disable automatic box update checking. If you disable this, then
+	# boxes will only be checked for updates when the user runs
+	# `vagrant box outdated`. This is not recommended.
+	# config.vm.box_check_update = false
 
 	# Share an additional folder to the guest VM. The first argument is
 	# the path on the host to the actual folder. The second argument is
@@ -370,9 +361,9 @@ Vagrant.configure("2") do |config|
 	#   vb.gui = true
 	#
 	#   # Customize the amount of memory on the VM:
-		# As of November 2016, a memory setting of 1024 is needed for NAS,
-		# if less than 1024 is used, NetArchive Suite will not start
-		vb.memory = "1024"
+		# As of March 2017, a memory setting of atleast 1024 is needed for
+		# NAS, if less than 1024 is used, NetArchive Suite will not even start
+		vb.memory = "4096"
 	 end
 	#
 	# View the documentation for the provider you are using for more
@@ -392,7 +383,6 @@ Vagrant.configure("2") do |config|
 	# use.
 
 
-
 	config.vm.provision "shell", inline: $shellinit, name: "shellinit"
 
 	config.vm.provision "shell", inline: $javainstall, name: "javainstall"
@@ -408,6 +398,5 @@ Vagrant.configure("2") do |config|
 	config.vm.provision "shell", inline: $postgressetup, name: "postgressetup"
 
 	config.vm.provision "shell", inline: $netarchivedeploy, name: "netarchivedeploy"
-
 end
 
