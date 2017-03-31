@@ -22,6 +22,7 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -74,6 +75,7 @@ public class ArchiveFileTester extends IndexerTestCase {
         (new ArchiveFileDAO()).create(file);
         file.index();
         File outputFile = new File(destDir, file.getOriginalIndexFileName());
-        assertTrue("Should have a resonable numer of lines in output file", FileUtils.countLines(outputFile) == 15);
+
+        assertEquals("Should find all duplicates in original.", 15, FileUtils.countLines(outputFile));
     }
 }

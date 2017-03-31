@@ -29,7 +29,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.jsp.JspWriter;
 
@@ -78,9 +82,10 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     public final static String METADATA_ITEMS_PLACEHOLDER = "%{METADATA_ITEMS_PLACEHOLDER}";
     public static final String MAX_TIME_SECONDS_PLACEHOLDER = "%{MAX_TIME_SECONDS_PLACEHOLDER}";
     public static final String CRAWLERTRAPS_PLACEHOLDER = "%{CRAWLERTRAPS_PLACEHOLDER}";
-    
-    public static final String DEDUPLICATION_BEAN_REFERENCE_PATTERN = "<ref bean=\"DeDuplicator\"/>";
-    public static final String DEDUPLICATION_BEAN_PATTERN =  "<bean id=\"DeDuplicator\"";
+
+    public static final Pattern DEDUPLICATION_BEAN_REFERENCE_PATTERN = Pattern.compile(".*ref.*bean.*DeDuplicator.*", Pattern.DOTALL);
+
+    public static final Pattern DEDUPLICATION_BEAN_PATTERN =  Pattern.compile(".*bean.*id.*DeDuplicator.*", Pattern.DOTALL);
     public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER 
     	= "%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}"; 
 
@@ -93,12 +98,34 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     		"%{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER}";
     
     public static final String QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER 
-    	= "%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}"; 
+    	= "%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}";
+
+	public static final String DEDUPLICATION_ENABLED_PLACEHOLDER = "%{DEDUPLICATION_ENABLED_PLACEHOLDER}";
     
     
     // PLACEHOLDERS for archiver beans (Maybe not necessary)
     final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";	
 	final String ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER = "%{ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER}";
+	
+	//match theses properties in crawler-beans.cxml to add them into harvestInfo.xml
+	//for preservation purpose
+	public enum MetadataInfo {
+		TEMPLATE_DESCRIPTION("metadata\\.description=.+[\\r\\n]"),
+		TEMPLATE_UPDATE_DATE("metadata\\.date=.+[\\r\\n]"),
+		OPERATOR("metadata\\.operator=.+[\\r\\n]");
+		
+		private final String regex;
+		
+		private MetadataInfo(String regex) {
+			this.regex = regex;
+		}
+		
+		public String toString() {
+			return this.regex;
+		}
+	};
+	
+	public Map<MetadataInfo, String> metadataInfoMap;
 	
     /**
      * Constructor for HeritrixTemplate class.
@@ -111,6 +138,17 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
         ArgumentNotValid.checkNotNull(template, "String template");
         this.template_id = template_id;
         this.template = template;
+        
+        metadataInfoMap = new HashMap<MetadataInfo, String> ();
+        for(MetadataInfo metadataInfo : MetadataInfo.values()) {
+            Pattern p = Pattern.compile(metadataInfo.regex);
+            Matcher m = p.matcher(this.template);
+            if(m.find()) {
+    	        String operator = this.template.substring(m.start(), m.end()).trim();
+    	        //return the value of the property after the =
+    	        metadataInfoMap.put(metadataInfo, operator.split("=")[1]);
+            }
+        }
     }
     
 	/**
@@ -205,8 +243,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	//   - a DeDuplicator reference bean is present in the template
 	public boolean IsDeduplicationEnabled() {
 		return (template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER) 
-				&& template.contains(DEDUPLICATION_BEAN_PATTERN)
-				&& template.contains(DEDUPLICATION_BEAN_REFERENCE_PATTERN)); 
+				&& DEDUPLICATION_BEAN_PATTERN.matcher(template).matches()
+				&& DEDUPLICATION_BEAN_REFERENCE_PATTERN.matcher(template).matches());
 	}	
 
 	/**
@@ -448,6 +486,14 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     		this.template = templateNew;
     	}
  	}
+	
+	public String getMetadataInfo(MetadataInfo info) {
+		String infoStr = null;
+		if(metadataInfoMap.containsKey(info)) {
+			infoStr = metadataInfoMap.get(info);
+		}
+		return infoStr;
+	}
 
 	@Override
 	public void writeTemplate(OutputStream os) throws IOFailure {
@@ -521,10 +567,16 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	@Override
 	public void removeDeduplicatorIfPresent() {
 		//NOP
-		log.warn("Removing the Deduplicator is not possible with the H3 templates and should not be required with the H3 template.");
+		log.debug("In H3 we don't remove the deduplicator, but just disable it.");
 	}
-	
-//<property name="metadataItems">
+
+	@Override public void enableOrDisableDeduplication(boolean enabled) {
+		final String replacement = Boolean.toString(enabled).toLowerCase();
+		log.debug("Replacing deduplication enabled placeholder {} with {}.", DEDUPLICATION_ENABLED_PLACEHOLDER, replacement);
+		this.template = template.replace(DEDUPLICATION_ENABLED_PLACEHOLDER, replacement);
+	}
+
+	//<property name="metadataItems">
 //  <map>
 //        <entry key="harvestInfo.version" value="1.03"/> <!-- TODO maybe not add this one -->
 //        <entry key="harvestInfo.jobId" value="1"/>
@@ -576,6 +628,22 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		sb.append(HARVESTINFO_MAXOBJECTSPERDOMAIN + valuePart + ajob.getMaxObjectsPerDomain() + endMetadataEntry);
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_ORDERXMLNAME + valuePart + ajob.getOrderXMLName() + endMetadataEntry);
+
+		/* orderxml update date - only inserted if not null and not-empty. */
+		/* take info from crawler-beans.cxml */
+		String tmp = getMetadataInfo(MetadataInfo.TEMPLATE_UPDATE_DATE);
+		if (tmp != null && !tmp.isEmpty()){
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_ORDERXMLUPDATEDATE + valuePart + tmp  + endMetadataEntry);
+		}
+		/* orderxml description - only inserted if not null and not-empty. */
+		/* take info from crawler-beans.cxml */
+		tmp = getMetadataInfo(MetadataInfo.TEMPLATE_DESCRIPTION);
+		if (tmp != null && !tmp.isEmpty()){
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_ORDERXMLDESCRIPTION + valuePart + tmp  + endMetadataEntry);
+		}
+
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + valuePart + 
 				origHarvestdefinitionName + endMetadataEntry);
@@ -594,6 +662,14 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		if (performer != null && !performer.isEmpty()){
 			sb.append(startMetadataEntry);
 			sb.append(HARVESTINFO_PERFORMER + valuePart + performer  + endMetadataEntry);
+		}
+		
+		/* optional OPERATOR - only inserted if not null and not-empty. */
+		/* take info from crawler-beans.cxml */
+		String operator = getMetadataInfo(MetadataInfo.OPERATOR);
+		if (operator != null && !operator.isEmpty()){
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_OPERATOR + valuePart + operator  + endMetadataEntry);
 		}
 		
 		/* optional HARVESTINFO_AUDIENCE - only inserted if not null and not-empty. */

@@ -137,8 +137,12 @@ public abstract class HeritrixLauncherAbstract {
     		template.setArchiveFilePrefix(files.getArchiveFilePrefix());
 
     		if (template.IsDeduplicationEnabled()) {
-    			template.setDeduplicationIndexLocation(files.getIndexDir().getAbsolutePath());
-    		}
+                final String deduplicationIndexLocation = files.getIndexDir().getAbsolutePath();
+                log.debug("Template is dedup-enabled so setting index location to {}.", deduplicationIndexLocation);
+                template.setDeduplicationIndexLocation(deduplicationIndexLocation);
+    		} else {
+                log.debug("Template is not dedup-enabled so not setting index location");
+            }
     		// Remove superfluous placeholders in the template (maybe unnecessary)
     		template.removePlaceholders();
     		files.writeOrderXml(template);

@@ -54,9 +54,9 @@ public class WindowsMachine extends Machine {
      */
     public WindowsMachine(Element root, XmlStructure parentSettings, Parameters param, String netarchiveSuiteSource,
             File slf4JConfig, File securityPolicy, File dbFile, File arcdbFile, boolean resetDir,
-            File externalJarFolder) {
+            File externalJarFolder, File logoFile, File menulogoFile) {
         super(root, parentSettings, param, netarchiveSuiteSource, slf4JConfig, securityPolicy, dbFile,
-                arcdbFile, resetDir, externalJarFolder);
+                arcdbFile, resetDir, externalJarFolder, logoFile, menulogoFile);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_WINDOWS;
@@ -1310,4 +1310,9 @@ public class WindowsMachine extends Machine {
                 + "machine. Please fix your deploy configuration.");
     }
 
+	@Override
+	protected String osUpdateLogos() {
+		// TODO not yer implemented
+		return "";
+	}
 }

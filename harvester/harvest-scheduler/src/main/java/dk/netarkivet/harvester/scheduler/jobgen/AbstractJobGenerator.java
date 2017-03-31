@@ -206,20 +206,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
      */
     protected void editJobOrderXml(Job job) {
         HeritrixTemplate doc = job.getOrderXMLdoc();
-        if (DEDUPLICATION_ENABLED) {
-            // Check that the Deduplicator element is present in the
-            // OrderXMl and enabled. If missing or disabled log a warning
-        	
-            if (!doc.IsDeduplicationEnabled()) {
-                log.warn("Unable to perform deduplication for this job as the required DeDuplicator element is "
-                        + "disabled or missing from template");
-            }
-        } else {
-            // Remove deduplicator Element from OrderXML if present
-        	doc.removeDeduplicatorIfPresent();
-        	job.setOrderXMLDoc(doc);
-	        log.info("Removed DeDuplicator element because Deduplication is disabled");   
-        }
+        doc.enableOrDisableDeduplication(DEDUPLICATION_ENABLED);
     }
 
     /**

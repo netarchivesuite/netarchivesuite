@@ -282,6 +282,8 @@ public class Job implements Serializable, JobInfo {
 
     	setAttributes(cfg.getAttributesAndTypes());
 
+        orderXMLdoc.enableOrDisableDeduplication(Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED));
+
         status = JobStatus.NEW;
     }
 

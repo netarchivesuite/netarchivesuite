@@ -86,6 +86,7 @@ National Library.
             <!--  1 minute -->
             <refreshInterval>60</refreshInterval>
             <displayedHistorySize>30</displayedHistorySize>
+            <displayedFrontierQueuesSize>100</displayedFrontierQueuesSize> <!-- optional, default = 100 -->
             <historySampleRate>300</historySampleRate><!--  in seconds, 5 minutes -->
             <historyChartGenInterval>300</historyChartGenInterval><!--  in seconds, 5 minutes -->
         </monitor>
@@ -206,6 +207,9 @@ National Library.
                     <versionnumber>1</versionnumber>
                 </filename>
             </metadata>
+            <monitor>
+                <tempPath></tempPath>
+            </monitor>
         </harvesting>
         <indexserver>
             <listeningcheckinterval>30000</listeningcheckinterval>

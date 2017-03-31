@@ -293,6 +293,12 @@ public class HarvesterSettings {
      * Maximum number of most recent history records displayed on the running job details page.
      */
     public static String HARVEST_MONITOR_DISPLAYED_HISTORY_SIZE = "settings.harvester.monitor.displayedHistorySize";
+    
+    /**
+     * <b>settings.harvester.monitor.displayedFrontierQueuesSize</b>:<br>
+     * Maximum number of frontier queues displayed on the running job details page.
+     */
+    public static String HARVEST_MONITOR_DISPLAYED_FRONTIER_QUEUE_SIZE = "settings.harvester.monitor.displayedFrontierQueuesSize";
 
     /**
      * <b>settings.harvester.harvesting.heritrix.crawlLoopWaitTime</b>:<br>
@@ -605,7 +611,7 @@ public class HarvesterSettings {
      * 'startNewFilesOnCheckpoint' setting in the Heritrix WARCWriterProcessor. Only available with H3. The default is true.
      */
     public static String HERITRIX_WARC_START_NEW_FILES_ON_CHECKPOINT 
-    	= "settings.harvester.harvesting.heritrix.warc.startNewFilesOnCheckpoint";
+        = "settings.harvester.harvesting.heritrix.warc.startNewFilesOnCheckpoint";
     
     /**
      * Currently UNUSED.
@@ -805,5 +811,7 @@ public class HarvesterSettings {
      * Heritrix3 rest api.
      */
     public static String HERITRIX3_CERTIFICATE_PASSWORD = "settings.harvester.harvesting.heritrix3.certificatePassword";
+
+    public static String HERITRIX3_MONITOR_TEMP_PATH = "settings.harvester.harvesting.monitor.tempPath";
 
 }

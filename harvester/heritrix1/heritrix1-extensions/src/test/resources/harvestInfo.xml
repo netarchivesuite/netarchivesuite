@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <harvestInfo>
-  <version>0.5</version>
+  <version>0.6</version>
   <jobId>1</jobId>
   <channel>FOCUSED></channel>
   <snapshot>false</snapshot>
@@ -8,7 +8,10 @@
   <origHarvestDefinitionID>2</origHarvestDefinitionID>
   <maxBytesPerDomain>500000000</maxBytesPerDomain>
   <maxObjectsPerDomain>2000</maxObjectsPerDomain>
-  <orderXMLName>default_orderxml</orderXMLName>
+  <orderXMLName></orderXMLName>
+  <templateName>crawler-beans.cxml</templateName>
+  <templateLastUpdateDate>20161206174000</templateLastUpdateDate>
+  <templateDescription>Default crawler-beans.cxml for FOCUSED harvests</templateDescription> 
   <origHarvestDefinitionName>netarkivet</origHarvestDefinitionName>
   <scheduleName>Once_a_week</scheduleName>
   <harvestFilenamePrefix>1-2</harvestFilenamePrefix>

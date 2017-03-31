@@ -147,8 +147,12 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
         PageHelper.getWebDriver().findElement(By.name("save")).click();
         SelectiveHarvestPageHelper.activateHarvest(harvestName);
         HarvestUtils.waitForJobGeneration(harvestName);
+        try {
+            Thread.sleep(30000);
+        } catch (InterruptedException e) {
+        }
         List<WebElement> links = PageHelper.getWebDriver().findElements(By.partialLinkText(harvestName));
-        assertEquals(links.size(), 8, "Expected to generate one job per distinct configuration.");
+        assertEquals(links.size(), 8, "Expected to generate one job per distinct configuration for " + harvestName + ".");
     }
 
     /**

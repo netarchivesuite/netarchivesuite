@@ -812,7 +812,12 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 	    }
 	}
 
-	@Override
+    @Override public void enableOrDisableDeduplication(boolean enabled) {
+        //NOP
+        log.debug("In H1 templates we don't enable/disable deduplication.");
+    }
+
+    @Override
 	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
 			String scheduleName, String performer) {
 		

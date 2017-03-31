@@ -241,10 +241,10 @@ This page displays a list of running jobs.
 
    int rowcount = 0;
 
-   //recup list
+   //get list
    List<StartedJobInfo> infoList = infos.get(harvestName);
 
-   //trie de la List
+   //sort List
    HarvestStatusRunningTablesSort.ColumnId cidSort=
        tbs.getSortedColumnIdentByHarvestName(harvestName);
 
@@ -295,7 +295,7 @@ This page displays a list of running jobs.
 
 %>
    <tr class="<%=HTMLUtils.getRowClass(rowcount++)%>">
-        <td><a href="<%=jobDetailsLink%>"><%=jobId%></a></td>
+        <td><a href="history/job/<%=jobId%>/"><%=jobId%></a></td>
         <td class="crawlerHost">
             &nbsp;
             <%
@@ -328,15 +328,13 @@ This page displays a list of running jobs.
             <img src="<%=bullet%>" alt="<%=I18N.getString(request.getLocale(), altStatus)%>"/>
             &nbsp;
             <a href="<%=info.getHostUrl()%>" target="_blank"><%=info.getHostName()%></a>
-            &nbsp;
-            <a href="history/job/<%=jobId%>/"><img src="Monkey-Wrench-icon-16.png" /></a>
         </td>
         <td align="right"><%=StringUtils.formatPercentage(info.getProgress())%></td>
         <td align="right"><%=info.getElapsedTime()%></td>
         <td align="right"><%=info.getQueuedFilesCount()%></td>
         <td align="right"><%=info.getTotalQueuesCount()%></td>
         <td align="right"><%=info.getActiveQueuesCount()%></td>
-        <td align="right"><%=info.getRetiredQueuesCount()%></td>
+        <td align="right"><%=info.getInactiveQueuesCount()%></td>
         <td align="right"><%=info.getExhaustedQueuesCount()%></td>
         <td align="right">
             <%= StringUtils.formatNumber(info.getCurrentProcessedDocsPerSec())

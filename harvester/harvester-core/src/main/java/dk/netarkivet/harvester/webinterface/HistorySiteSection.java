@@ -35,13 +35,22 @@ public class HistorySiteSection extends SiteSection {
      * Create a new history SiteSection object.
      */
     public HistorySiteSection() {
-        super("sitesection;history", "Harveststatus", 3, new String[][] { {"alljobs", "pagetitle;all.jobs"},
-                {"deprecatedperdomain", "pagetitle;all.jobs.per.domain"}, {"running", "pagetitle;all.jobs.running"},
-                {"running-jobdetails", "pagetitle;running.job.details"},
-                {"perhd", "pagetitle;all.jobs.per.harvestdefinition"},
-                {"perharvestrun", "pagetitle;all.jobs.per.harvestrun"}, {"jobdetails", "pagetitle;details.for.job"},
-                {"perdomain", "pagetitle;all.jobs.per.domain"}, {"seeds", "pagetitle;seeds.for.harvestdefinition"}},
-                "History", dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+        super("sitesection;history",
+        		"Harveststatus",
+        		2,
+        		new String[][] {
+        			{"alljobs", "pagetitle;all.jobs"},
+                    //{"deprecatedperdomain", "pagetitle;all.jobs.per.domain"},
+                    {"running", "pagetitle;all.jobs.running"},
+                    {"running-jobdetails", "pagetitle;running.job.details"},
+                    {"perhd", "pagetitle;all.jobs.per.harvestdefinition"},
+                    {"perharvestrun", "pagetitle;all.jobs.per.harvestrun"},
+                    {"jobdetails", "pagetitle;details.for.job"},
+                    {"perdomain", "pagetitle;all.jobs.per.domain"},
+                    {"seeds", "pagetitle;seeds.for.harvestdefinition"}
+                },
+                "History", dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE
+        );
     }
 
     /**

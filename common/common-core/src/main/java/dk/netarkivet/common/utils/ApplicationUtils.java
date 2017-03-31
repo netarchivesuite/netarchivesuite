@@ -98,7 +98,7 @@ public abstract class ApplicationUtils {
      */
     private static void checkArgs(String[] args) {
         if (showVersion(args)) {
-            logAndPrint("NetarchiveSuite " + dk.netarkivet.common.Constants.getVersionString());
+            logAndPrint("NetarchiveSuite " + dk.netarkivet.common.Constants.getVersionString(false));
             System.exit(0);
         }
         if (args.length > 0) {
@@ -134,7 +134,7 @@ public abstract class ApplicationUtils {
     public static void startApp(Class c, String[] args) {
         String appName = c.getName();
         Settings.set(CommonSettings.APPLICATION_NAME, appName);
-        logAndPrint("Starting " + appName + "\n" + Constants.getVersionString());
+        logAndPrint("Starting " + appName + "\n" + Constants.getVersionString(false));
         logAndPrint("Java VM: " + System.getProperty("java.version"));
         logAndPrint("java.home: " + System.getProperty("java.home"));
         logAndPrint("Working dir: " + System.getProperty("user.dir"));
@@ -193,7 +193,7 @@ public abstract class ApplicationUtils {
 
         String appName = component.getClass().getName();
         Settings.set(CommonSettings.APPLICATION_NAME, appName);
-        logAndPrint("Starting " + appName + "\n" + Constants.getVersionString());
+        logAndPrint("Starting " + appName + "\n" + Constants.getVersionString(false));
         log.info("Using settings files '{}'", StringUtils.conjoin(File.pathSeparator, Settings.getSettingsFiles()));
         dirMustExist(FileUtils.getTempDir());
         // Start the remote management connector

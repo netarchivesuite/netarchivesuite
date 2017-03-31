@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>integration-test</artifactId>
-    <version>5.2-SNAPSHOT</version>
+    <version>5.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>system-test</artifactId>
@@ -14,42 +14,26 @@
 
   <dependencies>
     <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-    </dependency>
-
-    <!-- Hook up the other loggers to use SLF4J -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jul-to-slf4j</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>log4j-over-slf4j</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jaccept</groupId>
-      <artifactId>jaccept-gui</artifactId>
-      <version>0.4</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.8.21</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -59,32 +43,33 @@
       <scope>test</scope>
     </dependency>
 
-
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-java</artifactId>
-      <version>2.53.0</version>
+      <artifactId>selenium-api</artifactId>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-api</artifactId>
-      <version>2.53.0</version>
+      <artifactId>selenium-firefox-driver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-support</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.jaccept</groupId>
       <artifactId>jaccept-core</artifactId>
-      <version>0.4</version>
+      <scope>test</scope>
     </dependency>
 
-      <dependency>
-      	<groupId>org.hamcrest</groupId>
-      	<artifactId>hamcrest-all</artifactId>
-      	<version>1.3</version>
-      </dependency>
-
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 

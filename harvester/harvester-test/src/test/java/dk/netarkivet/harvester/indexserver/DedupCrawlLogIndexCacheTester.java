@@ -83,19 +83,19 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
 
         // "job" #4
         origins.put("http://www.kb.dk/bevarbogen/images/menu_03.gif",
-                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,92248220,20050506114818114");
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,92248220,20050506114818000");
         origins.put("http://www.kb.dk/bevarbogen/images/menu_06.gif",
-                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95056820,20050506114822152");
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95056820,20050506114822000");
         origins.put("http://www.kb.dk/bevarbogen/images/menu_07.gif",
-                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95468220,20050506114816092");
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95468220,20050506114816000");
         origins.put("http://www.kb.dk/bevarbogen/images/menutop.gif",
-                "54-8-20050620183552-00016-kb-prod-har-002.kb.dk.arc,42,20050506114820134");
+                "54-8-20050620183552-00016-kb-prod-har-002.kb.dk.arc,42,20050506114820000");
         origins.put("http://www.kb.dk/bevarbogen/script.js", "check-arc,42");
 
         // "job" #1
-        origins.put("http://www.kb.dk/clear.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,55983420,20050506114732511");
-        origins.put("http://www.kb.dk/dither.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,53985420,20050506114737078");
-        origins.put("http://www.kb.dk/dither_blaa.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,58593420,20050506114734522");
+        origins.put("http://www.kb.dk/clear.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,55983420,20050506114732000");
+        origins.put("http://www.kb.dk/dither.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,53985420,20050506114736000");
+        origins.put("http://www.kb.dk/dither_blaa.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,58593420,20050506114734000");
 
         Map<Long, File> files = new HashMap<Long, File>();
         files.put(1L, TestInfo.CRAWL_LOG_1);

@@ -116,6 +116,14 @@ import dk.netarkivet.common.utils.AllDocsCollector;
 @SuppressWarnings({"unchecked"})
 public class DeDuplicator extends Processor implements InitializingBean {
 
+    @Override public boolean getEnabled() {
+        return super.getEnabled();
+    }
+
+    @Override public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+    }
+
     private static Logger logger =
         Logger.getLogger(DeDuplicator.class.getName());
 
@@ -351,6 +359,10 @@ public class DeDuplicator extends Processor implements InitializingBean {
 
 
     public void afterPropertiesSet() throws Exception {
+        if (!getEnabled()) {
+            logger.info(this.getClass().getName() + " disabled.");
+            return;
+        }
         // Index location
         String indexLocation = getIndexLocation();
         try {
@@ -393,6 +405,10 @@ public class DeDuplicator extends Processor implements InitializingBean {
 
 	@Override
 	protected boolean shouldProcess(CrawlURI curi) {
+        if (!getEnabled()) {
+            logger.finest("Not handling " + curi.toString() + ", deduplication disabled.");
+            return false;
+        }
         if (curi.isSuccess() == false) {
             // Early return. No point in doing comparison on failed downloads.
             logger.finest("Not handling " + curi.toString()
@@ -472,6 +488,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
 
 	@Override
 	protected ProcessResult innerProcessResult(CrawlURI curi) throws InterruptedException {
+
         ProcessResult processResult = ProcessResult.PROCEED; // Default. Continue as normal
 
         logger.finest("Processing " + curi.toString() + "(" + 
@@ -750,6 +767,11 @@ public class DeDuplicator extends Processor implements InitializingBean {
         StringBuffer ret = new StringBuffer();
         ret.append("Processor: is.hi.bok.digest.DeDuplicator\n");
         ret.append("  Function:          Abort processing of duplicate records\n");
+        if (!getEnabled()) {
+            ret.append("Processor is disabled by configuration");
+            ret.append("\n");
+            return ret.toString();
+        }
         ret.append("                     - Lookup by " + 
         		(lookupByURL?"url":"digest") + " in use\n");
         ret.append("  Total handled:     " + stats.handledNumber + "\n");

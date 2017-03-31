@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import com.antiaction.common.servlet.AutoIncrement;
 import com.antiaction.common.servlet.PathMap;
+
+import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.harvester.webinterface.servlet.NASEnvironment.Language;
 
 public class HistoryServlet extends HttpServlet implements ResourceManagerAbstract {
 
@@ -39,6 +44,7 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
         super.init(servletConfig);
 
         environment = new NASEnvironment(getServletContext(), servletConfig);
+        environment.start();
 
         pathMap = new PathMap<Resource>();
 
@@ -101,6 +107,8 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
                 //current_user = environment.loginHandler.loginFromCookie(req, resp, session, this);
             }
 
+            locale_get_set(req, resp);
+
             String action = req.getParameter("action");
 
             // Logout, login or administration.
@@ -151,6 +159,50 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
             out.flush();
             out.close();
             //resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, sb.toString());
+        }
+    }
+
+    public void locale_get_set(HttpServletRequest req, HttpServletResponse resp) {
+        // Request parameter.
+        String languageStr = req.getParameter("locale");
+        Language languageObj = null;
+        if (languageStr != null) {
+            languageObj = environment.laguangeLHM.get(languageStr);
+            if (languageObj != null) {
+                Cookie cookie = new Cookie("locale", languageStr);
+                cookie.setPath("/");
+                //Keep the cookie for a year
+                cookie.setMaxAge(365 * 24 * 60 * 60);
+                resp.addCookie(cookie);
+            }
+        }
+        // Cookie.
+        if (languageObj == null) {
+            Cookie[] cookies = req.getCookies();
+            if (cookies != null) {
+                for (Cookie c : cookies) {
+                    if (c.getName().equals("locale")) {
+                        languageStr = c.getValue();
+                        languageObj = environment.laguangeLHM.get(languageStr);
+                    }
+                }
+            }
+        }
+        // Request.
+        if (languageObj == null) {
+            languageStr = HTMLUtils.getLocale(req);
+            if (languageStr != null) {
+                languageObj = environment.laguangeLHM.get(languageStr);
+            }
+            if (languageObj == null) {
+                languageObj = environment.laguangeLHM.get("en");
+            }
+        }
+        // Locale.
+        Locale locale = null;
+        if (languageObj != null) {
+            locale = languageObj.locale;
+            resp.setLocale(locale);
         }
     }
 

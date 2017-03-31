@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>harvester</artifactId>
-    <version>5.2-SNAPSHOT</version>
+    <version>5.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>harvester-core</artifactId>
@@ -69,56 +69,48 @@
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-      <version>1.1</version>
     </dependency>
 
     <dependency>
       <groupId>commons-pool</groupId>
       <artifactId>commons-pool</artifactId>
-      <version>1.6</version>
     </dependency>
 
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>2.3</version>
     </dependency>
 
     <dependency>
       <groupId>jfree</groupId>
       <artifactId>jfreechart</artifactId>
-      <version>1.0.13</version>
     </dependency>
 
     <dependency>
       <groupId>org.gnu.inet</groupId>
       <artifactId>libidn</artifactId>
-      <version><!-- FIXME: 0.5.9 -->0.6.5</version>
+      <version>${libidn.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.hp.gagawa</groupId>
       <artifactId>gagawa</artifactId>
-      <version>1.0.1</version>
     </dependency>
 
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>17.0</version>
     </dependency>
 
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
-      <version>1</version>
     </dependency>
 
     <!-- Move to Heritrix specific module when this is ready. -->
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.2</version>
     </dependency>
 
     <!-- HarvestJobManager -->
@@ -126,13 +118,11 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-c3p0</artifactId>
-      <version>4.3.6.Final</version>
     </dependency>
 
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>9.2-1003-jdbc4</version>
     </dependency>
 
     <dependency>
@@ -143,19 +133,17 @@
     <dependency>
       <groupId>com.antiaction</groupId>
       <artifactId>common-servlet</artifactId>
-      <version>0.1.0-NAS</version>
+      <version>${common-html.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.antiaction</groupId>
       <artifactId>common-html</artifactId>
-      <version>0.1.0-NAS</version>
     </dependency>
 
     <dependency>
       <groupId>com.antiaction</groupId>
       <artifactId>common-template-engine</artifactId>
-      <version>0.2.0-NAS</version>
     </dependency>
 
     <dependency>
@@ -163,6 +151,12 @@
       <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>
