@@ -20,7 +20,10 @@ public class SeedUriDomainnameQueueAssignmentPolicyTest {
         UURI uuri1 = UURIFactory.getInstance(url1);
         UURI uuri2 = UURIFactory.getInstance(url2);
         CrawlURI curi1 = new CrawlURI(uuri1);
+        curi1.setSeed(true);
+        curi1.setSourceTag(url1);
         CrawlURI curi2 = new CrawlURI(uuri2, "E", uuri1, null);
+        curi2.setSourceTag(url1);
         assertEquals(policy.getClassKey(curi1), policy.getClassKey(curi2));
     }
 
