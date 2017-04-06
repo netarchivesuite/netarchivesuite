@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
 import org.slf4j.Logger;
@@ -46,6 +47,8 @@ public class Heritrix3JobMonitorThread implements Runnable {
     }
 
     public Thread thread;
+
+    public Throwable throwable;
 
     public boolean bExit = false;
 
@@ -103,23 +106,24 @@ public class Heritrix3JobMonitorThread implements Runnable {
             List<File> oldFilesList = new ArrayList<File>();
 
             while (!bExit) {
-                @SuppressWarnings("unchecked")
-                Set<Long> runningJobs = harvestMonitor.getRunningJobs();
+                Set<Long> runningJobs = getRunningJobs();
                 Iterator<Long> jobidIter = runningJobs.iterator();
                 Heritrix3JobMonitor jobmonitor;
                 synchronized (runningJobMonitorMap) {
                     filterJobMonitorMap.clear();
                     while (jobidIter.hasNext()) {
-                        long jobId = jobidIter.next();
-                        jobmonitor = runningJobMonitorMap.remove(jobId);
-                        if (jobmonitor == null) {
-                            try {
-                                // New H3 job.
-                                jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId, environment);
-                            } catch (IOException e) {
+                        Long jobId = jobidIter.next();
+                        if (jobId != null) {
+                            jobmonitor = runningJobMonitorMap.remove(jobId);
+                            if (jobmonitor == null) {
+                                try {
+                                    // New H3 job.
+                                    jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId, environment);
+                                } catch (IOException e) {
+                                }
                             }
+                            filterJobMonitorMap.put(jobId, jobmonitor);
                         }
-                        filterJobMonitorMap.put(jobId, jobmonitor);
                     }
                     tmpJobMonitorMap = filterJobMonitorMap;
                     filterJobMonitorMap = runningJobMonitorMap;
@@ -165,7 +169,19 @@ public class Heritrix3JobMonitorThread implements Runnable {
             }
             LOG.info("CrawlLog Thread stopped.");
         } catch (Throwable t) {
+        	throwable = t;
             LOG.error("CrawlLog Thread stopped unexpectedly!.", t);
+        }
+    }
+
+	public Set<Long> getRunningJobs() {
+	    @SuppressWarnings("unchecked")
+        Set<Long> orgJobs = harvestMonitor.getRunningJobs();
+        try {
+            Set<Long> jobs = new TreeSet<Long>(orgJobs);
+            return jobs;
+        } catch (Throwable t) {
+        	return null;
         }
     }
 
