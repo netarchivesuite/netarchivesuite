@@ -16,7 +16,6 @@ public class SeedUriDomainnameQueueAssignmentPolicyTest {
     @Test
     public void getClassKey() throws Exception {
        SeedUriDomainnameQueueAssignmentPolicy policy = new SeedUriDomainnameQueueAssignmentPolicy();
-        policy.setDeferToPrevious(true);
         String url1 = "http://www.ssup.dk";
         String url2 = "http://www.nemmehjemmesider.dk/designs/responsive03/stylesheets/layout.css";
         UURI uuri1 = UURIFactory.getInstance(url1);
@@ -32,7 +31,6 @@ public class SeedUriDomainnameQueueAssignmentPolicyTest {
     @Test
     public void getClassKeyTestChain() throws Exception {
         SeedUriDomainnameQueueAssignmentPolicy policy = new SeedUriDomainnameQueueAssignmentPolicy();
-        policy.setDeferToPrevious(false);
         String url1 = "http://www.ssup.dk";
         UURI uuri1 = UURIFactory.getInstance(url1);
         UURI uuri2 = UURIFactory.getInstance("http://www.f2.dk");

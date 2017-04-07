@@ -24,9 +24,6 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import java.util.NoSuchElementException;
-
-import org.apache.commons.httpclient.URIException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.frontier.HostnameQueueAssignmentPolicy;
@@ -39,8 +36,7 @@ import dk.netarkivet.common.utils.DomainUtils;
  * This is a modified version of the {@link DomainnameQueueAssignmentPolicy}
  * where domainname returned is the domainname of the candidateURI
  * except where the the SeedURI belongs to a different domain. 
- * 
- * 
+ *
  * Using the domain as the queue-name.
  * The domain is defined as the last two names in the entire hostname or
  * the entirety of an IP address.
@@ -67,14 +63,17 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
      * to take the key from the superclass (in the form host#port or just host) and extract
      * a domain-name from that. If all that fails, we fall back to a default value,
      *
+     * In practice this means that dns-lookups for non-seed uris each get their own
+     * queue, which is then never used again. This seems like a good idea because the
+     * frontier needs to be able to prioritise dns lookups.
+     *
      * @param cauri The crawl URI from which to find the key.
      * @return the key value
      */
     public String getClassKey(CrawlURI cauri) {
         log.debug("Finding classKey for cauri: " + cauri);
         String key = null;
-        boolean ignoreSourceSeed = (cauri != null && cauri.getCanonicalString().startsWith("dns"));
-        if (!ignoreSourceSeed) {
+        if (!isDns(cauri)) {
             key = getKeyFromSeed(cauri);
         }
         if (key == null) {
@@ -87,6 +86,15 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
         }
     }
 
+    private boolean isDns(CrawlURI cauri) {
+        return cauri != null && cauri.getCanonicalString().startsWith("dns");
+    }
+
+    /**
+     * Returns the domain name extracted from the URI being crawled itself, without reference to its seed.
+     * @param cauri the uri being crawled.
+     * @return the domain name, if it can be determined. Otherwise null.
+     */
     private String getKeyFromUriHostname(CrawlURI cauri) {
         String key = null;
         try {
@@ -106,6 +114,12 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
         return key;
     }
 
+    /**
+     * The bean property &lt;property name="sourceTagSeeds" value="true" /&gt; on the TextSeedModule bean in the
+     * heritrix crawler beans, should ensure that the seed is made available in every CrawlURI reached from that seed.
+     * @param cauri the CrawlURI
+     * @return the domain of the seed, if it can be determined. Otherwise null.
+     */
     private String getKeyFromSeed(CrawlURI cauri) {
         String key = null;
         try {
