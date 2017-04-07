@@ -71,43 +71,39 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
     public String getClassKey(CrawlURI cauri) {
         String candidate;
         log.debug("Finding classKey for cauri: " + cauri);
-        String key;
-        try {
-            key = DomainUtils.domainNameFromHostname(UURIFactory.getInstance(cauri.getSourceTag()).getHost());
-            if (key != null) {
-                return key;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         boolean ignoreSourceSeed = cauri != null && cauri.getCanonicalString().startsWith("dns"); // don't igoreSourceSeed if it is a dns url
-        try {
-            // Since getClassKey has no contract, we must encapsulate it from errors.
-            candidate = super.getClassKey(cauri);
-        } catch (NullPointerException e) {
-            log.debug("Heritrix broke getting class key candidate for " + cauri);
-            candidate = DEFAULT_CLASS_KEY;
-        }
-
-        String sourceSeedCandidate = null;
         if (!ignoreSourceSeed) {
-            sourceSeedCandidate = getCandidateFromSource(cauri);
-        }
-
-        if (sourceSeedCandidate != null) {
-            return sourceSeedCandidate;
-        } else { //sourceSeedCandidates are disabled, use the old method:
+            String key;
+            try {
+                key = DomainUtils.domainNameFromHostname(UURIFactory.getInstance(cauri.getSourceTag()).getHost());
+                if (key != null) {
+                    return key;
+                } else {
+                    return DEFAULT_CLASS_KEY;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return DEFAULT_CLASS_KEY;
+            }
+        } else {
+            try {
+                candidate = super.getClassKey(cauri);
+            } catch (NullPointerException e) {
+                log.debug("Heritrix broke getting class key candidate for " + cauri);
+                candidate = DEFAULT_CLASS_KEY;
+            }
             String[] hostnameandportnr = candidate.split("#");
             if (hostnameandportnr.length == 0 || hostnameandportnr.length > 2) {
                 return candidate;
+            } else {
+                String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
+                if (domainName == null) { // Not valid according to our rules
+                    log.debug("Illegal class key candidate '" + candidate + "' for '" + cauri + "'");
+                    return DEFAULT_CLASS_KEY;
+                } else {
+                    return domainName;
+                }
             }
-
-            String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
-            if (domainName == null) { // Not valid according to our rules
-                log.debug("Illegal class key candidate '" + candidate + "' for '" + cauri + "'");
-                return candidate;
-            }
-            return domainName;
         }
     }
 
