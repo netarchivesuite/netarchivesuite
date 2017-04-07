@@ -70,8 +70,17 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
      */
     public String getClassKey(CrawlURI cauri) {
         String candidate;
-        log.debug("Finding classKeý for cauri: " + cauri);
-        boolean ignoreSourceSeed = cauri != null && cauri.getCanonicalString().startsWith("dns");; // don't igoreSourceSeed if it is a dns url
+        log.debug("Finding classKey for cauri: " + cauri);
+        String key;
+        try {
+            key = DomainUtils.domainNameFromHostname(UURIFactory.getInstance(cauri.getSourceTag()).getHost());
+            if (key != null) {
+                return key;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        boolean ignoreSourceSeed = cauri != null && cauri.getCanonicalString().startsWith("dns"); // don't igoreSourceSeed if it is a dns url
         try {
             // Since getClassKey has no contract, we must encapsulate it from errors.
             candidate = super.getClassKey(cauri);
