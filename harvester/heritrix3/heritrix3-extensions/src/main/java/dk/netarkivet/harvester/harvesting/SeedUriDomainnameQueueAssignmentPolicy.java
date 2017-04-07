@@ -59,77 +59,61 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
 
     private Log log = LogFactory.getLog(getClass());
 
+
     /**
-     * Return a key for queue names based on domain names (last two parts of
-     * host name) or IP address.  They key may include a #<portnr> at the end.
+     * The logic is as follows:
+     * We get try to get the queue-name as the domain-name of the seed.
+     * If that fails, or if the uri is a dns entry, we use the "old" logic which is
+     * to take the key from the superclass (in the form host#port or just host) and extract
+     * a domain-name from that. If all that fails, we fall back to a default value,
      *
-     * @param cauri A potential URI.
-     * @return a class key (really an arbitrary string), one of <domainOrIP>,
-     * <domainOrIP>#<port>, or "default...".
-     * @see HostnameQueueAssignmentPolicy#getClassKey(CrawlURI)
+     * @param cauri The crawl URI from which to find the key.
+     * @return the key value
      */
     public String getClassKey(CrawlURI cauri) {
-        String candidate;
         log.debug("Finding classKey for cauri: " + cauri);
-        boolean ignoreSourceSeed = cauri != null && cauri.getCanonicalString().startsWith("dns"); // don't igoreSourceSeed if it is a dns url
+        String key = null;
+        boolean ignoreSourceSeed = (cauri != null && cauri.getCanonicalString().startsWith("dns"));
         if (!ignoreSourceSeed) {
-            String key;
-            try {
-                key = DomainUtils.domainNameFromHostname(UURIFactory.getInstance(cauri.getSourceTag()).getHost());
-                if (key != null) {
-                    return key;
-                } else {
-                    return DEFAULT_CLASS_KEY;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return DEFAULT_CLASS_KEY;
-            }
+            key = getKeyFromSeed(cauri);
+        }
+        if (key == null) {
+            key = getKeyFromUriHostname(cauri);
+        }
+        if (key != null) {
+            return key;
         } else {
-            try {
-                candidate = super.getClassKey(cauri);
-            } catch (NullPointerException e) {
-                log.debug("Heritrix broke getting class key candidate for " + cauri);
-                candidate = DEFAULT_CLASS_KEY;
-            }
-            String[] hostnameandportnr = candidate.split("#");
-            if (hostnameandportnr.length == 0 || hostnameandportnr.length > 2) {
-                return candidate;
-            } else {
-                String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
-                if (domainName == null) { // Not valid according to our rules
-                    log.debug("Illegal class key candidate '" + candidate + "' for '" + cauri + "'");
-                    return DEFAULT_CLASS_KEY;
-                } else {
-                    return domainName;
-                }
-            }
+            return DEFAULT_CLASS_KEY;
         }
     }
 
-     /**
-      * Find a candidate from the source.
-      * @param cauri A potential URI
-      * @return a candidate from the source or null if none found
-      */
-     private String getCandidateFromSource(CrawlURI cauri) {
-         String sourceCandidate = null;  
-         try {
-             sourceCandidate = cauri.getSourceTag(); 
-         } catch (NoSuchElementException e) {
-             log.warn("source-tag-seeds not set in Heritrix template!");
-             return null;
-         }
+    private String getKeyFromUriHostname(CrawlURI cauri) {
+        String key = null;
+        try {
+            key = super.getClassKey(cauri);
+        }  catch (NullPointerException e) {
+            log.debug("Heritrix broke getting class key candidate for " + cauri);
+        }
+        if (key != null) {
+            String[] hostnameandportnr = key.split("#");
+            if (hostnameandportnr.length == 1 || hostnameandportnr.length == 2) {
+                key = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
+            } else {
+                log.debug("Illegal class key candidate from superclass: '" + key + "' for '" + cauri + "'");
+                key = null;
+            }
+        }
+        return key;
+    }
 
-         String hostname = null;
-         try {
-             hostname = UURIFactory.getInstance(sourceCandidate).getHost();
-         } catch (URIException e) {
-             log.warn("Hostname could not be extracted from sourceCandidate: " + sourceCandidate);
-             return null;
-         }
-         String candidateKey = DomainUtils.domainNameFromHostname(hostname);
-         log.debug("CandidateKey for cauri '" + cauri + "':" + candidateKey);
-         return candidateKey;
-     }
+    private String getKeyFromSeed(CrawlURI cauri) {
+        String key = null;
+        try {
+            key = DomainUtils.domainNameFromHostname(UURIFactory.getInstance(cauri.getSourceTag()).getHost());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return key;
+    }
+
 }
