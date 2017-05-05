@@ -37,11 +37,12 @@ public class HistorySiteSection extends SiteSection {
     public HistorySiteSection() {
         super("sitesection;history",
         		"Harveststatus",
-        		2,
+        		3,
         		new String[][] {
         			{"alljobs", "pagetitle;all.jobs"},
                     //{"deprecatedperdomain", "pagetitle;all.jobs.per.domain"},
                     {"running", "pagetitle;all.jobs.running"},
+                    {"history/", "pagetitle;h3.remote.access"}, // refer to webpage outside of webpages directory
                     {"running-jobdetails", "pagetitle;running.job.details"},
                     {"perhd", "pagetitle;all.jobs.per.harvestdefinition"},
                     {"perharvestrun", "pagetitle;all.jobs.per.harvestrun"},

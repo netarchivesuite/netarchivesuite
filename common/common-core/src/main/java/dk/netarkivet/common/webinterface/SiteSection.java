@@ -56,7 +56,7 @@ public abstract class SiteSection {
     /** The resource bundle with translations of this sitesection. */
     private String bundle;
     /**
-     * Extension used for JSP files, including '.' separator.
+     * Extension used for JSP files, including '.' separator. 
      */
     private static final String JSP_EXTENSION = ".jsp";
     /**
@@ -94,7 +94,14 @@ public abstract class SiteSection {
             if (pageAndTitle.length != 2) {
                 throw new ArgumentNotValid("Must have exactly page and title in " + prefix);
             }
-            this.pagesAndTitles.put(prefix + "-" + pageAndTitle[0] + JSP_EXTENSION, pageAndTitle[1]);
+            // Handle links outside webpages directory
+            // Assume pageurl ending with / as external url requiring no prefix
+            String pageurl= prefix + "-" + pageAndTitle[0] + JSP_EXTENSION;
+            if (pageAndTitle[0].endsWith("/")) {
+            	pageurl = pageAndTitle[0]; // Add no prefix
+            }
+            String pagelabel = pageAndTitle[1];
+            this.pagesAndTitles.put(pageurl, pagelabel);
         }
     }
 
@@ -150,19 +157,13 @@ public abstract class SiteSection {
                 }
                 out.print("<tr>");
                 out.print("<td>&nbsp; &nbsp; <a href=\"/" + HTMLUtils.encode(dirname) + "/"
-                        + HTMLUtils.encode(pageAndTitle.getKey()) + "\"> "
+                        //+ HTMLUtils.encode(pageAndTitle.getKey())
+                		+ pageAndTitle.getKey() // Don't encode this
+                        + "\"> "
                         + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, pageAndTitle.getValue()))
                         + "</a></td>");
                 out.print("</tr>\n");
                 i++;
-            }
-            if (this.getClass().getName().equalsIgnoreCase("dk.netarkivet.harvester.webinterface.HistorySiteSection")) {
-                out.print("<tr>");
-                out.print("<td>&nbsp; &nbsp; <a href=\"/" + HTMLUtils.encode(dirname) + "/"
-                        + HTMLUtils.encode("history") + "/\"> "
-                        + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, "H3 Remote Access"))
-                        + "</a></td>");
-                out.print("</tr>\n");
             }
         }
     }
@@ -198,7 +199,6 @@ public abstract class SiteSection {
      * @return The dirname.
      */
     public String getDirname() {
-        return dirname;
     }
 
     /**
