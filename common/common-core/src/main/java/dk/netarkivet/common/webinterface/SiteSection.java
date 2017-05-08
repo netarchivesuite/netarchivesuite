@@ -199,6 +199,7 @@ public abstract class SiteSection {
      * @return The dirname.
      */
     public String getDirname() {
+    	return dirname;
     }
 
     /**
