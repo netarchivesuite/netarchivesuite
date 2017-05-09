@@ -12,8 +12,13 @@
   <packaging>war</packaging>
 
   <name>NetarchiveSuite - bitpreservation - webapp</name>
-
-
+  <dependencies>
+   <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>	
+</dependencies>
   <build>
     <finalName>BitPreservation</finalName>
   </build>
