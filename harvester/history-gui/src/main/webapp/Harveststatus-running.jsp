@@ -74,10 +74,11 @@ This page displays a list of running jobs.
         tbs.sortByHarvestName(sortedHarvest,Integer.parseInt(sortedColumn)) ;
     }
 
-    //list of information to be shown
+    // List of information to be shown
     Map<String, List<StartedJobInfo>> infos =
         RunningJobsInfoDAO.getInstance().getMostRecentByHarvestName();
 
+    // Count number of running jobs
     int jobCount = 0;
     for (List<StartedJobInfo> jobList : infos.values()) {
         jobCount += jobList.size();
@@ -393,28 +394,6 @@ This page displays a list of running jobs.
 
 </form>
 
-<% if (jobIdsForDomain.length > 0) { %>
-<br/>
-<table class="selection_table_small">
-<tr>
-    <th><fmt:message key="running.jobs.finder.table.jobId"/></th>
-</tr>
-<% for (long jobId : jobIdsForDomain) {
-    String jobDetailsLink = "Harveststatus-jobdetails.jsp?"
-       + Constants.JOB_PARAM + "=" + jobId;
-%>
-<tr><td><a href="<%=jobDetailsLink%>"><%=jobId%></a></td></tr>
-<% } %>
-</table>
-<% } else {
-
-    //after using the search button "searchDone" !=null
-    String searchDone = request.getParameter("searchDone");
-    if (searchDone != null) { %>
-    	 <fmt:message key="table.job.no.jobs"/>
-
-<% } %>
-<% } %>
 <% } %>
 <%
  HTMLUtils.generateFooter(out);
