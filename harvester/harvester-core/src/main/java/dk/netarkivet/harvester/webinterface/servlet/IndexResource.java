@@ -20,6 +20,7 @@ import com.antiaction.common.filter.Caching;
 import com.antiaction.common.templateengine.TemplateBuilderFactory;
 import com.antiaction.common.templateengine.TemplateBuilderPlaceHolder;
 import com.antiaction.common.templateengine.TemplatePlaceHolder;
+import com.sleepycat.je.Environment;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
@@ -91,6 +92,22 @@ public class IndexResource implements ResourceAbstract {
         List<Heritrix3JobMonitor> h3JobsList = environment.h3JobMonitorThread.getRunningH3Jobs();
         Heritrix3JobMonitor h3Job;
 
+        // Restart H3 job monitor thread.
+        String action = req.getParameter("action");
+        if (action != null && action.length() > 0) {
+            if ("restart".equalsIgnoreCase(action)) {
+                if (environment.h3JobMonitorThread.thread != null) {
+                	synchronized (environment.h3JobMonitorThread.thread) {
+                        if (!environment.h3JobMonitorThread.thread.isAlive()) {
+                    		Heritrix3JobMonitorThread newH3JobMonitor = new Heritrix3JobMonitorThread(environment);
+                        	newH3JobMonitor.start();
+                        	environment.h3JobMonitorThread = newH3JobMonitor; 
+                        }
+                	}
+                }
+            }
+        }
+
         sb.append("<a href=\"");
         sb.append(NASEnvironment.servicePath);
         sb.append("config/");
@@ -99,6 +116,27 @@ public class IndexResource implements ResourceAbstract {
         sb.append("</a>");
         sb.append("<br />\n");
         sb.append("<br />\n");
+
+        // Check if H3 job monitor thread is still running.
+        if (environment.h3JobMonitorThread.thread != null) {
+        	synchronized (environment.h3JobMonitorThread.thread) {
+                if (!environment.h3JobMonitorThread.thread.isAlive()) {
+                	sb.append("The H3 job monitor thread is not running anymore. ");
+                    sb.append("<a href=\"?action=restart");
+                    sb.append("\"");
+                    sb.append(" class=\"btn btn-default\">");
+                    sb.append("Restart");
+                    sb.append("</a>");
+                    sb.append("<br />\n");
+                	sb.append("<pre>");
+                	sb.append("Stacktrace[]:");
+                    HistoryServlet.throwable_stacktrace_dump(environment.h3JobMonitorThread.throwable, sb);
+                	sb.append("</pre>");
+                    sb.append("<br />\n");
+                    sb.append("<br />\n");
+                }
+        	}
+        }
 
         List<HarvestChannelStructure> hcList = new ArrayList<HarvestChannelStructure>();
         Map<String, HarvestChannelStructure> hcMap = new HashMap<String, HarvestChannelStructure>();

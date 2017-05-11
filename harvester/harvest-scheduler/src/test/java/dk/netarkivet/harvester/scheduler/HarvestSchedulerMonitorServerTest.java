@@ -245,12 +245,14 @@ public class HarvestSchedulerMonitorServerTest {
         assertEquals((long) job1.getJobID(), jobEndedMessageArgumentCaptor.getValue().getJobId());
         assertEquals(JobStatus.DONE, jobEndedMessageArgumentCaptor.getValue().getJobStatus());
 
-        logRecorder.assertLogContains(Level.WARN, "Received CrawlStatusMessage for job 1 with new status DONE, current state is " +
+        logRecorder.assertLogContains(Level.WARN, "Received unexpected CrawlStatusMessage for job 1 with new status DONE, current state is " +
                 "SUBMITTED");
     }
 
     /**
      * If DONE arrives after FAILED, the job should be marked FAILED and error info should be added to the job.
+     * Note: this is not what is tested here. Currently tested is:  
+     * If FAILED arrives after DONE, the job should be marked FAILED and error info should be added to the job.
      */
     @Test
     public void testDoneToFailed() {
@@ -262,13 +264,14 @@ public class HarvestSchedulerMonitorServerTest {
         harvestStatusMonitor.start();
         harvestStatusMonitor.visit(crawlStatusMessage);
 
-        final String ERROR_MESSAGE = "Received CrawlStatusMessage for job 1 with new status FAILED, current " +
-                "state is DONE. Marking job as FAILED";
+        final String ERROR_MESSAGE = "Received unexpected CrawlStatusMessage for job 1 with new status FAILED, current " +
+                "state is DONE. Marking job as DONE. Reported harvestErrors on job: Some harvesterrors"; // changed from FAILED to DONE and added string: . Reported harvestErrors on job: Some harvesterrors
+        
         ArgumentCaptor<Job> jobArgumentCaptor = ArgumentCaptor.forClass(Job.class);
         verify(jobDAOMock).update(jobArgumentCaptor.capture());
         Job actualJob = jobArgumentCaptor.getValue();
         assertEquals(job1.getJobID(), actualJob.getJobID());
-        assertEquals(JobStatus.FAILED, actualJob.getStatus());
+        assertEquals(JobStatus.DONE, actualJob.getStatus());// FAILED => DONE
         assertThat(actualJob.getHarvestErrors(), containsString(HARVEST_ERRORS));
         assertThat(actualJob.getHarvestErrors(), containsString(ERROR_MESSAGE));
         assertThat(actualJob.getHarvestErrorDetails(), containsString(HARVEST_ERRORS));
@@ -278,10 +281,10 @@ public class HarvestSchedulerMonitorServerTest {
                 ArgumentCaptor.forClass(JobEndedMessage.class);
         verify(jmsConnectionMock).send(jobEndedMessageArgumentCaptor.capture());
         assertEquals((long) job1.getJobID(), jobEndedMessageArgumentCaptor.getValue().getJobId());
-        assertEquals(JobStatus.FAILED, jobEndedMessageArgumentCaptor.getValue().getJobStatus());
+        assertEquals(JobStatus.FAILED, jobEndedMessageArgumentCaptor.getValue().getJobStatus()); // FAILED => DONE ??
 
         logRecorder.assertLogContains(Level.WARN, ERROR_MESSAGE);
-        logRecorder.assertLogContains(Level.WARN, "Job 1 failed: ");
+        //logRecorder.assertLogContains(Level.WARN, "Job 1 failed: ");
     }
 
     /**

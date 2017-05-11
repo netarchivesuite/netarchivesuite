@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
 import org.slf4j.Logger;
@@ -46,6 +47,8 @@ public class Heritrix3JobMonitorThread implements Runnable {
     }
 
     public Thread thread;
+
+    public Throwable throwable;
 
     public boolean bExit = false;
 
@@ -103,59 +106,62 @@ public class Heritrix3JobMonitorThread implements Runnable {
             List<File> oldFilesList = new ArrayList<File>();
 
             while (!bExit) {
-                @SuppressWarnings("unchecked")
-                Set<Long> runningJobs = harvestMonitor.getRunningJobs();
-                Iterator<Long> jobidIter = runningJobs.iterator();
-                Heritrix3JobMonitor jobmonitor;
-                synchronized (runningJobMonitorMap) {
-                    filterJobMonitorMap.clear();
-                    while (jobidIter.hasNext()) {
-                        long jobId = jobidIter.next();
-                        jobmonitor = runningJobMonitorMap.remove(jobId);
-                        if (jobmonitor == null) {
-                            try {
-                                // New H3 job.
-                                jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId, environment);
-                            } catch (IOException e) {
+                Set<Long> runningJobs = getRunningJobs();
+                if (runningJobs != null) {
+                    Iterator<Long> jobidIter = runningJobs.iterator();
+                    Heritrix3JobMonitor jobmonitor;
+                    synchronized (runningJobMonitorMap) {
+                        filterJobMonitorMap.clear();
+                        while (jobidIter.hasNext()) {
+                            Long jobId = jobidIter.next();
+                            if (jobId != null) {
+                                jobmonitor = runningJobMonitorMap.remove(jobId);
+                                if (jobmonitor == null) {
+                                    try {
+                                        // New H3 job.
+                                        jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId, environment);
+                                    } catch (IOException e) {
+                                    }
+                                }
+                                filterJobMonitorMap.put(jobId, jobmonitor);
                             }
                         }
-                        filterJobMonitorMap.put(jobId, jobmonitor);
+                        tmpJobMonitorMap = filterJobMonitorMap;
+                        filterJobMonitorMap = runningJobMonitorMap;
+                        runningJobMonitorMap = tmpJobMonitorMap;
                     }
-                    tmpJobMonitorMap = filterJobMonitorMap;
-                    filterJobMonitorMap = runningJobMonitorMap;
-                    runningJobMonitorMap = tmpJobMonitorMap;
-                }
-                jobmonitorIter = filterJobMonitorMap.values().iterator();
-                while (jobmonitorIter.hasNext()) {
-                    jobmonitor = jobmonitorIter.next();
-                    jobmonitor.cleanup(oldFilesList);
-                }
-                jobmonitorIter = runningJobMonitorMap.values().iterator();
-                while (jobmonitorIter.hasNext()) {
-                    jobmonitor = jobmonitorIter.next();
+                    jobmonitorIter = filterJobMonitorMap.values().iterator();
+                    while (jobmonitorIter.hasNext()) {
+                        jobmonitor = jobmonitorIter.next();
+                        jobmonitor.cleanup(oldFilesList);
+                    }
+                    jobmonitorIter = runningJobMonitorMap.values().iterator();
+                    while (jobmonitorIter.hasNext()) {
+                        jobmonitor = jobmonitorIter.next();
+                        if (oldFilesMap != null) {
+                            oldFilesMap.remove(jobmonitor.logFile.getName());
+                            oldFilesMap.remove(jobmonitor.idxFile.getName());
+                        }
+                        if (!jobmonitor.bInitialized) {
+                            jobmonitor.init();
+                        }
+                        checkH3HostnamePort(jobmonitor);
+                        isH3HostnamePortEnabled(jobmonitor);
+                        if (jobmonitor.bPull) {
+                            jobmonitor.updateCrawlLog(tmpBuf);
+                        }
+                    }
                     if (oldFilesMap != null) {
-                        oldFilesMap.remove(jobmonitor.logFile.getName());
-                        oldFilesMap.remove(jobmonitor.idxFile.getName());
+                        oldFilesList.addAll(oldFilesMap.values());
+                        oldFilesMap = null;
                     }
-                    if (!jobmonitor.bInitialized) {
-                        jobmonitor.init();
-                    }
-                    checkH3HostnamePort(jobmonitor);
-                    isH3HostnamePortEnabled(jobmonitor);
-                    if (jobmonitor.bPull) {
-                        jobmonitor.updateCrawlLog(tmpBuf);
-                    }
-                }
-                if (oldFilesMap != null) {
-                    oldFilesList.addAll(oldFilesMap.values());
-                    oldFilesMap = null;
-                }
-                int idx = 0;
-                while (idx < oldFilesList.size()) {
-                    if (oldFilesList.get(idx).delete()) {
-                        idx++;
-                    } else {
-                        oldFilesList.remove(idx);
+                    int idx = 0;
+                    while (idx < oldFilesList.size()) {
+                        if (oldFilesList.get(idx).delete()) {
+                            idx++;
+                        } else {
+                            oldFilesList.remove(idx);
+                        }
                     }
                 }
                 try {
@@ -165,7 +171,19 @@ public class Heritrix3JobMonitorThread implements Runnable {
             }
             LOG.info("CrawlLog Thread stopped.");
         } catch (Throwable t) {
+        	throwable = t;
             LOG.error("CrawlLog Thread stopped unexpectedly!.", t);
+        }
+    }
+
+	public Set<Long> getRunningJobs() {
+	    @SuppressWarnings("unchecked")
+        Set<Long> orgJobs = harvestMonitor.getRunningJobs();
+        try {
+            Set<Long> jobs = new TreeSet<Long>(orgJobs);
+            return jobs;
+        } catch (Throwable t) {
+        	return null;
         }
     }
 
