@@ -106,6 +106,24 @@ This page displays a list of running jobs.
 <fmt:message key="running.jobs.nbrunning">
      <fmt:param value="<%=jobCount%>"/>
 </fmt:message>
+
+<form method="get" name="findJobForDomainForm" action="Harveststatus-running.jsp">
+    <input type="hidden" name="searchDone" value="1"/>
+
+    <fmt:message key="running.jobs.finder.inputGroup">
+        <fmt:param>
+            <input type="text"
+                   name="<%=FindRunningJobQuery.UI_FIELD.DOMAIN_NAME.name()%>"
+                   size="30"
+                   value=""/>
+        </fmt:param>
+    </fmt:message>
+
+    <input type="submit"
+           name="search"
+           value="<fmt:message key="running.jobs.finder.submit"/>"/>
+</form>
+
 <table class="selection_table">
 <%
 
@@ -375,24 +393,6 @@ This page displays a list of running jobs.
     </fmt:param>
 </fmt:message>
 <br/><br/>
-<form method="get" name="findJobForDomainForm" action="Harveststatus-running.jsp">
-
-<input type="hidden" name="searchDone" value="1"/>
-
-<fmt:message key="running.jobs.finder.inputGroup">
-
-<fmt:param>
-<input type="text"
-           name="<%=FindRunningJobQuery.UI_FIELD.DOMAIN_NAME.name()%>"
-           size="30"
-           value=""/>
-</fmt:param>
-</fmt:message>
-
-<input type="submit" name="search"
-       value="<fmt:message key="running.jobs.finder.submit"/>"/>
-
-</form>
 
 <% } %>
 <%
