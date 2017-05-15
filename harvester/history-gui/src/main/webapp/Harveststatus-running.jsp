@@ -99,7 +99,7 @@ This page displays a list of running jobs.
 <%
 	if (infos.size() == 0) {
 %>
-    <fmt:message key="table.job.no.jobs"/>
+        <fmt:message key="table.job.no.jobs"/>
 <%
 	} else { //Make table with found jobs
 %>
@@ -126,14 +126,11 @@ This page displays a list of running jobs.
 
 <table class="selection_table">
 <%
-
         for (String harvestName : infos.keySet()) {
 
 			String harvestDetailsLink = "Harveststatus-perhd.jsp?"
 		           + Constants.HARVEST_PARAM + "="
 		           + HTMLUtils.encode(harvestName);
-
-
 
 			//gestion des fleche de trie
 			String incSortPic = "&uarr;";
@@ -206,7 +203,9 @@ This page displays a list of running jobs.
             <fmt:message key="table.running.jobs.elapsedTime"/>
             <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ELAPSED.ordinal()]%>
         </a>
-   </th>
+    </th>
+    <th class="harvestHeader" rowspan="2">TODO urls..</th>
+    <th class="harvestHeader" rowspan="2">TODO in seedlist..</th>
     <th class="harvestHeader" colspan="5"><fmt:message key="table.running.jobs.queues"/></th>
     <th class="harvestHeader" colspan="3"><fmt:message key="table.running.jobs.performance"/></th>
     <th class="harvestHeader" rowspan="2"><fmt:message key="table.running.jobs.alerts"/></th>
@@ -350,6 +349,8 @@ This page displays a list of running jobs.
         </td>
         <td align="right"><%=StringUtils.formatPercentage(info.getProgress())%></td>
         <td align="right"><%=info.getElapsedTime()%></td>
+        <td align="right">TODO..</td>
+        <td align="right">TODO..</td>
         <td align="right"><%=info.getQueuedFilesCount()%></td>
         <td align="right"><%=info.getTotalQueuesCount()%></td>
         <td align="right"><%=info.getActiveQueuesCount()%></td>
@@ -393,6 +394,7 @@ This page displays a list of running jobs.
     </fmt:param>
 </fmt:message>
 <br/><br/>
+
 
 <% } %>
 <%
