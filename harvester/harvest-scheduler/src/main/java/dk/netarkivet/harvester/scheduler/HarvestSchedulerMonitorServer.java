@@ -113,7 +113,7 @@ public class HarvestSchedulerMonitorServer
                     oldStatus == JobStatus.RESUBMITTED ||
                     oldStatus == JobStatus.NEW) {
                 if (oldStatus != JobStatus.STARTED) {
-                    log.warn("Received CrawlStatusMessage for job {} with new status {}, current state is {}",
+                    log.warn("Received unexpected CrawlStatusMessage for job {} with new status {}, current state is {}",
                             jobID, newStatus ,oldStatus);
                 }
                 if (newStatus == JobStatus.FAILED) {
@@ -130,15 +130,21 @@ public class HarvestSchedulerMonitorServer
                 job.appendUploadErrorDetails(cmsg.getUploadErrorDetails());
             } else {
                 // Received done or failed on already dead job. Bad!
-                String message = "Received CrawlStatusMessage for job " + jobID + " with new status " + newStatus +
-                        ", current state is " + oldStatus+ ". Marking job as FAILED";
-                log.warn(message);
-                job.setStatus(JobStatus.FAILED);
+            	// Marking as FAILED, unless oldStatus is DONE (issue NAS-2612)
+            	log.error("newstatus: " + newStatus.name());
+            	log.error("oldstatus: " + oldStatus.name());
+            	JobStatus newStatus1 = JobStatus.FAILED;
+            	if (oldStatus.equals(JobStatus.DONE)) {
+            		newStatus1 = JobStatus.DONE;
+            	}
+            	String message = "Received unexpected CrawlStatusMessage for job " + jobID + " with new status " + newStatus +
+                        ", current state is " + oldStatus+ ". Marking job as " + newStatus1.name() + ". Reported harvestErrors on job: " +  cmsg.getHarvestErrors();
+                job.setStatus(newStatus1);                
                 job.appendHarvestErrors(cmsg.getHarvestErrors());
                 job.appendHarvestErrors(message);
                 job.appendHarvestErrorDetails(cmsg.getHarvestErrors());
                 job.appendHarvestErrorDetails(message);
-                log.warn("Job {} failed: {}", jobID, job.getHarvestErrorDetails());
+                log.warn(message);
             }
 
             jobDAOProvider.get().update(job);
