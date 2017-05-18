@@ -63,6 +63,11 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     protected static Set<Long> harvestDefinitionsBeingScheduled = Collections.synchronizedSet(new HashSet<Long>());
 
     /**
+     * A map giving access to the thread generating jobs for a given harvest definition.
+     */
+    protected static Map<Long, JobGeneratorTask.JobGeneratorThread> threadMap = Collections.synchronizedMap(new HashMap<>());
+
+    /**
      * Used the store the currenttimeMillis when the scheduling of a particular harvestdefinition # started or when last
      * a warning was issued.
      */
@@ -138,19 +143,20 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 if (harvestDefinitionsBeingScheduled.contains(id)) {
                     if (takesSuspiciouslyLongToSchedule(id)) {
                         String harvestName = haDefinitionDAO.getHarvestName(id);
-                        String errMsg = "Not creating jobs for harvestdefinition #" + id + " (" + harvestName + ")"
-                                + " as the previous scheduling is still running";
+                        String errMsg = "Possible problem creating jobs for harvestdefinition #" + id + " (" + harvestName + ")"
+                                + " as the previous scheduling is still running. Trying to recover.";
                         if (haDefinitionDAO.isSnapshot(id)) {
                             // Log only at level debug if the ID represents
                             // is a snapshot harvestdefinition, which are only run
                             // once anyway
                             log.debug(errMsg);
+                            continue;
                         } else { // Log at level WARN, and send a notification, if it is time
                             log.warn(errMsg);
+                            threadMap.get(id).killScheduling();
                             NotificationsFactory.getInstance().notify(errMsg, NotificationType.WARNING);
                         }
                     }
-                    continue;
                 }
 
                 final HarvestDefinition harvestDefinition = haDefinitionDAO.read(id);
@@ -181,49 +187,9 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
 
                 log.info("Starting to create jobs for harvest definition #{}({})", id, harvestDefinition.getName());
 
-                new Thread("JobGeneratorTask-" + id) {
-                    public void run() {
-                        try {
-                            JobGenerator jobGen = JobGeneratorFactory.getInstance();
-                            int jobsMade = jobGen.generateJobs(harvestDefinition);
-                            if (jobsMade > 0) {
-                                log.info("Created {} jobs for harvest definition ({})", jobsMade,
-                                        harvestDefinition.getName());
-                            } else {
-                                String msg = "No jobs created for harvest definition '"
-                                        + harvestDefinition.getName()
-                                        + "'. Probable cause: harvest tries to continue harvest that is already finished ";
-                                log.warn(msg);
-                                NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
-                            }
-                            haDefinitionDAO.update(harvestDefinition);
-                        } catch (Throwable e) {
-                            try {
-                                HarvestDefinition hd = haDefinitionDAO.read(harvestDefinition.getOid());
-                                hd.setActive(false);
-                                haDefinitionDAO.update(hd);
-                                String errMsg = "Exception while scheduling harvestdefinition #" + id + "("
-                                        + harvestDefinition.getName() + "). The harvestdefinition has been "
-                                        + "deactivated!";
-                                log.warn(errMsg, e);
-                                NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR, e);
-                            } catch (Exception e1) {
-                                String errMsg = "Exception while scheduling harvestdefinition #" + id + "("
-                                        + harvestDefinition.getName() + "). The harvestdefinition couldn't be "
-                                        + "deactivated!";
-                                log.warn(errMsg, e);
-                                log.warn("Unable to deactivate", e1);
-                                NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR, e);
-                            }
-                        } finally {
-                            harvestDefinitionsBeingScheduled.remove(id);
-                            schedulingStartedMap.remove(id);
-                            log.debug("Removed HD #{}({}) from list of harvestdefinitions to be scheduled. "
-                                    + "Harvestdefinitions still to be scheduled: {}", id, harvestDefinition.getName(),
-                                    harvestDefinitionsBeingScheduled);
-                        }
-                    }
-                }.start();
+                final JobGeneratorThread jobGeneratorThread = new JobGeneratorThread(id, harvestDefinition);
+                threadMap.put(id, jobGeneratorThread);
+                jobGeneratorThread.start();
             }
         }
 
@@ -251,6 +217,64 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                 } else {
                     return false;
                 }
+            }
+        }
+
+        private static class JobGeneratorThread extends Thread {
+            private final Long id;
+            private final HarvestDefinition harvestDefinition;
+
+            public JobGeneratorThread(Long id, HarvestDefinition harvestDefinition) {
+                super("JobGeneratorTask-" + id);
+                this.id = id;
+                this.harvestDefinition = harvestDefinition;
+            }
+
+            public void run() {
+                try {
+                    JobGenerator jobGen = JobGeneratorFactory.getInstance();
+                    int jobsMade = jobGen.generateJobs(harvestDefinition);
+                    if (jobsMade > 0) {
+                        log.info("Created {} jobs for harvest definition ({})", jobsMade,
+                                harvestDefinition.getName());
+                    } else {
+                        String msg = "No jobs created for harvest definition '"
+                                + harvestDefinition.getName()
+                                + "'. Probable cause: harvest tries to continue harvest that is already finished ";
+                        log.warn(msg);
+                        NotificationsFactory.getInstance().notify(msg, NotificationType.WARNING);
+                    }
+                    haDefinitionDAO.update(harvestDefinition);
+                } catch (Throwable e) {
+                    try {
+                        HarvestDefinition hd = haDefinitionDAO.read(harvestDefinition.getOid());
+                        hd.setActive(false);
+                        haDefinitionDAO.update(hd);
+                        String errMsg = "Exception while scheduling harvestdefinition #" + id + "("
+                                + harvestDefinition.getName() + "). The harvestdefinition has been "
+                                + "deactivated!";
+                        log.warn(errMsg, e);
+                        NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR, e);
+                    } catch (Exception e1) {
+                        String errMsg = "Exception while scheduling harvestdefinition #" + id + "("
+                                + harvestDefinition.getName() + "). The harvestdefinition couldn't be "
+                                + "deactivated!";
+                        log.warn(errMsg, e);
+                        log.warn("Unable to deactivate", e1);
+                        NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR, e);
+                    }
+                } finally {
+                    killScheduling();
+                }
+            }
+
+            public void killScheduling() {
+                log.debug("Removed HD #{}({}) from list of harvestdefinitions to be scheduled. "
+                                + "Harvestdefinitions still to be scheduled: {}", id, harvestDefinition.getName(),
+                        harvestDefinitionsBeingScheduled);
+                harvestDefinitionsBeingScheduled.remove(id);
+                schedulingStartedMap.remove(id);
+                threadMap.remove(id);
             }
         }
     }
