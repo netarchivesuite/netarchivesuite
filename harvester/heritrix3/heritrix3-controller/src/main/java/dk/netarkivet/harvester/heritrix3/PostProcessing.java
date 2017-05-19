@@ -137,12 +137,14 @@ public class PostProcessing {
      * @param crawlDir The location of harvest-info to be processed
      * @param crawlException any exceptions thrown by the crawl which need to be reported back to the scheduler (may be
      * null for success)
-     * @throws IOFailure if the file cannot be read
+     * @throws IOFailure if the harvestInfo.xml file cannot be read
      */
     public void doPostProcessing(File crawlDir, Throwable crawlException) throws IOFailure {
-        log.debug("Post-processing files in '{}'", crawlDir.getAbsolutePath());
-        if (!PersistentJobData.existsIn(crawlDir)) {
-            throw new IOFailure("No harvestInfo found in directory: " + crawlDir.getAbsolutePath());
+    	File harvestInfoFile = PersistentJobData.getHarvestInfoFile(crawlDir);
+        log.debug("Post-processing files in directory '{}' based on the harvestInfofile '{}'", crawlDir.getAbsolutePath(), harvestInfoFile);
+        
+        if (!harvestInfoFile.exists()) {
+            throw new IOFailure("Critical error: No '" + harvestInfoFile.getName() + "' found in directory: '" + crawlDir.getAbsolutePath() + "'");
         }
 
         PersistentJobData harvestInfo = new PersistentJobData(crawlDir);
@@ -158,7 +160,7 @@ public class PostProcessing {
             log.info("Store files in directory '{}' " + "from jobID: {}.", crawlDir, jobID);
             dhr = storeFiles(files, errorMessage, failedFiles);
         } catch (Exception e) {
-            String msg = "Trouble during postprocessing of files in '" + crawlDir.getAbsolutePath() + "'";
+            String msg = "Trouble occurred during postprocessing (including upload of files) in '" + crawlDir.getAbsolutePath() + "'";
             log.warn(msg, e);
             errorMessage.append(e.getMessage()).append("\n");
             // send a mail about this problem
@@ -179,14 +181,15 @@ public class PostProcessing {
                 csm = new CrawlStatusMessage(jobID, JobStatus.FAILED, dhr);
                 setErrorMessages(csm, crawlException, errorMessage.toString(), dhr == null, failedFiles.size());
             }
-            try {
+            
+            try { // TODO What kind of errors are we actually catching here if any
             	if (jmsConnection != null) {
             		jmsConnection.send(csm); 
             	} else {
-            		log.error("Message not sent, as jmsConnection variable was null!");
+            		log.error("CrawlStatusMessage was not sent, as jmsConnection variable was null!");
             	}
-            	if (crawlException == null && errorMessage.length() == 0) {
-            		log.info("Deleting final logs");
+            	if (crawlException == null && errorMessage.length() == 0) { // and the message is sent without throwing an exception
+            		log.info("Deleting crawl.log and progressstatistics.log for job {} ", jobID);
             		files.deleteFinalLogs();
             	}
             } finally {
@@ -194,7 +197,7 @@ public class PostProcessing {
                 // Cleanup is in an extra finally, because it consists of large amounts
                 // of data we need to remove, even on send trouble.
             	File oldJobsdir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
-                log.info("Cleanup after harvesting job with id '{}' and moving the rest of the job to oldjobsdir '{}' ", jobID, oldJobsdir);
+                log.info("Now doing cleanup after harvesting job with id '{}' and moving the rest of the job to oldjobsdir '{}' ", jobID, oldJobsdir);
                 files.cleanUpAfterHarvest(oldJobsdir);
             }
         }
@@ -256,9 +259,9 @@ public class PostProcessing {
             IngestableFiles inf = new IngestableFiles(files);
 
             inf.closeOpenFiles(WAIT_FOR_HERITRIX_TIMEOUT_SECS);
-            // Create a metadata ARC file
+            // Create a metadata archive file
             HarvestDocumentation.documentHarvest(inf);
-            // Upload all files
+            // Upload all files 
 
             // Check, if arcsdir or warcsdir is empty
             // Send a notification, if this is the case
@@ -280,10 +283,9 @@ public class PostProcessing {
             // we finally upload the metadata archive file.
             uploadFiles(inf.getMetadataArcFiles(), errorMessage, failedFiles);
             
-            // Make the harvestReport ready for uploading 
+            // Make the harvestReport ready for transfer back to the scheduler 
             DomainStatsReport dsr =  HarvestReportGenerator.getDomainStatsReport(files);
-            		
-            //new DomainStatsReport(hrg.getDomainStatsMap(), hrg.getDefaultStopReason()); 
+            		 
             return HarvestReportFactory.generateHarvestReport(dsr);
         } catch (IOFailure e) {
             String errMsg = "IOFailure occurred, while trying to upload files";
@@ -306,10 +308,10 @@ public class PostProcessing {
                 try {
                     log.info("Uploading file '{}' to arcrepository.", f.getName());
                     arcRepController.store(f);
-                    log.info("File '{}' uploaded successfully to arcrepository.", f.getName());
+                    log.info("File '{}' uploaded successfully to the arcrepository.", f.getName());
                 } catch (Exception e) {
                     File oldJobsDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
-                    String errorMsg = "Error uploading arcfile '" + f.getAbsolutePath() + "' Will be moved to '"
+                    String errorMsg = "Error uploading file '" + f.getAbsolutePath() + "' Will be moved to the oldjobs directory '"
                             + oldJobsDir.getAbsolutePath() + "'";
                     errorMessage.append(errorMsg).append("\n").append(e.toString()).append("\n");
                     log.warn(errorMsg, e);

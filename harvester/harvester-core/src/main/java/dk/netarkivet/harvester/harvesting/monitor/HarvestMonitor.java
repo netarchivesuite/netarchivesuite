@@ -325,7 +325,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
         }
     }
 
-    public Set getRunningJobs() {
+    public Set<Long> getRunningJobs() {
     	return Collections.unmodifiableSet(runningJobs);
     }
 

@@ -238,19 +238,19 @@ public class Heritrix3Files {
 	public String getJobname() {
 		return this.jobName;
 	}
-
+	
 	public void deleteFinalLogs() {
 		try {
 			FileUtils.remove(getCrawlLog());
 		} catch (IOFailure e) {
 			// Log harmless trouble
-			LOG.debug("Couldn't delete crawl log file.", e);
+			LOG.warn("Couldn't delete crawl log file '{}'", getCrawlLog(), e);
 		}
 		try {
 			FileUtils.remove(getProgressStatisticsLog());
 		} catch (IOFailure e) {
 			// Log harmless trouble
-			LOG.debug("Couldn't delete progress statistics log file.", e);
+			LOG.warn("Couldn't delete progress statistics log file '{}'", getProgressStatisticsLog(), e);
 		}
 	}
 
@@ -262,7 +262,7 @@ public class Heritrix3Files {
                     FileUtils.removeRecursively(disposable);
                 } catch (IOFailure e) {
                     // Log harmless trouble
-                    LOG.debug("Couldn't delete leftover file '{}'", disposable.getAbsolutePath(), e);
+                    LOG.warn("Couldn't delete leftover file '{}'", disposable.getAbsolutePath(), e);
                 }
             }
         }
@@ -274,7 +274,10 @@ public class Heritrix3Files {
             LOG.warn("Failed to rename jobdir '{}' to '{}'", crawlDir, destDir);
         }
 	}
-
+	/**
+	 * TODO Add to this list of disposable files: candidates are the folders heritrix3/bin and heritrix3/lib and heritrix3/extras
+	 * @return list of disposable files and file directories  
+	 */
 	public File[] getDisposableFiles() {
         return new File[] {new File(h3JobDir, "state"), new File(crawlDir, "checkpoints"), new File(h3JobDir, "scratch")};
     }

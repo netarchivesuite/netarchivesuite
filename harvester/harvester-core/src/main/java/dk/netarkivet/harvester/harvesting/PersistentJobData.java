@@ -184,6 +184,14 @@ public class PersistentJobData implements JobInfo {
     }
 
     /**
+     * @return the location of the harvestInfo File in the crawlDir.
+     */
+    public static File getHarvestInfoFile(File crawlDir) {
+        return new File(crawlDir, HARVEST_INFO_FILENAME);
+    }
+    
+
+    /**
      * Read harvestInfo into SimpleXML object.
      *
      * @return SimpleXml object for harvestInfo

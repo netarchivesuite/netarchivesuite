@@ -7,6 +7,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 
@@ -22,6 +25,8 @@ import dk.netarkivet.common.utils.Settings;
 * The file is named "archivefiles-report.txt"
 */
 class ArchiveFilesReportGenerator {
+	
+	private static final Logger log = LoggerFactory.getLogger(ArchiveFilesReportGenerator.class);
 
     private static final SimpleDateFormat ISO_8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
@@ -54,9 +59,11 @@ class ArchiveFilesReportGenerator {
      * @return the generated report file.
      */
     protected File generateReport() {
-
         File reportFile = new File(ingestablefiles.getCrawlDir(), REPORT_FILE_NAME);
-
+        if (reportFile.exists()) {
+        	log.warn("The report file '{}' does already exist. We don't try to make another one!", reportFile);
+        	return reportFile;
+        }
         try {
             boolean created = reportFile.createNewFile();
             if (!created) {
