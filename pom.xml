@@ -83,7 +83,6 @@
     <mockobjects-core.version>0.09</mockobjects-core.version>
     <commons-lang3.version>3.5</commons-lang3.version>
     <mail.version>1.4</mail.version>
-    <javax.inject.version>1</javax.inject.version>
     <common-html.version>0.1.0-NAS</common-html.version>
     <common-template-engine.version>0.3.0-NAS</common-template-engine.version>
     <twitter4j-core.version>2.2.6</twitter4j-core.version>
@@ -126,14 +125,12 @@
     around the Heritrix web crawler.
   </description>
 
-  <url>https://sbforge.org/display/NAS</url>
+  <url>http://netarchivesuite.org</url>
 
-  <!--TODO fix this before the next release !!! -->
   <organization>
-    <name>The Royal Danish Library, the Danish State and University Library,
-      the National Library of France and the Austrian National Library.
+    <name>The Royal Danish Library, the National Library of France and the Austrian National Library.
     </name>
-    <url>https://sbforge.org/display/BITMAG</url>
+    <url>http://netarchivesuite.org</url>
   </organization>
 
   <inceptionYear>2005</inceptionYear>
