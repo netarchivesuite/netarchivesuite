@@ -54,5 +54,11 @@ public interface JobGenerator {
      * @throws ArgumentNotValid if cfg is null
      */
     boolean canAccept(Job job, DomainConfiguration cfg, DomainConfiguration previousCfg);
-
+    
+    /**
+     * Test if this configuration should be ignored
+     * @param cfg a domain configuration
+     * @return true if we should ignore this configuration (It could be that it is disabled in some way, or all seeds are prefixed with a '#' and so there are no active seeds
+     */
+    boolean ignoreConfiguration(DomainConfiguration cfg);
 }

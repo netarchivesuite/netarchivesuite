@@ -218,6 +218,11 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
                         (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
                 continue;
             }
+            // excluding configs with no active seeds
+            if (ignoreConfiguration(cfg)) {
+            	log.info("Ignoring config '{}' for domain '{}' - no active seeds !");
+            	continue;
+            }
 
             DomainConfigurationKey domainConfigKey = new DomainConfigurationKey(cfg);
             Job match = jobsUnderConstruction.get(domainConfigKey);
