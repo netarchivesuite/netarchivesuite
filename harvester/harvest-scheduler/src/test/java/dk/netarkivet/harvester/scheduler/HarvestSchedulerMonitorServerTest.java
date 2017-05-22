@@ -265,13 +265,13 @@ public class HarvestSchedulerMonitorServerTest {
         harvestStatusMonitor.visit(crawlStatusMessage);
 
         final String ERROR_MESSAGE = "Received unexpected CrawlStatusMessage for job 1 with new status FAILED, current " +
-                "state is DONE. Marking job as DONE. Reported harvestErrors on job: Some harvesterrors"; // changed from FAILED to DONE and added string: . Reported harvestErrors on job: Some harvesterrors
+                "state is DONE. Marking job as DONE. Reported harvestErrors on job: Some harvesterrors"; 
         
         ArgumentCaptor<Job> jobArgumentCaptor = ArgumentCaptor.forClass(Job.class);
         verify(jobDAOMock).update(jobArgumentCaptor.capture());
         Job actualJob = jobArgumentCaptor.getValue();
         assertEquals(job1.getJobID(), actualJob.getJobID());
-        assertEquals(JobStatus.DONE, actualJob.getStatus());// FAILED => DONE
+        assertEquals(JobStatus.DONE, actualJob.getStatus());
         assertThat(actualJob.getHarvestErrors(), containsString(HARVEST_ERRORS));
         assertThat(actualJob.getHarvestErrors(), containsString(ERROR_MESSAGE));
         assertThat(actualJob.getHarvestErrorDetails(), containsString(HARVEST_ERRORS));
@@ -281,10 +281,9 @@ public class HarvestSchedulerMonitorServerTest {
                 ArgumentCaptor.forClass(JobEndedMessage.class);
         verify(jmsConnectionMock).send(jobEndedMessageArgumentCaptor.capture());
         assertEquals((long) job1.getJobID(), jobEndedMessageArgumentCaptor.getValue().getJobId());
-        assertEquals(JobStatus.FAILED, jobEndedMessageArgumentCaptor.getValue().getJobStatus()); // FAILED => DONE ??
+        assertEquals(JobStatus.FAILED, jobEndedMessageArgumentCaptor.getValue().getJobStatus()); 
 
         logRecorder.assertLogContains(Level.WARN, ERROR_MESSAGE);
-        //logRecorder.assertLogContains(Level.WARN, "Job 1 failed: ");
     }
 
     /**
