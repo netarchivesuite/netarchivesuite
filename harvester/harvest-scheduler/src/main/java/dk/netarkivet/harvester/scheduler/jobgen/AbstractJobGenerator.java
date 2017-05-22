@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,7 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
+import dk.netarkivet.harvester.datamodel.SeedList;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.eav.EAV;
 
@@ -183,7 +185,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
         }
         return checkSpecificAcceptConditions(job, cfg);
     }
-
+    
     /**
      * Called by {@link JobGenerator#canAccept(Job, DomainConfiguration, DomainConfiguration)}. Tests the implementation-specific conditions to accept
      * the given {@link DomainConfiguration} in the given {@link Job}. It is assumed that
@@ -256,4 +258,20 @@ abstract class AbstractJobGenerator implements JobGenerator {
         GlobalCrawlerTrapListDAO.getInstance().addGlobalCrawlerTraps(orderXMLdoc);
         return orderXMLdoc;
     }
+    
+    @Override
+	public boolean ignoreConfiguration(DomainConfiguration cfg) {
+		boolean noValidSeeds = true;
+		Iterator<SeedList> lists = cfg.getSeedLists();
+		while (noValidSeeds && lists.hasNext() ) {
+			SeedList sList = lists.next();
+			for (String seed: sList.getSeeds()) {
+				if (!seed.startsWith("#")) {
+					return false; // At least one valid seed in config. Don't ignore this config
+				}
+			}
+		}
+		return noValidSeeds;
+	}
+    
 }
