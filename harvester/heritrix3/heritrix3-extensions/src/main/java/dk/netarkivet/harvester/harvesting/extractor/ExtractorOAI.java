@@ -3,8 +3,8 @@
  * Author:      $Author: svc $
  * Date:        $Date: 2013-05-03 18:38:47 +0200 (Fri, 03 May 2013) $
  *
- * Copyright 2004-2012 The Royal Danish Library, the Danish State and
- * University Library, the National Library of France and the Austrian
+ * Copyright 2004-2017 The Royal Danish Library,
+ * the National Library of France and the Austrian
  * National Library.
  *
  * This program is free software; you can redistribute it and/or modify
