@@ -20,7 +20,7 @@ NetarchiveSuite was initially developed by The Royal Danish Library (KB) and The
 Library (SB) together as part of the National [Netarkivet.dk](http://netarkivet.dk">http://netarkivet.dk) initialtiv.
 The first release of the platform was in July 2005 and Netarkivet.dk has since used NetarchiveSuite 
 to harvest Danish websites as required by the latest Danish Legal Deposit Act.
-
+As of Januar 1st 2017,  The Danish State and University Library is now part of The Royal Danish Library
 NetarchiveSuite was released on July 2007 as Open Source under the LGPL license. The French National Library (BnF) 
 and the Austrian National Libraries (ONB) joined the project in 2008.
 
