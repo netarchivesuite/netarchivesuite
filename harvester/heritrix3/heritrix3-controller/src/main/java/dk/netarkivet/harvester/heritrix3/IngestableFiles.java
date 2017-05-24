@@ -99,7 +99,10 @@ public class IngestableFiles {
         // Create subdir 'metadata' if not already exists.
         FileUtils.createDir(getMetadataDir());
         // Create/scratch subdir 'tmp-meta'
-        FileUtils.removeRecursively(getTmpMetadataDir());
+        if (getTmpMetadataDir().isDirectory()) {
+        	FileUtils.removeRecursively(getTmpMetadataDir());
+        	log.warn("Removed directory {} with contents", getTmpMetadataDir());
+        }
         FileUtils.createDir(getTmpMetadataDir());
     }
 

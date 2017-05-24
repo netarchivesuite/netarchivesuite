@@ -60,16 +60,21 @@ class ArchiveFilesReportGenerator {
      */
     protected File generateReport() {
         File reportFile = new File(ingestablefiles.getCrawlDir(), REPORT_FILE_NAME);
+        File reportTmpFile = new File(ingestablefiles.getCrawlDir(), REPORT_FILE_NAME + ".open");
         if (reportFile.exists()) {
         	log.warn("The report file '{}' does already exist. We don't try to make another one!", reportFile);
         	return reportFile;
         }
+        if (reportTmpFile.exists()) {
+        	log.warn("We attempted to create the {} previously on date {}, as an temporary file exists. Deleting the temporary file {}", reportFile, new Date(reportTmpFile.lastModified()), reportTmpFile);
+        	reportTmpFile.delete();
+        }
         try {
-            boolean created = reportFile.createNewFile();
+            boolean created = reportTmpFile.createNewFile();
             if (!created) {
-                throw new IOException("Unable to create '" + reportFile.getAbsolutePath() + "'.");
+                throw new IOException("Unable to create temporary reportfile '" + reportTmpFile.getAbsolutePath() + "'.");
             }
-            PrintWriter out = new PrintWriter(reportFile);
+            PrintWriter out = new PrintWriter(reportTmpFile);
 
             out.println(REPORT_FILE_HEADER);
 
@@ -81,6 +86,10 @@ class ArchiveFilesReportGenerator {
             }
 
             out.close();
+            boolean success = reportTmpFile.renameTo(reportFile);
+            if (!success) {
+            	throw new IOException("Failed to rename '" + reportTmpFile.getAbsolutePath() + "' to '" + reportFile.getAbsolutePath() +"'");
+            }
         } catch (IOException e) {
             throw new IOFailure("Failed to create " + reportFile.getName(), e);
         }

@@ -275,10 +275,24 @@ public class Heritrix3Files {
         }
 	}
 	/**
-	 * TODO Add to this list of disposable files: candidates are the folders heritrix3/bin and heritrix3/lib and heritrix3/extras
+	 * Considered as disposable files are the following:
+	 * crawlDir/checkpoints
+	 * h3JobDir/state
+	 * h3JobDir/scratch
+	 * h3BaseDir/bin
+	 * h3BaseDir/extras
+	 * h3BaseDir/lib
+	 * 
 	 * @return list of disposable files and file directories  
 	 */
 	public File[] getDisposableFiles() {
-        return new File[] {new File(h3JobDir, "state"), new File(crawlDir, "checkpoints"), new File(h3JobDir, "scratch")};
+        return new File[] {
+        		new File(crawlDir, "checkpoints"),
+        		new File(h3JobDir, "state"), 
+        		new File(h3JobDir, "scratch"),
+        		new File(h3BaseDir, "bin"),
+        		new File(h3BaseDir, "extras"),
+        		new File(h3BaseDir, "lib")
+        };
     }
 }

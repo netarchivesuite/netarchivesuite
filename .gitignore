@@ -37,6 +37,4 @@ deploy/deploy-core/sb-test-bar-001.statsbiblioteket.dk/
 deploy/deploy-core/sb-test-har-001.statsbiblioteket.dk/
 deploy/deploy-core/startall_K.sh
 deploy/deploy-core/startall_S.sh
-deploy_deploy-core_pom.xml
-deploy_distribution_pom.xml
 
