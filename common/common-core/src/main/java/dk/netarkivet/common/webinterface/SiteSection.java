@@ -98,7 +98,7 @@ public abstract class SiteSection {
             // Assume pageurl ending with / as external url requiring no prefix
             String pageurl= prefix + "-" + pageAndTitle[0] + JSP_EXTENSION;
             if (pageAndTitle[0].endsWith("/")) {
-            	pageurl = pageAndTitle[0]; // Add no prefix
+                pageurl = pageAndTitle[0]; // Add no prefix
             }
             String pagelabel = pageAndTitle[1];
             this.pagesAndTitles.put(pageurl, pagelabel);
@@ -157,8 +157,7 @@ public abstract class SiteSection {
                 }
                 out.print("<tr>");
                 out.print("<td>&nbsp; &nbsp; <a href=\"/" + HTMLUtils.encode(dirname) + "/"
-                        //+ HTMLUtils.encode(pageAndTitle.getKey())
-                		+ pageAndTitle.getKey() // Don't encode this
+                        + pageAndTitle.getKey() 
                         + "\"> "
                         + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, pageAndTitle.getValue()))
                         + "</a></td>");
