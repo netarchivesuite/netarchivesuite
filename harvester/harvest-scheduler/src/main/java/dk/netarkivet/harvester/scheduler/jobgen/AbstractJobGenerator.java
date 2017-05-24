@@ -260,18 +260,19 @@ abstract class AbstractJobGenerator implements JobGenerator {
     }
     
     @Override
-	public boolean ignoreConfiguration(DomainConfiguration cfg) {
-		boolean noValidSeeds = true;
-		Iterator<SeedList> lists = cfg.getSeedLists();
-		while (noValidSeeds && lists.hasNext() ) {
-			SeedList sList = lists.next();
-			for (String seed: sList.getSeeds()) {
-				if (!seed.startsWith("#")) {
-					return false; // At least one valid seed in config. Don't ignore this config
-				}
-			}
-		}
-		return noValidSeeds;
-	}
-    
+    public boolean ignoreConfiguration(DomainConfiguration cfg) {
+        boolean noValidSeeds = true;
+        Iterator<SeedList> lists = cfg.getSeedLists();
+        while (noValidSeeds && lists.hasNext() ) {
+            SeedList sList = lists.next();
+            for (String seed: sList.getSeeds()) {
+                String trimmedSeed = seed.trim(); // trim before testing
+                if (trimmedSeed.length() > 0 && !trimmedSeed.startsWith("#")) { // Found a valid seed 
+                    return false; // At least one valid seed in config. Don't ignore this config
+                }
+            }
+        }
+        return noValidSeeds;
+    }
+
 }
