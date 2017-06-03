@@ -88,7 +88,7 @@ public class HarvestSchedulerMonitorServer
         JobStatus newStatus = cmsg.getStatusCode();
         Job job = jobDAOProvider.get().read(Long.valueOf(jobID));
         JobStatus oldStatus = job.getStatus();
-
+        boolean ignoreDomainHarvestReport = false; // Don't ignore DomainHarvestReport unless job already in DONE state  
         switch (newStatus) {
         case STARTED:
             if (oldStatus == JobStatus.NEW) {
@@ -134,8 +134,10 @@ public class HarvestSchedulerMonitorServer
             	log.error("newstatus: " + newStatus.name());
             	log.error("oldstatus: " + oldStatus.name());
             	JobStatus newStatus1 = JobStatus.FAILED;
+            	
             	if (oldStatus.equals(JobStatus.DONE)) {
             		newStatus1 = JobStatus.DONE;
+            		ignoreDomainHarvestReport = true;
             	}
             	String message = "Received unexpected CrawlStatusMessage for job " + jobID + " with new status " + newStatus +
                         ", current state is " + oldStatus+ ". Marking job as " + newStatus1.name() + ". Reported harvestErrors on job: " +  cmsg.getHarvestErrors();
@@ -149,7 +151,7 @@ public class HarvestSchedulerMonitorServer
 
             jobDAOProvider.get().update(job);
 
-            if (cmsg.getDomainHarvestReport() != null) {
+            if (!ignoreDomainHarvestReport && cmsg.getDomainHarvestReport() != null) { // ignore report if already in DONE state
                 cmsg.getDomainHarvestReport().postProcess(job);
             }
 
