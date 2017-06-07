@@ -152,7 +152,7 @@ public class HarvestSchedulerMonitorServer
 
             jobDAOProvider.get().update(job);
 
-            if (!ignoreDomainHarvestReport && cmsg.getDomainHarvestReport() != null) { // ignore report if already in DONE state
+            if (!ignoreDomainHarvestReport && cmsg.getDomainHarvestReport() != null) { 
                 cmsg.getDomainHarvestReport().postProcess(job);
             }
 
