@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2017 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -99,7 +99,10 @@ public class IngestableFiles {
         // Create subdir 'metadata' if not already exists.
         FileUtils.createDir(getMetadataDir());
         // Create/scratch subdir 'tmp-meta'
-        FileUtils.removeRecursively(getTmpMetadataDir());
+        if (getTmpMetadataDir().isDirectory()) {
+        	FileUtils.removeRecursively(getTmpMetadataDir());
+        	log.warn("Removed directory {} with contents", getTmpMetadataDir());
+        }
         FileUtils.createDir(getTmpMetadataDir());
     }
 

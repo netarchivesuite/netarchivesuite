@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2017 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -28,8 +28,10 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.jwat.common.ANVLRecord;
@@ -131,23 +133,7 @@ public class HarvestDocumentation {
 
             // Insert the harvestdetails into metadata archivefile.
             filesAddedAndNowDeletable = writeHarvestDetails(jobID, harvestID, ingestables, mdfw, Constants.getHeritrix3VersionString());
-            // All these files just added to the metadata archivefile can now be deleted
-            // except for the files we need for later processing):
-            // - crawl.log is needed to create domainharvestreport later
-            // - harvestInfo.xml is needed to upload stored data after
-            // crashes/stops on the harvesters
-            // - progress-statistics.log is needed to find out if crawl ended due
-            // to hitting a size limit, or due to other completion
-
-            Iterator<File> iterator = filesAddedAndNowDeletable.iterator();
-            while (iterator.hasNext()) {
-                File f = iterator.next();
-                if (f.getName().equals("crawl.log") || f.getName().equals("harvestInfo.xml")
-                        || f.getName().equals("progress-statistics.log")) {
-                    iterator.remove();
-                }
-            }
-
+            
             boolean cdxGenerationSucceeded = false;
 
             // Try to create CDXes over ARC and WARC files.
@@ -258,7 +244,7 @@ public class HarvestDocumentation {
      * @param crawlDir the directory where the crawljob took place
      * @param mdfw an MetadaFileWriter used to store the harvest configuration, and harvest logs and reports.
      * @param heritrixVersion the heritrix version used by the harvest.
-     * @return a list of files added to the archive file.
+     * @return a list of files that can now be deleted
      * @throws ArgumentNotValid If null arguments occur
      */
     private static List<File> writeHarvestDetails(long jobID, long harvestID, IngestableFiles ingestableFiles, MetadataFileWriter mdfw,
@@ -325,11 +311,9 @@ public class HarvestDocumentation {
         
         boolean genArcFilesReport = Settings.getBoolean(Heritrix3Settings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         if (genArcFilesReport) {
-    
-            log.debug("Creating an arcfiles-report.txt");
+            log.debug("Creating an arcfiles-report.txt if not already created");
             files.add(new MetadataFile(new ArchiveFilesReportGenerator(ingestableFiles).generateReport(), harvestID, jobID,
                     heritrixVersion));
-                    
         } else {
             log.debug("Creation of the arcfiles-report.txt has been disabled by the setting '{}'!",
             		Heritrix3Settings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
@@ -365,6 +349,26 @@ public class HarvestDocumentation {
             }
         }
 
+        // All these files just added to the metadata archivefile can now be deleted
+        // except for the files we need for later processing):
+        // - crawl.log is needed to create domainharvestreport later
+        // - harvestInfo.xml is needed to upload stored data after
+        // crashes/stops on the harvesters
+        // - progress-statistics.log is needed to find out if crawl ended due
+        // to hitting a size limit, or due to other completion
+        Iterator<File> iterator = filesAdded.iterator();
+        
+        Set<String> excludedFilenames = new HashSet<String>(); 
+        excludedFilenames.add("crawl.log");
+        excludedFilenames.add("harvestInfo.xml");
+        excludedFilenames.add("progress-statistics.log");
+        while (iterator.hasNext()) {
+            File f = iterator.next();
+            String name = f.getName();
+            if (excludedFilenames.contains(name)) {
+                iterator.remove();
+            }
+        }
         return filesAdded;
     }
   

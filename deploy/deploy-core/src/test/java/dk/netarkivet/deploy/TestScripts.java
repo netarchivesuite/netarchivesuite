@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - deploy
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2017 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -29,6 +29,10 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class TestScripts {
 
+    /**
+     * This test method is not a real test, is more a helper for debugging the DeployApplication. 
+     * All used resources from src/test/resources are dummy parameters to make it possible to debug 
+     */
     @Test
     public void test_template() {
         String[] args = {

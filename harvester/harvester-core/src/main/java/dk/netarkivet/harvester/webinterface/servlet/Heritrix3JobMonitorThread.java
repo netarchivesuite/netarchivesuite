@@ -69,10 +69,10 @@ public class Heritrix3JobMonitorThread implements Runnable {
     }
 
     public synchronized void start() {
-    	if (thread == null || !thread.isAlive()) {
+        if (thread == null || !thread.isAlive()) {
             thread = new Thread(this, "Heritrix3 Job Monitor Thread");
             thread.start();
-    	}
+        }
     }
 
     @Override
@@ -81,7 +81,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
         Iterator<Heritrix3JobMonitor> jobmonitorIter;
         byte[] tmpBuf = new byte[1024 * 1024];
         try {
-            LOG.info("CrawlLog Thread started.");
+            LOG.info("Heritrix3 Job Monitor Thread started.");
 
             //File tmpFolder = new File("/tmp/");
             File tmpFolder = environment.tempPath;;
@@ -169,21 +169,28 @@ public class Heritrix3JobMonitorThread implements Runnable {
                 } catch (InterruptedException e) {
                 }
             }
-            LOG.info("CrawlLog Thread stopped.");
+            LOG.info("Heritrix3 Job Monitor Thread stopped.");
         } catch (Throwable t) {
-        	throwable = t;
-            LOG.error("CrawlLog Thread stopped unexpectedly!.", t);
+            // Save throwable so we can show it in the restart GUI.
+            throwable = t;
+            LOG.error("Heritrix3 Job Monitor Thread stopped unexpectedly!.", t);
         }
     }
 
-	public Set<Long> getRunningJobs() {
-	    @SuppressWarnings("unchecked")
-        Set<Long> orgJobs = harvestMonitor.getRunningJobs();
+    /**
+     * Encapsulate call to get the set of running jobs and make a copy of it inside a throwable
+     * since concurrency is an issues.
+     * @return a copy of the running jobs set
+     */
+    public Set<Long> getRunningJobs() {
         try {
+            @SuppressWarnings("unchecked")
+            Set<Long> orgJobs = harvestMonitor.getRunningJobs();
             Set<Long> jobs = new TreeSet<Long>(orgJobs);
             return jobs;
         } catch (Throwable t) {
-        	return null;
+            LOG.debug("Heritrix3 Job Monitor Thread cloning of running jobs failed with an exception!", t);
+            return null;
         }
     }
 

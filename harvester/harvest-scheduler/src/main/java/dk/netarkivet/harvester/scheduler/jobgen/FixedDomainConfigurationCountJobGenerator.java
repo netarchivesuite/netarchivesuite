@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2017 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -217,6 +217,11 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
                 log.info("[JobGen] Config '{}' for '{}' excluded (0{})", cfg.getName(), cfg.getDomainName(),
                         (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
                 continue;
+            }
+            // excluding configs with no active seeds
+            if (ignoreConfiguration(cfg)) {
+            	log.info("Ignoring config '{}' for domain '{}' - no active seeds !");
+            	continue;
             }
 
             DomainConfigurationKey domainConfigKey = new DomainConfigurationKey(cfg);

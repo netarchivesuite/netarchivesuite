@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2017 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,7 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
+import dk.netarkivet.harvester.datamodel.SeedList;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.eav.EAV;
 
@@ -183,7 +185,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
         }
         return checkSpecificAcceptConditions(job, cfg);
     }
-
+    
     /**
      * Called by {@link JobGenerator#canAccept(Job, DomainConfiguration, DomainConfiguration)}. Tests the implementation-specific conditions to accept
      * the given {@link DomainConfiguration} in the given {@link Job}. It is assumed that
@@ -256,4 +258,21 @@ abstract class AbstractJobGenerator implements JobGenerator {
         GlobalCrawlerTrapListDAO.getInstance().addGlobalCrawlerTraps(orderXMLdoc);
         return orderXMLdoc;
     }
+    
+    @Override
+    public boolean ignoreConfiguration(DomainConfiguration cfg) {
+        boolean noValidSeeds = true;
+        Iterator<SeedList> lists = cfg.getSeedLists();
+        while (noValidSeeds && lists.hasNext() ) {
+            SeedList sList = lists.next();
+            for (String seed: sList.getSeeds()) {
+                String trimmedSeed = seed.trim(); // trim before testing
+                if (trimmedSeed.length() > 0 && !trimmedSeed.startsWith("#")) { // Found a valid seed 
+                    return false; // At least one valid seed in config. Don't ignore this config
+                }
+            }
+        }
+        return noValidSeeds;
+    }
+
 }

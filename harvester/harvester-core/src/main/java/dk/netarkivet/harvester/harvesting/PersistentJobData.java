@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2017 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -182,6 +182,14 @@ public class PersistentJobData implements JobInfo {
     public static boolean existsIn(File crawlDir) {
         return new File(crawlDir, HARVEST_INFO_FILENAME).exists();
     }
+
+    /**
+     * @return the location of the harvestInfo File in the crawlDir.
+     */
+    public static File getHarvestInfoFile(File crawlDir) {
+        return new File(crawlDir, HARVEST_INFO_FILENAME);
+    }
+    
 
     /**
      * Read harvestInfo into SimpleXML object.

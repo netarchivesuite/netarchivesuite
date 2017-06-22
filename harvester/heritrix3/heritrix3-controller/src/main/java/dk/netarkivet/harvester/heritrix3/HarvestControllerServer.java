@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2017 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -172,6 +172,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         log.debug("Obtained JMS connection.");
 
         status = new CrawlStatus();
+        log.info("SEND_READY_DELAY used by HarvestControllerServer is {}", status.getSendReadyDelay());
 
         // If any unprocessed jobs are left on the server, process them now
         postProcessing.processOldJobs();
@@ -471,13 +472,18 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         }
 
         /**
-         * Does the operator want us to shutdown now. TODO In a later implementation, the harvestControllerServer could
-         * be notified over JMX. Now we just look for a "shutdown.txt" file in the HARVEST_CONTROLLER_SERVERDIR
+         * Does the operator want us to shutdown now.
+         * TODO In a later implementation, the harvestControllerServer could
+         * be notified over JMX. Now we just look for a "shutdown.txt" file in the HARVEST_CONTROLLER_SERVERDIR 
+         * log that we're shutting down, send a notification about this, and then shutdown.
          */
         private void shutdownNowOrContinue() {
             File shutdownFile = new File(serverDir, "shutdown.txt");
+            
             if (shutdownFile.exists()) {
-                log.info("Found shutdown-file in serverdir - " + "shutting down the application");
+            	String msg = "Found shutdown-file in serverdir '" +  serverDir.getAbsolutePath() + "'. Shutting down the application"; 
+                log.info(msg);
+                NotificationsFactory.getInstance().notify(msg, NotificationType.INFO);
                 instance.cleanup();
                 System.exit(0);
             }
@@ -501,12 +507,12 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         private final int SEND_READY_DELAY = Settings.getInt(HarvesterSettings.SEND_READY_DELAY);
 
         /**
-         * Starts the sending of status messages.
+         * Starts the sending of status messages. Interval defined by HarvesterSettings.SEND_READY_DELAY .
          */
         public void startSending() {
             this.channelIsValid = true;
             statusTransmitter = new PeriodicTaskExecutor("HarvesterStatus", this, 0,
-            		Settings.getInt(HarvesterSettings.SEND_READY_INTERVAL));
+            		getSendReadyDelay());
         }
 
         /**
@@ -528,7 +534,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         }
 
         /**
-         * Use for changing the running state.
+         * Used for changing the running state in methods startAcceptingJobs and stopAcceptingJobs 
          * @param running The new status
          */
         public void setRunning(boolean running) {
@@ -545,7 +551,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         @Override
         public void run() {
             try {
-                Thread.sleep(SEND_READY_DELAY);
+                Thread.sleep(getSendReadyDelay());
             } catch (Exception e) {
                 log.error("Unable to sleep", e);
             }
@@ -555,6 +561,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
             }
         }
 
+        public int getSendReadyDelay() {
+        	return SEND_READY_DELAY;
+        }
+        
     }
 
 }

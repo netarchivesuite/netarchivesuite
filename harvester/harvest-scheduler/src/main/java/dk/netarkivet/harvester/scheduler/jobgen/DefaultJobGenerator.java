@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2017 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -167,6 +167,12 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                         (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
                 continue;
             }
+            // excluding configs with no active seeds
+            if (ignoreConfiguration(cfg)) {
+            	log.info("Ignoring config '{}' for domain '{}' - no active seeds !");
+            	continue;
+            }
+            
             if ((job == null) || (!canAccept(job, cfg, previousDomainConf))) {
                 if (job != null) {
                     // If we're done with a job, write it out
