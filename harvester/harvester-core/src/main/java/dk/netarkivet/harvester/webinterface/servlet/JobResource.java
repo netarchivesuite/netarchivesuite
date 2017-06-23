@@ -34,6 +34,16 @@ public class JobResource implements ResourceAbstract {
 
     private static final String NAS_GROOVY_RESOURCE_PATH = "dk/netarkivet/harvester/webinterface/servlet/nas.groovy";
 
+    private static final String NAS_CRAWLLOG = " crawllog";
+
+    private static final String NAS_FRONTIER = " Frontier";
+
+    private static final String NAS_REJECTRULES = " RejectRules";
+
+    private static final String NAS_BUDGET = " Budget";
+
+    private static final String NAS_REPORTS = " Reports";
+
     private NASEnvironment environment;
 
     protected int R_JOB = -1;
@@ -760,30 +770,8 @@ public class JobResource implements ResourceAbstract {
             sb.append(" is not running.");
         }
 
-        if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" Crawllog");
-        }
-        if (masterTplBuilder.menuPlace != null) {
-            masterTplBuilder.menuPlace.setText(menuSb.toString());
-        }
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" Crawllog");
-        }
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
-        }
+        String pageName = NAS_CRAWLLOG;
+        generatePageInformation(numerics, locale, masterTplBuilder, sb, menuSb, pageName);
 
         masterTplBuilder.write(out);
 
@@ -907,37 +895,15 @@ public class JobResource implements ResourceAbstract {
             sb.append(" is not running.");
         }
 
-        if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" Frontier");
-        }
-        if (masterTplBuilder.menuPlace != null) {
-            masterTplBuilder.menuPlace.setText(menuSb.toString());
-        }
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" Frontier");
-        }
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
-        }
+        String pageName = NAS_FRONTIER;
+        generatePageInformation(numerics, locale, masterTplBuilder, sb, menuSb, pageName);
 
         masterTplBuilder.write(out);
 
         out.flush();
         out.close();
     }
-    
+
     public void filter_add(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
     	Locale locale = resp.getLocale();
     	resp.setContentType("text/html; charset=UTF-8");
@@ -1056,37 +1022,8 @@ public class JobResource implements ResourceAbstract {
             sb.append(" is not running.");
         }
 
-        if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" RejectRules");
-        }
-
-        if (masterTplBuilder.menuPlace != null) {
-            masterTplBuilder.menuPlace.setText(menuSb.toString());
-        }
-        
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" RejectRules");
-        }
-
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
-        }
+        String pageName = NAS_REJECTRULES;
+        generatePageInformation(numerics, locale, masterTplBuilder, sb, menuSb, pageName);
 
         masterTplBuilder.write(out);
 
@@ -1265,37 +1202,8 @@ public class JobResource implements ResourceAbstract {
             sb.append(" is not running.");
         }
 
-        if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" Budget");
-        }
-
-        if (masterTplBuilder.menuPlace != null) {
-            masterTplBuilder.menuPlace.setText(menuSb.toString());
-        }
-        
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" Budget");
-        }
-
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
-        }
+        String pageName = NAS_BUDGET;
+        generatePageInformation(numerics, locale, masterTplBuilder, sb, menuSb, pageName);
 
         masterTplBuilder.write(out);
 
@@ -1459,8 +1367,19 @@ public class JobResource implements ResourceAbstract {
             }
         }
 
+        String pageName = NAS_REPORTS;
+        generatePageInformation(numerics, locale, masterTplBuilder, sb, menuSb, pageName);
+
+        masterTplBuilder.write(out);
+
+        out.flush();
+        out.close();
+    }
+
+    private void generatePageInformation(List<Integer> numerics, Locale locale, MasterTemplateBuilder masterTplBuilder,
+            StringBuilder sb, StringBuilder menuSb, String pageName) {
         if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" Reports");
+            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+pageName);
         }
         if (masterTplBuilder.menuPlace != null) {
             masterTplBuilder.menuPlace.setText(menuSb.toString());
@@ -1469,7 +1388,7 @@ public class JobResource implements ResourceAbstract {
             masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
         }
         if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" Reports");
+            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+pageName);
         }
         if (masterTplBuilder.contentPlace != null) {
             masterTplBuilder.contentPlace.setText(sb.toString());
@@ -1481,13 +1400,9 @@ public class JobResource implements ResourceAbstract {
             masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
         }
         if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
+            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(
+                    HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
         }
-
-        masterTplBuilder.write(out);
-
-        out.flush();
-        out.close();
     }
 
 }
