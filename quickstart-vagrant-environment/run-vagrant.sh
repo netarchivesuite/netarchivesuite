@@ -81,5 +81,6 @@ vagrant destroy -f
 echo 'Running: vagrant up'
 vagrant up >vagrant-up-output.txt
 echo 'Vagrant is up!'
+echo 'To build from a totally clean vagrant, do'
+echo '  vagrant destroy -f; vagrant box remove "ubuntu/precise64"'
 date
-
