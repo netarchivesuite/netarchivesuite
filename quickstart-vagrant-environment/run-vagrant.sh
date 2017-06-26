@@ -50,7 +50,7 @@ else
 			# Insert code into Vagrantfile-include that retrieves a local copy
 			# of the requested branch
 			# git clone -b <branch> --depth 1 <remote_repo>
-			echo 'pwd; mkdir gitting; cd gitting; git clone -b "$bargument" --depth 1 https://github.com/netarchivesuite/netarchivesuite.git' >'Vagrantfile-include'
+			echo "pwd; mkdir gitting; cd gitting; git clone -b $bargument --depth 1 https://github.com/netarchivesuite/netarchivesuite.git" >'Vagrantfile-include'
 
 			# Build the newly cloned NAS using maven
 			#echo ''>'Vagrantfile-include'
