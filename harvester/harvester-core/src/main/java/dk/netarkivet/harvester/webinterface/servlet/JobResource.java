@@ -34,6 +34,8 @@ public class JobResource implements ResourceAbstract {
 
     private static final String NAS_GROOVY_RESOURCE_PATH = "dk/netarkivet/harvester/webinterface/servlet/nas.groovy";
 
+    private static final String NAS_JOB = "Details and Actions on Running Job";
+
     private static final String NAS_CRAWLLOG = " crawllog";
 
     private static final String NAS_FRONTIER = " Frontier";
@@ -165,15 +167,8 @@ public class JobResource implements ResourceAbstract {
             }
 
             h3Job.update();
-            
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
+
+            generateJobInformation(menuSb, h3Job);
             
             sb.append("<div>\n");
             
@@ -217,9 +212,9 @@ public class JobResource implements ResourceAbstract {
             sb.append("MaxJobRunningTime: ");
             sb.append(h3Job.job.getMaxJobRunningTime());
             sb.append(" ms.<br />\n");
-            
+
             sb.append("</div>\n");
-            
+
             /* Heritrix3 WebUI */
             sb.append("<div style=\"float:left;position: absolute;left:600px;\">\n");
             sb.append("<a href=\"");
@@ -227,9 +222,9 @@ public class JobResource implements ResourceAbstract {
             sb.append("\" class=\"btn btn-default\">");
             sb.append("Heritrix3 WebUI");
             sb.append("</a>");
-            
+
             sb.append("</div>\n");
-            
+
             sb.append("<div style=\"clear:both;\"></div>");
             sb.append("</div>");
             
@@ -258,7 +253,7 @@ public class JobResource implements ResourceAbstract {
             sb.append("\" class=\"btn btn-default\">");
             sb.append("H3 Crawllog");
             sb.append("</a>");
-            
+
             sb.append("&nbsp;");
 
             /* Crawllog */
@@ -286,12 +281,12 @@ public class JobResource implements ResourceAbstract {
             sb.append("&nbsp;");
 
             sb.append("</div>\n");
-            
+
             /* line 2 */
-            
+
             sb.append("<h4>Queue actions</h4>\n");
             sb.append("<div>\n");
-            
+
             /* Show/delete Frontier */
             sb.append("<a href=\"");
             sb.append(NASEnvironment.servicePath);
@@ -381,7 +376,7 @@ public class JobResource implements ResourceAbstract {
                 sb.append("\" class=\"btn btn-default\">");
                 sb.append("View scripting_events.log");
                 sb.append("</a>");
-                
+
                 sb.append("</div>\n");
 
                 sb.append("shortName: ");
@@ -589,29 +584,14 @@ public class JobResource implements ResourceAbstract {
             sb.append(" is not running.");
         }
 
+        String pageName = NAS_JOB + h3Job.jobId;
+        generatePageInformation(numerics, locale, masterTplBuilder, sb, menuSb, pageName);
+
         if (masterTplBuilder.titlePlace != null) {
             masterTplBuilder.titlePlace.setText("Details and Actions on Running Job "+h3Job.jobId);
         }
-        if (masterTplBuilder.menuPlace != null) {
-            masterTplBuilder.menuPlace.setText(menuSb.toString());
-        }
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
         if (masterTplBuilder.headingPlace != null) {
             masterTplBuilder.headingPlace.setText("Details and Actions on Running Job "+h3Job.jobId);
-        }
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
         }
 
         masterTplBuilder.write(out);
@@ -670,14 +650,7 @@ public class JobResource implements ResourceAbstract {
         Pageable pageable = h3Job;
 
         if (h3Job != null && h3Job.isReady()) {
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
+            generateJobInformation(menuSb, h3Job);
 
             String actionStr = req.getParameter("action");
             
@@ -719,7 +692,7 @@ public class JobResource implements ResourceAbstract {
             sb.append(totalCachedSize);
             sb.append(" bytes\n");
             sb.append("</div>\n");
-            
+
             sb.append("<div style=\"float:left;\">\n");
             sb.append("<a href=\"");
             sb.append("?action=update");
@@ -728,7 +701,7 @@ public class JobResource implements ResourceAbstract {
             sb.append("</a>");
             //sb.append("the cache manually ");
             sb.append("</div>\n");
-            
+
             sb.append("<div style=\"clear:both;\"></div>\n");
             sb.append("</div>\n");
 
@@ -847,14 +820,7 @@ public class JobResource implements ResourceAbstract {
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
         if (h3Job != null && h3Job.isReady()) {
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
+            generateJobInformation(menuSb, h3Job);
 
             if (deleteStr != null && "1".equals(deleteStr) && (initials == null || initials.length() == 0)) {
                 //sb.append("<span style=\"text-color: red;\">Initials required to delete from the frontier queue!</span><br />\n");
@@ -902,6 +868,17 @@ public class JobResource implements ResourceAbstract {
 
         out.flush();
         out.close();
+    }
+
+    private void generateJobInformation(StringBuilder menuSb, Heritrix3JobMonitor h3Job) {
+        menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
+        menuSb.append(NASEnvironment.servicePath);
+        menuSb.append("job/");
+        menuSb.append(h3Job.jobId);
+        menuSb.append("/");
+        menuSb.append("\"> Job ");
+        menuSb.append(h3Job.jobId);
+        menuSb.append("</a></td></tr>");
     }
 
     public void filter_add(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
@@ -964,14 +941,7 @@ public class JobResource implements ResourceAbstract {
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
         if (h3Job != null && h3Job.isReady()) {
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
+            generateJobInformation(menuSb, h3Job);
             
             /* form control */
             /* case submit for delete but no checked regex */
@@ -1119,14 +1089,7 @@ public class JobResource implements ResourceAbstract {
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
         if (h3Job != null && h3Job.isReady()) {
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
+            generateJobInformation(menuSb, h3Job);
             
             /* form control */
             boolean submitWithInitials = true;
@@ -1238,14 +1201,7 @@ public class JobResource implements ResourceAbstract {
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
         if (h3Job != null && h3Job.isReady()) {
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
+            generateJobInformation(menuSb, h3Job);
 
             if (engineStr != null && engineStr.length() > 0 && scriptStr != null && scriptStr.length() > 0) {
                 ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, engineStr, scriptStr);
@@ -1318,14 +1274,7 @@ public class JobResource implements ResourceAbstract {
         Job job;
 
         if (h3Job != null && h3Job.isReady()) {
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
+            generateJobInformation(menuSb, h3Job);
 
             if (h3Job.jobResult != null && h3Job.jobResult.job != null) {
                 job = h3Job.jobResult.job;
@@ -1403,6 +1352,8 @@ public class JobResource implements ResourceAbstract {
             masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(
                     HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
         }
+
+
     }
 
 }
