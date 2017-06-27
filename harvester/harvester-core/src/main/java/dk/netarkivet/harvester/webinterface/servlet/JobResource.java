@@ -579,9 +579,7 @@ public class JobResource implements ResourceAbstract {
                 }
             }
         } else {
-            sb.append("Job ");
-            sb.append(numerics.get(0));
-            sb.append(" is not running.");
+            generateJobIsNotRunning(numerics, sb);
         }
 
         String pageName = NAS_JOB + h3Job.jobId;
@@ -601,6 +599,12 @@ public class JobResource implements ResourceAbstract {
     }
 
     public void crawllog_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+        long lines;
+        long linesPerPage = 100;
+        long page = 1;
+        long pages = 0;
+        String q = null;
+
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
@@ -608,40 +612,9 @@ public class JobResource implements ResourceAbstract {
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
 
-        long lines;
-        long linesPerPage = 100;
-        long page = 1;
-        long pages = 0;
-        String q = null;
-
-        String tmpStr;
-        tmpStr = req.getParameter("page");
-        if (tmpStr != null && tmpStr.length() > 0) {
-            try {
-                page = Long.parseLong(tmpStr);
-            } catch (NumberFormatException e) {
-            }
-        }
-        tmpStr = req.getParameter("itemsperpage");
-        if (tmpStr != null && tmpStr.length() > 0) {
-            try {
-                linesPerPage = Long.parseLong(tmpStr);
-            } catch (NumberFormatException e) {
-            }
-        }
-        
-        if (linesPerPage < 25) {
-            linesPerPage = 25;
-        }
-        if (linesPerPage > 1000) {
-            linesPerPage = 1000;
-        }
-        
-
-        tmpStr = req.getParameter("q");
-        if (tmpStr != null && tmpStr.length() > 0 && !tmpStr.equalsIgnoreCase(".*")) {
-            q = tmpStr;
-        }
+        page = getPage(req, page);
+        linesPerPage = getLinesPerPage(req, linesPerPage);
+        q = getParameterQ(req, q);
 
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
@@ -651,96 +624,32 @@ public class JobResource implements ResourceAbstract {
 
         if (h3Job != null && h3Job.isReady()) {
             generateJobInformation(menuSb, h3Job);
-
             String actionStr = req.getParameter("action");
-            
-            if ("update".equalsIgnoreCase(actionStr)) {
-                byte[] tmpBuf = new byte[1024 * 1024];
-                h3Job.updateCrawlLog(tmpBuf);
-            }
-            
+            updateCrawllog(h3Job, actionStr);
+
             long totalCachedLines = h3Job.getTotalCachedLines();
             long totalCachedSize = h3Job.getLastIndexed();
 
-            SearchResult searchResult = null;
-            
             if (q != null) {
-            	
-                searchResult = h3Job.getSearchResult(q);
-                searchResult.update();
-                pageable = searchResult;
+                pageable = getPageable(q, h3Job);
             }
 
             lines = pageable.getIndexSize();
-            
-            if (lines > 0) {
-                lines = (lines / 8) - 1;
+            if (lines > 0)
                 pages = Pagination.getPages(lines, linesPerPage);
-            } else {
-                lines = 0;
-            }
-            if (page > pages) {
+            lines = (lines > 0) ? (lines / 8) - 1 : 0;
+
+            if (page > pages)
                 page = pages;
-            }
-            
-            sb.append("<div style=\"margin-bottom:20px;\">\n");
-            sb.append("<div style=\"float:left;min-width:180px;\">\n");
-            sb.append("Total cached lines: ");
-            sb.append(totalCachedLines);
-            sb.append(" URIs<br />\n");
-            sb.append("Total cached size: ");
-            sb.append(totalCachedSize);
-            sb.append(" bytes\n");
-            sb.append("</div>\n");
 
-            sb.append("<div style=\"float:left;\">\n");
-            sb.append("<a href=\"");
-            sb.append("?action=update");
-            sb.append("\" class=\"btn btn-default\">");
-            sb.append("Update cache");
-            sb.append("</a>");
-            //sb.append("the cache manually ");
+            produceTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
+            produceUpdateCacheButton(sb);
+            q = produceMargin(q, sb);
+            produceItemsPerPage(linesPerPage, q, sb);
             sb.append("</div>\n");
-
-            sb.append("<div style=\"clear:both;\"></div>\n");
-            sb.append("</div>\n");
-
-            if (q == null) {
-                q = ".*";
-            }
-            
-            sb.append("<div style=\"margin-bottom:20px;\">\n");
-
-            sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">");
-            sb.append("<label for=\"itemsperpage\">Lines to show:</label>");
-            sb.append("<input type=\"text\" id=\"itemsperpage\" name=\"itemsperpage\" value=\"" + linesPerPage + "\" placeholder=\"must be &gt; 25 and &lt; 1000 \">\n");
-            sb.append("<label for=\"q\">Filter regex:</label>");
-            sb.append("<input type=\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"content-type\" style=\"display:inline;width:350px;\">\n");
-            sb.append("<button type=\"submit\" name=\"search\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Search</button>\n");
-
-            sb.append("</div>\n");
-            
-            sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
-            sb.append("<span>Matching lines: ");
-            sb.append(lines);
-            sb.append(" URIs</span>\n");
-            sb.append("</div>\n");
-            sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
-            sb.append("<div style=\"clear:both;\"></div>");
-            sb.append("<div>\n");
-            sb.append("<pre>\n");
-            if (lines > 0) {
-                byte[] pageBytes = pageable.readPage(page, linesPerPage, true);
-                sb.append(new String(pageBytes, "UTF-8"));
-            }
-            sb.append("</pre>\n");
-            sb.append("</div>\n");
-            sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
-            sb.append("</form>");
+            producePagination(lines, linesPerPage, page, pages, sb, pageable);
         } else {
-            sb.append("Job ");
-            sb.append(numerics.get(0));
-            sb.append(" is not running.");
+            generateJobIsNotRunning(numerics, sb);
         }
 
         String pageName = NAS_CRAWLLOG;
@@ -752,7 +661,20 @@ public class JobResource implements ResourceAbstract {
         out.close();
     }
 
+    private void updateCrawllog(Heritrix3JobMonitor h3Job, String actionStr) {
+        if ("update".equalsIgnoreCase(actionStr)) {
+            byte[] tmpBuf = new byte[1024 * 1024];
+            h3Job.updateCrawlLog(tmpBuf);
+        }
+    }
+
     public void frontier_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+        long lines;
+        long linesPerPage = 100;
+        long page = 1;
+        long pages = 0;
+        String q = null;
+
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
@@ -760,36 +682,17 @@ public class JobResource implements ResourceAbstract {
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
 
+        page = getPage(req, page);
+        linesPerPage = getLinesPerPage(req, linesPerPage);
+        q = getParameterQ(req, q);
+
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
 
-        String regex = req.getParameter("regex");
-        if (regex == null || regex.length() == 0) {
-            regex =".*";
-        }
-        long limit = 1000;
-        String limitStr = req.getParameter("limit");
-        if (limitStr != null && limitStr.length() > 0) {
-            try {
-                limit = Long.parseLong(limitStr);
-            } catch (NumberFormatException e) {
-            }
-        }
-        String initials = req.getParameter("initials");
-        if (initials == null) {
-            initials = "";
-        }
-
-        String resource = NAS_GROOVY_RESOURCE_PATH;
-        InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
-        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        byte[] tmpArr = new byte[8192];
-        int read;
-        while ((read = in.read(tmpArr)) != -1) {
-            bOut.write(tmpArr, 0, read);
-        }
-        in.close();
-        String script = new String(bOut.toByteArray(), "UTF-8");
+        String regex = getParameterRegex(req);
+        long limit = getLimit(req);
+        String initials = getInitials(req);
+        String script = getGroovyScript();
 
         /*
         //RandomAccessFile raf = new RandomAccessFile("/home/nicl/workspace-nas-h3/heritrix3-scripts/src/main/java/view-frontier-url.groovy", "r");
@@ -801,14 +704,7 @@ public class JobResource implements ResourceAbstract {
         */
 
         String deleteStr = req.getParameter("delete");
-        if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
-            script += "\n";
-            script += "\ninitials = \"" + initials + "\"";
-            script += "\ndeleteFromFrontier '" + regex + "'\n";
-        } else {
-            script += "\n";
-            script += "\nlistFrontier '" + regex + "', " + limit + "\n";
-        }
+        script = getDeleteScript(regex, limit, initials, script, deleteStr);
 
         // To use, just remove the initial "//" from any one of these lines.
         //
@@ -818,47 +714,48 @@ public class JobResource implements ResourceAbstract {
         //printCrawlLog '.*'          //View already crawled lines uris matching a given regexp
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
+        //Pageable pageable = h3Job;
 
         if (h3Job != null && h3Job.isReady()) {
             generateJobInformation(menuSb, h3Job);
+
 
             if (deleteStr != null && "1".equals(deleteStr) && (initials == null || initials.length() == 0)) {
                 //sb.append("<span style=\"text-color: red;\">Initials required to delete from the frontier queue!</span><br />\n");
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to delete from the frontier queue!</div>");
             }
 
-            sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
-            sb.append("<label for=\"limit\">Lines to show:</label>");
-            sb.append("<input type=\"text\" id=\"limit\" name=\"limit\" value=\"" + limit + "\" placeholder=\"return limit\">\n");
-            sb.append("<label for=\"regex\">Filter regex:</label>");
-            sb.append("<input type=\"text\" id=\"regex\" name=\"regex\" value=\"" + regex + "\" placeholder=\"regex\" style=\"display:inline;width:350px;\">\n");
-            sb.append("<button type=\"submit\" name=\"show\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Show</button>\n");
+            produceLineToShow(sb, regex, limit);
             sb.append("&nbsp;");
-            sb.append("<label for=\"initials\">User initials:</label>");
-            sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
-            sb.append("<button type=\"submit\" name=\"delete\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Delete</button>\n");
-            sb.append("</form>\n");
+            produceInitials(sb, initials);
 
-            ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
-            //System.out.println(new String(scriptResult.response, "UTF-8"));
-            if (scriptResult != null && scriptResult.script != null) {
-                if (scriptResult.script.htmlOutput != null) {
-                    sb.append("<fieldset><!--<legend>htmlOut</legend>-->");
-                    sb.append(scriptResult.script.htmlOutput);
-                    sb.append("</fieldset><br />\n");
-                }
-                if (scriptResult.script.rawOutput != null) {
-                    sb.append("<fieldset><!--<legend>rawOut</legend>-->");
-                    sb.append("<pre>");
-                    sb.append(scriptResult.script.rawOutput);
-                    sb.append("</pre>");
-                    sb.append("</fieldset><br />\n");
-                }
+            generateGroovy(sb, script, h3Job);
+
+            /*
+            long totalCachedLines = h3Job.getTotalCachedLines();
+            long totalCachedSize = h3Job.getLastIndexed();
+
+            if (q != null) {
+                pageable = getPageable(q, h3Job);
             }
+
+            lines = pageable.getIndexSize();
+            if (lines > 0)
+                pages = Pagination.getPages(lines, linesPerPage);
+            lines = (lines > 0) ? (lines / 8) - 1 : 0;
+
+            if (page > pages)
+                page = pages;
+
+            produceTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
+            produceUpdateCacheButton(sb);
+            q = produceMargin(q, sb);
+            produceItemsPerPage(linesPerPage, q, sb);
+            sb.append("</div>\n");
+            producePagination(lines, linesPerPage, page, pages, sb, pageable);
+            */
         } else {
-            sb.append("Job ");
-            sb.append(numerics.get(0));
-            sb.append(" is not running.");
+            generateJobIsNotRunning(numerics, sb);
         }
 
         String pageName = NAS_FRONTIER;
@@ -868,6 +765,214 @@ public class JobResource implements ResourceAbstract {
 
         out.flush();
         out.close();
+    }
+
+    private String produceMargin(String q, StringBuilder sb) {
+        sb.append("<div style=\"clear:both;\"></div>\n");
+        sb.append("</div>\n");
+
+        if (q == null) {
+            q = ".*";
+        }
+
+        sb.append("<div style=\"margin-bottom:20px;\">\n");
+        return q;
+    }
+
+    private String getGroovyScript() throws IOException {
+        String resource = NAS_GROOVY_RESOURCE_PATH;
+        InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        byte[] tmpArr = new byte[8192];
+        int read;
+        while ((read = in.read(tmpArr)) != -1) {
+            bOut.write(tmpArr, 0, read);
+        }
+        in.close();
+        return new String(bOut.toByteArray(), "UTF-8");
+    }
+
+    private String getDeleteScript(String regex, long limit, String initials, String script, String deleteStr) {
+        if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
+            script += "\n";
+            script += "\ninitials = \"" + initials + "\"";
+            script += "\ndeleteFromFrontier '" + regex + "'\n";
+        } else {
+            script += "\n";
+            script += "\nlistFrontier '" + regex + "', " + limit + "\n";
+        }
+        return script;
+    }
+
+    private void generateGroovy(StringBuilder sb, String script, Heritrix3JobMonitor h3Job) {
+        ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
+        //System.out.println(new String(scriptResult.response, "UTF-8"));
+        if (scriptResult != null && scriptResult.script != null) {
+            if (scriptResult.script.htmlOutput != null) {
+                sb.append("<fieldset><!--<legend>htmlOut</legend>-->");
+                sb.append(scriptResult.script.htmlOutput);
+                sb.append("</fieldset><br />\n");
+            }
+            if (scriptResult.script.rawOutput != null) {
+                sb.append("<fieldset><!--<legend>rawOut</legend>-->");
+                sb.append("<pre>");
+                sb.append(scriptResult.script.rawOutput);
+                sb.append("</pre>");
+                sb.append("</fieldset><br />\n");
+            }
+        }
+    }
+
+    private void produceInitials(StringBuilder sb, String initials) {
+        sb.append("<label for=\"initials\">User initials:</label>");
+        sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
+        sb.append("<button type=\"submit\" name=\"delete\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Delete</button>\n");
+        sb.append("</form>\n");
+    }
+
+    private void produceLineToShow(StringBuilder sb, String regex, long limit) {
+        sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
+        sb.append("<label for=\"limit\">Lines to show:</label>");
+        sb.append("<input type=\"text\" id=\"limit\" name=\"limit\" value=\"" + limit + "\" placeholder=\"return limit\">\n");
+        sb.append("<label for=\"regex\">Filter regex:</label>");
+        sb.append("<input type=\"text\" id=\"regex\" name=\"regex\" value=\"" + regex + "\" placeholder=\"regex\" style=\"display:inline;width:350px;\">\n");
+        sb.append("<button type=\"submit\" name=\"show\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Show</button>\n");
+    }
+
+    private void producePagination(long lines, long linesPerPage, long page, long pages, StringBuilder sb,
+            Pageable pageable) throws IOException {
+        sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
+        sb.append("<span>Matching lines: ");
+        sb.append(lines);
+        sb.append(" URIs</span>\n");
+        sb.append("</div>\n");
+        sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
+        sb.append("<div style=\"clear:both;\"></div>");
+        sb.append("<div>\n");
+        sb.append("<pre>\n");
+        if (lines > 0) {
+            byte[] pageBytes = pageable.readPage(page, linesPerPage, true);
+            sb.append(new String(pageBytes, "UTF-8"));
+        }
+        sb.append("</pre>\n");
+        sb.append("</div>\n");
+        sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
+        sb.append("</form>");
+    }
+
+    private void produceItemsPerPage(long linesPerPage, String q, StringBuilder sb) {
+        sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">");
+        sb.append("<label for=\"itemsperpage\">Lines to show:</label>");
+        sb.append("<input type=\"text\" id=\"itemsperpage\" name=\"itemsperpage\" value=\"" + linesPerPage + "\" placeholder=\"must be &gt; 25 and &lt; 1000 \">\n");
+        sb.append("<label for=\"q\">Filter regex:</label>");
+        sb.append("<input type=\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"content-type\" style=\"display:inline;width:350px;\">\n");
+        sb.append("<button type=\"submit\" name=\"search\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Search</button>\n");
+    }
+
+    private void produceUpdateCacheButton(StringBuilder sb) {
+        sb.append("<div style=\"float:left;\">\n");
+        sb.append("<a href=\"");
+        sb.append("?action=update");
+        sb.append("\" class=\"btn btn-default\">");
+        sb.append("Update cache");
+        sb.append("</a>");
+        //sb.append("the cache manually ");
+        sb.append("</div>\n");
+    }
+
+    private void produceTotalCachedInformation(StringBuilder sb, long totalCachedLines, long totalCachedSize) {
+        sb.append("<div style=\"margin-bottom:20px;\">\n");
+        sb.append("<div style=\"float:left;min-width:180px;\">\n");
+        sb.append("Total cached lines: ");
+        sb.append(totalCachedLines);
+        sb.append(" URIs<br />\n");
+        sb.append("Total cached size: ");
+        sb.append(totalCachedSize);
+        sb.append(" bytes\n");
+        sb.append("</div>\n");
+    }
+
+    private Pageable getPageable(String q, Heritrix3JobMonitor h3Job) throws IOException {
+        SearchResult searchResult;
+        Pageable pageable;
+        searchResult = h3Job.getSearchResult(q);
+        searchResult.update();
+        pageable = searchResult;
+        return pageable;
+    }
+
+    private String getInitials(HttpServletRequest req) {
+        String initials = req.getParameter("initials");
+        if (initials == null) {
+            initials = "";
+        }
+        return initials;
+    }
+
+    private long getLimit(HttpServletRequest req) {
+        long limit = 1000;
+        String limitStr = req.getParameter("limit");
+        if (limitStr != null && limitStr.length() > 0) {
+            try {
+                limit = Long.parseLong(limitStr);
+            } catch (NumberFormatException e) {
+            }
+        }
+        return limit;
+    }
+
+    private String getParameterRegex(HttpServletRequest req) {
+        String regex = req.getParameter("regex");
+        if (regex == null || regex.length() == 0) {
+            regex =".*";
+        }
+        return regex;
+    }
+
+    private String getParameterQ(HttpServletRequest req, String q) {
+        String tmpStr;
+        tmpStr = req.getParameter("q");
+        if (tmpStr != null && tmpStr.length() > 0 && !tmpStr.equalsIgnoreCase(".*")) {
+            q = tmpStr;
+        }
+        return q;
+    }
+
+    private long getLinesPerPage(HttpServletRequest req, long linesPerPage) {
+        String tmpStr;
+        tmpStr = req.getParameter("itemsperpage");
+        if (tmpStr != null && tmpStr.length() > 0) {
+            try {
+                linesPerPage = Long.parseLong(tmpStr);
+            } catch (NumberFormatException e) {
+            }
+        }
+
+        if (linesPerPage < 25) {
+            linesPerPage = 25;
+        }
+        if (linesPerPage > 1000) {
+            linesPerPage = 1000;
+        }
+        return linesPerPage;
+    }
+
+    private long getPage(HttpServletRequest req, long page) {
+        String tmpStr;
+        tmpStr = req.getParameter("page");
+        if (tmpStr != null && tmpStr.length() > 0) {
+            try {
+                page = Long.parseLong(tmpStr);
+            } catch (NumberFormatException e) {
+            }
+        }
+        return page;
+    }
+
+    private void generateJobIsNotRunning(List<Integer> numerics, StringBuilder sb) {
+        sb.append("Job ");
+        sb.append(numerics.get(0));
+        sb.append(" is not running.");
     }
 
     private void generateJobInformation(StringBuilder menuSb, Heritrix3JobMonitor h3Job) {
@@ -911,16 +1016,7 @@ public class JobResource implements ResourceAbstract {
     		initials = "";
     	}
 
-        String resource = NAS_GROOVY_RESOURCE_PATH;
-        InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
-        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        byte[] tmpArr = new byte[8192];
-        int read;
-        while ((read = in.read(tmpArr)) != -1) {
-            bOut.write(tmpArr, 0, read);
-        }
-        in.close();
-        String script = new String(bOut.toByteArray(), "UTF-8");
+        String script = getGroovyScript();
 
         if (regex.length() > 0 && !initials.isEmpty()) {
         	String[] lines = regex.split(System.getProperty("line.separator"));
@@ -987,9 +1083,7 @@ public class JobResource implements ResourceAbstract {
             
             sb.append("</form>\n");
         } else {
-            sb.append("Job ");
-            sb.append(numerics.get(0));
-            sb.append(" is not running.");
+            generateJobIsNotRunning(numerics, sb);
         }
 
         String pageName = NAS_REJECTRULES;
@@ -1042,16 +1136,7 @@ public class JobResource implements ResourceAbstract {
         
         boolean isNumber = true;
 
-        String resource = NAS_GROOVY_RESOURCE_PATH;
-        InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
-        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        byte[] tmpArr = new byte[8192];
-        int read;
-        while ((read = in.read(tmpArr)) != -1) {
-            bOut.write(tmpArr, 0, read);
-        }
-        in.close();
-        String script = new String(bOut.toByteArray(), "UTF-8");
+        String script = getGroovyScript();
         String originalScript = script;
 
         script += "\n";
@@ -1160,9 +1245,7 @@ public class JobResource implements ResourceAbstract {
 
             sb.append("</form>\n");
         } else {
-            sb.append("Job ");
-            sb.append(numerics.get(0));
-            sb.append(" is not running.");
+            generateJobIsNotRunning(numerics, sb);
         }
 
         String pageName = NAS_BUDGET;
