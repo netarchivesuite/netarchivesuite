@@ -717,7 +717,7 @@ public class JobResource implements ResourceAbstract {
         //printCrawlLog '.*'          //View already crawled lines uris matching a given regexp
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
-        //Pageable pageable = h3Job;
+        Pageable pageable = h3Job;
 
         if (h3Job != null && h3Job.isReady()) {
             generateJobInformation(menuSb, h3Job);
@@ -734,7 +734,6 @@ public class JobResource implements ResourceAbstract {
 
             generateGroovy(sb, script, h3Job);
 
-            /*
             long totalCachedLines = h3Job.getTotalCachedLines();
             long totalCachedSize = h3Job.getLastIndexed();
 
@@ -756,7 +755,6 @@ public class JobResource implements ResourceAbstract {
             produceItemsPerPage(linesPerPage, q, sb);
             sb.append("</div>\n");
             producePagination(lines, linesPerPage, page, pages, sb, pageable);
-            */
         } else {
             generateJobIsNotRunning(numerics, sb);
         }
