@@ -669,14 +669,14 @@ public class JobResource implements ResourceAbstract {
     }
 
     public void frontier_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-/*
+
         long lines;
 
         long linesPerPage = 100;
         long page = 1;
         long pages = 0;
         String q = null;
-*/
+
 
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
@@ -685,10 +685,10 @@ public class JobResource implements ResourceAbstract {
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
 
-/*        page = getPage(req, page);
+        page = getPage(req, page);
         linesPerPage = getLinesPerPage(req, linesPerPage);
         q = getParameterQ(req, q);
-*/
+
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
 
