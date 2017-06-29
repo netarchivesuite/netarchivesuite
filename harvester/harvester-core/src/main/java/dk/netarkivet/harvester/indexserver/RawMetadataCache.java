@@ -182,7 +182,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
      */
     private void migrateDuplicates(Long id, String replicaUsed, String specifiedPattern, BatchStatus originalBatchJob) {
         File cacheFileName = getCacheFile(id);
-        Pattern duplicatePattern = Pattern.compile(".*duplicate:\"([^,]+),([0-9]+),.*");
+        Pattern duplicatePattern = Pattern.compile(".*duplicate:\"([^,]+),([0-9]+).*");
         if (urlPattern.pattern().equals(MetadataFile.CRAWL_LOG_PATTERN)) {
             GetMetadataArchiveBatchJob job2 = new GetMetadataArchiveBatchJob(Pattern.compile(".*duplicationmigration.*"), Pattern.compile("text/plain"));
             job2.processOnlyFilesMatching(specifiedPattern);
