@@ -62,9 +62,18 @@ This page displays a list of running jobs.
     // TODO remove, just for testing
     //TODO iterer
 
-    //String allParams = request.getParameterNames();
-    List<String> parameterNames = new ArrayList<String>(request.getParameterMap().keySet());
-    String allParams = String.join(", ", parameterNames);
+    //String alleParams = request.getParameterNames();
+    //List<String> parameterNames = new ArrayList<String>(request.getParameterMap().keySet());
+    //String allParams = String.join(", ", parameterNames);
+
+    List<String> allParameters = Collections.list(request.getParameterNames());
+    //List<String> parameterNames = new ArrayList<String>(request.getParameterMap().keySet());
+    String allParams = "";
+
+    for (String param : allParameters) {
+        allParams += param + ",";
+    }
+
 
     //
     HarvestStatusRunningTablesSort tbs=(HarvestStatusRunningTablesSort)
