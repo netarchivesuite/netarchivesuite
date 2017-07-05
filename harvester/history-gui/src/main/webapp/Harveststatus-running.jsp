@@ -48,8 +48,7 @@ This page displays a list of running jobs.
     dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort"
 	pageEncoding="UTF-8"%>
 <%@ page import="dk.netarkivet.harvester.datamodel.JobDAO" %>
-<%@ page import="javax.inject.Provider" %>
-<%@ page import="com.sun.tools.corba.se.idl.toJavaPortable.StringGen" %>
+<%@ page import="java.util.ArrayList" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
@@ -61,8 +60,11 @@ This page displays a list of running jobs.
 
 <%
     // TODO remove, just for testing
-    String allParams = request.getParameterNames().toString();
+    //TODO iterer
 
+    //String allParams = request.getParameterNames();
+    List<String> parameterNames = new ArrayList<String>(request.getParameterMap().keySet());
+    String allParams = String.join(", ", parameterNames);
 
     //
     HarvestStatusRunningTablesSort tbs=(HarvestStatusRunningTablesSort)
