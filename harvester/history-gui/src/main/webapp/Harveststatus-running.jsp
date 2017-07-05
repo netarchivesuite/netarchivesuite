@@ -28,27 +28,28 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 This page displays a list of running jobs.
 --%>
 
+<%-- TODO .getHost on the java.net.URL below? --%>
 <%@page import="dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor"%>
 <%@ page
 	import="
-    java.util.Date,
+	java.net.URL,
     java.util.List,
-    java.util.Set,
     java.util.Map,
-    java.util.TreeMap,
     java.util.Collections,
-    java.text.SimpleDateFormat,
     dk.netarkivet.common.utils.I18n,
     dk.netarkivet.common.webinterface.HTMLUtils,
-    dk.netarkivet.common.webinterface.SiteSection,
     dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo,
     dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO,
+    dk.netarkivet.harvester.datamodel.Job,
     dk.netarkivet.harvester.webinterface.Constants,
     dk.netarkivet.harvester.webinterface.FindRunningJobQuery,
     dk.netarkivet.common.utils.StringUtils,
     dk.netarkivet.common.utils.TableSort,
     dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort"
 	pageEncoding="UTF-8"%>
+<%@ page import="dk.netarkivet.harvester.datamodel.JobDAO" %>
+<%@ page import="javax.inject.Provider" %>
+<%@ page import="com.sun.tools.corba.se.idl.toJavaPortable.StringGen" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
@@ -59,10 +60,14 @@ This page displays a list of running jobs.
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%>
 
 <%
+    // TODO remove, just for testing
+    String allParams = request.getParameterNames().toString();
+
+
     //
     HarvestStatusRunningTablesSort tbs=(HarvestStatusRunningTablesSort)
         session.getAttribute("TablesSortData");
-    if(tbs==null){
+    if (tbs==null){
         tbs = new HarvestStatusRunningTablesSort();
         session.setAttribute("TablesSortData",tbs);
     }
@@ -70,7 +75,7 @@ This page displays a list of running jobs.
     String sortedColumn=request.getParameter(Constants.COLUMN_PARAM);
     String sortedHarvest=request.getParameter(Constants.HARVEST_PARAM);
 
-    if( sortedColumn != null && sortedHarvest != null) {
+    if (sortedColumn != null && sortedHarvest != null) {
         tbs.sortByHarvestName(sortedHarvest,Integer.parseInt(sortedColumn)) ;
     }
 
@@ -106,6 +111,8 @@ This page displays a list of running jobs.
 <fmt:message key="running.jobs.nbrunning">
      <fmt:param value="<%=jobCount%>"/>
 </fmt:message>
+
+TODO testing here: <%=allParams%>
 
 <form method="get" name="findJobForDomainForm" action="Harveststatus-running.jsp">
     <input type="hidden" name="searchDone" value="1"/>
@@ -164,12 +171,12 @@ This page displays a list of running jobs.
             String columnId;
 %>
 
-<tr class="spacerRowBig"><td colspan="12">&nbsp;</td></tr>
-<tr><th colspan="13">
+<tr class="spacerRowBig"><td colspan="15">&nbsp;</td></tr>
+<tr><th colspan="15">
     <fmt:message key="table.running.jobs.harvestName"/>&nbsp;<a href="<%=harvestDetailsLink%>"><%=harvestName %></a>
 </th>
 </tr>
-<tr class="spacerRowSmall"><td colspan="12">&nbsp;</td></tr>
+<tr class="spacerRowSmall"><td colspan="15">&nbsp;</td></tr>
 <tr>
     <th class="harvestHeader" rowspan="2">
     <% sortLink=sortBaseLink
@@ -205,7 +212,7 @@ This page displays a list of running jobs.
         </a>
     </th>
     <th class="harvestHeader" rowspan="2">TODO urls..</th>
-    <th class="harvestHeader" rowspan="2">TODO in seedlist..</th>
+    <th class="harvestHeader" rowspan="2"><fmt:message key="table.running.jobs.inseedlist"/></th>
     <th class="harvestHeader" colspan="5"><fmt:message key="table.running.jobs.queues"/></th>
     <th class="harvestHeader" colspan="3"><fmt:message key="table.running.jobs.performance"/></th>
     <th class="harvestHeader" rowspan="2"><fmt:message key="table.running.jobs.alerts"/></th>
@@ -256,7 +263,6 @@ This page displays a list of running jobs.
     <th class="harvestHeader"><fmt:message key="table.running.jobs.toeThreads"/></th>
 </tr>
 <%
-
    int rowcount = 0;
 
    //get list
@@ -297,10 +303,10 @@ This page displays a list of running jobs.
 
        TableSort.SortOrder order = tbs.getSortOrderByHarvestName(harvestName);
 
-       if( order == TableSort.SortOrder.INCR){
+       if (order == TableSort.SortOrder.INCR){
            Collections.sort(infoList);
        }
-       if( order == TableSort.SortOrder.DESC){
+       if (order == TableSort.SortOrder.DESC){
            Collections.sort(infoList, Collections.reverseOrder());
        }
    }
@@ -311,6 +317,17 @@ This page displays a list of running jobs.
 	   String jobDetailsLink = "Harveststatus-running-jobdetails.jsp?"
 	   + Constants.JOB_PARAM + "=" + jobId;
 
+       // TODO Find out whether searched domain is in the seedlist for job with jobId
+       Job job = JobDAO.getInstance().read(jobId);
+       String seedList = job.getSeedListAsString();
+       String linesOfSeedlist[] = seedList.split("\\r?\\n");
+
+       for (String seed : linesOfSeedlist) {
+           // TODO is _searched domain_ equal to line?
+
+       }
+
+       String domainIsInSeedlist = "y";  // TODO replace
 %>
    <tr class="<%=HTMLUtils.getRowClass(rowcount++)%>">
         <td><a href="history/job/<%=jobId%>/"><%=jobId%></a></td>
@@ -340,7 +357,6 @@ This page displays a list of running jobs.
                         altStatus = "table.running.jobs.status.crawlFinished";
                         bullet = "greybullet.png";
                         break;
-
                 }
             %>
             <img src="<%=bullet%>" alt="<%=I18N.getString(request.getLocale(), altStatus)%>"/>
@@ -350,7 +366,7 @@ This page displays a list of running jobs.
         <td align="right"><%=StringUtils.formatPercentage(info.getProgress())%></td>
         <td align="right"><%=info.getElapsedTime()%></td>
         <td align="right">TODO..</td>
-        <td align="right">TODO..</td>
+        <td align="right"><%=domainIsInSeedlist%></td>
         <td align="right"><%=info.getQueuedFilesCount()%></td>
         <td align="right"><%=info.getTotalQueuesCount()%></td>
         <td align="right"><%=info.getActiveQueuesCount()%></td>
