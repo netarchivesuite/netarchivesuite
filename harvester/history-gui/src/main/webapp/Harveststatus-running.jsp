@@ -60,19 +60,17 @@ This page displays a list of running jobs.
 
 <%
     // TODO remove, just for testing
-    //TODO iterer
-
     //String alleParams = request.getParameterNames();
     //List<String> parameterNames = new ArrayList<String>(request.getParameterMap().keySet());
     //String allParams = String.join(", ", parameterNames);
 
-    List<String> allParameters = Collections.list(request.getParameterNames());
-    //List<String> parameterNames = new ArrayList<String>(request.getParameterMap().keySet());
-    String allParams = "";
+    //List<String> allParameters = Collections.list(request.getParameterNames());
+    //List<String> allParameters = new ArrayList<String>(request.getParameterMap().keySet());
+    //String allParams = "";
 
-    for (String param : allParameters) {
-        allParams += param + ",";
-    }
+    //for (String param : allParameters) {
+    //    allParams += param + ",";
+    //}
 
 
     //
@@ -103,6 +101,9 @@ This page displays a list of running jobs.
     FindRunningJobQuery findJobQuery = new FindRunningJobQuery(request);
     Long[] jobIdsForDomain = findJobQuery.getRunningJobIds();
 
+    String searchedDomainName = request.getParameter(FindRunningJobQuery.UI_FIELD.DOMAIN_NAME.name());
+
+
     HTMLUtils.setUTF8(request);
     HTMLUtils.generateHeader(
             pageContext,
@@ -123,7 +124,7 @@ This page displays a list of running jobs.
      <fmt:param value="<%=jobCount%>"/>
 </fmt:message>
 
-TODO testing here: <%=allParams%>
+TODO testing here: <%=searchedDomainName%>
 
 <form method="get" name="findJobForDomainForm" action="Harveststatus-running.jsp">
     <input type="hidden" name="searchDone" value="1"/>
