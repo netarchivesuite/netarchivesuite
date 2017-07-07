@@ -48,7 +48,7 @@ This page displays a list of running jobs.
     dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort"
 	pageEncoding="UTF-8"%>
 <%@ page import="dk.netarkivet.harvester.datamodel.JobDAO" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="dk.netarkivet.common.utils.DomainUtils" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
@@ -59,33 +59,19 @@ This page displays a list of running jobs.
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%>
 
 <%
-    // TODO remove, just for testing
-    //String alleParams = request.getParameterNames();
-    //List<String> parameterNames = new ArrayList<String>(request.getParameterMap().keySet());
-    //String allParams = String.join(", ", parameterNames);
-
-    //List<String> allParameters = Collections.list(request.getParameterNames());
-    //List<String> allParameters = new ArrayList<String>(request.getParameterMap().keySet());
-    //String allParams = "";
-
-    //for (String param : allParameters) {
-    //    allParams += param + ",";
-    //}
-
-
     //
     HarvestStatusRunningTablesSort tbs=(HarvestStatusRunningTablesSort)
         session.getAttribute("TablesSortData");
-    if (tbs==null){
+    if (tbs == null){
         tbs = new HarvestStatusRunningTablesSort();
-        session.setAttribute("TablesSortData",tbs);
+        session.setAttribute("TablesSortData", tbs);
     }
 
     String sortedColumn=request.getParameter(Constants.COLUMN_PARAM);
     String sortedHarvest=request.getParameter(Constants.HARVEST_PARAM);
 
     if (sortedColumn != null && sortedHarvest != null) {
-        tbs.sortByHarvestName(sortedHarvest,Integer.parseInt(sortedColumn)) ;
+        tbs.sortByHarvestName(sortedHarvest,Integer.parseInt(sortedColumn));
     }
 
     // List of information to be shown
@@ -101,8 +87,8 @@ This page displays a list of running jobs.
     FindRunningJobQuery findJobQuery = new FindRunningJobQuery(request);
     Long[] jobIdsForDomain = findJobQuery.getRunningJobIds();
 
+    // The domain name that user has searched for (if any, otherwise null)
     String searchedDomainName = request.getParameter(FindRunningJobQuery.UI_FIELD.DOMAIN_NAME.name());
-
 
     HTMLUtils.setUTF8(request);
     HTMLUtils.generateHeader(
@@ -123,8 +109,6 @@ This page displays a list of running jobs.
 <fmt:message key="running.jobs.nbrunning">
      <fmt:param value="<%=jobCount%>"/>
 </fmt:message>
-
-TODO testing here: <%=searchedDomainName%>
 
 <form method="get" name="findJobForDomainForm" action="Harveststatus-running.jsp">
     <input type="hidden" name="searchDone" value="1"/>
@@ -329,17 +313,24 @@ TODO testing here: <%=searchedDomainName%>
 	   String jobDetailsLink = "Harveststatus-running-jobdetails.jsp?"
 	   + Constants.JOB_PARAM + "=" + jobId;
 
-       // TODO Find out whether searched domain is in the seedlist for job with jobId
+       // Find out whether searched domain is in the seed list for job with jobId
        Job job = JobDAO.getInstance().read(jobId);
        String seedList = job.getSeedListAsString();
-       String linesOfSeedlist[] = seedList.split("\\r?\\n");
+       String linesOfSeedList[] = seedList.split("\\r?\\n");
+       URL domainUrl = new URL(searchedDomainName);
+       String domainHost = domainUrl.getHost();
+       String domainDomain = DomainUtils.domainNameFromHostname(domainHost);
 
-       for (String seed : linesOfSeedlist) {
-           // TODO is _searched domain_ equal to line?
-
+       String domainIsInSeedList = "n";
+       for (String seed : linesOfSeedList) {
+           URL seedUrl = new URL(seed);
+           String seedHost = seedUrl.getHost();
+           String seedDomain = DomainUtils.domainNameFromHostname(seedHost);
+           if (domainDomain.equals(seedDomain)) {
+               domainIsInSeedList = "y";
+           }
        }
 
-       String domainIsInSeedlist = "y";  // TODO replace
 %>
    <tr class="<%=HTMLUtils.getRowClass(rowcount++)%>">
         <td><a href="history/job/<%=jobId%>/"><%=jobId%></a></td>
@@ -378,7 +369,7 @@ TODO testing here: <%=searchedDomainName%>
         <td align="right"><%=StringUtils.formatPercentage(info.getProgress())%></td>
         <td align="right"><%=info.getElapsedTime()%></td>
         <td align="right">TODO..</td>
-        <td align="right"><%=domainIsInSeedlist%></td>
+        <td align="right"><%=domainIsInSeedList%></td>
         <td align="right"><%=info.getQueuedFilesCount()%></td>
         <td align="right"><%=info.getTotalQueuesCount()%></td>
         <td align="right"><%=info.getActiveQueuesCount()%></td>
