@@ -110,6 +110,8 @@ This page displays a list of running jobs.
      <fmt:param value="<%=jobCount%>"/>
 </fmt:message>
 
+TODO: searchedDomainName = <%=searchedDomainName%>
+
 <form method="get" name="findJobForDomainForm" action="Harveststatus-running.jsp">
     <input type="hidden" name="searchDone" value="1"/>
 
@@ -317,6 +319,10 @@ This page displays a list of running jobs.
        Job job = JobDAO.getInstance().read(jobId);
        String seedList = job.getSeedListAsString();
        String linesOfSeedList[] = seedList.split("\\r?\\n");
+
+       if (searchedDomainName == null) {
+           searchedDomainName = "is null";
+       }
        URL domainUrl = new URL(searchedDomainName);
        String domainHost = domainUrl.getHost();
        String domainDomain = DomainUtils.domainNameFromHostname(domainHost);
