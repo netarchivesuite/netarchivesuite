@@ -321,7 +321,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
        String linesOfSeedList[] = seedList.split("\\r?\\n");
 
        if (searchedDomainName == null) {
-           searchedDomainName = "is null";
+           searchedDomainName = "http://ekot.dk";
        }
        URL domainUrl = new URL(searchedDomainName);
        String domainHost = domainUrl.getHost();
