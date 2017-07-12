@@ -28,10 +28,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 This page displays a list of running jobs.
 --%>
 
-<%-- TODO .getHost on the java.net.URL below? --%>
-<%@page import="dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor"%>
 <%@ page
-	import="
+        import="
+	dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor,
 	java.net.URL,
     java.util.List,
     java.util.Map,
@@ -45,38 +44,34 @@ This page displays a list of running jobs.
     dk.netarkivet.harvester.webinterface.FindRunningJobQuery,
     dk.netarkivet.common.utils.StringUtils,
     dk.netarkivet.common.utils.TableSort,
-    dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort"
+    dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort,
+    dk.netarkivet.harvester.datamodel.JobDAO,
+    dk.netarkivet.common.utils.DomainUtils"
 	pageEncoding="UTF-8"%>
-<%@ page import="dk.netarkivet.harvester.datamodel.JobDAO" %>
-<%@ page import="dk.netarkivet.common.utils.DomainUtils" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-
 <fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"/>
 <fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/>
-<%!private static final I18n I18N = new I18n(
-            dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%>
+<%!private static final I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%>
 
 <%
-    //
-    HarvestStatusRunningTablesSort tbs=(HarvestStatusRunningTablesSort)
-        session.getAttribute("TablesSortData");
-    if (tbs == null){
+    // Sort data for table(?)
+    HarvestStatusRunningTablesSort tbs = (HarvestStatusRunningTablesSort)session.getAttribute("TablesSortData");
+    if (tbs == null) {
         tbs = new HarvestStatusRunningTablesSort();
         session.setAttribute("TablesSortData", tbs);
     }
 
-    String sortedColumn=request.getParameter(Constants.COLUMN_PARAM);
-    String sortedHarvest=request.getParameter(Constants.HARVEST_PARAM);
+    String sortedColumn = request.getParameter(Constants.COLUMN_PARAM);
+    String sortedHarvest = request.getParameter(Constants.HARVEST_PARAM);
 
     if (sortedColumn != null && sortedHarvest != null) {
-        tbs.sortByHarvestName(sortedHarvest,Integer.parseInt(sortedColumn));
+        tbs.sortByHarvestName(sortedHarvest, Integer.parseInt(sortedColumn));
     }
 
-    // List of information to be shown
-    Map<String, List<StartedJobInfo>> infos =
-        RunningJobsInfoDAO.getInstance().getMostRecentByHarvestName();
+    // Get list of information to be shown, i.e. most recent record for every job, partitioned by harvest definition name
+    Map<String, List<StartedJobInfo>> infos = RunningJobsInfoDAO.getInstance().getMostRecentByHarvestName();
 
     // Count number of running jobs
     int jobCount = 0;
@@ -84,16 +79,17 @@ This page displays a list of running jobs.
         jobCount += jobList.size();
     }
 
-    FindRunningJobQuery findJobQuery = new FindRunningJobQuery(request);
-    Long[] jobIdsForDomain = findJobQuery.getRunningJobIds();
+    // TODO this was unused... is it supposed to be used for something upcoming?
+    //FindRunningJobQuery findJobQuery = new FindRunningJobQuery(request);
+    //Long[] jobIdsForDomain = findJobQuery.getRunningJobIds();
 
-    // The domain name that user has searched for (if any, otherwise null)
+    // Get domain name that user has searched for (if any, otherwise null)
     String searchedDomainName = request.getParameter(FindRunningJobQuery.UI_FIELD.DOMAIN_NAME.name());
 
     HTMLUtils.setUTF8(request);
     HTMLUtils.generateHeader(
             pageContext,
-            HarvestMonitor.getAutoRefreshDelay()); // Autorefresh every x seconds
+            HarvestMonitor.getAutoRefreshDelay());  // Auto-refresh every x seconds
 %>
 
 <%--Make header of page--%>
@@ -104,7 +100,7 @@ This page displays a list of running jobs.
 %>
         <fmt:message key="table.job.no.jobs"/>
 <%
-	} else { //Make table with found jobs
+	} else {  //Make table with found jobs
 %>
 <fmt:message key="running.jobs.nbrunning">
      <fmt:param value="<%=jobCount%>"/>
@@ -129,44 +125,41 @@ TODO: searchedDomainName = <%=searchedDomainName%>
            value="<fmt:message key="running.jobs.finder.submit"/>"/>
 </form>
 
+
 <table class="selection_table">
 <%
         for (String harvestName : infos.keySet()) {
-
 			String harvestDetailsLink = "Harveststatus-perhd.jsp?"
 		           + Constants.HARVEST_PARAM + "="
 		           + HTMLUtils.encode(harvestName);
 
-			//gestion des fleche de trie
+			//gestion des fleche de trie (TODO what is the proper English translation of this?)
 			String incSortPic = "&uarr;";
             String descSortPic = "&darr;";
             String noSortPic = "";
             String tabArrow[] = new String[10];
-            for( int i=0;i<10;i++) {
-                tabArrow[i] =  noSortPic;
+            for (int i = 0; i < 10; i++) {
+                tabArrow[i] = noSortPic;
             }
             String arrow = noSortPic;
-            HarvestStatusRunningTablesSort.ColumnId cid =
-                tbs.getSortedColumnIdentByHarvestName(harvestName);
-            if(cid != HarvestStatusRunningTablesSort.ColumnId.NONE){
-
+            HarvestStatusRunningTablesSort.ColumnId cid = tbs.getSortedColumnIdentByHarvestName(harvestName);
+            if (cid != HarvestStatusRunningTablesSort.ColumnId.NONE) {
                 TableSort.SortOrder order = tbs.getSortOrderByHarvestName(harvestName);
-                if( order == TableSort.SortOrder.INCR){
+                if (order == TableSort.SortOrder.INCR) {
                     arrow = incSortPic;
                 }
-                if( order == TableSort.SortOrder.DESC){
+                if (order == TableSort.SortOrder.DESC) {
                     arrow = descSortPic;
                 }
                 tabArrow[cid.ordinal()] = arrow;
             }
 
-            String sortBaseLink="Harveststatus-running.jsp?"
+            String sortBaseLink = "Harveststatus-running.jsp?"
                     + Constants.HARVEST_PARAM + "="
                     + HTMLUtils.encode(harvestName)
                     + "&"
-                    +Constants.COLUMN_PARAM + "=" ;
+                    + Constants.COLUMN_PARAM + "=" ;
             String sortLink;
-            String columnId;
 %>
 
 <tr class="spacerRowBig"><td colspan="15">&nbsp;</td></tr>
@@ -177,8 +170,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
 <tr class="spacerRowSmall"><td colspan="15">&nbsp;</td></tr>
 <tr>
     <th class="harvestHeader" rowspan="2">
-    <% sortLink=sortBaseLink
-    + HarvestStatusRunningTablesSort.ColumnId.ID.hashCode(); %>
+    <% sortLink=sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.ID.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.jobId"/>
             <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ID.ordinal()]%>
@@ -193,8 +185,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
         </a>
     </th>
     <th class="harvestHeader" rowspan="2">
-    <% sortLink=sortBaseLink
-    + HarvestStatusRunningTablesSort.ColumnId.PROGRESS.hashCode(); %>
+    <% sortLink=sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.PROGRESS.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.progress"/>
             <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.PROGRESS.ordinal()]%>
@@ -202,8 +193,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
     </th>
 
     <th class="harvestHeader" rowspan="2">
-    <% sortLink=sortBaseLink
-    + HarvestStatusRunningTablesSort.ColumnId.ELAPSED.hashCode(); %>
+    <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.ELAPSED.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.elapsedTime"/>
             <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ELAPSED.ordinal()]%>
@@ -217,40 +207,35 @@ TODO: searchedDomainName = <%=searchedDomainName%>
 </tr>
 <tr>
     <th class="harvestHeader" >
-    <% sortLink=sortBaseLink
-    + HarvestStatusRunningTablesSort.ColumnId.QFILES.hashCode(); %>
+    <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.QFILES.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.queuedFiles"/>
             <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.QFILES.ordinal()]%>
         </a>
     </th>
     <th class="harvestHeader" >
-    <% sortLink=sortBaseLink
-    + HarvestStatusRunningTablesSort.ColumnId.TOTALQ.hashCode(); %>
+    <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.TOTALQ.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.totalQueues"/>
             <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.TOTALQ.ordinal()]%>
         </a>
     </th>
     <th class="harvestHeader" >
-    <% sortLink=sortBaseLink
-    + HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.hashCode(); %>
+    <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.activeQueues"/>
             <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.ordinal()]%>
         </a>
     </th>
     <th class="harvestHeader">
-    <% sortLink=sortBaseLink
-    + HarvestStatusRunningTablesSort.ColumnId.RETIREDQ.hashCode(); %>
+    <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.RETIREDQ.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.retiredQueues"/>
             <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.RETIREDQ.ordinal()]%>
         </a>
     </th>
     <th class="harvestHeader" >
-    <% sortLink=sortBaseLink
-    + HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.hashCode(); %>
+    <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.hashCode(); %>
         <a href="<%=sortLink %>">
             <fmt:message key="table.running.jobs.exhaustedQueues"/>
             <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.ordinal()]%>
@@ -261,50 +246,48 @@ TODO: searchedDomainName = <%=searchedDomainName%>
     <th class="harvestHeader"><fmt:message key="table.running.jobs.toeThreads"/></th>
 </tr>
 <%
-   int rowcount = 0;
+   int rowCount = 0;
 
-   //get list
+   // Get list
    List<StartedJobInfo> infoList = infos.get(harvestName);
 
-   //sort List
-   HarvestStatusRunningTablesSort.ColumnId cidSort=
-       tbs.getSortedColumnIdentByHarvestName(harvestName);
+   // Sort List
+   HarvestStatusRunningTablesSort.ColumnId cidSort = tbs.getSortedColumnIdentByHarvestName(harvestName);
 
-   if(cidSort != HarvestStatusRunningTablesSort.ColumnId.NONE){
-
+   if (cidSort != HarvestStatusRunningTablesSort.ColumnId.NONE) {
        for (StartedJobInfo info : infoList) {
-           if(cidSort == HarvestStatusRunningTablesSort.ColumnId.ID){
+           if (cidSort == HarvestStatusRunningTablesSort.ColumnId.ID) {
                info.chooseCompareCriteria(StartedJobInfo.Criteria.JOBID);
            }
-           if(cidSort == HarvestStatusRunningTablesSort.ColumnId.HOST){
+           if (cidSort == HarvestStatusRunningTablesSort.ColumnId.HOST) {
                info.chooseCompareCriteria(StartedJobInfo.Criteria.HOST);
            }
-           if(cidSort == HarvestStatusRunningTablesSort.ColumnId.ELAPSED){
+           if (cidSort == HarvestStatusRunningTablesSort.ColumnId.ELAPSED) {
                info.chooseCompareCriteria(StartedJobInfo.Criteria.ELAPSED);
            }
-           if(cidSort == HarvestStatusRunningTablesSort.ColumnId.PROGRESS){
+           if (cidSort == HarvestStatusRunningTablesSort.ColumnId.PROGRESS) {
                info.chooseCompareCriteria(StartedJobInfo.Criteria.PROGRESS);
            }
-           if(cidSort == HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ){
+           if (cidSort == HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ) {
                info.chooseCompareCriteria(StartedJobInfo.Criteria.EXHAUSTEDQ);
            }
-           if(cidSort == HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ){
+           if (cidSort == HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ) {
                info.chooseCompareCriteria(StartedJobInfo.Criteria.ACTIVEQ);
            }
-           if(cidSort == HarvestStatusRunningTablesSort.ColumnId.TOTALQ){
+           if (cidSort == HarvestStatusRunningTablesSort.ColumnId.TOTALQ) {
                info.chooseCompareCriteria(StartedJobInfo.Criteria.TOTALQ);
            }
-           if(cidSort == HarvestStatusRunningTablesSort.ColumnId.QFILES){
+           if (cidSort == HarvestStatusRunningTablesSort.ColumnId.QFILES) {
                info.chooseCompareCriteria(StartedJobInfo.Criteria.QFILES);
            }
        }
 
        TableSort.SortOrder order = tbs.getSortOrderByHarvestName(harvestName);
 
-       if (order == TableSort.SortOrder.INCR){
+       if (order == TableSort.SortOrder.INCR) {
            Collections.sort(infoList);
        }
-       if (order == TableSort.SortOrder.DESC){
+       if (order == TableSort.SortOrder.DESC) {
            Collections.sort(infoList, Collections.reverseOrder());
        }
    }
@@ -312,8 +295,8 @@ TODO: searchedDomainName = <%=searchedDomainName%>
    for (StartedJobInfo info : infoList) {
 	   long jobId = info.getJobId();
 
-	   String jobDetailsLink = "Harveststatus-running-jobdetails.jsp?"
-	   + Constants.JOB_PARAM + "=" + jobId;
+       // TODO unused, remove
+	   //String jobDetailsLink = "Harveststatus-running-jobdetails.jsp?" + Constants.JOB_PARAM + "=" + jobId;
 
        // Find out whether searched domain is in the seed list for job with jobId
        Job job = JobDAO.getInstance().read(jobId);
@@ -321,7 +304,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
        String linesOfSeedList[] = seedList.split("\\r?\\n");
 
        if (searchedDomainName == null) {
-           searchedDomainName = "http://ekot.dk";
+           searchedDomainName = "http://ekot.dk";  // TODO remove
        }
        URL domainUrl = new URL(searchedDomainName);
        String domainHost = domainUrl.getHost();
@@ -338,7 +321,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
        }
 
 %>
-   <tr class="<%=HTMLUtils.getRowClass(rowcount++)%>">
+   <tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
         <td><a href="history/job/<%=jobId%>/"><%=jobId%></a></td>
         <td class="crawlerHost">
             &nbsp;
@@ -399,6 +382,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
     }
 %>
 </table>
+
 <br/><br/>
 &nbsp;
 <fmt:message key="table.running.jobs.legend">
@@ -419,7 +403,6 @@ TODO: searchedDomainName = <%=searchedDomainName%>
     </fmt:param>
 </fmt:message>
 <br/><br/>
-
 
 <% } %>
 <%
