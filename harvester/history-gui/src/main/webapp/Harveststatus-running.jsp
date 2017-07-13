@@ -321,12 +321,20 @@ TODO: searchedDomainName = <%=searchedDomainName%>
             if (searchedDomainName == null) {
                 searchedDomainName = "http://ekot.dk";  // TODO remove
             }
+            // Add http:// to searched url if it has no protocol part
+            if (!searchedDomainName.toLowerCase().matches("^\\w+://.*")) {
+                searchedDomainName = "http://" + searchedDomainName;
+            }
             URL domainUrl = new URL(searchedDomainName);
             String domainHost = domainUrl.getHost();
             String domainDomain = DomainUtils.domainNameFromHostname(domainHost);
 
             String domainIsInSeedList = "n";
             for (String seed : linesOfSeedList) {
+                // Add http:// to seed-url if it has no protocol part
+                if (!seed.toLowerCase().matches("^\\w+://.*")) {
+                    seed = "http://" + seed;
+                }
                 URL seedUrl = new URL(seed);
                 String seedHost = seedUrl.getHost();
                 String seedDomain = DomainUtils.domainNameFromHostname(seedHost);
