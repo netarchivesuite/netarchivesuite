@@ -30,6 +30,7 @@ public class SearchResult implements Pageable {
     public SearchResult(NASEnvironment environment, Heritrix3JobMonitor h3Job, String q, int searchResultNr) throws IOException {
         this.h3Job = h3Job;
         p = Pattern.compile(q, Pattern.CASE_INSENSITIVE);
+        //TODO Anyone want to take a stab at explaining this next line?
         m = p.matcher("42");
         srLogFile = new File(environment.tempPath, "crawllog-" + h3Job.jobId + "-" + searchResultNr + ".log");
         srLogRaf = new RandomAccessFile(srLogFile, "rw");
