@@ -92,7 +92,7 @@ void listFrontier(String regex, long limit) {
     if (limit > 0) {
         content = 'Matching URIs(test): '+ matchingCount + '</p>' + content
     } else {
-        content = 'First matching URIs (return limit reached): ' + matchingCount + '</p>' + content
+        content = 'First matching URIs(test) (return limit reached): ' + matchingCount + '</p>' + content
     }
     htmlOut.println content
 }
