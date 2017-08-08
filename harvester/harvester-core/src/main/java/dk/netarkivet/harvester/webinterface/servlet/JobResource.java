@@ -603,7 +603,7 @@ public class JobResource implements ResourceAbstract {
         long linesPerPage = 100;
         long page = 1;
         long pages = 0;
-        String q = null;
+        String pageString = null;
 
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
@@ -614,7 +614,7 @@ public class JobResource implements ResourceAbstract {
 
         page = getPage(req, page);
         linesPerPage = getLinesPerPage(req, linesPerPage);
-        q = getParameterQ(req, q);
+        pageString = getParameterPage(req, pageString);
 
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
@@ -630,8 +630,8 @@ public class JobResource implements ResourceAbstract {
             long totalCachedLines = h3Job.getTotalCachedLines();
             long totalCachedSize = h3Job.getLastIndexed();
 
-            if (q != null) {
-                pageable = getPageable(q, h3Job);
+            if (pageString != null) {
+                pageable = getPageable(pageString, h3Job);
             }
 
             lines = pageable.getIndexSize();
@@ -644,8 +644,8 @@ public class JobResource implements ResourceAbstract {
 
             produceTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
             produceUpdateCacheButton(sb);
-            q = produceMargin(q, sb);
-            produceItemsPerPage(linesPerPage, q, sb);
+            pageString = produceMargin(pageString, sb);
+            produceItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
             producePagination(lines, linesPerPage, page, pages, sb, pageable);
         } else {
@@ -675,7 +675,7 @@ public class JobResource implements ResourceAbstract {
         long linesPerPage = 100;
         long page = 1;
         long pages = 0;
-        String q = null;
+        String pageString = null;
 
 
         Locale locale = resp.getLocale();
@@ -687,7 +687,7 @@ public class JobResource implements ResourceAbstract {
 
         page = getPage(req, page);
         linesPerPage = getLinesPerPage(req, linesPerPage);
-        q = getParameterQ(req, q);
+        pageString = getParameterPage(req, pageString);
 
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
@@ -705,7 +705,6 @@ public class JobResource implements ResourceAbstract {
         raf.close();
         String script = new String(src, "UTF-8");
         */
-
         String deleteStr = req.getParameter("delete");
         script = getDeleteScript(regex, limit, initials, script, deleteStr);
 
@@ -724,21 +723,18 @@ public class JobResource implements ResourceAbstract {
 
 
             if (deleteStr != null && "1".equals(deleteStr) && (initials == null || initials.length() == 0)) {
-                //sb.append("<span style=\"text-color: red;\">Initials required to delete from the frontier queue!</span><br />\n");
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to delete from the frontier queue!</div>");
             }
-
             produceLineToShow(sb, regex, limit);
-            sb.append("&nbsp;");
+            sb.append("&nbsp;"+ page + "&nbsp;");
             produceInitials(sb, initials);
-
             generateGroovy(sb, script, h3Job);
 
             long totalCachedLines = h3Job.getTotalCachedLines();
             long totalCachedSize = h3Job.getLastIndexed();
 
-            if (q != null) {
-                pageable = getPageable(q, h3Job);
+            if (pageString != null) {
+                pageable = getPageable(pageString, h3Job);
             }
 
             lines = pageable.getIndexSize();
@@ -751,8 +747,8 @@ public class JobResource implements ResourceAbstract {
 
             produceTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
             produceUpdateCacheButton(sb);
-            q = produceMargin(q, sb);
-            produceItemsPerPage(linesPerPage, q, sb);
+            pageString = produceMargin(pageString, sb);
+            produceItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
             producePagination(lines, linesPerPage, page, pages, sb, pageable);
         } else {
@@ -782,14 +778,14 @@ public class JobResource implements ResourceAbstract {
 
     private String getGroovyScript() throws IOException {
         String resource = NAS_GROOVY_RESOURCE_PATH;
-        InputStream in = JobResource.class.getClassLoader().getResourceAsStream(resource);
+        InputStream inputStream = JobResource.class.getClassLoader().getResourceAsStream(resource);
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         byte[] tmpArr = new byte[8192];
         int read;
-        while ((read = in.read(tmpArr)) != -1) {
+        while ((read = inputStream.read(tmpArr)) != -1) {
             bOut.write(tmpArr, 0, read);
         }
-        in.close();
+        inputStream.close();
         return new String(bOut.toByteArray(), "UTF-8");
     }
 
@@ -930,13 +926,13 @@ public class JobResource implements ResourceAbstract {
         return regex;
     }
 
-    private String getParameterQ(HttpServletRequest req, String q) {
+    private String getParameterPage(HttpServletRequest req, String pageString) {
         String tmpStr;
         tmpStr = req.getParameter("q");
         if (tmpStr != null && tmpStr.length() > 0 && !tmpStr.equalsIgnoreCase(".*")) {
-            q = tmpStr;
+            pageString = tmpStr;
         }
-        return q;
+        return pageString;
     }
 
     private long getLinesPerPage(HttpServletRequest req, long linesPerPage) {
