@@ -8,7 +8,7 @@ logfilePrefix = "scripting_events"   // A logfile will be created with this pref
 //deleteFromFrontier '.*foobar.*'    //Remove uris matching a given regexp from the frontier
 //printCrawlLog '.*'          //View already crawled lines uris matching a given regexp
 
-import com.sleepycat.je.DatabaseEntry;
+import com.sleepycat.je.DatabaseEntry
 import com.sleepycat.je.OperationStatus
 
 import java.nio.file.Files
@@ -72,11 +72,17 @@ void listFrontier(String regex, long limit) {
     key = new DatabaseEntry();
     value = new DatabaseEntry();
     matchingCount = 0
+    index = 0
     try {
         while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && limit > 0) {
+            if ((index < page * pagesize) || (index > (page + 1) * pagesize)) {
+                index++
+                continue
+            }
             if (value.getData().length == 0) {
                 continue;
             }
+            index++
             curi = pendingUris.crawlUriBinding.entryToObject(value);
             if (pattern.matcher(curi.toString())) {
                 //htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
@@ -88,14 +94,58 @@ void listFrontier(String regex, long limit) {
     } finally {
         cursor.close();
     }
-    content = content +  '</pre>'
+
+    content = content +  pagination + '</pre>'
+
     if (limit > 0) {
-        content = 'Matching URIs(test): '+ matchingCount + '</p>' + content
+        content = 'Matching URIs(test): '+ matchingCount + '</p>' + pagination + content
     } else {
-        content = 'First matching URIs(test) (return limit reached): ' + matchingCount + '</p>' + content
+        content = 'First matching URIs(test) (return limit reached): ' + matchingCount + '</p>' + pagination + content
     }
     htmlOut.println content
 }
+
+/*
+// groovy
+// see org.archive.crawler.frontier.BdbMultipleWorkQueues.forAllPendingDo()
+htmlOut.println '<pre>'
+//pattern = ~regex
+//type  org.archive.crawler.frontier.BdbMultipleWorkQueues
+
+pendingUris = job.crawlController.frontier.pendingUris
+
+//iterates over the raw underlying instance of com.sleepycat.je.Database
+cursor = pendingUris.pendingUrisDB.openCursor(null, null);
+key = new DatabaseEntry();
+value = new DatabaseEntry();
+index = 0
+page = 3
+pagesize = 50
+//cursor.skipNext(skip, key, value, null)
+matchingCount = 0
+while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS) {
+    if ((index < page * pagesize) || (index > (page + 1) * pagesize)) {
+        index++
+        continue
+    }
+    if (value.getData().length == 0) {
+        continue;
+    }
+    index++
+    curi = pendingUris.crawlUriBinding.entryToObject(value);
+    htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
+
+//    if (pattern.matcher(curi.toString())) {
+//        htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
+//        matchingCount++
+//    }
+
+}
+cursor.close();
+htmlOut.println '</pre>'
+htmlOut.println '<p>'+ matchingCount + " matching uris found </p>"
+*/
+
 
 void pageFrontier(long skip, int items) {
     htmlOut.println '<pre>'
