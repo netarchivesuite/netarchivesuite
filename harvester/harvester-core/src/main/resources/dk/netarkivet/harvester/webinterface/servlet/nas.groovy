@@ -66,6 +66,8 @@ void listFrontier(String regex, long limit) {
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
     htmlOut.println '<p>Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
+    htmlOut.println 'Pagenumber: ' + page + '\n<br/>'
+    htmlOut.println 'Pagesize: ' + pagesize + '\n<br/>'
     content = '<pre>'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
     cursor = pendingUris.pendingUrisDB.openCursor(null, null);
@@ -104,47 +106,6 @@ void listFrontier(String regex, long limit) {
     }
     htmlOut.println content
 }
-
-/*
-// groovy
-// see org.archive.crawler.frontier.BdbMultipleWorkQueues.forAllPendingDo()
-htmlOut.println '<pre>'
-//pattern = ~regex
-//type  org.archive.crawler.frontier.BdbMultipleWorkQueues
-
-pendingUris = job.crawlController.frontier.pendingUris
-
-//iterates over the raw underlying instance of com.sleepycat.je.Database
-cursor = pendingUris.pendingUrisDB.openCursor(null, null);
-key = new DatabaseEntry();
-value = new DatabaseEntry();
-index = 0
-page = 3
-pagesize = 50
-//cursor.skipNext(skip, key, value, null)
-matchingCount = 0
-while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS) {
-    if ((index < page * pagesize) || (index > (page + 1) * pagesize)) {
-        index++
-        continue
-    }
-    if (value.getData().length == 0) {
-        continue;
-    }
-    index++
-    curi = pendingUris.crawlUriBinding.entryToObject(value);
-    htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
-
-//    if (pattern.matcher(curi.toString())) {
-//        htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
-//        matchingCount++
-//    }
-
-}
-cursor.close();
-htmlOut.println '</pre>'
-htmlOut.println '<p>'+ matchingCount + " matching uris found </p>"
-*/
 
 
 void pageFrontier(long skip, int items) {
