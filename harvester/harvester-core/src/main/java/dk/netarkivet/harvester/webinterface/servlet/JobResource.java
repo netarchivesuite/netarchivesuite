@@ -726,10 +726,10 @@ public class JobResource implements ResourceAbstract {
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to delete from the frontier queue!</div>");
             }
             produceLineToShow(sb, regex, limit);
-            sb.append("&nbsp;"+ page + "&nbsp;");
+            sb.append("&nbsp;");
             produceInitials(sb, initials);
             generateGroovy(sb, script, h3Job);
-
+/*
             long totalCachedLines = h3Job.getTotalCachedLines();
             long totalCachedSize = h3Job.getLastIndexed();
 
@@ -751,6 +751,7 @@ public class JobResource implements ResourceAbstract {
             produceItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
             producePagination(lines, linesPerPage, page, pages, sb, pageable);
+*/
         } else {
             generateJobIsNotRunning(numerics, sb);
         }
@@ -807,6 +808,7 @@ public class JobResource implements ResourceAbstract {
         if (scriptResult != null && scriptResult.script != null) {
             if (scriptResult.script.htmlOutput != null) {
                 sb.append("<fieldset><!--<legend>htmlOut</legend>-->");
+
                 sb.append(scriptResult.script.htmlOutput);
                 sb.append("</fieldset><br />\n");
             }
