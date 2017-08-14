@@ -74,7 +74,11 @@ void listFrontier(String regex, long limit) {
     matchingCount = 0
     index = 0
     try {
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && limit > 0) {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < page * pagesize) {
+            index++
+        }
+
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < (page + 1) * pagesize - 1) {
 /*            if ((index < page * pagesize) || (index > (page + 1) * pagesize)) {
                 index++
                 continue
@@ -83,13 +87,12 @@ void listFrontier(String regex, long limit) {
             if (value.getData().length == 0) {
                 continue;
             }
-            index++
             curi = pendingUris.crawlUriBinding.entryToObject(value);
             if (pattern.matcher(curi.toString())) {
                 //htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
                 content = content + curi + '\n'
                 matchingCount++
-                --limit;
+                index++
             }
         }
     } finally {
