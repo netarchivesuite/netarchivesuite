@@ -99,12 +99,12 @@ void listFrontier(String regex, long limit) {
         cursor.close();
     }
 
-    content = content +  pagination + '</pre>'
+    content = content + '</pre>'
 
     if (limit > 0) {
-        content = 'Matching URIs(test): '+ matchingCount + '</p>' + pagination + content
+        content = 'Matching URIs(test): '+ matchingCount + '</p>' + content
     } else {
-        content = 'First matching URIs(test) (return limit reached): ' + matchingCount + '</p>' + pagination + content
+        content = 'First matching URIs(test) (return limit reached): ' + matchingCount + '</p>' + content
     }
     htmlOut.println content
 }
