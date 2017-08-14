@@ -74,8 +74,10 @@ void listFrontier(String regex, long limit) {
     matchingCount = 0
     index = 0
     try {
+        htmlOut.println 0
         while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < page * pagesize) {
             index++
+            htmlOut.println index
         }
 
         while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < (page + 1) * pagesize - 1) {
@@ -84,6 +86,8 @@ void listFrontier(String regex, long limit) {
                 continue
             }
 */
+            htmlOut.println index
+
             if (value.getData().length == 0) {
                 continue;
             }
