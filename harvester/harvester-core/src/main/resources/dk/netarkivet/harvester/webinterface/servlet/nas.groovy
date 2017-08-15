@@ -40,7 +40,7 @@ Logger getLogger() {
 }
 
 void logEvent(String e) {
-    try { 
+    try {
         getLogger().info("Action from user " + initials + ": " +e)
     } catch(groovy.lang.MissingPropertyException e1) {
         getLogger().info("Action from user: " +e)
@@ -61,7 +61,7 @@ void deleteFromFrontier(String regex) {
 void listFrontier(String regex, long limit) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
-    
+
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
@@ -82,8 +82,9 @@ void listFrontier(String regex, long limit) {
         }
 */
 
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < (page + 1) * pagesize - 1) {
-/*            if ((index < page * pagesize) || (index > (page + 1) * pagesize)) {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && limit > 0) {
+/*        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < (page + 1) * pagesize - 1) {
+            if ((index < page * pagesize) || (index > (page + 1) * pagesize)) {
                 index++
                 continue
             }
@@ -98,6 +99,7 @@ void listFrontier(String regex, long limit) {
             if (pattern.matcher(curi.toString())) {
                 //htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
                 content = content + curi + '\n'
+                --limit
                 matchingCount++
             }
         }

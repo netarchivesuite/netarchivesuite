@@ -729,7 +729,7 @@ public class JobResource implements ResourceAbstract {
             sb.append("&nbsp;");
             produceInitials(sb, initials);
             generateGroovy(sb, script, h3Job);
-/*
+
             long totalCachedLines = h3Job.getTotalCachedLines();
             long totalCachedSize = h3Job.getLastIndexed();
 
@@ -751,7 +751,7 @@ public class JobResource implements ResourceAbstract {
             produceItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
             producePagination(lines, linesPerPage, page, pages, sb, pageable);
-*/
+
         } else {
             generateJobIsNotRunning(numerics, sb);
         }
