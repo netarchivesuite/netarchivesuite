@@ -1,6 +1,11 @@
 package dk.netarkivet.harvester.webinterface.servlet;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,6 +25,7 @@ import com.antiaction.common.templateengine.login.LoginTemplateHandler;
 import com.antiaction.common.templateengine.storage.TemplateFileStorageManager;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
@@ -27,7 +33,6 @@ import dk.netarkivet.harvester.Constants;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 public class NASEnvironment {
-
     /** servletConfig. */
     protected ServletConfig servletConfig = null;
 
@@ -194,4 +199,29 @@ public class NASEnvironment {
         return sb.toString();
     }
 
+    /**
+     * Get the lines (i.e. URLs) of the crawllog for the running job with the given job id
+     *
+     * @param jobId Id of the running job
+     * @return Lines (URLs) of the crawllog for given job
+     */
+    public List<String> getCrawledUrls(long jobId) {
+        Heritrix3JobMonitor h3Job = h3JobMonitorThread.getRunningH3Job(jobId);
+        String crawlLogPath = h3Job.crawlLogFilePath;
+
+        List<String> crawledUrls = new ArrayList<>();
+        try (
+                InputStream fis = new FileInputStream(crawlLogPath);
+                InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+                BufferedReader br = new BufferedReader(isr);
+        ) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                crawledUrls.add(line);
+            }
+        } catch (java.io.IOException e) {
+            throw new IOFailure("Could not open crawllog file", e);
+        }
+        return crawledUrls;
+    }
 }
