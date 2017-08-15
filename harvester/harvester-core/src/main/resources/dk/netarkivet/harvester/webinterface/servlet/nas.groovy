@@ -19,8 +19,8 @@ import java.util.logging.Logger
 import java.util.regex.Pattern
 
 void killToeThread(int thread) {
-    job.crawlController.requestCrawlPause();
-    job.crawlController.killThread(thread, true);
+    job.crawlController.requestCrawlPause()
+    job.crawlController.killThread(thread, true)
     logEvent("Killed Toe Thread number " + thread + ".")
     rawOut.println "WARNING: This job and heritrix may now need to be manually terminated when it is finished harvesting."
     rawOut.println "REMINDER: This job is now in a Paused state."
@@ -36,7 +36,7 @@ Logger getLogger() {
             return entry.key
         }
     }
-    return job.crawlController.loggerModule.setupSimpleLog(logfilePrefix);
+    return job.crawlController.loggerModule.setupSimpleLog(logfilePrefix)
 }
 
 void logEvent(String e) {
@@ -65,12 +65,12 @@ void listFrontier(String regex, long limit) {
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
-    htmlOut.println '<p>Total queued URIs: ' + pendingUris.pendingUrisDB.count() + ', page: ' + page + 'pagesize: ' + pagesize + '\n<br/>'
+    htmlOut.println '<p>Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
     content = '<pre>'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
-    cursor = pendingUris.pendingUrisDB.openCursor(null, null);
-    key = new DatabaseEntry();
-    value = new DatabaseEntry();
+    cursor = pendingUris.pendingUrisDB.openCursor(null, null)
+    key = new DatabaseEntry()
+    value = new DatabaseEntry()
     matchingCount = 0
     index = 0
     try {
@@ -93,18 +93,18 @@ void listFrontier(String regex, long limit) {
             index++
 
             if (value.getData().length == 0) {
-                continue;
+                continue
             }
-            curi = pendingUris.crawlUriBinding.entryToObject(value);
+            curi = pendingUris.crawlUriBinding.entryToObject(value)
             if (pattern.matcher(curi.toString())) {
                 //htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
                 content = content + curi + '\n'
-                --limit
                 matchingCount++
+                --limit
             }
         }
     } finally {
-        cursor.close();
+        cursor.close()
     }
 
     content = content + '</pre>'
@@ -124,17 +124,17 @@ void pageFrontier(long skip, int items) {
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
     //iterates over the raw underlying instance of com.sleepycat.je.Database
-    cursor = pendingUris.pendingUrisDB.openCursor(null, null);
-    key = new DatabaseEntry();
-    value = new DatabaseEntry();
+    cursor = pendingUris.pendingUrisDB.openCursor(null, null)
+    key = new DatabaseEntry()
+    value = new DatabaseEntry()
     cursor.skipNext(skip, key, value, null)
     matchingCount = 0
     try {
         while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS) {
             if (value.getData().length == 0) {
-                continue;
+                continue
             }
-            curi = pendingUris.crawlUriBinding.entryToObject(value);
+            curi = pendingUris.crawlUriBinding.entryToObject(value)
             htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
             /*
             if (pattern.matcher(curi.toString())) {
@@ -144,28 +144,30 @@ void pageFrontier(long skip, int items) {
             */
         }
     } finally {
-        cursor.close();
+        cursor.close()
     }
     htmlOut.println '</pre>'
     htmlOut.println '<p>'+ matchingCount + " matching uris found </p>"
 }
 
 class patternMatchingPredicate implements Predicate<String> {
-    private java.util.regex.Pattern p;
-    public patternMatchingPredicate(java.util.regex.Pattern p) {this.p=p;}
-    boolean test(String s) {return s.matches(p);}
+    private java.util.regex.Pattern p
+
+    patternMatchingPredicate(java.util.regex.Pattern p) {this.p=p }
+    boolean test(String s) {return s.matches(p) }
 }
 
 class PrintConsumer implements Consumer<String> {
-    private PrintWriter out;
-    public PrintConsumer(PrintWriter out){this.out=out;}
-    void accept(String s) {out.println("<span style=\"font-size:small\">" + s + "</span>");}
+    private PrintWriter out
+
+    PrintConsumer(PrintWriter out){this.out=out }
+    void accept(String s) {out.println("<span style=\"font-size:small\">" + s + "</span>") }
 }
 
 void printCrawlLog(String regex) {
     style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     htmlOut.println '<pre style="' + style +'">'
-    namePredicate = new patternMatchingPredicate(~regex);
+    namePredicate = new patternMatchingPredicate(~regex)
     crawlLogFile = job.crawlController.frontier.loggerModule.crawlLogPath.file
     matchingCount =  Files.lines(crawlLogFile.toPath()).filter(namePredicate).peek(new PrintConsumer(htmlOut)).count()
     htmlOut.println '</pre>'
@@ -173,8 +175,8 @@ void printCrawlLog(String regex) {
 }
 
 void showModBudgets() {
-	def modQueues = job.jobContext.data.get("manually-added-queues");
-	if(modQueues.size() > 0) {
+	def modQueues = job.jobContext.data.get("manually-added-queues")
+    if(modQueues.size() > 0) {
 		htmlOut.println('<p style="margin-top: 50px;">Budgets of following domains/hosts have been changed in the current job :</p>')
 	}
 	htmlOut.println('<ul>')
@@ -226,8 +228,8 @@ void changeBudget(String key, int value) {
 	appCtx.getBean("frontier").reconsiderRetiredQueues()
 
 	//to store our manually added budget changes, we have to put them in a map
-	def modQueues = job.jobContext.data.get("manually-added-queues");
-	if(modQueues == null) {
+	def modQueues = job.jobContext.data.get("manually-added-queues")
+    if(modQueues == null) {
 		modQueues = [:]
 	}
 	oldValue = modQueues.get(key)	
@@ -271,7 +273,7 @@ void addFilter(String pat) {
 	}
 }
 
-void removeFilters(def indexesOFiltersToRemove) {
+void removeFilters(indexesOFiltersToRemove) {
 	indexesOFiltersToRemove = indexesOFiltersToRemove.sort().reverse()
 	regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
 	indexesOFiltersToRemove.each ({ num ->
