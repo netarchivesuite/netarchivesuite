@@ -706,7 +706,7 @@ public class JobResource implements ResourceAbstract {
         String script = new String(src, "UTF-8");
         */
         String deleteStr = req.getParameter("delete");
-        script = getDeleteScript(regex, limit, initials, script, deleteStr);
+        script = getDeleteScript(regex, limit, initials, script, deleteStr, page, linesPerPage);
 
         // To use, just remove the initial "//" from any one of these lines.
         //
@@ -790,14 +790,15 @@ public class JobResource implements ResourceAbstract {
         return new String(bOut.toByteArray(), "UTF-8");
     }
 
-    private String getDeleteScript(String regex, long limit, String initials, String script, String deleteStr) {
+    private String getDeleteScript(String regex, long limit, String initials, String script,
+                     String deleteStr, long pageNo, long pageSize) {
         if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
             script += "\n";
             script += "\ninitials = \"" + initials + "\"";
             script += "\ndeleteFromFrontier '" + regex + "'\n";
         } else {
             script += "\n";
-            script += "\nlistFrontier '" + regex + "', " + limit + "\n";
+            script += "\nlistFrontier '" + regex + "', " + limit + "', " + pageNo + "', " + pageSize + "\n";
         }
         return script;
     }

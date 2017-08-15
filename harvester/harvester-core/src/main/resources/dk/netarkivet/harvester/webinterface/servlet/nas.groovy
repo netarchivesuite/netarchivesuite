@@ -58,7 +58,7 @@ void deleteFromFrontier(String regex) {
 }
 
 
-void listFrontier(String regex, long limit) {
+void listFrontier(String regex, long limit, long  pageNo, long pageSize) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
 
@@ -76,7 +76,7 @@ void listFrontier(String regex, long limit) {
     try {
         htmlOut.println 0
 
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < page * 50) {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < pageNo * pageSize) {
             index++
             content = content + index + '\n'
         }
