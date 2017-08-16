@@ -913,7 +913,7 @@ public class JobResource implements ResourceAbstract {
     }
 
     private long getLimit(HttpServletRequest req) {
-        long limit = 1000;
+        long limit = 100;
         String limitStr = req.getParameter("limit");
         if (limitStr != null && limitStr.length() > 0) {
             try {
