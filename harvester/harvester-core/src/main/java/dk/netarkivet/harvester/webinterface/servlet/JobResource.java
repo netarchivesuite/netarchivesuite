@@ -62,13 +62,6 @@ public class JobResource implements ResourceAbstract {
 
     protected int R_REPORT = -1;
 
-    protected long lines;
-
-    protected long linesPerPage = 100;
-    protected long page = 1;
-    protected long pages = 0;
-    protected String pageString = null;
-
     @Override
     public void resources_init(NASEnvironment environment) {
         this.environment = environment;
@@ -606,10 +599,12 @@ public class JobResource implements ResourceAbstract {
     }
 
     public void crawllog_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        linesPerPage = 100;
-        page = 1;
-        pages = 0;
-        pageString = null;
+        long lines;
+
+        long linesPerPage = 100;
+        long page = 1;
+        long pages = 0;
+        String pageString = null;
 
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
@@ -675,10 +670,12 @@ public class JobResource implements ResourceAbstract {
     }
 
     public void frontier_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        linesPerPage = 100;
-        page = 1;
-        pages = 0;
-        pageString = null;
+        long lines;
+
+        long linesPerPage = 100;
+        long page = 1;
+        long pages = 0;
+        String pageString = null;
 
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
@@ -721,6 +718,7 @@ public class JobResource implements ResourceAbstract {
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
         Pageable pageable = h3Job;
+        //long pendingUris = job.crawlController.frontier.pendingUris;
 
         if (h3Job != null && h3Job.isReady()) {
             generateJobInformation(menuSb, h3Job);
@@ -750,7 +748,7 @@ public class JobResource implements ResourceAbstract {
             produceTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
             produceUpdateCacheButton(sb);
             pageString = produceMargin(pageString, sb);
-            produceItemsPerPage(linesPerPage, pageString, sb);
+            //produceItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
             producePagination(lines, linesPerPage, page, pages, sb, pageable);
             generateGroovy(sb, script, h3Job);
