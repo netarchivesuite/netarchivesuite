@@ -62,6 +62,13 @@ public class JobResource implements ResourceAbstract {
 
     protected int R_REPORT = -1;
 
+    protected long lines;
+
+    protected long linesPerPage = 100;
+    protected long page = 1;
+    protected long pages = 0;
+    protected String pageString = null;
+
     @Override
     public void resources_init(NASEnvironment environment) {
         this.environment = environment;
@@ -599,11 +606,10 @@ public class JobResource implements ResourceAbstract {
     }
 
     public void crawllog_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        long lines;
-        long linesPerPage = 100;
-        long page = 1;
-        long pages = 0;
-        String pageString = null;
+        linesPerPage = 100;
+        page = 1;
+        pages = 0;
+        pageString = null;
 
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
@@ -669,14 +675,10 @@ public class JobResource implements ResourceAbstract {
     }
 
     public void frontier_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-
-        long lines;
-
-        long linesPerPage = 100;
-        long page = 1;
-        long pages = 0;
-        String pageString = null;
-
+        linesPerPage = 100;
+        page = 1;
+        pages = 0;
+        pageString = null;
 
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
@@ -685,9 +687,6 @@ public class JobResource implements ResourceAbstract {
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
 
-        page = getPage(req, page);
-        linesPerPage = getLinesPerPage(req, linesPerPage);
-        pageString = getParameterPage(req, pageString);
 
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
@@ -695,7 +694,12 @@ public class JobResource implements ResourceAbstract {
         String regex = getParameterRegex(req);
         long limit = getLimit(req);
         String initials = getInitials(req);
+        page = getPage(req, page);
+        linesPerPage = limit;
+        pageString = getParameterPage(req, pageString);
+
         String script = getGroovyScript();
+
 
         /*
         //RandomAccessFile raf = new RandomAccessFile("/home/nicl/workspace-nas-h3/heritrix3-scripts/src/main/java/view-frontier-url.groovy", "r");
@@ -706,7 +710,7 @@ public class JobResource implements ResourceAbstract {
         String script = new String(src, "UTF-8");
         */
         String deleteStr = req.getParameter("delete");
-        script = getDeleteScript(regex, limit, initials, script, deleteStr, page, linesPerPage);
+        script = getDeleteScript(regex, limit, initials, script, deleteStr);
 
         // To use, just remove the initial "//" from any one of these lines.
         //
@@ -716,11 +720,10 @@ public class JobResource implements ResourceAbstract {
         //printCrawlLog '.*'          //View already crawled lines uris matching a given regexp
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
-        //Pageable pageable = h3Job;
+        Pageable pageable = h3Job;
 
         if (h3Job != null && h3Job.isReady()) {
             generateJobInformation(menuSb, h3Job);
-
 
             if (deleteStr != null && "1".equals(deleteStr) && (initials == null || initials.length() == 0)) {
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to delete from the frontier queue!</div>");
@@ -728,8 +731,7 @@ public class JobResource implements ResourceAbstract {
             produceLineToShow(sb, regex, limit);
             sb.append("&nbsp;");
             produceInitials(sb, initials);
-            generateGroovy(sb, script, h3Job);
-/*
+
             long totalCachedLines = h3Job.getTotalCachedLines();
             long totalCachedSize = h3Job.getLastIndexed();
 
@@ -751,7 +753,7 @@ public class JobResource implements ResourceAbstract {
             produceItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
             producePagination(lines, linesPerPage, page, pages, sb, pageable);
-*/
+            generateGroovy(sb, script, h3Job);
         } else {
             generateJobIsNotRunning(numerics, sb);
         }
@@ -791,14 +793,15 @@ public class JobResource implements ResourceAbstract {
     }
 
     private String getDeleteScript(String regex, long limit, String initials, String script,
-                     String deleteStr, long pageNo, long pageSize) {
+                     String deleteStr) {
         if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
             script += "\n";
             script += "\ninitials = \"" + initials + "\"";
             script += "\ndeleteFromFrontier '" + regex + "'\n";
         } else {
+            //parametre bliver ikke overført til groovy???
             script += "\n";
-            script += "\nlistFrontier '" + regex + "', " + limit + "', " + pageNo + "', " + pageSize + "\n";
+            script += "\nlistFrontier '" + regex + "', " + limit + "\n";
         }
         return script;
     }

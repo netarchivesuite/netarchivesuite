@@ -58,7 +58,7 @@ void deleteFromFrontier(String regex) {
 }
 
 
-void listFrontier(String regex, long limit, long  pageNo, long pageSize) {
+void listFrontier(String regex, long limit) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
 
@@ -66,6 +66,7 @@ void listFrontier(String regex, long limit, long  pageNo, long pageSize) {
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
     htmlOut.println '<p>Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
+
     content = '<pre>'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
     cursor = pendingUris.pendingUrisDB.openCursor(null, null)
@@ -76,7 +77,7 @@ void listFrontier(String regex, long limit, long  pageNo, long pageSize) {
     try {
         htmlOut.println 0
 
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < pageNo * pageSize) {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < page * linesPerPage) {
             index++
             content = content + index + '\n'
         }
