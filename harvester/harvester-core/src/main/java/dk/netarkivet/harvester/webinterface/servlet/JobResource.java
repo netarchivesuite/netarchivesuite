@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -612,18 +613,22 @@ public class JobResource implements ResourceAbstract {
             } catch (NumberFormatException e) {
             }
         }
-        
+
         if (linesPerPage < 25) {
             linesPerPage = 25;
         }
         if (linesPerPage > 1000) {
             linesPerPage = 1000;
         }
-        
+
+        String additionalParams;
 
         tmpStr = req.getParameter("q");
         if (tmpStr != null && tmpStr.length() > 0 && !tmpStr.equalsIgnoreCase(".*")) {
             q = tmpStr;
+            additionalParams = "&q=" + URLEncoder.encode(q, "UTF-8");
+        } else {
+        	additionalParams = "";
         }
 
         StringBuilder sb = new StringBuilder();
@@ -716,7 +721,7 @@ public class JobResource implements ResourceAbstract {
             sb.append(lines);
             sb.append(" URIs</span>\n");
             sb.append("</div>\n");
-            sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
+            sb.append(Pagination.getPagination(page, linesPerPage, pages, false, additionalParams));
             sb.append("<div style=\"clear:both;\"></div>");
             sb.append("<div>\n");
             sb.append("<pre>\n");
@@ -726,7 +731,7 @@ public class JobResource implements ResourceAbstract {
             }
             sb.append("</pre>\n");
             sb.append("</div>\n");
-            sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
+            sb.append(Pagination.getPagination(page, linesPerPage, pages, false, additionalParams));
             sb.append("</form>");
         } else {
             sb.append("Job ");

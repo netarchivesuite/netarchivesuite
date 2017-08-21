@@ -41,8 +41,7 @@ public class Pagination {
      * @param pages total number of pages
      * @return HTML text block
      */
-    public static String getPagination(long page, long itemsPerPage, long pages, boolean bShowAll) {
-    	String additionalParams = "";
+    public static String getPagination(long page, long itemsPerPage, long pages, boolean bShowAll, String additionalParams) {
         if (page < 1) {
             page = 1;
         }
@@ -105,6 +104,7 @@ public class Pagination {
             sb.append("<li class=\"disabled\"><span>Next</span></li>");
         }
         // Items per page.
+        /*
         sb.append("<li>");
         String[][] options = new String[][] {{"10", "10"}, {"25", "25"}, {"50", "50"}, {"100", "100"}, {"all", "Vis alle"}};
         int selected;
@@ -127,8 +127,6 @@ public class Pagination {
                 break;
             }
         }
-        //sb.append("<select name=\"organization\" class=\"input-mini\" onchange=\"submitForm('myform');\">");
-        /*
         sb.append("<select name=\"itemsperpage\" class=\"input-mini\" onchange=\"this.form.submit();\">");
         for (int i=0; i<options.length; ++i) {
             sb.append("<option value=\"");
@@ -142,8 +140,8 @@ public class Pagination {
             sb.append("</option>");
         }
         sb.append("</select>");
-        */
         sb.append("</li>");
+        */
         sb.append("</ul>\n");
         sb.append("</div>\n");
         return sb.toString();
