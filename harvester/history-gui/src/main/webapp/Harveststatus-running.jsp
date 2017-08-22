@@ -32,6 +32,7 @@ This page displays a list of running jobs.
         import="
 	            dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor,
                 java.net.URL,
+                java.net.MalformedURLException,
                 java.util.List,
                 java.util.Map,
                 java.util.Collections,
@@ -39,13 +40,12 @@ This page displays a list of running jobs.
                 dk.netarkivet.common.webinterface.HTMLUtils,
                 dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo,
                 dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO,
-                dk.netarkivet.harvester.datamodel.Job,
+                dk.netarkivet.harvester.webinterface.servlet.NASEnvironment,
                 dk.netarkivet.harvester.webinterface.Constants,
                 dk.netarkivet.harvester.webinterface.FindRunningJobQuery,
                 dk.netarkivet.common.utils.StringUtils,
                 dk.netarkivet.common.utils.TableSort,
                 dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort,
-                dk.netarkivet.harvester.datamodel.JobDAO,
                 dk.netarkivet.common.utils.DomainUtils"
         pageEncoding="UTF-8" %>
 
@@ -70,7 +70,7 @@ This page displays a list of running jobs.
         tbs.sortByHarvestName(sortedHarvest, Integer.parseInt(sortedColumn));
     }
 
-    // Get list of information to be shown, i.e. most recent record for every job, partitioned by harvest definition name
+    // Get list of information to be shown, i.e. most recent record for every job, partitioned by harvest def. name
     Map<String, List<StartedJobInfo>> infos = RunningJobsInfoDAO.getInstance().getMostRecentByHarvestName();
 
     // Count number of running jobs
@@ -259,6 +259,29 @@ TODO: searchedDomainName = <%=searchedDomainName%>
         <th class="harvestHeader"><fmt:message key="table.running.jobs.toeThreads"/></th>
     </tr>
 
+    <%!
+        /**
+         * Normalizes input URL so that only the domain part remains.
+         *
+         * @param url URL intended to be stripped to it's domain part
+         * @return The domain part of the input URL, or "" if URL was malformed
+         */
+        public String normalizeDomainUrl(String url) {
+            if (!url.toLowerCase().matches("^\\w+://.*")) {
+                // URL has no protocol part, so let's add one
+                url = "http://" + url;
+            }
+            URL domainUrl;
+            try {
+                domainUrl = new URL(url);
+            } catch (MalformedURLException e) {
+                return "";
+            }
+            String domainHost = domainUrl.getHost();
+            return DomainUtils.domainNameFromHostname(domainHost);
+        }
+    %>
+
     <%-- Prepare data for rows --%>
     <%
         int rowCount = 0;
@@ -310,9 +333,37 @@ TODO: searchedDomainName = <%=searchedDomainName%>
         for (StartedJobInfo info : infoList) {
             long jobId = info.getJobId();
 
+            if (searchedDomainName != null) {
+                // Something's been searched for, so let's see if this job should be skipped according to the search...
+                NASEnvironment environment = new NASEnvironment(session.getServletContext(), this.getServletConfig());
+                List<String> crawledUrls = environment.getCrawledUrls(jobId);
+                boolean currentJobHarvestsSearchedDomain = false;
+
+                // TODO: if searched domain is not in crawledUrls for given jobId, skip current iteration
+
+                // Normalize search URL
+                String searchedDomain = normalizeDomainUrl(searchedDomainName);
+
+                for (String crawledUrl : crawledUrls) {
+                    // Normalize crawled URL
+                    String crawledDomain = normalizeDomainUrl(crawledUrl);
+
+                    if (searchedDomain.equalsIgnoreCase(crawledDomain)) {
+                        currentJobHarvestsSearchedDomain = true;
+                        // This job should be shown, skip rest of the crawllog
+                        break;
+                    }
+                }
+                if (!currentJobHarvestsSearchedDomain) {
+                    // Do not show this job, continue from the next job
+                    continue;
+                }
+            }
+
+
             // TODO unused, remove
             //String jobDetailsLink = "Harveststatus-running-jobdetails.jsp?" + Constants.JOB_PARAM + "=" + jobId;
-
+/*
             // Find out whether searched domain is in the seed list for job with jobId
             Job job = JobDAO.getInstance().read(jobId);
             String seedList = job.getSeedListAsString();
@@ -342,6 +393,9 @@ TODO: searchedDomainName = <%=searchedDomainName%>
                     domainIsInSeedList = "y";
                 }
             }
+  */
+
+
     %>
 
     <%-- Generate the rows of data --%>
@@ -382,7 +436,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
         <td align="right"><%=StringUtils.formatPercentage(info.getProgress())%></td>
         <td align="right"><%=info.getElapsedTime()%></td>
         <td align="right">TODO..</td>
-        <td align="right"><%=domainIsInSeedList%></td>
+        <td align="right">TODO..</td>
         <td align="right"><%=info.getQueuedFilesCount()%></td>
         <td align="right"><%=info.getTotalQueuesCount()%></td>
         <td align="right"><%=info.getActiveQueuesCount()%></td>
