@@ -334,7 +334,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
             long jobId = info.getJobId();
 
             %>
-            TODO: jobId = <%=jobId%>
+              <tr><td>TODO: jobId = <%=jobId%></td></tr>
             <%
 
             if (searchedDomainName != null || !searchedDomainName.equals("")) {
