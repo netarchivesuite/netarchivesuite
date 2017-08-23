@@ -333,13 +333,15 @@ TODO: searchedDomainName = <%=searchedDomainName%>
         for (StartedJobInfo info : infoList) {
             long jobId = info.getJobId();
 
-            if (searchedDomainName != null) {
+            %>
+            TODO: jobId = <%=jobId%>
+            <%
+
+            if (searchedDomainName != null || !searchedDomainName.equals("")) {
                 // Something's been searched for, so let's see if this job should be skipped according to the search...
                 NASEnvironment environment = new NASEnvironment(session.getServletContext(), this.getServletConfig());
                 List<String> crawledUrls = environment.getCrawledUrls(jobId);
                 boolean currentJobHarvestsSearchedDomain = false;
-
-                // TODO: if searched domain is not in crawledUrls for given jobId, skip current iteration
 
                 // Normalize search URL
                 String searchedDomain = normalizeDomainUrl(searchedDomainName);
