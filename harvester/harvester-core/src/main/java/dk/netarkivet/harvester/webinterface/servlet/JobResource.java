@@ -582,13 +582,16 @@ public class JobResource implements ResourceAbstract {
             generateJobIsNotRunning(numerics, sb);
         }
 
-        String pageName = NAS_JOB + h3Job.jobId;
+        String pageName = NAS_JOB;
+        if (h3Job != null) {
+            pageName += h3Job.jobId;
+        }
         generatePageInformation(numerics, locale, masterTplBuilder, sb, menuSb, pageName);
 
-        if (masterTplBuilder.titlePlace != null) {
+        if (masterTplBuilder.titlePlace != null && h3Job != null) {
             masterTplBuilder.titlePlace.setText("Details and Actions on Running Job "+h3Job.jobId);
         }
-        if (masterTplBuilder.headingPlace != null) {
+        if (masterTplBuilder.headingPlace != null && h3Job != null) {
             masterTplBuilder.headingPlace.setText("Details and Actions on Running Job "+h3Job.jobId);
         }
 
@@ -691,12 +694,14 @@ public class JobResource implements ResourceAbstract {
         String regex = getParameterRegex(req);
         long limit = getLimit(req);
         String initials = getInitials(req);
+/*
         page = getPage(req, page);
         linesPerPage = limit;
         pageString = getParameterPage(req, pageString);
+*/
 
         String script = getGroovyScript();
-
+        //Another content has to be loaded in and the number of pages shall be determined from that content
 
         /*
         //RandomAccessFile raf = new RandomAccessFile("/home/nicl/workspace-nas-h3/heritrix3-scripts/src/main/java/view-frontier-url.groovy", "r");
@@ -717,8 +722,7 @@ public class JobResource implements ResourceAbstract {
         //printCrawlLog '.*'          //View already crawled lines uris matching a given regexp
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
-        Pageable pageable = h3Job;
-        //long pendingUris = job.crawlController.frontier.pendingUris;
+//        Pageable pageable = h3Job;
 
         if (h3Job != null && h3Job.isReady()) {
             generateJobInformation(menuSb, h3Job);
@@ -730,6 +734,7 @@ public class JobResource implements ResourceAbstract {
             sb.append("&nbsp;");
             produceInitials(sb, initials);
 
+/*
             long totalCachedLines = h3Job.getTotalCachedLines();
             long totalCachedSize = h3Job.getLastIndexed();
 
@@ -751,6 +756,8 @@ public class JobResource implements ResourceAbstract {
             //produceItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
             producePagination(lines, linesPerPage, page, pages, sb, pageable);
+*/
+
             generateGroovy(sb, script, h3Job);
         } else {
             generateJobIsNotRunning(numerics, sb);
@@ -797,7 +804,7 @@ public class JobResource implements ResourceAbstract {
             script += "\ninitials = \"" + initials + "\"";
             script += "\ndeleteFromFrontier '" + regex + "'\n";
         } else {
-            //parametre bliver ikke overført til groovy???
+            //It seems like the groovy script can't get hold of the parameters
             script += "\n";
             script += "\nlistFrontier '" + regex + "', " + limit + "\n";
         }
@@ -806,6 +813,7 @@ public class JobResource implements ResourceAbstract {
 
     private void generateGroovy(StringBuilder sb, String script, Heritrix3JobMonitor h3Job) {
         ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
+
         //System.out.println(new String(scriptResult.response, "UTF-8"));
         if (scriptResult != null && scriptResult.script != null) {
             if (scriptResult.script.htmlOutput != null) {
