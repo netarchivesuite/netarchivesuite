@@ -651,7 +651,11 @@ public class JobResource implements ResourceAbstract {
             pageString = produceMargin(pageString, sb);
             produceItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
-            producePagination(lines, linesPerPage, page, pages, sb, pageable);
+            produceStartPagination(lines, linesPerPage, page, pages, sb, pageable);
+            produceCrawllogContent(lines, linesPerPage, page, sb, pageable);
+            produceEndPagination(linesPerPage, page, pages, sb);
+
+
         } else {
             generateJobIsNotRunning(numerics, sb);
         }
@@ -663,6 +667,14 @@ public class JobResource implements ResourceAbstract {
 
         out.flush();
         out.close();
+    }
+
+    private void produceCrawllogContent(long lines, long linesPerPage, long page, StringBuilder sb, Pageable pageable)
+            throws IOException {
+        if (lines > 0) {
+            byte[] pageBytes = pageable.readPage(page, linesPerPage, true);
+            sb.append(new String(pageBytes, "UTF-8"));
+        }
     }
 
     private void updateCrawllog(Heritrix3JobMonitor h3Job, String actionStr) {
@@ -700,8 +712,6 @@ public class JobResource implements ResourceAbstract {
         pageString = getParameterPage(req, pageString);
 
         String script = getGroovyScript();
-        //Another content has to be loaded in and the number of pages shall be determined from that content
-        pageString = script;
 
         /*
         //RandomAccessFile raf = new RandomAccessFile("/home/nicl/workspace-nas-h3/heritrix3-scripts/src/main/java/view-frontier-url.groovy", "r");
@@ -755,10 +765,11 @@ public class JobResource implements ResourceAbstract {
             pageString = produceMargin(pageString, sb);
             produceItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
-            producePagination(lines, linesPerPage, page, pages, sb, pageable);
-
-
+            produceStartPagination(lines, linesPerPage, page, pages, sb, pageable);
             generateGroovy(sb, script, h3Job);
+            produceEndPagination(linesPerPage, page, pages, sb);
+
+
         } else {
             generateJobIsNotRunning(numerics, sb);
         }
@@ -772,16 +783,23 @@ public class JobResource implements ResourceAbstract {
         out.close();
     }
 
-    private String produceMargin(String q, StringBuilder sb) {
+    private void produceEndPagination(long linesPerPage, long page, long pages, StringBuilder sb) {
+        sb.append("</pre>\n");
+        sb.append("</div>\n");
+        sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
+        sb.append("</form>");
+    }
+
+    private String produceMargin(String marginStr, StringBuilder sb) {
         sb.append("<div style=\"clear:both;\"></div>\n");
         sb.append("</div>\n");
 
-        if (q == null) {
-            q = ".*";
+        if (marginStr == null) {
+            marginStr = ".*";
         }
 
         sb.append("<div style=\"margin-bottom:20px;\">\n");
-        return q;
+        return marginStr;
     }
 
     private String getGroovyScript() throws IOException {
@@ -848,7 +866,7 @@ public class JobResource implements ResourceAbstract {
         sb.append("<button type=\"submit\" name=\"show\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Show</button>\n");
     }
 
-    private void producePagination(long lines, long linesPerPage, long page, long pages, StringBuilder sb,
+    private void produceStartPagination(long lines, long linesPerPage, long page, long pages, StringBuilder sb,
             Pageable pageable) throws IOException {
         sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
         sb.append("<span>Matching lines: ");
@@ -859,14 +877,6 @@ public class JobResource implements ResourceAbstract {
         sb.append("<div style=\"clear:both;\"></div>");
         sb.append("<div>\n");
         sb.append("<pre>\n");
-        if (lines > 0) {
-            byte[] pageBytes = pageable.readPage(page, linesPerPage, true);
-            sb.append(new String(pageBytes, "UTF-8"));
-        }
-        sb.append("</pre>\n");
-        sb.append("</div>\n");
-        sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
-        sb.append("</form>");
     }
 
     private void produceItemsPerPage(long linesPerPage, String q, StringBuilder sb) {
