@@ -337,7 +337,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
               <tr><td>TODO: jobId = <%=jobId%></td></tr>
             <%
 
-            if (searchedDomainName != null || !searchedDomainName.equals("")) {
+            if (searchedDomainName != null && !searchedDomainName.equals("")) {
                 // Something's been searched for, so let's see if this job should be skipped according to the search...
                 NASEnvironment environment = new NASEnvironment(session.getServletContext(), this.getServletConfig());
                 List<String> crawledUrls = environment.getCrawledUrls(jobId);
