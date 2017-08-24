@@ -694,14 +694,14 @@ public class JobResource implements ResourceAbstract {
         String regex = getParameterRegex(req);
         long limit = getLimit(req);
         String initials = getInitials(req);
-/*
+
         page = getPage(req, page);
         linesPerPage = limit;
         pageString = getParameterPage(req, pageString);
-*/
 
         String script = getGroovyScript();
         //Another content has to be loaded in and the number of pages shall be determined from that content
+        pageString = script;
 
         /*
         //RandomAccessFile raf = new RandomAccessFile("/home/nicl/workspace-nas-h3/heritrix3-scripts/src/main/java/view-frontier-url.groovy", "r");
@@ -722,7 +722,7 @@ public class JobResource implements ResourceAbstract {
         //printCrawlLog '.*'          //View already crawled lines uris matching a given regexp
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
-//        Pageable pageable = h3Job;
+        Pageable pageable = h3Job;
 
         if (h3Job != null && h3Job.isReady()) {
             generateJobInformation(menuSb, h3Job);
@@ -734,7 +734,6 @@ public class JobResource implements ResourceAbstract {
             sb.append("&nbsp;");
             produceInitials(sb, initials);
 
-/*
             long totalCachedLines = h3Job.getTotalCachedLines();
             long totalCachedSize = h3Job.getLastIndexed();
 
@@ -750,13 +749,14 @@ public class JobResource implements ResourceAbstract {
             if (page > pages)
                 page = pages;
 
+
             produceTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
             produceUpdateCacheButton(sb);
             pageString = produceMargin(pageString, sb);
-            //produceItemsPerPage(linesPerPage, pageString, sb);
+            produceItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
             producePagination(lines, linesPerPage, page, pages, sb, pageable);
-*/
+
 
             generateGroovy(sb, script, h3Job);
         } else {

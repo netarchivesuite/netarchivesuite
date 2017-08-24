@@ -75,10 +75,10 @@ void listFrontier(String regex, long limit) {
     matchingCount = 0
     index = 0
     try {
-        htmlOut.println 0
+        htmlOut.println lines
 
-        //while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < page * linesPerPage) {
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < 25) {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < page * linesPerPage) {
+        //while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < 25) {
             index++
             content = content + index + '\n'
         }
