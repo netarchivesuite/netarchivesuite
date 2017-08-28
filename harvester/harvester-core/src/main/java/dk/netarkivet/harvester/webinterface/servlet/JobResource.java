@@ -168,7 +168,7 @@ public class JobResource implements ResourceAbstract {
 
             h3Job.update();
 
-            generateJobInformation(menuSb, h3Job);
+            showJobInformation(menuSb, h3Job);
             
             sb.append("<div>\n");
             
@@ -627,7 +627,7 @@ public class JobResource implements ResourceAbstract {
         Pageable pageable = h3Job;
 
         if (h3Job != null && h3Job.isReady()) {
-            generateJobInformation(menuSb, h3Job);
+            showJobInformation(menuSb, h3Job);
             String actionStr = req.getParameter("action");
             updateCrawllog(h3Job, actionStr);
 
@@ -646,14 +646,14 @@ public class JobResource implements ResourceAbstract {
             if (page > pages)
                 page = pages;
 
-            produceTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
-            produceUpdateCacheButton(sb);
-            pageString = produceMargin(pageString, sb);
-            produceItemsPerPage(linesPerPage, pageString, sb);
+            showTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
+            showUpdateCacheButton(sb);
+            pageString = showMargin(pageString, sb);
+            showItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
-            produceStartPagination(lines, linesPerPage, page, pages, sb, pageable);
-            produceCrawllogContent(lines, linesPerPage, page, sb, pageable);
-            produceEndPagination(linesPerPage, page, pages, sb);
+            startPagination(lines, linesPerPage, page, pages, sb, pageable);
+            showCrawllogContent(lines, linesPerPage, page, sb, pageable);
+            endPagination(linesPerPage, page, pages, sb);
 
 
         } else {
@@ -669,25 +669,9 @@ public class JobResource implements ResourceAbstract {
         out.close();
     }
 
-    private void produceCrawllogContent(long lines, long linesPerPage, long page, StringBuilder sb, Pageable pageable)
-            throws IOException {
-        if (lines > 0) {
-            byte[] pageBytes = pageable.readPage(page, linesPerPage, true);
-            sb.append(new String(pageBytes, "UTF-8"));
-        }
-    }
-
-    private void updateCrawllog(Heritrix3JobMonitor h3Job, String actionStr) {
-        if ("update".equalsIgnoreCase(actionStr)) {
-            byte[] tmpBuf = new byte[1024 * 1024];
-            h3Job.updateCrawlLog(tmpBuf);
-        }
-    }
-
     public void frontier_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
         long lines;
-
-        long linesPerPage = 100;
+        long linesPerPage;
         long page = 1;
         long pages = 0;
         String pageString = null;
@@ -699,50 +683,31 @@ public class JobResource implements ResourceAbstract {
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
 
-
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
 
-        String regex = getParameterRegex(req);
-        long limit = getLimit(req);
-        String initials = getInitials(req);
-
         page = getPage(req, page);
-        linesPerPage = limit;
+        linesPerPage = getLinesPerPage(req);
+        String regex = getParameterRegex(req);
+        String initials = getInitials(req);
         pageString = getParameterPage(req, pageString);
 
-        String script = getGroovyScript();
-
-        /*
-        //RandomAccessFile raf = new RandomAccessFile("/home/nicl/workspace-nas-h3/heritrix3-scripts/src/main/java/view-frontier-url.groovy", "r");
-        RandomAccessFile raf = new RandomAccessFile("/home/nicl/workspace-nas-h3/heritrix3-scripts/src/main/java/nas.groovy", "r");
-        byte[] src = new byte[(int)raf.length()];
-        raf.readFully(src);
-        raf.close();
-        String script = new String(src, "UTF-8");
-        */
+        String frontierScript = getGroovyScript();
         String deleteStr = req.getParameter("delete");
-        script = getDeleteScript(regex, limit, initials, script, deleteStr);
-
-        // To use, just remove the initial "//" from any one of these lines.
-        //
-        //killToeThread  1       //Kill a toe thread by number
-        //listFrontier '.*stats.*'    //List uris in the frontier matching a given regexp
-        //deleteFromFrontier '.*foobar.*'    //Remove uris matching a given regexp from the frontier
-        //printCrawlLog '.*'          //View already crawled lines uris matching a given regexp
+        frontierScript = getDeleteScript(regex, linesPerPage, initials, frontierScript, deleteStr);
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
         Pageable pageable = h3Job;
 
         if (h3Job != null && h3Job.isReady()) {
-            generateJobInformation(menuSb, h3Job);
+            showJobInformation(menuSb, h3Job);
 
             if (deleteStr != null && "1".equals(deleteStr) && (initials == null || initials.length() == 0)) {
                 sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Initials required to delete from the frontier queue!</div>");
             }
-            produceLineToShow(sb, regex, limit);
+            showSearchInformation(sb, regex, linesPerPage);
             sb.append("&nbsp;");
-            produceInitials(sb, initials);
+            showInitials(sb, initials);
 
             long totalCachedLines = h3Job.getTotalCachedLines();
             long totalCachedSize = h3Job.getLastIndexed();
@@ -760,15 +725,15 @@ public class JobResource implements ResourceAbstract {
                 page = pages;
 
 
-            produceTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
-            produceUpdateCacheButton(sb);
-            pageString = produceMargin(pageString, sb);
-            produceItemsPerPage(linesPerPage, pageString, sb);
+            showTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
+            showUpdateCacheButton(sb);
+            pageString = showMargin(pageString, sb);
+            //showItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
-            produceStartPagination(lines, linesPerPage, page, pages, sb, pageable);
-            generateGroovy(sb, script, h3Job);
-            produceEndPagination(linesPerPage, page, pages, sb);
 
+            startPagination(lines, linesPerPage, page, pages, sb, pageable);
+            frontierPageContent(sb, frontierScript, h3Job);
+            endPagination(linesPerPage, page, pages, sb);
 
         } else {
             generateJobIsNotRunning(numerics, sb);
@@ -783,14 +748,15 @@ public class JobResource implements ResourceAbstract {
         out.close();
     }
 
-    private void produceEndPagination(long linesPerPage, long page, long pages, StringBuilder sb) {
+
+    private void endPagination(long linesPerPage, long page, long pages, StringBuilder sb) {
         sb.append("</pre>\n");
         sb.append("</div>\n");
         sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
         sb.append("</form>");
     }
 
-    private String produceMargin(String marginStr, StringBuilder sb) {
+    private String showMargin(String marginStr, StringBuilder sb) {
         sb.append("<div style=\"clear:both;\"></div>\n");
         sb.append("</div>\n");
 
@@ -800,6 +766,21 @@ public class JobResource implements ResourceAbstract {
 
         sb.append("<div style=\"margin-bottom:20px;\">\n");
         return marginStr;
+    }
+
+    private void showCrawllogContent(long lines, long linesPerPage, long page, StringBuilder sb, Pageable pageable)
+            throws IOException {
+        if (lines > 0) {
+            byte[] pageBytes = pageable.readPage(page, linesPerPage, true);
+            sb.append(new String(pageBytes, "UTF-8"));
+        }
+    }
+
+    private void updateCrawllog(Heritrix3JobMonitor h3Job, String actionStr) {
+        if ("update".equalsIgnoreCase(actionStr)) {
+            byte[] tmpBuf = new byte[1024 * 1024];
+            h3Job.updateCrawlLog(tmpBuf);
+        }
     }
 
     private String getGroovyScript() throws IOException {
@@ -822,14 +803,13 @@ public class JobResource implements ResourceAbstract {
             script += "\ninitials = \"" + initials + "\"";
             script += "\ndeleteFromFrontier '" + regex + "'\n";
         } else {
-            //It seems like the groovy script can't get hold of the parameters
             script += "\n";
             script += "\nlistFrontier '" + regex + "', " + limit + "\n";
         }
         return script;
     }
 
-    private void generateGroovy(StringBuilder sb, String script, Heritrix3JobMonitor h3Job) {
+    private void frontierPageContent(StringBuilder sb, String script, Heritrix3JobMonitor h3Job) {
         ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
 
         //System.out.println(new String(scriptResult.response, "UTF-8"));
@@ -850,23 +830,14 @@ public class JobResource implements ResourceAbstract {
         }
     }
 
-    private void produceInitials(StringBuilder sb, String initials) {
+    private void showInitials(StringBuilder sb, String initials) {
         sb.append("<label for=\"initials\">User initials:</label>");
         sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
         sb.append("<button type=\"submit\" name=\"delete\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Delete</button>\n");
         sb.append("</form>\n");
     }
 
-    private void produceLineToShow(StringBuilder sb, String regex, long limit) {
-        sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
-        sb.append("<label for=\"limit\">Lines to show:</label>");
-        sb.append("<input type=\"text\" id=\"limit\" name=\"limit\" value=\"" + limit + "\" placeholder=\"return limit\">\n");
-        sb.append("<label for=\"regex\">Filter regex:</label>");
-        sb.append("<input type=\"text\" id=\"regex\" name=\"regex\" value=\"" + regex + "\" placeholder=\"regex\" style=\"display:inline;width:350px;\">\n");
-        sb.append("<button type=\"submit\" name=\"show\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Show</button>\n");
-    }
-
-    private void produceStartPagination(long lines, long linesPerPage, long page, long pages, StringBuilder sb,
+    private void startPagination(long lines, long linesPerPage, long page, long pages, StringBuilder sb,
             Pageable pageable) throws IOException {
         sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
         sb.append("<span>Matching lines: ");
@@ -879,16 +850,25 @@ public class JobResource implements ResourceAbstract {
         sb.append("<pre>\n");
     }
 
-    private void produceItemsPerPage(long linesPerPage, String q, StringBuilder sb) {
+    private void showSearchInformation(StringBuilder sb, String regex, long linesToShow) {
+        sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
+        sb.append("<label for=\"limit\">Lines to show:</label>");
+        sb.append("<input type=\"text\" id=\"limit\" name=\"limit\" value=\"" + linesToShow + "\" placeholder=\"return limit\">\n");
+        sb.append("<label for=\"regex\">Filter regex:</label>");
+        sb.append("<input type=\"text\" id=\"regex\" name=\"regex\" value=\"" + regex + "\" placeholder=\"regex\" style=\"display:inline;width:350px;\">\n");
+        sb.append("<button type=\"submit\" name=\"show\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Show</button>\n");
+    }
+
+    private void showItemsPerPage(long linesPerPage, String regex, StringBuilder sb) {
         sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">");
         sb.append("<label for=\"itemsperpage\">Lines to show:</label>");
         sb.append("<input type=\"text\" id=\"itemsperpage\" name=\"itemsperpage\" value=\"" + linesPerPage + "\" placeholder=\"must be &gt; 25 and &lt; 1000 \">\n");
         sb.append("<label for=\"q\">Filter regex:</label>");
-        sb.append("<input type=\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"content-type\" style=\"display:inline;width:350px;\">\n");
+        sb.append("<input type=\"text\" id=\"q\" name=\"q\" value=\"" + regex + "\" placeholder=\"content-type\" style=\"display:inline;width:350px;\">\n");
         sb.append("<button type=\"submit\" name=\"search\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Search</button>\n");
     }
 
-    private void produceUpdateCacheButton(StringBuilder sb) {
+    private void showUpdateCacheButton(StringBuilder sb) {
         sb.append("<div style=\"float:left;\">\n");
         sb.append("<a href=\"");
         sb.append("?action=update");
@@ -899,7 +879,7 @@ public class JobResource implements ResourceAbstract {
         sb.append("</div>\n");
     }
 
-    private void produceTotalCachedInformation(StringBuilder sb, long totalCachedLines, long totalCachedSize) {
+    private void showTotalCachedInformation(StringBuilder sb, long totalCachedLines, long totalCachedSize) {
         sb.append("<div style=\"margin-bottom:20px;\">\n");
         sb.append("<div style=\"float:left;min-width:180px;\">\n");
         sb.append("Total cached lines: ");
@@ -928,7 +908,7 @@ public class JobResource implements ResourceAbstract {
         return initials;
     }
 
-    private long getLimit(HttpServletRequest req) {
+    private long getLinesPerPage(HttpServletRequest req) {
         long limit = 100;
         String limitStr = req.getParameter("limit");
         if (limitStr != null && limitStr.length() > 0) {
@@ -994,7 +974,7 @@ public class JobResource implements ResourceAbstract {
         sb.append(" is not running.");
     }
 
-    private void generateJobInformation(StringBuilder menuSb, Heritrix3JobMonitor h3Job) {
+    private void showJobInformation(StringBuilder menuSb, Heritrix3JobMonitor h3Job) {
         menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
         menuSb.append(NASEnvironment.servicePath);
         menuSb.append("job/");
@@ -1056,7 +1036,7 @@ public class JobResource implements ResourceAbstract {
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
         if (h3Job != null && h3Job.isReady()) {
-            generateJobInformation(menuSb, h3Job);
+            showJobInformation(menuSb, h3Job);
             
             /* form control */
             /* case submit for delete but no checked regex */
@@ -1193,7 +1173,7 @@ public class JobResource implements ResourceAbstract {
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
         if (h3Job != null && h3Job.isReady()) {
-            generateJobInformation(menuSb, h3Job);
+            showJobInformation(menuSb, h3Job);
             
             /* form control */
             boolean submitWithInitials = true;
@@ -1303,7 +1283,7 @@ public class JobResource implements ResourceAbstract {
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
         if (h3Job != null && h3Job.isReady()) {
-            generateJobInformation(menuSb, h3Job);
+            showJobInformation(menuSb, h3Job);
 
             if (engineStr != null && engineStr.length() > 0 && scriptStr != null && scriptStr.length() > 0) {
                 ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, engineStr, scriptStr);
@@ -1376,7 +1356,7 @@ public class JobResource implements ResourceAbstract {
         Job job;
 
         if (h3Job != null && h3Job.isReady()) {
-            generateJobInformation(menuSb, h3Job);
+            showJobInformation(menuSb, h3Job);
 
             if (h3Job.jobResult != null && h3Job.jobResult.job != null) {
                 job = h3Job.jobResult.job;
