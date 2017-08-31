@@ -404,8 +404,8 @@ public class RunBatchTester {
 
     /**
      * Test success fully arguments.
+       @Test
      */
-    @Test
     public void testSuccess() {
         String[] args = new String[] {"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
                 "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS};
