@@ -17,7 +17,7 @@ derby.log
 **/harvester-test/tmp1
 **/wayback-test/derbyDB/
 **/wayback-resourcestore/admin.data
-**/pom.xml.versionsBackup
+pom.xml.versionsBackup
 # Additional junkfiles that ideally should be cleaned up after finishing the test
 harvester/heritrix1/heritrix1-controller/oldjobs/
 deploy/deploy-core/dir_kb-test-bar-010.bitarkiv.kb.dk.bat
