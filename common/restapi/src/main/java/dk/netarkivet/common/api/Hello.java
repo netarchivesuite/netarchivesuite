@@ -3,15 +3,17 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-@Path( "/hello/{name}" )
+@Path( "/hello" )
 /**
  * Created by csr on 9/4/17.
  */
 public class Hello {
+
     @GET
-       public String getThing( @PathParam( "name" ) String name )
-       {
-           return "Hello, " + name;
-       }
+    @Path("/{name}")
+    public String getThing( @PathParam( "name" ) String name )
+    {
+        return "Hello, " + name;
+    }
 
 }

@@ -17,6 +17,7 @@
     <module>netarchivesuite-test-utils</module>
     <module>common-core</module>
     <module>common-test</module>
+    <module>restapi</module>
   </modules>
 
 </project>

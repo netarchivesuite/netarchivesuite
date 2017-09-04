@@ -30,7 +30,17 @@ import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
+import javax.servlet.ServletException;
+
+import org.apache.catalina.Context;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.core.AprLifecycleListener;
+import org.apache.catalina.startup.Tomcat;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,24 +104,69 @@ public class GUIWebServerTester {
     public void testDummy() {
     	
     }
-    
-    public void testRunningServer() {
-        server = new GUIWebServer();
-        try {
-        	server.startServer();
-        } catch (Throwable e) {
-        	server = null; // avoid attempt of cleanup
-        	fail("Failed to start server: " + e);
-        }
-        
-        try {
-            new Socket(InetAddress.getLocalHost(), dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_PORT);
-        } catch (ConnectException e) {
-        	fail("After starting GUIWebserver, unable to connect to port '" + dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_PORT + "': " + e);
-        } catch (IOException e) {
-            fail("Port not in use after starting server due to error: " + e);
-        }
+
+    @Test
+    public void testRestWS() throws ServletException, LifecycleException, IOException {
+        Tomcat server = new Tomcat();
+
+
+        Context restContext = server.addWebapp("/", "/home/csr/projects/netarchivesuite/common/restapi/target/restapi.war");
+
+
+       /* Wrapper servlet = restContext.createWrapper();
+        servlet.setName( "jaxrs" );
+        servlet.setServletClass(
+                "org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet" );
+
+        servlet.addInitParameter(
+                "jaxrs.serviceClasses",
+                "dk.netarkivet.common.api.Hello"
+        );
+        servlet.setLoadOnStartup( 1 );
+        restContext.addChild( servlet );
+        restContext.addServletMapping( "/rest*//**//**//**//*", "jaxrs" );    */
+
+        final String absolutePath = createBaseDirectory().getAbsolutePath();
+        server.setBaseDir(absolutePath);
+        server.setPort(4242);
+        //server.setBaseDir(".");
+        server.getHost().setAppBase(absolutePath);
+        //server.getServer().addLifecycleListener(new AprLifecycleListener());
+        //server.addWebapp("/rest", "/home/csr/projects/netarchivesuite/common/restapi/target/restapi.war");
+        server.start();
+        server.getServer().await();
+        Socket socket = new Socket(InetAddress.getLocalHost(), 4242);
+        server.stop();
     }
+
+    private static File createBaseDirectory() throws IOException {
+           final File base = File.createTempFile( "tmp-", "", new File(".") );
+
+           if( !base.delete() ) {
+               throw new IOException( "Cannot (re)create base folder: " + base.getAbsolutePath()  );
+           }
+
+           if( !base.mkdir() ) {
+               throw new IOException( "Cannot create base folder: " + base.getAbsolutePath()  );
+           }
+
+           return base;
+       }
+
+    @Test
+    public void testRunningServer() throws IOException {
+        Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION,
+                "");
+        Settings.set(CommonSettings.SITESECTION_CLASS, "");
+        Settings.set("settings.common.webinterface.restwar", "/home/csr/projects/netarchivesuite/common/restapi/target/restapi.war");
+        server = GUIWebServer.getInstance();
+        //server = new GUIWebServer();
+        //server.startServer();
+        Socket socket = new Socket(InetAddress.getLocalHost(),
+                dk.netarkivet.common.webinterface.TestInfo.GUI_WEB_SERVER_PORT);
+        server.cleanup();
+    }
+
 
     public void testExpectedExceptionsWhenStartingServer() throws IOException {
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, Long.toString(65536L));

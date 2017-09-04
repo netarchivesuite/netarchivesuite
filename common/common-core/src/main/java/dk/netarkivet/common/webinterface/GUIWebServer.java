@@ -27,6 +27,7 @@ import java.io.File;
 import javax.servlet.ServletException;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.core.AprLifecycleListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
@@ -39,7 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.api.Hello;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
@@ -83,8 +83,12 @@ public class GUIWebServer implements CleanupIF {
                     + HTTP_PORT_NUMBER_UPPER_LIMIT + "], not " + port);
         }
         // TODO Replace with just one setting. See issue NAS-1687
-        String[] webApps = Settings.getAll(CommonSettings.SITESECTION_WEBAPPLICATION);
-        String[] classes = Settings.getAll(CommonSettings.SITESECTION_CLASS);
+        String[] webApps = new String[]{};
+        String[] classes = new String[]{};
+        if (!(Settings.get(CommonSettings.SITESECTION_WEBAPPLICATION).trim() == "")) {
+            webApps = Settings.getAll(CommonSettings.SITESECTION_WEBAPPLICATION);
+            classes = Settings.getAll(CommonSettings.SITESECTION_CLASS);
+        }
         if (webApps.length != classes.length) {
             throw new IOFailure("Number of webapplications and number of classes defining "
                     + "the webapps do not match. " + "Webapps: [" + StringUtils.conjoin(",", webApps) + "]. "
@@ -177,7 +181,16 @@ public class GUIWebServer implements CleanupIF {
             }
         }
 
-        Context restContext = server.addContext("/rest", "");
+/*        server.setBaseDir(".");
+        server.getHost().setAppBase(".");
+        server.getServer().addLifecycleListener(new AprLifecycleListener());
+        try {
+            server.addWebapp("/rest", Settings.get("settings.common.webinterface.restwar"));
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        }*/
+
+        Context restContext = server.addContext("/rest", Settings.get("settings.common.webinterface.restwar"));
         Wrapper servlet = restContext.createWrapper();
         servlet.setName( "jaxrs" );
         servlet.setServletClass(
@@ -185,11 +198,11 @@ public class GUIWebServer implements CleanupIF {
 
         servlet.addInitParameter(
                 "jaxrs.serviceClasses",
-                Hello.class.getName()
+                "dk.netarkivet.common.api.Hello"
         );
         servlet.setLoadOnStartup( 1 );
         restContext.addChild( servlet );
-        restContext.addServletMapping( "/rest/*", "jaxrs" );
+        restContext.addServletMapping( "/rest*//*", "jaxrs" );
     }
 
 
