@@ -69,6 +69,8 @@ public class DeduplicateToCDXAdapterTester {
     public static final String NAS_2598_STRING = "2016-12-05T10:11:38.808Z   200       2026 http://www.w3.org/Icons/valid-xhtml10-blue.png EI http://www.w3.org/Icons/valid-xhtml10-blue image/png #041 20161205101137572+1226 sha1:C3PH3IWTSURQ7XILQRHDIDDGAD2ORRPH www.kaarefc.dk duplicate:\"2-1-20161205100306320-00000-4320~kb-test-har-004.kb.dk~8173.arc,151298,20161205100315930\",content-size:2408";
     public static final String NAS_2598_STRING2 = "2016-12-05T10:35:50.553Z   200      45292 http://www.trineogkaare.dk/images/n003-a.jpg ELE http://www.trineogkaare.dk/bilkir.html image/jpeg #031 20161205103550286+264 sha1:UZ3MSPJL3PQR3C65IMEYZJ5NNJJPDTBA www.trineogkaare.dk duplicate:\"5-2-20161205101552457-00000-4551~kb-test-har-004.kb.dk~8171.arc,30098791,20161205101622637\",content-size:45603";
 
+    public static final String NARK_1280_STRING = "2010-03-01T23:34:41.852Z   200       1530 http://multimedia.pol.dk/archive/02010-03-01T23:34:41.852Z   200       1530 http://multimedia.pol.dk/archive/00401/Winter_Weather_Utah_401523r.jpg XE http://politiken.dk/fotografier/verdensbilleder_fotografier/article855370.ece image/jpeg #049 20100301233441829+22 sha1:LCP5CJZA6X7Z7LSZYNDKPOLHIPUTV2AM - duplicate:\"125-14-20100217105028-00001-sb-test-har-001.statsbiblioteket.dk.arc,10964302\",content-size:1977";
+
 
     @Before
     public void setUp() {
@@ -106,6 +108,16 @@ public class DeduplicateToCDXAdapterTester {
         CaptureSearchResult result = adapter2.adapt(cdx_line);
         assertEquals("Should get the arcfilename back out of the cdx line",
                 "2-1-20161205100306320-00000-4320~kb-test-har-004.kb.dk~8173.arc", result.getFile());
+    }
+
+    @Test
+    public void testAdaptLineNARK1280() {
+        DeduplicateToCDXAdapterInterface adapter = new DeduplicateToCDXAdapter();
+        String cdx_line = adapter.adaptLine(NARK_1280_STRING);
+        CDXLineToSearchResultAdapter adapter2 = new CDXLineToSearchResultAdapter();
+        CaptureSearchResult result = adapter2.adapt(cdx_line);
+        assertEquals("Should get the arcfilename back out of the cdx line",
+                "125-14-20100217105028-00001-sb-test-har-001.statsbiblioteket.dk.arc", result.getFile());
     }
 
 

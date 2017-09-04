@@ -26,17 +26,20 @@ import java.io.File;
 
 import javax.servlet.ServletException;
 
+import org.apache.catalina.Context;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.Constants;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
+import org.apache.catalina.Wrapper;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.api.Hello;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
@@ -173,6 +176,20 @@ public class GUIWebServer implements CleanupIF {
                 log.error("Unable to add webapp " + webapp, e);
             }
         }
+
+        Context restContext = server.addContext("/rest", "");
+        Wrapper servlet = restContext.createWrapper();
+        servlet.setName( "jaxrs" );
+        servlet.setServletClass(
+                "org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet" );
+
+        servlet.addInitParameter(
+                "jaxrs.serviceClasses",
+                Hello.class.getName()
+        );
+        servlet.setLoadOnStartup( 1 );
+        restContext.addChild( servlet );
+        restContext.addServletMapping( "/rest/*", "jaxrs" );
     }
 
 
