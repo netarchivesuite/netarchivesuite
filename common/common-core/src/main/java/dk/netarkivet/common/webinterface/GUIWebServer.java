@@ -181,6 +181,12 @@ public class GUIWebServer implements CleanupIF {
             }
         }
 
+        try {
+            server.addWebapp("/", "webapps/REST-api.war");
+        } catch (ServletException e) {
+            log.error("Unable to add REST api", e);
+        }
+
 /*        server.setBaseDir(".");
         server.getHost().setAppBase(".");
         server.getServer().addLifecycleListener(new AprLifecycleListener());
@@ -190,7 +196,7 @@ public class GUIWebServer implements CleanupIF {
             throw new RuntimeException(e);
         }*/
 
-        Context restContext = server.addContext("/rest", Settings.get("settings.common.webinterface.restwar"));
+       /* Context restContext = server.addContext("/rest", Settings.get("settings.common.webinterface.restwar"));
         Wrapper servlet = restContext.createWrapper();
         servlet.setName( "jaxrs" );
         servlet.setServletClass(
@@ -202,7 +208,7 @@ public class GUIWebServer implements CleanupIF {
         );
         servlet.setLoadOnStartup( 1 );
         restContext.addChild( servlet );
-        restContext.addServletMapping( "/rest*//*", "jaxrs" );
+        restContext.addServletMapping( "/rest*//**//*", "jaxrs" );*/
     }
 
 

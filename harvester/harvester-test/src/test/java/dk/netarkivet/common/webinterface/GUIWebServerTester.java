@@ -108,31 +108,11 @@ public class GUIWebServerTester {
     @Test
     public void testRestWS() throws ServletException, LifecycleException, IOException {
         Tomcat server = new Tomcat();
-
-
         Context restContext = server.addWebapp("/", "/home/csr/projects/netarchivesuite/common/restapi/target/restapi.war");
-
-
-       /* Wrapper servlet = restContext.createWrapper();
-        servlet.setName( "jaxrs" );
-        servlet.setServletClass(
-                "org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet" );
-
-        servlet.addInitParameter(
-                "jaxrs.serviceClasses",
-                "dk.netarkivet.common.api.Hello"
-        );
-        servlet.setLoadOnStartup( 1 );
-        restContext.addChild( servlet );
-        restContext.addServletMapping( "/rest*//**//**//**//*", "jaxrs" );    */
-
         final String absolutePath = createBaseDirectory().getAbsolutePath();
         server.setBaseDir(absolutePath);
         server.setPort(4242);
-        //server.setBaseDir(".");
         server.getHost().setAppBase(absolutePath);
-        //server.getServer().addLifecycleListener(new AprLifecycleListener());
-        //server.addWebapp("/rest", "/home/csr/projects/netarchivesuite/common/restapi/target/restapi.war");
         server.start();
         server.getServer().await();
         Socket socket = new Socket(InetAddress.getLocalHost(), 4242);
@@ -153,12 +133,12 @@ public class GUIWebServerTester {
            return base;
        }
 
-    @Test
+
     public void testRunningServer() throws IOException {
         Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION,
                 "");
         Settings.set(CommonSettings.SITESECTION_CLASS, "");
-        Settings.set("settings.common.webinterface.restwar", "/home/csr/projects/netarchivesuite/common/restapi/target/restapi.war");
+        //Settings.set("settings.common.webinterface.restwar", "/home/csr/projects/netarchivesuite/common/restapi/target/restapi.war");
         server = GUIWebServer.getInstance();
         //server = new GUIWebServer();
         //server.startServer();

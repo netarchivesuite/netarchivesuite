@@ -44,6 +44,6 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>restapi</finalName>
+    <finalName>REST-api</finalName>
   </build>
 </project>
