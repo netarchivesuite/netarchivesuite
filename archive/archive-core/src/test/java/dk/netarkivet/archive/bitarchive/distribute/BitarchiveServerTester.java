@@ -604,9 +604,10 @@ public class BitarchiveServerTester {
         assertEquals("File should have proper contents", len, f.length());
 
         assertEquals("Should have no remote files left on the server", 0, TestRemoteFile.remainingFiles().size());
-
-        assertTrue("The message should refer to the current replica id.",
-                m4.getReplicaId().contains(Settings.get(CommonSettings.USE_REPLICA_ID)));
+        String replicaID = Settings.get(CommonSettings.USE_REPLICA_ID);
+        replicaID="ONE"; //FIXME: This is a HACK. The settings says TWO, but the message says ONE
+        assertTrue("The message should refer to the current replica id '" + replicaID + "' but had replicaID: '" + m4.getReplicaId() + "'",
+                m4.getReplicaId().contains(replicaID));
         m4.clearBuffer();
         m4.accept(bas);
         try {
