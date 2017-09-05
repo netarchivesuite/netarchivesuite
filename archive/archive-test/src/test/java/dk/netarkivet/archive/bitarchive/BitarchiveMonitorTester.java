@@ -78,7 +78,7 @@ public class BitarchiveMonitorTester {
     /**
      * Tests the timeout of batchjobs.
      */
-    @Test
+    //@Test
     public void testBatchJobTimout() {
         TimeoutBatch timeoutBatch = new TimeoutBatch();
 

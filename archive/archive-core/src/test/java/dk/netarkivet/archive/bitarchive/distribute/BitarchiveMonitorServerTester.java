@@ -786,9 +786,13 @@ public class BitarchiveMonitorServerTester {
 
     /**
      * Testing GetChecksumMessage.
+     * Requires file TestInfo.BATCH_ONE_CHECKSUM_OUTPUT_FILE
      */
     @Test
     public void testGetChecksumMessage() throws InterruptedException, IOException {
+    	assertTrue("Missing file '" + TestInfo.BATCH_ONE_CHECKSUM_OUTPUT_FILE.getAbsolutePath() + "' needed by RemoteFileFactory", 
+    			TestInfo.BATCH_ONE_CHECKSUM_OUTPUT_FILE.isFile());
+    	
         bam_server = BitarchiveMonitorServer.getInstance();
         Thread.sleep(200);
 
@@ -836,10 +840,14 @@ public class BitarchiveMonitorServerTester {
 
     /**
      * Tests the opportunity to correct a entry in the archive through CorrectMessage.
+     * Uses the file TestInfo.CORRECT_ARC_FILE and file TestInfo.BAD_ARC_FILE
      */
     @Test
     public void testCorrectMessage() throws InterruptedException {
-        bam_server = BitarchiveMonitorServer.getInstance();
+    	assertTrue("Missing file '" + TestInfo.CORRECT_ARC_FILE.getAbsolutePath() + "' needed by RemoteFileFactory", TestInfo.CORRECT_ARC_FILE.isFile());
+    	assertTrue("Missing file '" + TestInfo.BAD_ARC_FILE.getAbsolutePath() + "' needed by RemoteFileFactory", TestInfo.BAD_ARC_FILE.isFile());
+    	
+    	bam_server = BitarchiveMonitorServer.getInstance();
 
         TestMessageListener listener = new TestMessageListener();
         con.setListener(THE_BAMON, listener);
@@ -857,7 +865,7 @@ public class BitarchiveMonitorServerTester {
 
         String badChecksum = "error-123";
         String credentials = "exampleCredentials";
-
+        
         RemoteFile rf = RemoteFileFactory.getCopyfileInstance(TestInfo.CORRECT_ARC_FILE);
 
         CorrectMessage cm = new CorrectMessage(THE_BAMON, THE_ARCREPOS, badChecksum, rf, repId, credentials);

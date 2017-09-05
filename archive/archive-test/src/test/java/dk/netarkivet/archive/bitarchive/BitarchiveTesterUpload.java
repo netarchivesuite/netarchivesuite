@@ -42,6 +42,8 @@ import org.junit.Test;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
+import dk.netarkivet.common.distribute.ChannelID;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.TestRemoteFile;
@@ -77,7 +79,12 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      */
     @Before
     public void setUp() throws Exception {
-        super.setUp();
+        super.setUp(); 
+        try { 
+        	Channels.getAllBa();
+        } catch (Exception e){
+        	fail("Channels.getAllBa should not throw Exception " + e);
+        }
         server = BitarchiveServer.getInstance();
     }
 

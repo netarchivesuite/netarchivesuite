@@ -124,6 +124,7 @@ public class ArcRepositoryServerTester {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
 
         FileUtils.removeRecursively(WORKING_DIR);
+        assertTrue("OriginalDir doesn't exist '" + ORIGINALS_DIR.getAbsolutePath() + "'", ORIGINALS_DIR.isDirectory());
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
         FileUtils.createDir(CLOG_DIR);
         FileUtils.createDir(ALOG_DIR);
@@ -138,7 +139,9 @@ public class ArcRepositoryServerTester {
     public void tearDown() throws Exception {
         AdminData.getUpdateableInstance().close();
         FileUtils.removeRecursively(WORKING_DIR);
-        con.removeListener(Channels.getError(), dummyServer);
+        if (dummyServer != null) {
+        	con.removeListener(Channels.getError(), dummyServer);
+        }
         rf.tearDown();
         rs.tearDown();
     }
