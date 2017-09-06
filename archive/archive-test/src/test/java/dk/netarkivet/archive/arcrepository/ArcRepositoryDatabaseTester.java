@@ -83,6 +83,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.ChecksumCalculator;
+import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -98,7 +99,9 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 @SuppressWarnings({"unused"})
 // FIXME: @Ignore
-@Ignore("test hangs")
+@Ignore("test fails initially with database class-loader errors and now hangs")
+//ArcRepositoryDatabaseTester.setUp:174 Creation of database '/home/svc/devel/netarchivesuite/archive/archive-test/archivedatabasedir/archivedb.sql' failed in dir '/home/svc/devel/netarchivesuite/archive/archive-test/tests/dk/netarkivet/archive/arcrepository/data/working' with error: java.sql.SQLException: No suitable driver found for 
+//jdbc:derby:tests/dk/netarkivet/archive/arcrepository/data/working/derivenamefromresource;create=true
 public class ArcRepositoryDatabaseTester {
     /** A repeatedly used reflected method, used across method calls. */
     Method readChecksum;
@@ -167,7 +170,12 @@ public class ArcRepositoryDatabaseTester {
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         // Database admin test.
-        DatabaseTestUtils.createDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(), TestInfo.WORKING_DIR);
+        try {
+        	DatabaseTestUtils.createDatabase(TestInfo.DATABASE_FILE.getAbsolutePath(), TestInfo.WORKING_DIR);
+        } catch (Exception e) {
+        	fail("Creation of database '" + TestInfo.DATABASE_FILE.getAbsolutePath() + "' failed in dir '" 
+        			+ TestInfo.WORKING_DIR.getAbsolutePath() + "' with error: " + ExceptionUtils.getStackTrace(e));  
+        }
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, PrintNotifications.class.getName());
@@ -196,15 +204,16 @@ public class ArcRepositoryDatabaseTester {
         bam_server = BitarchiveMonitorServer.getInstance();
 
         testFiles = new File(BITARCHIVE_DIR, "filedir").listFiles(FileUtils.ARCS_FILTER);
+        System.out.println("Setup completed");
     }
 
     @After
     public void tearDown() throws Exception {
         // BATCH
-        arcRepos.close(); // Close down ArcRepository controller
-        bam_server.close();
-        arClient.close();
-        archiveServer1.close();
+        if (arcRepos != null) arcRepos.close(); // Close down ArcRepository controller
+        if (bam_server != null) bam_server.close();
+        if (arClient != null)arClient.close();
+        if (archiveServer1 != null) archiveServer1.close();
         ReplicaCacheDatabase.getInstance().cleanup();
         FileUtils.removeRecursively(WORKING_DIR);
 
@@ -212,6 +221,7 @@ public class ArcRepositoryDatabaseTester {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.tearDown();
         rf.tearDown();
+        System.out.println("teardown completed");
     }
 
     /** Test that ArcRepository is a singleton. */

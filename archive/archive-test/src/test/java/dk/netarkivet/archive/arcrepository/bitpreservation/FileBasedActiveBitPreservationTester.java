@@ -103,7 +103,6 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 @SuppressWarnings({"unused", "deprecation"})
 public class FileBasedActiveBitPreservationTester {
 
-    //private Log log = LogFactory.getLog(getClass().getName());
     private final Logger log = LoggerFactory.getLogger(FileBasedActiveBitPreservationTester.class);
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();
@@ -161,8 +160,10 @@ public class FileBasedActiveBitPreservationTester {
      * @throws IOException
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("FIXME: Fails")
+    // FIXME: FileBasedActiveBitPreservationTester.testFindChangedFiles:197 Wrong state list should be as expected.
+    //Expected [integrity11.ARC, integrity12.ARC] but was [] expected:<[integrity11.ARC, integrity12.ARC]> but was:<[]>
+
     public void testFindChangedFiles() throws IOException {
 
         // We check the following four cases:
@@ -302,8 +303,6 @@ public class FileBasedActiveBitPreservationTester {
     }
 
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testGetFilePreservationStatus() throws NoSuchFieldException, IllegalAccessException {
 
         FileUtils.copyFile(TestInfo.CORRECT_ADMIN_DATA, TestInfo.ADMIN_DATA);
@@ -404,14 +403,11 @@ public class FileBasedActiveBitPreservationTester {
     }
 
     /**
-     * Fails in Ant
-     *
+     * testGetBitarchiveChecksum().
      * @throws Exception
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
-    public void failingTestGetBitarchiveChecksum() throws Exception {
+    public void testGetBitarchiveChecksum() throws Exception {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         AdminData.getUpdateableInstance().addEntry("foobar", null, "md5-1");
         AdminData.getUpdateableInstance().addEntry("barfu", null, "klaf");
@@ -705,7 +701,6 @@ public class FileBasedActiveBitPreservationTester {
         }
 
         public File correct(String replicaId, String checksum, File file, String credentials) {
-            // TODO: something!
             throw new NotImplementedException("TODO: ME!");
 
         }

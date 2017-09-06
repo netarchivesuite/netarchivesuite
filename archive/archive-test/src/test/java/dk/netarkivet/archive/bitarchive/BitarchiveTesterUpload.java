@@ -37,12 +37,10 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
-import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
@@ -135,8 +133,6 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * Uploading a file that has errors should throw an IOFailure exception.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testUploadBadFile() {
         try {
             final RemoteFile arcfile = RemoteFileFactory.getInstance(new File(ORIGINALS_DIR, "Upload1.ARC"), true,
@@ -167,8 +163,6 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * Uploading a file that already exists in the archive should throw a FileAlreadyExists exception.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testUploadAlreadyUploaded() {
         RemoteFile rf = new TestRemoteFile(new File(ORIGINALS_DIR, UPLOADED_FILES.get(0)), false, false, false);
         try {
@@ -184,8 +178,6 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * Uploading a file that exists (valid reference) and that does not exist in the archive.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testUploadSuccess() {
         archive.upload(new TestRemoteFile(new File(ORIGINALS_DIR, UPLOADED_FILES.get(1)), false, false, false),
                 UPLOADED_FILES.get(1));
@@ -198,8 +190,6 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * @throws IOException If unable to close FileOutputStream.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testUploadDataInArchive() throws IOException {
 
         String nameForFileToUpload = UPLOADED_FILES.get(2);
@@ -238,8 +228,6 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * Verify that we upload into specified directory.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testUploadUsesDir() {
         final File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
         setupBitarchiveWithDirs(new String[] {dir1.getAbsolutePath(),});

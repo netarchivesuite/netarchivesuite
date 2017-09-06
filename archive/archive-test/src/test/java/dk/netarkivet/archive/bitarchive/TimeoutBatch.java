@@ -38,7 +38,7 @@ public class TimeoutBatch extends FileBatchJob {
     }
 
     public void initialize(OutputStream os) {
-        // one second in milisecond.
+        // one second in milliseconds.
         start = new Date();
 
         String msg = "timeout: " + getBatchJobTimeout() + "\n";
