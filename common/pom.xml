@@ -18,6 +18,7 @@
     <module>common-core</module>
     <module>common-test</module>
     <module>restapi</module>
+    <module>webgui</module>
   </modules>
 
 </project>

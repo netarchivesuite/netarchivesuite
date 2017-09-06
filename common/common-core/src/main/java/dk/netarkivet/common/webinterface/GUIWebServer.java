@@ -192,6 +192,17 @@ public class GUIWebServer implements CleanupIF {
             log.error("Unable to add REST api", e);
         }
 
+        try {
+            final File warfile = new File(basedir.getAbsolutePath(), "webpages/webgui.war");
+            if (warfile.exists()) {
+                server.addWebapp("/webgui", warfile.getAbsolutePath());
+            } else {
+                log.error("No such file " + warfile.getAbsolutePath());
+            }
+        } catch (ServletException e) {
+            log.error("Unable to add webgui", e);
+        }
+
 /*        server.setBaseDir(".");
         server.getHost().setAppBase(".");
         server.getServer().addLifecycleListener(new AprLifecycleListener());

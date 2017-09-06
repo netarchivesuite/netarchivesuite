@@ -37,6 +37,7 @@ import javax.management.MBeanServerFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.RuntimeMBeanException;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,7 @@ import dk.netarkivet.monitor.logging.SingleLogRecord;
 /**
  * Implementation of StatusEntry, that receives its data from the MBeanServer (JMX).
  */
+@XmlRootElement
 public class JMXStatusEntry implements StatusEntry {
 
     private static final Logger log = LoggerFactory.getLogger(JMXStatusEntry.class);
@@ -67,6 +69,12 @@ public class JMXStatusEntry implements StatusEntry {
 
     /** Internationalisation object. */
     private static final I18n I18N = new I18n(dk.netarkivet.monitor.Constants.TRANSLATIONS_BUNDLE);
+
+    /**
+     * for JAX-RS
+     */
+    public JMXStatusEntry() {
+    }
 
     /**
      * Constructor for the JMXStatusEntry.
@@ -134,6 +142,17 @@ public class JMXStatusEntry implements StatusEntry {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXIndexProperty);
     }
 
+
+    private String logMessage;
+
+    public String getLogMessage() {
+        return logMessage;
+    }
+
+    public void setLogMessage(String logMessage) {
+        this.logMessage = logMessage;
+    }
+
     /**
      * Gets the log message from this status entry. This implementation actually talks to an MBeanServer to get the log
      * message. Will return an explanation if remote host does not respond, throws exception or returns null.
@@ -152,6 +171,7 @@ public class JMXStatusEntry implements StatusEntry {
                 return HTMLUtils.escapeHtmlValues(getLogDate()
                         + I18N.getString(l, "errormsg;remote.host.returned.null.log.record"));
             } else {
+                this.setLogMessage(logMessage);
                 return logMessage;
             }
         } catch (RuntimeMBeanException e) {
