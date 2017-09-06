@@ -36,7 +36,6 @@ import java.util.regex.Pattern;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.archive.ArchiveSettings;
@@ -71,7 +70,7 @@ public class FileChecksumArchiveTester {
 
         Settings.set(ArchiveSettings.CHECKSUM_BASEDIR, TestInfo.CHECKSUM_DIR.getAbsolutePath());
         Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
-
+        FileChecksumArchive.getInstance().cleanup(); // assure a clean instance
         fca = FileChecksumArchive.getInstance();
     }
 
@@ -88,10 +87,10 @@ public class FileChecksumArchiveTester {
      * Ensure that there is enough space.
      */
     @Test
-    @Ignore("The file '/Users/ravn/git/netarchivesuite/archive/archive-test/tests/dk/netarkivet/archive/checksum/distribute/data/working/basefiledir/checksum_THREE.md5' is not a valid file.")
-    // FIXME: Failing test
     public void testChecksum() {
-        assertTrue("less than " + Settings.getLong(ArchiveSettings.CHECKSUM_MIN_SPACE_LEFT) + " free.",
+    	String checksumFilePath = fca.getFileName();
+    	assertTrue("The checksumFile should exist, but it doesn't", new File(checksumFilePath).isFile());
+        assertTrue("less than " + Settings.getLong(ArchiveSettings.CHECKSUM_MIN_SPACE_LEFT) + " free on location of checksumfile '" + checksumFilePath + "'",
                 fca.hasEnoughSpace());
     }
 
@@ -99,7 +98,6 @@ public class FileChecksumArchiveTester {
      * Checks whether the filename for the checksum file is defined correct in the settings.
      */
     @Test
-    @Ignore("The files should have the same name.  expected:<...t/archive/checksum/d[istribute/data/working/basefiledir]/checksum_THREE.md5> but was:<...t/archive/checksum/d[ata/working/cs]/checksum_THREE.md5>")
     public void testFilename() {
         String filename = Settings.get(ArchiveSettings.CHECKSUM_BASEDIR) + "/checksum_THREE.md5";
         assertEquals("The files should have the same name. ", fca.getFileName(), filename);
@@ -113,8 +111,6 @@ public class FileChecksumArchiveTester {
      * @throws Exception So it is unnecessary to catch IOExceptions, since the test should fail.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testContent() throws Exception {
         RemoteFile arcfile1 = RemoteFileFactory.getInstance(TestInfo.UPLOAD_FILE_1, false, false, false);
         assertFalse("The archive should not already contain TEST1.arc", fca.hasEntry("TEST1.arc"));
@@ -205,7 +201,6 @@ public class FileChecksumArchiveTester {
      * @throws IOException
      */
     @Test
-    @Ignore("IOFailure:  Cannot create the output file containing all the entries of this archive")
     public void testAdminData() throws IOException {
         FileChecksumArchive.getInstance().cleanup();
         // PRINT THE ADMIN FILE

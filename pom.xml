@@ -92,7 +92,8 @@
     <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
     <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
     <sonar.language>java</sonar.language>
-    <jacoco.version>0.7.2.201409121644</jacoco.version>
+<!--    <jacoco.version>0.7.2.201409121644</jacoco.version> -->
+   <jacoco.version>0.7.9</jacoco.version>
   </properties>
 
   <modules>

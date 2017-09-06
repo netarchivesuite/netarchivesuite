@@ -78,10 +78,10 @@ public class BitarchiveMonitorTester {
     /**
      * Tests the timeout of batchjobs.
      */
-    //@Test
+    @Test
     public void testBatchJobTimout() {
-        TimeoutBatch timeoutBatch = new TimeoutBatch();
-
+    	TimeoutBatch timeoutBatch = new TimeoutBatch();
+    	Channels.reset();
         // jmsARClient.batch(timeoutBatch, "ONE");
         BatchMessage msg = new BatchMessage(Channels.getTheBamon(), Channels.getError(), timeoutBatch,
                 Settings.get(CommonSettings.USE_REPLICA_ID));
