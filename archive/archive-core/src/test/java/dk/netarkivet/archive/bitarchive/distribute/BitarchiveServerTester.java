@@ -163,8 +163,6 @@ public class BitarchiveServerTester {
      * @throws InterruptedException
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testVisitUploadMessage() throws InterruptedException {
         SERVER1.mkdirs();
 
@@ -235,7 +233,7 @@ public class BitarchiveServerTester {
      * We currently don't resend the message, but just reply.
      */
     @Test
-    @Ignore("Number of listeners on queue not 1.")
+    //@Ignore("Number of listeners on queue not 1.")
     public void testVisitUploadMessageDiskcrash() {
         // Set to just over the minimum size guaranteed.
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
@@ -283,7 +281,7 @@ public class BitarchiveServerTester {
     }
 
     @Test
-    @Ignore("Number of listeners on queue not 1.")
+    //@Ignore("Number of listeners on queue not 1.")
     public void testListenerNotRemovedOnErrors() {
         bas = BitarchiveServer.getInstance();
         ChannelID arcReposQ = Channels.getTheRepos();
@@ -457,6 +455,7 @@ public class BitarchiveServerTester {
      *
      * @throws IOException If unable to read a file.
      */
+    @Test
     @Ignore("Excluded because it fails occassionally")
     public void failingTestVisitBatchMessageThreaded() throws IOException {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
@@ -620,7 +619,7 @@ public class BitarchiveServerTester {
     }
 
     @Test
-    @Ignore("Not NotOk")
+    //@Ignore("Not NotOk")
     // FIXME: Not NotOK
     public void testStopBatchThread() throws InterruptedException {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
@@ -731,7 +730,7 @@ public class BitarchiveServerTester {
      * .archive.bitarchive.distribute/BitarchiveServerTester /testBatchTerminationMessage/
      */
     @Test
-    @Ignore("Not NotOK")
+    //@Ignore("Not NotOK")
     // FIXME: Not NotOK
     public void failingTestBatchTerminationMessage() throws InterruptedException {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());

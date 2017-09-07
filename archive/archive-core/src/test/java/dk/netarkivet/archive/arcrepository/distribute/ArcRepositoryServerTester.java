@@ -258,7 +258,7 @@ public class ArcRepositoryServerTester {
      */
     //TODO seems to be no reason why this cannot be mocked by creating an ArcRepositoryServer with a mock
     //ArcRepository .
-    //@Test
+    @Test
     public void testVisitBatchMessage() {
         // Create dummy server and listen on the TheArcrepos queue
         DummyServer serverTheBamonQueue = new DummyServer();
@@ -312,8 +312,16 @@ public class ArcRepositoryServerTester {
      * Test message is sent and returned, and set "OK" if no errors occurs.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("FIXME -  fails with Invalid version during tearDown")
+    /*
+     * dk.netarkivet.common.exceptions.IOFailure: Invalid version 'get1.ARC c0a18bd60cec6cc4abb526a20b916298 UPLOAD_FAILED 1504775431848' when reading from adminDataFile '/home/svc/devel/netarchivesuite/archive/archive-core/tests/dk/netarkivet/archive/arcrepository/data/get/working/log/admindata/admin.data'
+	at dk.netarkivet.archive.arcrepositoryadmin.AdminData.read(AdminData.java:248)
+	at dk.netarkivet.archive.arcrepositoryadmin.AdminData.<init>(AdminData.java:106)
+	at dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData.<init>(UpdateableAdminData.java:69)
+	at dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData.getInstance(UpdateableAdminData.java:86)
+	at dk.netarkivet.archive.arcrepositoryadmin.AdminData.getUpdateableInstance(AdminData.java:118)
+	at dk.netarkivet.archive.arcrepository.distribute.ArcRepositoryServerTester.tearDown(ArcRepositoryServerTester.java:140)
+     */
     public void testStore() {
         file = new File(new File(BITARCHIVE_DIR, "filedir"), STORABLE_FILES.get(0).toString());
         ArcRepository arc = ArcRepository.getInstance();
@@ -328,7 +336,7 @@ public class ArcRepositoryServerTester {
     /**
      * Test message is resent.
      */
-    //@Test
+    @Test
     public void testGet() {
         file = new File(BITARCHIVE_DIR, STORABLE_FILES.get(0).toString());
         GetMessage msg = new GetMessage(Channels.getTheRepos(), Channels.getError(), "", 0);
