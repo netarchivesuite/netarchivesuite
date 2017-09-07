@@ -6,11 +6,10 @@ $(".tagline").click(function() {
 $(document).ready(function() {
     $('#tabs').tabs({
       load: function( event, ui ) {
-          var active = $('#tabs').tabs('option', 'active');
           if(event.currentTarget != null && event.currentTarget.firstChild.textContent === "Status") {
               $('#status_table').DataTable( {
                   ajax: {
-                      url: 'http://localhost:8074/rest/rest/status/all',
+                      url: '../rest/rest/status/all',
                       dataSrc: ''
                   },
                   columns: [
@@ -20,7 +19,6 @@ $(document).ready(function() {
                   ]
               } );
           }
-          //$("#tabid").html().eq(active).attr("href"));
       }
     });
 
