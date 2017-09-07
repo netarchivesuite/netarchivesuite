@@ -33,7 +33,7 @@ import org.junit.Test;
 
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.archive.checksum.distribute.ChecksumClient;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -43,7 +43,7 @@ public class ReplicaClientFactoryTester {
     @Before
     public void setUp() {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
     }
 
     @After

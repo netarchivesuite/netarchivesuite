@@ -53,7 +53,7 @@ import org.junit.Test;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ARCLookup;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
@@ -87,7 +87,7 @@ public class ARCLookupTester {
                 "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc", 73269);
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
 
         // Although we also need some real data
         File WORKING_DIR = TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR;

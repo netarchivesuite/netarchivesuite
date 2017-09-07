@@ -46,7 +46,7 @@ import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -93,7 +93,7 @@ public class ArcRepositoryTesterBatch {
     public void setUp() throws Exception {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         FileUtils.removeRecursively(WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.TestRemoteFile");

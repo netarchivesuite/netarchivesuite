@@ -92,7 +92,7 @@ public class IntegrityTestSuite {
     @After
     public void tearDown() {
         logbackRecorder.stopRecorder();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         JMSConnectionFactory.getInstance().cleanup();
         pes.tearDown();
         rs.tearDown();

@@ -48,7 +48,7 @@ import org.junit.rules.TestName;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -113,7 +113,7 @@ public class HarvestControllerServerTester {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         // Out commented to avoid reference to archive module from harvester module.
         // Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES, "1");
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
@@ -131,7 +131,7 @@ public class HarvestControllerServerTester {
             hcs.close();
         }
         JMSConnectionMockupMQ.clearTestQueues();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         rs.tearDown();
     }
 

@@ -66,7 +66,6 @@ import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -165,7 +164,7 @@ public class ArcRepositoryDatabaseTester {
     public void setUp() throws Exception {
         rf.setUp();
         rs.setUp();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         JMSConnectionMockupMQ.clearTestQueues();
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();

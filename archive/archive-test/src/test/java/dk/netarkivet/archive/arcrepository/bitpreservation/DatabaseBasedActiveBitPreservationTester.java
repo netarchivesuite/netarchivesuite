@@ -56,7 +56,7 @@ import dk.netarkivet.archive.arcrepositoryadmin.ArchiveDBConnection;
 import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabase;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -97,7 +97,7 @@ public class DatabaseBasedActiveBitPreservationTester {
     @Before
     public void setUp() throws Exception {
         rs.setUp();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         mtf.setUp();
         jmsConnection.setUp();
         rf.setUp();
