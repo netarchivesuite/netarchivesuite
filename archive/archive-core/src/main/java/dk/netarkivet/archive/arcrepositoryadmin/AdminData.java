@@ -245,7 +245,7 @@ public abstract class AdminData {
                     validOldVersion = true;
                 }
                 if (!dataVersion.equals(VERSION_NUMBER) && !validOldVersion) {
-                    throw new IOFailure("Invalid version" + dataVersion);
+                    throw new IOFailure("Invalid version '" + dataVersion + "' when reading from adminDataFile '" +  adminDataFile.getAbsolutePath() + "'");
                 }
                 // Now read the data file, depending on version.
                 if (dataVersion.equals(VERSION_NUMBER)) {
