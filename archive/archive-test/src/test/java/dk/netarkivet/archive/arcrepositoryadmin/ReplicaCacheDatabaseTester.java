@@ -44,7 +44,7 @@ import org.junit.Test;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -74,7 +74,7 @@ public class ReplicaCacheDatabaseTester {
     public void setUp() throws Exception {
         rs.setUp();
         mtf.setUp();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         ArchiveDBConnection.cleanup();
 
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());

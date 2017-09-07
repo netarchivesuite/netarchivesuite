@@ -38,7 +38,6 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
@@ -63,7 +62,7 @@ public class DatabaseAdminTester {
 
     @Before
     public void setUp() throws Exception {
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         rs.setUp();
         mtf.setUp();
         utrf.setUp();

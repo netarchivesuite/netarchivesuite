@@ -51,7 +51,6 @@ import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
@@ -110,7 +109,7 @@ public class ArcRepositoryTesterStore {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
 
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
 
         FileUtils.removeRecursively(ARCHIVE_DIR);
         FileUtils.removeRecursively(TEMP_DIR);

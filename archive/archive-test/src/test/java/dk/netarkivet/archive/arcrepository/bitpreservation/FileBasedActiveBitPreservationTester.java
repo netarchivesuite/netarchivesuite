@@ -65,7 +65,6 @@ import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -119,7 +118,7 @@ public class FileBasedActiveBitPreservationTester {
     @Before
     public void setUp() throws Exception {
         rs.setUp();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         mtf.setUp();
         mj.setUp();
         rf.setUp();

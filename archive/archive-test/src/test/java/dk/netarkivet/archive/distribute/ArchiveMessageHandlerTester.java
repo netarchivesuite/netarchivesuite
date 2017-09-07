@@ -49,7 +49,6 @@ import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.PermissionDenied;
@@ -67,7 +66,7 @@ public class ArchiveMessageHandlerTester {
 
     @Before
     public void setUp() throws Exception {
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         // super.setUp();
         rs.setUp();
         rf.setUp();

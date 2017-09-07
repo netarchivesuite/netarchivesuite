@@ -28,6 +28,9 @@ import java.util.Set;
 
 import dk.netarkivet.common.distribute.JMSConnectionSunMQ;
 
+/*
+ * Constants used by various test classes in modules common-test, and deploy-test. 
+ */
 public class TestInfo {
     public static final File BASEDIR = new File("./tests/dk/netarkivet/common/utils");
     public static final File TEMPDIR = new File(BASEDIR, "working");

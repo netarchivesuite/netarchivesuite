@@ -55,7 +55,6 @@ import dk.netarkivet.archive.bitarchive.BitarchiveApplication;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -103,7 +102,7 @@ public class BitarchiveServerTester {
     public void setUp() throws IOException {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         utrf.setUp();
         File tmpdir = new File(TestInfo.UPLOADMESSAGE_TEMP_DIR, "commontempdir");
         FileUtils.removeRecursively(WORKING);

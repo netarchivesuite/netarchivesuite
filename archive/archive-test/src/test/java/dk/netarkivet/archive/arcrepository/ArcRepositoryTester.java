@@ -53,7 +53,6 @@ import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NullRemoteFile;
 import dk.netarkivet.common.distribute.StringRemoteFile;
@@ -87,7 +86,7 @@ public class ArcRepositoryTester {
     public void setUp() throws Exception {
         // reset the channels.
         if (first) {
-            ChannelsTesterHelper.resetChannels();
+            Channels.reset();
         }
 
         rs.setUp();
