@@ -64,13 +64,14 @@ void listFrontier(String regex, long limit) {
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
-    htmlOut.println '<p>Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
+    htmlOut.println '<p>Limit: ' + 100 + '\n<br/>'
+    htmlOut.println 'Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
     totalCachedLines = pendingUris;
     if (linesPerPage == 0)
         linesPerPage = 100
     totalCachedSize = getPages(pendingUris, linesPerPage)
-    htmlOut.println 'Total queued URIs: ' + totalCachedSize + '\n<br/>'
-    htmlOut.println '<p>Total queued URIs: ' + page + '\n<br/>'
+    htmlOut.println 'Total cached size: ' + totalCachedSize + '\n<br/>'
+    htmlOut.println 'Page: ' + page + '\n<br/>'
 
 
     content = '<pre>'
