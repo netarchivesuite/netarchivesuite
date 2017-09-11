@@ -87,6 +87,13 @@
     <common-template-engine.version>0.3.0-NAS</common-template-engine.version>
     <twitter4j-core.version>2.2.6</twitter4j-core.version>
     <json.version>20131018</json.version>
+    <!-- Sonar -->
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+    <sonar.language>java</sonar.language>
+<!--    <jacoco.version>0.7.2.201409121644</jacoco.version> -->
+   <jacoco.version>0.7.9</jacoco.version>
   </properties>
 
   <modules>
@@ -987,6 +994,25 @@
   </build>
 
   <profiles>
+
+  <profile>
+      <id>sonar-coverage</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.jacoco</groupId>
+              <artifactId>jacoco-maven-plugin</artifactId>
+              <version>${jacoco.version}</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+
     <profile>
       <id>skipSlowTests</id>
       <activation>
@@ -1031,5 +1057,6 @@
         <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
       </properties>
     </profile>
+
   </profiles>
 </project>

@@ -37,7 +37,6 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.distribute.TestRemoteFile;
@@ -54,8 +53,8 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Unit-test to test the BatchStatus class.
  */
 public class BatchStatusTester {
-    MoveTestFiles mtf = new MoveTestFiles(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
-            dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
+    MoveTestFiles mtf = new MoveTestFiles(TestInfo.DISTRIBUTE_ARCREPOSITORY_ORIGINALS_DIR,
+    		TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR);
 
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
 
@@ -72,21 +71,19 @@ public class BatchStatusTester {
     }
 
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testCopyResults() throws IOException {
         List<File> emptyList = Collections.emptyList();
-        File tmpFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "newFile");
-        String fileContents = FileUtils.readFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE);
-        TestRemoteFile lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE,
+        File tmpFile = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "newFile");
+        String fileContents = FileUtils.readFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE);
+        TestRemoteFile lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
                 false, false, false);
         BatchStatus bs = new BatchStatus("ONE", emptyList, 1, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         bs.copyResults(tmpFile);
         FileAsserts.assertFileContains("Should have copied result contents", fileContents, tmpFile);
         assertTrue("Source (remote) file should be deleted", lrf.isDeleted());
-        FileUtils.copyFile(tmpFile, dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE);
+        FileUtils.copyFile(tmpFile, TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE);
 
-        File noSuchFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "noSuchFile");
+        File noSuchFile = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "noSuchFile");
         try {
             bs.copyResults(noSuchFile);
             fail("Should have thrown exception on already-read file");
@@ -95,7 +92,7 @@ public class BatchStatusTester {
         }
         assertFalse("Should not have made a result file", noSuchFile.exists());
 
-        lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.EMPTY_FILE, false, false,
+        lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_EMPTY_FILE, false, false,
                 false);
         bs = new BatchStatus("KB", emptyList, 1, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         bs.copyResults(tmpFile);
@@ -121,12 +118,10 @@ public class BatchStatusTester {
     }
 
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testAppendResults() throws IOException {
         List<File> emptyList = Collections.emptyList();
-        String fileContents = FileUtils.readFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE);
-        TestRemoteFile lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE,
+        String fileContents = FileUtils.readFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE);
+        TestRemoteFile lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
                 false, false, false);
         BatchStatus bs = new BatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -145,7 +140,7 @@ public class BatchStatusTester {
             // expected
         }
 
-        lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.EMPTY_FILE, false, false,
+        lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_EMPTY_FILE, false, false,
                 false);
         bs = new BatchStatus("KB", emptyList, 1, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         bs.appendResults(new OutputStream() {
@@ -176,20 +171,18 @@ public class BatchStatusTester {
     }
 
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testHasResultFile() throws IOException {
         List<File> emptyList = Collections.emptyList();
-        TestRemoteFile lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE,
+        TestRemoteFile lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
                 false, false, false);
         BatchStatus bs = new BatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
-        File tmpFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "newFile");
+        File tmpFile = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "newFile");
         assertTrue("Should have result file when given", bs.hasResultFile());
         bs.copyResults(tmpFile);
         assertFalse("Should not have result file after copying", bs.hasResultFile());
-        FileUtils.copyFile(tmpFile, dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE);
+        FileUtils.copyFile(tmpFile, TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE);
 
-        lrf = new TestRemoteFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE, false, false,
+        lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE, false, false,
                 false);
         bs = new BatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -15,7 +15,7 @@
 
   <modules>
     <module>archive-core</module>
-    <module>archive-test</module>
+    <module>archive-test</module> 
     <module>bitpreservation-gui</module>
   </modules>
 

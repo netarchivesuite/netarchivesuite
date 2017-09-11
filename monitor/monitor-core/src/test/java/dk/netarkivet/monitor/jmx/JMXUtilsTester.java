@@ -24,6 +24,7 @@ package dk.netarkivet.monitor.jmx;
 
 import javax.management.remote.JMXServiceURL;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.sun.jndi.rmi.registry.RegistryContextFactory;
@@ -42,6 +43,7 @@ public class JMXUtilsTester {
     @Test
     public final void testGetUrl() {
         JMXServiceURL JmxServiceUrl = JMXUtils.getUrl(defaultServer, 8000, 8100);
+        Assert.assertNotNull(JmxServiceUrl);
     }
 
     /*

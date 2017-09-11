@@ -39,7 +39,6 @@ import org.junit.Test;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
@@ -65,13 +64,13 @@ public class DoOneCrawlMessageTester {
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
     }
 
     @After
     public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         rs.tearDown();
     }
 

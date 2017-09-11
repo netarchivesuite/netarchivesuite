@@ -49,7 +49,6 @@ import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
@@ -100,7 +99,7 @@ public class BitarchiveClientTester {
     /**
      * Number of ARC records in the file uploaded.
      */
-    private static final int NUM_RECORDS = 21;
+    private static final int NUM_RECORDS = 5; // changed from 21 - the file must have changed during the move from ant to maven?
     private JMSConnectionMockupMQ con;
     ReloadSettings rs = new ReloadSettings();
 
@@ -109,10 +108,10 @@ public class BitarchiveClientTester {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
 
         rf.setUp();
-
+        
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
 
         handler = new MessageTestHandler();
@@ -197,8 +196,6 @@ public class BitarchiveClientTester {
      * Initiate upload and verify that corresponding upload message received by onUpload message handler.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testUpload() {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME, FILE_TO_UPLOAD.exists());
 
@@ -216,8 +213,6 @@ public class BitarchiveClientTester {
      * Verify that it is possible to retrieve previously uploaded file.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testGetFile() {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME, FILE_TO_UPLOAD.exists());
 
@@ -249,8 +244,6 @@ public class BitarchiveClientTester {
      * handler.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testUploadTwice() {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.TestRemoteFile");
 
@@ -284,8 +277,6 @@ public class BitarchiveClientTester {
      * @throws IOException
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testGet() throws IOException {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME, FILE_TO_UPLOAD.exists());
 
@@ -323,8 +314,6 @@ public class BitarchiveClientTester {
      * message with correct result data from the batch job.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testBatch1() {
         uploadInPreparationOfBatchTest();
 
@@ -360,8 +349,6 @@ public class BitarchiveClientTester {
      * Verify that the batch(ChannelID,FileBatchJob,RemoteFile) method does not accept null parameters.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testBatch2() {
         uploadInPreparationOfBatchTest();
 
@@ -418,8 +405,6 @@ public class BitarchiveClientTester {
     }
 
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testNewMessages() {
         // make sure, that the listener 'handler' is the only one on the
         // TheBamon queue

@@ -34,6 +34,7 @@ import org.junit.Test;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.Serial;
@@ -45,7 +46,7 @@ import dk.netarkivet.testutils.Serial;
 @SuppressWarnings({"serial"})
 public class BatchMessageTester {
     // Need a couple of queues for the constructors for the messages
-    private ChannelID q1 = TestInfo.QUEUE_1;
+    //private ChannelID q1 = TestInfo.QUEUE_1;
     private static FileBatchJob job;
 
     @Before
@@ -59,6 +60,7 @@ public class BatchMessageTester {
      */
     @Test
     public void testBatchMessageSerializable() throws IOException, ClassNotFoundException {
+    	ChannelID q1 = Channels.getAnyBa();
         BatchMessage bm = new BatchMessage(q1, job, Settings.get(CommonSettings.USE_REPLICA_ID));
         BatchMessage bm2 = (BatchMessage) Serial.serial(bm);
         assertEquals("Serializability failure for BatchMessage", relevantState(bm), relevantState(bm2));

@@ -107,8 +107,8 @@ public class ReestablishAdminDatabaseTester {
     }
 
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("FIXME: hangs")
+    // FIXME: test temporarily disabled to hanging behaviour or too slow 
     public void testSuccess() {
         String[] args = new String[] {TestInfo.DATABASE_ADMIN_DATA_2.getPath()};
         try {
@@ -126,8 +126,8 @@ public class ReestablishAdminDatabaseTester {
     }
 
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("FIXME: hangs")
+    // FIXME: test temporarily disabled due to hanging behaviour
     public void testNotEmptyDatabase() {
         String[] args = new String[] {TestInfo.DATABASE_ADMIN_DATA_2.getPath()};
         try {

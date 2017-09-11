@@ -771,8 +771,6 @@ public class JMSArcRepositoryClientTester {
     }
 
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testCorrect() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException,
             IllegalAccessException {
         final File result = new File(WORKING, "correct.file");

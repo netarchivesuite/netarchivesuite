@@ -41,7 +41,6 @@ import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
@@ -69,7 +68,7 @@ public class ChecksumClientTester {
         rf.setUp();
         mtf.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
 
         Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
 
