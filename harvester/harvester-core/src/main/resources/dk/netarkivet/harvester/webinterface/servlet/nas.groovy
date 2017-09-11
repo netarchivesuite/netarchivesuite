@@ -65,6 +65,13 @@ void listFrontier(String regex, long limit) {
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
     htmlOut.println '<p>Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
+    totalCachedLines = pendingUris;
+    if (linesPerPage == 0)
+        linesPerPage = 100
+    totalCachedSize = getPages(pendingUris, linesPerPage)
+    htmlOut.println 'Total queued URIs: ' + totalCachedSize + '\n<br/>'
+    htmlOut.println '<p>Total queued URIs: ' + page + '\n<br/>'
+
 
     content = '<pre>'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
@@ -79,7 +86,7 @@ void listFrontier(String regex, long limit) {
         totalCachedLines = pendingUris;
         if (linesPerPage == 0)
             linesPerPage = 100
-        totalCachedSize = pendingUris / linesPerPage
+        totalCachedSize = getPages(pendingUris, linesPerPage)
 
         while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)(page * linesPerPage))) {
         //while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < 25) {
@@ -88,13 +95,13 @@ void listFrontier(String regex, long limit) {
         }
 
 //        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && limit > 0) {
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && limit > 0 && index < (page + 1) * pagesize - 1) {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < (page + 1) * pagesize - 1) {
 /*            if ((index < page * pagesize) || (index > (page + 1) * pagesize)) {
                 index++
                 continue
             }
 */
-//            content = content + index + '\n'
+            content = content + index + '\n'
 
             if (value.getData().length == 0) {
                 continue
@@ -122,6 +129,19 @@ void listFrontier(String regex, long limit) {
     htmlOut.println content
 }
 
+/**
+ * Calculate the total number of pages.
+ * @param items total number of items
+ * @param itemsPerPage items displayed per page
+ * @return the total number of pages
+ */
+public static long getPages(long items, long itemsPerPage) {
+    long pages = (items + itemsPerPage - 1) / itemsPerPage;
+    if (pages == 0) {
+        pages = 1;
+    }
+    return pages;
+}
 
 void pageFrontier(long skip, int items) {
     htmlOut.println '<pre>'
