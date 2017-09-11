@@ -80,11 +80,10 @@ public class IndexResource implements ResourceAbstract {
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
-        
         Caching.caching_disable_headers(resp);
 
-        TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
-        MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
+        TemplateBuilderFactory<MasterTemplateBuilder> masterTplBuilderFactory = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
+        MasterTemplateBuilder masterTplBuilder = masterTplBuilderFactory.getTemplateBuilder();
 
         StringBuilder sb = new StringBuilder();
 
@@ -208,29 +207,8 @@ public class IndexResource implements ResourceAbstract {
             }
         }
 
-        if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("H3 Remote Access");
-        }
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("H3 Remote Access");
-        }
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
-        }
-
-        masterTplBuilder.write(out);
+        masterTplBuilder.insertContent("H3 Remote Access", null, environment.generateLanguageLinks(locale), "H3 Remote Access", sb.toString(),
+        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
         out.flush();
         out.close();
@@ -247,11 +225,10 @@ public class IndexResource implements ResourceAbstract {
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
-
         Caching.caching_disable_headers(resp);
 
-        TemplateBuilderFactory<ConfigTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "h3config.tpl", "UTF-8", ConfigTemplateBuilder.class);
-        ConfigTemplateBuilder configTplBuilder = tplBuilder.getTemplateBuilder();
+        TemplateBuilderFactory<ConfigTemplateBuilder> configTplBuilderFactory = TemplateBuilderFactory.getInstance(environment.templateMaster, "h3config.tpl", "UTF-8", ConfigTemplateBuilder.class);
+        ConfigTemplateBuilder configTplBuilder = configTplBuilderFactory.getTemplateBuilder();
 
         StringBuilder sb = new StringBuilder();
         StringBuilder enabledhostsSb = new StringBuilder();
