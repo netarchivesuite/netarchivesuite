@@ -709,8 +709,9 @@ public class JobResource implements ResourceAbstract {
             sb.append("&nbsp;");
             showInitials(sb, initials);
 
-            long totalCachedLines = h3Job.getTotalCachedLines();
-            long totalCachedSize = h3Job.getLastIndexed();
+//            long totalCachedLines = h3Job.getTotalCachedLines();
+//            long totalCachedSize = h3Job.getLastIndexed();
+
 
             if (pageString != null) {
                 pageable = getPageable(pageString, h3Job);
@@ -725,14 +726,14 @@ public class JobResource implements ResourceAbstract {
                 page = pages;
 
 
-            showTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
-            showUpdateCacheButton(sb);
-            pageString = showMargin(pageString, sb);
+            //showTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
+            //showUpdateCacheButton(sb);
+            //pageString = showMargin(pageString, sb);
             //showItemsPerPage(linesPerPage, pageString, sb);
-            sb.append("</div>\n");
+            //sb.append("</div>\n");
 
             startPagination(lines, linesPerPage, page, pages, sb, pageable);
-            frontierPageContent(sb, frontierScript, h3Job);
+            showFrontierPage(sb, frontierScript, h3Job);
             endPagination(linesPerPage, page, pages, sb);
 
         } else {
@@ -748,107 +749,6 @@ public class JobResource implements ResourceAbstract {
         out.close();
     }
 
-
-    private void endPagination(long linesPerPage, long page, long pages, StringBuilder sb) {
-        sb.append("</pre>\n");
-        sb.append("</div>\n");
-        sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
-        sb.append("</form>");
-    }
-
-    private String showMargin(String marginStr, StringBuilder sb) {
-        sb.append("<div style=\"clear:both;\"></div>\n");
-        sb.append("</div>\n");
-
-        if (marginStr == null) {
-            marginStr = ".*";
-        }
-
-        sb.append("<div style=\"margin-bottom:20px;\">\n");
-        return marginStr;
-    }
-
-    private void showCrawllogContent(long lines, long linesPerPage, long page, StringBuilder sb, Pageable pageable)
-            throws IOException {
-        if (lines > 0) {
-            byte[] pageBytes = pageable.readPage(page, linesPerPage, true);
-            sb.append(new String(pageBytes, "UTF-8"));
-        }
-    }
-
-    private void updateCrawllog(Heritrix3JobMonitor h3Job, String actionStr) {
-        if ("update".equalsIgnoreCase(actionStr)) {
-            byte[] tmpBuf = new byte[1024 * 1024];
-            h3Job.updateCrawlLog(tmpBuf);
-        }
-    }
-
-    private String getGroovyScript() throws IOException {
-        String resource = NAS_GROOVY_RESOURCE_PATH;
-        InputStream inputStream = JobResource.class.getClassLoader().getResourceAsStream(resource);
-        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        byte[] tmpArr = new byte[8192];
-        int read;
-        while ((read = inputStream.read(tmpArr)) != -1) {
-            bOut.write(tmpArr, 0, read);
-        }
-        inputStream.close();
-        return new String(bOut.toByteArray(), "UTF-8");
-    }
-
-    private String getDeleteScript(String regex, long limit, String initials, String script,
-                     String deleteStr) {
-        if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
-            script += "\n";
-            script += "\ninitials = \"" + initials + "\"";
-            script += "\ndeleteFromFrontier '" + regex + "'\n";
-        } else {
-            script += "\n";
-            script += "\nlistFrontier '" + regex + "', " + limit + "\n";
-        }
-        return script;
-    }
-
-    private void frontierPageContent(StringBuilder sb, String script, Heritrix3JobMonitor h3Job) {
-        ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
-
-        //System.out.println(new String(scriptResult.response, "UTF-8"));
-        if (scriptResult != null && scriptResult.script != null) {
-            if (scriptResult.script.htmlOutput != null) {
-                sb.append("<fieldset><!--<legend>htmlOut</legend>-->");
-
-                sb.append(scriptResult.script.htmlOutput);
-                sb.append("</fieldset><br />\n");
-            }
-            if (scriptResult.script.rawOutput != null) {
-                sb.append("<fieldset><!--<legend>rawOut</legend>-->");
-                sb.append("<pre>");
-                sb.append(scriptResult.script.rawOutput);
-                sb.append("</pre>");
-                sb.append("</fieldset><br />\n");
-            }
-        }
-    }
-
-    private void showInitials(StringBuilder sb, String initials) {
-        sb.append("<label for=\"initials\">User initials:</label>");
-        sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
-        sb.append("<button type=\"submit\" name=\"delete\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Delete</button>\n");
-        sb.append("</form>\n");
-    }
-
-    private void startPagination(long lines, long linesPerPage, long page, long pages, StringBuilder sb,
-            Pageable pageable) throws IOException {
-        sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
-        sb.append("<span>Matching lines: ");
-        sb.append(lines);
-        sb.append(" URIs</span>\n");
-        sb.append("</div>\n");
-        sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
-        sb.append("<div style=\"clear:both;\"></div>");
-        sb.append("<div>\n");
-        sb.append("<pre>\n");
-    }
 
     private void showSearchInformation(StringBuilder sb, String regex, long linesToShow) {
         sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
@@ -889,6 +789,107 @@ public class JobResource implements ResourceAbstract {
         sb.append(totalCachedSize);
         sb.append(" bytes\n");
         sb.append("</div>\n");
+    }
+
+    private void showInitials(StringBuilder sb, String initials) {
+        sb.append("<label for=\"initials\">User initials:</label>");
+        sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
+        sb.append("<button type=\"submit\" name=\"delete\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Delete</button>\n");
+        sb.append("</form>\n");
+    }
+
+    private String showMargin(String marginStr, StringBuilder sb) {
+        sb.append("<div style=\"clear:both;\"></div>\n");
+        sb.append("</div>\n");
+
+        if (marginStr == null) {
+            marginStr = ".*";
+        }
+
+        sb.append("<div style=\"margin-bottom:20px;\">\n");
+        return marginStr;
+    }
+
+    private void startPagination(long lines, long linesPerPage, long page, long pages, StringBuilder sb,
+            Pageable pageable) throws IOException {
+        sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
+        sb.append("<span>Matching lines: ");
+        sb.append(lines);
+        sb.append(" URIs</span>\n");
+        sb.append("</div>\n");
+        sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
+        sb.append("<div style=\"clear:both;\"></div>");
+        sb.append("<div>\n");
+        sb.append("<pre>\n");
+    }
+
+    private void showCrawllogContent(long lines, long linesPerPage, long page, StringBuilder sb, Pageable pageable)
+            throws IOException {
+        if (lines > 0) {
+            byte[] pageBytes = pageable.readPage(page, linesPerPage, true);
+            sb.append(new String(pageBytes, "UTF-8"));
+        }
+    }
+
+    private void updateCrawllog(Heritrix3JobMonitor h3Job, String actionStr) {
+        if ("update".equalsIgnoreCase(actionStr)) {
+            byte[] tmpBuf = new byte[1024 * 1024];
+            h3Job.updateCrawlLog(tmpBuf);
+        }
+    }
+
+    private String getGroovyScript() throws IOException {
+        String resource = NAS_GROOVY_RESOURCE_PATH;
+        InputStream inputStream = JobResource.class.getClassLoader().getResourceAsStream(resource);
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        byte[] tmpArr = new byte[8192];
+        int read;
+        while ((read = inputStream.read(tmpArr)) != -1) {
+            bOut.write(tmpArr, 0, read);
+        }
+        inputStream.close();
+        return new String(bOut.toByteArray(), "UTF-8");
+    }
+
+    private void showFrontierPage(StringBuilder sb, String script, Heritrix3JobMonitor h3Job) {
+        ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
+
+        //System.out.println(new String(scriptResult.response, "UTF-8"));
+        if (scriptResult != null && scriptResult.script != null) {
+            if (scriptResult.script.htmlOutput != null) {
+                sb.append("<fieldset><!--<legend>htmlOut</legend>-->");
+
+                sb.append(scriptResult.script.htmlOutput);
+                sb.append("</fieldset><br />\n");
+            }
+            if (scriptResult.script.rawOutput != null) {
+                sb.append("<fieldset><!--<legend>rawOut</legend>-->");
+                sb.append("<pre>");
+                sb.append(scriptResult.script.rawOutput);
+                sb.append("</pre>");
+                sb.append("</fieldset><br />\n");
+            }
+        }
+    }
+
+    private void endPagination(long linesPerPage, long page, long pages, StringBuilder sb) {
+        sb.append("</pre>\n");
+        sb.append("</div>\n");
+        sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
+        sb.append("</form>");
+    }
+
+    private String getDeleteScript(String regex, long limit, String initials, String script,
+            String deleteStr) {
+        if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
+            script += "\n";
+            script += "\ninitials = \"" + initials + "\"";
+            script += "\ndeleteFromFrontier '" + regex + "'\n";
+        } else {
+            script += "\n";
+            script += "\nlistFrontier '" + regex + "', " + limit + "\n";
+        }
+        return script;
     }
 
     private Pageable getPageable(String q, Heritrix3JobMonitor h3Job) throws IOException {

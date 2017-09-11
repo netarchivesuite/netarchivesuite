@@ -57,7 +57,6 @@ void deleteFromFrontier(String regex) {
     rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
 
-
 void listFrontier(String regex, long limit) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
@@ -77,21 +76,25 @@ void listFrontier(String regex, long limit) {
     try {
         htmlOut.println lines
 
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < page * linesPerPage) {
+        totalCachedLines = pendingUris;
+        if (linesPerPage == 0)
+            linesPerPage = 100
+        totalCachedSize = pendingUris / linesPerPage
+
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)(page * linesPerPage))) {
         //while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < 25) {
             index++
             content = content + index + '\n'
         }
 
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && limit > 0) {
-/*        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < (page + 1) * pagesize - 1) {
-            if ((index < page * pagesize) || (index > (page + 1) * pagesize)) {
+//        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && limit > 0) {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && limit > 0 && index < (page + 1) * pagesize - 1) {
+/*            if ((index < page * pagesize) || (index > (page + 1) * pagesize)) {
                 index++
                 continue
             }
 */
-            content = content + index + '\n'
-            index++
+//            content = content + index + '\n'
 
             if (value.getData().length == 0) {
                 continue
@@ -101,6 +104,7 @@ void listFrontier(String regex, long limit) {
                 //htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
                 content = content + curi + '\n'
                 matchingCount++
+                index++
                 --limit
             }
         }
