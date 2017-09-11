@@ -66,11 +66,12 @@ void listFrontier(String regex, long limit) {
     pendingUris = job.crawlController.frontier.pendingUris
     htmlOut.println '<p>Limit: ' + 100 + '\n<br/>'
     htmlOut.println 'Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
-    htmlOut.println 'Page: ' + page + '\n<br/>'
     if (linesPerPage == 0)
         linesPerPage = 100
     totalCachedSize = getPages(pendingUris, linesPerPage)
     htmlOut.println 'Total cached size: ' + totalCachedSize + '\n<br/>'
+    //htmlOut.println 'Page: ' + page + '\n<br/>'
+    page = 2
     totalCachedLines = pendingUris;
 
 
