@@ -69,14 +69,14 @@ void listFrontier(String regex, long limit) {
     htmlOut.println '-'
     htmlOut.println '---'
     htmlOut.println '-----'
-    htmlOut.println 'Total cached size: ' + getPages(pendingUris, limit) + '\n<br/>'
+    htmlOut.println 'Total cached size: ' + getPages(pendingUris.pendingUrisDB.count(), limit) + '\n<br/>'
     htmlOut.println '-------'
     page = 2
     htmlOut.println 'Page: ' + page + '\n<br/>'
     htmlOut.println '---------'
-    totalCachedLines = pendingUris;
+    totalCachedLines = pendingUris.pendingUrisDB.count();
     htmlOut.println '-----------'
-    totalCachedSize = getPages(pendingUris, limit)
+    totalCachedSize = getPages(pendingUris.pendingUrisDB.count(), limit)
     htmlOut.println '-------------'
     content = '<pre>'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
