@@ -695,6 +695,8 @@ public class JobResource implements ResourceAbstract {
         String frontierScript = getGroovyScript();
         String deleteStr = req.getParameter("delete");
         frontierScript = getDeleteScript(regex, linesPerPage, initials, frontierScript, deleteStr);
+        String totalCacheLinesStr = frontierScript.substring(frontierScript.indexOf("<pre>"));
+        long totalCachedLines = Long.getLong(totalCacheLinesStr);
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
         Pageable pageable = h3Job;
@@ -733,7 +735,7 @@ public class JobResource implements ResourceAbstract {
             //sb.append("</div>\n");
 
             startPagination(lines, linesPerPage, page, pages, sb, pageable);
-            showFrontierPage(sb, frontierScript, h3Job);
+            showFrontierPage(sb, frontierScript, h3Job, totalCachedLines);
             endPagination(linesPerPage, page, pages, sb);
 
         } else {
@@ -851,7 +853,7 @@ public class JobResource implements ResourceAbstract {
         return new String(bOut.toByteArray(), "UTF-8");
     }
 
-    private void showFrontierPage(StringBuilder sb, String script, Heritrix3JobMonitor h3Job) {
+    private void showFrontierPage(StringBuilder sb, String script, Heritrix3JobMonitor h3Job, long totalCachedLines) {
         ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
 
         //System.out.println(new String(scriptResult.response, "UTF-8"));

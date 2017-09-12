@@ -57,7 +57,7 @@ void deleteFromFrontier(String regex) {
     rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
 
-void listFrontier(String regex, long limit) {
+void listFrontier(String regex, long limit, String pageStr) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
 
@@ -78,7 +78,8 @@ void listFrontier(String regex, long limit) {
     htmlOut.println '-----------'
     totalCachedSize = getPages(pendingUris.pendingUrisDB.count(), limit)
     htmlOut.println '-------------'
-    content = '<pre>'
+    content = totalCachedLines
+    content = content + '<pre>'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
     cursor = pendingUris.pendingUrisDB.openCursor(null, null)
     key = new DatabaseEntry()
