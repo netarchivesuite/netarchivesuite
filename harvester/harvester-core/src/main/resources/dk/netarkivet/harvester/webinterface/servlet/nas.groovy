@@ -68,12 +68,15 @@ void listFrontier(String regex, long limit) {
     htmlOut.println 'Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
     if (linesPerPage == 0)
         linesPerPage = 100
+    htmlOut.println '-------------------------'
     totalCachedSize = getPages(pendingUris, linesPerPage)
+    htmlOut.println '---'
     htmlOut.println 'Total cached size: ' + totalCachedSize + '\n<br/>'
+    htmlOut.println '---------------------------------------------------------'
     //htmlOut.println 'Page: ' + page + '\n<br/>'
     page = 2
+    htmlOut.println '-'
     totalCachedLines = pendingUris;
-
 
     content = '<pre>'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
@@ -83,17 +86,19 @@ void listFrontier(String regex, long limit) {
     matchingCount = 0
     index = 0
     try {
+        /*
         htmlOut.println lines
 
         totalCachedLines = pendingUris;
         if (linesPerPage == 0)
             linesPerPage = 100
         totalCachedSize = getPages(pendingUris, linesPerPage)
+        */
 
         while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)(page * linesPerPage))) {
         //while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < 25) {
             index++
-            content = content + index + '\n'
+            //content = content + index + '\n'
         }
 
 //        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && limit > 0) {
@@ -103,7 +108,7 @@ void listFrontier(String regex, long limit) {
                 continue
             }
 */
-            content = content + index + '\n'
+            //content = content + index + '\n'
 
             if (value.getData().length == 0) {
                 continue
