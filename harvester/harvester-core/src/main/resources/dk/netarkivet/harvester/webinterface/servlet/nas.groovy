@@ -66,17 +66,18 @@ void listFrontier(String regex, long limit) {
     pendingUris = job.crawlController.frontier.pendingUris
     htmlOut.println '<p>Limit: ' + 100 + '\n<br/>'
     htmlOut.println 'Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
-    htmlOut.println '--------------'
-    htmlOut.println '-------------------------'
-    long totalCachedSize = getPages(pendingUris, limit)
-    htmlOut.println '---'
-    htmlOut.println 'Total cached size: ' + totalCachedSize + '\n<br/>'
-    htmlOut.println '---------------------------------------------------------'
-    //htmlOut.println 'Page: ' + page + '\n<br/>'
-    def page = 2
     htmlOut.println '-'
+    htmlOut.println '---'
+    htmlOut.println '-----'
+    htmlOut.println 'Total cached size: ' + getPages(pendingUris, limit) + '\n<br/>'
+    htmlOut.println '-------'
+    page = 2
+    htmlOut.println 'Page: ' + page + '\n<br/>'
+    htmlOut.println '---------'
     totalCachedLines = pendingUris;
-
+    htmlOut.println '-----------'
+    totalCachedSize = getPages(pendingUris, limit)
+    htmlOut.println '-------------'
     content = '<pre>'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
     cursor = pendingUris.pendingUrisDB.openCursor(null, null)
@@ -146,7 +147,7 @@ public static long getPages(long items, long itemsPerPage) {
     if (pages == 0) {
         pages = 1
     }
-    pages
+    return pages
 }
 
 void pageFrontier(long skip, int items) {
