@@ -66,6 +66,7 @@ void listFrontier(String regex, long limit) {
     pendingUris = job.crawlController.frontier.pendingUris
     htmlOut.println '<p>Limit: ' + 100 + '\n<br/>'
     htmlOut.println 'Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
+    htmlOut.println '--------------'
     if (linesPerPage == 0)
         linesPerPage = 100
     htmlOut.println '-------------------------'
@@ -95,20 +96,20 @@ void listFrontier(String regex, long limit) {
         totalCachedSize = getPages(pendingUris, linesPerPage)
         */
 
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)(page * linesPerPage))) {
-        //while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < 25) {
+        //while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)(page * linesPerPage))) {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < 25) {
             index++
             //content = content + index + '\n'
         }
 
-//        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && limit > 0) {
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < (page + 1) * pagesize - 1) {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && limit > 0) {
+//        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < (page + 1) * pagesize - 1) {
 /*            if ((index < page * pagesize) || (index > (page + 1) * pagesize)) {
                 index++
                 continue
             }
 */
-            //content = content + index + '\n'
+            content = content + index + '\n'
 
             if (value.getData().length == 0) {
                 continue
