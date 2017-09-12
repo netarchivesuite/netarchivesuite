@@ -67,15 +67,13 @@ void listFrontier(String regex, long limit) {
     htmlOut.println '<p>Limit: ' + 100 + '\n<br/>'
     htmlOut.println 'Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
     htmlOut.println '--------------'
-    if (linesPerPage == 0)
-        linesPerPage = 100
     htmlOut.println '-------------------------'
-    totalCachedSize = getPages(pendingUris, linesPerPage)
+    long totalCachedSize = getPages(pendingUris, limit)
     htmlOut.println '---'
     htmlOut.println 'Total cached size: ' + totalCachedSize + '\n<br/>'
     htmlOut.println '---------------------------------------------------------'
     //htmlOut.println 'Page: ' + page + '\n<br/>'
-    page = 2
+    def page = 2
     htmlOut.println '-'
     totalCachedLines = pendingUris;
 
@@ -144,11 +142,11 @@ void listFrontier(String regex, long limit) {
  * @return the total number of pages
  */
 public static long getPages(long items, long itemsPerPage) {
-    long pages = (items + itemsPerPage - 1) / itemsPerPage;
+    long pages = (items + itemsPerPage - 1) / itemsPerPage
     if (pages == 0) {
-        pages = 1;
+        pages = 1
     }
-    return pages;
+    pages
 }
 
 void pageFrontier(long skip, int items) {
