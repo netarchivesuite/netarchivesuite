@@ -57,27 +57,18 @@ void deleteFromFrontier(String regex) {
     rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
 
-void listFrontier(String regex, long limit, String pageStr) {
+void listFrontier(String regex, long limit) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
+    String[] pageAndRegex = regex.split("|")
+    page = Long.getLong(pageAndRegex[0], 1)
+    regex.substring(regex.indexOf("|"))
 
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
-    htmlOut.println '<p>Limit: ' + 100 + '\n<br/>'
-    htmlOut.println 'Total queued URIs: ' + pendingUris.pendingUrisDB.count() + '\n<br/>'
-    htmlOut.println '-'
-    htmlOut.println '---'
-    htmlOut.println '-----'
-    htmlOut.println 'Total cached size: ' + getPages(pendingUris.pendingUrisDB.count(), limit) + '\n<br/>'
-    htmlOut.println '-------'
-    page = 2
-    htmlOut.println 'Page: ' + page + '\n<br/>'
-    htmlOut.println '---------'
     totalCachedLines = pendingUris.pendingUrisDB.count();
-    htmlOut.println '-----------'
     totalCachedSize = getPages(pendingUris.pendingUrisDB.count(), limit)
-    htmlOut.println '-------------'
     content = totalCachedLines
     content = content + '<pre>'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
@@ -87,28 +78,21 @@ void listFrontier(String regex, long limit, String pageStr) {
     matchingCount = 0
     index = 0
     try {
-        /*
-        htmlOut.println lines
-
-        totalCachedLines = pendingUris;
-        if (linesPerPage == 0)
-            linesPerPage = 100
-        totalCachedSize = getPages(pendingUris, linesPerPage)
-        */
-
-        //while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)(page * linesPerPage))) {
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < 25) {
-            index++
-            //content = content + index + '\n'
-        }
-
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && limit > 0) {
-//        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < (page + 1) * pagesize - 1) {
-/*            if ((index < page * pagesize) || (index > (page + 1) * pagesize)) {
-                index++
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS) {
+            if (value.getData().length == 0) {
                 continue
             }
-*/
+            curi = pendingUris.crawlUriBinding.entryToObject(value)
+            if (pattern.matcher(curi.toString())) {
+                matchingCount++
+            }
+        }
+
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)(page * limit))) {
+            index++
+        }
+
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)((page + 1) * limit) - 1))  {
             content = content + index + '\n'
 
             if (value.getData().length == 0) {
@@ -116,11 +100,8 @@ void listFrontier(String regex, long limit, String pageStr) {
             }
             curi = pendingUris.crawlUriBinding.entryToObject(value)
             if (pattern.matcher(curi.toString())) {
-                //htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
                 content = content + curi + '\n'
-                matchingCount++
                 index++
-                --limit
             }
         }
     } finally {
@@ -130,9 +111,9 @@ void listFrontier(String regex, long limit, String pageStr) {
     content = content + '</pre>'
 
     if (limit > 0) {
-        content = 'Matching URIs(test): '+ matchingCount + '</p>' + content
+        content = matchingCount + '</p>' + content
     } else {
-        content = 'First matching URIs(test) (return limit reached): ' + matchingCount + '</p>' + content
+        content = matchingCount + '</p>' + content
     }
     htmlOut.println content
 }

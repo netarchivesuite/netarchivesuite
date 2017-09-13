@@ -651,7 +651,7 @@ public class JobResource implements ResourceAbstract {
             pageString = showMargin(pageString, sb);
             showItemsPerPage(linesPerPage, pageString, sb);
             sb.append("</div>\n");
-            startPagination(lines, linesPerPage, page, pages, sb, pageable);
+            startPagination(lines, linesPerPage, page, pages, sb);
             showCrawllogContent(lines, linesPerPage, page, sb, pageable);
             endPagination(linesPerPage, page, pages, sb);
 
@@ -694,12 +694,10 @@ public class JobResource implements ResourceAbstract {
 
         String frontierScript = getGroovyScript();
         String deleteStr = req.getParameter("delete");
-        frontierScript = getDeleteScript(regex, linesPerPage, initials, frontierScript, deleteStr);
-        String totalCacheLinesStr = frontierScript.substring(frontierScript.indexOf("<pre>"));
-        long totalCachedLines = Long.getLong(totalCacheLinesStr);
+        frontierScript = getDeleteScript(regex, linesPerPage, initials, frontierScript, deleteStr, pageString);
+        long totalCachedLines = Long.getLong(frontierScript.substring(3, frontierScript.indexOf("</p>")), 1);
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
-        Pageable pageable = h3Job;
 
         if (h3Job != null && h3Job.isReady()) {
             showJobInformation(menuSb, h3Job);
@@ -711,30 +709,13 @@ public class JobResource implements ResourceAbstract {
             sb.append("&nbsp;");
             showInitials(sb, initials);
 
-//            long totalCachedLines = h3Job.getTotalCachedLines();
-//            long totalCachedSize = h3Job.getLastIndexed();
-
-
-            if (pageString != null) {
-                pageable = getPageable(pageString, h3Job);
-            }
-
-            lines = pageable.getIndexSize();
-            if (lines > 0)
-                pages = Pagination.getPages(lines, linesPerPage);
-            lines = (lines > 0) ? (lines / 8) - 1 : 0;
+            if (totalCachedLines > 0)
+                pages = Pagination.getPages(totalCachedLines, linesPerPage);
 
             if (page > pages)
                 page = pages;
 
-
-            //showTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
-            //showUpdateCacheButton(sb);
-            //pageString = showMargin(pageString, sb);
-            //showItemsPerPage(linesPerPage, pageString, sb);
-            //sb.append("</div>\n");
-
-            startPagination(lines, linesPerPage, page, pages, sb, pageable);
+            startPagination(totalCachedLines, linesPerPage, page, pages, sb);
             showFrontierPage(sb, frontierScript, h3Job, totalCachedLines);
             endPagination(linesPerPage, page, pages, sb);
 
@@ -812,8 +793,7 @@ public class JobResource implements ResourceAbstract {
         return marginStr;
     }
 
-    private void startPagination(long lines, long linesPerPage, long page, long pages, StringBuilder sb,
-            Pageable pageable) throws IOException {
+    private void startPagination(long lines, long linesPerPage, long page, long pages, StringBuilder sb) throws IOException {
         sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
         sb.append("<span>Matching lines: ");
         sb.append(lines);
@@ -882,14 +862,14 @@ public class JobResource implements ResourceAbstract {
     }
 
     private String getDeleteScript(String regex, long limit, String initials, String script,
-            String deleteStr) {
+            String deleteStr, String pageString) {
         if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
             script += "\n";
             script += "\ninitials = \"" + initials + "\"";
             script += "\ndeleteFromFrontier '" + regex + "'\n";
         } else {
             script += "\n";
-            script += "\nlistFrontier '" + regex + "', " + limit + "\n";
+            script += "\nlistFrontier '" + pageString + "|" + regex + "', " + limit + "\n";
         }
         return script;
     }
