@@ -62,15 +62,14 @@ void listFrontier(String regex, long limit) {
     //htmlOut.println '<pre style="' + style +'">'
     String[] pageAndRegex = regex.split("|")
     page = Long.getLong(pageAndRegex[0], 1)
-    regex.substring(regex.indexOf("|"))
+    regex = regex.replaceFirst(regex.substring(regex.indexOf("|")+1), "")
 
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
     totalCachedLines = pendingUris.pendingUrisDB.count();
     totalCachedSize = getPages(pendingUris.pendingUrisDB.count(), limit)
-    content = totalCachedLines
-    content = content + '<pre>'
+    content = '<pre>'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
     cursor = pendingUris.pendingUrisDB.openCursor(null, null)
     key = new DatabaseEntry()
@@ -87,13 +86,20 @@ void listFrontier(String regex, long limit) {
                 matchingCount++
             }
         }
+    } finally {
+        cursor.close()
+    }
 
+    cursor = pendingUris.pendingUrisDB.openCursor(null, null)
+    key = new DatabaseEntry()
+    value = new DatabaseEntry()
+    try {
         while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)(page * limit))) {
+            content = content + index + '\n'
             index++
         }
 
         while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)((page + 1) * limit) - 1))  {
-            content = content + index + '\n'
 
             if (value.getData().length == 0) {
                 continue
@@ -101,6 +107,7 @@ void listFrontier(String regex, long limit) {
             curi = pendingUris.crawlUriBinding.entryToObject(value)
             if (pattern.matcher(curi.toString())) {
                 content = content + curi + '\n'
+                content = content + index + '\n'
                 index++
             }
         }
