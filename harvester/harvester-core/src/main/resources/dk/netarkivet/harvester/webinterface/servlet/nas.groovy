@@ -117,9 +117,9 @@ void listFrontier(String regex, long limit) {
     content = content + '</pre>'
 
     if (limit > 0) {
-        content = '#' + matchingCount + '#</p>' + content
+        content = '½' + matchingCount + '½</p>' + content
     } else {
-        content = '#' + matchingCount + '#</p>' + content
+        content = '½' + matchingCount + '½</p>' + content
     }
     htmlOut.println content
 }
