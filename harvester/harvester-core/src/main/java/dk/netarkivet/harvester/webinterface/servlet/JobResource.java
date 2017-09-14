@@ -719,7 +719,7 @@ public class JobResource implements ResourceAbstract {
                 page = pages;
 
             startPagination(totalCachedLines, linesPerPage, page, pages, sb);
-            showFrontierPage(sb, frontierScript, h3Job, totalCachedLines, frontierScriptSplittedAnotherTime[0]);
+            showFrontierPage(sb, frontierScript, h3Job, totalCachedLines, frontierScriptSplittedAgain[0]);
             endPagination(linesPerPage, page, pages, sb);
 
         } else {
