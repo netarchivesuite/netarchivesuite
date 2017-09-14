@@ -67,10 +67,9 @@ void listFrontier(String regex, long limit) {
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
-    totalCachedLines = pendingUris.pendingUrisDB.count();
-    totalCachedSize = getPages(pendingUris.pendingUrisDB.count(), limit)
+    totalCachedLines = pendingUris.pendingUrisDB.count()
+    totalCachedSize = getPages(totalCachedLines, limit)
     content = '<pre>'
-    htmlOut.println '--'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
     cursor = pendingUris.pendingUrisDB.openCursor(null, null)
     key = new DatabaseEntry()
@@ -90,17 +89,16 @@ void listFrontier(String regex, long limit) {
     } finally {
         cursor.close()
     }
-    htmlOut.println '----'
+
     cursor = pendingUris.pendingUrisDB.openCursor(null, null)
     key = new DatabaseEntry()
     value = new DatabaseEntry()
     try {
         while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)(page * limit))) {
-            content = content + index + '\n'
             index++
         }
+        content = content + page + '\n'
 
-        htmlOut.println '------'
         while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)((page + 1) * limit)))  {
 
             if (value.getData().length == 0) {
@@ -109,11 +107,9 @@ void listFrontier(String regex, long limit) {
             curi = pendingUris.crawlUriBinding.entryToObject(value)
             if (pattern.matcher(curi.toString())) {
                 content = content + curi + '\n'
-                content = content + index + '\n'
                 index++
             }
         }
-        htmlOut.println '--------'
     } finally {
         cursor.close()
     }
