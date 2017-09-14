@@ -70,6 +70,7 @@ void listFrontier(String regex, long limit) {
     totalCachedLines = pendingUris.pendingUrisDB.count()
     totalCachedSize = getPages(totalCachedLines, limit)
     content = '<pre>'
+    content = content + totalCachedLines + "|"
     //iterates over the raw underlying instance of com.sleepycat.je.Database
     cursor = pendingUris.pendingUrisDB.openCursor(null, null)
     key = new DatabaseEntry()
