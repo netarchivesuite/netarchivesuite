@@ -70,6 +70,7 @@ void listFrontier(String regex, long limit) {
     totalCachedLines = pendingUris.pendingUrisDB.count();
     totalCachedSize = getPages(pendingUris.pendingUrisDB.count(), limit)
     content = '<pre>'
+    htmlOut.println '--'
     //iterates over the raw underlying instance of com.sleepycat.je.Database
     cursor = pendingUris.pendingUrisDB.openCursor(null, null)
     key = new DatabaseEntry()
@@ -89,7 +90,7 @@ void listFrontier(String regex, long limit) {
     } finally {
         cursor.close()
     }
-
+    htmlOut.println '----'
     cursor = pendingUris.pendingUrisDB.openCursor(null, null)
     key = new DatabaseEntry()
     value = new DatabaseEntry()
@@ -99,7 +100,8 @@ void listFrontier(String regex, long limit) {
             index++
         }
 
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)((page + 1) * limit) - 1))  {
+        htmlOut.println '------'
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)((page + 1) * limit)))  {
 
             if (value.getData().length == 0) {
                 continue
@@ -111,6 +113,7 @@ void listFrontier(String regex, long limit) {
                 index++
             }
         }
+        htmlOut.println '--------'
     } finally {
         cursor.close()
     }

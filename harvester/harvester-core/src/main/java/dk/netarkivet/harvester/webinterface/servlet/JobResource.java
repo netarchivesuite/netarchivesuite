@@ -839,13 +839,13 @@ public class JobResource implements ResourceAbstract {
         //System.out.println(new String(scriptResult.response, "UTF-8"));
         if (scriptResult != null && scriptResult.script != null) {
             if (scriptResult.script.htmlOutput != null) {
-                sb.append("<fieldset><!--<legend>htmlOut</legend>-->");
+                sb.append("<fieldset><!--<legend>htmlOut</legend>-->"+totalCachedLines + "|");
 
                 sb.append(scriptResult.script.htmlOutput);
                 sb.append("</fieldset><br />\n");
             }
             if (scriptResult.script.rawOutput != null) {
-                sb.append("<fieldset><!--<legend>rawOut</legend>-->");
+                sb.append("<fieldset><!--<legend>rawOut</legend>-->"+totalCachedLines + "/");
                 sb.append("<pre>");
                 sb.append(scriptResult.script.rawOutput);
                 sb.append("</pre>");
