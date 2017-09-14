@@ -97,7 +97,6 @@ void listFrontier(String regex, long limit) {
         while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)(page * limit))) {
             index++
         }
-        content = content + page + '\n'
 
         while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)((page + 1) * limit)))  {
 

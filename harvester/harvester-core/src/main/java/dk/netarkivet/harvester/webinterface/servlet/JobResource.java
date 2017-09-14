@@ -695,7 +695,8 @@ public class JobResource implements ResourceAbstract {
         String frontierScript = getGroovyScript();
         String deleteStr = req.getParameter("delete");
         frontierScript = getDeleteScript(regex, linesPerPage, initials, frontierScript, deleteStr, pageString);
-        long totalCachedLines = Long.getLong(frontierScript.substring(0, frontierScript.indexOf("</p>")), 1);
+        String[] frontierScriptSplitted = frontierScript.split("</p>");
+        long totalCachedLines = Long.getLong(frontierScriptSplitted[0],1);
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
@@ -716,7 +717,7 @@ public class JobResource implements ResourceAbstract {
                 page = pages;
 
             startPagination(totalCachedLines, linesPerPage, page, pages, sb);
-            showFrontierPage(sb, frontierScript, h3Job, totalCachedLines);
+            showFrontierPage(sb, frontierScript, h3Job, totalCachedLines, frontierScriptSplitted[0]);
             endPagination(linesPerPage, page, pages, sb);
 
         } else {
@@ -833,19 +834,19 @@ public class JobResource implements ResourceAbstract {
         return new String(bOut.toByteArray(), "UTF-8");
     }
 
-    private void showFrontierPage(StringBuilder sb, String script, Heritrix3JobMonitor h3Job, long totalCachedLines) {
+    private void showFrontierPage(StringBuilder sb, String script, Heritrix3JobMonitor h3Job, long totalCachedLines, String totalCachedLinesString) {
         ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
 
         //System.out.println(new String(scriptResult.response, "UTF-8"));
         if (scriptResult != null && scriptResult.script != null) {
             if (scriptResult.script.htmlOutput != null) {
-                sb.append("<fieldset><!--<legend>htmlOut</legend>-->"+totalCachedLines + "|");
+                sb.append("<fieldset><!--<legend>htmlOut</legend>-->"+totalCachedLines + "|"+totalCachedLinesString + "|");
 
                 sb.append(scriptResult.script.htmlOutput);
                 sb.append("</fieldset><br />\n");
             }
             if (scriptResult.script.rawOutput != null) {
-                sb.append("<fieldset><!--<legend>rawOut</legend>-->"+totalCachedLines + "/");
+                sb.append("<fieldset><!--<legend>rawOut</legend>-->"+totalCachedLines + "/"+totalCachedLinesString + "|");
                 sb.append("<pre>");
                 sb.append(scriptResult.script.rawOutput);
                 sb.append("</pre>");
