@@ -695,8 +695,8 @@ public class JobResource implements ResourceAbstract {
         String frontierScript = getGroovyScript();
         String deleteStr = req.getParameter("delete");
         frontierScript = getDeleteScript(regex, linesPerPage, initials, frontierScript, deleteStr, pageString);
-        String[] frontierScriptSplitted = frontierScript.split("½");
-        long totalCachedLines = Long.getLong(frontierScriptSplitted[1],1);
+        String[] frontierScriptSplitted = frontierScript.split("#");
+        long totalCachedLines = Long.getLong(frontierScriptSplitted[2],1);
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
@@ -717,7 +717,7 @@ public class JobResource implements ResourceAbstract {
                 page = pages;
 
             startPagination(totalCachedLines, linesPerPage, page, pages, sb);
-            showFrontierPage(sb, frontierScript, h3Job, totalCachedLines, frontierScriptSplitted[1]);
+            showFrontierPage(sb, frontierScript, h3Job, totalCachedLines, frontierScriptSplitted[2]);
             endPagination(linesPerPage, page, pages, sb);
 
         } else {
