@@ -70,26 +70,25 @@ void listFrontier(String regex, long limit) {
     totalCachedLines = pendingUris.pendingUrisDB.count()
     totalCachedSize = getPages(totalCachedLines, limit)
     content = '<pre>'
-    content = content + totalCachedLines + "#"
     //iterates over the raw underlying instance of com.sleepycat.je.Database
-    cursor = pendingUris.pendingUrisDB.openCursor(null, null)
-    key = new DatabaseEntry()
-    value = new DatabaseEntry()
     matchingCount = 0
     index = 0
-    try {
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS) {
-            if (value.getData().length == 0) {
-                continue
-            }
-            curi = pendingUris.crawlUriBinding.entryToObject(value)
-            if (pattern.matcher(curi.toString())) {
-                matchingCount++
-            }
-        }
-    } finally {
-        cursor.close()
-    }
+//    cursor = pendingUris.pendingUrisDB.openCursor(null, null)
+//    key = new DatabaseEntry()
+//    value = new DatabaseEntry()
+//    try {
+//        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS) {
+//            if (value.getData().length == 0) {
+//                continue
+//            }
+//            curi = pendingUris.crawlUriBinding.entryToObject(value)
+//            if (pattern.matcher(curi.toString())) {
+//                matchingCount++
+//            }
+//        }
+//    } finally {
+//        cursor.close()
+//    }
 
     cursor = pendingUris.pendingUrisDB.openCursor(null, null)
     key = new DatabaseEntry()
@@ -106,20 +105,21 @@ void listFrontier(String regex, long limit) {
             }
             curi = pendingUris.crawlUriBinding.entryToObject(value)
             if (pattern.matcher(curi.toString())) {
-                content = content + curi + '\n'
+                if (((long)index) >= ((long)(page * limit)) && ((long)index) < ((long)((page + 1) * limit)))
+                    content = content + curi + '\n'
                 index++
+                matchingCount++
             }
         }
     } finally {
         cursor.close()
     }
-
     content = content + '</pre>'
 
     if (limit > 0) {
-        content = matchingCount + '</p>' + content
+        content = '#' + matchingCount + '#</p>' + content
     } else {
-        content = matchingCount + '</p>' + content
+        content = '#' + matchingCount + '#</p>' + content
     }
     htmlOut.println content
 }
