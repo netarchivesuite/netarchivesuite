@@ -33,15 +33,7 @@ public class Status {
     public JMXStatusEntry[] getAllStatus() {
         String query = "dk.netarkivet.common.logging:*,index=0";
         ArrayList<JMXStatusEntry> entries = new ArrayList<>();
-/*        MBeanServer mBeanServer = MBeanServerFactory.createMBeanServer();
-        Set<ObjectName> resultSet = null;
-        try {
 
-            HostForwarding.getInstance(SingleLogRecord.class, mBeanServer, query);
-            resultSet = mBeanServer.queryNames(new ObjectName(query), null);
-        } catch (MalformedObjectNameException e) {
-            throw new RuntimeException(e);
-        }*/
         List<StatusEntry> entries1 = null;
         try {
             entries1 = JMXStatusEntry.queryJMX(query);
@@ -54,6 +46,4 @@ public class Status {
         }
         return entries.toArray(new JMXStatusEntry[]{});
     }
-
-
 }
