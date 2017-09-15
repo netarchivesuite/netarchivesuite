@@ -29,14 +29,19 @@ public class Heritrix3JobMonitorThread implements Runnable {
     /** The logger for this class. */
     private static final Logger LOG = LoggerFactory.getLogger(Heritrix3JobMonitorThread.class);
 
+    /** Environment used for all servlets. */
     protected NASEnvironment environment;
 
+    /** <code>HarvestMonitor</code> instance. */
     protected static HarvestMonitor harvestMonitor;
 
+    /** <code>JobDAO</code> instance. */
     protected static JobDAO jobDAO;
 
+    /** <code>RunningJobsInfoDAO</code> instance. */
     protected static RunningJobsInfoDAO runningJobsInfoDAO;
 
+    /** <code>HarvestChannelDAO</code> instance. */
     protected static HarvestChannelDAO harvestChannelDAO;
 
     static {
@@ -46,22 +51,26 @@ public class Heritrix3JobMonitorThread implements Runnable {
         harvestChannelDAO = HarvestChannelDAO.getInstance();
     }
 
+    /** Current thread. */
     public Thread thread;
 
+    /** If caught, the throwable that stopped the monitor thread. */
     public Throwable throwable;
 
+    /** Boolean switch to close the thread. */
     public boolean bExit = false;
 
+    /** Map of running H3 job monitors. */
     public Map<Long, Heritrix3JobMonitor> runningJobMonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
 
     public Map<Long, Heritrix3JobMonitor> filterJobMonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
 
-    public Set<Heritrix3Wrapper> h3WrapperSet = new HashSet<Heritrix3Wrapper>();
-
     public Set<String> h3HostPortSet = new HashSet<String>();
 
+    /** List of hosts with monitoring enabled. */
     public List<String> h3HostnamePortEnabledList = new ArrayList<String>();
 
+    /** List of hosts with monitoring disabled. */
     public List<String> h3HostnamePortDisabledList = new ArrayList<String>();
 
     public Heritrix3JobMonitorThread(NASEnvironment environment) {
@@ -108,6 +117,9 @@ public class Heritrix3JobMonitorThread implements Runnable {
             while (!bExit) {
                 Set<Long> runningJobs = getRunningJobs();
                 if (runningJobs != null) {
+                	/*
+                	 * Identify running and stopped jobs.
+                	 */
                     Iterator<Long> jobidIter = runningJobs.iterator();
                     Heritrix3JobMonitor jobmonitor;
                     synchronized (runningJobMonitorMap) {
@@ -121,6 +133,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
                                         // New H3 job.
                                         jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId, environment);
                                     } catch (IOException e) {
+                                    	// Ignored because exceptions can occur communicating with H3 in this call.
                                     }
                                 }
                                 filterJobMonitorMap.put(jobId, jobmonitor);
@@ -130,11 +143,18 @@ public class Heritrix3JobMonitorThread implements Runnable {
                         filterJobMonitorMap = runningJobMonitorMap;
                         runningJobMonitorMap = tmpJobMonitorMap;
                     }
+                    /*
+                     * Add the cached files for stopped jobs to the list of old files.
+                     */
                     jobmonitorIter = filterJobMonitorMap.values().iterator();
                     while (jobmonitorIter.hasNext()) {
                         jobmonitor = jobmonitorIter.next();
                         jobmonitor.cleanup(oldFilesList);
                     }
+                    /*
+                     * Remove cached files for running jobs in the list of old files.
+                     * On thread start all cached files are added to old files even though they might still be running.
+                     */
                     jobmonitorIter = runningJobMonitorMap.values().iterator();
                     while (jobmonitorIter.hasNext()) {
                         jobmonitor = jobmonitorIter.next();
@@ -225,7 +245,6 @@ public class Heritrix3JobMonitorThread implements Runnable {
 
     public boolean isH3HostnamePortEnabled(Heritrix3JobMonitor jobmonitor) {
         synchronized (h3HostnamePortEnabledList) {
-            // TODO Not ideal to do contains on a list. But its fairly short.
             jobmonitor.bPull = h3HostnamePortEnabledList.contains(jobmonitor.h3HostnamePort);
         }
         return jobmonitor.bPull;

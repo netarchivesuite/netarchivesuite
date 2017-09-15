@@ -24,9 +24,6 @@ package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
 
-import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.Channels;
-
 /**
  * TestInfo associated with package dk.netarkivet.archive.bitarchive. Contains useful constants.
  */
@@ -40,6 +37,5 @@ public class TestInfo {
 
     static String baAppId = "bitArchiveApp_1";
 
-    static ChannelID QUEUE_1 = Channels.getAnyBa();
     static final long BITARCHIVE_BATCH_JOB_TIMEOUT = 7 * 24 * 60 * 60 * 1000;
 }

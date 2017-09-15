@@ -35,7 +35,6 @@ import java.lang.reflect.Field;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.distribute.Channels;
@@ -73,8 +72,6 @@ public class GetFileMessageTester {
     }
 
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testGetData() throws IOException, NoSuchFieldException, IllegalAccessException {
         File origFile = new File(WORKING, "NetarchiveSuite-store1.arc");
         GetFileMessage message = new GetFileMessage(Channels.getAllBa(), Channels.getThisReposClient(),
