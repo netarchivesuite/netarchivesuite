@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$user" == "vagrant" ] ; then
+if [ "$USER" == "vagrant" ] ; then
   cd /home/vagrant/gitting/netarchivesuite
   sudo git pull
   sudo mvn -B -DskipTests clean package
