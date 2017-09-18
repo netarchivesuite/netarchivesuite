@@ -1,4 +1,4 @@
-package dk.netarkivet.harvester.webinterface.servlet;
+package dk.netarkivet.heritrix3.monitor.resources;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,10 +28,18 @@ import com.antiaction.common.templateengine.TemplatePlaceHolder;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
+import dk.netarkivet.heritrix3.monitor.NASEnvironment;
+import dk.netarkivet.heritrix3.monitor.NASUser;
+import dk.netarkivet.heritrix3.monitor.Pageable;
+import dk.netarkivet.heritrix3.monitor.Pagination;
+import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
+import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
+import dk.netarkivet.heritrix3.monitor.SearchResult;
 
 public class JobResource implements ResourceAbstract {
 
-    private static final String NAS_GROOVY_RESOURCE_PATH = "dk/netarkivet/harvester/webinterface/servlet/nas.groovy";
+    private static final String NAS_GROOVY_RESOURCE_PATH = "dk/netarkivet/heritrix3/monitor/nas.groovy";
 
     private NASEnvironment environment;
 

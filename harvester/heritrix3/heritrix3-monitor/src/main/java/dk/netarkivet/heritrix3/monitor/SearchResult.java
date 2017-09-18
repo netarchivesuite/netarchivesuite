@@ -1,4 +1,4 @@
-package dk.netarkivet.harvester.webinterface.servlet;
+package dk.netarkivet.heritrix3.monitor;
 
 import java.io.File;
 import java.io.IOException;

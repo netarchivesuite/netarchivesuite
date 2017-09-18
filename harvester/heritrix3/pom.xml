@@ -17,5 +17,6 @@
     <module>heritrix3-extensions</module>
     <module>heritrix3-bundler</module>
     <module>heritrix3-controller</module>
+    <module>heritrix3-monitor</module>
   </modules>
 </project>

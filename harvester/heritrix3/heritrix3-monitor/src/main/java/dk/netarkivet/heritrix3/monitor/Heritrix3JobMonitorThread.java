@@ -1,4 +1,4 @@
-package dk.netarkivet.harvester.webinterface.servlet;
+package dk.netarkivet.heritrix3.monitor;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -30,19 +30,19 @@ public class Heritrix3JobMonitorThread implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(Heritrix3JobMonitorThread.class);
 
     /** Environment used for all servlets. */
-    protected NASEnvironment environment;
+    private NASEnvironment environment;
 
     /** <code>HarvestMonitor</code> instance. */
-    protected static HarvestMonitor harvestMonitor;
+    public static HarvestMonitor harvestMonitor;
 
     /** <code>JobDAO</code> instance. */
-    protected static JobDAO jobDAO;
+    public static JobDAO jobDAO;
 
     /** <code>RunningJobsInfoDAO</code> instance. */
-    protected static RunningJobsInfoDAO runningJobsInfoDAO;
+    public static RunningJobsInfoDAO runningJobsInfoDAO;
 
     /** <code>HarvestChannelDAO</code> instance. */
-    protected static HarvestChannelDAO harvestChannelDAO;
+    public static HarvestChannelDAO harvestChannelDAO;
 
     static {
         harvestMonitor = HarvestMonitor.getInstance();
@@ -205,7 +205,8 @@ public class Heritrix3JobMonitorThread implements Runnable {
     public Set<Long> getRunningJobs() {
         try {
             @SuppressWarnings("unchecked")
-            Set<Long> orgJobs = harvestMonitor.getRunningJobs();
+            //Set<Long> orgJobs = harvestMonitor.getRunningJobs();
+            Set<Long> orgJobs = RunningJobsInfoDAO.getInstance().getHistoryRecordIds();
             Set<Long> jobs = new TreeSet<Long>(orgJobs);
             return jobs;
         } catch (Throwable t) {

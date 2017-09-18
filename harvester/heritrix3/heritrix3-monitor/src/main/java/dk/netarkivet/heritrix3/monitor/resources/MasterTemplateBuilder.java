@@ -1,4 +1,4 @@
-package dk.netarkivet.harvester.webinterface.servlet;
+package dk.netarkivet.heritrix3.monitor.resources;
 
 import com.antiaction.common.templateengine.TemplateBuilderBase;
 import com.antiaction.common.templateengine.TemplateBuilderPlaceHolder;

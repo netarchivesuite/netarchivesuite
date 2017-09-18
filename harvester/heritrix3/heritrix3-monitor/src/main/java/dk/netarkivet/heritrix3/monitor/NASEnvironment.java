@@ -1,4 +1,4 @@
-package dk.netarkivet.harvester.webinterface.servlet;
+package dk.netarkivet.heritrix3.monitor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class NASEnvironment {
     /** servletConfig. */
     protected ServletConfig servletConfig = null;
 
-    protected TemplateMaster templateMaster = null;
+    public TemplateMaster templateMaster = null;
 
     protected String login_template_name = null;
 
@@ -43,7 +43,7 @@ public class NASEnvironment {
 
     public String h3AdminPassword;
 
-    protected Heritrix3JobMonitorThread h3JobMonitorThread;
+    public Heritrix3JobMonitorThread h3JobMonitorThread;
 
     public static String contextPath;
 

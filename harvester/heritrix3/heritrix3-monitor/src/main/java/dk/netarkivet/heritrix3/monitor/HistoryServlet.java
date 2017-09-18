@@ -1,4 +1,4 @@
-package dk.netarkivet.harvester.webinterface.servlet;
+package dk.netarkivet.heritrix3.monitor;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,7 +21,10 @@ import com.antiaction.common.servlet.AutoIncrement;
 import com.antiaction.common.servlet.PathMap;
 
 import dk.netarkivet.common.webinterface.HTMLUtils;
-import dk.netarkivet.harvester.webinterface.servlet.NASEnvironment.Language;
+import dk.netarkivet.heritrix3.monitor.NASEnvironment.Language;
+import dk.netarkivet.heritrix3.monitor.resources.ConfigResource;
+import dk.netarkivet.heritrix3.monitor.resources.IndexResource;
+import dk.netarkivet.heritrix3.monitor.resources.JobResource;
 
 public class HistoryServlet extends HttpServlet implements ResourceManagerAbstract {
 
@@ -51,6 +54,10 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
         IndexResource indexResource = new IndexResource();
         indexResource.resources_init(environment);
         indexResource.resources_add(this);
+
+        ConfigResource configResource = new ConfigResource();
+        configResource.resources_init(environment);
+        configResource.resources_add(this);
 
         JobResource jobResource = new JobResource();
         jobResource.resources_init(environment);
