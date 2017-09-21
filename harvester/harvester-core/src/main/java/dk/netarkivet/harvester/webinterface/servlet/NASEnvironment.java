@@ -107,7 +107,8 @@ public class NASEnvironment {
         login_template_name = "login.html";
 
         templateMaster = TemplateMaster.getInstance("default");
-        templateMaster.addTemplateStorage(TemplateFileStorageManager.getInstance(servletContext.getRealPath("/"), "UTF-8"));
+        templateMaster.addTemplateStorage(TemplateFileStorageManager.getInstance(
+                        servletContext.getRealPath("/"), "UTF-8"));
 
         loginHandler = new LoginTemplateHandler<NASUser>();
         loginHandler.templateMaster = templateMaster;
@@ -200,24 +201,43 @@ public class NASEnvironment {
     }
 
     /**
-     * Get the lines (i.e. URLs) of the crawllog for the running job with the given job id
+     * Get the (attempted) crawled URLs of the crawllog for the running job with the given job id
      *
      * @param jobId Id of the running job
-     * @return Lines (URLs) of the crawllog for given job
+     * @return The (attempted) crawled URLs of the crawllog for given job
      */
-    public List<String> getCrawledUrls(long jobId) {
-        Heritrix3JobMonitor h3Job = h3JobMonitorThread.getRunningH3Job(jobId);
+    public List<String> getCrawledUrls(long jobId, Heritrix3JobMonitor h3Job) {
+        if (h3Job == null) {
+            h3Job = h3JobMonitorThread.getRunningH3Job(jobId);
+        }
         String crawlLogPath = h3Job.crawlLogFilePath;
 
         List<String> crawledUrls = new ArrayList<>();
         try (
                 InputStream fis = new FileInputStream(crawlLogPath);
                 InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
-                BufferedReader br = new BufferedReader(isr);
+                BufferedReader br = new BufferedReader(isr)
         ) {
             String line;
             while ((line = br.readLine()) != null) {
-                crawledUrls.add(line);
+                String[] columns = line.split("\\s+");
+                if (columns.length < 4) {
+                    continue;
+                }
+                String fetchStatusCode = columns[1];
+                String harvestedUrl = columns[3];
+
+                // Do not include URLs with a negative Fetch Status Code (coz they're not even attempted crawled)
+                if (Integer.parseInt(fetchStatusCode) < 0) {
+                    continue;
+                }
+
+                // Do not include dns-look-ups from the crawllog
+                if (harvestedUrl.startsWith("dns:")) {
+                    continue;
+                }
+
+                crawledUrls.add(harvestedUrl);
             }
         } catch (java.io.IOException e) {
             throw new IOFailure("Could not open crawllog file", e);
