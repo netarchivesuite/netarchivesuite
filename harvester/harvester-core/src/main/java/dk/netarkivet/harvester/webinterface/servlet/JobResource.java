@@ -737,11 +737,13 @@ public class JobResource implements ResourceAbstract {
     private Long extractPaginationInformation(ScriptResult scriptResult) {
         if (scriptResult != null && scriptResult.script != null) {
             if (scriptResult.script.htmlOutput != null) {
-                return Long.getLong(scriptResult.script.htmlOutput.split("|")[0], 1);
+                String[] splitted = scriptResult.script.htmlOutput.split("|");
+                return Long.getLong(splitted[0], 1);
             }
             else {
                 if (scriptResult.script.rawOutput != null) {
-                    return Long.getLong(scriptResult.script.rawOutput.split("|")[0], 1);
+                    String[] splitted = scriptResult.script.rawOutput.split("|");
+                    return Long.getLong(splitted[0], 1);
                 }
             }
         }
