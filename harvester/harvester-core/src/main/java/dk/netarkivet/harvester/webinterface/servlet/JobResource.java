@@ -695,8 +695,6 @@ public class JobResource implements ResourceAbstract {
         String frontierScript = getGroovyScript();
         String deleteStr = req.getParameter("delete");
         frontierScript = getDeleteScript(regex, linesPerPage, initials, frontierScript, deleteStr, pageString);
-        String[] frontierScriptSplitted = frontierScript.split("Matching count:");
-        long totalCachedLines = Long.getLong(frontierScriptSplitted[2],1);
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
@@ -710,6 +708,9 @@ public class JobResource implements ResourceAbstract {
             sb.append("&nbsp;");
             showInitials(sb, initials);
 
+            ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", frontierScript);
+            long totalCachedLines = extractPaginationInformation(scriptResult);
+
             if (totalCachedLines > 0)
                 pages = Pagination.getPages(totalCachedLines, linesPerPage);
 
@@ -717,7 +718,7 @@ public class JobResource implements ResourceAbstract {
                 page = pages;
 
             startPagination(totalCachedLines, linesPerPage, page, pages, sb);
-            showFrontierPage(sb, frontierScript, h3Job, totalCachedLines, frontierScriptSplitted[2]);
+            showFrontierPage(sb, scriptResult);
             endPagination(linesPerPage, page, pages, sb);
 
         } else {
@@ -733,6 +734,19 @@ public class JobResource implements ResourceAbstract {
         out.close();
     }
 
+    private Long extractPaginationInformation(ScriptResult scriptResult) {
+        if (scriptResult != null && scriptResult.script != null) {
+            if (scriptResult.script.htmlOutput != null) {
+                return Long.getLong(scriptResult.script.htmlOutput.split("|")[0], 1);
+            }
+            else {
+                if (scriptResult.script.rawOutput != null) {
+                    return Long.getLong(scriptResult.script.rawOutput.split("|")[0], 1);
+                }
+            }
+        }
+        return 1L;
+    }
 
     private void showSearchInformation(StringBuilder sb, String regex, long linesToShow) {
         sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
@@ -834,19 +848,18 @@ public class JobResource implements ResourceAbstract {
         return new String(bOut.toByteArray(), "UTF-8");
     }
 
-    private void showFrontierPage(StringBuilder sb, String script, Heritrix3JobMonitor h3Job, long totalCachedLines, String totalCachedLinesString) {
-        ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
+    private void showFrontierPage(StringBuilder sb, ScriptResult scriptResult) {
 
         //System.out.println(new String(scriptResult.response, "UTF-8"));
         if (scriptResult != null && scriptResult.script != null) {
             if (scriptResult.script.htmlOutput != null) {
-                sb.append("<fieldset><!--<legend>htmlOut</legend>-->"+totalCachedLines + "|"+totalCachedLinesString + "|");
+                sb.append("<fieldset><!--<legend>htmlOut</legend>-->");
 
                 sb.append(scriptResult.script.htmlOutput);
                 sb.append("</fieldset><br />\n");
             }
             if (scriptResult.script.rawOutput != null) {
-                sb.append("<fieldset><!--<legend>rawOut</legend>-->"+totalCachedLines + "/"+totalCachedLinesString + "|");
+                sb.append("<fieldset><!--<legend>rawOut</legend>-->");
                 sb.append("<pre>");
                 sb.append(scriptResult.script.rawOutput);
                 sb.append("</pre>");
