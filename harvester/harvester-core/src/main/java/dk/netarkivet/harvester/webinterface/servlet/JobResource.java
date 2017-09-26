@@ -712,6 +712,7 @@ public class JobResource implements ResourceAbstract {
 
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", frontierScript);
             long totalCachedLines = extractPaginationInformation(scriptResult);
+            removePaginationInformation(scriptResult);
 
             if (totalCachedLines > 0)
                 pages = Pagination.getPages(totalCachedLines, linesPerPage);
@@ -743,19 +744,38 @@ public class JobResource implements ResourceAbstract {
             if (scriptResult.script.htmlOutput != null) {
                 Matcher matcher = pattern.matcher(scriptResult.script.htmlOutput);
                 matcher.find();
-                String totalLinesString = matcher.group();
-                return Long.getLong(totalLinesString, 1);
+                Long totalLines = Long.getLong(matcher.group(), 3);
+                return totalLines;
             }
             else {
                 if (scriptResult.script.rawOutput != null) {
                     Matcher matcher = pattern.matcher(scriptResult.script.rawOutput);
                     matcher.find();
-                    String totalLinesString = matcher.group();
-                    return Long.getLong(totalLinesString, 1);
+                    Long totalLines = Long.getLong(matcher.group(), 3);
+                    return totalLines;
                 }
             }
         }
         return 1L;
+    }
+
+    private void removePaginationInformation(ScriptResult scriptResult) {
+        Pattern pattern = Pattern.compile("-?\\d+");
+        //Matcher m = p.matcher("There are more than -2 and less than 12 numbers here");
+        if (scriptResult != null && scriptResult.script != null) {
+            if (scriptResult.script.htmlOutput != null) {
+                Matcher matcher = pattern.matcher(scriptResult.script.htmlOutput);
+                matcher.find();
+                scriptResult.script.htmlOutput = scriptResult.script.htmlOutput.substring(matcher.end());
+            }
+            else {
+                if (scriptResult.script.rawOutput != null) {
+                    Matcher matcher = pattern.matcher(scriptResult.script.rawOutput);
+                    matcher.find();
+                    scriptResult.script.rawOutput = scriptResult.script.rawOutput.substring(matcher.end());
+                }
+            }
+        }
     }
 
     private void showSearchInformation(StringBuilder sb, String regex, long linesToShow) {

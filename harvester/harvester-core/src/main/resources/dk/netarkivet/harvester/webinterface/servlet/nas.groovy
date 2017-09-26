@@ -80,7 +80,7 @@ void listFrontier(String regex, long limit) {
     key = new DatabaseEntry()
     value = new DatabaseEntry()
     try {
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)(page * limit))) {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS) {
             index++
         }
 
