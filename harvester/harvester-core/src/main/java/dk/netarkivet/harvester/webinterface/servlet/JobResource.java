@@ -743,13 +743,15 @@ public class JobResource implements ResourceAbstract {
             if (scriptResult.script.htmlOutput != null) {
                 Matcher matcher = pattern.matcher(scriptResult.script.htmlOutput);
                 matcher.find();
-                return Long.getLong(matcher.group(), 1);
+                String totalLinesString = matcher.group();
+                return Long.getLong(totalLinesString, 1);
             }
             else {
                 if (scriptResult.script.rawOutput != null) {
                     Matcher matcher = pattern.matcher(scriptResult.script.rawOutput);
                     matcher.find();
-                    return Long.getLong(matcher.group(), 1);
+                    String totalLinesString = matcher.group();
+                    return Long.getLong(totalLinesString, 1);
                 }
             }
         }
