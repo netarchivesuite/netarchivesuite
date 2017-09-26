@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -735,15 +737,19 @@ public class JobResource implements ResourceAbstract {
     }
 
     private Long extractPaginationInformation(ScriptResult scriptResult) {
+        Pattern pattern = Pattern.compile("-?\\d+");
+        //Matcher m = p.matcher("There are more than -2 and less than 12 numbers here");
         if (scriptResult != null && scriptResult.script != null) {
             if (scriptResult.script.htmlOutput != null) {
-                String[] splitted = scriptResult.script.htmlOutput.split("|");
-                return Long.getLong(splitted[0], 1);
+                Matcher matcher = pattern.matcher(scriptResult.script.htmlOutput);
+                matcher.find();
+                return Long.getLong(matcher.group(), 1);
             }
             else {
                 if (scriptResult.script.rawOutput != null) {
-                    String[] splitted = scriptResult.script.rawOutput.split("|");
-                    return Long.getLong(splitted[0], 1);
+                    Matcher matcher = pattern.matcher(scriptResult.script.rawOutput);
+                    matcher.find();
+                    return Long.getLong(matcher.group(), 1);
                 }
             }
         }
@@ -856,7 +862,6 @@ public class JobResource implements ResourceAbstract {
         if (scriptResult != null && scriptResult.script != null) {
             if (scriptResult.script.htmlOutput != null) {
                 sb.append("<fieldset><!--<legend>htmlOut</legend>-->");
-
                 sb.append(scriptResult.script.htmlOutput);
                 sb.append("</fieldset><br />\n");
             }

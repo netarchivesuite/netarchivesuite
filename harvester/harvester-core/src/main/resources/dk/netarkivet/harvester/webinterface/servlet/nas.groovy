@@ -100,13 +100,8 @@ void listFrontier(String regex, long limit) {
     } finally {
         cursor.close()
     }
-    content = content + '</pre>'
+    content = matchingCount + '</p>' + content + '</pre>'
 
-    if (limit > 0) {
-        content = '|' + matchingCount + '|</p>' + content
-    } else {
-        content = '|' + matchingCount + '|</p>' + content
-    }
     htmlOut.println content
 }
 
