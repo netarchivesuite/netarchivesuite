@@ -740,18 +740,23 @@ public class JobResource implements ResourceAbstract {
     private Long extractPaginationInformation(ScriptResult scriptResult) {
         Pattern pattern = Pattern.compile("\\d+");
         if (scriptResult != null && scriptResult.script != null) {
-            if (scriptResult.script.htmlOutput != null) {
-                Matcher matcher = pattern.matcher(scriptResult.script.htmlOutput);
-                matcher.find();
-                String str = scriptResult.script.htmlOutput.substring(matcher.start(), matcher.end());
-                return Long.parseLong(scriptResult.script.htmlOutput.substring(matcher.start(), matcher.end()), 1);
-            }
-            else {
-                if (scriptResult.script.rawOutput != null) {
-                    Matcher matcher = pattern.matcher(scriptResult.script.rawOutput);
+            try {
+                if (scriptResult.script.htmlOutput != null) {
+                    Matcher matcher = pattern.matcher(scriptResult.script.htmlOutput);
                     matcher.find();
-                    return Long.parseLong(scriptResult.script.rawOutput.substring(matcher.start(), matcher.end()), 1);
+                    String str = scriptResult.script.htmlOutput.substring(matcher.start(), matcher.end());
+                    return Long.parseLong(str);
+                } else {
+                    if (scriptResult.script.rawOutput != null) {
+                        Matcher matcher = pattern.matcher(scriptResult.script.rawOutput);
+                        matcher.find();
+                        String str = scriptResult.script.rawOutput.substring(matcher.start(), matcher.end());
+                        return Long.parseLong(str);
+                    }
                 }
+            }
+            catch (Exception ex) {
+                return 1L;
             }
         }
         return 1L;
