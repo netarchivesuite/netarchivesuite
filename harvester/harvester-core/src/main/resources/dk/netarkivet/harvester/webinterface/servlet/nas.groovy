@@ -60,8 +60,8 @@ void deleteFromFrontier(String regex) {
 void listFrontier(String regex, long limit) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
-    String[] pageAndRegex = regex.split("|")
-    page = Long.getLong(pageAndRegex[0], 1)
+    String pageNo= regex.substring(0, regex.indexOf("|"));
+    page = Long.parseLong(pageNo)
     regex = regex.replaceFirst(regex.substring(regex.indexOf("|")+1), "")
 
     pattern = ~regex
@@ -80,11 +80,7 @@ void listFrontier(String regex, long limit) {
     key = new DatabaseEntry()
     value = new DatabaseEntry()
     try {
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS) {
-            index++
-        }
-
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && ((long)index) < ((long)((page + 1) * limit)))  {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS )  {
 
             if (value.getData().length == 0) {
                 continue
