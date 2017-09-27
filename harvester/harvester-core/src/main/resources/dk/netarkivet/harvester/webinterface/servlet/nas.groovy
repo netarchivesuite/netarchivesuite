@@ -16,6 +16,7 @@ import java.util.function.Consumer
 import java.util.function.Predicate
 import java.util.logging.FileHandler
 import java.util.logging.Logger
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 void killToeThread(int thread) {
@@ -60,9 +61,11 @@ void deleteFromFrontier(String regex) {
 void listFrontier(String regex, long limit) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
-    String[] pageAndRegex = regex.split("|")
-    page = Long.parseLong(pageAndRegex[0])
-    regex = regex.replaceFirst(regex.substring(regex.indexOf("|")+1), "")
+    Pattern pageNoPattern = Pattern.compile("\\d+")
+    Matcher matcher = pageNoPattern.matcher(regex)
+    matcher.find()
+    page = Long.parseLong(regex.substring(matcher.start(), matcher.end()))
+    regex = regex.substring(matcher.end())
 
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
