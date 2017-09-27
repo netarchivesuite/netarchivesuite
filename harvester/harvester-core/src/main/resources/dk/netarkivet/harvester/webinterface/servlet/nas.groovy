@@ -60,8 +60,8 @@ void deleteFromFrontier(String regex) {
 void listFrontier(String regex, long limit) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
-    String pageNo= regex.substring(0, regex.indexOf("|"));
-    page = Long.parseLong(pageNo)
+    String[] pageAndRegex = regex.split("|")
+    page = Long.parseLong(pageAndRegex[0])
     regex = regex.replaceFirst(regex.substring(regex.indexOf("|")+1), "")
 
     pattern = ~regex
