@@ -961,9 +961,9 @@ public class JobResource implements ResourceAbstract {
         String tmpStr;
         tmpStr = req.getParameter("q");
         if (tmpStr != null && tmpStr.length() > 0 && !tmpStr.equalsIgnoreCase(".*")) {
-            pageString = tmpStr;
+            return tmpStr;
         }
-        return pageString;
+        return "1";
     }
 
     private long getLinesPerPage(HttpServletRequest req, long linesPerPage) {
