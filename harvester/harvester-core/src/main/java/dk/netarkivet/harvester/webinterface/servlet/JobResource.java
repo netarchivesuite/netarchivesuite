@@ -676,7 +676,6 @@ public class JobResource implements ResourceAbstract {
         long linesPerPage;
         long page = 1;
         long pages = 0;
-        long totalCachedLines = 0;
         String pageString = null;
 
         Locale locale = resp.getLocale();
@@ -711,8 +710,8 @@ public class JobResource implements ResourceAbstract {
             showInitials(sb, initials);
 
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", frontierScript);
-            //long totalCachedLines = extractPaginationInformation(scriptResult);
-            //removePaginationInformation(scriptResult);
+            long totalCachedLines = extractPaginationInformation(scriptResult);
+            removePaginationInformation(scriptResult);
 
             if (totalCachedLines > 0)
                 pages = Pagination.getPages(totalCachedLines, linesPerPage);

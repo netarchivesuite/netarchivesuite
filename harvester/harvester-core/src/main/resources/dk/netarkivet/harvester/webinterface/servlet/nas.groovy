@@ -95,7 +95,7 @@ void listFrontier(long page, String regex, long limit) {
         cursor.close()
     }
     totalCachedLines = matchingCount
-    content = '</p>' + content + '</pre>'
+    content = matchingCount + '</p>' + content + '</pre>'
 
     htmlOut.println content
 }
