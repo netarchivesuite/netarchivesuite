@@ -676,6 +676,7 @@ public class JobResource implements ResourceAbstract {
         long linesPerPage;
         long page = 1;
         long pages = 0;
+        long totalCachedLines = 0;
         String pageString = null;
 
         Locale locale = resp.getLocale();
@@ -692,11 +693,10 @@ public class JobResource implements ResourceAbstract {
         linesPerPage = getLinesPerPage(req);
         String regex = getParameterRegex(req);
         String initials = getInitials(req);
-        pageString = getParameterPage(req, pageString);
 
         String frontierScript = getGroovyScript();
         String deleteStr = req.getParameter("delete");
-        frontierScript = getDeleteScript(regex, linesPerPage, initials, frontierScript, deleteStr, pageString);
+        frontierScript = getDeleteScript(regex, linesPerPage, initials, frontierScript, deleteStr, page);
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
@@ -711,8 +711,8 @@ public class JobResource implements ResourceAbstract {
             showInitials(sb, initials);
 
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", frontierScript);
-            long totalCachedLines = extractPaginationInformation(scriptResult);
-            removePaginationInformation(scriptResult);
+            //long totalCachedLines = extractPaginationInformation(scriptResult);
+            //removePaginationInformation(scriptResult);
 
             if (totalCachedLines > 0)
                 pages = Pagination.getPages(totalCachedLines, linesPerPage);
@@ -908,14 +908,14 @@ public class JobResource implements ResourceAbstract {
     }
 
     private String getDeleteScript(String regex, long limit, String initials, String script,
-            String deleteStr, String pageString) {
+            String deleteStr, long page) {
         if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
             script += "\n";
             script += "\ninitials = \"" + initials + "\"";
             script += "\ndeleteFromFrontier '" + regex + "'\n";
         } else {
             script += "\n";
-            script += "\nlistFrontier '" + pageString + "|" + regex + "', " + limit + "\n";
+            script += "\nlistFrontier '" + page + ", " + regex + "', " + limit + "\n";
         }
         return script;
     }
