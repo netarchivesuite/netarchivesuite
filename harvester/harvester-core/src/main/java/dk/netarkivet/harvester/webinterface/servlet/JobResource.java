@@ -693,9 +693,12 @@ public class JobResource implements ResourceAbstract {
         String regex = getParameterRegex(req);
         String initials = getInitials(req);
 
+        pageString = getParameterPage(req, pageString);
+
         String frontierScript = getGroovyScript();
         String deleteStr = req.getParameter("delete");
-        frontierScript = getDeleteScript(regex, linesPerPage, initials, frontierScript, deleteStr, page);
+        frontierScript = getDeleteScript(regex, linesPerPage, initials, frontierScript, deleteStr, pageString);
+
 
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
@@ -907,14 +910,14 @@ public class JobResource implements ResourceAbstract {
     }
 
     private String getDeleteScript(String regex, long limit, String initials, String script,
-            String deleteStr, long page) {
+            String deleteStr, String pageString) {
         if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
             script += "\n";
             script += "\ninitials = \"" + initials + "\"";
             script += "\ndeleteFromFrontier '" + regex + "'\n";
         } else {
             script += "\n";
-            script += "\nlistFrontier '" + page + ", " + regex + "', " + limit + "\n";
+            script += "\nlistFrontier '" + pageString + "|" + regex + "', " + limit + "\n";
         }
         return script;
     }

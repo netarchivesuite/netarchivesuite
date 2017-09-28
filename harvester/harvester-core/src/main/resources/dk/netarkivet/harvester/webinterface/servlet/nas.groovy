@@ -58,9 +58,14 @@ void deleteFromFrontier(String regex) {
     rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
 
-void listFrontier(long page, String regex, long limit) {
+void listFrontier(String regex, long limit) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
+    Pattern pageNoPattern = Pattern.compile("\\d+")
+    Matcher matcher = pageNoPattern.matcher(regex)
+    matcher.find()
+    page = Long.parseLong(regex.substring(matcher.start(), matcher.end()))
+    regex = regex.substring(matcher.end())
 
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
@@ -94,7 +99,6 @@ void listFrontier(long page, String regex, long limit) {
     } finally {
         cursor.close()
     }
-    totalCachedLines = matchingCount
     content = matchingCount + '</p>' + content + '</pre>'
 
     htmlOut.println content
