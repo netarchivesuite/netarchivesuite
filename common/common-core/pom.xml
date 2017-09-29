@@ -50,7 +50,11 @@
       <version>${tomcat.version}</version>
     </dependency>
 
-
+ <dependency>
+     <groupId>com.jcraft</groupId>
+     <artifactId>jsch</artifactId>
+     <version>0.1.54</version>
+    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
