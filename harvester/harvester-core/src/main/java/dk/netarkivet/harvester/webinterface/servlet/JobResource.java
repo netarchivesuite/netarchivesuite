@@ -604,11 +604,6 @@ public class JobResource implements ResourceAbstract {
     }
 
     public void crawllog_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-
-//        page = getPage(req, page);
-//        linesPerPage = getLinesPerPage(req, linesPerPage);
-//        pageString = getParameterPage(req, pageString);
-
         long lines;
         long linesPerPage = 100;
         long page = 1;
@@ -622,31 +617,35 @@ public class JobResource implements ResourceAbstract {
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
 
-        String tmpStr;
-        tmpStr = req.getParameter("page");
-        if (tmpStr != null && tmpStr.length() > 0) {
-            try {
-                page = Long.parseLong(tmpStr);
-            } catch (NumberFormatException e) {
-            }
-        }
-        tmpStr = req.getParameter("itemsperpage");
-        if (tmpStr != null && tmpStr.length() > 0) {
-            try {
-                linesPerPage = Long.parseLong(tmpStr);
-            } catch (NumberFormatException e) {
-            }
-        }
+        page = getPage(req, page);
+//        String tmpStr;
+//        tmpStr = req.getParameter("page");
+//        if (tmpStr != null && tmpStr.length() > 0) {
+//            try {
+//                page = Long.parseLong(tmpStr);
+//            } catch (NumberFormatException e) {
+//            }
+//        }
 
-        if (linesPerPage < 25) {
-            linesPerPage = 25;
-        }
-        if (linesPerPage > 1000) {
-            linesPerPage = 1000;
-        }
+        linesPerPage = getLinesPerPage(req, linesPerPage);
+//        tmpStr = req.getParameter("itemsperpage");
+//        if (tmpStr != null && tmpStr.length() > 0) {
+//            try {
+//                linesPerPage = Long.parseLong(tmpStr);
+//            } catch (NumberFormatException e) {
+//            }
+//        }
+//
+//        if (linesPerPage < 25) {
+//            linesPerPage = 25;
+//        }
+//        if (linesPerPage > 1000) {
+//            linesPerPage = 1000;
+//        }
 
 
-        tmpStr = req.getParameter("q");
+//        pageString = getParameterPage(req, pageString);
+        String tmpStr = req.getParameter("q");
         if (tmpStr != null && tmpStr.length() > 0 && !tmpStr.equalsIgnoreCase(".*")) {
             pageString = tmpStr;
         }
