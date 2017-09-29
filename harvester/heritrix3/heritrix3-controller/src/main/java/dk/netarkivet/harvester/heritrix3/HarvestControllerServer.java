@@ -225,8 +225,11 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         }
 
         if (!msg.isValid()) {
-            log.error("Received message stating that channel '{}' is invalid. Will stop. "
-            		+ "Probable cause: the channel is not one of the known channels stored in the channels table", channelName);
+        	String errMsg = "Received message stating that channel '" +  channelName + "' is invalid. Will stop. "
+            		+ "Probable cause: the channel is not one of the known channels stored in the channels table"; 
+            log.error(errMsg);
+            // Send a notification about this, ASAP
+            NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR);
             close();
             return;
         }
