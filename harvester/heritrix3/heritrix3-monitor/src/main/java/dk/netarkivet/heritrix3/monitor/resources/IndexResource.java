@@ -90,7 +90,13 @@ public class IndexResource implements ResourceAbstract {
                         if (!environment.h3JobMonitorThread.thread.isAlive()) {
                             // The h3JobMonitorThread is dead. Restart it.
                             Heritrix3JobMonitorThread newH3JobMonitor = new Heritrix3JobMonitorThread(environment);
-                            newH3JobMonitor.start();
+                            try {
+                                newH3JobMonitor.init();
+                                newH3JobMonitor.start();
+                            }
+                            catch (Throwable t) {
+                            	t.printStackTrace();
+                            }
                             environment.h3JobMonitorThread = newH3JobMonitor; 
                         }
                     }
@@ -198,7 +204,11 @@ public class IndexResource implements ResourceAbstract {
             }
         }
 
-        masterTplBuilder.insertContent("H3 Remote Access", "", environment.generateLanguageLinks(locale), "H3 Remote Access", sb.toString(),
+        StringBuilder menuSb = new StringBuilder();
+        //String url = req.getPathInfo();
+        //HTMLUtils.generateNavigationTree(menuSb, url, locale);
+
+        masterTplBuilder.insertContent("H3 Remote Access", menuSb.toString(), environment.generateLanguageLinks(locale), "H3 Remote Access", sb.toString(),
         		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
         out.flush();

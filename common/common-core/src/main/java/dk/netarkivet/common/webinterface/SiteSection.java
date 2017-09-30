@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.jsp.JspWriter;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -137,12 +135,12 @@ public abstract class SiteSection {
      * @param locale The locale to generate the navigation tree for.
      * @throws IOException If there is a problem writing to the page.
      */
-    public void generateNavigationTree(JspWriter out, String url, Locale locale) throws IOException {
+    public void generateNavigationTree(StringBuilder sb, String url, Locale locale) throws IOException {
         String firstPage = pagesAndTitles.keySet().iterator().next();
-        out.print("<tr>");
-        out.print("<td><a href=\"/" + HTMLUtils.encode(dirname) + "/" + HTMLUtils.encode(firstPage) + "\">"
+        sb.append("<tr>");
+        sb.append("<td><a href=\"/" + HTMLUtils.encode(dirname) + "/" + HTMLUtils.encode(firstPage) + "\">"
                 + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, mainname)) + "</a></td>\n");
-        out.print("</tr>");
+        sb.append("</tr>");
         // If we are on the above page or one of its subpages, display the
         // next level down in the tree
         String page = getPage(url);
@@ -155,13 +153,13 @@ public abstract class SiteSection {
                 if (i == visiblePages) {
                     break;
                 }
-                out.print("<tr>");
-                out.print("<td>&nbsp; &nbsp; <a href=\"/" + HTMLUtils.encode(dirname) + "/"
+                sb.append("<tr>");
+                sb.append("<td>&nbsp; &nbsp; <a href=\"/" + HTMLUtils.encode(dirname) + "/"
                         + pageAndTitle.getKey() 
                         + "\"> "
                         + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, pageAndTitle.getValue()))
                         + "</a></td>");
-                out.print("</tr>\n");
+                sb.append("</tr>\n");
                 i++;
             }
         }

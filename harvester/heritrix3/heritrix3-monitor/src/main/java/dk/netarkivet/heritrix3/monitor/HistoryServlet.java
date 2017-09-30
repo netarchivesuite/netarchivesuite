@@ -23,8 +23,14 @@ import com.antiaction.common.servlet.PathMap;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment.Language;
 import dk.netarkivet.heritrix3.monitor.resources.ConfigResource;
+import dk.netarkivet.heritrix3.monitor.resources.H3BudgetResource;
+import dk.netarkivet.heritrix3.monitor.resources.H3CrawlLogCachedResource;
+import dk.netarkivet.heritrix3.monitor.resources.H3FilterResource;
+import dk.netarkivet.heritrix3.monitor.resources.H3FrontierResource;
+import dk.netarkivet.heritrix3.monitor.resources.H3JobResource;
+import dk.netarkivet.heritrix3.monitor.resources.H3ReportResource;
+import dk.netarkivet.heritrix3.monitor.resources.H3ScriptResource;
 import dk.netarkivet.heritrix3.monitor.resources.IndexResource;
-import dk.netarkivet.heritrix3.monitor.resources.JobResource;
 
 public class HistoryServlet extends HttpServlet implements ResourceManagerAbstract {
 
@@ -59,9 +65,33 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
         configResource.resources_init(environment);
         configResource.resources_add(this);
 
-        JobResource jobResource = new JobResource();
-        jobResource.resources_init(environment);
-        jobResource.resources_add(this);
+        H3JobResource h3JobResource = new H3JobResource();
+        h3JobResource.resources_init(environment);
+        h3JobResource.resources_add(this);
+
+        H3CrawlLogCachedResource h3CrawlLogCachedResource = new H3CrawlLogCachedResource();
+        h3CrawlLogCachedResource.resources_init(environment);
+        h3CrawlLogCachedResource.resources_add(this);
+
+        H3FrontierResource h3FrontierResource = new H3FrontierResource();
+        h3FrontierResource.resources_init(environment);
+        h3FrontierResource.resources_add(this);
+
+        H3ReportResource h3ReportResource = new H3ReportResource();
+        h3ReportResource.resources_init(environment);
+        h3ReportResource.resources_add(this);
+
+        H3ScriptResource h3ScriptResource = new H3ScriptResource();
+        h3ScriptResource.resources_init(environment);
+        h3ScriptResource.resources_add(this);
+
+        H3FilterResource h3FilterResource = new H3FilterResource();
+        h3FilterResource.resources_init(environment);
+        h3FilterResource.resources_add(this);
+
+        H3BudgetResource h3BudgetResource = new H3BudgetResource();
+        h3BudgetResource.resources_init(environment);
+        h3BudgetResource.resources_add(this);
     }
 
     public int resource_add(ResourceAbstract resources, String path,

@@ -214,7 +214,9 @@ public class HTMLUtils {
         // Start the two column / one row table which fills the page
         out.print("<table id =\"main_table\"><tr>\n");
         // fill in data in the left column
-        generateNavigationTree(out, url, locale);
+        StringBuilder sb = new StringBuilder();
+        generateNavigationTree(sb, url, locale);
+        out.print(sb.toString());
         // The right column contains the active form content for this page
         out.print("<td valign = \"top\" >\n");
         // Language links
@@ -248,7 +250,9 @@ public class HTMLUtils {
         // Start the two column / one row table which fills the page
         out.print("<table id =\"main_table\"><tr>\n");
         // fill in data in the left column
-        generateNavigationTree(out, url, locale);
+        StringBuilder sb = new StringBuilder();
+        generateNavigationTree(sb, url, locale);
+        out.print(sb.toString());
         // The right column contains the active form content for this page
         out.print("<td valign = \"top\" >\n");
         // Language links
@@ -297,19 +301,19 @@ public class HTMLUtils {
      * @param locale The locale selecting the language.
      * @throws IOException if the output cannot be written.
      */
-    private static void generateNavigationTree(JspWriter out, String url, Locale locale) throws IOException {
-        out.print("<td valign=\"top\" id=\"menu\">\n");
+    public static void generateNavigationTree(StringBuilder sb, String url, Locale locale) throws IOException {
+        sb.append("<td valign=\"top\" id=\"menu\">\n");
         // The list of menu items is presented as a 1-column table
-        out.print("<table id=\"menu_table\">\n");
+        sb.append("<table id=\"menu_table\">\n");
         String s = I18N.getString(locale, "sidebar.title.menu");
-        out.print("<tr><td><a class=\"sidebarHeader\" href=\"index.jsp\">"
+        sb.append("<tr><td><a class=\"sidebarHeader\" href=\"index.jsp\">"
                 + "<img src=\"transparent_menu_logo.png\" alt=\"" + s + "\"/> " + s + "</a></td></tr>\n");
 
         for (SiteSection section : SiteSection.getSections()) {
-            section.generateNavigationTree(out, url, locale);
+            section.generateNavigationTree(sb, url, locale);
         }
-        out.print("</table>\n");
-        out.print("</td>\n");
+        sb.append("</table>\n");
+        sb.append("</td>\n");
     }
 
     /**

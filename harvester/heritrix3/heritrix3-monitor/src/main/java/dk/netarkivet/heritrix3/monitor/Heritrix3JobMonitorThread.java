@@ -44,13 +44,6 @@ public class Heritrix3JobMonitorThread implements Runnable {
     /** <code>HarvestChannelDAO</code> instance. */
     public static HarvestChannelDAO harvestChannelDAO;
 
-    static {
-        harvestMonitor = HarvestMonitor.getInstance();
-        jobDAO = JobDAO.getInstance();
-        runningJobsInfoDAO = RunningJobsInfoDAO.getInstance();
-        harvestChannelDAO = HarvestChannelDAO.getInstance();
-    }
-
     /** Current thread. */
     public Thread thread;
 
@@ -75,6 +68,21 @@ public class Heritrix3JobMonitorThread implements Runnable {
 
     public Heritrix3JobMonitorThread(NASEnvironment environment) {
         this.environment = environment;
+    }
+
+    public synchronized void init() throws Exception {
+    	if (harvestMonitor == null) {
+            harvestMonitor = HarvestMonitor.getInstance();
+    	}
+    	if (jobDAO == null) {
+            jobDAO = JobDAO.getInstance();
+    	}
+    	if (runningJobsInfoDAO == null) {
+            runningJobsInfoDAO = RunningJobsInfoDAO.getInstance();
+    	}
+    	if (harvestChannelDAO == null) {
+            harvestChannelDAO = HarvestChannelDAO.getInstance();
+    	}
     }
 
     public synchronized void start() {
@@ -204,7 +212,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
      */
     public Set<Long> getRunningJobs() {
         try {
-            @SuppressWarnings("unchecked")
+            //@SuppressWarnings("unchecked")
             //Set<Long> orgJobs = harvestMonitor.getRunningJobs();
             Set<Long> orgJobs = RunningJobsInfoDAO.getInstance().getHistoryRecordIds();
             Set<Long> jobs = new TreeSet<Long>(orgJobs);

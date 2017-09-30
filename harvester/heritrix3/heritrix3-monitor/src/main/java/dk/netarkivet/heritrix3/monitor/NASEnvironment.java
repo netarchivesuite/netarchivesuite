@@ -1,6 +1,9 @@
 package dk.netarkivet.heritrix3.monitor;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,8 +28,13 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
 import dk.netarkivet.harvester.Constants;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.heritrix3.monitor.resources.H3JobResource;
 
 public class NASEnvironment {
+
+    private static final String NAS_GROOVY_RESOURCE_PATH = "dk/netarkivet/heritrix3/monitor/nas.groovy";
+
+    public String NAS_GROOVY_SCRIPT;
 
     /** servletConfig. */
     protected ServletConfig servletConfig = null;
@@ -67,6 +75,18 @@ public class NASEnvironment {
         Locale locale;
     }
 
+    public String getResourceAsString(String resource) throws IOException {
+        InputStream in = H3JobResource.class.getClassLoader().getResourceAsStream(resource);
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        byte[] tmpArr = new byte[8192];
+        int read;
+        while ((read = in.read(tmpArr)) != -1) {
+            bOut.write(tmpArr, 0, read);
+        }
+        in.close();
+        return new String(bOut.toByteArray(), "UTF-8");
+    }
+
     public NASEnvironment(ServletContext servletContext, ServletConfig theServletConfig) throws ServletException {
         Map<String, Locale> localeMap = new HashMap<String, Locale>();
         Locale[] locales = Locale.getAvailableLocales();
@@ -99,6 +119,12 @@ public class NASEnvironment {
             laguangeLHM.put(languageObj.language, languageObj);
         }
 
+        try {
+            NAS_GROOVY_SCRIPT = getResourceAsString(NAS_GROOVY_RESOURCE_PATH);
+        } catch (IOException e) {
+        	throw new ServletException("Resource missing: " + NAS_GROOVY_RESOURCE_PATH);
+        }
+
         login_template_name = "login.html";
 
         templateMaster = TemplateMaster.getInstance("default");
@@ -128,7 +154,13 @@ public class NASEnvironment {
     }
 
     public void start() {
-        h3JobMonitorThread.start();
+        try {
+        	h3JobMonitorThread.init();
+            h3JobMonitorThread.start();
+        }
+        catch (Throwable t) {
+        	t.printStackTrace();
+        }
     }
 
     /**
