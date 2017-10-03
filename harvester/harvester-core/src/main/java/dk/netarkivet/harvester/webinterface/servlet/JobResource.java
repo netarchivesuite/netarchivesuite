@@ -620,9 +620,15 @@ public class JobResource implements ResourceAbstract {
 
             long pages = 0;
             long lines = pageable.getIndexSize();
-            if (lines > 0)
+//            if (lines > 0)
+//                pages = Pagination.getPages(lines, linesPerPage);
+//            lines = (lines > 0) ? (lines / 8) - 1 : 0;
+            if (lines > 0) {
+                lines = (lines / 8) - 1;
                 pages = Pagination.getPages(lines, linesPerPage);
-            lines = (lines > 0) ? (lines / 8) - 1 : 0;
+            } else {
+                lines = 0;
+            }
 
             if (page > pages)
                 page = pages;
