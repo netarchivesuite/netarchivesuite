@@ -35,33 +35,21 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 public class JobResource implements ResourceAbstract {
 
     private static final String NAS_GROOVY_RESOURCE_PATH = "dk/netarkivet/harvester/webinterface/servlet/nas.groovy";
-
     private static final String NAS_JOB = "Details and Actions on Running Job";
-
     private static final String NAS_CRAWLLOG = " crawllog";
-
     private static final String NAS_FRONTIER = " Frontier";
-
     private static final String NAS_REJECTRULES = " RejectRules";
-
     private static final String NAS_BUDGET = " Budget";
-
     private static final String NAS_REPORTS = " Reports";
 
     private NASEnvironment environment;
 
     protected int R_JOB = -1;
-
     protected int R_CRAWLLOG = -1;
-
     protected int R_FRONTIER = -1;
-    
     protected int R_FILTER = -1;
-    
     protected int R_BUDGET = -1;
-
     protected int R_SCRIPT = -1;
-
     protected int R_REPORT = -1;
 
     @Override
@@ -169,15 +157,9 @@ public class JobResource implements ResourceAbstract {
             }
 
             h3Job.update();
-
             showJobInformation(menuSb, h3Job);
-            
             sb.append("<div>\n");
-            
-            
-            
             sb.append("<div style=\"float:left;min-width: 300px;\">\n");
-
             sb.append("JobId: <a href=\"/History/Harveststatus-jobdetails.jsp?jobID="+h3Job.jobId+"\">");
             sb.append(h3Job.jobId);
             sb.append("</a><br />\n");
@@ -224,15 +206,11 @@ public class JobResource implements ResourceAbstract {
             sb.append("\" class=\"btn btn-default\">");
             sb.append("Heritrix3 WebUI");
             sb.append("</a>");
-
             sb.append("</div>\n");
-
             sb.append("<div style=\"clear:both;\"></div>");
             sb.append("</div>");
-            
-            
+
             /* line 1 */
-            
             sb.append("<h4>Job details</h4>\n");
             sb.append("<div>\n");
             
@@ -598,18 +576,11 @@ public class JobResource implements ResourceAbstract {
         }
 
         masterTplBuilder.write(out);
-
         out.flush();
         out.close();
     }
 
     public void crawllog_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        long lines;
-        long linesPerPage = 100;
-        long page = 1;
-        long pages = 0;
-        String pageString = null;
-
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
@@ -617,38 +588,17 @@ public class JobResource implements ResourceAbstract {
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
 
+        long linesPerPage = 100;
+        long page = 1;
         page = getPage(req, page);
-//        String tmpStr;
-//        tmpStr = req.getParameter("page");
-//        if (tmpStr != null && tmpStr.length() > 0) {
-//            try {
-//                page = Long.parseLong(tmpStr);
-//            } catch (NumberFormatException e) {
-//            }
-//        }
-
         linesPerPage = getLinesPerPage(req, linesPerPage);
-//        tmpStr = req.getParameter("itemsperpage");
-//        if (tmpStr != null && tmpStr.length() > 0) {
-//            try {
-//                linesPerPage = Long.parseLong(tmpStr);
-//            } catch (NumberFormatException e) {
-//            }
-//        }
-//
-//        if (linesPerPage < 25) {
-//            linesPerPage = 25;
-//        }
-//        if (linesPerPage > 1000) {
-//            linesPerPage = 1000;
-//        }
 
-
-//        pageString = getParameterPage(req, pageString);
-        String tmpStr = req.getParameter("q");
-        if (tmpStr != null && tmpStr.length() > 0 && !tmpStr.equalsIgnoreCase(".*")) {
-            pageString = tmpStr;
-        }
+        String regexString = getRegEx(req);
+//        String tmpSearchString = req.getParameter("q");
+//        String regexString = null;
+//        if (tmpSearchString != null && tmpSearchString.length() > 0 && !tmpSearchString.equalsIgnoreCase(".*")) {
+//            regexString = tmpSearchString;
+//        }
 
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
@@ -664,11 +614,12 @@ public class JobResource implements ResourceAbstract {
             long totalCachedLines = h3Job.getTotalCachedLines();
             long totalCachedSize = h3Job.getLastIndexed();
 
-            if (pageString != null) {
-                pageable = getPageable(pageString, h3Job);
+            if (regexString != null) {
+                pageable = getPageable(regexString, h3Job);
             }
 
-            lines = pageable.getIndexSize();
+            long pages = 0;
+            long lines = pageable.getIndexSize();
             if (lines > 0)
                 pages = Pagination.getPages(lines, linesPerPage);
             lines = (lines > 0) ? (lines / 8) - 1 : 0;
@@ -678,34 +629,24 @@ public class JobResource implements ResourceAbstract {
 
             showTotalCachedInformation(sb, totalCachedLines, totalCachedSize);
             showUpdateCacheButton(sb);
-            pageString = showMargin(pageString, sb);
-            showItemsPerPage(linesPerPage, pageString, sb);
+            regexString = showMargin(regexString, sb);
+            showItemsPerPage(linesPerPage, regexString, sb);
             sb.append("</div>\n");
             startPagination(lines, linesPerPage, page, pages, sb);
             showCrawllogContent(lines, linesPerPage, page, sb, pageable);
             endPagination(linesPerPage, page, pages, sb);
-
-
         } else {
             generateJobIsNotRunning(numerics, sb);
         }
-
         String pageName = NAS_CRAWLLOG;
+
         generatePageInformation(numerics, locale, masterTplBuilder, sb, menuSb, pageName);
-
         masterTplBuilder.write(out);
-
         out.flush();
         out.close();
     }
 
     public void frontier_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        long lines;
-        long linesPerPage;
-        long page = 1;
-        long pages = 0;
-        String pageString = null;
-
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
@@ -716,18 +657,17 @@ public class JobResource implements ResourceAbstract {
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
 
+        long page = 1;
         page = getPage(req, page);
+        long linesPerPage;
         linesPerPage = getLinesPerPage(req);
         String regex = getParameterRegex(req);
         String initials = getInitials(req);
-
-        pageString = getParameterPage(req, pageString);
+        String regexString = getRegEx(req);
 
         String frontierScript = getGroovyScript();
         String deleteStr = req.getParameter("delete");
-        frontierScript = getDeleteScript(regex, linesPerPage, initials, frontierScript, deleteStr, pageString);
-
-
+        frontierScript = getScript(regex, linesPerPage, initials, frontierScript, deleteStr, regexString);
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
         if (h3Job != null && h3Job.isReady()) {
@@ -744,6 +684,7 @@ public class JobResource implements ResourceAbstract {
             long totalCachedLines = extractPaginationInformation(scriptResult);
             removePaginationInformation(scriptResult);
 
+            long pages = 0;
             if (totalCachedLines > 0)
                 pages = Pagination.getPages(totalCachedLines, linesPerPage);
 
@@ -757,12 +698,10 @@ public class JobResource implements ResourceAbstract {
         } else {
             generateJobIsNotRunning(numerics, sb);
         }
-
         String pageName = NAS_FRONTIER;
+
         generatePageInformation(numerics, locale, masterTplBuilder, sb, menuSb, pageName);
-
         masterTplBuilder.write(out);
-
         out.flush();
         out.close();
     }
@@ -859,16 +798,14 @@ public class JobResource implements ResourceAbstract {
         sb.append("</form>\n");
     }
 
-    private String showMargin(String marginStr, StringBuilder sb) {
+    private String showMargin(String pageStr, StringBuilder sb) {
         sb.append("<div style=\"clear:both;\"></div>\n");
         sb.append("</div>\n");
-
-        if (marginStr == null) {
-            marginStr = ".*";
-        }
-
         sb.append("<div style=\"margin-bottom:20px;\">\n");
-        return marginStr;
+        if (pageStr == null) {
+            pageStr = ".*";
+        }
+        return pageStr;
     }
 
     private void startPagination(long lines, long linesPerPage, long page, long pages, StringBuilder sb) throws IOException {
@@ -912,7 +849,6 @@ public class JobResource implements ResourceAbstract {
     }
 
     private void showFrontierPage(StringBuilder sb, ScriptResult scriptResult) {
-
         //System.out.println(new String(scriptResult.response, "UTF-8"));
         if (scriptResult != null && scriptResult.script != null) {
             if (scriptResult.script.htmlOutput != null) {
@@ -937,7 +873,7 @@ public class JobResource implements ResourceAbstract {
         sb.append("</form>");
     }
 
-    private String getDeleteScript(String regex, long limit, String initials, String script,
+    private String getScript(String regex, long limit, String initials, String script,
             String deleteStr, String pageString) {
         if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
             script += "\n";
@@ -987,13 +923,13 @@ public class JobResource implements ResourceAbstract {
         return regex;
     }
 
-    private String getParameterPage(HttpServletRequest req, String pageString) {
+    private String getRegEx(HttpServletRequest req) {
         String tmpStr;
         tmpStr = req.getParameter("q");
         if (tmpStr != null && tmpStr.length() > 0 && !tmpStr.equalsIgnoreCase(".*")) {
             return tmpStr;
         }
-        return "1";
+        return null;
     }
 
     private long getLinesPerPage(HttpServletRequest req, long linesPerPage) {
@@ -1145,10 +1081,9 @@ public class JobResource implements ResourceAbstract {
         }
 
         String pageName = NAS_REJECTRULES;
+
         generatePageInformation(numerics, locale, masterTplBuilder, sb, menuSb, pageName);
-
         masterTplBuilder.write(out);
-
         out.flush();
         out.close();
     }
@@ -1305,21 +1240,17 @@ public class JobResource implements ResourceAbstract {
         } else {
             generateJobIsNotRunning(numerics, sb);
         }
-
         String pageName = NAS_BUDGET;
+
         generatePageInformation(numerics, locale, masterTplBuilder, sb, menuSb, pageName);
-
         masterTplBuilder.write(out);
-
         out.flush();
         out.close();
     }
 
     public static class ScriptTemplateBuilder extends MasterTemplateBuilder {
-
         @TemplateBuilderPlaceHolder("script")
         public TemplatePlaceHolder scriptPlace;
-
     }
 
     public void script(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
@@ -1393,7 +1324,6 @@ public class JobResource implements ResourceAbstract {
         }
 
         masterTplBuilder.write(out);
-
         out.flush();
         out.close();
     }
@@ -1493,8 +1423,5 @@ public class JobResource implements ResourceAbstract {
             masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(
                     HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
         }
-
-
     }
-
 }

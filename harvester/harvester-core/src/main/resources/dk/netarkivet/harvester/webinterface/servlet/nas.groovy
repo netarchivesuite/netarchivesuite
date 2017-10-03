@@ -58,20 +58,29 @@ void deleteFromFrontier(String regex) {
     rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
 
-void listFrontier(String regex, long limit) {
+/**
+ * Find the links that are in the frontier list fulfilling the regular expression and the links on the actual page
+ * @param regex Combined pagenumber and searchstring
+ * @param itemsPerPage items displayed per page
+ * @return the total number of pages combined with the frontier links that are on the page that fulfills the search string
+ */
+void listFrontier(String regex, long itemsPerPage) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
     Pattern pageNoPattern = Pattern.compile("\\d+")
     Matcher matcher = pageNoPattern.matcher(regex)
-    matcher.find()
-    page = Long.parseLong(regex.substring(matcher.start(), matcher.end()))
-    regex = regex.substring(matcher.end())
+    if (matcher.find()) {
+        page = Long.parseLong(regex.substring(matcher.start(), matcher.end()))
+        regex = regex.substring(matcher.end())
+    }
+    else
+        page = 1
 
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
     totalCachedLines = pendingUris.pendingUrisDB.count()
-    totalCachedSize = getPages(totalCachedLines, limit)
+    totalCachedSize = getPages(totalCachedLines, itemsPerPage)
     if (page > totalCachedSize)
         page = totalCachedSize
     content = '<pre>'
@@ -90,7 +99,7 @@ void listFrontier(String regex, long limit) {
             }
             curi = pendingUris.crawlUriBinding.entryToObject(value)
             if (pattern.matcher(curi.toString())) {
-                if (((long)index) >= ((long)(page * limit)) && ((long)index) < ((long)((page + 1) * limit)))
+                if (((long)index) >= ((long)(page * itemsPerPage)) && ((long)index) < ((long)((page + 1) * itemsPerPage)))
                     content = content + curi + '\n'
                 index++
                 matchingCount++
