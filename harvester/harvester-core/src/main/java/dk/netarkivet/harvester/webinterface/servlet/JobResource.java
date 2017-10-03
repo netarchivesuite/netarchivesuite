@@ -663,11 +663,11 @@ public class JobResource implements ResourceAbstract {
         linesPerPage = getLinesPerPage(req);
         String regex = getParameterRegex(req);
         String initials = getInitials(req);
-        String regexString = getRegEx(req);
+        String pageString = String.valueOf(page);
 
         String frontierScript = getGroovyScript();
         String deleteStr = req.getParameter("delete");
-        frontierScript = getScript(regex, linesPerPage, initials, frontierScript, deleteStr, regexString);
+        frontierScript = getScript(regex, linesPerPage, initials, frontierScript, deleteStr, pageString);
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
         if (h3Job != null && h3Job.isReady()) {
