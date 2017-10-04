@@ -588,17 +588,11 @@ public class JobResource implements ResourceAbstract {
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
 
-        long linesPerPage = 100;
-        long page = 1;
-        page = getPage(req, page);
+        long linesPerPage = 1000;
+        long page = getPage(req);
         linesPerPage = getLinesPerPage(req, linesPerPage);
 
         String regexString = getRegEx(req);
-//        String tmpSearchString = req.getParameter("q");
-//        String regexString = null;
-//        if (tmpSearchString != null && tmpSearchString.length() > 0 && !tmpSearchString.equalsIgnoreCase(".*")) {
-//            regexString = tmpSearchString;
-//        }
 
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
@@ -620,9 +614,6 @@ public class JobResource implements ResourceAbstract {
 
             long pages = 0;
             long lines = pageable.getIndexSize();
-//            if (lines > 0)
-//                pages = Pagination.getPages(lines, linesPerPage);
-//            lines = (lines > 0) ? (lines / 8) - 1 : 0;
             if (lines > 0) {
                 lines = (lines / 8) - 1;
                 pages = Pagination.getPages(lines, linesPerPage);
@@ -652,6 +643,16 @@ public class JobResource implements ResourceAbstract {
         out.close();
     }
 
+    /**
+     * Shows a pageable list of the content of the frontier list found by calling a groovy script.
+     * The content is divided up in a number of pages of a specified number of lines per page.
+     * A regular expression may be given to specify the wanted result.
+     *
+     * @param req The servlet request object
+     * @param resp The HTTP response wrapper
+     * @param numerics The list of jobs
+     */
+
     public void frontier_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
@@ -663,10 +664,8 @@ public class JobResource implements ResourceAbstract {
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
 
-        long page = 1;
-        page = getPage(req, page);
-        long linesPerPage;
-        linesPerPage = getLinesPerPage(req);
+        long page = getPage(req);
+        long linesPerPage = getLinesPerPage(req);
         String regex = getParameterRegex(req);
         String initials = getInitials(req);
         String pageString = String.valueOf(page);
@@ -687,8 +686,7 @@ public class JobResource implements ResourceAbstract {
             showInitials(sb, initials);
 
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", frontierScript);
-            long totalCachedLines = extractPaginationInformation(scriptResult);
-            removePaginationInformation(scriptResult);
+            long totalCachedLines = extractLinesAmount(scriptResult);
 
             long pages = 0;
             if (totalCachedLines > 0)
@@ -712,7 +710,7 @@ public class JobResource implements ResourceAbstract {
         out.close();
     }
 
-    private Long extractPaginationInformation(ScriptResult scriptResult) {
+    private Long extractLinesAmount(ScriptResult scriptResult) {
         Pattern pattern = Pattern.compile("\\d+");
         if (scriptResult != null && scriptResult.script != null) {
             try {
@@ -720,12 +718,14 @@ public class JobResource implements ResourceAbstract {
                     Matcher matcher = pattern.matcher(scriptResult.script.htmlOutput);
                     matcher.find();
                     String str = scriptResult.script.htmlOutput.substring(matcher.start(), matcher.end());
+                    scriptResult.script.htmlOutput = scriptResult.script.htmlOutput.substring(matcher.end());
                     return Long.parseLong(str);
                 } else {
                     if (scriptResult.script.rawOutput != null) {
                         Matcher matcher = pattern.matcher(scriptResult.script.rawOutput);
                         matcher.find();
                         String str = scriptResult.script.rawOutput.substring(matcher.start(), matcher.end());
+                        scriptResult.script.rawOutput = scriptResult.script.rawOutput.substring(matcher.end());
                         return Long.parseLong(str);
                     }
                 }
@@ -735,25 +735,6 @@ public class JobResource implements ResourceAbstract {
             }
         }
         return 1L;
-    }
-
-    private void removePaginationInformation(ScriptResult scriptResult) {
-        Pattern pattern = Pattern.compile("-?\\d+");
-        //Matcher m = p.matcher("There are more than -2 and less than 12 numbers here");
-        if (scriptResult != null && scriptResult.script != null) {
-            if (scriptResult.script.htmlOutput != null) {
-                Matcher matcher = pattern.matcher(scriptResult.script.htmlOutput);
-                matcher.find();
-                scriptResult.script.htmlOutput = scriptResult.script.htmlOutput.substring(matcher.end());
-            }
-            else {
-                if (scriptResult.script.rawOutput != null) {
-                    Matcher matcher = pattern.matcher(scriptResult.script.rawOutput);
-                    matcher.find();
-                    scriptResult.script.rawOutput = scriptResult.script.rawOutput.substring(matcher.end());
-                }
-            }
-        }
     }
 
     private void showSearchInformation(StringBuilder sb, String regex, long linesToShow) {
@@ -910,7 +891,7 @@ public class JobResource implements ResourceAbstract {
     }
 
     private long getLinesPerPage(HttpServletRequest req) {
-        long limit = 100;
+        long limit = 1000;
         String limitStr = req.getParameter("limit");
         if (limitStr != null && limitStr.length() > 0) {
             try {
@@ -957,7 +938,8 @@ public class JobResource implements ResourceAbstract {
         return linesPerPage;
     }
 
-    private long getPage(HttpServletRequest req, long page) {
+    private long getPage(HttpServletRequest req) {
+        long page = 1;
         String tmpStr;
         tmpStr = req.getParameter("page");
         if (tmpStr != null && tmpStr.length() > 0) {
