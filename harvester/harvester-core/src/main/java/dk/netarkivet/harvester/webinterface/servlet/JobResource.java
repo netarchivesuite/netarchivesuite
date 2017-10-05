@@ -44,13 +44,13 @@ public class JobResource implements ResourceAbstract {
 
     private NASEnvironment environment;
 
-    protected int R_JOB = -1;
-    protected int R_CRAWLLOG = -1;
-    protected int R_FRONTIER = -1;
-    protected int R_FILTER = -1;
-    protected int R_BUDGET = -1;
-    protected int R_SCRIPT = -1;
-    protected int R_REPORT = -1;
+    private int R_JOB = -1;
+    private int R_CRAWLLOG = -1;
+    private int R_FRONTIER = -1;
+    private int R_FILTER = -1;
+    private int R_BUDGET = -1;
+    private int R_SCRIPT = -1;
+    private int R_REPORT = -1;
 
     @Override
     public void resources_init(NASEnvironment environment) {
@@ -680,7 +680,7 @@ public class JobResource implements ResourceAbstract {
 
         String frontierScript = getGroovyScript();
         String deleteStr = req.getParameter("delete");
-        frontierScript = getScript(regex, linesPerPage, initials, frontierScript, deleteStr, pageString, page);
+        frontierScript = getScript(regex, linesPerPage, initials, frontierScript, deleteStr, page);
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
         if (h3Job != null && h3Job.isReady()) {
@@ -869,7 +869,7 @@ public class JobResource implements ResourceAbstract {
     }
 
     private String getScript(String regex, long limit, String initials, String script,
-            String deleteStr, String pageString, long page) {
+            String deleteStr, long page) {
         if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
             script += "\n";
             script += "\ninitials = \"" + initials + "\"";

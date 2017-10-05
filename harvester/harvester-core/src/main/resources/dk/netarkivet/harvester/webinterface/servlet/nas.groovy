@@ -67,15 +67,6 @@ void deleteFromFrontier(String regex) {
 void listFrontier(String regex, long itemsPerPage, long page) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
-//    Pattern pageNoPattern = Pattern.compile("\\d+")
-//    Matcher matcher = pageNoPattern.matcher(regex)
-//    if (matcher.find()) {
-//        page = Long.parseLong(regex.substring(matcher.start(), matcher.end()))
-//        regex = regex.substring(matcher.end())
-//    }
-//    else
-//        page = 1
-
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
