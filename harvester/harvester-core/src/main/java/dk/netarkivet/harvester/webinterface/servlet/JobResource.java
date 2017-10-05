@@ -580,6 +580,15 @@ public class JobResource implements ResourceAbstract {
         out.close();
     }
 
+    /**
+     * Displays a html-page with a pageable list of the crawllog content.
+     * The content is divided up in a number of pages of a specified number of lines per page.
+     * A regular expression may be given to specify the wanted result.
+     *
+     * @param req The servlet request object
+     * @param resp The HTTP response wrapper
+     * @param numerics The list of jobs
+     */
     public void crawllog_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
@@ -643,15 +652,15 @@ public class JobResource implements ResourceAbstract {
     }
 
     /**
-     * Shows a pageable list of the content of the frontier list found by calling a groovy script.
+     * Displays a html-page with a pageable list of the content of the frontier list found by calling a groovy script.
      * The content is divided up in a number of pages of a specified number of lines per page.
      * A regular expression may be given to specify the wanted result.
+     * Furthermore deletion is possible
      *
      * @param req The servlet request object
      * @param resp The HTTP response wrapper
      * @param numerics The list of jobs
      */
-
     public void frontier_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
@@ -671,7 +680,7 @@ public class JobResource implements ResourceAbstract {
 
         String frontierScript = getGroovyScript();
         String deleteStr = req.getParameter("delete");
-        frontierScript = getScript(regex, linesPerPage, initials, frontierScript, deleteStr, pageString);
+        frontierScript = getScript(regex, linesPerPage, initials, frontierScript, deleteStr, pageString, page);
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
 
         if (h3Job != null && h3Job.isReady()) {
@@ -860,22 +869,22 @@ public class JobResource implements ResourceAbstract {
     }
 
     private String getScript(String regex, long limit, String initials, String script,
-            String deleteStr, String pageString) {
+            String deleteStr, String pageString, long page) {
         if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
             script += "\n";
             script += "\ninitials = \"" + initials + "\"";
             script += "\ndeleteFromFrontier '" + regex + "'\n";
         } else {
             script += "\n";
-            script += "\nlistFrontier '" + pageString + "|" + regex + "', " + limit + "\n";
+            script += "\nlistFrontier '" + regex + "', " + limit + ", " + page + "\n";
         }
         return script;
     }
 
-    private Pageable getPageable(String q, Heritrix3JobMonitor h3Job) throws IOException {
+    private Pageable getPageable(String regEx, Heritrix3JobMonitor h3Job) throws IOException {
         SearchResult searchResult;
         Pageable pageable;
-        searchResult = h3Job.getSearchResult(q);
+        searchResult = h3Job.getSearchResult(regEx);
         searchResult.update();
         pageable = searchResult;
         return pageable;

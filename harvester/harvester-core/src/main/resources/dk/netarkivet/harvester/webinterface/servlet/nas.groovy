@@ -64,17 +64,17 @@ void deleteFromFrontier(String regex) {
  * @param itemsPerPage items displayed per page
  * @return the total number of pages combined with the frontier links that are on the page that fulfills the search string
  */
-void listFrontier(String regex, long itemsPerPage) {
+void listFrontier(String regex, long itemsPerPage, long page) {
     //style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     //htmlOut.println '<pre style="' + style +'">'
-    Pattern pageNoPattern = Pattern.compile("\\d+")
-    Matcher matcher = pageNoPattern.matcher(regex)
-    if (matcher.find()) {
-        page = Long.parseLong(regex.substring(matcher.start(), matcher.end()))
-        regex = regex.substring(matcher.end())
-    }
-    else
-        page = 1
+//    Pattern pageNoPattern = Pattern.compile("\\d+")
+//    Matcher matcher = pageNoPattern.matcher(regex)
+//    if (matcher.find()) {
+//        page = Long.parseLong(regex.substring(matcher.start(), matcher.end()))
+//        regex = regex.substring(matcher.end())
+//    }
+//    else
+//        page = 1
 
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
@@ -119,7 +119,7 @@ void listFrontier(String regex, long itemsPerPage) {
  * @param itemsPerPage items displayed per page
  * @return the total number of pages
  */
-public static long getPages(long items, long itemsPerPage) {
+long getPages(long items, long itemsPerPage) {
     long pages = (items + itemsPerPage - 1) / itemsPerPage
     if (pages == 0) {
         pages = 1
