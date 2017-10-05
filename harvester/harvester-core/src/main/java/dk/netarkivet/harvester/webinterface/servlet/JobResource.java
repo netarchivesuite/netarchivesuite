@@ -588,7 +588,7 @@ public class JobResource implements ResourceAbstract {
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
 
-        long linesPerPage = 1000;
+        long linesPerPage = 100;
         long page = getPage(req);
         linesPerPage = getLinesPerPage(req, linesPerPage);
 
@@ -664,8 +664,9 @@ public class JobResource implements ResourceAbstract {
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
 
+        long linesPerPage = 100;
         long page = getPage(req);
-        long linesPerPage = getLinesPerPage(req);
+        linesPerPage = getLinesPerPage(req, linesPerPage);
         String regex = getParameterRegex(req);
         String initials = getInitials(req);
         String pageString = String.valueOf(page);
@@ -891,7 +892,7 @@ public class JobResource implements ResourceAbstract {
     }
 
     private long getLinesPerPage(HttpServletRequest req) {
-        long limit = 1000;
+        long limit = 100;
         String limitStr = req.getParameter("limit");
         if (limitStr != null && limitStr.length() > 0) {
             try {
