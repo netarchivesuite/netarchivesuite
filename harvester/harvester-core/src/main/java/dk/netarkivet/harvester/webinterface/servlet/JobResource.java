@@ -588,9 +588,8 @@ public class JobResource implements ResourceAbstract {
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
 
-        long linesPerPage = 100;
         long page = getPage(req);
-        linesPerPage = getLinesPerPage(req, linesPerPage);
+        long linesPerPage = getLinesPerPage(req);
 
         String regexString = getRegEx(req);
 
@@ -664,9 +663,8 @@ public class JobResource implements ResourceAbstract {
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
 
-        long linesPerPage = 100;
         long page = getPage(req);
-        linesPerPage = getLinesPerPage(req, linesPerPage);
+        long linesPerPage = getLinesPerPage(req);
         String regex = getParameterRegex(req);
         String initials = getInitials(req);
         String pageString = String.valueOf(page);
@@ -891,18 +889,6 @@ public class JobResource implements ResourceAbstract {
         return initials;
     }
 
-    private long getLinesPerPage(HttpServletRequest req) {
-        long limit = 100;
-        String limitStr = req.getParameter("limit");
-        if (limitStr != null && limitStr.length() > 0) {
-            try {
-                limit = Long.parseLong(limitStr);
-            } catch (NumberFormatException e) {
-            }
-        }
-        return limit;
-    }
-
     private String getParameterRegex(HttpServletRequest req) {
         String regex = req.getParameter("regex");
         if (regex == null || regex.length() == 0) {
@@ -920,13 +906,24 @@ public class JobResource implements ResourceAbstract {
         return null;
     }
 
-    private long getLinesPerPage(HttpServletRequest req, long linesPerPage) {
+    private long getLinesPerPage(HttpServletRequest req) {
+        long linesPerPage = 100;
         String tmpStr;
         tmpStr = req.getParameter("itemsperpage");
         if (tmpStr != null && tmpStr.length() > 0) {
             try {
                 linesPerPage = Long.parseLong(tmpStr);
             } catch (NumberFormatException e) {
+            }
+        }
+        else
+        {
+            tmpStr = req.getParameter("limit");
+            if (tmpStr != null && tmpStr.length() > 0) {
+                try {
+                    linesPerPage = Long.parseLong(tmpStr);
+                } catch (NumberFormatException e) {
+                }
             }
         }
 
