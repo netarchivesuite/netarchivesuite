@@ -30,7 +30,7 @@ public class NASSystemUtil {
      * Defines the standard application setup in the DK test system.
      */
     public static Application[] getApplications() {
-        return new Application[] {new Application("KB-TEST-BAR-015", "BitarchiveApplication", null, null, "KBN"),
+        return new Application[] {new Application("KB-TEST-BAR-01", "BitarchiveApplication", null, null, "KBN"),
                 new Application("KB-TEST-BAR-016", "BitarchiveApplication", "BitApp_1", null, "KBN"),
                 new Application("KB-TEST-BAR-016", "BitarchiveApplication", "BitApp_2", null, "KBN"),
                 new Application("KB-TEST-BAR-016", "BitarchiveApplication", "BitApp_3", null, "KBN"),
