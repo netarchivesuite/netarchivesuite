@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +28,7 @@ import com.antiaction.common.templateengine.storage.TemplateFileStorageManager;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
@@ -244,4 +247,50 @@ public class NASEnvironment {
         }
         return crawledUrls;
     }
+
+    /**
+     * Normalizes input URL so that only the domain part remains.
+     *
+     * @param url URL intended to be stripped to it's domain part
+     * @return The domain part of the input URL, or "" if URL was malformed
+     */
+    private String normalizeDomainUrl(String url) {
+        if (!url.toLowerCase().matches("^\\w+://.*")) {
+            // URL has no protocol part, so let's add one
+            url = "http://" + url;
+        }
+        URL domainUrl;
+        try {
+            domainUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            return "";
+        }
+        String domainHost = domainUrl.getHost();
+        return DomainUtils.domainNameFromHostname(domainHost);
+    }
+
+    /**
+     * Find out whether the given job harvests given domain.
+     *
+     * @param jobId The job
+     * @param domainName The domain
+     * @return whether the given job harvests given domain
+     */
+    public boolean jobHarvestsDomain(long jobId, String domainName) {
+        List<String> crawledUrls = getCrawledUrls(jobId, null);
+
+        // Normalize search URL
+        String searchedDomain = normalizeDomainUrl(domainName);
+
+        for (String crawledUrl : crawledUrls) {
+            // Normalize crawled URL
+            String crawledDomain = normalizeDomainUrl(crawledUrl);
+
+            if (searchedDomain.equalsIgnoreCase(crawledDomain)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

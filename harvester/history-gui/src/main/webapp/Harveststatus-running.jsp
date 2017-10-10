@@ -48,6 +48,7 @@ This page displays a list of running jobs.
                 dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort,
                 dk.netarkivet.common.utils.DomainUtils"
         pageEncoding="UTF-8" %>
+<%@ page import="static dk.netarkivet.harvester.webinterface.servlet.HistoryServlet.environment" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
@@ -259,29 +260,6 @@ TODO: searchedDomainName = <%=searchedDomainName%>
         <th class="harvestHeader"><fmt:message key="table.running.jobs.toeThreads"/></th>
     </tr>
 
-    <%!
-        /**
-         * Normalizes input URL so that only the domain part remains.
-         *
-         * @param url URL intended to be stripped to it's domain part
-         * @return The domain part of the input URL, or "" if URL was malformed
-         */
-        public String normalizeDomainUrl(String url) {
-            if (!url.toLowerCase().matches("^\\w+://.*")) {
-                // URL has no protocol part, so let's add one
-                url = "http://" + url;
-            }
-            URL domainUrl;
-            try {
-                domainUrl = new URL(url);
-            } catch (MalformedURLException e) {
-                return "";
-            }
-            String domainHost = domainUrl.getHost();
-            return DomainUtils.domainNameFromHostname(domainHost);
-        }
-    %>
-
     <%-- Prepare data for rows --%>
     <%
         int rowCount = 0;
@@ -330,6 +308,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
             }
         }
 
+        // Iterate through the jobs to be listed
         for (StartedJobInfo info : infoList) {
             long jobId = info.getJobId();
 
@@ -340,24 +319,9 @@ TODO: searchedDomainName = <%=searchedDomainName%>
             if (searchedDomainName != null && !searchedDomainName.equals("")) {
                 // Something's been searched for, so let's see if this job should be skipped according to the search...
                 NASEnvironment environment = new NASEnvironment(session.getServletContext(), this.getServletConfig());
-                List<String> crawledUrls = environment.getCrawledUrls(jobId, null);
-                boolean currentJobHarvestsSearchedDomain = false;
 
-                // Normalize search URL
-                String searchedDomain = normalizeDomainUrl(searchedDomainName);
-
-                for (String crawledUrl : crawledUrls) {
-                    // Normalize crawled URL
-                    String crawledDomain = normalizeDomainUrl(crawledUrl);
-
-                    if (searchedDomain.equalsIgnoreCase(crawledDomain)) {
-                        currentJobHarvestsSearchedDomain = true;
-                        // This job should be shown, skip rest of the crawllog
-                        break;
-                    }
-                }
-                if (!currentJobHarvestsSearchedDomain) {
-                    // Do not show this job, continue from the next job
+                if (!environment.jobHarvestsDomain(jobId, searchedDomainName)) {
+                    // Current job doesn't harvest searched domain, so don't show it. Continue from the next job.
                     continue;
                 }
             }
