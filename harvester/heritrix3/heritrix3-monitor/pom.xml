@@ -21,7 +21,7 @@
       <groupId>com.antiaction</groupId>
       <artifactId>bootstrap-agent</artifactId>
       <version>${bootstrap-agent.version}</version>
-      <!--classifier>dist</classifier-->
+      <classifier>overlay</classifier>
       <type>zip</type>
     </dependency>
 

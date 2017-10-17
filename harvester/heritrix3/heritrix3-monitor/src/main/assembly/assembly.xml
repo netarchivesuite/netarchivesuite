@@ -9,22 +9,27 @@
         <format>zip</format>
     </formats>
 
-    <includeBaseDirectory>false</includeBaseDirectory >
+    <includeBaseDirectory>true</includeBaseDirectory >
 
     <!-- groupId:artifactId:type[:classifier]:version -->
     <dependencySets>
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>com.antiaction:bootstrap-agent:zip</include>
+                <include>com.antiaction:bootstrap-agent:zip:overlay</include>
             </includes>
             <unpack>true</unpack>
             <unpackOptions>
+<!--
+                <includes>
+                  <include>..</include>
+                </includes>
                 <excludes>
-                  <!--exclude>*/lib/httpcore-4.2.4.jar</exclude-->
+                  <exclude>..</exclude>
                 </excludes>
+-->
             </unpackOptions>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory></outputDirectory>
         </dependencySet>
 
         <dependencySet>
@@ -78,14 +83,14 @@
                 <exclude>org.apache.httpcomponents:httpclient:jar:4.2.5</exclude>
                 <exclude>org.apache.httpcomponents:httpcore:jar:4.2.4</exclude>
             </excludes>
-            <outputDirectory>/bootstrap-agent-${bootstrap-agent.version}/webapp/History/WEB-INF/lib/</outputDirectory>
+            <outputDirectory>webapp/History/WEB-INF/lib/</outputDirectory>
         </dependencySet>
     </dependencySets>
 
     <fileSets>
         <fileSet>
             <directory>${basedir}/src/main/webapp/</directory>
-            <outputDirectory>/bootstrap-agent-${bootstrap-agent.version}/webapp/History/</outputDirectory>
+            <outputDirectory>webapp/History/</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>
