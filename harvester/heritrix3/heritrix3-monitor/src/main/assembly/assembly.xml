@@ -33,6 +33,7 @@
                 <include>*:jar</include>
             </includes>
             <excludes>
+<!--
                 <exclude>commons-fileupload:commons-fileupload:jar</exclude>
                 <exclude>commons-httpclient:commons-httpclient:jar</exclude>
                 <exclude>commons-cli:commons-cli:jar</exclude>
@@ -41,11 +42,11 @@
                 <exclude>commons-lang:commons-lang:jar</exclude>
                 <exclude>commons-logging:commons-logging:jar</exclude>
                 <exclude>commons-net:commons-net:jar</exclude>
+                <exclude>org.jwat:jwat-common:jar</exclude>
+-->
                 <exclude>fastutil:fastutil:jar</exclude>
-                <exclude>org.gnu.inet:libidn:jar</exclude>
                 <exclude>com.google.guava:guava:jar</exclude>
                 <exclude>berkeleydb:je:jar</exclude>
-                <exclude>org.jwat:jwat-common:jar</exclude>
                 <!-- hibernate -->
                 <exclude>org.hibernate:*:jar</exclude>
                 <exclude>antlr:antlr:jar</exclude>
