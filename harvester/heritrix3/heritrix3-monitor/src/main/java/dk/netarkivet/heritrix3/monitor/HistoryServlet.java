@@ -57,6 +57,8 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
 
         pathMap = new PathMap<Resource>();
 
+        System.out.println(this.getClass().getClassLoader());
+
         IndexResource indexResource = new IndexResource();
         indexResource.resources_init(environment);
         indexResource.resources_add(this);

@@ -105,22 +105,12 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
         }
 
         StringBuilder sb = new StringBuilder();
-        StringBuilder menuSb = new StringBuilder();
 
         long jobId = numerics.get(0);
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
         Pageable pageable = h3Job;
 
         if (h3Job != null && h3Job.isReady()) {
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
-
             String actionStr = req.getParameter("action");
             
             if ("update".equalsIgnoreCase(actionStr)) {
@@ -141,7 +131,7 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
             }
 
             lines = pageable.getIndexSize();
-            
+
             if (lines > 0) {
                 lines = (lines / 8) - 1;
                 pages = Pagination.getPages(lines, linesPerPage);
@@ -151,7 +141,7 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
             if (page > pages) {
                 page = pages;
             }
-            
+
             sb.append("<div style=\"margin-bottom:20px;\">\n");
             sb.append("<div style=\"float:left;min-width:180px;\">\n");
             sb.append("Total cached lines: ");
@@ -211,6 +201,8 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
             sb.append(jobId);
             sb.append(" is not running.");
         }
+
+        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), h3Job);
 
         masterTplBuilder.insertContent("Job " + jobId + " Crawllog", menuSb.toString(), environment.generateLanguageLinks(locale),
         		"Job " + jobId + " Crawllog", sb.toString(),

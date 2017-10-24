@@ -67,7 +67,6 @@ public class H3FilterResource implements ResourceAbstract {
         MasterTemplateBuilder masterTplBuilder = masterTplBuilderFactory.getTemplateBuilder();
 
         StringBuilder sb = new StringBuilder();
-        StringBuilder menuSb = new StringBuilder();
 
         String regex = req.getParameter("regex");
         if (regex == null) {
@@ -110,15 +109,6 @@ public class H3FilterResource implements ResourceAbstract {
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
 
         if (h3Job != null && h3Job.isReady()) {
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
-            
             /* form control */
             /* case submit for delete but no checked regex */
             boolean keepRegexTextArea = false;
@@ -167,6 +157,8 @@ public class H3FilterResource implements ResourceAbstract {
             sb.append(jobId);
             sb.append(" is not running.");
         }
+
+        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), h3Job);
 
         masterTplBuilder.insertContent("Job " + jobId + " RejectRules", menuSb.toString(), environment.generateLanguageLinks(locale),
         		"Job " + jobId + " RejectRules", sb.toString(),

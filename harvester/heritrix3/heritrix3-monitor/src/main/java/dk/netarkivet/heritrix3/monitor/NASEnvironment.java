@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -170,18 +171,22 @@ public class NASEnvironment {
         servletConfig = null;
     }
 
-    public void replaceH3HostnamePortRegexList(List<String> h3HostnamePortRegexList) {
+    public void replaceH3HostnamePortRegexList(List<String> h3HostnamePortRegexList, List<String> invalidPatternsList) {
         String regex;
         StringMatcher stringMatcher;
         synchronized (h3HostPortAllowRegexList) {
             h3HostPortAllowRegexList.clear();
             for (int i=0; i<h3HostnamePortRegexList.size(); ++i) {
                 regex = h3HostnamePortRegexList.get(i);
-                stringMatcher = new StringMatcher();
-                stringMatcher.str = regex;
-                stringMatcher.p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-                stringMatcher.m = stringMatcher.p.matcher("42");
-                h3HostPortAllowRegexList.add(stringMatcher);
+                try {
+                    stringMatcher = new StringMatcher();
+                    stringMatcher.str = regex;
+                    stringMatcher.p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+                    stringMatcher.m = stringMatcher.p.matcher("42");
+                    h3HostPortAllowRegexList.add(stringMatcher);
+                } catch (PatternSyntaxException e) {
+                    invalidPatternsList.add(regex);
+                }
             }
         }
     }

@@ -66,7 +66,6 @@ public class H3ReportResource implements ResourceAbstract {
         MasterTemplateBuilder masterTplBuilder = masterTplBuilderFactory.getTemplateBuilder();
 
         StringBuilder sb = new StringBuilder();
-        StringBuilder menuSb = new StringBuilder();
 
         String reportStr = req.getParameter("report");
 
@@ -75,15 +74,6 @@ public class H3ReportResource implements ResourceAbstract {
         Job job;
 
         if (h3Job != null && h3Job.isReady()) {
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
-
             if (h3Job.jobResult != null && h3Job.jobResult.job != null) {
                 job = h3Job.jobResult.job;
                 Report report;
@@ -123,6 +113,8 @@ public class H3ReportResource implements ResourceAbstract {
                 }
             }
         }
+
+        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), h3Job);
 
         masterTplBuilder.insertContent("Job "+ jobId + " Reports", menuSb.toString(), environment.generateLanguageLinks(locale), "Job " + jobId + " Reports", sb.toString(),
         		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);

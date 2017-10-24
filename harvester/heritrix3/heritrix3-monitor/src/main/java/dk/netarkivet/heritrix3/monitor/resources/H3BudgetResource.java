@@ -64,7 +64,6 @@ public class H3BudgetResource implements ResourceAbstract {
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
 
         StringBuilder sb = new StringBuilder();
-        StringBuilder menuSb = new StringBuilder();
 
         String budget = req.getParameter("budget");
         if (budget == null) {
@@ -134,15 +133,6 @@ public class H3BudgetResource implements ResourceAbstract {
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
 
         if (h3Job != null && h3Job.isReady()) {
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
-            
             /* form control */
             boolean submitWithInitials = true;
             if ((!submit1.isEmpty() || !submit2.isEmpty()) && initials.isEmpty()) {
@@ -215,6 +205,8 @@ public class H3BudgetResource implements ResourceAbstract {
             sb.append(jobId);
             sb.append(" is not running.");
         }
+
+        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), h3Job);
 
         masterTplBuilder.insertContent("Job " + jobId + " Budget", menuSb.toString(), environment.generateLanguageLinks(locale), "Job " + jobId + " Budget", sb.toString(),
         		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);

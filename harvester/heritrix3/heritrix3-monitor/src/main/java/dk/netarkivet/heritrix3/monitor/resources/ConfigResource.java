@@ -15,9 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.antiaction.common.filter.Caching;
 import com.antiaction.common.templateengine.TemplateBuilderFactory;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment.StringMatcher;
 import dk.netarkivet.heritrix3.monitor.NASUser;
@@ -67,6 +66,7 @@ public class ConfigResource implements ResourceAbstract {
 
         StringBuilder sb = new StringBuilder();
         StringBuilder enabledhostsSb = new StringBuilder();
+        List<String> invalidPatternsList = new LinkedList<String>();
 
         String method = req.getMethod().toUpperCase();
         if ("POST".equals(method)) {
@@ -79,7 +79,7 @@ public class ConfigResource implements ResourceAbstract {
                     enabledhostsList.add(tmpStr);
                 }
                 reader.close();
-                environment.replaceH3HostnamePortRegexList(enabledhostsList);
+                environment.replaceH3HostnamePortRegexList(enabledhostsList, invalidPatternsList);
                 environment.h3JobMonitorThread.updateH3HostnamePortFilter();
             }
         }
@@ -91,6 +91,16 @@ public class ConfigResource implements ResourceAbstract {
                 enabledhostsSb.append(stringMatcher.str);
                 enabledhostsSb.append("\n");
             }
+        }
+
+        if (invalidPatternsList.size() > 0) {
+            sb.append("<h5>");
+            sb.append(environment.I18N.getString(locale, "h5.invalid.regexes"));
+            sb.append(":</h5>\n");
+        	for (int i=0; i<invalidPatternsList.size(); ++i) {
+                sb.append(invalidPatternsList.get(i));
+                sb.append("<br />\n");
+        	}
         }
 
         synchronized (environment.h3JobMonitorThread.h3HostnamePortEnabledList) {
@@ -125,29 +135,11 @@ public class ConfigResource implements ResourceAbstract {
             }
         }
 
-        if (configTplBuilder.titlePlace != null) {
-            configTplBuilder.titlePlace.setText("H3 Remote Access Config");
-        }
-        if (configTplBuilder.languagesPlace != null) {
-            configTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-        if (configTplBuilder.headingPlace != null) {
-            configTplBuilder.headingPlace.setText("H3 Remote Access Config");
-        }
-        if (configTplBuilder.enabledhostsPlace != null) {
-            configTplBuilder.enabledhostsPlace.setText(enabledhostsSb.toString());
-        }
-        if (configTplBuilder.contentPlace != null) {
-            configTplBuilder.contentPlace.setText(sb.toString());
-        }
-        if (configTplBuilder.versionPlace != null) {
-            configTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-        if (configTplBuilder.environmentPlace != null) {
-            configTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
+        StringBuilder menuSb = configTplBuilder.buildMenu(new StringBuilder(), null);
 
-        configTplBuilder.write(out);
+        configTplBuilder.insertContent("H3 Remote Access Config", menuSb.toString(), environment.generateLanguageLinks(locale), "H3 Remote Access Config",
+        		enabledhostsSb.toString(), sb.toString(),
+        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
         out.flush();
         out.close();

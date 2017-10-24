@@ -67,7 +67,6 @@ public class H3JobResource implements ResourceAbstract {
         MasterTemplateBuilder masterTplBuilder = masterTplBuilderFactory.getTemplateBuilder();
 
         StringBuilder sb = new StringBuilder();
-        StringBuilder menuSb = new StringBuilder();
 
         long jobId = numerics.get(0);
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
@@ -106,16 +105,7 @@ public class H3JobResource implements ResourceAbstract {
             }
 
             h3Job.update();
-            
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
-            
+
             sb.append("<div>\n");
 
             sb.append("<div style=\"float:left;min-width: 300px;\">\n");
@@ -526,6 +516,8 @@ public class H3JobResource implements ResourceAbstract {
             sb.append(jobId);
             sb.append(" is not running.");
         }
+
+        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), h3Job);
 
         masterTplBuilder.insertContent("Details and Actions on Running Job " + jobId, menuSb.toString(), environment.generateLanguageLinks(locale),
         		"Details and Actions on Running Job " + jobId, sb.toString(),

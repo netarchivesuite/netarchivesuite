@@ -204,7 +204,7 @@ public class IndexResource implements ResourceAbstract {
             }
         }
 
-        StringBuilder menuSb = new StringBuilder();
+        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), null);
         //String url = req.getPathInfo();
         //HTMLUtils.generateNavigationTree(menuSb, url, locale);
 

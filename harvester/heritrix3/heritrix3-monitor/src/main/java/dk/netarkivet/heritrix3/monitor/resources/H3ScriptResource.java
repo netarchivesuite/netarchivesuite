@@ -70,21 +70,11 @@ public class H3ScriptResource implements ResourceAbstract {
         }
 
         StringBuilder sb = new StringBuilder();
-        StringBuilder menuSb = new StringBuilder();
 
         long jobId = numerics.get(0);
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
 
         if (h3Job != null && h3Job.isReady()) {
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
-
             if (engineStr != null && engineStr.length() > 0 && scriptStr != null && scriptStr.length() > 0) {
                 ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, engineStr, scriptStr);
                 //System.out.println(new String(scriptResult.response, "UTF-8"));
@@ -103,6 +93,8 @@ public class H3ScriptResource implements ResourceAbstract {
                 }
             }
         }
+
+        StringBuilder menuSb = scriptTplBuilder.buildMenu(new StringBuilder(), h3Job);
 
         scriptTplBuilder.insertContent("Scripting console", menuSb.toString(), environment.generateLanguageLinks(locale), "Scripting console", scriptStr, sb.toString(),
         		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);

@@ -7,6 +7,8 @@ import com.antiaction.common.templateengine.TemplatePlaceHolder;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
+import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 
 public class MasterTemplateBuilder extends TemplateBuilderBase {
 
@@ -37,6 +39,20 @@ public class MasterTemplateBuilder extends TemplateBuilderBase {
 
     @TemplateBuilderPlaceHolder("refresh")
     public TemplatePlaceHolder refreshPlace;
+
+    public StringBuilder buildMenu(StringBuilder menuSb, Heritrix3JobMonitor h3Job) {
+        if (h3Job != null) {
+            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
+            menuSb.append(NASEnvironment.servicePath);
+            menuSb.append("job/");
+            menuSb.append(h3Job.jobId);
+            menuSb.append("/");
+            menuSb.append("\"> Job ");
+            menuSb.append(h3Job.jobId);
+            menuSb.append("</a></td></tr>");
+        }
+        return menuSb;
+    }
 
     public MasterTemplateBuilder insertContent(String title, String menu, String languages, String heading, String content, String refresh) {
         if (titlePlace != null) {
