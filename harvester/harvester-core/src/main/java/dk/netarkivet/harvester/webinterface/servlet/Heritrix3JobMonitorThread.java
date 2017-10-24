@@ -129,6 +129,8 @@ public class Heritrix3JobMonitorThread implements Runnable {
                         tmpJobMonitorMap = filterJobMonitorMap;
                         filterJobMonitorMap = runningJobMonitorMap;
                         runningJobMonitorMap = tmpJobMonitorMap;
+                        LOG.debug("runningJobMonitorMap.hashCode() from Heritrix3JobMonitorThread.run()",
+                                runningJobMonitorMap.hashCode());
                     }
                     jobmonitorIter = filterJobMonitorMap.values().iterator();
                     while (jobmonitorIter.hasNext()) {
@@ -198,6 +200,8 @@ public class Heritrix3JobMonitorThread implements Runnable {
         Heritrix3JobMonitor h3Job;
         synchronized (runningJobMonitorMap) {
             h3Job = runningJobMonitorMap.get(jobId);
+            LOG.debug("runningJobMonitorMap.hashCode() from Heritrix3JobMonitorThread.getRunningH3Job(long jobId)",
+                    runningJobMonitorMap.hashCode());
         }
         return h3Job;
     }
