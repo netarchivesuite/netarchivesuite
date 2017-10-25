@@ -52,7 +52,8 @@ public class Heritrix3JobMonitorThread implements Runnable {
 
     public boolean bExit = false;
 
-    public Map<Long, Heritrix3JobMonitor> runningJobMonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
+    public  Map<Long, Heritrix3JobMonitor> runningJobMonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
+    private final Object runningJobMonitorMapSynchronizer = new Object();
 
     public Map<Long, Heritrix3JobMonitor> filterJobMonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
 
@@ -110,7 +111,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
                 if (runningJobs != null) {
                     Iterator<Long> jobidIter = runningJobs.iterator();
                     Heritrix3JobMonitor jobmonitor;
-                    synchronized (runningJobMonitorMap) {
+                    synchronized (runningJobMonitorMapSynchronizer) {
                         filterJobMonitorMap.clear();
                         while (jobidIter.hasNext()) {
                             Long jobId = jobidIter.next();
@@ -130,7 +131,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
                         filterJobMonitorMap = runningJobMonitorMap;
                         runningJobMonitorMap = tmpJobMonitorMap;
                         LOG.debug("runningJobMonitorMap.hashCode() from Heritrix3JobMonitorThread.run() : {}",
-                                runningJobMonitorMap.hashCode());
+                                runningJobMonitorMap.super. hashCode());
                     }
                     jobmonitorIter = filterJobMonitorMap.values().iterator();
                     while (jobmonitorIter.hasNext()) {
@@ -198,7 +199,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
 
     public Heritrix3JobMonitor getRunningH3Job(long jobId) {
         Heritrix3JobMonitor h3Job;
-        synchronized (runningJobMonitorMap) {
+        synchronized (runningJobMonitorMapSynchronizer) {
             h3Job = runningJobMonitorMap.get(jobId);
             LOG.debug("runningJobMonitorMap.hashCode() from Heritrix3JobMonitorThread.getRunningH3Job(jobId) : {}",
                     runningJobMonitorMap.hashCode());
@@ -208,7 +209,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
 
     public List<Heritrix3JobMonitor> getRunningH3Jobs() {
         List<Heritrix3JobMonitor> h3JobsList = new LinkedList<Heritrix3JobMonitor>();
-        synchronized (runningJobMonitorMap) {
+        synchronized (runningJobMonitorMapSynchronizer) {
             h3JobsList.addAll(runningJobMonitorMap.values());
         }
         return h3JobsList;
