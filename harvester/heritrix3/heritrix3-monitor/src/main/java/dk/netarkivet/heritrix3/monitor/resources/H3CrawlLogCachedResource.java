@@ -124,10 +124,11 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
             SearchResult searchResult = null;
             
             if (q != null) {
-            	
                 searchResult = h3Job.getSearchResult(q);
                 searchResult.update();
                 pageable = searchResult;
+            } else  {
+                q = ".*";
             }
 
             lines = pageable.getIndexSize();
@@ -160,18 +161,14 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
             sb.append("</a>");
             //sb.append("the cache manually ");
             sb.append("</div>\n");
-            
+
             sb.append("<div style=\"clear:both;\"></div>\n");
             sb.append("</div>\n");
 
-            if (q == null) {
-                q = ".*";
-            }
-            
             sb.append("<div style=\"margin-bottom:20px;\">\n");
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">");
-            sb.append("<label for=\"itemsperpage\">Lines to show:</label>");
+            sb.append("<label for=\"itemsperpage\">Lines per page:</label>");
             sb.append("<input type=\"text\" id=\"itemsperpage\" name=\"itemsperpage\" value=\"" + linesPerPage + "\" placeholder=\"must be &gt; 25 and &lt; 1000 \">\n");
             sb.append("<label for=\"q\">Filter regex:</label>");
             sb.append("<input type=\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"content-type\" style=\"display:inline;width:350px;\">\n");

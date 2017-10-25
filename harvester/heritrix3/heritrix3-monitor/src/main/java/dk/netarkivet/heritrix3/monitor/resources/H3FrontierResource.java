@@ -1,8 +1,11 @@
 package dk.netarkivet.heritrix3.monitor.resources;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -19,6 +22,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
+import dk.netarkivet.heritrix3.monitor.Pagination;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
 
@@ -65,22 +69,54 @@ public class H3FrontierResource implements ResourceAbstract {
 
         StringBuilder sb = new StringBuilder();
 
-        String regex = req.getParameter("regex");
-        if (regex == null || regex.length() == 0) {
-            regex =".*";
-        }
-        long limit = 1000;
-        String limitStr = req.getParameter("limit");
-        if (limitStr != null && limitStr.length() > 0) {
+        long lines;
+        long linesPerPage = 100;
+        long page = 1;
+        long pages = 0;
+        String q = null;
+
+        String tmpStr;
+        tmpStr = req.getParameter("page");
+        if (tmpStr != null && tmpStr.length() > 0) {
             try {
-                limit = Long.parseLong(limitStr);
+                page = Long.parseLong(tmpStr);
             } catch (NumberFormatException e) {
             }
         }
+        tmpStr = req.getParameter("itemsperpage");
+        if (tmpStr != null && tmpStr.length() > 0) {
+            try {
+                linesPerPage = Long.parseLong(tmpStr);
+            } catch (NumberFormatException e) {
+            }
+        }
+
+        if (linesPerPage < 25) {
+            linesPerPage = 25;
+        }
+        if (linesPerPage > 1000) {
+            linesPerPage = 1000;
+        }
+
         String initials = req.getParameter("initials");
         if (initials == null) {
             initials = "";
         }
+
+        tmpStr = req.getParameter("q");
+        if (tmpStr != null && tmpStr.length() > 0 && !tmpStr.equalsIgnoreCase(".*")) {
+            q = tmpStr;
+        } else {
+        	q = "";
+        }
+
+        String additionalParams = "";
+    	if (q.length() > 0) {
+            additionalParams += "&q=" + URLEncoder.encode(q, "UTF-8");
+    	}
+    	if (initials.length() > 0) {
+            additionalParams += "&initials=" + URLEncoder.encode(initials, "UTF-8");
+    	}
 
         String script = environment.NAS_GROOVY_SCRIPT;
 
@@ -88,18 +124,11 @@ public class H3FrontierResource implements ResourceAbstract {
         if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
             script += "\n";
             script += "\ninitials = \"" + initials + "\"";
-            script += "\ndeleteFromFrontier '" + regex + "'\n";
+            script += "\ndeleteFromFrontier '" + q + "'\n";
         } else {
             script += "\n";
-            script += "\nlistFrontier '" + regex + "', " + limit + "\n";
+            script += "\nlistFrontier '" + q + "', " + linesPerPage + ", " + (page - 1) + "\n";
         }
-
-        // To use, just remove the initial "//" from any one of these lines.
-        //
-        //killToeThread  1       //Kill a toe thread by number
-        //listFrontier '.*stats.*'    //List uris in the frontier matching a given regexp
-        //deleteFromFrontier '.*foobar.*'    //Remove uris matching a given regexp from the frontier
-        //printCrawlLog '.*'          //View already crawled lines uris matching a given regexp
 
         long jobId = numerics.get(0);
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
@@ -111,18 +140,40 @@ public class H3FrontierResource implements ResourceAbstract {
             }
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
-            sb.append("<label for=\"limit\">Lines to show:</label>");
-            sb.append("<input type=\"text\" id=\"limit\" name=\"limit\" value=\"" + limit + "\" placeholder=\"return limit\">\n");
-            sb.append("<label for=\"regex\">Filter regex:</label>");
-            sb.append("<input type=\"text\" id=\"regex\" name=\"regex\" value=\"" + regex + "\" placeholder=\"regex\" style=\"display:inline;width:350px;\">\n");
+            sb.append("<label for=\"limit\">Lines per page:</label>");
+            sb.append("<input type=\"text\" id=\"itemsperpage\" name=\"itemsperpage\" value=\"" + linesPerPage + "\" placeholder=\"return limit\">\n");
+            sb.append("<label for=\"q\">Filter regex:</label>");
+            sb.append("<input type=\"text\" id=\"q\" name=\"q\" value=\"" + q + "\" placeholder=\"regex\" style=\"display:inline;width:350px;\">\n");
             sb.append("<button type=\"submit\" name=\"show\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Show</button>\n");
             sb.append("&nbsp;");
             sb.append("<label for=\"initials\">User initials:</label>");
             sb.append("<input type=\"text\" id=\"initials\" name=\"initials\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
-            sb.append("<button type=\"submit\" name=\"delete\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-thumbs-up\"></i> Delete</button>\n");
+            sb.append("<button type=\"submit\" name=\"delete\" value=\"1\" class=\"btn btn-danger\"><i class=\"icon-white icon-trash\"></i> Delete</button>\n");
             sb.append("</form>\n");
 
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
+            lines = extractLinesAmount(scriptResult);
+
+            if (lines > 0) {
+                pages = (lines + linesPerPage - 1) / linesPerPage;
+                if (pages == 0) {
+                    pages = 1;
+                }
+            }
+
+            if (page > pages) {
+                page = pages;
+            }
+
+            sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
+            sb.append("<span>Matching lines: ");
+            sb.append(lines);
+            sb.append(" URIs</span>\n");
+            sb.append("</div>\n");
+            sb.append(Pagination.getPagination(page, linesPerPage, pages, false, additionalParams));
+            sb.append("<div style=\"clear:both;\"></div>");
+            sb.append("<div>\n");
+            sb.append("<pre>\n");
             //System.out.println(new String(scriptResult.response, "UTF-8"));
             if (scriptResult != null && scriptResult.script != null) {
                 if (scriptResult.script.htmlOutput != null) {
@@ -138,6 +189,10 @@ public class H3FrontierResource implements ResourceAbstract {
                     sb.append("</fieldset><br />\n");
                 }
             }
+            sb.append("</pre>\n");
+            sb.append("</div>\n");
+            sb.append(Pagination.getPagination(page, linesPerPage, pages, false, additionalParams));
+            sb.append("</form>");
         } else {
             sb.append("Job ");
             sb.append(jobId);
@@ -154,4 +209,31 @@ public class H3FrontierResource implements ResourceAbstract {
         out.close();
     }
     
+    private Long extractLinesAmount(ScriptResult scriptResult) {
+        Pattern pattern = Pattern.compile("\\d+");
+        if (scriptResult != null && scriptResult.script != null) {
+            try {
+                if (scriptResult.script.htmlOutput != null) {
+                    Matcher matcher = pattern.matcher(scriptResult.script.htmlOutput);
+                    matcher.find();
+                    String str = scriptResult.script.htmlOutput.substring(matcher.start(), matcher.end());
+                    scriptResult.script.htmlOutput = scriptResult.script.htmlOutput.substring(matcher.end());
+                    return Long.parseLong(str);
+                } else {
+                    if (scriptResult.script.rawOutput != null) {
+                        Matcher matcher = pattern.matcher(scriptResult.script.rawOutput);
+                        matcher.find();
+                        String str = scriptResult.script.rawOutput.substring(matcher.start(), matcher.end());
+                        scriptResult.script.rawOutput = scriptResult.script.rawOutput.substring(matcher.end());
+                        return Long.parseLong(str);
+                    }
+                }
+            }
+            catch (Exception ex) {
+                return 1L;
+            }
+        }
+        return 1L;
+    }
+
 }

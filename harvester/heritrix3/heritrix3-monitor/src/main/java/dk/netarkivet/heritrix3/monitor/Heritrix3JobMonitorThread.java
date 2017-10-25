@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO;
-import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor;
 
 public class Heritrix3JobMonitorThread implements Runnable {
 
@@ -33,7 +32,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
     private NASEnvironment environment;
 
     /** <code>HarvestMonitor</code> instance. */
-    public static HarvestMonitor harvestMonitor;
+    //public static HarvestMonitor harvestMonitor;
 
     /** <code>JobDAO</code> instance. */
     public static JobDAO jobDAO;
@@ -71,9 +70,11 @@ public class Heritrix3JobMonitorThread implements Runnable {
     }
 
     public synchronized void init() throws Exception {
+    	/*
     	if (harvestMonitor == null) {
             harvestMonitor = HarvestMonitor.getInstance();
     	}
+    	*/
     	if (jobDAO == null) {
             jobDAO = JobDAO.getInstance();
     	}

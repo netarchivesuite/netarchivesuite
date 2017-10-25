@@ -277,11 +277,14 @@ public class H3JobResource implements ResourceAbstract {
                     sb.append(thisAction);
                     sb.append("\"");
                     if("terminate".equals(thisAction) || "teardown".equals(thisAction)) {
-                    	sb.append("onclick=\"return confirm('Are you sure you wish to ");
+                    	sb.append(" onclick=\"return confirm('Are you sure you wish to ");
                     	sb.append(thisAction);
                     	sb.append(" the job currently being crawled ?')\"");
+                        sb.append(" class=\"btn btn-danger\">");
+                        sb.append("<i class=\\\"icon-white icon-trash\\\"></i>");
+                    } else {
+                        sb.append(" class=\"btn btn-default\">");
                     }
-                    sb.append(" class=\"btn btn-default\">");
                     sb.append(job.availableActions.get(i).substring(0, 1).toUpperCase()+job.availableActions.get(i).substring(1));
                     sb.append("</a>");
                 }
