@@ -49,6 +49,12 @@
                 <exclude>commons-net:commons-net:jar</exclude>
                 <exclude>org.jwat:jwat-common:jar</exclude>
 -->
+                <exclude>org.slf4j:*:jar</exclude>
+                <exclude>ch.qos.logback:*:jar</exclude>
+                <!-- tomcat -->
+                <exclude>org.apache.tomcat.embed:*:jar</exclude>
+                <exclude>org.apache.tomcat:*:jar</exclude>
+                <!-- junk -->
                 <exclude>fastutil:fastutil:jar</exclude>
                 <exclude>com.google.guava:guava:jar</exclude>
                 <exclude>berkeleydb:je:jar</exclude>
@@ -56,9 +62,6 @@
                 <exclude>org.hibernate:*:jar</exclude>
                 <exclude>antlr:antlr:jar</exclude>
                 <exclude>commons-collections:commons-collections:jar</exclude>
-                <!-- tomcat -->
-                <exclude>org.apache.tomcat.embed:*:jar</exclude>
-                <exclude>org.apache.tomcat:*:jar</exclude>
                 <!-- jetty -->
                 <exclude>org.eclipse.jetty:*:jar</exclude>
                 <exclude>org.eclipse.jetty.websocket:*:jar</exclude>

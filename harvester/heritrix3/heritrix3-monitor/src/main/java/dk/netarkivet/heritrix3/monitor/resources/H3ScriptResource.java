@@ -9,6 +9,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.netarchivesuite.heritrix3wrapper.ScriptResult;
 
 import com.antiaction.common.filter.Caching;
@@ -79,17 +80,39 @@ public class H3ScriptResource implements ResourceAbstract {
                 ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, engineStr, scriptStr);
                 //System.out.println(new String(scriptResult.response, "UTF-8"));
                 if (scriptResult != null && scriptResult.script != null) {
-                    if (scriptResult.script.htmlOutput != null) {
-                        sb.append(scriptResult.script.htmlOutput);
-                    }
-                    if (scriptResult.script.rawOutput != null) {
+                    if (scriptResult.script.failure) {
+                    	if (scriptResult.script.stackTrace != null) {
+                        	sb.append("<h5>Script failed with the following stacktrace:</h5>\n");
+                            sb.append("<pre>\n");
+                            sb.append(StringEscapeUtils.escapeHtml(scriptResult.script.stackTrace));
+                            sb.append("</pre>\n");
+                    	} else if (scriptResult.script.exception != null) {
+                        	sb.append("<h5>Script failed with the following message:</h5>\n");
+                            sb.append("<pre>\n");
+                            sb.append(StringEscapeUtils.escapeHtml(scriptResult.script.exception));
+                            sb.append("</pre>\n");
+                    	} else {
+                            sb.append("<b>Unknown script failure!</b></br>\n");
+                    	}
+                    	sb.append("<h5>Raw script result Xml:</h5>\n");
                         sb.append("<pre>");
-                        sb.append(scriptResult.script.rawOutput);
+                        sb.append(StringEscapeUtils.escapeHtml(new String(scriptResult.response, "UTF-8")));
+                        sb.append("</pre>");
+                    } else {
+                    	if (scriptResult.script.htmlOutput != null) {
+                            sb.append(scriptResult.script.htmlOutput);
+                        }
+                        if (scriptResult.script.rawOutput != null) {
+                            sb.append("<pre>");
+                            sb.append(scriptResult.script.rawOutput);
+                            sb.append("</pre>");
+                        }
+                        sb.append("<pre>");
+                        sb.append(new String(scriptResult.response, "UTF-8"));
                         sb.append("</pre>");
                     }
-                    sb.append("<pre>");
-                    sb.append(new String(scriptResult.response, "UTF-8"));
-                    sb.append("</pre>");
+                } else {
+                	sb.append("<b>Script did not return any response!</b><br/>\n");
                 }
             }
         }

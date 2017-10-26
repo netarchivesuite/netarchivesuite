@@ -12,6 +12,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.netarchivesuite.heritrix3wrapper.ScriptResult;
 
 import com.antiaction.common.filter.Caching;
@@ -165,34 +166,58 @@ public class H3FrontierResource implements ResourceAbstract {
                 page = pages;
             }
 
-            sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
-            sb.append("<span>Matching lines: ");
-            sb.append(lines);
-            sb.append(" URIs</span>\n");
-            sb.append("</div>\n");
-            sb.append(Pagination.getPagination(page, linesPerPage, pages, false, additionalParams));
-            sb.append("<div style=\"clear:both;\"></div>");
-            sb.append("<div>\n");
-            sb.append("<pre>\n");
-            //System.out.println(new String(scriptResult.response, "UTF-8"));
             if (scriptResult != null && scriptResult.script != null) {
-                if (scriptResult.script.htmlOutput != null) {
-                    sb.append("<fieldset><!--<legend>htmlOut</legend>-->");
-                    sb.append(scriptResult.script.htmlOutput);
-                    sb.append("</fieldset><br />\n");
-                }
-                if (scriptResult.script.rawOutput != null) {
-                    sb.append("<fieldset><!--<legend>rawOut</legend>-->");
+                if (scriptResult.script.failure) {
+                	if (scriptResult.script.stackTrace != null) {
+                    	sb.append("<h5>Script failed with the following stacktrace:</h5>\n");
+                        sb.append("<pre>\n");
+                        sb.append(StringEscapeUtils.escapeHtml(scriptResult.script.stackTrace));
+                        sb.append("</pre>\n");
+                	} else if (scriptResult.script.exception != null) {
+                    	sb.append("<h5>Script failed with the following message:</h5>\n");
+                        sb.append("<pre>\n");
+                        sb.append(StringEscapeUtils.escapeHtml(scriptResult.script.exception));
+                        sb.append("</pre>\n");
+                	} else {
+                        sb.append("<b>Unknown script failure!</b></br>\n");
+                	}
+                	sb.append("<h5>Raw script result Xml:</h5>\n");
                     sb.append("<pre>");
-                    sb.append(scriptResult.script.rawOutput);
+                    sb.append(StringEscapeUtils.escapeHtml(new String(scriptResult.response, "UTF-8")));
                     sb.append("</pre>");
-                    sb.append("</fieldset><br />\n");
+                } else {
+                    sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
+                    sb.append("<span>Matching lines: ");
+                    sb.append(lines);
+                    sb.append(" URIs</span>\n");
+                    sb.append("</div>\n");
+                    sb.append(Pagination.getPagination(page, linesPerPage, pages, false, additionalParams));
+                    sb.append("<div style=\"clear:both;\"></div>");
+                    sb.append("<div>\n");
+                    sb.append("<pre>\n");
+                    //System.out.println(new String(scriptResult.response, "UTF-8"));
+                    if (scriptResult != null && scriptResult.script != null) {
+                        if (scriptResult.script.htmlOutput != null) {
+                            sb.append("<fieldset><!--<legend>htmlOut</legend>-->");
+                            sb.append(scriptResult.script.htmlOutput);
+                            sb.append("</fieldset><br />\n");
+                        }
+                        if (scriptResult.script.rawOutput != null) {
+                            sb.append("<fieldset><!--<legend>rawOut</legend>-->");
+                            sb.append("<pre>");
+                            sb.append(scriptResult.script.rawOutput);
+                            sb.append("</pre>");
+                            sb.append("</fieldset><br />\n");
+                        }
+                    }
+                    sb.append("</pre>\n");
+                    sb.append("</div>\n");
+                    sb.append(Pagination.getPagination(page, linesPerPage, pages, false, additionalParams));
+                    sb.append("</form>");
                 }
+            } else {
+            	sb.append("<b>Script did not return any response!</b><br/>\n");
             }
-            sb.append("</pre>\n");
-            sb.append("</div>\n");
-            sb.append(Pagination.getPagination(page, linesPerPage, pages, false, additionalParams));
-            sb.append("</form>");
         } else {
             sb.append("Job ");
             sb.append(jobId);
