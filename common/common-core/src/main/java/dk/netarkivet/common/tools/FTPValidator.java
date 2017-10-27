@@ -111,7 +111,14 @@ public class FTPValidator {
                + "'");
     	  validator = new FTPValidator(ftphost, ftpPort, user, passwd);
        } else {
-    	   validator = new FTPValidator();
+    	   String remoteFileClassSet = Settings.get(CommonSettings.REMOTE_FILE_CLASS);
+    	   if (remoteFileClassSet.equals(FTPRemoteFile.class.getName())) {
+    		   validator = new FTPValidator();
+    	   } else {
+    		   System.err.println("Wrong remotefileClass defined: " + remoteFileClassSet);
+    		   System.err.println("Aborting program");
+    		   System.exit(1);
+    	   }
        }
        boolean result = validator.test();
        if (result == false) {
