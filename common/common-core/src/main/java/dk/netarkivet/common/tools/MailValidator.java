@@ -44,7 +44,7 @@ public class MailValidator {
 			System.exit(1);
 		}
 		NotificationsFactory.getInstance().notify("Test-message sent from " + MailValidator.class.getName() + " from host '" + SystemUtils.getLocalHostName(), NotificationType.INFO);
-		System.out.println("Test-Mail now sent successfully to adresss '" + Settings.get(EMailNotifications.MAIL_SENDER_SETTING) + "' using '" 
-				+ Settings.get(CommonSettings.MAIL_SERVER) + "' as mailserver");
+		System.out.println("Test-Mail now sent successfully to address '" + Settings.get(EMailNotifications.MAIL_RECEIVER_SETTING) + "' using '" 
+				+ Settings.get(CommonSettings.MAIL_SERVER) + "' as mailserver, and '" + Settings.get(EMailNotifications.MAIL_SENDER_SETTING) + "' as sender.");
 	}
 }

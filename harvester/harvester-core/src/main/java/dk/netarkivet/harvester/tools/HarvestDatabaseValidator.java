@@ -6,6 +6,7 @@ import java.util.Date;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDBConnection;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
@@ -75,10 +76,14 @@ public class HarvestDatabaseValidator {
 			}
 			describeSettings();
 			boolean success = accessTest();
-			System.out.println("Database accessTest was " + (success? "":"Not ") + "successful");
+			System.out.println("Database accessTest was " + (success? "":"not ") + "successful");
 
 	}
 		private static boolean accessTest() {
+			String driverClass = DBSpecifics.getInstance().getDriverClassName();
+			if (!Settings.verifyClass(driverClass)) {
+				return false;
+			}
 			String jdbcUrl = HarvestDBConnection.getDBUrl();
 			try {
 				HarvestDBConnection.get();

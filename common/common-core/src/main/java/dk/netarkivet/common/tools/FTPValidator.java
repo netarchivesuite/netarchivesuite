@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -130,9 +131,9 @@ public class FTPValidator {
 
     private boolean test() throws Exception {
         /* make 3 duplicates of TestInfo.TESTXML: test1.xml, test2.xml, test3.xml */
-        testFile1 = new File("test1000.xml");
-        testFile2 = new File("test2000.xml");
-        testFile3 = new File("test3000.xml");
+        testFile1 = new File("FTPValidator_file1.xml");
+        testFile2 = new File("FTPValidator_file2.xml");
+        testFile3 = new File("FTPValidator_file3.xml");
         String fileAsString = "<test>" 
             + "<file>"
             + "<attachHere>Should go away</attachHere>"
@@ -188,6 +189,7 @@ public class FTPValidator {
             throw new IOFailure("Connect to " + ftpHost + ":" + ftpPort +
                                 " failed",  e.getCause());
         } finally {
+           
            if (theFTPClient != null) {
                theFTPClient.disconnect();
            }
@@ -208,51 +210,65 @@ public class FTPValidator {
          * the ftp-server proftpd (www.proftpd.org), using
          * the configuration stored in CVS here: /projects/webarkivering/proftpd.org
          */
-        String nameOfUploadedFile;
-        String nameOfUploadedFile3;
-        
-        File inputFile = testFile1;
-        File inputFile2 = testFile2;
-        File inputFile3 = testFile3;
-        
-        InputStream in = new FileInputStream(inputFile);
-        InputStream in2 = new FileInputStream(inputFile2);
-        InputStream in3 = new FileInputStream(inputFile3);
+    	InputStream in = null;
+    	InputStream in2 = null;
+    	InputStream in3 = null;
+    	
+    	try {
+    		String nameOfUploadedFile;
+    		String nameOfUploadedFile3;
 
-        nameOfUploadedFile = inputFile.getName();
-        nameOfUploadedFile3 = inputFile3.getName();
-        
+    		File inputFile = testFile1;
+    		File inputFile2 = testFile2;
+    		File inputFile3 = testFile3;
 
-        /** try to append data to file on FTP-server. */
-        /** Assumption: File does not exist on FTP-server. */
-        if (onServer(nameOfUploadedFile)) {
-            System.out.println("File '" + nameOfUploadedFile 
-                    + "' should not exist already on server");
-            return false;
-        }
-        if (!theFTPClient.appendFile(nameOfUploadedFile, in)) {
-            System.out.println("Appendfile operation failed");
-            return false;
-        }
-        upLoadedFiles.add(nameOfUploadedFile);
+    		in = new FileInputStream(inputFile);
+    		in2 = new FileInputStream(inputFile2);
+    		in3 = new FileInputStream(inputFile3);
 
-        /** try to append data to file on the FTP-server. */
-        if (!theFTPClient.appendFile(nameOfUploadedFile, in2)) {
-            System.out.println("Appendfile operation 2 failed");
-            return false; 
-        }
-        
-        if (!upLoadedFiles.contains(nameOfUploadedFile)) {
-            upLoadedFiles.add(nameOfUploadedFile);
-        }
+    		nameOfUploadedFile = inputFile.getName();
+    		nameOfUploadedFile3 = inputFile3.getName();
 
-        /** try to store data to a file on the FTP-server. */
-        if (!theFTPClient.storeFile(nameOfUploadedFile3, in3)) {
-            System.out.println("Store operation failed");
-            return false;
-        }
-        upLoadedFiles.add(nameOfUploadedFile3);
-        return true;
+    		/** try to append data to file on FTP-server. */
+    		/** Assumption: If file exists already on FTP-server, try to delete it */
+    		if (onServer(nameOfUploadedFile)) {
+    			System.out.println("File '" + nameOfUploadedFile 
+    					+ "' should not exist already on server. Trying to delete it");
+    			boolean deleted = theFTPClient.deleteFile(nameOfUploadedFile);
+    			if (!deleted) {
+    				System.err.println("Unable to delete file '" + nameOfUploadedFile + "' from ftp-server");
+    				return false;
+    			}
+    		}
+    		
+    		if (!theFTPClient.appendFile(nameOfUploadedFile, in)) {
+    			System.out.println("Appendfile operation failed");
+    			return false;
+    		}
+    		upLoadedFiles.add(nameOfUploadedFile);
+//
+//    		/** try to append data to file on the FTP-server. */
+//    		if (!theFTPClient.appendFile(nameOfUploadedFile, in2)) {
+//    			System.out.println("Appendfile operation 2 failed");
+//    			return false; 
+//    		}
+
+    		if (!upLoadedFiles.contains(nameOfUploadedFile)) {
+    			upLoadedFiles.add(nameOfUploadedFile);
+    		}
+
+    		/** try to store data to a file on the FTP-server. */
+    		if (!theFTPClient.storeFile(nameOfUploadedFile3, in3)) {
+    			System.out.println("Store operation failed");
+    			return false;
+    		}
+    		upLoadedFiles.add(nameOfUploadedFile3);
+    		return true;
+    	} finally {
+    		IOUtils.closeQuietly(in);
+    		IOUtils.closeQuietly(in2);
+    		IOUtils.closeQuietly(in3);
+    	}
     }
 
     private static void printArgs() {
