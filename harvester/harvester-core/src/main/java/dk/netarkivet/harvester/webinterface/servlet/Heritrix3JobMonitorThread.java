@@ -122,6 +122,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
                                         // New H3 job.
                                         jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId, environment);
                                     } catch (IOException e) {
+                                        LOG.debug("IOException assigning to jobmonitor");
                                     }
                                 }
                                 filterJobMonitorMap.put(jobId, jobmonitor);
