@@ -20,6 +20,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.ExtendedFTPRemoteFile;
 import dk.netarkivet.common.distribute.FTPRemoteFile;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
@@ -30,7 +31,9 @@ import dk.netarkivet.common.utils.Settings;
 
 
 public class FTPValidator {
-
+	
+	public static final String SETTINGSFILEPATH = "dk.netarkivet.settings.file";
+	
     private FTPClient theFTPClient;
     private ArrayList<RemoteFile> upLoadedFTPRemoteFiles = new ArrayList<RemoteFile>();
     private ArrayList<String> upLoadedFiles = new ArrayList<String>();
@@ -64,6 +67,7 @@ public class FTPValidator {
         Settings.set(CommonSettings.FTP_SERVER_PORT, ftpPort + "");
         Settings.set(CommonSettings.FTP_USER_NAME, ftpUser);
         Settings.set(CommonSettings.FTP_USER_PASSWORD, ftpPasswd);
+        Settings.set(CommonSettings.FTP_RETRIES_SETTINGS, "3");
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
         
         if (tmpDir.exists()) {
@@ -94,15 +98,25 @@ public class FTPValidator {
      * @throws Exception 
      */
     public static void main(String[] args) throws Exception {
-       boolean useSettingsFile = false;    	
+       boolean useDefaultSettingsFile = false;    	
        if (args.length == 0) {
-    	   useSettingsFile = true;
+    	   useDefaultSettingsFile = true;
+       } else if (args.length == 1) {
+    	    System.out.println("Using settingsfile given as argument: " + args[0]); 
+			System.setProperty(SETTINGSFILEPATH, args[0]);
+			File settingsfile = new File(args[0]);
+			if (!settingsfile.exists()) {
+				System.err.println("Aborting program. Settingsfile '" + settingsfile.getAbsolutePath() + "' does not exist or is not a file");
+				System.exit(1);
+			}
+			useDefaultSettingsFile = true;
        } else if (args.length != 4) {
     	   printArgs();
     	   System.exit(1);
        }
+
        FTPValidator validator = null;
-       if (!useSettingsFile) {
+       if (!useDefaultSettingsFile) {
     	   String ftphost = args[0];
     	   int ftpPort = Integer.parseInt(args[1]);
     	   String user = args[2];
@@ -113,7 +127,8 @@ public class FTPValidator {
     	  validator = new FTPValidator(ftphost, ftpPort, user, passwd);
        } else {
     	   String remoteFileClassSet = Settings.get(CommonSettings.REMOTE_FILE_CLASS);
-    	   if (remoteFileClassSet.equals(FTPRemoteFile.class.getName())) {
+    	   if (remoteFileClassSet.equals(FTPRemoteFile.class.getName()) || 
+    			   remoteFileClassSet.equals(ExtendedFTPRemoteFile.class.getName())) {
     		   validator = new FTPValidator();
     	   } else {
     		   System.err.println("Wrong remotefileClass defined: " + remoteFileClassSet);
@@ -338,43 +353,6 @@ public class FTPValidator {
         }
         return true;
     }
-
-//    /** Test that multiple uploads of the same file does not clash.
-//     * Test for bug #135
-//     * @throws IOException
-//     */
-//    public void testDoubleUpload() throws IOException {
-//        Settings.set(CommonSettings.REMOTE_FILE_CLASS, 
-//        "dk.netarkivet.common.distribute.FTPRemoteFile");
-//        File testFile = testFile1;
-//        PrintWriter write1 = new PrintWriter(new FileWriter(testFile));
-//        write1.print(FILE_1_CONTENTS);
-//        write1.close();
-//
-//        RemoteFile rf1 = RemoteFileFactory.getInstance(testFile, true, false,
-//                                                       true);
-//
-//        /** register that testFile should now be present on ftp-server */
-//        upLoadedFTPRemoteFiles.add(rf1);
-//
-//        PrintWriter write2 = new PrintWriter(new FileWriter(testFile));
-//        write2.print(FILE_2_CONTENTS);
-//        write2.close();
-//
-//        RemoteFile rf2 = RemoteFileFactory.getInstance(testFile, true, false,
-//                                                       true);
-//
-//        upLoadedFTPRemoteFiles.add(rf2);
-//
-//        File newFile = new File(tmpDir, "newfile.xml");
-//        rf1.copyTo(newFile);
-//        assertEquals("Contents of first file should be preserved",
-//                FILE_1_CONTENTS, FileUtils.readFile(newFile));
-//
-//        rf2.copyTo(newFile);
-//        assertEquals("Contents of second file should be preserved",
-//                FILE_2_CONTENTS, FileUtils.readFile(newFile));
-//    }
 
     public boolean test501MFile() throws Exception {
         long FiveHundredMbytes = 530000000;
