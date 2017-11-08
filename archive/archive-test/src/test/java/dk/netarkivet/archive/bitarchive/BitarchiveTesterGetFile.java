@@ -35,10 +35,10 @@ import org.junit.Test;
 import dk.netarkivet.testutils.LogbackRecorder;
 
 public class BitarchiveTesterGetFile extends BitarchiveTestCase {
-    private static final File ORIGINALS_DIR = new File(new File(TestInfo.DATA_DIR, "getFile"), "originals");
-
+    //private static final File ORIGINALS_DIR = new File(new File(TestInfo.DATA_DIR, "getFile"), "originals");
     protected File getOriginalsDir() {
-        return ORIGINALS_DIR;
+    	return new File(new File(TestInfo.DATA_DIR, "getFile"), "originals");
+        //return ORIGINALS_DIR;
     }
 
     @Before

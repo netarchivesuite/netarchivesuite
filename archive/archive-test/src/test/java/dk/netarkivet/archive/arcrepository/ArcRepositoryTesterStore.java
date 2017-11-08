@@ -51,7 +51,6 @@ import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
@@ -110,14 +109,14 @@ public class ArcRepositoryTesterStore {
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
 
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
 
         FileUtils.removeRecursively(ARCHIVE_DIR);
         FileUtils.removeRecursively(TEMP_DIR);
         FileUtils.removeRecursively(ADMINDATA_DIR);
         FileUtils.createDir(ADMINDATA_DIR);
         FileUtils.createDir(TEMP_DIR);
-
+        Channels.reset();
         // Create a bit archive server that listens to archive events
         arcRepos = ArcRepository.getInstance();
     }
@@ -169,8 +168,6 @@ public class ArcRepositoryTesterStore {
      * @throws InterruptedException
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testStoreFileAlreadyStored() throws InterruptedException, IOException {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         // Set listeners
@@ -234,8 +231,6 @@ public class ArcRepositoryTesterStore {
      * afterwards
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testStoreOtherChecksum() {
         // Set listeners
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -287,8 +282,6 @@ public class ArcRepositoryTesterStore {
      * now UPLOAD_STARTED for all bitarchives
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testStoreNewFile() throws IOException {
         // Set listeners
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -343,8 +336,6 @@ public class ArcRepositoryTesterStore {
      * that state is changed to UPLOADED
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testStoreFailedFile() throws IOException {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -410,8 +401,7 @@ public class ArcRepositoryTesterStore {
      * test that state is still UPLOADED
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("Fragile test: fails in eclipse, but success when run using maven clean install")
     public void testStoreUploadedFile() throws IOException {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -477,8 +467,6 @@ public class ArcRepositoryTesterStore {
      * that state is still STARTED
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testStoreStartedFile() throws IOException {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -542,8 +530,8 @@ public class ArcRepositoryTesterStore {
      * data uploaded
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("Fails: java.lang.AssertionError: Checksum message should be sent to replica 'ONE', but replica 'TWO' got: [msg9: To DEV_TWO_THE_BAMON ReplyTo DEV_COMMON_THE_REPOS OK Arcfiles: NetarchiveSuite-store1.arc, ReplicaId: TWO, Checksum: null] expected:<0> but was:<1>")
+    // FIXME: test fails currently
     public void testOnUploadMessageOK() throws IOException {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
@@ -610,8 +598,8 @@ public class ArcRepositoryTesterStore {
      * replies). Also test that state is upload failed
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("FIXME:java.lang.AssertionError: One message should be replied expected:<1> but was:<0>")
+    // FIXME: test fails due to error: java.lang.AssertionError: One message should be replied expected:<1> but was:<0>")
     public void testOnUploadMessageNotOK() throws IOException {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
@@ -675,8 +663,6 @@ public class ArcRepositoryTesterStore {
      * state is completed
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testOnBatchReplyOk() throws IOException, NoSuchFieldException, IllegalAccessException {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
@@ -746,8 +732,6 @@ public class ArcRepositoryTesterStore {
      * bitarchive is waiting for replies Also test that state is failed
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testOnBatchReplyNotOkOnUpload() throws IOException, NoSuchFieldException, IllegalAccessException {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
@@ -813,8 +797,6 @@ public class ArcRepositoryTesterStore {
      * store the file again Also test that state is upload started
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testOnBatchReplyNotOkOnRetry() throws IOException, NoSuchFieldException, IllegalAccessException {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();

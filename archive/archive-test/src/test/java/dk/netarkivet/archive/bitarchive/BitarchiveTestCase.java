@@ -23,11 +23,13 @@
 package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
+import java.lang.reflect.Field;
 
 import org.junit.After;
 import org.junit.Before;
 
 import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -62,6 +64,7 @@ public abstract class BitarchiveTestCase {
             // Copy over the "existing" bit archive.
             TestFileUtils.copyDirectoryNonCVS(getOriginalsDir(), TestInfo.WORKING_DIR);
             Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.WORKING_DIR.getAbsolutePath());
+            Channels.reset(); // resetting channels
             archive = Bitarchive.getInstance();
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
@@ -81,4 +84,9 @@ public abstract class BitarchiveTestCase {
         // super.tearDown();
     }
 
+    public static void resetChannels() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+    	Field field = Channels.class.getDeclaredField("instance");
+    	field.set(null, (Channels) null);
+    }
+    
 }

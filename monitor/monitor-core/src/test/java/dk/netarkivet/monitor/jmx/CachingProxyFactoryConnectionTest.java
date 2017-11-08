@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.monitor.jmx;
 
+
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -36,6 +38,7 @@ public class CachingProxyFactoryConnectionTest {
     @Test
     public void testCachingProxyFactoryConnection() {
         JMXProxyConnectionFactory f = new CachingProxyConnectionFactory(new DummyJMXProxyConnectionFactory());
+        Assert.assertFalse(f == null);
     }
 
     /*

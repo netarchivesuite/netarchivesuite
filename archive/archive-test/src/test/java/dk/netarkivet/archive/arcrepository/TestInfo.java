@@ -42,4 +42,20 @@ class TestInfo {
     static final File DATABASE_DIR = new File(WORKING_DIR, "database");
     static final File DATABASE_FILE = new File("archivedatabasedir", "archivedb.sql");
 
+    /* Constants taken from the old dk.netarkivet.archive.distribute.arcrepository.TestInfo */
+    private static final File DISTRIBUTE_ARCREPOSITORY_BASE_DIR = new File("tests/dk/netarkivet/archive/distribute/arcrepository/data");
+    public static final File DISTRIBUTE_ARCREPOSITORY_WORKING_DIR = new File(DISTRIBUTE_ARCREPOSITORY_BASE_DIR, "working");
+    public static final File DISTRIBUTE_ARCREPOSITORY_ORIGINALS_DIR = new File(DISTRIBUTE_ARCREPOSITORY_BASE_DIR, "originals");
+
+  /**
+   * An archive directory to work on.
+   */
+   public static final File DISTRIBUTE_ARCREPOSITORY_ARCHIVE_DIR = new File(DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "bitarchive1");
+   public static final File DISTRIBUTE_ARCREPOSITORY_INDEX_DIR_2_3 = new File(DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "2-3-cache");
+//  public static final File DISTRIBUTE_ARCREPOSITORY_INDEX_DIR_2_4_3_5 = new File(DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "2-4-3-5-cache");
+   public static final File DISTRIBUTE_ARCREPOSITORY_LOG_PATH = new File(DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "tmp");
+   public static final File DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE = new File(DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "testFile.txt");
+   public static final File DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY = new File(DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "testCopy.txt");
+   public static final File DISTRIBUTE_ARCREPOSITORY_EMPTY_FILE = new File(DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "zeroByteFile");
+
 }

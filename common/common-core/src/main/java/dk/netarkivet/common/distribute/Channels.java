@@ -462,7 +462,7 @@ public class Channels {
     /**
      * Reset the instance to re-read the settings. Only for use in tests.
      */
-    static void reset() {
+    public static void reset() {
         instance = null;
     }
 

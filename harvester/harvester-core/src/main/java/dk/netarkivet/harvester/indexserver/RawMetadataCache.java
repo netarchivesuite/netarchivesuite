@@ -182,7 +182,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
      */
     private void migrateDuplicates(Long id, String replicaUsed, String specifiedPattern, BatchStatus originalBatchJob) {
         File cacheFileName = getCacheFile(id);
-        Pattern duplicatePattern = Pattern.compile(".*duplicate:\"([^,]+),([0-9]+),.*");
+        Pattern duplicatePattern = Pattern.compile(".*duplicate:\"([^,]+),([0-9]+).*");
         if (urlPattern.pattern().equals(MetadataFile.CRAWL_LOG_PATTERN)) {
             GetMetadataArchiveBatchJob job2 = new GetMetadataArchiveBatchJob(Pattern.compile(".*duplicationmigration.*"), Pattern.compile("text/plain"));
             job2.processOnlyFilesMatching(specifiedPattern);
@@ -202,7 +202,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 log.info("Doing migration for {}", id);
                 try {
                     final List<String> migrationLines = org.apache.commons.io.FileUtils.readLines(migration);
-                    log.info("{} migration records found.", migrationLines.size());
+                    log.info("{} migration records found for job {}", migrationLines.size(), id);
                     for (String line : migrationLines) {
                         String[] splitLine = StringUtils.split(line);
                         lookup.put(new Pair<String, Long>(splitLine[0], Long.parseLong(splitLine[1])),
@@ -223,13 +223,17 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 }
                 originalBatchJob.copyResults(crawllog);
                 try {
+                    int matches = 0;
+                    int errors = 0;
                     for (String line :  org.apache.commons.io.FileUtils.readLines(crawllog)) {
                         Matcher m = duplicatePattern.matcher(line);
                         if (m.matches()) {
+                            matches++;
                             Long newOffset = lookup.get(new Pair<String, Long>(m.group(1), Long.parseLong(m.group(2))));
                             if (newOffset == null) {
                                 log.warn("Could not migrate duplicate in " + line);
                                 FileUtils.appendToFile(cacheFileName, line);
+                                errors++;
                             } else {
                                 String newLine = line.substring(0, m.start(2)) + newOffset + line.substring(m.end(2));
                                 newLine = newLine.replace(m.group(1), m.group(1) + ".gz");
@@ -239,6 +243,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                             FileUtils.appendToFile(cacheFileName, line);
                         }
                     }
+                    log.info("Found and migrated {} duplicate lines for job {} with {} errors", matches, id, errors); 
                 } catch (IOException e) {
                     throw new IOFailure("Could not read " + crawllog.getAbsolutePath());
                 } finally {

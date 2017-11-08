@@ -56,7 +56,7 @@ public class BitarchiveTesterCTOR {
     ReloadSettings rs = new ReloadSettings();
 
     /**
-     * The properties-file containg properties for logging in unit-tests
+     * The properties-file containing properties for logging in unit-tests
      */
     private static final String CREDENTIALS = "42";
 

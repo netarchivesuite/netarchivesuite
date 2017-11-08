@@ -43,7 +43,7 @@ import com.sun.messaging.QueueConnectionFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionSunMQ;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -60,7 +60,7 @@ public class HangingListenerTest {
     public void setUp() {
         Settings.set(CommonSettings.JMS_BROKER_CLASS, JMSConnectionSunMQ.class.getName());
         // JMSConnection.getInstance();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         /* Do not send notification by email. Print them to STDOUT. */
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
