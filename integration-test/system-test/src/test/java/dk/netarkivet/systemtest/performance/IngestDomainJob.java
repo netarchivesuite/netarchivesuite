@@ -45,15 +45,21 @@ class IngestDomainJob extends GenericWebJob {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        /**
         stressTest.addStep("Getting domain file", "The file should be downloaded");
         int returnCode = 0;
+        final String command = "scp test@kb-prod-udv-001.kb.dk:" + backupEnv + "-backup/domain.*.txt " + domainsFile
+                .getAbsolutePath();
         try {
-            Process p = Runtime.getRuntime().exec("scp test@kb-prod-udv-001.kb.dk:" + backupEnv +"-backup/domain.*.txt " + domainsFile.getAbsolutePath());
+            Process p = Runtime.getRuntime().exec(
+                    command);
             returnCode = p.waitFor();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        assertEquals(returnCode, 0, "Return code from scp command is " + returnCode);
+        assertEquals(returnCode, 0, "Return code from scp command " + command + " is " + returnCode);
+         **/
+        stressTest.addStep("Checking for existence of domains file", "The file should exist.");
         assertThat("Domain file " + domainsFile.getAbsolutePath() + " is too short", domainsFile.length(), greaterThan(10000L));
         stressTest.addStep("Ingesting domains from " + domainsFile.getAbsolutePath(),
                 "Expect to see domain generation.");
