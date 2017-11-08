@@ -49,7 +49,7 @@ class IngestDomainJob extends GenericWebJob {
         int returnCode = 0;
         //final String command = "scp test@kb-prod-udv-001.kb.dk:" + backupEnv + "-backup/domain.*.txt " + domainsFile
         //        .getAbsolutePath();
-        final String command = "cp devel@kb-prod-udv-001.kb.dk:prod-backup/domain.*.txt " + domainsFile
+        final String command = "scp devel@kb-prod-udv-001.kb.dk:prod-backup/domain.*.txt " + domainsFile
                 .getAbsolutePath();
         try {
             Process p = Runtime.getRuntime().exec(
