@@ -20,14 +20,12 @@
 -- License along with this library; if not, write to the Free Software
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
--- See createArchiveDB.sql for information of the semantics of these fields.
+-- See derby/createArchiveDB.sql for information of the semantics of these fields.
  
 ----------------------------------------------
--- FIXME MISSING CONNECT INFORMATION FOR postgreSQL
+-- FIXME - MISSING CONNECT INFORMATION FOR postgreSQL
+-- FIXME - Add any missing indices, if necessary
 ----------------------------------------------
-
---Q1: Which difference if any are there between 'int' and 'integer' in postgreSQL?
---Q2: which indices are necessary?
 
 --***************************************************************************--
 -- Area: Basics
