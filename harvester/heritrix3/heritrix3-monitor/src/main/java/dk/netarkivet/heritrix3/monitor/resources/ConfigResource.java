@@ -138,8 +138,7 @@ public class ConfigResource implements ResourceAbstract {
         StringBuilder menuSb = configTplBuilder.buildMenu(new StringBuilder(), null);
 
         configTplBuilder.insertContent("H3 Remote Access Config", menuSb.toString(), environment.generateLanguageLinks(locale), "H3 Remote Access Config",
-        		enabledhostsSb.toString(), sb.toString(),
-        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
+        		enabledhostsSb.toString(), sb.toString(), "").write(out);
 
         out.flush();
         out.close();

@@ -10,6 +10,8 @@ logfilePrefix = "scripting_events"   // A logfile will be created with this pref
 
 import com.sleepycat.je.DatabaseEntry
 import com.sleepycat.je.OperationStatus
+import com.sleepycat.je.CursorConfig
+import com.sleepycat.je.LockMode
 
 import java.nio.file.Files
 import java.util.function.Consumer
@@ -71,33 +73,62 @@ void listFrontier(String regex, long itemsPerPage, long page) {
     pendingUris = job.crawlController.frontier.pendingUris
     totalCachedLines = pendingUris.pendingUrisDB.count()
     totalCachedSize = getPages(totalCachedLines, itemsPerPage)
-    if (page > totalCachedSize)
+    if (page > totalCachedSize) {
         page = totalCachedSize
-    content = '<pre>'
+    }
     matchingCount = 0
     index = 0
 
+    def sb = StringBuilder.newInstance()
+
+    config = new CursorConfig()
+    config.setReadUncommitted(true)
     //iterates over the raw underlying instance of com.sleepycat.je.Database
-    cursor = pendingUris.pendingUrisDB.openCursor(null, null)
+    cursor = pendingUris.pendingUrisDB.openCursor(null, config)
     key = new DatabaseEntry()
     value = new DatabaseEntry()
     try {
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS ) {
-            if (value.getData().length == 0) {
-                continue
+        fIdx = (long)(page * itemsPerPage)
+        tIdx = (long)(fIdx + itemsPerPage)
+        if ("".compareTo(regex) == 0) {
+            /*
+            if (fIdx > 0) {
+                index = skipNext(fIdx - 1, key, value, LockMode.READ_UNCOMMITTED)
+                if (index > 0) {
+                    ++index
+                }
             }
-            curi = pendingUris.crawlUriBinding.entryToObject(value)
-            if (pattern.matcher(curi.toString())) {
-                if (((long)index) >= ((long)(page * itemsPerPage)) && ((long)index) < ((long)((page + 1) * itemsPerPage)))
-                    content = content + curi + '\n'
-                index++
-                matchingCount++
+            */
+            while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < tIdx) {
+                if (value.getData().length == 0) {
+                    continue
+                }
+                if (index >= fIdx) {
+                    curi = pendingUris.crawlUriBinding.entryToObject(value)
+                    sb << curi << '\n'
+                }
+                ++index
+            }
+        }
+        else {
+            while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < tIdx) {
+                if (value.getData().length == 0) {
+                    continue
+                }
+                curi = pendingUris.crawlUriBinding.entryToObject(value)
+                if (pattern.matcher(curi.toString())) {
+                    if (((long)index) >= ((long)(page * itemsPerPage)) && ((long)index) < ((long)((page + 1) * itemsPerPage))) {
+                        sb << curi << '\n'
+                    }
+                    ++index
+                    ++matchingCount
+                }
             }
         }
     } finally {
         cursor.close()
     }
-    content = matchingCount + '</p>' + content + '</pre>'
+    content = matchingCount + '</p>' + '<pre>' + sb.toString() + '</pre>'
 
     htmlOut.println content
 }
@@ -173,15 +204,15 @@ void printCrawlLog(String regex) {
 }
 
 void showModBudgets() {
-	def modQueues = job.jobContext.data.get("manually-added-queues")
+    def modQueues = job.jobContext.data.get("manually-added-queues")
     if(modQueues.size() > 0) {
-		htmlOut.println('<p style="margin-top: 50px;">Budgets of following domains/hosts have been changed in the current job :</p>')
-	}
-	htmlOut.println('<ul>')
-	modQueues.each { key, value ->
-		htmlOut.println('<li>'+key)
-		htmlOut.println('<input type="hidden" name="queueName" value="'+key+'"/>')
-		htmlOut.println('<input type="text" name="'+key+'-budget" style="width:100px" value="'+value+'"/></li>')
+        htmlOut.println('<p style="margin-top: 50px;">Budgets of following domains/hosts have been changed in the current job :</p>')
+    }
+    htmlOut.println('<ul>')
+    modQueues.each { key, value ->
+        htmlOut.println('<li>'+key)
+        htmlOut.println('<input type="hidden" name="queueName" value="'+key+'"/>')
+        htmlOut.println('<input type="text" name="'+key+'-budget" style="width:100px" value="'+value+'"/></li>')
 	}
 	htmlOut.println('</ul>')
 }

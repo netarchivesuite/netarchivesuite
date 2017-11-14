@@ -227,8 +227,7 @@ public class H3FrontierResource implements ResourceAbstract {
         StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), h3Job);
 
         masterTplBuilder.insertContent("Job " + jobId + " Frontier", menuSb.toString(), environment.generateLanguageLinks(locale),
-        		"Job " + jobId + " Frontier", sb.toString(),
-        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
+        		"Job " + jobId + " Frontier", sb.toString(), "").write(out);
 
         out.flush();
         out.close();

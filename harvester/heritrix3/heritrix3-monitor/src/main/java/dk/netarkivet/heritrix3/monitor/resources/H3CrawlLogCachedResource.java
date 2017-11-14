@@ -202,8 +202,7 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
         StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), h3Job);
 
         masterTplBuilder.insertContent("Job " + jobId + " Crawllog", menuSb.toString(), environment.generateLanguageLinks(locale),
-        		"Job " + jobId + " Crawllog", sb.toString(),
-        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
+        		"Job " + jobId + " Crawllog", sb.toString(), "").write(out);
 
         out.flush();
         out.close();

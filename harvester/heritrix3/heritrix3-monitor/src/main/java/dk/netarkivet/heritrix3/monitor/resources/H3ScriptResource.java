@@ -15,8 +15,6 @@ import org.netarchivesuite.heritrix3wrapper.ScriptResult;
 import com.antiaction.common.filter.Caching;
 import com.antiaction.common.templateengine.TemplateBuilderFactory;
 
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
@@ -119,8 +117,7 @@ public class H3ScriptResource implements ResourceAbstract {
 
         StringBuilder menuSb = scriptTplBuilder.buildMenu(new StringBuilder(), h3Job);
 
-        scriptTplBuilder.insertContent("Scripting console", menuSb.toString(), environment.generateLanguageLinks(locale), "Scripting console", scriptStr, sb.toString(),
-        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
+        scriptTplBuilder.insertContent("Scripting console", menuSb.toString(), environment.generateLanguageLinks(locale), "Scripting console", scriptStr, sb.toString(), "").write(out);
 
         out.flush();
         out.close();

@@ -131,7 +131,10 @@ public class H3JobResource implements ResourceAbstract {
             sb.append("Channel: ");
             sb.append(h3Job.job.getChannel());
             sb.append("<br />\n");
-            sb.append("TemplateName: <a href=\"/History/Harveststatus-download-job-harvest-template.jsp?JobID="+h3Job.jobId+"\">");
+            sb.append("TemplateName: <a href=\"");
+            sb.append("/History/Harveststatus-download-job-harvest-template.jsp?JobID=");
+            sb.append(h3Job.jobId);
+            sb.append("\">");
             sb.append(h3Job.job.getOrderXMLName());
             sb.append("</a><br />\n");
             sb.append("CountDomains: ");

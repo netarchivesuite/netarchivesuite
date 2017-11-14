@@ -13,11 +13,16 @@ import org.netarchivesuite.heritrix3wrapper.ByteRange;
 import org.netarchivesuite.heritrix3wrapper.Heritrix3Wrapper;
 import org.netarchivesuite.heritrix3wrapper.JobResult;
 import org.netarchivesuite.heritrix3wrapper.StreamResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 
 public class Heritrix3JobMonitor implements Pageable {
+
+    /** The logger for this class. */
+    private static final Logger LOG = LoggerFactory.getLogger(Heritrix3JobMonitorThread.class);
 
     protected NASEnvironment environment;
 
@@ -95,7 +100,15 @@ public class Heritrix3JobMonitor implements Pageable {
                 if (crawlLogFilePath != null) {
                     logRaf = new RandomAccessFile(logFile, "rw");
                     idxRaf = new RandomAccessFile(idxFile, "rw");
-                    idxRaf.writeLong(0);
+                    if (idxRaf.length() == 0) {
+                        idxRaf.writeLong(0);
+                    } else {
+                        idxRaf.seek(idxRaf.length() - 8);
+                        lastIndexed = idxRaf.readLong();
+                    	totalCachedLines = (idxRaf.length() / 8) - 1;
+                    }
+                    idxRaf.seek(idxRaf.length());
+                    logRaf.seek(logRaf.length());
                     bInitialized = true;
                 }
             }
@@ -138,33 +151,45 @@ public class Heritrix3JobMonitor implements Pageable {
                     pos = logRaf.length();
                     to = pos;
                     if (jobResult != null && jobResult.job != null && jobResult.job.crawlLogFilePath != null) {
-                        StreamResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, pos, pos + tmpBuf.length - 1);
-                        if (anypathResult != null && anypathResult.byteRange != null && anypathResult.in != null) {
-                            byteRange = anypathResult.byteRange;
-                            if (byteRange.contentLength > 0) {
-                                logRaf.seek(pos);
-                                int read;
-                                try {
-                                    while ((read = anypathResult.in.read(tmpBuf)) != -1) {
-                                        logRaf.write(tmpBuf, 0, read);
-                                        to += read;
-                                        idx = 0;
-                                        while (read > 0) {
-                                            ++pos;
-                                            --read;
-                                            if (tmpBuf[idx++] == '\n') {
-                                                idxRaf.writeLong(pos);
-                                                lastIndexed = pos;
-                                                totalCachedLines++;
+                    	long rangeFrom = pos;
+                    	long rangeTo = pos + tmpBuf.length - 1;
+                        StreamResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, null, null, true);
+                        LOG.info("Crawllog length for job {}={}.", jobId, anypathResult.contentLength);
+                        if (anypathResult != null && rangeFrom < anypathResult.contentLength) {
+                        	if (rangeTo > anypathResult.contentLength) {
+                        		rangeTo = anypathResult.contentLength;
+                        	}
+                        	anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, rangeFrom, rangeTo);
+                            LOG.info("Crawllog byterange download for job {}. ({}-{})", jobId, rangeFrom, rangeTo);
+                            if (anypathResult != null && anypathResult.byteRange != null && anypathResult.in != null) {
+                                byteRange = anypathResult.byteRange;
+                                if (byteRange.contentLength > 0) {
+                                    logRaf.seek(pos);
+                                    int read;
+                                    try {
+                                        while ((read = anypathResult.in.read(tmpBuf)) != -1) {
+                                            logRaf.write(tmpBuf, 0, read);
+                                            to += read;
+                                            idx = 0;
+                                            while (read > 0) {
+                                                ++pos;
+                                                --read;
+                                                if (tmpBuf[idx++] == '\n') {
+                                                    idxRaf.writeLong(pos);
+                                                    lastIndexed = pos;
+                                                    totalCachedLines++;
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                IOUtils.closeQuietly(anypathResult);
-                                if (byteRange.contentLength == to) {
+                                    catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    IOUtils.closeQuietly(anypathResult);
+                                    if (byteRange.contentLength == to) {
+                                        bLoop = false;
+                                    }
+                                } else {
                                     bLoop = false;
                                 }
                             } else {
