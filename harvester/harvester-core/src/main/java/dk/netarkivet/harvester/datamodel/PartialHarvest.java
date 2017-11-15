@@ -41,6 +41,7 @@ import java.util.Set;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -287,32 +288,30 @@ public class PartialHarvest extends HarvestDefinition {
      * @param maxObjects Maximum number of objects to harvest per domain
      * @param attributeValues  Attributes read from webpage
      * @see EventHarvestUtil#addConfigurations(PageContext, I18n, String) for details
+     * @return the list of invalid seeds found during this process.
      */
-    public void addSeeds(Set<String> seeds, String templateName, long maxBytes, int maxObjects, Map<String, String> attributeValues) {
+    public Set<String> addSeeds(Set<String> seeds, String templateName, long maxBytes, int maxObjects, Map<String, String> attributeValues) {
         ArgumentNotValid.checkNotNull(seeds, "seeds");
         ArgumentNotValid.checkNotNullOrEmpty(templateName, "templateName");
         if (!TemplateDAO.getInstance().exists(templateName)) {
             throw new UnknownID("No such template: " + templateName);
         }
-
+        Set<String> invalidSeeds = new HashSet<String>();
         Map<String, Set<String>> acceptedSeeds = new HashMap<String, Set<String>>();
-        StringBuilder invalidMessage = new StringBuilder("Unable to create an event harvest.\n"
-                + "The following seeds are invalid:\n");
-        boolean valid = true;
-        // validate:
-
+        
         for (String seed : seeds) {
-            boolean seedValid = processSeed(seed, invalidMessage, acceptedSeeds);
+            boolean seedValid = processSeed(seed, acceptedSeeds);
             if (!seedValid) {
-                valid = false;
+                invalidSeeds.add(seed);
             }
         }
 
-        if (!valid) {
-            throw new ArgumentNotValid(invalidMessage.toString());
+        if (invalidSeeds.size() > 0) {
+            log.warn("Found the following invalid seeds:" + StringUtils.join(invalidSeeds, ","));
         }
 
         addSeedsToDomain(templateName, maxBytes, maxObjects, acceptedSeeds, attributeValues);
+        return invalidSeeds;
     }
 
     /**
@@ -323,19 +322,16 @@ public class PartialHarvest extends HarvestDefinition {
      * @param maxBytes Maximum number of bytes to harvest per domain
      * @param maxObjects Maximum number of objects to harvest per domain
      */
-    public void addSeedsFromFile(File seedsFile, String templateName, long maxBytes, int maxObjects, Map<String,String> attributeValues) {
+    public Set<String> addSeedsFromFile(File seedsFile, String templateName, long maxBytes, int maxObjects, Map<String,String> attributeValues) {
         ArgumentNotValid.checkNotNull(seedsFile, "seeds");
         ArgumentNotValid.checkTrue(seedsFile.isFile(), "seedsFile does not exist");
         ArgumentNotValid.checkNotNullOrEmpty(templateName, "templateName");
         if (!TemplateDAO.getInstance().exists(templateName)) {
             throw new UnknownID("No such template: " + templateName);
         }
-
+        Set<String> invalidSeeds = new HashSet<String>();
         Map<String, Set<String>> acceptedSeeds = new HashMap<String, Set<String>>();
-        StringBuilder invalidMessage = new StringBuilder("Unable to create an event harvest.\n"
-                + "The following seeds are invalid:\n");
-        boolean valid = true;
-
+        
         // validate all the seeds in the file
         // those accepted are entered into the acceptedSeeds datastructure
 
@@ -345,9 +341,9 @@ public class PartialHarvest extends HarvestDefinition {
             seedIterator = new LineIterator(new FileReader(seedsFile));
             while (seedIterator.hasNext()) {
                 String seed = seedIterator.next();
-                boolean seedValid = processSeed(seed, invalidMessage, acceptedSeeds);
+                boolean seedValid = processSeed(seed, acceptedSeeds);
                 if (!seedValid) {
-                    valid = false;
+                    invalidSeeds.add(seed);
                 }
             }
         } catch (IOException e) {
@@ -355,23 +351,23 @@ public class PartialHarvest extends HarvestDefinition {
         } finally {
             LineIterator.closeQuietly(seedIterator);
         }
-
-        if (!valid) {
-            throw new ArgumentNotValid(invalidMessage.toString());
+        
+        if (invalidSeeds.size() > 0) {
+            log.warn("Found the following invalid seeds:" + StringUtils.join(invalidSeeds, ","));
         }
-
+        
         addSeedsToDomain(templateName, maxBytes, maxObjects, acceptedSeeds, attributeValues);
+        return invalidSeeds;
     }
 
     /**
      * Process each seed.
      *
      * @param seed The given seed.
-     * @param invalidMessage The message builder where the invalid seeds are added.
      * @param acceptedSeeds The set of accepted seeds
      * @return true, if the processed seed is valid or empty.
      */
-    private boolean processSeed(String seed, StringBuilder invalidMessage, Map<String, Set<String>> acceptedSeeds) {
+    private boolean processSeed(String seed, Map<String, Set<String>> acceptedSeeds) {
         seed = seed.trim();
         if (seed.length() != 0 && !seed.startsWith("#") && !seed.startsWith("//")) { // ignore empty lines and comments
             
@@ -382,15 +378,11 @@ public class PartialHarvest extends HarvestDefinition {
             try {
                 url = new URL(seed);
             } catch (MalformedURLException e) {
-                invalidMessage.append(seed);
-                invalidMessage.append('\n');
                 return false;
             }
             String host = url.getHost();
             String domainName = DomainUtils.domainNameFromHostname(host);
             if (domainName == null) {
-                invalidMessage.append(seed);
-                invalidMessage.append('\n');
                 return false;
             }
 

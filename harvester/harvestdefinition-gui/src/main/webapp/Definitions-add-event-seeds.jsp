@@ -61,7 +61,8 @@ harvest.
                  org.apache.commons.fileupload.FileItemFactory,
                  org.apache.commons.fileupload.disk.DiskFileItemFactory,
                  org.apache.commons.fileupload.servlet.ServletFileUpload,
-                 org.apache.commons.fileupload.FileItem,dk.netarkivet.harvester.webinterface.EventHarvestUtil,
+                 org.apache.commons.fileupload.FileItem,
+                 dk.netarkivet.harvester.webinterface.EventHarvestUtil,
                  dk.netarkivet.harvester.datamodel.eav.EAV,
                  dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType,
                  com.antiaction.raptor.dao.AttributeTypeBase,
@@ -152,33 +153,33 @@ harvest.
     String harvestComments = hddao.getSparsePartialHarvest(
     	harvestName).getComments();
     
-    if (update != null && update.length() > 0) {
-        try {
-            if (!isMultiPart) {
-			  	EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName);
-			} else {
-				if (!seedsFileName.isEmpty()) { // File exist 		
-					if (seedsFile.length() > 0) { // and has size > 0
-						EventHarvestUtil.addConfigurationsFromSeedsFile(
-							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
-							maxobjectsString, maxrateString, orderTemplateString, attributeMap);
-					}
-				} else {
-					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                	"errormsg;no.seedsfile.was.uploaded");
-        			return;
-        		}
-			}
-        } catch (ForwardedToErrorPage e) {
-            HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                    "errormsg;error.adding.seeds.to.0", harvestName, e);
-            return;
-        }
-        response.sendRedirect("Definitions-edit-selective-harvest.jsp?"
-                + Constants.HARVEST_PARAM + "="
-                + HTMLUtils.encode(harvestName));
-        return;
-    }
+//     if (update != null && update.length() > 0) {
+//         try {
+//             if (!isMultiPart) {
+// 			  	EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName);
+// 			} else {
+// 				if (!seedsFileName.isEmpty()) { // File exist 		
+// 					if (seedsFile.length() > 0) { // and has size > 0
+// 						EventHarvestUtil.addConfigurationsFromSeedsFile(
+// 							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
+// 							maxobjectsString, maxrateString, orderTemplateString, attributeMap);
+// 					}
+// 				} else {
+// 					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+//                 	"errormsg;no.seedsfile.was.uploaded");
+//         			return;
+//         		}
+// 			}
+//         } catch (ForwardedToErrorPage e) {
+//             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+//                     "errormsg;error.adding.seeds.to.0", harvestName, e);
+//             return;
+//         }
+//         response.sendRedirect("Definitions-edit-selective-harvest.jsp?"
+//                 + Constants.HARVEST_PARAM + "="
+//                 + HTMLUtils.encode(harvestName));
+//         return;
+//     }
     HTMLUtils.generateHeader(pageContext);%>
 
 <h2><fmt:message key="prompt;event.harvest"/>
@@ -193,12 +194,15 @@ the user
     <%=HTMLUtils.escapeHtmlValues(harvestComments)%>
 </div>
 
-<form action="Definitions-add-event-seeds.jsp" 
+<!-- <form action="Definitions-add-event-seeds.jsp" -->
+ <form action="Definitions-edit-selective-harvest.jsp"
+
 <% if (usingFileMode) { %>enctype="multipart/form-data" <%} %> method="post">
 
     <input type="hidden" name="<%= Constants.UPDATE_PARAM %>" value="1"/>
     <input type="hidden" name="<%= Constants.HARVEST_PARAM %>"
-           value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"/>
+           value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"/>        
+    <input type="hidden" name="<%= Constants.ADD_SEEDS_PARAM %>" value="1"/>
            
     <%--Setting of these variables is not currently supported in the system so we
      just use default values as placeholders for a future upgrade --%>

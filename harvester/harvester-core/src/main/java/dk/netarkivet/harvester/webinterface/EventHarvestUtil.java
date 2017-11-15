@@ -26,6 +26,7 @@ package dk.netarkivet.harvester.webinterface;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -73,13 +74,15 @@ public final class EventHarvestUtil {
      * @param context the current JSP context
      * @param i18n the translation information to use in this context
      * @param eventHarvestName The name of the partial harvest to which these seeds are to be added
+     * @param illegalSeeds A (possibly empty) list of invalidSeeds found
      * @throws ForwardedToErrorPage If maxBytes is not a number, or if any of the seeds is badly formatted such that no
      * domain name can be parsed from it, or if orderTemplate is not given or unknown.
      */
-    public static void addConfigurations(PageContext context, I18n i18n, String eventHarvestName) {
+    public static void addConfigurations(PageContext context, I18n i18n, String eventHarvestName, List<String> illegalSeeds) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         ArgumentNotValid.checkNotNull(eventHarvestName, "String eventHarvestName");
+        ArgumentNotValid.checkNotNull(illegalSeeds, "List<String> illegalSeeds");
 
         HTMLUtils.forwardOnMissingParameter(context, Constants.SEEDS_PARAM);
         ServletRequest request = context.getRequest();
@@ -127,7 +130,9 @@ public final class EventHarvestUtil {
         try {
             PartialHarvest eventHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(
                     eventHarvestName);
-            eventHarvest.addSeeds(seedSet, orderTemplate, maxBytes, maxObjects, attributeValues);
+            Set<String> illegalSeedsFound = eventHarvest.addSeeds(seedSet, orderTemplate, maxBytes, maxObjects, attributeValues);
+            illegalSeeds.addAll(illegalSeedsFound);            
+            
         } catch (Exception e) {
             log.error("Unexpected exception thrown", e);
             HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;error.adding.seeds.to.0", eventHarvestName, e);
@@ -147,14 +152,16 @@ public final class EventHarvestUtil {
      * @param maxrateString The given maxrate as a string (currently not used)
      * @param ordertemplate The name of the ordertemplate to use
      * @param attributes A list of attributes and form values
+     * @param illegalSeeds A (possibly empty) list of invalidSeeds found 
      */
     public static void addConfigurationsFromSeedsFile(PageContext context, I18n i18n, String eventHarvestName,
-            File seeds, String maxbytesString, String maxobjectsString, String maxrateString, String ordertemplate, Map<String,String> attributes) {
+            File seeds, String maxbytesString, String maxobjectsString, String maxrateString, String ordertemplate, Map<String,String> attributes, List<String> illegalSeeds) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         ArgumentNotValid.checkNotNullOrEmpty(eventHarvestName, "String eventHarvestName");
         ArgumentNotValid.checkNotNull(seeds, "String seeds");
         ArgumentNotValid.checkNotNull(ordertemplate, "String ordertemplate");
+        ArgumentNotValid.checkNotNull(illegalSeeds, "List<String> illegalSeeds");
 
         long maxBytes = 0L;
         int maxObjects = 0;
@@ -193,7 +200,8 @@ public final class EventHarvestUtil {
             PartialHarvest eventHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(
                     eventHarvestName);
             
-            eventHarvest.addSeedsFromFile(seeds, ordertemplate, maxBytes, maxObjects, attributes);
+            Set<String> illegalSeedsFound = eventHarvest.addSeedsFromFile(seeds, ordertemplate, maxBytes, maxObjects, attributes);
+            illegalSeeds.addAll(illegalSeedsFound); 
         } catch (Exception e) {
             log.error("Unexpected exception thrown", e);
             HTMLUtils

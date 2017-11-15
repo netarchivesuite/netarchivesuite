@@ -74,6 +74,9 @@ DomainConfigurations are posted as pairs
 
 --%><%@ page import="java.util.ArrayList,
                  java.util.List,
+                 java.util.HashMap,
+                 java.util.Map,
+                 java.util.Set,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.utils.StringUtils,
@@ -87,7 +90,16 @@ DomainConfigurations are posted as pairs
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.SelectiveHarvestUtil,
-                 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes"
+                 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes,
+                 org.apache.commons.fileupload.FileItemFactory,
+                 org.apache.commons.fileupload.disk.DiskFileItemFactory,
+                 org.apache.commons.fileupload.servlet.ServletFileUpload,
+                 org.apache.commons.fileupload.FileItem,
+                 dk.netarkivet.harvester.webinterface.EventHarvestUtil,
+                 dk.netarkivet.harvester.datamodel.eav.EAV,
+                 dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType,
+                 com.antiaction.raptor.dao.AttributeTypeBase,
+                 com.antiaction.raptor.dao.AttributeBase"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -95,31 +107,44 @@ DomainConfigurations are posted as pairs
 <%!private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%>
   	<%HTMLUtils.setUTF8(request);
-
+  	String SAVE_PARAM_ARG = request.getParameter(Constants.SAVE_PARAM); // remember the SAVE_PARAM
+  	String harvestName = request.getParameter(Constants.HARVEST_PARAM); // remember the HARVEST_PARAM
+  	
     HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
     // Update all relevant HD data from request, some results are saved in
     // string buffers
     List<String> unknownDomains = new ArrayList<String>();
     List<String> illegalDomains = new ArrayList<String>();
+    List<String> illegalSeeds = new ArrayList<String>(); // produced by EventHarvestUtils.addconfigurations
+    String ADD_SEEDS_PARAM = request.getParameter(Constants.ADD_SEEDS_PARAM);
     try {
-        SelectiveHarvestUtil.processRequest(pageContext, I18N,
-                unknownDomains, illegalDomains);
+    	if (ADD_SEEDS_PARAM == null) { 
+        	SelectiveHarvestUtil.processRequest(pageContext, I18N,
+                	unknownDomains, illegalDomains);
+    	} else {
+    		boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
+    		if (!isMultiPart){
+    			 Map<String,String> attributeMap = new HashMap<String,String>(); 
+    			 Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
+    			 EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
+    		}
+    	}
+        
     } catch (ForwardedToErrorPage e) {
         return;
     }
 
     //Redirect if we just saved the HD
-    if (request.getParameter(Constants.SAVE_PARAM) != null) {
+    if (SAVE_PARAM_ARG != null) {
         response.sendRedirect("Definitions-selective-harvests.jsp");
         return;
     }
 
-    // Preload default parameter values
+    // Preload default parameter values 
     SparsePartialHarvest hdd = null;
 
     // Now, unless we are creating a new definition from scratch, we read in the
     // current values from the dao
-    String harvestName = request.getParameter(Constants.HARVEST_PARAM);
     if (harvestName != null) {
         hdd = hddao.getSparsePartialHarvest(harvestName);
         if (hdd == null) {
@@ -269,8 +294,6 @@ int extendedFieldType = ExtendedFieldTypes.HARVESTDEFINITION;
 <%@ include file="extendedfields_element.jspf" %>
 
 
-
-
 <%
 }
 
@@ -392,6 +415,28 @@ if (hdd != null) {
         <td>
             <textarea rows="<%= illegalDomains.size()%>" cols="30"><%=
                 HTMLUtils.escapeHtmlValues(StringUtils.conjoin("\n", illegalDomains))
+            %></textarea>
+        </td>
+    </tr>
+</table>
+<%
+    }
+%>
+<%
+
+  if (illegalSeeds.size() > 0) {
+%>
+<br/>
+<table class="selection_table">
+    <tr>
+        <th>
+            <fmt:message key="illegal.seeds.not.addable"/> <!--  FIXME add this key -->
+        </th>
+    </tr>
+    <tr>
+        <td>
+            <textarea rows="<%= illegalSeeds.size()%>" cols="30"><%=
+                HTMLUtils.escapeHtmlValues(StringUtils.conjoin("\n", illegalSeeds))
             %></textarea>
         </td>
     </tr>
