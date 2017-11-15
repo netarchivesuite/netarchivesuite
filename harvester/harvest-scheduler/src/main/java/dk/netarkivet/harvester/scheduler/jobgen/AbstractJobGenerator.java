@@ -93,7 +93,13 @@ abstract class AbstractJobGenerator implements JobGenerator {
             Collections.sort(subset, domainConfigurationSubsetComparator);
             log.trace("{} domainconfigs now sorted and ready to processing for harvest #{}", subset.size(),
                     harvest.getOid());
+            if (subset.size() == 0) {
+                log.warn("Processing a domain config subset of zero size for HD #{}.", harvest.getOid());
+            }
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
+            if (jobsMade == 0) {
+                log.warn("Created 0 jobs for HD #{} from domain cfg subset size {}.", harvest.getOid(), subset.size());
+            }
         }
 
         if (!harvest.isSnapShot()) {
