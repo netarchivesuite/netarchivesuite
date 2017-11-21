@@ -77,9 +77,11 @@ DomainConfigurations are posted as pairs
                  java.util.HashMap,
                  java.util.Map,
                  java.util.Set,
+                 java.io.File,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.utils.StringUtils,
+                 dk.netarkivet.common.utils.FileUtils,  
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
@@ -118,21 +120,67 @@ DomainConfigurations are posted as pairs
     List<String> illegalSeeds = new ArrayList<String>(); // produced by EventHarvestUtils.addconfigurations
     String ADD_SEEDS_PARAM = request.getParameter(Constants.ADD_SEEDS_PARAM);
     try {
-    	if (ADD_SEEDS_PARAM == null) { 
+		if (ADD_SEEDS_PARAM == null) { 
         	SelectiveHarvestUtil.processRequest(pageContext, I18N,
                 	unknownDomains, illegalDomains);
     	} else {
-    		boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
-    		if (!isMultiPart){
-    			 Map<String,String> attributeMap = new HashMap<String,String>(); 
-    			 Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
-    			 EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
+			boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
+    		Map<String,String> attributeMap = new HashMap<String,String>(); 
+			Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
+			if (!isMultiPart){
+				EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
+    		} else {
+    			
+    			File seedsFile = File.createTempFile("seeds", ".txt", FileUtils.getTempDir());
+    			EventHarvestUtil.processMultidataForm((PageContext) pageContext, seedsFile, attributeMap);
+    			if (seedsFile.length() > 0) {
+    				String maxbytesString = attributeMap.get(Constants.MAX_BYTES_PARAM);
+					String maxobjectsString = attributeMap.get(Constants.MAX_OBJECTS_PARAM);
+					String maxrateString = attributeMap.get(Constants.MAX_RATE_PARAM);
+					String orderTemplateString = attributeMap.get(Constants.ORDER_TEMPLATE_PARAM);
+					EventHarvestUtil.addConfigurationsFromSeedsFile(
+ 							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
+ 							maxobjectsString, maxrateString, orderTemplateString, attributeMap, illegalSeeds);
+ 				} else {
+ 					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+                 	"errormsg;no.seedsfile.was.uploaded");
+         			return;
+         		}    			 		
     		}
     	}
-        
-    } catch (ForwardedToErrorPage e) {
+	} catch (ForwardedToErrorPage e) {
         return;
     }
+    
+//     try {
+//     	if (ADD_SEEDS_PARAM == null) { 
+//         	SelectiveHarvestUtil.processRequest(pageContext, I18N,
+//                 	unknownDomains, illegalDomains);
+//     	} else {
+//     		boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
+//     		Map<String,String> attributeMap = new HashMap<String,String>(); 
+// 			Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
+//     		if (!isMultiPart){
+//     			 EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
+//     		} else {
+//     			File seedsFile = File.createTempFile("seeds", ".txt", FileUtils.getTempDir());
+//     			EventHarvestUtil.processMultidataForm(pageContext, seedsFile, attributeMap);
+//     			if (seedsFile.length() > 0) {
+//     				EventHarvestUtil.addConfigurationsFromSeedsFile(
+//  							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
+//  							maxobjectsString, maxrateString, orderTemplateString, attributeMap);
+//  					}
+//  				} else {
+//  					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+//                  	"errormsg;no.seedsfile.was.uploaded");
+//          			return;
+//          		}    			 		
+//     		}
+//     	}
+        
+//     } catch (ForwardedToErrorPage e) {
+//         return;
+//     }
 
     //Redirect if we just saved the HD
     if (SAVE_PARAM_ARG != null) {
@@ -430,12 +478,12 @@ if (hdd != null) {
 <table class="selection_table">
     <tr>
         <th>
-            <fmt:message key="illegal.seeds.not.addable"/> <!--  FIXME add this key -->
+            <fmt:message key="illegal.seeds.not.addable"/>
         </th>
     </tr>
     <tr>
         <td>
-            <textarea rows="<%= illegalSeeds.size()%>" cols="30"><%=
+            <textarea rows="<%= illegalSeeds.size()%>" cols="150"><%=
                 HTMLUtils.escapeHtmlValues(StringUtils.conjoin("\n", illegalSeeds))
             %></textarea>
         </td>

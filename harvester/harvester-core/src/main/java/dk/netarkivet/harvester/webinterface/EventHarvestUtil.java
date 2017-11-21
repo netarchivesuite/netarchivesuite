@@ -32,8 +32,13 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +63,45 @@ public final class EventHarvestUtil {
      */
     private EventHarvestUtil() {
     }
-
+    
+    public static void processMultidataForm(PageContext context, File seedsFile, Map<String,String> attributeMap) throws Exception {
+    	// Create a factory for disk-based file items
+    	FileItemFactory factory = new DiskFileItemFactory();
+		// Create a new file upload handler
+   		ServletFileUpload upload = new ServletFileUpload(factory);
+        // As the parsing of the formdata has the sideeffect of removing the
+        // formdata from the request(!), we have to extract all possible data
+        // the first time around.
+   		Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
+   		ServletRequest request = context.getRequest();
+        List items = upload.parseRequest((HttpServletRequest)request);
+        for (Object o : items) {
+        	FileItem item = (FileItem) o;
+            String fieldName = item.getFieldName();
+            if (fieldName.equals(Constants.HARVEST_PARAM)) {
+            	attributeMap.put(fieldName, item.getString());
+          	} else if (fieldName.equals(Constants.UPDATE_PARAM)) {
+          		attributeMap.put(fieldName, item.getString());
+            } else if (fieldName.equals(Constants.MAX_BYTES_PARAM)) {
+            	attributeMap.put(fieldName, item.getString());
+            } else if (fieldName.equals(Constants.MAX_OBJECTS_PARAM)) {
+            	attributeMap.put(fieldName, item.getString());
+            } else if (fieldName.equals(Constants.MAX_RATE_PARAM)) {
+            	attributeMap.put(fieldName, item.getString());             
+            } else if (fieldName.equals(Constants.ORDER_TEMPLATE_PARAM)) {
+            	attributeMap.put(fieldName, item.getString());
+            } else if (fieldName.equals(Constants.UPLOAD_FILE_PARAM)) {
+              	item.write(seedsFile);
+              	attributeMap.put(fieldName, item.getName());
+            } 
+             // else-if for the attribute values 
+             else if (attributeNames.contains(fieldName)) {
+                 attributeMap.put(fieldName, item.getString());
+             }
+       	}
+    }
+    
+    
     /**
      * Adds a bunch of configurations to a given PartialHarvest. For full definitions of the parameters, see
      * Definitions-add-event-seeds.jsp. For each seed in the list, the following steps are taken: 1) The domain is

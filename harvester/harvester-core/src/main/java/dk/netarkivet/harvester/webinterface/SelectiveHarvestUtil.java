@@ -32,7 +32,6 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.DomainUtils;
@@ -330,4 +329,10 @@ public final class SelectiveHarvestUtil {
             return false;
         }
     }
+
+	public static void processRequest(Object pageContext, String i18n,
+			List<String> unknownDomains, List<String> illegalDomains) {
+		// TODO Auto-generated method stub
+		
+	}
 }
