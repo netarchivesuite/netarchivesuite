@@ -50,7 +50,6 @@ harvest.
                  java.util.Map,
                  java.io.File,
                  java.util.Set,
-                 dk.netarkivet.common.utils.FileUtils,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
@@ -58,11 +57,6 @@ harvest.
                  dk.netarkivet.harvester.datamodel.PartialHarvest,
                  dk.netarkivet.harvester.datamodel.TemplateDAO,
                  dk.netarkivet.harvester.webinterface.Constants,
-                 org.apache.commons.fileupload.FileItemFactory,
-                 org.apache.commons.fileupload.disk.DiskFileItemFactory,
-                 org.apache.commons.fileupload.servlet.ServletFileUpload,
-                 org.apache.commons.fileupload.FileItem,
-                 dk.netarkivet.harvester.webinterface.EventHarvestUtil,
                  dk.netarkivet.harvester.datamodel.eav.EAV,
                  dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType,
                  com.antiaction.raptor.dao.AttributeTypeBase,
@@ -73,60 +67,9 @@ harvest.
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%><%HTMLUtils.setUTF8(request);
     
-    boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
-    String harvestName = null;
-    String mode = null;
-    String update = null;
-    // These fields are necessary
-    File seedsFile = File.createTempFile("seeds", ".txt", 
-                    FileUtils.getTempDir());
-    String maxbytesString = null;
-    String maxobjectsString = null;
-    String orderTemplateString = null;
-    String maxrateString = null;
-    String seedsFileName = "";
-    Map<String,String> attributeMap = new HashMap<String,String>(); 
-    Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
-    
-    if (isMultiPart) {
-    	// Create a factory for disk-based file items
-    	FileItemFactory factory = new DiskFileItemFactory();
-		// Create a new file upload handler
-   		ServletFileUpload upload = new ServletFileUpload(factory);
-        // As the parsing of the formdata has the sideeffect of removing the
-        // formdata from the request(!), we have to extract all possible data
-        // the first time around.
-        List items = upload.parseRequest(request);
-        for (Object o : items) {
-        	FileItem item = (FileItem) o;
-            String fieldName = item.getFieldName();
-            if (fieldName.equals(Constants.HARVEST_PARAM)) {
-            	harvestName = item.getString();
-          	} else if (fieldName.equals(Constants.UPDATE_PARAM)) {
-           		update = item.getString();
-            } else if (fieldName.equals(Constants.MAX_BYTES_PARAM)) {
-           		maxbytesString = item.getString();
-            } else if (fieldName.equals(Constants.MAX_OBJECTS_PARAM)) {
-          		maxobjectsString = item.getString();
-            } else if (fieldName.equals(Constants.MAX_RATE_PARAM)) {
-               	maxrateString = item.getString();             
-            } else if (fieldName.equals(Constants.ORDER_TEMPLATE_PARAM)) {
-             	orderTemplateString = item.getString();
-            } else if (fieldName.equals(Constants.UPLOAD_FILE_PARAM)) {
-              	item.write(seedsFile);
-           		seedsFileName = item.getName();
-            } 
-             // else-if for the attribute values 
-             else if (attributeNames.contains(fieldName)) {
-                 attributeMap.put(fieldName, item.getString());
-             }            
-       	}
-    } else {
-    	harvestName = request.getParameter(Constants.HARVEST_PARAM);
-    	mode = request.getParameter(Constants.FROM_FILE_PARAM);
-    	update = request.getParameter(Constants.UPDATE_PARAM);
-    }
-    	
+    String harvestName = request.getParameter(Constants.HARVEST_PARAM);
+    String mode = request.getParameter(Constants.FROM_FILE_PARAM);
+
     if (harvestName == null) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                 "errormsg;missing.parameter.0",
@@ -150,36 +93,8 @@ harvest.
         return;
     }
     // Should we test, that this is in fact a PartialHarvest?
-    String harvestComments = hddao.getSparsePartialHarvest(
-    	harvestName).getComments();
+    String harvestComments = hddao.getSparsePartialHarvest(harvestName).getComments();
     
-//     if (update != null && update.length() > 0) {
-//         try {
-//             if (!isMultiPart) {
-// 			  	EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName);
-// 			} else {
-// 				if (!seedsFileName.isEmpty()) { // File exist 		
-// 					if (seedsFile.length() > 0) { // and has size > 0
-// 						EventHarvestUtil.addConfigurationsFromSeedsFile(
-// 							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
-// 							maxobjectsString, maxrateString, orderTemplateString, attributeMap);
-// 					}
-// 				} else {
-// 					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-//                 	"errormsg;no.seedsfile.was.uploaded");
-//         			return;
-//         		}
-// 			}
-//         } catch (ForwardedToErrorPage e) {
-//             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-//                     "errormsg;error.adding.seeds.to.0", harvestName, e);
-//             return;
-//         }
-//         response.sendRedirect("Definitions-edit-selective-harvest.jsp?"
-//                 + Constants.HARVEST_PARAM + "="
-//                 + HTMLUtils.encode(harvestName));
-//         return;
-//     }
     HTMLUtils.generateHeader(pageContext);%>
 
 <h2><fmt:message key="prompt;event.harvest"/>
@@ -194,7 +109,6 @@ the user
     <%=HTMLUtils.escapeHtmlValues(harvestComments)%>
 </div>
 
-<!-- <form action="Definitions-add-event-seeds.jsp" -->
  <form action="Definitions-edit-selective-harvest.jsp"
 
 <% if (usingFileMode) { %>enctype="multipart/form-data" <%} %> method="post">

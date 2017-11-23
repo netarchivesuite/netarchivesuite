@@ -24,6 +24,7 @@
 package dk.netarkivet.harvester.webinterface;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
+import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
@@ -64,11 +66,49 @@ public final class EventHarvestUtil {
     private EventHarvestUtil() {
     }
     
+    public static void processAddSeeds(PageContext pageContext, boolean isMultiPart, I18n I18N, String harvestName, List<String> illegalSeeds, Map<String,String> attributeMap) throws IOException {
+    	log.info("Initiating processAddSeeds method");
+    	HTMLUtils.log(EventHarvestUtil.class.getName(), "Initiating processAddSeeds method");
+    	if (!isMultiPart){
+    		EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
+    	} else {
+    		File seedsFile = File.createTempFile("seeds", ".txt", FileUtils.getTempDir());
+    		try {
+				EventHarvestUtil.processMultidataForm(pageContext, seedsFile, attributeMap);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				log.info("Throws unexpected exception", e);
+				HTMLUtils.log(EventHarvestUtil.class.getName(), "Throws unexpected exception" + e);
+				
+			}
+    		if (seedsFile.length() > 0) {
+    			String maxbytesString = attributeMap.get(Constants.MAX_BYTES_PARAM);
+    			String maxobjectsString = attributeMap.get(Constants.MAX_OBJECTS_PARAM);
+    			String maxrateString = attributeMap.get(Constants.MAX_RATE_PARAM);
+    			String orderTemplateString = attributeMap.get(Constants.ORDER_TEMPLATE_PARAM);
+    			EventHarvestUtil.addConfigurationsFromSeedsFile(
+    					pageContext, I18N, harvestName, seedsFile, maxbytesString, 
+    					maxobjectsString, maxrateString, orderTemplateString, attributeMap, illegalSeeds);
+    		} else {
+    			log.warn("no file was uploaded");
+    			HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+    					"errormsg;no.seedsfile.was.uploaded");
+    			return;
+    		}    			 		
+    	}
+    	log.info("Finishing processAddSeeds method");
+    	HTMLUtils.log(EventHarvestUtil.class.getName(), "Finishing processAddSeeds method");
+
+    }
+    
+    
+    
     public static void processMultidataForm(PageContext context, File seedsFile, Map<String,String> attributeMap) throws Exception {
     	// Create a factory for disk-based file items
     	FileItemFactory factory = new DiskFileItemFactory();
 		// Create a new file upload handler
    		ServletFileUpload upload = new ServletFileUpload(factory);
+   		log.info("starting processMultidataForm ");
         // As the parsing of the formdata has the sideeffect of removing the
         // formdata from the request(!), we have to extract all possible data
         // the first time around.

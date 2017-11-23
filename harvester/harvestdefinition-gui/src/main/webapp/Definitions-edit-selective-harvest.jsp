@@ -119,7 +119,7 @@ DomainConfigurations are posted as pairs
     List<String> illegalDomains = new ArrayList<String>();
     List<String> illegalSeeds = new ArrayList<String>(); // produced by EventHarvestUtils.addconfigurations
     String ADD_SEEDS_PARAM = request.getParameter(Constants.ADD_SEEDS_PARAM);
-    try {
+    //try {
 		if (ADD_SEEDS_PARAM == null) { 
         	SelectiveHarvestUtil.processRequest(pageContext, I18N,
                 	unknownDomains, illegalDomains);
@@ -127,30 +127,32 @@ DomainConfigurations are posted as pairs
 			boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
     		Map<String,String> attributeMap = new HashMap<String,String>(); 
 			Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
-			if (!isMultiPart){
-				EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
-    		} else {
-    			
-    			File seedsFile = File.createTempFile("seeds", ".txt", FileUtils.getTempDir());
-    			EventHarvestUtil.processMultidataForm((PageContext) pageContext, seedsFile, attributeMap);
-    			if (seedsFile.length() > 0) {
-    				String maxbytesString = attributeMap.get(Constants.MAX_BYTES_PARAM);
-					String maxobjectsString = attributeMap.get(Constants.MAX_OBJECTS_PARAM);
-					String maxrateString = attributeMap.get(Constants.MAX_RATE_PARAM);
-					String orderTemplateString = attributeMap.get(Constants.ORDER_TEMPLATE_PARAM);
-					EventHarvestUtil.addConfigurationsFromSeedsFile(
- 							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
- 							maxobjectsString, maxrateString, orderTemplateString, attributeMap, illegalSeeds);
- 				} else {
- 					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                 	"errormsg;no.seedsfile.was.uploaded");
-         			return;
-         		}    			 		
-    		}
+			EventHarvestUtil.processAddSeeds(pageContext, isMultiPart, I18N, harvestName, illegalSeeds, attributeMap);
+			
+// 			if (!isMultiPart){
+// 				EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
+//     		} else {
+//     			File seedsFile = File.createTempFile("seeds", ".txt", FileUtils.getTempDir());
+//     			EventHarvestUtil.processMultidataForm(pageContext, seedsFile, attributeMap);
+//     			if (seedsFile.length() > 0) {
+//     				String maxbytesString = attributeMap.get(Constants.MAX_BYTES_PARAM);
+// 					String maxobjectsString = attributeMap.get(Constants.MAX_OBJECTS_PARAM);
+// 					String maxrateString = attributeMap.get(Constants.MAX_RATE_PARAM);
+// 					String orderTemplateString = attributeMap.get(Constants.ORDER_TEMPLATE_PARAM);
+// 					EventHarvestUtil.addConfigurationsFromSeedsFile(
+//  							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
+//  							maxobjectsString, maxrateString, orderTemplateString, attributeMap, illegalSeeds);
+//  				} else {
+//  					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+//                  	"errormsg;no.seedsfile.was.uploaded");
+//          			return;
+//          		}    			 		
+//     		}
     	}
-	} catch (ForwardedToErrorPage e) {
-        return;
-    }
+	//} catch (ForwardedToErrorPage e) {
+	//	System.err.println(e);
+    //    return;
+    //}
     
 //     try {
 //     	if (ADD_SEEDS_PARAM == null) { 
@@ -179,6 +181,7 @@ DomainConfigurations are posted as pairs
 //     	}
         
 //     } catch (ForwardedToErrorPage e) {
+	
 //         return;
 //     }
 
