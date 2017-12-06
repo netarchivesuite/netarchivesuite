@@ -211,9 +211,9 @@ public class NASEnvironment {
      */
     public List<String> getCrawledUrls(long jobId, Heritrix3JobMonitor h3Job) {
         if (h3Job == null) {
-            h3Job = h3JobMonitorThread.getRunningH3Job(jobId);
+            h3Job = h3JobMonitorThread.getRunningH3Job(jobId);  // TODO this becomes null, fix it
         }
-        String crawlLogPath = h3Job.crawlLogFilePath;
+        String crawlLogPath = h3Job.crawlLogFilePath;  // TODO this results in a NullPointerException, fix it
 
         List<String> crawledUrls = new ArrayList<>();
         try (

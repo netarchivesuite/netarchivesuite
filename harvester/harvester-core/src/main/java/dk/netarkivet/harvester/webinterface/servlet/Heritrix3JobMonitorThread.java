@@ -109,15 +109,23 @@ public class Heritrix3JobMonitorThread implements Runnable {
             while (!bExit) {
                 Set<Long> runningJobs = getRunningJobs();
                 if (runningJobs != null) {
-                    Iterator<Long> jobidIter = runningJobs.iterator();
                     Heritrix3JobMonitor jobmonitor;
+
+
+
+                    Iterator<Long> jobidIter = runningJobs.iterator();
                     synchronized (runningJobMonitorMapSynchronizer) {
                         filterJobMonitorMap.clear();
+
+                        // For all running jobs..
                         while (jobidIter.hasNext()) {
                             Long jobId = jobidIter.next();
+
                             if (jobId != null) {
                                 jobmonitor = runningJobMonitorMap.remove(jobId);
                                 if (jobmonitor == null) {
+                                    // Either jobId was not in runningJobMonitorMap, or the jobmonitor for key jobId
+                                    // was itself null. Either way, the jobmonitor for jobId could not be found.
                                     try {
                                         // New H3 job.
                                         jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId, environment);
@@ -128,10 +136,15 @@ public class Heritrix3JobMonitorThread implements Runnable {
                                 filterJobMonitorMap.put(jobId, jobmonitor);
                             }
                         }
+
+                        // Swap filterJobMonitorMap and runningJobMonitorMap
                         tmpJobMonitorMap = filterJobMonitorMap;
                         filterJobMonitorMap = runningJobMonitorMap;
                         runningJobMonitorMap = tmpJobMonitorMap;
                     }
+
+
+
                     jobmonitorIter = filterJobMonitorMap.values().iterator();
                     while (jobmonitorIter.hasNext()) {
                         jobmonitor = jobmonitorIter.next();
