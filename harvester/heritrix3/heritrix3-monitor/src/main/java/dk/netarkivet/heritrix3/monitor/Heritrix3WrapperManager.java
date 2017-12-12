@@ -32,6 +32,7 @@ public class Heritrix3WrapperManager {
                         if ("https".equalsIgnoreCase(scheme)) {
                             port = 443;
                         } else {
+                        	// Assume schema is http.
                             port = 80;
                         }
                     }

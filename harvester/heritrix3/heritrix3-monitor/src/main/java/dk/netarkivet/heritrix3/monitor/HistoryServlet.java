@@ -197,7 +197,6 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
             out.write( sb.toString().getBytes( "UTF-8" ) );
             out.flush();
             out.close();
-            //resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, sb.toString());
         }
     }
 

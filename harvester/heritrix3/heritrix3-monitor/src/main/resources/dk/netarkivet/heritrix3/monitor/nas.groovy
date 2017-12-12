@@ -99,6 +99,7 @@ void listFrontier(String regex, long itemsPerPage, long page) {
                 }
             }
             */
+            matchingCount = totalCachedLines
             while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < tIdx) {
                 if (value.getData().length == 0) {
                     continue

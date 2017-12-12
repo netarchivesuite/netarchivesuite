@@ -19,7 +19,10 @@ import com.antiaction.common.templateengine.TemplateBuilderFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
+import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitorThread;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
@@ -78,8 +81,18 @@ public class H3JobResource implements ResourceAbstract {
             h3Job.init();
         }
 
+        String action = req.getParameter("action");
+        if (action != null && action.length() > 0) {
+            if ("failed".equalsIgnoreCase(action)) {
+            	dk.netarkivet.harvester.datamodel.Job nasJob = Heritrix3JobMonitorThread.jobDAO.read(jobId);
+            	if (nasJob != null && (h3Job == null || !h3Job.isReady())) {
+            		nasJob.setStatus(JobStatus.FAILED);
+                    Heritrix3JobMonitorThread.jobDAO.update(nasJob);
+            	}
+            }
+        }
+
         if (h3Job != null && h3Job.isReady()) {
-            String action = req.getParameter("action");
             if (action != null && action.length() > 0) {
                 if ("build".equalsIgnoreCase(action)) {
                     h3Job.h3wrapper.buildJobConfiguration(h3Job.jobname);
@@ -103,6 +116,8 @@ public class H3JobResource implements ResourceAbstract {
                     h3Job.h3wrapper.teardownJob(h3Job.jobname);
                 }
             }
+
+            //job.setStatus(JobStatus.FAILED);
 
             h3Job.update();
 
@@ -521,6 +536,18 @@ public class H3JobResource implements ResourceAbstract {
             sb.append("Job ");
             sb.append(jobId);
             sb.append(" is not running.");
+        	dk.netarkivet.harvester.datamodel.Job nasJob = Heritrix3JobMonitorThread.jobDAO.read(jobId);
+        	if (nasJob != null && nasJob.getStatus() == JobStatus.STARTED && (h3Job == null || !h3Job.isReady())) {
+                sb.append("<br />\n");
+                sb.append("<a href=\"?action=");
+                sb.append("failed");
+                sb.append("\"");
+            	sb.append(" onclick=\"return confirm('Are you sure you wish to fail the job currently being crawled ?')\"");
+                sb.append(" class=\"btn btn-danger\">");
+                sb.append("<i class=\\\"icon-white icon-trash\\\"></i>");
+                sb.append("Set job status to failed!");
+                sb.append("</a>");
+        	}
         }
 
         StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), h3Job);
