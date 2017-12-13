@@ -40,7 +40,6 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.qos.logback.classic.Level;
@@ -289,8 +288,6 @@ public class AdminDataTester {
      * Verify that constructing an AdminData does not fail.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testCTOR() {
         // Test invalid settings:
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, "/foo/bar/nonExistingDir");

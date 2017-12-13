@@ -3,7 +3,7 @@
 if [ "$USER" == "vagrant" ] ; then
   cd /home/vagrant/gitting/netarchivesuite
   sudo git pull
-  sudo mvn -B -DskipTests clean package
+  sudo mvn -B -q -DskipTests clean package
   sudo rm /home/vagrant/netarchive/NetarchiveSuite*.zip
   sudo rm -rf /home/vagrant/netarchive/deploy
   sudo mv /home/vagrant/gitting/netarchivesuite/harvester/heritrix3/heritrix3-bundler/target/NetarchiveSuite-heritrix3-bundler*.zip /home/vagrant/netarchive/NetarchiveSuite-heritrix3-bundler.zip

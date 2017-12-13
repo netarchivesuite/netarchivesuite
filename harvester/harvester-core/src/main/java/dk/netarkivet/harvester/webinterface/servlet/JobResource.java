@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -24,8 +25,6 @@ import com.antiaction.common.templateengine.TemplateBuilderFactory;
 import com.antiaction.common.templateengine.TemplateBuilderPlaceHolder;
 import com.antiaction.common.templateengine.TemplatePlaceHolder;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
@@ -111,16 +110,16 @@ public class JobResource implements ResourceAbstract {
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
-
         Caching.caching_disable_headers(resp);
 
-        TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
-        MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
+        TemplateBuilderFactory<MasterTemplateBuilder> masterTplBuilderFactory = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
+        MasterTemplateBuilder masterTplBuilder = masterTplBuilderFactory.getTemplateBuilder();
 
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
 
-        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
+        long jobId = numerics.get(0);
+        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
         Job job;
         
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();   
@@ -167,9 +166,7 @@ public class JobResource implements ResourceAbstract {
             menuSb.append("</a></td></tr>");
             
             sb.append("<div>\n");
-            
-            
-            
+
             sb.append("<div style=\"float:left;min-width: 300px;\">\n");
 
             sb.append("JobId: <a href=\"/History/Harveststatus-jobdetails.jsp?jobID="+h3Job.jobId+"\">");
@@ -223,8 +220,7 @@ public class JobResource implements ResourceAbstract {
             
             sb.append("<div style=\"clear:both;\"></div>");
             sb.append("</div>");
-            
-            
+
             /* line 1 */
             
             sb.append("<h4>Job details</h4>\n");
@@ -576,36 +572,13 @@ public class JobResource implements ResourceAbstract {
             }
         } else {
             sb.append("Job ");
-            sb.append(numerics.get(0));
+            sb.append(jobId);
             sb.append(" is not running.");
         }
 
-        if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Details and Actions on Running Job "+h3Job.jobId);
-        }
-        if (masterTplBuilder.menuPlace != null) {
-            masterTplBuilder.menuPlace.setText(menuSb.toString());
-        }
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Details and Actions on Running Job "+h3Job.jobId);
-        }
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
-        }
-
-        masterTplBuilder.write(out);
+        masterTplBuilder.insertContent("Details and Actions on Running Job " + jobId, menuSb.toString(), environment.generateLanguageLinks(locale),
+        		"Details and Actions on Running Job " + jobId, sb.toString(),
+        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
         out.flush();
         out.close();
@@ -616,10 +589,10 @@ public class JobResource implements ResourceAbstract {
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
+        Caching.caching_disable_headers(resp);
 
-        TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(
-                environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
-        MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
+        TemplateBuilderFactory<MasterTemplateBuilder> masterTplBuilderFactory = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
+        MasterTemplateBuilder masterTplBuilder = masterTplBuilderFactory.getTemplateBuilder();
 
         long lines;
         long linesPerPage = 100;
@@ -642,24 +615,29 @@ public class JobResource implements ResourceAbstract {
             } catch (NumberFormatException e) {
             }
         }
-        
+
         if (linesPerPage < 25) {
             linesPerPage = 25;
         }
         if (linesPerPage > 1000) {
             linesPerPage = 1000;
         }
-        
+
+        String additionalParams;
 
         tmpStr = req.getParameter("q");
         if (tmpStr != null && tmpStr.length() > 0 && !tmpStr.equalsIgnoreCase(".*")) {
             q = tmpStr;
+            additionalParams = "&q=" + URLEncoder.encode(q, "UTF-8");
+        } else {
+        	additionalParams = "";
         }
 
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
 
-        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
+        long jobId = numerics.get(0);
+        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
         Pageable pageable = h3Job;
 
         if (h3Job != null && h3Job.isReady()) {
@@ -744,7 +722,7 @@ public class JobResource implements ResourceAbstract {
             sb.append(lines);
             sb.append(" URIs</span>\n");
             sb.append("</div>\n");
-            sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
+            sb.append(Pagination.getPagination(page, linesPerPage, pages, false, additionalParams));
             sb.append("<div style=\"clear:both;\"></div>");
             sb.append("<div>\n");
             sb.append("<pre>\n");
@@ -754,40 +732,17 @@ public class JobResource implements ResourceAbstract {
             }
             sb.append("</pre>\n");
             sb.append("</div>\n");
-            sb.append(Pagination.getPagination(page, linesPerPage, pages, false));
+            sb.append(Pagination.getPagination(page, linesPerPage, pages, false, additionalParams));
             sb.append("</form>");
         } else {
             sb.append("Job ");
-            sb.append(numerics.get(0));
+            sb.append(jobId);
             sb.append(" is not running.");
         }
 
-        if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" Crawllog");
-        }
-        if (masterTplBuilder.menuPlace != null) {
-            masterTplBuilder.menuPlace.setText(menuSb.toString());
-        }
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" Crawllog");
-        }
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
-        }
-
-        masterTplBuilder.write(out);
+        masterTplBuilder.insertContent("Job " + jobId + " Crawllog", menuSb.toString(), environment.generateLanguageLinks(locale),
+        		"Job " + jobId + " Crawllog", sb.toString(),
+        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
         out.flush();
         out.close();
@@ -797,9 +752,10 @@ public class JobResource implements ResourceAbstract {
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
+        Caching.caching_disable_headers(resp);
 
-        TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
-        MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
+        TemplateBuilderFactory<MasterTemplateBuilder> masterTplBuilderFactory = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
+        MasterTemplateBuilder masterTplBuilder = masterTplBuilderFactory.getTemplateBuilder();
 
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
@@ -858,7 +814,8 @@ public class JobResource implements ResourceAbstract {
         //deleteFromFrontier '.*foobar.*'    //Remove uris matching a given regexp from the frontier
         //printCrawlLog '.*'          //View already crawled lines uris matching a given regexp
 
-        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
+        long jobId = numerics.get(0);
+        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
 
         if (h3Job != null && h3Job.isReady()) {
             menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
@@ -905,36 +862,13 @@ public class JobResource implements ResourceAbstract {
             }
         } else {
             sb.append("Job ");
-            sb.append(numerics.get(0));
+            sb.append(jobId);
             sb.append(" is not running.");
         }
 
-        if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" Frontier");
-        }
-        if (masterTplBuilder.menuPlace != null) {
-            masterTplBuilder.menuPlace.setText(menuSb.toString());
-        }
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" Frontier");
-        }
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
-        }
-
-        masterTplBuilder.write(out);
+        masterTplBuilder.insertContent("Job " + jobId + " Frontier", menuSb.toString(), environment.generateLanguageLinks(locale),
+        		"Job " + jobId + " Frontier", sb.toString(),
+        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
         out.flush();
         out.close();
@@ -944,9 +878,10 @@ public class JobResource implements ResourceAbstract {
     	Locale locale = resp.getLocale();
     	resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
+        Caching.caching_disable_headers(resp);
 
-        TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
-        MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
+        TemplateBuilderFactory<MasterTemplateBuilder> masterTplBuilderFactory = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
+        MasterTemplateBuilder masterTplBuilder = masterTplBuilderFactory.getTemplateBuilder();
 
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
@@ -997,7 +932,8 @@ public class JobResource implements ResourceAbstract {
         }
         script += "\nshowFilters()\n";
 
-        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
+        long jobId = numerics.get(0);
+        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
 
         if (h3Job != null && h3Job.isReady()) {
             menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
@@ -1054,43 +990,13 @@ public class JobResource implements ResourceAbstract {
             sb.append("</form>\n");
         } else {
             sb.append("Job ");
-            sb.append(numerics.get(0));
+            sb.append(jobId);
             sb.append(" is not running.");
         }
 
-        if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" RejectRules");
-        }
-
-        if (masterTplBuilder.menuPlace != null) {
-            masterTplBuilder.menuPlace.setText(menuSb.toString());
-        }
-        
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" RejectRules");
-        }
-
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
-        }
-
-        masterTplBuilder.write(out);
+        masterTplBuilder.insertContent("Job " + jobId + " RejectRules", menuSb.toString(), environment.generateLanguageLinks(locale),
+        		"Job " + jobId + " RejectRules", sb.toString(),
+        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
         out.flush();
         out.close();
@@ -1100,6 +1006,7 @@ public class JobResource implements ResourceAbstract {
     	Locale locale = resp.getLocale();
     	resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
+        Caching.caching_disable_headers(resp);
 
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
@@ -1180,8 +1087,8 @@ public class JobResource implements ResourceAbstract {
         
         originalScript += "\ngetQueueTotalBudget()\n";
 
-
-        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
+        long jobId = numerics.get(0);
+        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
 
         if (h3Job != null && h3Job.isReady()) {
             menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
@@ -1263,43 +1170,12 @@ public class JobResource implements ResourceAbstract {
             sb.append("</form>\n");
         } else {
             sb.append("Job ");
-            sb.append(numerics.get(0));
+            sb.append(jobId);
             sb.append(" is not running.");
         }
 
-        if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" Budget");
-        }
-
-        if (masterTplBuilder.menuPlace != null) {
-            masterTplBuilder.menuPlace.setText(menuSb.toString());
-        }
-        
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" Budget");
-        }
-
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
-        }
-
-        masterTplBuilder.write(out);
+        masterTplBuilder.insertContent("Job " + jobId + " Budget", menuSb.toString(), environment.generateLanguageLinks(locale), "Job " + jobId + " Budget", sb.toString(),
+        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
         out.flush();
         out.close();
@@ -1310,15 +1186,23 @@ public class JobResource implements ResourceAbstract {
         @TemplateBuilderPlaceHolder("script")
         public TemplatePlaceHolder scriptPlace;
 
+        public MasterTemplateBuilder insertContent(String title, String menu, String languages, String heading, String script, String content, String refresh) {
+        	super.insertContent(title, menu, languages, heading, content, refresh);
+            if (scriptPlace != null) {
+                scriptPlace.setText(script);
+            }
+            return this;
+        }
     }
 
     public void script(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
+        Caching.caching_disable_headers(resp);
 
-        TemplateBuilderFactory<ScriptTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "h3script.tpl", "UTF-8", ScriptTemplateBuilder.class);
-        ScriptTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
+        TemplateBuilderFactory<ScriptTemplateBuilder> scriptTplBuilderFactory = TemplateBuilderFactory.getInstance(environment.templateMaster, "h3script.tpl", "UTF-8", ScriptTemplateBuilder.class);
+        ScriptTemplateBuilder scriptTplBuilder = scriptTplBuilderFactory.getTemplateBuilder();
 
         String engineStr = req.getParameter("engine");
         String scriptStr = req.getParameter("script");
@@ -1329,7 +1213,8 @@ public class JobResource implements ResourceAbstract {
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
 
-        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
+        long jobId = numerics.get(0);
+        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
 
         if (h3Job != null && h3Job.isReady()) {
             menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
@@ -1360,36 +1245,8 @@ public class JobResource implements ResourceAbstract {
             }
         }
 
-        if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Scripting console");
-        }
-        if (masterTplBuilder.menuPlace != null) {
-            masterTplBuilder.menuPlace.setText(menuSb.toString());
-        }
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Scripting console");
-        }
-        if (masterTplBuilder.scriptPlace != null) {
-            masterTplBuilder.scriptPlace.setText(scriptStr);
-        }
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
-        }
-
-        masterTplBuilder.write(out);
+        scriptTplBuilder.insertContent("Scripting console", menuSb.toString(), environment.generateLanguageLinks(locale), "Scripting console", scriptStr, sb.toString(),
+        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
         out.flush();
         out.close();
@@ -1399,16 +1256,18 @@ public class JobResource implements ResourceAbstract {
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
+        Caching.caching_disable_headers(resp);
 
-        TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
-        MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
+        TemplateBuilderFactory<MasterTemplateBuilder> masterTplBuilderFactory = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
+        MasterTemplateBuilder masterTplBuilder = masterTplBuilderFactory.getTemplateBuilder();
 
         StringBuilder sb = new StringBuilder();
         StringBuilder menuSb = new StringBuilder();
 
         String reportStr = req.getParameter("report");
 
-        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(numerics.get(0));
+        long jobId = numerics.get(0);
+        Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
         Job job;
 
         if (h3Job != null && h3Job.isReady()) {
@@ -1461,32 +1320,8 @@ public class JobResource implements ResourceAbstract {
             }
         }
 
-        if (masterTplBuilder.titlePlace != null) {
-            masterTplBuilder.titlePlace.setText("Job "+numerics.get(0)+" Reports");
-        }
-        if (masterTplBuilder.menuPlace != null) {
-            masterTplBuilder.menuPlace.setText(menuSb.toString());
-        }
-        if (masterTplBuilder.languagesPlace != null) {
-            masterTplBuilder.languagesPlace.setText(environment.generateLanguageLinks(locale));
-        }
-        if (masterTplBuilder.headingPlace != null) {
-            masterTplBuilder.headingPlace.setText("Job "+numerics.get(0)+" Reports");
-        }
-        if (masterTplBuilder.contentPlace != null) {
-            masterTplBuilder.contentPlace.setText(sb.toString());
-        }
-        if (masterTplBuilder.versionPlace != null) {
-            masterTplBuilder.versionPlace.setText(Constants.getVersionString(true));
-        }
-        if (masterTplBuilder.environmentPlace != null) {
-            masterTplBuilder.environmentPlace.setText(Settings.get(CommonSettings.ENVIRONMENT_NAME));
-        }
-        if (masterTplBuilder.refreshInterval != null) {
-            masterTplBuilder.refreshInterval.setText("<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n");
-        }
-
-        masterTplBuilder.write(out);
+        masterTplBuilder.insertContent("Job "+ jobId + " Reports", menuSb.toString(), environment.generateLanguageLinks(locale), "Job " + jobId + " Reports", sb.toString(),
+        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
         out.flush();
         out.close();

@@ -41,7 +41,7 @@ public class Pagination {
      * @param pages total number of pages
      * @return HTML text block
      */
-    public static String getPagination(long page, long itemsPerPage, long pages, boolean bShowAll) {
+    public static String getPagination(long page, long itemsPerPage, long pages, boolean bShowAll, String additionalParams) {
         if (page < 1) {
             page = 1;
         }
@@ -56,8 +56,7 @@ public class Pagination {
         sb.append("<ul>\n");
         // Previous
         if (page > 1) {
-            sb.append("<li><a href=\"?page=" + (page - 1) + "&itemsperpage="
-                    + itemsPerPage + "\">Previous</a></li>");
+            sb.append("<li><a href=\"?page=" + (page - 1) + "&itemsperpage=" + itemsPerPage + additionalParams + "\">Previous</a></li>");
         } else {
             sb.append("<li class=\"disabled\"><span>Previous</span></li>");
         }
@@ -65,8 +64,7 @@ public class Pagination {
         if (page == 1) {
             sb.append("<li class=\"active\"><span>" + 1 + "</span></li>");
         } else {
-            sb.append("<li><a href=\"?page=" + 1 + "&itemsperpage="
-                    + itemsPerPage + "\">" + 1 + "</a></li>");
+            sb.append("<li><a href=\"?page=" + 1 + "&itemsperpage=" + itemsPerPage + additionalParams + "\">" + 1 + "</a></li>");
         }
         // List.
         long tmpPage = page - 3;
@@ -81,11 +79,9 @@ public class Pagination {
         int show = 8;
         while (show > 1 && tmpPage <= pages) {
             if (tmpPage == page) {
-                sb.append("<li class=\"active\"><span>" + tmpPage
-                        + "</span></li>");
+                sb.append("<li class=\"active\"><span>" + tmpPage + "</span></li>");
             } else {
-                sb.append("<li><a href=\"?page=" + tmpPage + "&itemsperpage="
-                        + itemsPerPage + "\">" + tmpPage + "</a></li>");
+                sb.append("<li><a href=\"?page=" + tmpPage + "&itemsperpage=" + itemsPerPage + additionalParams + "\">" + tmpPage + "</a></li>");
             }
             --show;
             tmpPage++;
@@ -96,21 +92,19 @@ public class Pagination {
                 sb.append("<li class=\"disabled\"><span>...</span></li>");
             }
             if (tmpPage == page) {
-                sb.append("<li class=\"active\"><span>" + pages
-                        + "</span></li>");
+                sb.append("<li class=\"active\"><span>" + pages + "</span></li>");
             } else {
-                sb.append("<li><a href=\"?page=" + pages + "&itemsperpage="
-                        + itemsPerPage + "\">" + pages + "</a></li>");
+                sb.append("<li><a href=\"?page=" + pages + "&itemsperpage=" + itemsPerPage + additionalParams  + "\">" + pages + "</a></li>");
             }
         }
         // Next.
         if (page < pages) {
-            sb.append("<li><a href=\"?page=" + (page + 1) + "&itemsperpage="
-                    + itemsPerPage + "\">Next</a></li>");
+            sb.append("<li><a href=\"?page=" + (page + 1) + "&itemsperpage=" + itemsPerPage + additionalParams + "\">Next</a></li>");
         } else {
             sb.append("<li class=\"disabled\"><span>Next</span></li>");
         }
         // Items per page.
+        /*
         sb.append("<li>");
         String[][] options = new String[][] {{"10", "10"}, {"25", "25"}, {"50", "50"}, {"100", "100"}, {"all", "Vis alle"}};
         int selected;
@@ -133,8 +127,6 @@ public class Pagination {
                 break;
             }
         }
-        //sb.append("<select name=\"organization\" class=\"input-mini\" onchange=\"submitForm('myform');\">");
-        /*
         sb.append("<select name=\"itemsperpage\" class=\"input-mini\" onchange=\"this.form.submit();\">");
         for (int i=0; i<options.length; ++i) {
             sb.append("<option value=\"");
@@ -148,8 +140,8 @@ public class Pagination {
             sb.append("</option>");
         }
         sb.append("</select>");
-        */
         sb.append("</li>");
+        */
         sb.append("</ul>\n");
         sb.append("</div>\n");
         return sb.toString();
