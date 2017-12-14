@@ -62,7 +62,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
 
     /** A map from harvest job number to the running H3 job monitor for the given job */
     public Map<Long, Heritrix3JobMonitor> runningJobMonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
-    public  Map<Long, Heritrix3JobMonitor> runningJobMonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
+
     private final Object runningJobMonitorMapSynchronizer = new Object();
 
     public Map<Long, Heritrix3JobMonitor> filterJobMonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
