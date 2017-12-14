@@ -322,8 +322,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
                 //NASEnvironment environment = new NASEnvironment(session.getServletContext(), this.getServletConfig());
 
               //if (!environment.jobHarvestsDomain(jobId, searchedDomainName)) {
-                if (HistoryServlet != null
-                        && HistoryServlet.environment != null
+                if (HistoryServlet.environment != null
                         && !HistoryServlet.environment.jobHarvestsDomain(jobId, searchedDomainName)) {
                     // Current job doesn't harvest searched domain, so don't show it. Continue from the next job.
                     continue;
