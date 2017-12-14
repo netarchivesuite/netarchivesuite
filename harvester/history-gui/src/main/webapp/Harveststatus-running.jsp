@@ -49,6 +49,7 @@ This page displays a list of running jobs.
                 dk.netarkivet.common.utils.DomainUtils"
         pageEncoding="UTF-8" %>
 <%@ page import="static dk.netarkivet.harvester.webinterface.servlet.HistoryServlet.environment" %>
+<%@ page import="dk.netarkivet.harvester.webinterface.servlet.HistoryServlet" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
@@ -318,9 +319,12 @@ TODO: searchedDomainName = <%=searchedDomainName%>
 
             if (searchedDomainName != null && !searchedDomainName.equals("")) {
                 // Something's been searched for, so let's see if this job should be skipped according to the search...
-                NASEnvironment environment = new NASEnvironment(session.getServletContext(), this.getServletConfig());
+                //NASEnvironment environment = new NASEnvironment(session.getServletContext(), this.getServletConfig());
 
-                if (!environment.jobHarvestsDomain(jobId, searchedDomainName)) {
+              //if (!environment.jobHarvestsDomain(jobId, searchedDomainName)) {
+                if (HistoryServlet != null
+                        && HistoryServlet.environment != null
+                        && !HistoryServlet.environment.jobHarvestsDomain(jobId, searchedDomainName)) {
                     // Current job doesn't harvest searched domain, so don't show it. Continue from the next job.
                     continue;
                 }
