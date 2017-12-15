@@ -25,7 +25,6 @@ import javax.servlet.ServletException;
 import com.antiaction.common.templateengine.TemplateMaster;
 import com.antiaction.common.templateengine.login.LoginTemplateHandler;
 import com.antiaction.common.templateengine.storage.TemplateFileStorageManager;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
