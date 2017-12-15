@@ -25,8 +25,10 @@ import javax.servlet.ServletException;
 import com.antiaction.common.templateengine.TemplateMaster;
 import com.antiaction.common.templateengine.login.LoginTemplateHandler;
 import com.antiaction.common.templateengine.storage.TemplateFileStorageManager;
+import com.sun.javaws.exceptions.InvalidArgumentException;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
@@ -270,7 +272,12 @@ public class NASEnvironment {
             return "";
         }
         String domainHost = domainUrl.getHost();
-        return DomainUtils.domainNameFromHostname(domainHost);
+        String normalizedDomainUrl = DomainUtils.domainNameFromHostname(domainHost);
+        if (normalizedDomainUrl == null) {
+            // Invalid domain
+            throw new ArgumentNotValid(url + " is not a valid domain name.");
+        }
+        return normalizedDomainUrl;
     }
 
     /**
