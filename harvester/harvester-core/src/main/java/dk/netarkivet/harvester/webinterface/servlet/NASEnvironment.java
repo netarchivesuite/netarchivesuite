@@ -257,7 +257,8 @@ public class NASEnvironment {
      * Normalizes input URL so that only the domain part remains.
      *
      * @param url URL intended to be stripped to it's domain part
-     * @return The domain part of the input URL, or "" if URL was malformed
+     * @return The domain part of the input URL
+     * @throws ArgumentNotValid if URL was malformed
      */
     private String normalizeDomainUrl(String url) {
         if (!url.toLowerCase().matches("^\\w+://.*")) {

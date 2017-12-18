@@ -31,8 +31,6 @@ This page displays a list of running jobs.
 <%@ page
         import="
 	            dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor,
-                java.net.URL,
-                java.net.MalformedURLException,
                 java.util.List,
                 java.util.Map,
                 java.util.Collections,
@@ -40,15 +38,12 @@ This page displays a list of running jobs.
                 dk.netarkivet.common.webinterface.HTMLUtils,
                 dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo,
                 dk.netarkivet.harvester.datamodel.RunningJobsInfoDAO,
-                dk.netarkivet.harvester.webinterface.servlet.NASEnvironment,
                 dk.netarkivet.harvester.webinterface.Constants,
                 dk.netarkivet.harvester.webinterface.FindRunningJobQuery,
                 dk.netarkivet.common.utils.StringUtils,
                 dk.netarkivet.common.utils.TableSort,
-                dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort,
-                dk.netarkivet.common.utils.DomainUtils"
+                dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort"
         pageEncoding="UTF-8" %>
-<%@ page import="static dk.netarkivet.harvester.webinterface.servlet.HistoryServlet.environment" %>
 <%@ page import="dk.netarkivet.harvester.webinterface.servlet.HistoryServlet" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
@@ -81,10 +76,6 @@ This page displays a list of running jobs.
         jobCount += jobList.size();
     }
 
-    // TODO this was unused... is it supposed to be used for something upcoming?
-    //FindRunningJobQuery findJobQuery = new FindRunningJobQuery(request);
-    //Long[] jobIdsForDomain = findJobQuery.getRunningJobIds();
-
     // Get domain name that user has searched for (if any, otherwise null)
     String searchedDomainName = request.getParameter(FindRunningJobQuery.UI_FIELD.DOMAIN_NAME.name());
 
@@ -110,7 +101,6 @@ This page displays a list of running jobs.
     <fmt:param value="<%=jobCount%>"/>
 </fmt:message>
 
-TODO: searchedDomainName = <%=searchedDomainName%>
 
 <%-- Input field for search --%>
 <form method="get" name="findJobForDomainForm" action="Harveststatus-running.jsp">
@@ -138,7 +128,7 @@ TODO: searchedDomainName = <%=searchedDomainName%>
                     + Constants.HARVEST_PARAM + "="
                     + HTMLUtils.encode(harvestName);
 
-            //gestion des fleche de trie (TODO what is the proper English translation of this?)
+            //gestion des fleche de trie (what is a good English translation of this?)
             String incSortPic = "&uarr;";
             String descSortPic = "&darr;";
             String noSortPic = "";
@@ -167,18 +157,18 @@ TODO: searchedDomainName = <%=searchedDomainName%>
             String sortLink;
     %>
 
-    <tr class="spacerRowBig"><td colspan="15">&nbsp;</td></tr>
+    <tr class="spacerRowBig"><td colspan="13">&nbsp;</td></tr>
 
     <%-- Headline for each harvest definition --%>
     <tr>
-        <th colspan="15">
+        <th colspan="13">
             <fmt:message key="table.running.jobs.harvestName"/>
             &nbsp;
             <a href="<%=harvestDetailsLink%>"><%=harvestName%></a>
         </th>
     </tr>
 
-    <tr class="spacerRowSmall"><td colspan="15">&nbsp;</td></tr>
+    <tr class="spacerRowSmall"><td colspan="13">&nbsp;</td></tr>
 
     <%-- Topmost row of headers for each column of the table --%>
     <tr>
@@ -212,8 +202,6 @@ TODO: searchedDomainName = <%=searchedDomainName%>
                 <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ELAPSED.ordinal()]%>
             </a>
         </th>
-        <th class="harvestHeader" rowspan="2">TODO urls..</th>
-        <th class="harvestHeader" rowspan="2"><fmt:message key="table.running.jobs.inseedlist"/></th>
         <th class="harvestHeader" colspan="5"><fmt:message key="table.running.jobs.queues"/></th>
         <th class="harvestHeader" colspan="3"><fmt:message key="table.running.jobs.performance"/></th>
         <th class="harvestHeader" rowspan="2"><fmt:message key="table.running.jobs.alerts"/></th>
@@ -313,57 +301,14 @@ TODO: searchedDomainName = <%=searchedDomainName%>
         for (StartedJobInfo info : infoList) {
             long jobId = info.getJobId();
 
-            %>
-              <tr><td>TODO: jobId = <%=jobId%></td></tr>
-            <%
-
             if (searchedDomainName != null && !searchedDomainName.equals("")) {
                 // Something's been searched for, so let's see if this job should be skipped according to the search...
-                //NASEnvironment environment = new NASEnvironment(session.getServletContext(), this.getServletConfig());
-
-              //if (!environment.jobHarvestsDomain(jobId, searchedDomainName)) {
                 if (HistoryServlet.environment != null
                         && !HistoryServlet.environment.jobHarvestsDomain(jobId, searchedDomainName)) {
                     // Current job doesn't harvest searched domain, so don't show it. Continue from the next job.
                     continue;
                 }
             }
-
-
-            // TODO unused, remove
-            //String jobDetailsLink = "Harveststatus-running-jobdetails.jsp?" + Constants.JOB_PARAM + "=" + jobId;
-/*
-            // Find out whether searched domain is in the seed list for job with jobId
-            Job job = JobDAO.getInstance().read(jobId);
-            String seedList = job.getSeedListAsString();
-            String linesOfSeedList[] = seedList.split("\\r?\\n");
-
-            if (searchedDomainName == null) {
-                searchedDomainName = "http://ekot.dk";  // TODO remove
-            }
-            // Add http:// to searched url if it has no protocol part
-            if (!searchedDomainName.toLowerCase().matches("^\\w+://.*")) {
-                searchedDomainName = "http://" + searchedDomainName;
-            }
-            URL domainUrl = new URL(searchedDomainName);
-            String domainHost = domainUrl.getHost();
-            String domainDomain = DomainUtils.domainNameFromHostname(domainHost);
-
-            String domainIsInSeedList = "n";
-            for (String seed : linesOfSeedList) {
-                // Add http:// to seed-url if it has no protocol part
-                if (!seed.toLowerCase().matches("^\\w+://.*")) {
-                    seed = "http://" + seed;
-                }
-                URL seedUrl = new URL(seed);
-                String seedHost = seedUrl.getHost();
-                String seedDomain = DomainUtils.domainNameFromHostname(seedHost);
-                if (domainDomain.equals(seedDomain)) {
-                    domainIsInSeedList = "y";
-                }
-            }
-  */
-
 
     %>
 
@@ -404,8 +349,6 @@ TODO: searchedDomainName = <%=searchedDomainName%>
         </td>
         <td align="right"><%=StringUtils.formatPercentage(info.getProgress())%></td>
         <td align="right"><%=info.getElapsedTime()%></td>
-        <td align="right">TODO..</td>
-        <td align="right">TODO..</td>
         <td align="right"><%=info.getQueuedFilesCount()%></td>
         <td align="right"><%=info.getTotalQueuesCount()%></td>
         <td align="right"><%=info.getActiveQueuesCount()%></td>
