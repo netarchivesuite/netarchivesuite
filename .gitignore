@@ -17,3 +17,32 @@ derby.log
 **/harvester-test/tmp1
 **/wayback-test/derbyDB/
 **/wayback-resourcestore/admin.data
+
+# Ignore pom.xml.versionsBackup files
+pom.xml.versionsBackup
+*/pom.xml.versionsBackup
+*/**/pom.xml.versionsBackup
+
+#Ignore evil file
+archive/archive-test/evil
+
+# Ignore output from unittests into deploy/deploy-core dir.
+deploy/deploy-core/dir_kb-test-bar-010.bitarkiv.kb.dk.bat
+deploy/deploy-core/dir_kb-test-bar-011.bitarkiv.kb.dk.bat
+deploy/deploy-core/install_K.sh
+deploy/deploy-core/install_S.sh
+deploy/deploy-core/kb-test-acs-001.kb.dk/
+deploy/deploy-core/kb-test-adm-001.kb.dk/
+deploy/deploy-core/kb-test-bar-010.bitarkiv.kb.dk/
+deploy/deploy-core/kb-test-bar-011.bitarkiv.kb.dk/
+deploy/deploy-core/kb-test-har-001.kb.dk/
+deploy/deploy-core/kb-test-har-002.kb.dk/
+deploy/deploy-core/killall_K.sh
+deploy/deploy-core/killall_S.sh
+deploy/deploy-core/nas.zip
+deploy/deploy-core/sb-test-acs-001.statsbiblioteket.dk/
+deploy/deploy-core/sb-test-bar-001.statsbiblioteket.dk/
+deploy/deploy-core/sb-test-har-001.statsbiblioteket.dk/
+deploy/deploy-core/startall_K.sh
+deploy/deploy-core/startall_S.sh
+

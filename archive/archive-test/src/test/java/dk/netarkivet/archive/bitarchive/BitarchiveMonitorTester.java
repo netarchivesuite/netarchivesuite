@@ -40,6 +40,7 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ClassAsserts;
@@ -59,6 +60,7 @@ public class BitarchiveMonitorTester {
     public void setUp() {
         rs.setUp();
         mj.setUp();
+        ChannelsTesterHelper.resetChannels();
     }
 
     @After
