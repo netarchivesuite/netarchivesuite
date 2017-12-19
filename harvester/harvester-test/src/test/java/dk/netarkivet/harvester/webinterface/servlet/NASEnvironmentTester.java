@@ -42,9 +42,9 @@ public class NASEnvironmentTester extends DataModelTestCase {
 
         // Create a mock crawllog file
         String mockCrawllogContent
-                = "2005-05-06T11:47:26.550Z     1         53 dns:www.kb.dk P http://www.kb.dk/ text/dns #002 20050506114726441+2 - -\n"
+                = "2005-05-06T11:47:26.550Z     1         53 dns:www.sb.dk P http://www.sb.dk/ text/dns #002 20050506114726441+2 - -\n"
                 + "2005-05-06T11:47:28.464Z   404        278 http://www.netarkivet.dk/robots.txt P http://www.netarkivet.dk/ text/html #028 20050506114728458+5 NYN2HPNQGIPJTPMGAV4QPBUCVJVNMM54 -\n"
-                + "2005-05-06T11:47:34.753Z -9998          - https://rex.kb.dk/F L http://www.kb.dk/ no-type #030 - - 3t\n"
+                + "2005-05-06T11:47:34.753Z -9998          - https://rex.qb.dk/F L http://www.qb.dk/ no-type #030 - - 3t\n"
                 + "2005-05-06T11:47:30.544Z   200      13750 http://www.kb.dk/ - - text/html #001 20050506114730466+32 U4X3Z5EGCNUYTMIXST6BJXGA5SBKTEAJ 3t\n";
 
         File tempFile = File.createTempFile("NASEnvironmentTest-mock-crawllog-", ".tmp");
@@ -68,20 +68,10 @@ public class NASEnvironmentTester extends DataModelTestCase {
         Heritrix3JobMonitor h3Job = new Heritrix3JobMonitor();
         h3Job.setCrawlLogFilePath(crawlLogFilePath);
 
-        Stream<String> crawledUrls = environment.getCrawledUrls(1, h3Job);
-        List<String> crawled = crawledUrls.collect(Collectors.toList());
-
-        // Check whether output corresponds to the input crawllog-mock-file
-        if (crawled.size() != 2) {
-            fail("Wrong amount (" + crawled.size() + ") of URLs extracted from crawllog!");
-            return;
-        }
-
-        if (!crawled.get(0).equalsIgnoreCase("http://www.netarkivet.dk/robots.txt")
-                || !crawled.get(1).equalsIgnoreCase("http://www.kb.dk/")) {
-            fail("URL(s) extracted from crawllog do not match!");
-            return;
-        }
+        assertTrue(environment.jobHarvestsDomain(1, "netarkivet.dk", h3Job));
+        assertTrue(environment.jobHarvestsDomain(1, "kb.dk", h3Job));
+        assertFalse(environment.jobHarvestsDomain(1, "rex.qb.dk", h3Job));
+        assertFalse(environment.jobHarvestsDomain(1, "sb.dk", h3Job));
     }
 
 }

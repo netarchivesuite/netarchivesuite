@@ -304,7 +304,7 @@ This page displays a list of running jobs.
             if (searchedDomainName != null && !searchedDomainName.equals("")) {
                 // Something's been searched for, so let's see if this job should be skipped according to the search...
                 if (HistoryServlet.environment != null
-                        && !HistoryServlet.environment.jobHarvestsDomain(jobId, searchedDomainName)) {
+                        && !HistoryServlet.environment.jobHarvestsDomain(jobId, searchedDomainName, null)) {
                     // Current job doesn't harvest searched domain, so don't show it. Continue from the next job.
                     continue;
                 }

@@ -248,7 +248,9 @@ public class NASEnvironment {
 
         try {
             Stream<String> attemptedHarvestedUrlsFromCrawllog = Files.lines(Paths.get(crawlLogPath),
-                    Charset.forName("UTF-8")).filter(line -> urlInLineIsAttemptedHarvested(line));
+                    Charset.forName("UTF-8"))
+                    .filter(line -> urlInLineIsAttemptedHarvested(line))
+                    .map(line -> line.split("\\s+")[3]);
 
             return attemptedHarvestedUrlsFromCrawllog;
         } catch (java.io.IOException e) {
@@ -290,12 +292,12 @@ public class NASEnvironment {
      * @param domainName The domain
      * @return whether the given job harvests given domain
      */
-    public boolean jobHarvestsDomain(long jobId, String domainName) {
+    public boolean jobHarvestsDomain(long jobId, String domainName, Heritrix3JobMonitor h3Job) {
         // Normalize search URL
         String searchedDomain = normalizeDomainUrl(domainName);
 
         // Return whether or not the crawled URLs contain the searched URL
-        return getCrawledUrls(jobId, null)
+        return getCrawledUrls(jobId, h3Job)
                 .map(url -> normalizeDomainUrl(url))
                 .anyMatch(url -> searchedDomain.equalsIgnoreCase(url));
     }
