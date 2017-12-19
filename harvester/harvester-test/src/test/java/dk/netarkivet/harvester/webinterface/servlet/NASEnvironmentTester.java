@@ -9,6 +9,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -66,15 +68,17 @@ public class NASEnvironmentTester extends DataModelTestCase {
         Heritrix3JobMonitor h3Job = new Heritrix3JobMonitor();
         h3Job.setCrawlLogFilePath(crawlLogFilePath);
 
-        List<String> crawledUrls = environment.getCrawledUrls(1, h3Job);
+        Stream<String> crawledUrls = environment.getCrawledUrls(1, h3Job);
+        List<String> crawled = crawledUrls.collect(Collectors.toList());
 
         // Check whether output corresponds to the input crawllog-mock-file
-        if (crawledUrls.size() != 2) {
-            fail("Wrong amount (" + crawledUrls.size() + ") of URLs extracted from crawllog!");
+        if (crawled.size() != 2) {
+            fail("Wrong amount (" + crawled.size() + ") of URLs extracted from crawllog!");
             return;
         }
-        if (!crawledUrls.get(0).equalsIgnoreCase("http://www.netarkivet.dk/robots.txt")
-                || !crawledUrls.get(1).equalsIgnoreCase("http://www.kb.dk/")) {
+
+        if (!crawled.get(0).equalsIgnoreCase("http://www.netarkivet.dk/robots.txt")
+                || !crawled.get(1).equalsIgnoreCase("http://www.kb.dk/")) {
             fail("URL(s) extracted from crawllog do not match!");
             return;
         }
