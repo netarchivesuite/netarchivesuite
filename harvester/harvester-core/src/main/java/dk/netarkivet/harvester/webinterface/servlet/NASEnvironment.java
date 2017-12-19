@@ -246,11 +246,11 @@ public class NASEnvironment {
         }
         String crawlLogPath = h3Job.crawlLogFilePath;
 
-        try (
-                Stream<String> attemptedHarvestedUrlsFromCrawllog = Files.lines(Paths.get(crawlLogPath),
-                        Charset.forName("UTF-8")).filter(line -> urlInLineIsAttemptedHarvested(line))
-        ) {
-           return attemptedHarvestedUrlsFromCrawllog;
+        try {
+            Stream<String> attemptedHarvestedUrlsFromCrawllog = Files.lines(Paths.get(crawlLogPath),
+                    Charset.forName("UTF-8")).filter(line -> urlInLineIsAttemptedHarvested(line));
+
+            return attemptedHarvestedUrlsFromCrawllog;
         } catch (java.io.IOException e) {
             throw new IOFailure("Could not open crawllog file", e);
         }
