@@ -1,13 +1,11 @@
 package dk.netarkivet.harvester.webinterface.servlet;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -205,52 +204,56 @@ public class NASEnvironment {
     }
 
     /**
+     * Determine whether URL in given crawllog line is attempted harvested
+     * @param crawllogLine Line from the crawllog under consideration
+     * @return whether the given crawllog line contains an URL that is attempted harvested
+     */
+    private boolean urlInLineIsAttemptedHarvested(String crawllogLine) {
+        String[] columns = crawllogLine.split("\\s+");
+        if (columns.length < 4) {
+            return false;
+        }
+        String fetchStatusCode = columns[1];
+        String harvestedUrl = columns[3];
+
+        // Do not include URLs with a negative Fetch Status Code (coz they're not even attempted crawled)
+        if (Integer.parseInt(fetchStatusCode) < 0) {
+            return false;
+        }
+
+        // Do not include dns-look-ups from the crawllog
+        if (harvestedUrl.startsWith("dns:")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Get the (attempted) crawled URLs of the crawllog for the running job with the given job id
      *
      * @param jobId Id of the running job
+     * @param h3Job Heritrix3JobMonitor from which to get the job for the given jobId
      * @return The (attempted) crawled URLs of the crawllog for given job
      */
-    public List<String> getCrawledUrls(long jobId, Heritrix3JobMonitor h3Job) {
+    public Stream<String> getCrawledUrls(long jobId, Heritrix3JobMonitor h3Job) {
         if (h3Job == null) {
             h3Job = h3JobMonitorThread.getRunningH3Job(jobId);
             if (h3Job == null) {
                 // There were no running jobs
-                return new ArrayList<>();
+                return Stream.empty();
             }
         }
         String crawlLogPath = h3Job.crawlLogFilePath;
 
-        List<String> crawledUrls = new ArrayList<>();
         try (
-                InputStream fis = new FileInputStream(crawlLogPath);
-                InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
-                BufferedReader br = new BufferedReader(isr)
+                Stream<String> attemptedHarvestedUrlsFromCrawllog = Files.lines(Paths.get(crawlLogPath),
+                        Charset.forName("UTF-8")).filter(line -> urlInLineIsAttemptedHarvested(line))
         ) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] columns = line.split("\\s+");
-                if (columns.length < 4) {
-                    continue;
-                }
-                String fetchStatusCode = columns[1];
-                String harvestedUrl = columns[3];
-
-                // Do not include URLs with a negative Fetch Status Code (coz they're not even attempted crawled)
-                if (Integer.parseInt(fetchStatusCode) < 0) {
-                    continue;
-                }
-
-                // Do not include dns-look-ups from the crawllog
-                if (harvestedUrl.startsWith("dns:")) {
-                    continue;
-                }
-
-                crawledUrls.add(harvestedUrl);
-            }
+           return attemptedHarvestedUrlsFromCrawllog;
         } catch (java.io.IOException e) {
             throw new IOFailure("Could not open crawllog file", e);
         }
-        return crawledUrls;
     }
 
     /**
@@ -288,20 +291,12 @@ public class NASEnvironment {
      * @return whether the given job harvests given domain
      */
     public boolean jobHarvestsDomain(long jobId, String domainName) {
-        List<String> crawledUrls = getCrawledUrls(jobId, null);
-
         // Normalize search URL
         String searchedDomain = normalizeDomainUrl(domainName);
 
-        for (String crawledUrl : crawledUrls) {
-            // Normalize crawled URL
-            String crawledDomain = normalizeDomainUrl(crawledUrl);
-
-            if (searchedDomain.equalsIgnoreCase(crawledDomain)) {
-                return true;
-            }
-        }
-        return false;
+        // Return whether or not the crawled URLs contain the searched URL
+        return getCrawledUrls(jobId, null)
+                .map(url -> normalizeDomainUrl(url))
+                .anyMatch(url -> searchedDomain.equalsIgnoreCase(url));
     }
-
 }
