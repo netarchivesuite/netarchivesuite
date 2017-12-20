@@ -106,7 +106,7 @@ public class IngestDomainList {
                         }
                     }
 
-                    if (DomainUtils.isValidDomainName(domainName)) {
+                    if (DomainUtils.isValidDomainName(domainName.trim())) {
                         if (!dao.exists(domainName)) {
                             myDomain = Domain.getDefaultDomain(domainName);
                             dao.create(myDomain);
