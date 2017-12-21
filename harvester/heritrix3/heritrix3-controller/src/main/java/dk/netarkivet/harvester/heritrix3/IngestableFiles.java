@@ -99,7 +99,10 @@ public class IngestableFiles {
         // Create subdir 'metadata' if not already exists.
         FileUtils.createDir(getMetadataDir());
         // Create/scratch subdir 'tmp-meta'
-        FileUtils.removeRecursively(getTmpMetadataDir());
+        if (getTmpMetadataDir().isDirectory()) {
+        	FileUtils.removeRecursively(getTmpMetadataDir());
+        	log.warn("Removed directory {} with contents", getTmpMetadataDir());
+        }
         FileUtils.createDir(getTmpMetadataDir());
     }
 
@@ -259,10 +262,6 @@ public class IngestableFiles {
         return new File(heritrixJobDir, "latest/reports");
     }
     
-    
-    
-    
-    
     /**
      * Get a list of all WARC files that should get ingested. Any open files should be closed with closeOpenFiles first.
      *
@@ -274,8 +273,6 @@ public class IngestableFiles {
             if (!warcsdir.isDirectory()) {
                 throw new IOFailure(warcsdir.getPath() + " is not a directory");
             }
-	    //log
-
             return Arrays.asList(warcsdir.listFiles(FileUtils.WARCS_FILTER));
         } else {
             return new LinkedList<File>();

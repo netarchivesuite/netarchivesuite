@@ -244,13 +244,13 @@ public class Heritrix3Files {
 			FileUtils.remove(getCrawlLog());
 		} catch (IOFailure e) {
 			// Log harmless trouble
-			LOG.debug("Couldn't delete crawl log file.", e);
+			LOG.warn("Couldn't delete crawl log file.", e);
 		}
 		try {
 			FileUtils.remove(getProgressStatisticsLog());
 		} catch (IOFailure e) {
 			// Log harmless trouble
-			LOG.debug("Couldn't delete progress statistics log file.", e);
+			LOG.warn("Couldn't delete progress statistics log file.", e);
 		}
 	}
 
@@ -262,7 +262,7 @@ public class Heritrix3Files {
                     FileUtils.removeRecursively(disposable);
                 } catch (IOFailure e) {
                     // Log harmless trouble
-                    LOG.debug("Couldn't delete leftover file '{}'", disposable.getAbsolutePath(), e);
+                    LOG.warn("Couldn't delete leftover file '{}'", disposable.getAbsolutePath(), e);
                 }
             }
         }
@@ -274,8 +274,25 @@ public class Heritrix3Files {
             LOG.warn("Failed to rename jobdir '{}' to '{}'", crawlDir, destDir);
         }
 	}
-
-	public File[] getDisposableFiles() {
-        return new File[] {new File(h3JobDir, "state"), new File(crawlDir, "checkpoints"), new File(h3JobDir, "scratch")};
+		/**
+	     * Considered as disposable files are the following:
+		 * crawlDir/checkpoints
+		 * h3JobDir/state
+		 * h3JobDir/scratch
+		 * h3BaseDir/bin
+		 * h3BaseDir/extras
+		 * h3BaseDir/lib
+		 * 
+		 * @return list of disposable files and file directories  
+		 */
+	 	public File[] getDisposableFiles() {
+	        return new File[] {
+	        		new File(crawlDir, "checkpoints"),
+	        		new File(h3JobDir, "state"), 
+	        		new File(h3JobDir, "scratch"),
+	        		new File(h3BaseDir, "bin"),
+	        		new File(h3BaseDir, "extras"),
+	        		new File(h3BaseDir, "lib")
+	        };
     }
 }
