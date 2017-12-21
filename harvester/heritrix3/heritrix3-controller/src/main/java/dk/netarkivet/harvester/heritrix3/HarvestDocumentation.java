@@ -148,17 +148,12 @@ public class HarvestDocumentation {
                 addCDXes(ingestables, warcFilesDir, mdfw, ArchiveProfile.WARC_PROFILE);
                 cdxGenerationSucceeded = true;
             }
-
-            if (cdxGenerationSucceeded) {
-                // This indicates, that either the files in the arcsdir or in the warcsdir
-                // have now been CDX-processed.
-                //
-                // TODO refactor, as this call has too many sideeffects
-                ingestables.setMetadataGenerationSucceeded(true);
-            } else {
+            
+            if (!cdxGenerationSucceeded) {
                 log.warn("Found no archive directory with ARC og WARC files. Looked for dirs '{}' and '{}'.",
                         arcFilesDir.getAbsolutePath(), warcFilesDir.getAbsolutePath());
             }
+            ingestables.setMetadataGenerationSucceeded(true);
         } finally {
             // If at this point metadata is not ready, an error occurred.
             if (!ingestables.isMetadataReady()) {
