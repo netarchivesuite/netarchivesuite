@@ -92,6 +92,7 @@ public class IngestDomainList {
             in = new BufferedReader(new InputStreamReader(new FileInputStream(domainList), "UTF-8"));
 
             while ((domainName = in.readLine()) != null) {
+                domainName = domainName.trim();
                 try {
                     countDomains++;
                     if ((countDomains % PRINT_INTERVAL) == 0) {
@@ -106,7 +107,7 @@ public class IngestDomainList {
                         }
                     }
 
-                    if (DomainUtils.isValidDomainName(domainName.trim())) {
+                    if (DomainUtils.isValidDomainName(domainName)) {
                         if (!dao.exists(domainName)) {
                             myDomain = Domain.getDefaultDomain(domainName);
                             dao.create(myDomain);
