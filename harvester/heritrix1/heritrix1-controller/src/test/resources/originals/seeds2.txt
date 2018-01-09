@@ -1,5 +1,0 @@
-# One URL per line.
-# This seed list tests that several URLs can be found from the seed list.
-http://netarkivet.dk/kildetekster/JavaArcUtils-0.3.tar.gz
-http://netarkivet.dk/website/press/Bryllup-20040706.pdf
-http://netarkivet.dk/proj/pilot_juli2001.pdf
