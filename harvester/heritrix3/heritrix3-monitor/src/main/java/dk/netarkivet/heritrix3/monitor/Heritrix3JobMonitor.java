@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 
 public class Heritrix3JobMonitor implements Pageable {

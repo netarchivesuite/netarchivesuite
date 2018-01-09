@@ -18,8 +18,6 @@ import org.netarchivesuite.heritrix3wrapper.ScriptResult;
 import com.antiaction.common.filter.Caching;
 import com.antiaction.common.templateengine.TemplateBuilderFactory;
 
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
@@ -94,9 +92,6 @@ public class H3FrontierResource implements ResourceAbstract {
 
         if (linesPerPage < 25) {
             linesPerPage = 25;
-        }
-        if (linesPerPage > 1000) {
-            linesPerPage = 1000;
         }
 
         String initials = req.getParameter("initials");
