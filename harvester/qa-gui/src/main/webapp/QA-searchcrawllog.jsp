@@ -81,7 +81,9 @@ domain - the domain to get the log for
         if (regexp != null && regexp.length() != 0 ) {
             crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
         } else { // use 'domain' as the regular expression
-        	regexp = ".*" + domain.replaceAll("\\.", "\\\\.") + ".*";
+        	//regexp = ".*" + domain.replaceAll("\\.", "\\\\.") + ".*";
+           	regexp = ".*(https?:\\/\\/(www\\.)?|dns:|ftp:\\/\\/)([\\w_-]+\\.)?([\\w_-]+\\.)?([\\w_-]+\\.)?" 
+            		+ domain.replaceAll("\\.", "\\\\.") +  "($|\\/|\\w|\\s).*";
         	crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
         }
         LineNumberReader reader = new LineNumberReader(new FileReader(crawlLogExtract));
