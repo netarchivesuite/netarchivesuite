@@ -93,6 +93,9 @@ public class IngestDomainList {
 
             while ((domainName = in.readLine()) != null) {
                 domainName = domainName.trim();
+                if (domainName.isEmpty()) {
+                	continue; // Skip empty lines
+                }
                 try {
                     countDomains++;
                     if ((countDomains % PRINT_INTERVAL) == 0) {
