@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.archive.format.ArchiveFileConstants;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecordHeader;
 import org.archive.io.arc.ARCRecord;
@@ -117,6 +118,7 @@ public class NetarchiveResourceStore implements ResourceStore {
         metadata.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, "" + offset);
         metadata.put(ARCRecordMetaData.LENGTH_FIELD_KEY, "" + bitarchiveRecord.getLength());
         metadata.put(ARCRecordMetaData.STATUSCODE_FIELD_KEY, captureSearchResult.getHttpCode());
+        metadata.put(ArchiveFileConstants.ORIGIN_FIELD_KEY, captureSearchResult.getOriginalUrl());
         // create arcRecordMetaData.
         try {
             arcRecordMetaData = new ARCRecordMetaData(filename, metadata);
