@@ -81,7 +81,7 @@
             <includes>
                 <include>org.netarchivesuite:*:jar</include>
             </includes>
-            <outputFileNameMapping>netarchivesuite-${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>netarchivesuite-${project.version}-${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
             <outputDirectory>/lib/</outputDirectory>
         </dependencySet>
 
@@ -107,10 +107,10 @@
             <includes>
                 <include>*:jar</include>
             </includes>
-            <!--excludes>
+            <excludes>
                 <exclude>org.netarchivesuite:*:jar</exclude>
                 <exclude>org.apache.derby:*:jar</exclude>
-            </excludes-->
+            </excludes>
             <outputDirectory>/lib/</outputDirectory>
         </dependencySet>
 
