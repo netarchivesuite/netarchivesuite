@@ -154,10 +154,10 @@ public class Heritrix3JobMonitor implements Pageable {
                     	long rangeFrom = pos;
                     	long rangeTo = pos + tmpBuf.length - 1;
                         StreamResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, null, null, true);
-                        LOG.info("Crawllog length for job {}={}.", jobId, anypathResult.contentLength);
                         if (anypathResult != null && rangeFrom < anypathResult.contentLength) {
-                        	if (rangeTo > anypathResult.contentLength) {
-                        		rangeTo = anypathResult.contentLength;
+                            LOG.info("Crawllog length for job {}={}.", jobId, anypathResult.contentLength);
+                        	if (rangeTo >= anypathResult.contentLength) {
+                        		rangeTo = anypathResult.contentLength - 1;
                         	}
                         	anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, rangeFrom, rangeTo);
                             LOG.info("Crawllog byterange download for job {}. ({}-{})", jobId, rangeFrom, rangeTo);

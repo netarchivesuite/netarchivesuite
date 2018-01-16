@@ -148,13 +148,16 @@ public class IndexResource implements ResourceAbstract {
         }
 
         Iterator<Heritrix3JobMonitor> j3JobIter = h3JobsList.iterator();
+        String channelStr;
         while (j3JobIter.hasNext()) {
             h3Job = j3JobIter.next();
-            if (!h3Job.bInitialized) {
-                h3Job.init();
+            if (h3Job.job != null) {
+            	channelStr = h3Job.job.getChannel();
+            	if (channelStr != null) {
+                    hcs = hcMap.get(channelStr);
+                    hcs.h3JobList.add(h3Job);
+            	}
             }
-            hcs = hcMap.get(h3Job.job.getChannel());
-            hcs.h3JobList.add(h3Job);
         }
 
         for (int i=0; i<hcList.size(); ++i) {
