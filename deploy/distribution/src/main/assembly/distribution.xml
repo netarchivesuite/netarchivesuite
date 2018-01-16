@@ -81,7 +81,7 @@
             <includes>
                 <include>org.netarchivesuite:*:jar</include>
             </includes>
-            <outputFileNameMapping>netarchivesuite-${project.version}-${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>netarchivesuite-${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
             <outputDirectory>/lib/</outputDirectory>
         </dependencySet>
 
