@@ -42,9 +42,9 @@ This page displays a list of running jobs.
                 dk.netarkivet.harvester.webinterface.FindRunningJobQuery,
                 dk.netarkivet.common.utils.StringUtils,
                 dk.netarkivet.common.utils.TableSort,
-                dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort"
+                dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort,
+                dk.netarkivet.harvester.webinterface.servlet.HistoryServlet"
         pageEncoding="UTF-8" %>
-<%@ page import="dk.netarkivet.harvester.webinterface.servlet.HistoryServlet" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
@@ -128,10 +128,10 @@ This page displays a list of running jobs.
                     + Constants.HARVEST_PARAM + "="
                     + HTMLUtils.encode(harvestName);
 
-            //gestion des fleche de trie (what is a good English translation of this?)
-            String incSortPic = "&uarr;";
-            String descSortPic = "&darr;";
-            String noSortPic = "";
+            //Handling of which arrow to show
+            String incSortPic = "&uarr;"; // html entity for UPWARDS ARROW
+            String descSortPic = "&darr;"; // html entity for DOWNWARDS ARROW
+            String noSortPic = ""; // NO ARROW
             String tabArrow[] = new String[10];
             for (int i = 0; i < 10; i++) {
                 tabArrow[i] = noSortPic;
