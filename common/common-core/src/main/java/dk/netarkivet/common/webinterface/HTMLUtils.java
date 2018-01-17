@@ -307,11 +307,13 @@ public class HTMLUtils {
                 + "<img src=\"transparent_menu_logo.png\" alt=\"" + s + "\"/> " + s + "</a></td></tr>\n");
 
         final List<SiteSection> sections = SiteSection.getSections();
+        log.debug("Generating Navigation Tree for " + sections.size() + " site sections.");
         for (SiteSection section : sections) {
             try {
+                log.debug("Generating navigation tree for " + section.getDirname() + " from url " + url);
                 section.generateNavigationTree(out, url, locale);
             } catch (IOException e) {
-                log.debug("Error generating navigation tree for " + section.getDirname() + " from url " + url);
+                log.warn("Error generating navigation tree for " + section.getDirname() + " from url " + url, e);
             }
         }
         out.print("</table>\n");
