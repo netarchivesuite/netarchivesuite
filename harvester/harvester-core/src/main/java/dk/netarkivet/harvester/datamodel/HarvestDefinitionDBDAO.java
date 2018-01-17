@@ -677,7 +677,14 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + " FROM partialharvests, harvestdefinitions"
                     + " WHERE harvestdefinitions.harvest_id = partialharvests.harvest_id"
                     + " AND isactive = ? AND nextdate IS NOT NULL AND nextdate < ?", true, now));
-            return ids;
+            Set<Long> distinctIds = new HashSet<>();
+            distinctIds.addAll(ids);
+            if (distinctIds.size() != ids.size()) {
+                log.warn("Query returned multiple identical ids {}. These have been sanitized.", ids);
+                return distinctIds;
+            } else {
+                return ids;
+            }
         } finally {
             HarvestDBConnection.release(connection);
         }

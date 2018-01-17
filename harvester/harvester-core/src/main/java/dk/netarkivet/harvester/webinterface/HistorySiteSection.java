@@ -38,17 +38,17 @@ public class HistorySiteSection extends SiteSection {
         super("sitesection;history",
         		"Harveststatus",
         		3,
-        		new String[][] {
-        			{"alljobs", "pagetitle;all.jobs"},
-                    //{"deprecatedperdomain", "pagetitle;all.jobs.per.domain"},
-                    {"running", "pagetitle;all.jobs.running"},
-                    {"history/", "pagetitle;h3.remote.access"}, // refer to webpage outside of webpages directory
-                    {"running-jobdetails", "pagetitle;running.job.details"},
-                    {"perhd", "pagetitle;all.jobs.per.harvestdefinition"},
-                    {"perharvestrun", "pagetitle;all.jobs.per.harvestrun"},
-                    {"jobdetails", "pagetitle;details.for.job"},
-                    {"perdomain", "pagetitle;all.jobs.per.domain"},
-                    {"seeds", "pagetitle;seeds.for.harvestdefinition"}
+                new String[][] {
+                        {"alljobs", "pagetitle;all.jobs"},
+                        //{"deprecatedperdomain", "pagetitle;all.jobs.per.domain"},
+                        {"running", "pagetitle;all.jobs.running"},
+                        {"running-jobdetails", "pagetitle;running.job.details"},
+                        {"history/", "pagetitle;h3.remote.access"}, // refer to webpage outside of webpages directory
+                        {"perhd", "pagetitle;all.jobs.per.harvestdefinition"},
+                        {"perharvestrun", "pagetitle;all.jobs.per.harvestrun"},
+                        {"jobdetails", "pagetitle;details.for.job"},
+                        {"perdomain", "pagetitle;all.jobs.per.domain"},
+                        {"seeds", "pagetitle;seeds.for.harvestdefinition"}
                 },
                 "History", dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE
         );
