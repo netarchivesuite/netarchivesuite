@@ -1,6 +1,11 @@
 package dk.netarkivet.harvester.webinterface.servlet;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -20,6 +26,9 @@ import com.antiaction.common.templateengine.login.LoginTemplateHandler;
 import com.antiaction.common.templateengine.storage.TemplateFileStorageManager;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
@@ -27,7 +36,6 @@ import dk.netarkivet.harvester.Constants;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 public class NASEnvironment {
-
     /** servletConfig. */
     protected ServletConfig servletConfig = null;
 
@@ -102,7 +110,8 @@ public class NASEnvironment {
         login_template_name = "login.html";
 
         templateMaster = TemplateMaster.getInstance("default");
-        templateMaster.addTemplateStorage(TemplateFileStorageManager.getInstance(servletContext.getRealPath("/"), "UTF-8"));
+        templateMaster.addTemplateStorage(TemplateFileStorageManager.getInstance(
+                        servletContext.getRealPath("/"), "UTF-8"));
 
         loginHandler = new LoginTemplateHandler<NASUser>();
         loginHandler.templateMaster = templateMaster;
@@ -194,4 +203,102 @@ public class NASEnvironment {
         return sb.toString();
     }
 
+    /**
+     * Determine whether URL in given crawllog line is attempted harvested
+     * @param crawllogLine Line from the crawllog under consideration
+     * @return whether the given crawllog line contains an URL that is attempted harvested
+     */
+    private boolean urlInLineIsAttemptedHarvested(String crawllogLine) {
+        String[] columns = crawllogLine.split("\\s+");
+        if (columns.length < 4) {
+            return false;
+        }
+        String fetchStatusCode = columns[1];
+        String harvestedUrl = columns[3];
+
+        // Do not include URLs with a negative Fetch Status Code (coz they're not even attempted crawled)
+        if (Integer.parseInt(fetchStatusCode) < 0) {
+            return false;
+        }
+
+        // Do not include dns-look-ups from the crawllog
+        if (harvestedUrl.startsWith("dns:")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the (attempted) crawled URLs of the crawllog for the running job with the given job id
+     *
+     * @param jobId Id of the running job
+     * @param h3Job Heritrix3JobMonitor from which to get the job for the given jobId
+     * @return The (attempted) crawled URLs of the crawllog for given job
+     */
+    public Stream<String> getCrawledUrls(long jobId, Heritrix3JobMonitor h3Job) {
+        if (h3Job == null) {
+            h3Job = h3JobMonitorThread.getRunningH3Job(jobId);
+            if (h3Job == null) {
+                // There were no running jobs
+                return Stream.empty();
+            }
+        }
+        String crawlLogPath = h3Job.crawlLogFilePath;
+
+        try {
+            Stream<String> attemptedHarvestedUrlsFromCrawllog = Files.lines(Paths.get(crawlLogPath),
+                    Charset.forName("UTF-8"))
+                    .filter(line -> urlInLineIsAttemptedHarvested(line))
+                    .map(line -> line.split("\\s+")[3]);
+
+            return attemptedHarvestedUrlsFromCrawllog;
+        } catch (java.io.IOException e) {
+            throw new IOFailure("Could not open crawllog file", e);
+        }
+    }
+
+    /**
+     * Normalizes input URL so that only the domain part remains.
+     *
+     * @param url URL intended to be stripped to it's domain part
+     * @return The domain part of the input URL
+     * @throws ArgumentNotValid if URL was malformed
+     */
+    private String normalizeDomainUrl(String url) {
+        if (!url.toLowerCase().matches("^\\w+://.*")) {
+            // URL has no protocol part, so let's add one
+            url = "http://" + url;
+        }
+        URL domainUrl;
+        try {
+            domainUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            return "";
+        }
+        String domainHost = domainUrl.getHost();
+        String normalizedDomainUrl = DomainUtils.domainNameFromHostname(domainHost);
+        if (normalizedDomainUrl == null) {
+            // Invalid domain
+            throw new ArgumentNotValid(url + " is not a valid domain name.");
+        }
+        return normalizedDomainUrl;
+    }
+
+    /**
+     * Find out whether the given job harvests given domain.
+     *
+     * @param jobId The job
+     * @param domainName The domain
+     * @return whether the given job harvests given domain
+     */
+    public boolean jobHarvestsDomain(long jobId, String domainName, Heritrix3JobMonitor h3Job) {
+        // Normalize search URL
+        String searchedDomain = normalizeDomainUrl(domainName);
+
+        // Return whether or not the crawled URLs contain the searched URL
+        return getCrawledUrls(jobId, h3Job)
+                .map(url -> normalizeDomainUrl(url))
+                .anyMatch(url -> searchedDomain.equalsIgnoreCase(url));
+    }
 }
