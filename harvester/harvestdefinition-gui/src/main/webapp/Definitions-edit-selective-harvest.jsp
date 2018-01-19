@@ -119,12 +119,13 @@ DomainConfigurations are posted as pairs
     List<String> illegalDomains = new ArrayList<String>();
     List<String> illegalSeeds = new ArrayList<String>(); // produced by EventHarvestUtils.addconfigurations
     String ADD_SEEDS_PARAM = request.getParameter(Constants.ADD_SEEDS_PARAM);
-    //try {
-		if (ADD_SEEDS_PARAM == null) { 
-        	SelectiveHarvestUtil.processRequest(pageContext, I18N,
+    boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
+    EventHarvestUtil.writeTo("Definitions-edit-selective.jsp: multipart = " + isMultiPart);
+ 
+    	if (!isMultiPart && ADD_SEEDS_PARAM == null) {
+       		SelectiveHarvestUtil.processRequest(pageContext, I18N,
                 	unknownDomains, illegalDomains);
     	} else {
-			boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
     		Map<String,String> attributeMap = new HashMap<String,String>(); 
 			Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
 			EventHarvestUtil.processAddSeeds(pageContext, isMultiPart, I18N, harvestName, illegalSeeds, attributeMap);
