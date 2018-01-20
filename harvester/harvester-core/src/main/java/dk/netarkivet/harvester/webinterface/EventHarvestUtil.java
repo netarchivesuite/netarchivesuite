@@ -69,9 +69,8 @@ public final class EventHarvestUtil {
     }
     
     public static void processAddSeeds(PageContext pageContext, boolean isMultiPart, I18n I18N, String harvestName, List<String> illegalSeeds, Map<String,String> attributeMap) throws IOException {
-    	log.info("Initiating processAddSeeds method");
+    	log.info("Starting processAddSeeds method");
     	writeTo("Initiating processAddSeeds method, multipart=" + isMultiPart);
-    	HTMLUtils.log(EventHarvestUtil.class.getName(), "Initiating processAddSeeds method");
     	if (!isMultiPart){
     		// The new seeds is contained directly in the formdata
     		addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
@@ -81,20 +80,20 @@ public final class EventHarvestUtil {
     		try {
 				processMultidataForm(pageContext, seedsFile, attributeMap);
 			} catch (Throwable e) {
-				// TODO Auto-generated catch block
 				log.info("Throws unexpected exception", e);
 				HTMLUtils.log(EventHarvestUtil.class.getName(), "Throws unexpected exception" + e);
 				
 			}
     		if (seedsFile.length() > 0) {
-    			String harvestName1 = attributeMap.get(Constants.HARVEST_PARAM);
+    			harvestName = attributeMap.get(Constants.HARVEST_PARAM); // reading from attributeMap, as harvestName is null if multipart
     			String maxbytesString = attributeMap.get(Constants.MAX_BYTES_PARAM);
     			String maxobjectsString = attributeMap.get(Constants.MAX_OBJECTS_PARAM);
     			String maxrateString = attributeMap.get(Constants.MAX_RATE_PARAM);
     			String orderTemplateString = attributeMap.get(Constants.ORDER_TEMPLATE_PARAM);
     			EventHarvestUtil.addConfigurationsFromSeedsFile(
-    					pageContext, I18N, harvestName1, seedsFile, maxbytesString, 
+    					pageContext, I18N, harvestName, seedsFile, maxbytesString, 
     					maxobjectsString, maxrateString, orderTemplateString, attributeMap, illegalSeeds);
+  
     		} else {
     			log.warn("no file was uploaded");
     			HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
@@ -102,9 +101,7 @@ public final class EventHarvestUtil {
     			return;
     		}    			 		
     	}
-    	log.info("Finishing processAddSeeds method");
-    	HTMLUtils.log(EventHarvestUtil.class.getName(), "Finishing processAddSeeds method");
-
+    	log.info("Finished processAddSeeds method");
     }
     
     private static void processMultidataForm(PageContext context, File seedsFile, Map<String,String> attributeMap) throws Exception {
@@ -145,6 +142,7 @@ public final class EventHarvestUtil {
              }
        	}
         writeTo("Keys in attributeMap:" + StringUtils.join(attributeMap.keySet(), ","));
+        log.debug("Found keys in attributeMap: {}", StringUtils.join(attributeMap.keySet(), ","));
     }
     
     /**

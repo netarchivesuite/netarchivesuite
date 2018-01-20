@@ -122,70 +122,17 @@ DomainConfigurations are posted as pairs
     boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
     EventHarvestUtil.writeTo("Definitions-edit-selective.jsp: multipart = " + isMultiPart);
  
-    	if (!isMultiPart && ADD_SEEDS_PARAM == null) {
-       		SelectiveHarvestUtil.processRequest(pageContext, I18N,
-                	unknownDomains, illegalDomains);
-    	} else {
+    if (!isMultiPart && ADD_SEEDS_PARAM == null) {
+       	SelectiveHarvestUtil.processRequest(pageContext, I18N,
+               unknownDomains, illegalDomains);
+    } else {
     		Map<String,String> attributeMap = new HashMap<String,String>(); 
 			Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
 			EventHarvestUtil.processAddSeeds(pageContext, isMultiPart, I18N, harvestName, illegalSeeds, attributeMap);
-			
-// 			if (!isMultiPart){
-// 				EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
-//     		} else {
-//     			File seedsFile = File.createTempFile("seeds", ".txt", FileUtils.getTempDir());
-//     			EventHarvestUtil.processMultidataForm(pageContext, seedsFile, attributeMap);
-//     			if (seedsFile.length() > 0) {
-//     				String maxbytesString = attributeMap.get(Constants.MAX_BYTES_PARAM);
-// 					String maxobjectsString = attributeMap.get(Constants.MAX_OBJECTS_PARAM);
-// 					String maxrateString = attributeMap.get(Constants.MAX_RATE_PARAM);
-// 					String orderTemplateString = attributeMap.get(Constants.ORDER_TEMPLATE_PARAM);
-// 					EventHarvestUtil.addConfigurationsFromSeedsFile(
-//  							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
-//  							maxobjectsString, maxrateString, orderTemplateString, attributeMap, illegalSeeds);
-//  				} else {
-//  					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-//                  	"errormsg;no.seedsfile.was.uploaded");
-//          			return;
-//          		}    			 		
-//     		}
-    	}
-	//} catch (ForwardedToErrorPage e) {
-	//	System.err.println(e);
-    //    return;
-    //}
-    
-//     try {
-//     	if (ADD_SEEDS_PARAM == null) { 
-//         	SelectiveHarvestUtil.processRequest(pageContext, I18N,
-//                 	unknownDomains, illegalDomains);
-//     	} else {
-//     		boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
-//     		Map<String,String> attributeMap = new HashMap<String,String>(); 
-// 			Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
-//     		if (!isMultiPart){
-//     			 EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
-//     		} else {
-//     			File seedsFile = File.createTempFile("seeds", ".txt", FileUtils.getTempDir());
-//     			EventHarvestUtil.processMultidataForm(pageContext, seedsFile, attributeMap);
-//     			if (seedsFile.length() > 0) {
-//     				EventHarvestUtil.addConfigurationsFromSeedsFile(
-//  							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
-//  							maxobjectsString, maxrateString, orderTemplateString, attributeMap);
-//  					}
-//  				} else {
-//  					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-//                  	"errormsg;no.seedsfile.was.uploaded");
-//          			return;
-//          		}    			 		
-//     		}
-//     	}
-        
-//     } catch (ForwardedToErrorPage e) {
-	
-//         return;
-//     }
-
+			if (harvestName == null) { // is null if multiPart, read the harvestname from the attributeMap
+				harvestName = attributeMap.get(Constants.HARVEST_PARAM);
+			}
+    }		
     //Redirect if we just saved the HD
     if (SAVE_PARAM_ARG != null) {
         response.sendRedirect("Definitions-selective-harvests.jsp");
