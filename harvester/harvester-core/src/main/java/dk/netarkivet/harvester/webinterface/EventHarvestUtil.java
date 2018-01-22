@@ -24,7 +24,6 @@
 package dk.netarkivet.harvester.webinterface;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -69,8 +68,7 @@ public final class EventHarvestUtil {
     }
     
     public static void processAddSeeds(PageContext pageContext, boolean isMultiPart, I18n I18N, String harvestName, List<String> illegalSeeds, Map<String,String> attributeMap) throws IOException {
-    	log.info("Starting processAddSeeds method");
-    	writeTo("Initiating processAddSeeds method, multipart=" + isMultiPart);
+    	log.info("Starting processAddSeeds(), multipart={}", isMultiPart);
     	if (!isMultiPart){
     		// The new seeds is contained directly in the formdata
     		addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
@@ -81,8 +79,6 @@ public final class EventHarvestUtil {
 				processMultidataForm(pageContext, seedsFile, attributeMap);
 			} catch (Throwable e) {
 				log.info("Throws unexpected exception", e);
-				HTMLUtils.log(EventHarvestUtil.class.getName(), "Throws unexpected exception" + e);
-				
 			}
     		if (seedsFile.length() > 0) {
     			harvestName = attributeMap.get(Constants.HARVEST_PARAM); // reading from attributeMap, as harvestName is null if multipart
@@ -95,13 +91,13 @@ public final class EventHarvestUtil {
     					maxobjectsString, maxrateString, orderTemplateString, attributeMap, illegalSeeds);
   
     		} else {
-    			log.warn("no file was uploaded");
+    			log.warn("No file was uploaded.");
     			HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
     					"errormsg;no.seedsfile.was.uploaded");
     			return;
     		}    			 		
     	}
-    	log.info("Finished processAddSeeds method");
+    	log.info("Finished processAddSeeds(), multipart={}", isMultiPart);
     }
     
     private static void processMultidataForm(PageContext context, File seedsFile, Map<String,String> attributeMap) throws Exception {
@@ -109,8 +105,7 @@ public final class EventHarvestUtil {
     	FileItemFactory factory = new DiskFileItemFactory();
 		// Create a new file upload handler
    		ServletFileUpload upload = new ServletFileUpload(factory);
-   		log.info("starting processMultidataForm ");
-   		writeTo("starting processMultidataForm ");
+   		log.info("Starting processMultidataForm() ");
         // As the parsing of the formdata has the sideeffect of removing the
         // formdata from the request(!), we have to extract all possible data
         // the first time around.
@@ -141,8 +136,8 @@ public final class EventHarvestUtil {
                  attributeMap.put(fieldName, item.getString());
              }
        	}
-        writeTo("Keys in attributeMap:" + StringUtils.join(attributeMap.keySet(), ","));
         log.debug("Found keys in attributeMap: {}", StringUtils.join(attributeMap.keySet(), ","));
+        log.info("Finished processMultidataForm()");
     }
     
     /**
@@ -209,7 +204,6 @@ public final class EventHarvestUtil {
         for (String attrParam: EAV.getAttributeNames(EAV.DOMAIN_TREE_ID)){
             String paramValue = context.getRequest().getParameter(attrParam);
             log.debug("Read attribute {}. The value in form: {}", attrParam, paramValue);
-            writeTo("Read attribute '" + attrParam + "', value is '" + paramValue + "'"); 
             attributeValues.put(attrParam, paramValue);
         }
         
@@ -222,7 +216,6 @@ public final class EventHarvestUtil {
             
         } catch (Throwable e) {
             log.error("Unexpected exception thrown", e);
-            writeTo("Unexpected exception thrown" + e);
             HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;error.adding.seeds.to.0", eventHarvestName, e);
             throw new ForwardedToErrorPage("Error while adding seeds", e);
         }
@@ -292,29 +285,9 @@ public final class EventHarvestUtil {
             illegalSeeds.addAll(illegalSeedsFound); 
         } catch (Exception e) {
             log.error("Unexpected exception thrown", e);
-            writeTo("Unexpected exception thrown" + e);
             HTMLUtils
                     .forwardWithErrorMessage(context, i18n, "errormsg;error.adding.seeds.to.0", e, eventHarvestName, e);
             throw new ForwardedToErrorPage("Error while adding seeds", e);
         }
-    }
-    
-    public static synchronized void writeTo(String logEntry){
-        //System.out.println("Writing entry to file " + logFile.getAbsolutePath());
-    	File logFile = new File(FileUtils.getTempDir(), "jsplog");
-    	try (FileWriter logFileWriter = new FileWriter(logFile, true);) {
-            logFileWriter.write(logEntry);
-            logFileWriter.write(System.lineSeparator());
-            logFileWriter.flush();
-            logFileWriter.close();
-        } catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-    }
-
-    
-    
-    
+    }    
 }

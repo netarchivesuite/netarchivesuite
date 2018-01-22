@@ -23,9 +23,6 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -35,10 +32,12 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.DomainUtils;
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
@@ -57,11 +56,15 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
  */
 @SuppressWarnings({"unchecked"})
 public final class SelectiveHarvestUtil {
-    /**
+    
+	static final Logger log = LoggerFactory.getLogger(SelectiveHarvestUtil.class);
+	
+	/**
      * Utility class. No instances.
      */
     private SelectiveHarvestUtil() {
     }
+    
 
     /**
      * Update or create a partial harvest definition.
@@ -78,7 +81,7 @@ public final class SelectiveHarvestUtil {
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         ArgumentNotValid.checkNotNull(unknownDomains, "List unknownDomains");
         ArgumentNotValid.checkNotNull(illegalDomains, "List illegalDomains");
-        writeTo(SelectiveHarvestUtil.class.getName() + ": starting method processRequest");
+        log.info("Starting method processRequest");
         // Was the set next date button pressed?
         boolean setNextDateOnly = HTMLUtils.parseOptionalBoolean(context, Constants.NEXTDATE_SUBMIT, false);
         if (setNextDateOnly) {
@@ -332,19 +335,5 @@ public final class SelectiveHarvestUtil {
         } else {
             return false;
         }
-    }
-    
-    private static synchronized void writeTo(String logEntry){
-        //System.out.println("Writing entry to file " + logFile.getAbsolutePath());
-    	File logFile = new File(FileUtils.getTempDir(), "jsplog");
-    	try (FileWriter logFileWriter = new FileWriter(logFile, true);) {
-            logFileWriter.write(logEntry);
-            logFileWriter.write(System.lineSeparator());
-            logFileWriter.flush();
-            logFileWriter.close();
-        } catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}        
-    }
+    }    
 }

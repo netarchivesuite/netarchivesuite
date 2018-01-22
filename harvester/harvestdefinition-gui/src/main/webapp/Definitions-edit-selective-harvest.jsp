@@ -27,17 +27,49 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 This page provides an interface for entering and updating information referring
 to a particular selective harvest.
 
-Parameters:
+This page has major side effects in that it will during then addSeeds function:
+1) Create any unknown domains present in the seedlist 
+2) Create for every seedlist a configuration and seedlist formed from the
+name of the harvest and the orderTemplate and add that configuration to the
+harvest.
+
+General parameters:
 harvestname:
      the name of the harvest definition.  If this is not set, the user is
      allowed to enter a new name, otherwise a harvest definition of that
      name must exist and the name cannot be changed.
-
-The following parameters are posted by the page to itself:
-
 update:
      if defined, the harvest definition database will be updated from the
      submitted fields.
+
+The following parameters are only posted by page Definitions-add-event-seeds.jsp
+
+seeds:
+	A whitespace-separated list of seed urls to be added
+orderTemplate:
+	The name of the order template to use with these seeds
+addSeeds: 
+     if defined, either the arguments seeds contain a list of the seeds to be added or they are in a file
+     Note that this variable is not directly accessable if the request is a multipart-posting. 
+     See line: ServletFileUpload.isMultipartContent(request)
+upload_file:
+     contains the reference to the file with the seeds, if we are dealing with a multipart-posting.
+     Is read in the EventHarvestUtil#processMultidataForm() method.
+maxRate:
+     maxRate value to use when creating new configurations. The value is not used currently
+maxObjects:
+	 maxObjects value to use when creating new configurations
+maxBytes:
+	maxBytes value to use when creating new configurations
+MAX_HOPS:
+    max Hops value to use when creating new configurations
+EXTRACT_JAVASCRIPT:
+     value to use when creating new configurations for extract javascript argument: '1' means true, 'null' means javascript extraction is disableed
+HONOR_ROBOTS_DOT_TXT:
+     value to use when creating new configurations for robots.txt. '1' means honoring robots.txt, 'null' means robots.txt is ignored 
+
+The following parameters are only posted by the page to itself:
+
 createnew:
      Set when creating new harvest, to indicate that rather than throwing a
      fit when no harvest exists called harvestname, it should be created.  This
@@ -120,9 +152,8 @@ DomainConfigurations are posted as pairs
     List<String> illegalSeeds = new ArrayList<String>(); // produced by EventHarvestUtils.addconfigurations
     String ADD_SEEDS_PARAM = request.getParameter(Constants.ADD_SEEDS_PARAM);
     boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
-    EventHarvestUtil.writeTo("Definitions-edit-selective.jsp: multipart = " + isMultiPart);
- 
-    if (!isMultiPart && ADD_SEEDS_PARAM == null) {
+
+    if (!isMultiPart && ADD_SEEDS_PARAM == null) { // we're dealing with the original processRequest for this page. 
        	SelectiveHarvestUtil.processRequest(pageContext, I18N,
                unknownDomains, illegalDomains);
     } else {

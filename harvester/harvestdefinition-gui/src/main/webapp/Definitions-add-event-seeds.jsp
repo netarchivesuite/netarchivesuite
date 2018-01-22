@@ -25,36 +25,22 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%--
 This page is used to add a (potentially) large number of seeds to an event harvest.
-Parameters:
+Previously, the processing was done on this page. The processing is now done from page 
+'Definitions-edit-selective-harvest.jsp'.
+
+Parameters sent to this page:
 harvestName:
-          the harvest to add the seeds to, must be name of a known harvest
-update:
-          if null, the page just displays a form for input. If not null, the backing
-          method  EventHarvest.addConfigurations is called to process the seeds to be added
-seeds:
-          A whitespace-separated list of seed urls to be added
+          the harvest to add the seeds to, must be name of a known harvest 
 usingFileMode:
 		  if null, you enter the seeds in the designated textarea; otherwise, it will ask for a file
 		  that contains the seeds.	         
-orderTemplate:
-          The name of the order template to use with these seeds
-
-This page has major side effects in that it will:
-1) Create any unknown domains present in the seedlist
-2) Create for every seedlist a configuration and seedlist formed from the
-name of the harvest and the orderTemplate and add that configuration to the
-harvest.
+		  
 --%><%@ page import="java.util.Iterator,
                  java.util.List,
-                 java.util.HashMap,
-                 java.util.Map,
-                 java.io.File,
-                 java.util.Set,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
-                 dk.netarkivet.harvester.datamodel.PartialHarvest,
                  dk.netarkivet.harvester.datamodel.TemplateDAO,
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.datamodel.eav.EAV,
