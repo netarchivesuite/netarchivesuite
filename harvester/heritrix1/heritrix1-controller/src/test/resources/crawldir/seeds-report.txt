@@ -1,3 +1,0 @@
-[seeds]                   [res-code] [status]
-http://www.kb.dk/                200 CRAWLED
-http://www.netarkivet.dk/        200 CRAWLED

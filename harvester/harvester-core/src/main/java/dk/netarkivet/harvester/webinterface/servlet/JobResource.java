@@ -66,7 +66,8 @@ public class JobResource implements ResourceAbstract {
     }
 
     @Override
-    public void resource_service(ServletContext servletContext, NASUser nas_user, HttpServletRequest req, HttpServletResponse resp, int resource_id, List<Integer> numerics, String pathInfo) throws IOException {
+    public void resource_service(ServletContext servletContext, NASUser nas_user, HttpServletRequest req,
+            HttpServletResponse resp, int resource_id, List<Integer> numerics, String pathInfo) throws IOException {
         if (NASEnvironment.contextPath == null) {
             NASEnvironment.contextPath = req.getContextPath();
         }
@@ -219,7 +220,7 @@ public class JobResource implements ResourceAbstract {
             
             sb.append("<div style=\"clear:both;\"></div>");
             sb.append("</div>");
-            
+
             /* line 1 */
             
             sb.append("<h4>Job details</h4>\n");
@@ -583,7 +584,8 @@ public class JobResource implements ResourceAbstract {
         out.close();
     }
 
-    public void crawllog_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
+    public void crawllog_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics)
+            throws IOException {
         Locale locale = resp.getLocale();
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
@@ -661,7 +663,6 @@ public class JobResource implements ResourceAbstract {
             SearchResult searchResult = null;
             
             if (q != null) {
-            	
                 searchResult = h3Job.getSearchResult(q);
                 searchResult.update();
                 pageable = searchResult;

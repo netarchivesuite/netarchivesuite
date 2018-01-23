@@ -1,3 +1,0 @@
-[#urls] [#bytes] [host]
-32 237127 netarkivet.dk
-1 56 dns:

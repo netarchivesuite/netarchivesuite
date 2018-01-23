@@ -74,11 +74,11 @@ public class Reporting {
      * @throws ArgumentNotValid If jobid is 0 or negative.
      * @throws IOFailure On trouble generating the file list
      */
-    public static List<String> getFilesForJob(int jobid, String harvestprefix) {
+    public static List<String> getFilesForJob(long jobid, String harvestprefix) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob fileListJob = new FileListJob();
         List<String> acceptedPatterns = new ArrayList<String>();
-        acceptedPatterns.add(".*" + jobid + ".*" + metadatafile_suffix);
+        acceptedPatterns.add(getMetadataFilePatternForJobId(jobid));
         acceptedPatterns.add(harvestprefix + archivefile_suffix);
         fileListJob.processOnlyFilesMatching(acceptedPatterns);
 
@@ -86,7 +86,7 @@ public class Reporting {
         try {
             f = File.createTempFile(jobid + "-files", ".txt", FileUtils.getTempDir());
         } catch (IOException e) {
-            throw new IOFailure("Could not create temorary file", e);
+            throw new IOFailure("Could not create temporary file", e);
         }
         BatchStatus status = ArcRepositoryClientFactory.getViewerInstance().batch(fileListJob,
                 Settings.get(CommonSettings.USE_REPLICA_ID));
@@ -117,7 +117,8 @@ public class Reporting {
                 return ArchiveBatchFilter.EXCLUDE_NON_WARCINFO_RECORDS;
             }
         };
-        cdxJob.processOnlyFilesMatching(".*"+jobid + ".*" + metadatafile_suffix);
+        String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobid);
+        cdxJob.processOnlyFilesMatching(metadataFileSearchPattern);
 
         File f;
         try {
@@ -155,11 +156,11 @@ public class Reporting {
      * @return A file containing the crawl.log lines. This file is temporary, and should be deleted after use.
      * @throws ArgumentNotValid On negative jobids, or if domain is null or the empty string.
      */
-    public static File getCrawlLogForDomainInJob(String domain, int jobid) {
+    public static File getCrawlLogForDomainInJob(String domain, long jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
         FileBatchJob urlsForDomainBatchJob = new HarvestedUrlsForDomainBatchJob(domain);
-        urlsForDomainBatchJob.processOnlyFilesMatching(".*"+jobid + ".*" + metadatafile_suffix);
+        urlsForDomainBatchJob.processOnlyFilesMatching(getMetadataFilePatternForJobId(jobid));
         return getResultFile(urlsForDomainBatchJob);
     }
 
@@ -196,12 +197,22 @@ public class Reporting {
      * @param regexp A regular expression
      * @return a File with the matching lines.
      */
-    public static File getCrawlLoglinesMatchingRegexp(int jobid, String regexp) {
+    public static File getCrawlLoglinesMatchingRegexp(long jobid, String regexp) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         ArgumentNotValid.checkNotNullOrEmpty(regexp, "String regexp");
         FileBatchJob crawlLogBatchJob = new CrawlLogLinesMatchingRegexp(regexp);
-        crawlLogBatchJob.processOnlyFilesMatching(".*"+jobid + ".*" + metadatafile_suffix);
+        crawlLogBatchJob.processOnlyFilesMatching(getMetadataFilePatternForJobId(jobid));
         return getResultFile(crawlLogBatchJob);
     }
-
+    
+    /**
+     * Construct the correct metadatafilepattern for a given jobID.
+     * @param jobid a given harvest jobID
+     * @return metadatafilePattern for the given jobid
+     */
+    private static String getMetadataFilePatternForJobId(long jobid) {
+    	// The old invalid metadataFilePattern
+    	//return ".*"+jobid + ".*" + metadatafile_suffix;
+    	return jobid + metadatafile_suffix;
+    }
 }

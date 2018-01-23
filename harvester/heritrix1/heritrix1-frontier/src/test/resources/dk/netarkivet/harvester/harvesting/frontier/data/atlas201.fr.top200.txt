@@ -1,3 +1,0 @@
-queue currentSize totalEnqueues sessionBalance lastCost(averageCost) lastDequeueTime wakeTime totalSpend/totalBudget errorCount lastPeekUri lastQueuedUri
-wikipedia.org 633755 648923 2827 1(1) 2010-08-27T09:22:20.051Z - 15173/-1 1 http://fr.wikipedia.org/wiki/RDS-1 http://fr.wikipedia.org/wiki/Sp%C3%A9cial:Citer/Institut_panrusse_de_recherche_scientifique_en_physique_exp%C3%A9rimentale
-wikimedia.org 41346 79617 727 1(1) 2010-08-27T09:22:25.055Z 1s632ms 38273/-1 0 http://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Nice-Cimiez-MATISSE_tombe1.jpg/200px-Nice-Cimiez-MATISSE_tombe1.jpg http://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Tsar_Bomba_Revised.jpg/220px-Tsar_Bomba_Revised.jpg

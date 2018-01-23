@@ -54,6 +54,7 @@ National Library.
             </domain>
         </datamodel>
         <scheduler>
+            <limitSubmittedJobsInQueue>false</limitSubmittedJobsInQueue>
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
             <jobgenerationperiode>10</jobgenerationperiode>

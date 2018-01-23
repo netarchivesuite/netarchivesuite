@@ -2,7 +2,7 @@
 # Start vagrant with NAS latest version (default) or optional other version
 
 program=`basename $0`
-usage="usage: ${program}"$'\n'"       ${program} -b<branch-name>"$'\n'
+usage="usage: ${program}"$'\n'"       ${program} -b<branch-name>"$'\n'"       ${program} -l"$'\n'
 
 set -u  # Give error msg on use of unset variables or exit with non-zero status
 
@@ -20,9 +20,14 @@ if [ $# -eq 0 ]; then
 else
 	# Exactly one command-line argument
 
+    bflag=0
+    lflag=0
 	# Read command line option -b <branch-name>
-	while getopts 'b:' option; do     # The : signals that -b needs an argument
+	while getopts 'b:l' option; do     # The : signals that -b needs an argument
 		case "$option" in
+			l)
+				lflag=1
+				;;
 			b)
 				bflag=1
 				bargument=("$OPTARG")
@@ -41,31 +46,37 @@ else
 
 		# Result of this will be empty iff branch was not found
 		getbranchhits="git ls-remote --heads https://github.com/netarchivesuite/netarchivesuite.git $bargument"
-		existingbranch=`$getbranchhits`
+        existingbranch=`$getbranchhits`
 
-		if [ -n "$existingbranch" ]; then
-			# The branch exists
-			echo 'Confirmed: the branch exists, all well, continuing...'
+        if [ -n "$existingbranch" ]; then
+            # The branch exists
+            echo 'Confirmed: the branch exists, all well, continuing...'
 
-			# Insert code into Vagrantfile-include that retrieves a local copy
-			# of the requested branch
-			# git clone -b <branch> --depth 1 <remote_repo>
-			echo "pwd; mkdir gitting; cd gitting; git clone -b $bargument --depth 1 https://github.com/netarchivesuite/netarchivesuite.git" >'Vagrantfile-include'
+            # Insert code into Vagrantfile-include that retrieves a local copy
+            # of the requested branch
+            # git clone -b <branch> --depth 1 <remote_repo>
+            echo "pwd; mkdir gitting; cd gitting; git clone -b $bargument --depth 1 https://github.com/netarchivesuite/netarchivesuite.git" >'Vagrantfile-include'
 
-			# Build the newly cloned NAS using maven
-			#echo ''>'Vagrantfile-include'
-			echo 'echo 'PWDing'; pwd; cd netarchivesuite; mvn -DskipTests clean package' >>'Vagrantfile-include'
+            # Build the newly cloned NAS using maven
+            #echo ''>'Vagrantfile-include'
+            echo 'echo 'PWDing'; pwd; cd netarchivesuite; mvn -DskipTests clean package' >>'Vagrantfile-include'
 
-			version="Netarchive suite from branch $bargument"
-		else
-			echo "error: unknown branch '$bargument'"
-			exit 1
-		fi
+            version="Netarchive suite from branch $bargument"
+        else
+            echo "error: unknown branch '$bargument'"
+            exit 1
+        fi
+	elif [ $lflag -eq 1 ]; then
+		# There was a -l option
+        # Insert code into Vagrantfile-include that uses the local copy
+        # git clone -l --depth 1 <remote_repo>
+        echo "pwd; mkdir gitting; cd gitting; git clone -l --depth 1 https://github.com/netarchivesuite/netarchivesuite.git" >'Vagrantfile-include'
+        echo 'echo 'PWDing'; pwd; cd netarchivesuite; mvn -DskipTests clean package' >>'Vagrantfile-include'
+        version="Netarchive suite from current local version"
 	else
-		printf "${usage}"
+ 		printf "${usage}"
 		exit 1
 	fi
-
 fi
 
 
