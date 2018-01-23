@@ -59,6 +59,42 @@ void deleteFromFrontier(String regex) {
     rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
 
+void getNumberOfUrlsInFrontier() {
+    //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
+    pendingUris = job.crawlController.frontier.pendingUris
+    pendingUrisCount = pendingUris.pendingUrisDB.count()
+    htmlOut.println "URLs in the frontierqueue: " + pendingUrisCount
+}
+
+void getNumberOfMatchedUrlsInFrontier(String regex) {
+    matchingCount = 0
+    pattern = ~regex
+    //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
+    pendingUris = job.crawlController.frontier.pendingUris
+    config = new CursorConfig()
+    config.setReadUncommitted(true)
+    //iterates over the raw underlying instance of com.sleepycat.je.Database
+    cursor = pendingUris.pendingUrisDB.openCursor(null, config)
+    key = new DatabaseEntry()
+    value = new DatabaseEntry()
+    try {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < tIdx) {
+            if (value.getData().length == 0) {
+                continue
+            }
+            curi = pendingUris.crawlUriBinding.entryToObject(value)
+            if (pattern.matcher(curi.toString())) {
+                if (((long)index) >= ((long)(page * itemsPerPage)) && ((long)index) < ((long)((page + 1) * itemsPerPage))) {
+                    ++matchingCount
+                }
+            }
+        }
+    } finally {
+        cursor.close()
+    }
+    rawOut.println matchingCount
+}
+
 /**
  * Find the links that are in the frontier list fulfilling the regular expression and the links on the actual page
  * @param regex Combined pagenumber and searchstring

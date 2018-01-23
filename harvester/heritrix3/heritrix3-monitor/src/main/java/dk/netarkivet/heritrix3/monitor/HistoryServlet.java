@@ -26,6 +26,7 @@ import dk.netarkivet.heritrix3.monitor.resources.ConfigResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3BudgetResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3CrawlLogCachedResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3FilterResource;
+import dk.netarkivet.heritrix3.monitor.resources.H3FrontierDeleteResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3FrontierResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3JobResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3ReportResource;
@@ -78,6 +79,10 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
         H3FrontierResource h3FrontierResource = new H3FrontierResource();
         h3FrontierResource.resources_init(environment);
         h3FrontierResource.resources_add(this);
+
+        H3FrontierDeleteResource h3FrontierDeleteResource = new H3FrontierDeleteResource();
+        h3FrontierDeleteResource.resources_init(environment);
+        h3FrontierDeleteResource.resources_add(this);
 
         H3ReportResource h3ReportResource = new H3ReportResource();
         h3ReportResource.resources_init(environment);

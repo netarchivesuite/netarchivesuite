@@ -224,7 +224,7 @@ public class H3JobResource implements ResourceAbstract {
                 sb.append(h3Job.crawlLogFilePath);
                 sb.append("?format=paged&pos=-1&lines=-1000&reverse=y");
                 sb.append("\" class=\"btn btn-default\">");
-                sb.append("H3 Crawllog");
+                sb.append("Remote H3 Crawllog viewer");
                 sb.append("</a>");
                 
                 sb.append("&nbsp;");
@@ -236,7 +236,7 @@ public class H3JobResource implements ResourceAbstract {
                 sb.append(h3Job.jobId);
                 sb.append("/crawllog/");
                 sb.append("\" class=\"btn btn-default\">");
-                sb.append("Crawllog");
+                sb.append("View/Search in cached Crawllog");
                 sb.append("</a>");
 
                 sb.append("&nbsp;");
@@ -268,6 +268,18 @@ public class H3JobResource implements ResourceAbstract {
                 sb.append("/frontier/");
                 sb.append("\" class=\"btn btn-default\">");
                 sb.append("Show/delete Frontier");
+                sb.append("</a>");
+
+                sb.append("&nbsp;");
+                
+                /* Delete from Frontier */
+                sb.append("<a href=\"");
+                sb.append(NASEnvironment.servicePath);
+                sb.append("job/");
+                sb.append(h3Job.jobId);
+                sb.append("/frontier-delete/");
+                sb.append("\" class=\"btn btn-default\">");
+                sb.append("Delete from Frontier");
                 sb.append("</a>");
 
                 sb.append("&nbsp;");
