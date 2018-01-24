@@ -25,13 +25,6 @@
       <artifactId>harvest-scheduler</artifactId>
       <version>${project.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>heritrix1-controller</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>heritrix3-controller</artifactId>

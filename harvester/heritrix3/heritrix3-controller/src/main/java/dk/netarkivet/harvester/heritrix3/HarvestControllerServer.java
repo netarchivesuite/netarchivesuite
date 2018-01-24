@@ -159,6 +159,9 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
             throw new ArgumentNotValid("Wrong setting of minSpaceLeft read from Settings: " + minSpaceRequired);
         }
         log.info("Harvesting requires at least {} bytes free.", minSpaceRequired);
+        
+        // If shutdown.txt found in serverdir, just close down the HarvestControllerApplication at once.
+        shutdownNowOrContinue();
 
         // Get JMS-connection
         // Channel THIS_CLIENT is only used for replies to store messages so
@@ -285,6 +288,24 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     private void removeListener() {
         log.debug("Removing listener on CHANNEL '{}'", jobChannel);
         jmsConnection.removeListener(jobChannel, this);
+    }
+    
+    /**
+     * Does the operator want us to shutdown now.
+     * TODO In a later implementation, the harvestControllerServer could
+     * be notified over JMX. Now we just look for a "shutdown.txt" file in the HARVEST_CONTROLLER_SERVERDIR 
+     * log that we're shutting down, send a notification about this, and then shutdown.
+     */
+    private void shutdownNowOrContinue() {
+        File shutdownFile = new File(serverDir, "shutdown.txt");
+        
+        if (shutdownFile.exists()) {
+        	String msg = "Found shutdown-file in serverdir '" +  serverDir.getAbsolutePath() + "'. Shutting down the application"; 
+            log.info(msg);
+            NotificationsFactory.getInstance().notify(msg, NotificationType.INFO);
+            instance.cleanup();
+            System.exit(0);
+        }
     }
 
     /**
@@ -468,27 +489,9 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
                 log.info("Ending crawl of job : {}", job.getJobID());
                 // process serverdir for files not yet uploaded.
                 postProcessing.processOldJobs();
-                shutdownNowOrContinue();
+                instance.shutdownNowOrContinue();
                 startAcceptingJobs();
                 beginListeningIfSpaceAvailable();
-            }
-        }
-
-        /**
-         * Does the operator want us to shutdown now.
-         * TODO In a later implementation, the harvestControllerServer could
-         * be notified over JMX. Now we just look for a "shutdown.txt" file in the HARVEST_CONTROLLER_SERVERDIR 
-         * log that we're shutting down, send a notification about this, and then shutdown.
-         */
-        private void shutdownNowOrContinue() {
-            File shutdownFile = new File(serverDir, "shutdown.txt");
-            
-            if (shutdownFile.exists()) {
-            	String msg = "Found shutdown-file in serverdir '" +  serverDir.getAbsolutePath() + "'. Shutting down the application"; 
-                log.info(msg);
-                NotificationsFactory.getInstance().notify(msg, NotificationType.INFO);
-                instance.cleanup();
-                System.exit(0);
             }
         }
     }

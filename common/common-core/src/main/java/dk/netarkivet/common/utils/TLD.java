@@ -116,6 +116,7 @@ public class TLD {
                 	tlds.add(tld);
                 }
             }
+        	log.info("Read {} TLDs from settings", tlds.size());
         } catch (UnknownID e) {
         	log.debug("No tlds found in settingsfiles " + StringUtils.conjoin(",", Settings.getSettingsFiles()));
         } 
@@ -125,12 +126,14 @@ public class TLD {
     /**
      * Helper method for reading TLDs from the embedded public suffix file. Will read all entries, validate them as legal TLDs and warn and
      * ignore them if any are invalid.
+     * Now silently ignores starred tld's in public suffix file (e.g "*.kw")
      * @param asPattern if true, return a list of quoted Strings using Pattern.quote
      * @return a List of TLDs as Strings
      */
     protected static List<String> readTldsFromPublicSuffixFile(boolean asPattern) {
         List<String> tlds = new ArrayList<String>();
         InputStream stream = getPublicSuffixListDataStream();
+        boolean silentlyIgnoringStarTldsInPublicSuffixFile = true;
         if (stream != null) {
         	BufferedReader br = null;
         	try {
@@ -140,10 +143,12 @@ public class TLD {
         			String tld = line.trim();
         			if (tld.isEmpty() || tld.startsWith("//")) {
         				continue;
+        			} else if (silentlyIgnoringStarTldsInPublicSuffixFile && tld.startsWith("*.")) {
+        				continue;
         			} else {
         	            if (!tld.matches(DOMAINNAME_CHAR_REGEX_STRING + "(" + DOMAINNAME_CHAR_REGEX_STRING + "|\\.)*")) {
         	                log.warn("Invalid tld '{}', ignoring", tld);
-        	                continue;
+        	                continue; 
         	            }
         	            if (asPattern) {
         	            	tlds.add(Pattern.quote(tld));
@@ -152,6 +157,7 @@ public class TLD {
         	            }
         			}
         		}
+        		log.info("Read {} TLDs from public suffix file", tlds.size());
         	} catch(IOException e) {
         		e.printStackTrace();
         	} finally {
