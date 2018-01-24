@@ -91,6 +91,8 @@ public class Constants {
     public static final String CREATENEW_PARAM = "createnew";
 
     public static final String UPDATE_PARAM = "update";
+    
+    public static final String ADD_SEEDS_PARAM = "addSeeds"; 
 
     public static final String ADDDOMAINS_PARAM = "addDomains";
 

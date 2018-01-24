@@ -924,4 +924,10 @@ public class HTMLUtils {
         SimpleDateFormat fmt = new SimpleDateFormat(DATE_FMT_STRING);
         return timestamp != null ? fmt.format(timestamp) : "-";
     }
+    
+    public static void log(String classname, String msg) {
+    	 log.info(classname + ":" +  msg);
+    }
+    
+    
 }

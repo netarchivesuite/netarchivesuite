@@ -205,13 +205,14 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                     // duplicationmigration lines should look like this: "FILENAME 496812 393343 1282069269000"
                     // But only the first 3 entries are used.
                     for (String line : migrationLines) {
+                    	// duplicationmigration lines look like this: "FILENAME 496812 393343 1282069269000"
                         String[] splitLine = StringUtils.split(line);
                         if (splitLine.length >= 3) { 
                             lookup.put(new Pair<String, Long>(splitLine[0], Long.parseLong(splitLine[1])),
-                                                  Long.parseLong(splitLine[2])); 
-                       } else {
-                    	   log.warn("Line '" + line + "' has a wrong format. Ignoring line");
-                       }
+                                 Long.parseLong(splitLine[2])); 
+                          } else {
+                               log.warn("Line '" + line + "' has a wrong format. Ignoring line");
+                          }
                     }
                 } catch (IOException e) {
                     throw new IOFailure("Could not read " + migration.getAbsolutePath());
