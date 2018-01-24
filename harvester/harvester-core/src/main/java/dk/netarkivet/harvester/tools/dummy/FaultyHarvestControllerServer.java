@@ -34,7 +34,7 @@ import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse;
 
-public class DummyHarvestControllerServer extends HarvesterMessageHandler implements CleanupIF {
+public class FaultyHarvestControllerServer extends HarvesterMessageHandler implements CleanupIF {
 
 	/**
 	 * This class responds to JMS doOneCrawl messages from the HarvestScheduler and launches a Heritrix crawl with the
@@ -63,10 +63,10 @@ public class DummyHarvestControllerServer extends HarvesterMessageHandler implem
 	 */
 
 	    /** The logger to use. */
-	    private static final Logger log = LoggerFactory.getLogger(DummyHarvestControllerServer.class);
+	    private static final Logger log = LoggerFactory.getLogger(FaultyHarvestControllerServer.class);
 
 	    /** The unique instance of this class. */
-	    private static DummyHarvestControllerServer instance;
+	    private static FaultyHarvestControllerServer instance;
 
 	    /** The configured application instance id. @see CommonSettings#APPLICATION_INSTANCE_ID */
 	    private final String applicationInstanceId = Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
@@ -103,9 +103,9 @@ public class DummyHarvestControllerServer extends HarvesterMessageHandler implem
 	     * @throws PermissionDenied If the serverdir or oldjobsdir can't be created
 	     * @throws IOFailure if data from old harvests exist, but contain illegal data
 	     */
-	    public static synchronized DummyHarvestControllerServer getInstance() throws IOFailure {
+	    public static synchronized FaultyHarvestControllerServer getInstance() throws IOFailure {
 	        if (instance == null) {
-	            instance = new DummyHarvestControllerServer();
+	            instance = new FaultyHarvestControllerServer();
 	        }
 	        return instance;
 	    }
@@ -118,7 +118,7 @@ public class DummyHarvestControllerServer extends HarvesterMessageHandler implem
 	     * @throws IOFailure If harvestInfoFile contains invalid data.
 	     * @throws UnknownID if the settings file does not specify a valid queue priority.
 	     */
-	    private DummyHarvestControllerServer() throws IOFailure {
+	    private FaultyHarvestControllerServer() throws IOFailure {
 	        log.info("Starting {}.", this.getClass());
 	        log.info("Bound to harvest channel '{}'", CHANNEL);
 
@@ -151,8 +151,8 @@ public class DummyHarvestControllerServer extends HarvesterMessageHandler implem
 	        JMSConnectionFactory.getInstance().setListener(HARVEST_CHAN_VALID_RESP_ID, this);
 
 	        // Ask if the channel this harvester is assigned to is valid
-	        jmsConnection.send(new HarvesterRegistrationRequest(DummyHarvestControllerServer.CHANNEL, applicationInstanceId));
-	        log.info("Requested to check the validity of harvest channel '{}'", DummyHarvestControllerServer.CHANNEL);
+	        jmsConnection.send(new HarvesterRegistrationRequest(FaultyHarvestControllerServer.CHANNEL, applicationInstanceId));
+	        log.info("Requested to check the validity of harvest channel '{}'", FaultyHarvestControllerServer.CHANNEL);
 	    }
 
 	    /**
@@ -412,9 +412,12 @@ public class DummyHarvestControllerServer extends HarvesterMessageHandler implem
 	                log.error("Unable to sleep", e);
 	            }
 	            //if (!running) { //Keep Sending SendReady messsages even while doing work
-	            	log.info("Sending ready message from {}", this.getClass());
+	            	log.info("Sending ready message #1 from {}", this.getClass());
 	                jmsConnection.send(new HarvesterReadyMessage(applicationInstanceId + " on " + physicalServerName,
-	                        DummyHarvestControllerServer.CHANNEL));
+	                        FaultyHarvestControllerServer.CHANNEL));
+	                log.info("Sending ready message #2 from {}", this.getClass());
+	                jmsConnection.send(new HarvesterReadyMessage(applicationInstanceId + " on " + physicalServerName,
+	                        FaultyHarvestControllerServer.CHANNEL));
 	            //}
 	        }
 
