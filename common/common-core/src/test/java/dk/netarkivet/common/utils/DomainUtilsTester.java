@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,10 @@ import org.junit.experimental.categories.Category;
 public class DomainUtilsTester {
 	@Test
 	public void canRetrieveTLDsFromPublisuffixFile() {
-		final int tldcount = 7975;
-		List<String> tlds = TLD.readTldsFromPublicSuffixFile(true);
+		final int tldcount = 8381;
+		List<String> tlds = new ArrayList<String>();
+		List<String> tldsQuoted = new ArrayList<String>();
+		TLD.readTldsFromPublicSuffixFile(tlds, tldsQuoted);
 		assertEquals(tlds.size(), tldcount);
 	}
 	
@@ -88,8 +91,10 @@ public class DomainUtilsTester {
     			getTestResourceFile("settings_with_extra_tlds.xml").getAbsolutePath());
     	Settings.reload();
     	TLD.reset();
-    	List<String> tldfromsettings = TLD.readTldsFromSettings(false);
-    	assertTrue(tldfromsettings.size() == 2);
+    	List<String> tlds = new ArrayList<String>();
+		List<String> tldsQuoted = new ArrayList<String>();
+    	TLD.readTldsFromSettings(tlds, tldsQuoted);
+    	assertTrue(tlds.size() == 2);
         int newcount = TLD.getInstance().getAllTlds(false).size();
         assertTrue(newcount == (count + 2));
     	System.setProperty(Settings.SETTINGS_FILE_PROPERTY, oldprop);

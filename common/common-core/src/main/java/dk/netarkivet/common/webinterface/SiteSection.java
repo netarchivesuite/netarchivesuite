@@ -230,7 +230,7 @@ public abstract class SiteSection {
         if (sections == null) {
             sections = new ArrayList<>();
             String[] sitesections = Settings.getAll(CommonSettings.SITESECTION_CLASS);
-            log.debug("Loading {} site section.", sitesections.length);
+            log.debug("Loading {} site section(s).", sitesections.length);
             for (String sitesection : sitesections) {
                 log.debug("Loading site section {}.", sitesection.toString());
                 try {
@@ -246,7 +246,7 @@ public abstract class SiteSection {
     }
 
     /**
-     * Clean up sitesections. This method calls close on all deployed site sections, and resets the list of site
+     * Clean up site sections. This method calls close on all deployed site sections, and resets the list of site
      * sections.
      */
     public static synchronized void cleanup() {
