@@ -51,12 +51,17 @@ void logEvent(String e) {
 }
 
 void deleteFromFrontier(String regex) {
-    job.crawlController.requestCrawlPause()
-    count = job.crawlController.frontier.deleteURIs(".*", regex)
-    rawOut.println "REMINDER: This job is now in a Paused state."
-    logEvent("Deleted " + count + " URIs from frontier matching regex '" + regex + "'")
-    rawOut.println count + " URIs were deleted from the frontier."
-    rawOut.println("This action has been logged in " + logfilePrefix + ".log")
+    //job.crawlController.requestCrawlPause()
+    if (job.crawlController.isPaused()) {
+	    count = job.crawlController.frontier.deleteURIs(".*", regex)
+	    //rawOut.println "REMINDER: This job is now in a Paused state."
+	    logEvent("Deleted " + count + " URIs from frontier matching regex '" + regex + "'")
+	    rawOut.println count + " URIs were deleted from the frontier."
+	    rawOut.println("This action has been logged in " + logfilePrefix + ".log")
+    }
+    else {
+	    rawOut.println "This job is not in a Paused state. Wait until job is pause and try again."
+    }
 }
 
 void getNumberOfUrlsInFrontier() {
@@ -84,9 +89,7 @@ void getNumberOfMatchedUrlsInFrontier(String regex) {
             }
             curi = pendingUris.crawlUriBinding.entryToObject(value)
             if (pattern.matcher(curi.toString())) {
-                if (((long)index) >= ((long)(page * itemsPerPage)) && ((long)index) < ((long)((page + 1) * itemsPerPage))) {
-                    ++matchingCount
-                }
+                ++matchingCount
             }
         }
     } finally {

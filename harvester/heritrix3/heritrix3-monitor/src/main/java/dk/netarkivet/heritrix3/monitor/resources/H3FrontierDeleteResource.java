@@ -115,8 +115,10 @@ public class H3FrontierDeleteResource implements ResourceAbstract {
                 }
                 if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
                     script += "\n";
-                    script += "\ninitials = \"" + initials + "\"";
-                    script += "\ndeleteFromFrontier '" + q + "'\n";
+                    script += "initials = \"" + initials + "\"";
+                    script += "\n";
+                    script += "deleteFromFrontier '" + q + "'";
+                    script += "\n";
                 }
                 ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
                 if (scriptResult != null && scriptResult.script != null) {
