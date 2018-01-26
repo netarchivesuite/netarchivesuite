@@ -3,6 +3,7 @@ package dk.netarkivet.heritrix3.monitor.resources;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,6 +62,7 @@ public class H3JobResource implements ResourceAbstract {
 
     public void job(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
         Locale locale = resp.getLocale();
+        NumberFormat numberFormat = NumberFormat.getInstance(locale);
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
         Caching.caching_disable_headers(resp);
@@ -178,10 +180,10 @@ public class H3JobResource implements ResourceAbstract {
                 sb.append(h3Job.job.getCountDomains());
                 sb.append("<br />\n");
                 sb.append("MaxBytesPerDomain: ");
-                sb.append(h3Job.job.getMaxBytesPerDomain());
+                sb.append(numberFormat.format(h3Job.job.getMaxBytesPerDomain()));
                 sb.append("<br />\n");
                 sb.append("MaxObjectsPerDomain: ");
-                sb.append(h3Job.job.getMaxObjectsPerDomain());
+                sb.append(numberFormat.format(h3Job.job.getMaxObjectsPerDomain()));
                 sb.append("<br />\n");
                 sb.append("MaxJobRunningTime: ");
                 sb.append(h3Job.job.getMaxJobRunningTime());

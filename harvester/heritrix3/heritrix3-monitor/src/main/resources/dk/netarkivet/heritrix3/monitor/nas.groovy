@@ -83,7 +83,7 @@ void getNumberOfMatchedUrlsInFrontier(String regex) {
     key = new DatabaseEntry()
     value = new DatabaseEntry()
     try {
-        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && index < tIdx) {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS) {
             if (value.getData().length == 0) {
                 continue
             }
