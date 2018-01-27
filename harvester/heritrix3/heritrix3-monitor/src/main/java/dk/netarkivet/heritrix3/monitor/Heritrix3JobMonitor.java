@@ -270,4 +270,12 @@ public class Heritrix3JobMonitor implements Pageable {
         return searchResult;
     }
 
+    /**
+     * Set the file path to the crawl log
+     *
+     * @param crawlLogFilePath File path to the crawl log
+     */
+    public void setCrawlLogFilePath(String crawlLogFilePath) {
+        this.crawlLogFilePath = crawlLogFilePath;
+    }
 }

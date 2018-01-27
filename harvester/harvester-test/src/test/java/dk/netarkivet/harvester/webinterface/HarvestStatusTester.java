@@ -1,5 +1,5 @@
 /*
- * #%L
+  * #%L
  * Netarchivesuite - harvester - test
  * %%
  * Copyright (C) 2005 - 2017 The Royal Danish Library, 
@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +48,15 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.SlowTest;
-import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobDAOTester;
+import dk.netarkivet.harvester.datamodel.JobDBDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.JobStatusInfo;
+import dk.netarkivet.harvester.datamodel.TestInfo;
 
 /**
  * Test of Harvest Status utility method for resubmitting jobs.
@@ -184,8 +193,8 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         Map<String, String[]> params = new HashMap<String, String[]>();
         params.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), new String[] {"ASC"});
-        List<JobStatusInfo> l = HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
-        assertEquals("Number of jobs should be 0", 0, l.size());
+        List<JobStatusInfo> list = HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
+        assertEquals("Number of jobs should be 0", 0, list.size());
 
         Set<Integer> testStatuscodeSet = new HashSet<Integer>();
         testStatuscodeSet.add(0);
@@ -207,6 +216,17 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         } catch (ArgumentNotValid e) {
             // Expected
         }
+        // Test non failing result
+        // add default job to test-database
+        Job job = JobDAOTester.createDefaultJobInDB(0); // added job with harvestid=TestInfo.HARVESTID (5678L);
+        //System.out.println(job);
+        
+        HarvestStatusQuery hsq = new HarvestStatusQuery(TestInfo.HARVESTID, 0); 
+        HarvestStatus hs = JobDAO.getInstance().getStatusInfo(hsq);
+        List<JobStatusInfo> jobs = hs.getJobStatusInfo();
+        assertTrue(job.getHarvestNum() == 0);
+        assertTrue(job.getOrigHarvestDefinitionID() == TestInfo.HARVESTID);
+        assertTrue("Number of jobs matching harvest #" +  TestInfo.HARVESTID + " should be 1, but was " + jobs.size(), jobs.size() == 1);
     }
 
     @Test

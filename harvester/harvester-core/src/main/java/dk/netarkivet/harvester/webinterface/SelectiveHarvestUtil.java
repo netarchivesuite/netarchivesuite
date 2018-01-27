@@ -32,6 +32,8 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -54,11 +56,15 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
  */
 @SuppressWarnings({"unchecked"})
 public final class SelectiveHarvestUtil {
-    /**
+    
+	static final Logger log = LoggerFactory.getLogger(SelectiveHarvestUtil.class);
+	
+	/**
      * Utility class. No instances.
      */
     private SelectiveHarvestUtil() {
     }
+    
 
     /**
      * Update or create a partial harvest definition.
@@ -75,7 +81,7 @@ public final class SelectiveHarvestUtil {
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         ArgumentNotValid.checkNotNull(unknownDomains, "List unknownDomains");
         ArgumentNotValid.checkNotNull(illegalDomains, "List illegalDomains");
-
+        log.info("Starting method processRequest");
         // Was the set next date button pressed?
         boolean setNextDateOnly = HTMLUtils.parseOptionalBoolean(context, Constants.NEXTDATE_SUBMIT, false);
         if (setNextDateOnly) {
@@ -329,5 +335,5 @@ public final class SelectiveHarvestUtil {
         } else {
             return false;
         }
-    }
+    }    
 }

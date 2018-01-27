@@ -52,8 +52,10 @@ public class Heritrix3JobMonitorThread implements Runnable {
     /** Boolean switch to close the thread. */
     public boolean bExit = false;
 
-    /** Map of running H3 job monitors. */
+    /** A map from harvest job number to the running H3 job monitor for the given job */
     public Map<Long, Heritrix3JobMonitor> runningJobMonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
+
+    private final Object runningJobMonitorMapSynchronizer = new Object();
 
     public Map<Long, Heritrix3JobMonitor> filterJobMonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
 
@@ -102,7 +104,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
             LOG.info("Heritrix3 Job Monitor Thread started.");
 
             //File tmpFolder = new File("/tmp/");
-            File tmpFolder = environment.tempPath;;
+            File tmpFolder = environment.tempPath;
             File[] oldFiles = tmpFolder.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
@@ -120,7 +122,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
             for (int i=0; i<oldFiles.length; ++i) {
                 tmpFile = oldFiles[i];
                 oldFilesMap.put(tmpFile.getName(), tmpFile);
-            };
+            }
             List<File> oldFilesList = new ArrayList<File>();
 
             while (!bExit) {
@@ -129,25 +131,36 @@ public class Heritrix3JobMonitorThread implements Runnable {
                 	/*
                 	 * Identify running and stopped jobs.
                 	 */
-                    Iterator<Long> jobidIter = runningJobs.iterator();
                     Heritrix3JobMonitor jobmonitor;
-                    synchronized (runningJobMonitorMap) {
+
+                    Iterator<Long> jobidIter = runningJobs.iterator();
+                    synchronized (runningJobMonitorMapSynchronizer) {
                         filterJobMonitorMap.clear();
+
+                        // For all running jobs..
                         while (jobidIter.hasNext()) {
                             Long jobId = jobidIter.next();
+
                             if (jobId != null) {
                                 jobmonitor = runningJobMonitorMap.remove(jobId);
                                 if (jobmonitor == null) {
+                                    // Either jobId was not in runningJobMonitorMap, or the jobmonitor for
+                                    // key jobId was itself null. Either way, the jobmonitor for jobId
+                                    // could not be found.
                                     try {
                                         // New H3 job.
-                                        jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId, environment);
+                                        jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId,
+                                                environment);
                                     } catch (IOException e) {
+                                        LOG.debug("IOException assigning to job monitor");
                                     	// Ignored because exceptions can occur communicating with H3 in this call.
                                     }
                                 }
                                 filterJobMonitorMap.put(jobId, jobmonitor);
                             }
                         }
+
+                        // Swap filterJobMonitorMap and runningJobMonitorMap
                         tmpJobMonitorMap = filterJobMonitorMap;
                         filterJobMonitorMap = runningJobMonitorMap;
                         runningJobMonitorMap = tmpJobMonitorMap;
@@ -226,7 +239,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
 
     public Heritrix3JobMonitor getRunningH3Job(long jobId) {
         Heritrix3JobMonitor h3Job;
-        synchronized (runningJobMonitorMap) {
+        synchronized (runningJobMonitorMapSynchronizer) {
             h3Job = runningJobMonitorMap.get(jobId);
         }
         return h3Job;
@@ -234,7 +247,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
 
     public List<Heritrix3JobMonitor> getRunningH3Jobs() {
         List<Heritrix3JobMonitor> h3JobsList = new LinkedList<Heritrix3JobMonitor>();
-        synchronized (runningJobMonitorMap) {
+        synchronized (runningJobMonitorMapSynchronizer) {
             h3JobsList.addAll(runningJobMonitorMap.values());
         }
         return h3JobsList;
@@ -255,6 +268,8 @@ public class Heritrix3JobMonitorThread implements Runnable {
 
     public boolean isH3HostnamePortEnabled(Heritrix3JobMonitor jobmonitor) {
         synchronized (h3HostnamePortEnabledList) {
+            // TODO Not ideal to do contains on a list. But its fairly short (i.e. max number of running
+            // H3 instances, presumably 80 or so, said Nicholas)
             jobmonitor.bPull = h3HostnamePortEnabledList.contains(jobmonitor.h3HostnamePort);
         }
         return jobmonitor.bPull;

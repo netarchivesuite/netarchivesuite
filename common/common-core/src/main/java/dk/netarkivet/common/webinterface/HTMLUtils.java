@@ -31,6 +31,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.RequestDispatcher;
@@ -309,8 +310,15 @@ public class HTMLUtils {
         sb.append("<tr><td><a class=\"sidebarHeader\" href=\"index.jsp\">"
                 + "<img src=\"transparent_menu_logo.png\" alt=\"" + s + "\"/> " + s + "</a></td></tr>\n");
 
-        for (SiteSection section : SiteSection.getSections()) {
-            section.generateNavigationTree(sb, url, locale);
+        final List<SiteSection> sections = SiteSection.getSections();
+        log.debug("Generating Navigation Tree for " + sections.size() + " site sections.");
+        for (SiteSection section : sections) {
+            try {
+                log.debug("Generating navigation tree for " + section.getDirname() + " from url " + url);
+                section.generateNavigationTree(sb, url, locale);
+            } catch (IOException e) {
+                log.warn("Error generating navigation tree for " + section.getDirname() + " from url " + url, e);
+            }
         }
         sb.append("</table>\n");
         sb.append("</td>\n");
@@ -920,4 +928,10 @@ public class HTMLUtils {
         SimpleDateFormat fmt = new SimpleDateFormat(DATE_FMT_STRING);
         return timestamp != null ? fmt.format(timestamp) : "-";
     }
+    
+    public static void log(String classname, String msg) {
+    	 log.info(classname + ":" +  msg);
+    }
+    
+    
 }

@@ -79,12 +79,15 @@ public class TLD {
 	 * both quoted and unquoted. Sets the TLD_REGEX_STRING,HOSTNAME_REGEX, and  VALID_DOMAIN_MATCHER.
 	 */
 	private TLD() {
-		tldListQuoted = readTldsFromPublicSuffixFile(true);
-		tldListQuoted.addAll(readTldsFromSettings(true));
 		
+		tldListQuoted = new ArrayList<String>();
+		tldList = new ArrayList<String>();
+		readTldsFromPublicSuffixFile(tldList, tldListQuoted);
+		readTldsFromSettings(tldList, tldListQuoted);
+		/*
 		tldList = readTldsFromPublicSuffixFile(false);
 		tldList.addAll(readTldsFromSettings(false));
-
+		*/
 		TLD_REGEX_STRING = "\\.(" + StringUtils.conjoin("|", tldListQuoted) + ")";
 		HOSTNAME_REGEX = Pattern.compile("^(|.*?\\.)(" + DOMAINNAME_CHAR_REGEX_STRING + "+"
 	            + TLD_REGEX_STRING + ")");
@@ -95,11 +98,11 @@ public class TLD {
 	/**
      * Helper method for reading TLDs from settings. Will read all settings, validate them as legal TLDs and warn and
      * ignore them if any are invalid. Settings may be with or without prefix "."
-     *
-     * @return a List of TLDs as Strings
+     * @param tldList the list to add all the tlds found in the settings
+     * @param quotedTldList the list to add all the tlds found in the settings - as a pattern  
      */
-    protected static List<String> readTldsFromSettings(boolean asPattern) {
-        List<String> tlds = new ArrayList<String>();
+    protected static void readTldsFromSettings(List<String> tldList, List<String> quotedTldList) {
+    	int count=0;
         try {
         	String[] settingsTlds = Settings.getAll(CommonSettings.TLDS);
         	for (String tld : settingsTlds) {
@@ -110,27 +113,27 @@ public class TLD {
                     log.warn("Invalid tld '{}', ignoring", tld);
                     continue;
                 }
-                if (asPattern) {
-                	tlds.add(Pattern.quote(tld));
-                } else {
-                	tlds.add(tld);
-                }
+                tldList.add(tld);
+                quotedTldList.add(Pattern.quote(tld));
+                count++;
             }
+        	log.info("Read {} TLDs from settings", count);
         } catch (UnknownID e) {
         	log.debug("No tlds found in settingsfiles " + StringUtils.conjoin(",", Settings.getSettingsFiles()));
         } 
-        return tlds;
     }
         
     /**
      * Helper method for reading TLDs from the embedded public suffix file. Will read all entries, validate them as legal TLDs and warn and
      * ignore them if any are invalid.
-     * @param asPattern if true, return a list of quoted Strings using Pattern.quote
-     * @return a List of TLDs as Strings
+     * Now silently ignores starred tld's in public suffix file (e.g "*.kw")
+ 	 * @param tldList the list to add all the tlds found in the public suffix file 
+     * @param quotedTldList the list to add all the tlds found in the public suffix file - as a pattern  
      */
-    protected static List<String> readTldsFromPublicSuffixFile(boolean asPattern) {
-        List<String> tlds = new ArrayList<String>();
+    protected static void readTldsFromPublicSuffixFile(List<String> tldList, List<String> quotedTldList) {
         InputStream stream = getPublicSuffixListDataStream();
+        boolean silentlyIgnoringStarTldsInPublicSuffixFile = true;
+        int count=0;
         if (stream != null) {
         	BufferedReader br = null;
         	try {
@@ -140,27 +143,26 @@ public class TLD {
         			String tld = line.trim();
         			if (tld.isEmpty() || tld.startsWith("//")) {
         				continue;
+        			} else if (silentlyIgnoringStarTldsInPublicSuffixFile && tld.startsWith("*.")) {
+        				continue;
         			} else {
         	            if (!tld.matches(DOMAINNAME_CHAR_REGEX_STRING + "(" + DOMAINNAME_CHAR_REGEX_STRING + "|\\.)*")) {
         	                log.warn("Invalid tld '{}', ignoring", tld);
-        	                continue;
+        	                continue; 
         	            }
-        	            if (asPattern) {
-        	            	tlds.add(Pattern.quote(tld));
-        	            } else {
-        	            	tlds.add(tld);
-        	            }
+        	            tldList.add(tld);
+                        quotedTldList.add(Pattern.quote(tld));
         			}
         		}
+        		log.info("Read {} TLDs from public suffix file", count);
         	} catch(IOException e) {
         		e.printStackTrace();
         	} finally {
         		IOUtils.closeQuietly(br);
         	}
         } else {
-        	log.warn("Unable to retrieve public suffix_list failed. Returned empty list!.");
+        	log.warn("Unable to retrieve public suffix_list failed. No tlds added!");
         }        
-        return tlds;
     }
 
     

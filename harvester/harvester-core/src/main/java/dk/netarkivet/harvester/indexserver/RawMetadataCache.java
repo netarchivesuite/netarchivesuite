@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
@@ -132,7 +131,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         final String metadataFilePatternSuffix = Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
         log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}{}' on replica '{}'", job
                 .getClass().getName(), id, metadataFilePatternSuffix, replicaUsed);
-        final String specifiedPattern = ".*" + id + ".*" + metadataFilePatternSuffix;
+        final String specifiedPattern = ".*" + id + ".*" + metadataFilePatternSuffix; // FIXME I think this pattern accepts too many metadatafilenames
         job.processOnlyFilesMatching(specifiedPattern);
         BatchStatus b = arcrep.batch(job, replicaUsed);
         // This check ensures that we got data from at least one file.
@@ -203,10 +202,17 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 try {
                     final List<String> migrationLines = org.apache.commons.io.FileUtils.readLines(migration);
                     log.info("{} migration records found for job {}", migrationLines.size(), id);
+                    // duplicationmigration lines should look like this: "FILENAME 496812 393343 1282069269000"
+                    // But only the first 3 entries are used.
                     for (String line : migrationLines) {
+                    	// duplicationmigration lines look like this: "FILENAME 496812 393343 1282069269000"
                         String[] splitLine = StringUtils.split(line);
-                        lookup.put(new Pair<String, Long>(splitLine[0], Long.parseLong(splitLine[1])),
-                                Long.parseLong(splitLine[2]));
+                        if (splitLine.length >= 3) { 
+                            lookup.put(new Pair<String, Long>(splitLine[0], Long.parseLong(splitLine[1])),
+                                 Long.parseLong(splitLine[2])); 
+                          } else {
+                               log.warn("Line '" + line + "' has a wrong format. Ignoring line");
+                          }
                     }
                 } catch (IOException e) {
                     throw new IOFailure("Could not read " + migration.getAbsolutePath());
