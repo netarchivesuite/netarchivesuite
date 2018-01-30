@@ -13,10 +13,10 @@ import dk.netarkivet.common.utils.SystemUtils;
  * Reads the mail-settings and tries to send a mail-notification. 
  */
 public class MailValidator {
-	
+
 	public static final String SETTINGSFILEPATH = "dk.netarkivet.settings.file";
 	public static final String EmailNotificationsClass = EMailNotifications.class.getName();
-	
+
 	/**
 	 * @param args The path to a settings.xml (optional). If no argument, uses the existing settings.(e.g. by explicit setting it
 	 *  -Ddk.netarkivet.settings.file=/fullOrrelative/path/to/settings.xml )
@@ -31,12 +31,12 @@ public class MailValidator {
 				System.exit(1);
 			}
 		} else {
-	        String settingsfilename = System.getProperty(SETTINGSFILEPATH);
-	        if (settingsfilename == null) {
-	        	System.out.println("Using default settings");
-	        } else {
-	        	System.out.println("Using settingsfile '" + settingsfilename + "' defined by setting '" + SETTINGSFILEPATH + "'");
-	        }
+			String settingsfilename = System.getProperty(SETTINGSFILEPATH);
+			if (settingsfilename == null) {
+				System.out.println("Using default settings");
+			} else {
+				System.out.println("Using settingsfile '" + settingsfilename + "' defined by setting '" + SETTINGSFILEPATH + "'");
+			}
 		}
 		String notificationsClass = Settings.get(CommonSettings.NOTIFICATIONS_CLASS);
 		if (!notificationsClass.equals(EmailNotificationsClass)) {
