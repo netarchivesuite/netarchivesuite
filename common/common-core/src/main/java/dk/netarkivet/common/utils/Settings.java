@@ -383,5 +383,20 @@ public class Settings {
         }
         throw new UnknownID("No match for key '" + path + "' in settings");
     }
+    
+    /**
+     * Verify, if the given class exists in the classpath.
+     * @param classname A given class to check for
+     * @return true, if the given class exists in the classpath, else false
+     */
+    public static boolean verifyClass(String classname) {
+    	try {
+    		Class.forName(classname);
+    	} catch (ClassNotFoundException e) {
+    		log.error("The class '" + classname + "' was not found in the classpath");
+    		return false;
+    	}
+    	return true;
+    }
 
 }
