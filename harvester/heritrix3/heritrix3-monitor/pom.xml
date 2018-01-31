@@ -13,14 +13,14 @@
   <name>NetarchiveSuite - heritrix3 monitor</name>
 
   <properties>
-      <bootstrap-agent.version>0.1.0-SNAPSHOT</bootstrap-agent.version>
+      <bootstrap-agent-tomcat.version>0.2.0-SNAPSHOT</bootstrap-agent-tomcat.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>com.antiaction</groupId>
-      <artifactId>bootstrap-agent</artifactId>
-      <version>${bootstrap-agent.version}</version>
+      <artifactId>bootstrap-agent-tomcat</artifactId>
+      <version>${bootstrap-agent-tomcat.version}</version>
       <classifier>overlay</classifier>
       <type>zip</type>
     </dependency>
