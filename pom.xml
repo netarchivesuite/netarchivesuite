@@ -164,6 +164,14 @@
   </distributionManagement>
 
   <repositories>
+
+    <repository>
+      <id>oracleReleases</id>
+      <name>Oracle Released Java Packages</name>
+      <url>http://download.oracle.com/maven</url>
+      <layout>default</layout>
+    </repository>
+
     <repository>
       <id>sbforge-nexus</id>
       <url>https://sbforge.org/nexus/content/groups/public</url>

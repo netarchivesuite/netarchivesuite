@@ -8,15 +8,6 @@
     <version>5.4-SNAPSHOT</version>
   </parent>
 
-  <repositories>
-    <repository>
-      <id>oracleReleases</id>
-      <name>Oracle Released Java Packages</name>
-      <url>http://download.oracle.com/maven</url>
-      <layout>default</layout>
-    </repository>
-  </repositories>
-
   <artifactId>heritrix3-extensions</artifactId>
 
   <packaging>jar</packaging>
