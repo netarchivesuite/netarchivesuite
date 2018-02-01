@@ -77,8 +77,9 @@
     </dependency>
 
     <dependency>    
-      <groupId>berkeleydb</groupId>
+      <groupId>com.sleepycat</groupId>
       <artifactId>je</artifactId>
+      <version>5.0.73</version>
     </dependency>
 
     <dependency>
