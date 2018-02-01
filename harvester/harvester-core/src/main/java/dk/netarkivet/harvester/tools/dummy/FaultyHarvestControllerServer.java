@@ -34,34 +34,24 @@ import dk.netarkivet.harvester.harvesting.distribute.HarvesterReadyMessage;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationRequest;
 import dk.netarkivet.harvester.harvesting.distribute.HarvesterRegistrationResponse;
 
+/**
+ * This class responds to JMS doOneCrawl messages from the HarvestScheduler and waits 10 minutes before failing the job. 
+ * <p>
+ * Initially, it registers its channel with the Scheduler by sending a HarvesterRegistrationRequest and waits for a positive HarvesterRegistrationResponse
+ * that its channel is recognized. If not recognized by the Scheduler, the HarvestControllerServer will send a notification about this, 
+ * and then close down the application.
+ * 
+ * During its operation CrawlStatus messages are sent to the HarvestSchedulerMonitorServer. When responding to the message,
+ * it sends a message with status 'STARTED'. When 10 minutes have passed, a message is sent with status 'FAILED'.
+ * <p>
+ * Before the 10 minutes starts, the JMS listener is removed to avoid handling more than one doOneCrawlMessage at a time
+ * During the 10 minutes, it will send two (instead of one) HarvesterReadyMessages to the scheduler to test issue NAS-2614.
+ * The interval between sending HarvesterReadyMessages is defined by the setting 'settings.harvester.harvesting.sendReadyDelay'.    
+ * <p>
+ */
 public class FaultyHarvestControllerServer extends HarvesterMessageHandler implements CleanupIF {
-
-	/**
-	 * This class responds to JMS doOneCrawl messages from the HarvestScheduler and launches a Heritrix crawl with the
-	 * received job description. The generated ARC files are uploaded to the bitarchives once a harvest job has been
-	 * completed.
-	 * <p>
-	 * During its operation CrawlStatus messages are sent to the HarvestSchedulerMonitorServer. When starting the actual
-	 * harvesting a message is sent with status 'STARTED'. When the harvesting has finished a message is sent with either
-	 * status 'DONE' or 'FAILED'. Either a 'DONE' or 'FAILED' message with result should ALWAYS be sent if at all possible,
-	 * but only ever one such message per job.
-	 * <p>
-	 * It is necessary to be able to run the Heritrix harvester on several machines and several processes on each machine.
-	 * Each instance of Heritrix is started and monitored by a HarvestControllerServer.
-	 * <p>
-	 * Initially, all directories under serverdir are scanned for harvestinfo files. If any are found, they are parsed for
-	 * information, and all remaining files are attempted uploaded to the bitarchive. It will then send back a
-	 * CrawlStatusMessage with status failed.
-	 * <p>
-	 * A new thread is started for each actual crawl, in which the JMS listener is removed. Threading is required since JMS
-	 * will not let the called thread remove the listener that's being handled.
-	 * <p>
-	 * After a harvestjob has been terminated, either successfully or unsuccessfully, the serverdir is again scanned for
-	 * harvestInfo files to attempt upload of files not yet uploaded. Then it begins to listen again after new jobs, if
-	 * there is enough room available on the machine. If not, it logs a warning about this, which is also sent as a
-	 * notification.
-	 */
-
+    
+    
 	    /** The logger to use. */
 	    private static final Logger log = LoggerFactory.getLogger(FaultyHarvestControllerServer.class);
 
@@ -97,8 +87,7 @@ public class FaultyHarvestControllerServer extends HarvesterMessageHandler imple
 	    private CrawlStatus status;
 
 	    /**
-	     * Returns or creates the unique instance of this singleton The server creates an instance of the HarvestController,
-	     * uploads arc-files from unfinished harvests, and starts to listen to JMS messages on the incoming jms queues.
+	     * Returns or creates the unique instance of this singleton.
 	     * @return The instance
 	     * @throws PermissionDenied If the serverdir or oldjobsdir can't be created
 	     * @throws IOFailure if data from old harvests exist, but contain illegal data
@@ -258,16 +247,7 @@ public class FaultyHarvestControllerServer extends HarvesterMessageHandler imple
 	    }
 
 	    /**
-	     * Checks that we're available to do a crawl, and if so, marks us as unavailable, checks that the job message is
-	     * well-formed, and starts the thread that the crawl happens in. If an error occurs starting the crawl, we will
-	     * start listening for messages again.
-	     * <p>
-	     * The sequence of actions involved in a crawl are:</br> 1. If we are already running, resend the job to the queue
-	     * and return</br> 2. Check the job for validity</br> 3. Send a CrawlStatus message that crawl has STARTED</br> In a
-	     * separate thread:</br> 4. Unregister this HACO as listener</br> 5. Create a new crawldir (based on the JobID and a
-	     * timestamp)</br> 6. Write a harvestInfoFile (using JobID and crawldir) and metadata</br> 7. Instantiate a new
-	     * HeritrixLauncher</br> 8. Start a crawl</br> 9. Store the generated arc-files and metadata in the known
-	     * bit-archives </br>10. _Always_ send CrawlStatus DONE or FAILED</br> 11. Move crawldir into oldJobs dir</br>
+	     * Here we receives a DoOneCrawlMessage, waits 10 minutes, and then fails the job.
 	     *
 	     * @param msg The crawl job
 	     * @throws IOFailure On trouble harvesting, uploading or processing harvestInfo
@@ -411,14 +391,12 @@ public class FaultyHarvestControllerServer extends HarvesterMessageHandler imple
 	            } catch (Exception e) {
 	                log.error("Unable to sleep", e);
 	            }
-	            //if (!running) { //Keep Sending SendReady messsages even while doing work
-	            	log.info("Sending ready message #1 from {}", this.getClass());
-	                jmsConnection.send(new HarvesterReadyMessage(applicationInstanceId + " on " + physicalServerName,
-	                        FaultyHarvestControllerServer.CHANNEL));
-	                log.info("Sending ready message #2 from {}", this.getClass());
-	                jmsConnection.send(new HarvesterReadyMessage(applicationInstanceId + " on " + physicalServerName,
-	                        FaultyHarvestControllerServer.CHANNEL));
-	            //}
+	            log.info("Sending ready message #1 from {}", this.getClass());
+	            jmsConnection.send(new HarvesterReadyMessage(applicationInstanceId + " on " + physicalServerName,
+	                    FaultyHarvestControllerServer.CHANNEL));
+	            log.info("Sending ready message #2 from {}", this.getClass());
+	            jmsConnection.send(new HarvesterReadyMessage(applicationInstanceId + " on " + physicalServerName,
+	                    FaultyHarvestControllerServer.CHANNEL));
 	        }
 
 	        public int getSendReadyDelay() {

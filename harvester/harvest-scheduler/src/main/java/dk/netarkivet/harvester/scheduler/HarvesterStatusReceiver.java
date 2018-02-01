@@ -70,11 +70,15 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
 	private final int submittedJobsInQueueThreshold;
 
     /**
+     * Constructor of the <code>HarvesterStatusReceiver</code>.
+     * This constructs also reads from settings, if we're limiting the number of submitted messages in each queue, and its limit.
+     * If the setting 'settings.harvester.scheduler.limitSubmittedJobsInQueue' is false, no limit is enforced, otherwise the limit is
+     * defined by setting 'settings.harvester.scheduler.submittedJobsInQueueLimit'.
      * @param jobDispatcher The <code>JobDispatcher</code> to delegate the dispatching of new jobs to, when a 'Ready for
-     * job' event is received.
+     * job' event is received. 
      * @param jmsConnection The JMS connection by which {@link HarvesterReadyMessage} is received.
-     * @param harvestChannelDao
-     * @param harvestChannelRegistry
+     * @param harvestChannelDao The specific HarvestChannelDAO instance to use 
+     * @param harvestChannelRegistry The specific HarvestChannelRegistry instance to use
      */
     public HarvesterStatusReceiver(JobDispatcher jobDispatcher, JMSConnection jmsConnection,
             HarvestChannelDAO harvestChannelDao, HarvestChannelRegistry harvestChannelRegistry) {
