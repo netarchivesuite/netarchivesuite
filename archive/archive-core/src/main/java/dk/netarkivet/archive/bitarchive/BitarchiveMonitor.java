@@ -69,7 +69,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     private static BitarchiveMonitor instance;
 
     /** The time of the latest sign of life received from each bitarchive. */
-    private Map<String, Long> bitarchiveSignsOfLife = Collections.synchronizedMap(new HashMap<String, Long>());
+    private final Map<String, Long> bitarchiveSignsOfLife = Collections.synchronizedMap(new HashMap<String, Long>());
 
     /** The acceptable delay in milliseconds between signs of life. */
     private final long acceptableSignOfLifeDelay;

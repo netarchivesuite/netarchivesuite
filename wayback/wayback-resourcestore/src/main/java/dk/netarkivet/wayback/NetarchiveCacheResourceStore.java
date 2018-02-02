@@ -51,7 +51,7 @@ public class NetarchiveCacheResourceStore implements ResourceStore {
     /** Logger. */
     private Log logger = LogFactory.getLog(getClass().getName());
     /** The filecache being used by this class. */
-    private LRUCache fileCache;
+    private final LRUCache fileCache;
     /** The replica being used by this class. */
     private Replica replicaUsed;
 

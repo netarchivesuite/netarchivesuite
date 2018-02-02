@@ -67,13 +67,13 @@ public class Heritrix3JobMonitorThread implements Runnable {
 
     public Map<Long, Heritrix3JobMonitor> filterJobMonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
 
-    public Set<String> h3HostPortSet = new HashSet<String>();
+    public final Set<String> h3HostPortSet = new HashSet<String>();
 
     /** List of hosts with monitoring enabled. */
-    public List<String> h3HostnamePortEnabledList = new ArrayList<String>();
+    public final List<String> h3HostnamePortEnabledList = new ArrayList<String>();
 
     /** List of hosts with monitoring disabled. */
-    public List<String> h3HostnamePortDisabledList = new ArrayList<String>();
+    public final List<String> h3HostnamePortDisabledList = new ArrayList<String>();
 
     public Heritrix3JobMonitorThread(NASEnvironment environment) {
         this.environment = environment;
