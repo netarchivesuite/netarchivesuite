@@ -153,11 +153,11 @@ public class HarvestDocumentation {
                 log.warn("Found no archive directory with ARC og WARC files. Looked for dirs '{}' and '{}'.",
                         arcFilesDir.getAbsolutePath(), warcFilesDir.getAbsolutePath());
             }
-            ingestables.setMetadataGenerationSucceeded(true);
+            ingestables.closeMetadataFile();
         } finally {
             // If at this point metadata is not ready, an error occurred.
             if (!ingestables.isMetadataReady()) {
-                ingestables.setMetadataGenerationSucceeded(false);
+                ingestables.setErrorState(true);
             } else {
                 for (File fileAdded : filesAddedAndNowDeletable) {
                     FileUtils.remove(fileAdded);
