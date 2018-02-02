@@ -78,16 +78,12 @@ public class TLD {
 	 * Private constructor of the TLD class. This constructor reads the TLDs from both settings and public suffix file.
 	 * both quoted and unquoted. Sets the TLD_REGEX_STRING,HOSTNAME_REGEX, and  VALID_DOMAIN_MATCHER.
 	 */
-	private TLD() {
-		
+	private TLD() {	
 		tldListQuoted = new ArrayList<String>();
 		tldList = new ArrayList<String>();
 		readTldsFromPublicSuffixFile(tldList, tldListQuoted);
 		readTldsFromSettings(tldList, tldListQuoted);
-		/*
-		tldList = readTldsFromPublicSuffixFile(false);
-		tldList.addAll(readTldsFromSettings(false));
-		*/
+
 		TLD_REGEX_STRING = "\\.(" + StringUtils.conjoin("|", tldListQuoted) + ")";
 		HOSTNAME_REGEX = Pattern.compile("^(|.*?\\.)(" + DOMAINNAME_CHAR_REGEX_STRING + "+"
 	            + TLD_REGEX_STRING + ")");
@@ -126,13 +122,13 @@ public class TLD {
     /**
      * Helper method for reading TLDs from the embedded public suffix file. Will read all entries, validate them as legal TLDs and warn and
      * ignore them if any are invalid.
-     * Now silently ignores starred tld's in public suffix file (e.g "*.kw")
+     * Now silently ignores starred tld's in public suffix file (e.g "*.kw") and exclusion rules (e.g. !metro.tokyo.jp)
  	 * @param tldList the list to add all the tlds found in the public suffix file 
      * @param quotedTldList the list to add all the tlds found in the public suffix file - as a pattern  
      */
     protected static void readTldsFromPublicSuffixFile(List<String> tldList, List<String> quotedTldList) {
         InputStream stream = getPublicSuffixListDataStream();
-        boolean silentlyIgnoringStarTldsInPublicSuffixFile = true;
+        boolean silentlyIgnoringStarTldsInPublicSuffixFile = Settings.getBoolean(CommonSettings.TLD_SILENTLY_IGNORE_STARRED_TLDS);
         int count=0;
         if (stream != null) {
         	BufferedReader br = null;
@@ -143,7 +139,7 @@ public class TLD {
         			String tld = line.trim();
         			if (tld.isEmpty() || tld.startsWith("//")) {
         				continue;
-        			} else if (silentlyIgnoringStarTldsInPublicSuffixFile && tld.startsWith("*.")) {
+        			} else if (silentlyIgnoringStarTldsInPublicSuffixFile && (tld.startsWith("*.") || tld.startsWith("!"))) {
         				continue;
         			} else {
         	            if (!tld.matches(DOMAINNAME_CHAR_REGEX_STRING + "(" + DOMAINNAME_CHAR_REGEX_STRING + "|\\.)*")) {
