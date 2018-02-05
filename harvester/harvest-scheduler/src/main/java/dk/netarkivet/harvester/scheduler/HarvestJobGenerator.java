@@ -269,12 +269,12 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
             }
 
             public void killScheduling() {
-                log.debug("Removed HD #{}({}) from list of harvestdefinitions to be scheduled. "
-                                + "Harvestdefinitions still to be scheduled: {}", id, harvestDefinition.getName(),
-                        harvestDefinitionsBeingScheduled);
                 harvestDefinitionsBeingScheduled.remove(id);
                 schedulingStartedMap.remove(id);
                 threadMap.remove(id);
+                log.debug("Removed HD #{}({}) from list of harvestdefinitions to be scheduled. "
+                                + "Harvestdefinitions still to be scheduled: {}", id, harvestDefinition.getName(),
+                        harvestDefinitionsBeingScheduled);
             }
         }
     }

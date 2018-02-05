@@ -67,6 +67,7 @@ public class JobDispatcher {
     /**
      * @param jmsConnection The JMS connection to use.
      * @param hDao The HarvestDefinitionDAO to use.
+     * @param jobDao The JobDAO to use.
      */
     public JobDispatcher(JMSConnection jmsConnection, HarvestDefinitionDAO hDao, JobDAO jobDao) {
         log.info("Creating JobDispatcher");
@@ -136,7 +137,7 @@ public class JobDispatcher {
     }
 
     /**
-     * Will read the next job ready to run from the db and set the job to submitted. If no jobs are ready, null will be
+     * Will read the next job ready to run from the database and set the job to submitted. If no jobs are ready, null will be
      * returned.
      * <p>
      * Note the operation is synchronized, so only one thread may start the submission of a job.

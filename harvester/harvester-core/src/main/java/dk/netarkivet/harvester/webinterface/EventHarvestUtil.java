@@ -24,20 +24,29 @@
 package dk.netarkivet.harvester.webinterface;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
+import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
@@ -57,7 +66,80 @@ public final class EventHarvestUtil {
      */
     private EventHarvestUtil() {
     }
-
+    
+    public static void processAddSeeds(PageContext pageContext, boolean isMultiPart, I18n I18N, String harvestName, List<String> illegalSeeds, Map<String,String> attributeMap) throws IOException {
+    	log.info("Starting processAddSeeds(), multipart={}", isMultiPart);
+    	if (!isMultiPart){
+    		// The new seeds is contained directly in the formdata
+    		addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
+    	} else {
+    		//the new seeds is contained indirectly in the formdata in a separate file.
+    		File seedsFile = File.createTempFile("seeds", ".txt", FileUtils.getTempDir());
+    		try {
+				processMultidataForm(pageContext, seedsFile, attributeMap);
+			} catch (Throwable e) {
+				log.info("Throws unexpected exception", e);
+			}
+    		if (seedsFile.length() > 0) {
+    			harvestName = attributeMap.get(Constants.HARVEST_PARAM); // reading from attributeMap, as harvestName is null if multipart
+    			String maxbytesString = attributeMap.get(Constants.MAX_BYTES_PARAM);
+    			String maxobjectsString = attributeMap.get(Constants.MAX_OBJECTS_PARAM);
+    			String maxrateString = attributeMap.get(Constants.MAX_RATE_PARAM);
+    			String orderTemplateString = attributeMap.get(Constants.ORDER_TEMPLATE_PARAM);
+    			EventHarvestUtil.addConfigurationsFromSeedsFile(
+    					pageContext, I18N, harvestName, seedsFile, maxbytesString, 
+    					maxobjectsString, maxrateString, orderTemplateString, attributeMap, illegalSeeds);
+  
+    		} else {
+    			log.warn("No file was uploaded.");
+    			HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+    					"errormsg;no.seedsfile.was.uploaded");
+    			return;
+    		}    			 		
+    	}
+    	log.info("Finished processAddSeeds(), multipart={}", isMultiPart);
+    }
+    
+    private static void processMultidataForm(PageContext context, File seedsFile, Map<String,String> attributeMap) throws Exception {
+    	// Create a factory for disk-based file items
+    	FileItemFactory factory = new DiskFileItemFactory();
+		// Create a new file upload handler
+   		ServletFileUpload upload = new ServletFileUpload(factory);
+   		log.info("Starting processMultidataForm() ");
+        // As the parsing of the formdata has the sideeffect of removing the
+        // formdata from the request(!), we have to extract all possible data
+        // the first time around.
+   		Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
+   		ServletRequest request = context.getRequest();
+        List items = upload.parseRequest((HttpServletRequest)request);
+        for (Object o : items) {
+        	FileItem item = (FileItem) o;
+            String fieldName = item.getFieldName();
+            if (fieldName.equals(Constants.HARVEST_PARAM)) {
+            	attributeMap.put(fieldName, item.getString());
+          	} else if (fieldName.equals(Constants.UPDATE_PARAM)) {
+          		attributeMap.put(fieldName, item.getString());
+            } else if (fieldName.equals(Constants.MAX_BYTES_PARAM)) {
+            	attributeMap.put(fieldName, item.getString());
+            } else if (fieldName.equals(Constants.MAX_OBJECTS_PARAM)) {
+            	attributeMap.put(fieldName, item.getString());
+            } else if (fieldName.equals(Constants.MAX_RATE_PARAM)) {
+            	attributeMap.put(fieldName, item.getString());             
+            } else if (fieldName.equals(Constants.ORDER_TEMPLATE_PARAM)) {
+            	attributeMap.put(fieldName, item.getString());
+            } else if (fieldName.equals(Constants.UPLOAD_FILE_PARAM)) {
+              	item.write(seedsFile);
+              	attributeMap.put(fieldName, item.getName());
+            } 
+             // else-if for the attribute values 
+             else if (attributeNames.contains(fieldName)) {
+                 attributeMap.put(fieldName, item.getString());
+             }
+       	}
+        log.debug("Found keys in attributeMap: {}", StringUtils.join(attributeMap.keySet(), ","));
+        log.info("Finished processMultidataForm()");
+    }
+    
     /**
      * Adds a bunch of configurations to a given PartialHarvest. For full definitions of the parameters, see
      * Definitions-add-event-seeds.jsp. For each seed in the list, the following steps are taken: 1) The domain is
@@ -73,13 +155,15 @@ public final class EventHarvestUtil {
      * @param context the current JSP context
      * @param i18n the translation information to use in this context
      * @param eventHarvestName The name of the partial harvest to which these seeds are to be added
+     * @param illegalSeeds A (possibly empty) list of invalidSeeds found
      * @throws ForwardedToErrorPage If maxBytes is not a number, or if any of the seeds is badly formatted such that no
      * domain name can be parsed from it, or if orderTemplate is not given or unknown.
      */
-    public static void addConfigurations(PageContext context, I18n i18n, String eventHarvestName) {
+    public static void addConfigurations(PageContext context, I18n i18n, String eventHarvestName, List<String> illegalSeeds) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         ArgumentNotValid.checkNotNull(eventHarvestName, "String eventHarvestName");
+        ArgumentNotValid.checkNotNull(illegalSeeds, "List<String> illegalSeeds");
 
         HTMLUtils.forwardOnMissingParameter(context, Constants.SEEDS_PARAM);
         ServletRequest request = context.getRequest();
@@ -127,8 +211,10 @@ public final class EventHarvestUtil {
         try {
             PartialHarvest eventHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(
                     eventHarvestName);
-            eventHarvest.addSeeds(seedSet, orderTemplate, maxBytes, maxObjects, attributeValues);
-        } catch (Exception e) {
+            Set<String> illegalSeedsFound = eventHarvest.addSeeds(seedSet, orderTemplate, maxBytes, maxObjects, attributeValues);
+            illegalSeeds.addAll(illegalSeedsFound);            
+            
+        } catch (Throwable e) {
             log.error("Unexpected exception thrown", e);
             HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;error.adding.seeds.to.0", eventHarvestName, e);
             throw new ForwardedToErrorPage("Error while adding seeds", e);
@@ -147,14 +233,16 @@ public final class EventHarvestUtil {
      * @param maxrateString The given maxrate as a string (currently not used)
      * @param ordertemplate The name of the ordertemplate to use
      * @param attributes A list of attributes and form values
+     * @param illegalSeeds A (possibly empty) list of invalidSeeds found 
      */
     public static void addConfigurationsFromSeedsFile(PageContext context, I18n i18n, String eventHarvestName,
-            File seeds, String maxbytesString, String maxobjectsString, String maxrateString, String ordertemplate, Map<String,String> attributes) {
+            File seeds, String maxbytesString, String maxobjectsString, String maxrateString, String ordertemplate, Map<String,String> attributes, List<String> illegalSeeds) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         ArgumentNotValid.checkNotNullOrEmpty(eventHarvestName, "String eventHarvestName");
         ArgumentNotValid.checkNotNull(seeds, "String seeds");
         ArgumentNotValid.checkNotNull(ordertemplate, "String ordertemplate");
+        ArgumentNotValid.checkNotNull(illegalSeeds, "List<String> illegalSeeds");
 
         long maxBytes = 0L;
         int maxObjects = 0;
@@ -193,12 +281,13 @@ public final class EventHarvestUtil {
             PartialHarvest eventHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(
                     eventHarvestName);
             
-            eventHarvest.addSeedsFromFile(seeds, ordertemplate, maxBytes, maxObjects, attributes);
+            Set<String> illegalSeedsFound = eventHarvest.addSeedsFromFile(seeds, ordertemplate, maxBytes, maxObjects, attributes);
+            illegalSeeds.addAll(illegalSeedsFound); 
         } catch (Exception e) {
             log.error("Unexpected exception thrown", e);
             HTMLUtils
                     .forwardWithErrorMessage(context, i18n, "errormsg;error.adding.seeds.to.0", e, eventHarvestName, e);
             throw new ForwardedToErrorPage("Error while adding seeds", e);
         }
-    }
+    }    
 }

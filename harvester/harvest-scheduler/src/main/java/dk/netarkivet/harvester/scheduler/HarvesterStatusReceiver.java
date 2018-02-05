@@ -22,14 +22,22 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
+import java.util.Enumeration;
+
+import javax.jms.JMSException;
+import javax.jms.QueueBrowser;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.lifecycle.ComponentLifeCycle;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.distribute.HarvesterChannels;
@@ -56,11 +64,21 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
     private final HarvestChannelDAO harvestChannelDao;
 
     private final HarvestChannelRegistry harvestChannelRegistry;
+    /** Is the feature to limit the number of submitted messages in each queue enabled? */
+	private final Boolean limitSubmittedJobsInQueue;
+	/** The number of submitted messages in each queue. Only used, if the above is true */
+	private final int submittedJobsInQueueThreshold;
 
     /**
+     * Constructor of the <code>HarvesterStatusReceiver</code>.
+     * This constructs also reads from settings, if we're limiting the number of submitted messages in each queue, and its limit.
+     * If the setting 'settings.harvester.scheduler.limitSubmittedJobsInQueue' is false, no limit is enforced, otherwise the limit is
+     * defined by setting 'settings.harvester.scheduler.submittedJobsInQueueLimit'.
      * @param jobDispatcher The <code>JobDispatcher</code> to delegate the dispatching of new jobs to, when a 'Ready for
-     * job' event is received.
+     * job' event is received. 
      * @param jmsConnection The JMS connection by which {@link HarvesterReadyMessage} is received.
+     * @param harvestChannelDao The specific HarvestChannelDAO instance to use 
+     * @param harvestChannelRegistry The specific HarvestChannelRegistry instance to use
      */
     public HarvesterStatusReceiver(JobDispatcher jobDispatcher, JMSConnection jmsConnection,
             HarvestChannelDAO harvestChannelDao, HarvestChannelRegistry harvestChannelRegistry) {
@@ -71,12 +89,18 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         this.jmsConnection = jmsConnection;
         this.harvestChannelDao = harvestChannelDao;
         this.harvestChannelRegistry = harvestChannelRegistry;
+        this.limitSubmittedJobsInQueue = Settings.getBoolean(HarvesterSettings.SCHEDULER_LIMIT_SUBMITTED_JOBS_IN_QUEUE);
+        this.submittedJobsInQueueThreshold = Settings.getInt(HarvesterSettings.SCHEDULER_SUBMITTED_JOBS_IN_QUEUE_LIMIT);
     }
 
     @Override
     public void start() {
         jmsConnection.setListener(HarvesterChannels.getHarvesterStatusChannel(), this);
         jmsConnection.setListener(HarvesterChannels.getHarvesterRegistrationRequestChannel(), this);
+        log.info("limitSubmittedJobsInQueue: {}", limitSubmittedJobsInQueue);
+        if (limitSubmittedJobsInQueue) {
+        	log.info("submittedJobsInQueueThreshold: {}", submittedJobsInQueueThreshold);
+        }
     }
 
     @Override
@@ -100,7 +124,20 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         } else if (!harvestChannelRegistry.isRegisteredToChannel(message.getApplicationInstanceId(), message.getHarvestChannelName())) {
         	harvestChannelRegistry.register(message.getHarvestChannelName(), message.getApplicationInstanceId());
         };
-        jobDispatcher.submitNextNewJob(channel);
+        if (limitSubmittedJobsInQueue) {
+        	// Check If already a Message in the JMS queue for this channel
+        	ChannelID relevantChannelId = HarvesterChannels.getHarvestJobChannelId(channel);
+        	int currentCount = getCount(relevantChannelId);
+        	if (currentCount < submittedJobsInQueueThreshold) {
+        		jobDispatcher.submitNextNewJob(channel);
+        	} else {
+        		log.debug("No jobs submitted to channel {} after receiving ready message from {}. "
+        				+ "Already {} jobs submitted to channel ", relevantChannelId, message.getApplicationInstanceId(),
+        				currentCount);
+        	}
+        } else { // If no limit, always submit new job, if a job in status NEW exists scheduled for this channel
+        	jobDispatcher.submitNextNewJob(channel);
+        }
     }
 
     @Override
@@ -130,4 +167,35 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         log.info("Sent a message to host {} to notify that harvest channel '{}' is {}", msg.getHostname(), channelName, (isValid ? "valid."
                 : "invalid."));
     }
+    
+    /**
+     * Retrieve the number of current messages defined by the given queueID. 
+     * @param queueID a given QueueID
+     * @return the number of current messages defined by the given queueID
+     */
+    private int getCount(ChannelID queueID) {
+    	QueueBrowser qBrowser;
+    	int count=0;
+    	try {
+    		qBrowser = jmsConnection.createQueueBrowser(queueID);
+    		Enumeration msgs = qBrowser.getEnumeration();
+
+    		if ( !msgs.hasMoreElements() ) {
+    			return 0;
+    		} else { 
+    			while (msgs.hasMoreElements()) { 
+    				msgs.nextElement();
+    				count++;
+    			}
+    		}
+    		qBrowser.close();
+    	} catch (JMSException e) {
+    		log.warn("JMSException thrown: ", e);
+    	} catch (Throwable e1) {
+    		log.warn("Unexpected exception of type {} thrown: ", e1.getClass().getName(), e1);
+    	}
+
+    	return count;
+    }
+    
 }

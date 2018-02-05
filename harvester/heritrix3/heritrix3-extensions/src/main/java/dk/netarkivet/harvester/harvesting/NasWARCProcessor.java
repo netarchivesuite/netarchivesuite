@@ -66,11 +66,11 @@ public class NasWARCProcessor extends WARCWriterProcessor {
         kp.put("writeMetadataOutlinks",writeMetadataOutlinks);
     }
 
+    List<String> cachedMetadata;
+
 	public NasWARCProcessor() {
 		super();
 	}
-	
-	List<String> cachedMetadata;
 	
 	 /**
      * metadata items.
@@ -149,55 +149,60 @@ public class NasWARCProcessor extends WARCWriterProcessor {
         String netarchiveSuiteComment = "#added by NetarchiveSuite "
                 + dk.netarkivet.common.Constants.getVersionString(false);
         ANVLRecord recordNAS = new ANVLRecord(); // Previously new ANVLRecord(7); 
+        
+        // Add the data from the metadataMap to the WarcInfoRecord  if it exists
+        if (metadataMap == null) {
+        	logger.warn("No NetarchiveSuite harvestInfo data available in the template");
+        } else {
+        	try {
+    
+        		recordNAS.addLabelValue(HARVESTINFO_VERSION, (String) metadataMap.get(HARVESTINFO_VERSION));
+        		recordNAS.addLabelValue(HARVESTINFO_JOBID, (String) metadataMap.get(HARVESTINFO_JOBID));
+        		recordNAS.addLabelValue(HARVESTINFO_CHANNEL, (String) metadataMap.get(HARVESTINFO_CHANNEL));
+        		recordNAS.addLabelValue(HARVESTINFO_HARVESTNUM, (String) metadataMap.get(HARVESTINFO_HARVESTNUM));
+        		recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONID,
+        				(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONID));
+        		recordNAS.addLabelValue(HARVESTINFO_MAXBYTESPERDOMAIN,
+        				(String) metadataMap.get(HARVESTINFO_MAXBYTESPERDOMAIN));
 
-        try {
-            // Add the data from the metadataMap to the WarcInfoRecord.
-            recordNAS.addLabelValue(HARVESTINFO_VERSION, (String) metadataMap.get(HARVESTINFO_VERSION));
-            recordNAS.addLabelValue(HARVESTINFO_JOBID, (String) metadataMap.get(HARVESTINFO_JOBID));
-            recordNAS.addLabelValue(HARVESTINFO_CHANNEL, (String) metadataMap.get(HARVESTINFO_CHANNEL));
-            recordNAS.addLabelValue(HARVESTINFO_HARVESTNUM, (String) metadataMap.get(HARVESTINFO_HARVESTNUM));
-            recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONID,
-            (String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONID));
-            recordNAS.addLabelValue(HARVESTINFO_MAXBYTESPERDOMAIN,
-            (String) metadataMap.get(HARVESTINFO_MAXBYTESPERDOMAIN));
+        		recordNAS.addLabelValue(HARVESTINFO_MAXOBJECTSPERDOMAIN,
+        				(String) metadataMap.get(HARVESTINFO_MAXOBJECTSPERDOMAIN));
+        		recordNAS.addLabelValue(HARVESTINFO_ORDERXMLNAME,
+        				(String) metadataMap.get(HARVESTINFO_ORDERXMLNAME));
+        		if (metadataMap.containsKey(HARVESTINFO_ORDERXMLUPDATEDATE)) {
+        			recordNAS.addLabelValue(HARVESTINFO_ORDERXMLUPDATEDATE, (String) metadataMap.get(HARVESTINFO_ORDERXMLUPDATEDATE));
+        		}
+        		if (metadataMap.containsKey(HARVESTINFO_ORDERXMLDESCRIPTION)) {
+        			recordNAS.addLabelValue(HARVESTINFO_ORDERXMLDESCRIPTION, (String) metadataMap.get(HARVESTINFO_ORDERXMLDESCRIPTION));
+        		}
+        		recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONNAME,
+        				(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONNAME));
 
-            recordNAS.addLabelValue(HARVESTINFO_MAXOBJECTSPERDOMAIN,
-            (String) metadataMap.get(HARVESTINFO_MAXOBJECTSPERDOMAIN));
-            recordNAS.addLabelValue(HARVESTINFO_ORDERXMLNAME,
-            (String) metadataMap.get(HARVESTINFO_ORDERXMLNAME));
-            if (metadataMap.containsKey(HARVESTINFO_ORDERXMLUPDATEDATE)) {
-            	recordNAS.addLabelValue(HARVESTINFO_ORDERXMLUPDATEDATE, (String) metadataMap.get(HARVESTINFO_ORDERXMLUPDATEDATE));
-            }
-            if (metadataMap.containsKey(HARVESTINFO_ORDERXMLDESCRIPTION)) {
-            	recordNAS.addLabelValue(HARVESTINFO_ORDERXMLDESCRIPTION, (String) metadataMap.get(HARVESTINFO_ORDERXMLDESCRIPTION));
-            }
-            recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONNAME,
-            (String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONNAME));
+        		if (metadataMap.containsKey(HARVESTINFO_SCHEDULENAME)) {
+        			recordNAS.addLabelValue(HARVESTINFO_SCHEDULENAME,
+        					(String) metadataMap.get(HARVESTINFO_SCHEDULENAME));
+        		}
+        		recordNAS.addLabelValue(HARVESTINFO_HARVESTFILENAMEPREFIX,
+        				(String) metadataMap.get(HARVESTINFO_HARVESTFILENAMEPREFIX));
 
-            if (metadataMap.containsKey(HARVESTINFO_SCHEDULENAME)) {
-                recordNAS.addLabelValue(HARVESTINFO_SCHEDULENAME,
-            (String) metadataMap.get(HARVESTINFO_SCHEDULENAME));
-            }
-            recordNAS.addLabelValue(HARVESTINFO_HARVESTFILENAMEPREFIX,
-            (String) metadataMap.get(HARVESTINFO_HARVESTFILENAMEPREFIX));
+        		recordNAS.addLabelValue(HARVESTINFO_JOBSUBMITDATE,
+        				(String) metadataMap.get(HARVESTINFO_JOBSUBMITDATE));
 
-            recordNAS.addLabelValue(HARVESTINFO_JOBSUBMITDATE,
-            (String) metadataMap.get(HARVESTINFO_JOBSUBMITDATE));
+        		if (metadataMap.containsKey(HARVESTINFO_PERFORMER)) {
+        			recordNAS.addLabelValue(HARVESTINFO_PERFORMER,
+        					(String) metadataMap.get(HARVESTINFO_PERFORMER));
+        		}
+        		if (metadataMap.containsKey(HARVESTINFO_OPERATOR)) {
+        			recordNAS.addLabelValue(HARVESTINFO_OPERATOR, (String) metadataMap.get(HARVESTINFO_OPERATOR));
+        		}
 
-            if (metadataMap.containsKey(HARVESTINFO_PERFORMER)) {
-            recordNAS.addLabelValue(HARVESTINFO_PERFORMER,
-            (String) metadataMap.get(HARVESTINFO_PERFORMER));
-            }
-            if (metadataMap.containsKey(HARVESTINFO_OPERATOR)) {
-            	recordNAS.addLabelValue(HARVESTINFO_OPERATOR, (String) metadataMap.get(HARVESTINFO_OPERATOR));
-            }
-
-            if (metadataMap.containsKey(HARVESTINFO_AUDIENCE)) {
-                recordNAS.addLabelValue(HARVESTINFO_AUDIENCE,
-            (String) metadataMap.get(HARVESTINFO_AUDIENCE));
-            }
-        } catch (Exception e) {
-                logger.warn("Error processing harvest info" , e);
+        		if (metadataMap.containsKey(HARVESTINFO_AUDIENCE)) {
+        			recordNAS.addLabelValue(HARVESTINFO_AUDIENCE,
+        					(String) metadataMap.get(HARVESTINFO_AUDIENCE));
+        		}
+        	} catch (Exception e) {
+        		logger.warn("Error processing harvest info" , e);
+        	}
         }
 
         // really ugly to return as List<String>, but changing would require 

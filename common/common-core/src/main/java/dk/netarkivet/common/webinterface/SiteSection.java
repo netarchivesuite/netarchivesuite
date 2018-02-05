@@ -34,6 +34,9 @@ import java.util.Map;
 
 import javax.servlet.jsp.JspWriter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -45,6 +48,10 @@ import dk.netarkivet.common.utils.Settings;
  * sidebar and how to determine which page you're in.
  */
 public abstract class SiteSection {
+
+    private static final Logger log = LoggerFactory.getLogger(SiteSection.class);
+
+
     /** The overall human-readable name of the section. */
     private final String mainname;
     /** The number of pages that should be visible in the sidebar. */
@@ -223,12 +230,15 @@ public abstract class SiteSection {
         if (sections == null) {
             sections = new ArrayList<>();
             String[] sitesections = Settings.getAll(CommonSettings.SITESECTION_CLASS);
+            log.debug("Loading {} site section(s).", sitesections.length);
             for (String sitesection : sitesections) {
+                log.debug("Loading site section {}.", sitesection.toString());
                 try {
                     ClassLoader loader = SiteSection.class.getClassLoader();
                     sections.add((SiteSection) loader.loadClass(sitesection).newInstance());
                 } catch (Exception e) {
-                    throw new IOFailure("Cannot read site section from settings", e);
+                    log.warn("Error loading class {}.", sitesection, e);
+                    throw new IOFailure("Cannot read site section " + sitesection + " from settings", e);
                 }
             }
         }
@@ -236,7 +246,7 @@ public abstract class SiteSection {
     }
 
     /**
-     * Clean up sitesections. This method calls close on all deployed site sections, and resets the list of site
+     * Clean up site sections. This method calls close on all deployed site sections, and resets the list of site
      * sections.
      */
     public static synchronized void cleanup() {

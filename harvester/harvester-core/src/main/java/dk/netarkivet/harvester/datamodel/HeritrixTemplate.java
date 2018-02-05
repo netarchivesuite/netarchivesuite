@@ -171,7 +171,7 @@ public abstract class HeritrixTemplate implements Serializable {
 		int trapCount=crawlerTraps.size();
 		for (String trap: crawlerTraps){
 		    if (trap.isEmpty()) { // Ignore empty traps in the trapcount (NAS-2480)
-		        log.warn("Found empty trap for domain", cfg.getDomainName());
+		        log.warn("Found empty trap for domain {}", cfg.getDomainName());
 		        trapCount--; 
 		    }
 		}

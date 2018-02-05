@@ -330,6 +330,18 @@ public class HarvesterSettings {
      */
     public static String SEND_READY_DELAY = "settings.harvester.harvesting.sendReadyDelay";
 
+    /** 
+     * Support for limiting the number of submitted messages in each harvestchannel using a javax.jms.QueueBrowser.
+     * Default value is: false
+     */
+	public static String SCHEDULER_LIMIT_SUBMITTED_JOBS_IN_QUEUE = "settings.harvester.scheduler.limitSubmittedJobsInQueue";
+	
+	/** 
+     * The limit for submitted messages in each harvestchannel. Not enabled if SCHEDULER_LIMIT_SUBMITTED_JOBS_IN_QUEUE is false 
+     * Default value is: 1
+     */
+	public static String SCHEDULER_SUBMITTED_JOBS_IN_QUEUE_LIMIT = "settings.harvester.scheduler.submittedJobsInQueueLimit";
+	
     /**
      * <b>settings.harvester.harvesting.frontier.frontierReportWaitTime</b>:<br>
      * Time interval in seconds to wait between two requests to generate a full frontier report. Default value is 600
