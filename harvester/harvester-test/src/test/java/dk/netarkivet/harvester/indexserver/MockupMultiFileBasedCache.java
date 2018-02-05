@@ -85,7 +85,7 @@ public class MockupMultiFileBasedCache extends MultiFileBasedCache<Long> impleme
         case WAITING:
             try {
                 long before = System.currentTimeMillis();
-                synchronized (o) {
+                synchronized (this) {
                     o.notifyAll();
                     o.wait(TIMEOUT);
                     o.notifyAll();
