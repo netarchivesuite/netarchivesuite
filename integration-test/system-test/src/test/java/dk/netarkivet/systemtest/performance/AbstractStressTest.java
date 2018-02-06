@@ -37,7 +37,7 @@ import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 @SuppressWarnings("unused")
 public abstract class AbstractStressTest extends SeleniumTest {
 
-    final String compressionSuffix = ".gz ";
+    final String compressionSuffix = " ";
 
     final Long SECOND = 1000L;
     final Long MINUTE = 60 * SECOND;
