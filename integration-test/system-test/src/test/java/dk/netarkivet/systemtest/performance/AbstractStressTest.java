@@ -185,10 +185,20 @@ public abstract class AbstractStressTest extends SeleniumTest {
                     "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
                             + " -d stresstest_harvestdb --no-privileges  --no-owner -t schedules --clean --schema public /tmp/"
                             + backupEnv + "_harvestdb.dump.out" + compressionSuffix;
+            String harvestChannelDB =
+                                "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
+                                        + " -d stresstest_harvestdb --no-privileges  --no-owner -t harvestchannel --clean --schema public /tmp/"
+                                        + backupEnv + "_harvestdb.dump.out" + compressionSuffix;
+            String harvestChannelSeqDB =
+                                "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
+                                        + " -d stresstest_harvestdb --no-privileges  --no-owner -t harvestchannel_id_seq --clean --schema public /tmp/"
+                                        + backupEnv + "_harvestdb.dump.out" + compressionSuffix;
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createRelationsHarvestDB);
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaVersionsHarvestDB);
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateOrdertemplatesHarvestDB);
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchedulesDB);
+            testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, harvestChannelDB);
+            testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, harvestChannelSeqDB);
             addFixture("Replacing checksum database with empty data");
             testController.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "mkdir CS");
             testController.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "touch CS/checksum_CS.md5");
