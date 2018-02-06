@@ -40,6 +40,8 @@ import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
 public class HarvestUtils {
+
+    protected static final TestLogger log = new TestLogger(HarvestUtils.class);
     public static String DEFAULT_DOMAIN = "pligtaflevering.dk";
     public static final int MAX_MINUTES_TO_WAIT_FOR_HARVEST = 60;
 
@@ -195,8 +197,10 @@ public class HarvestUtils {
             String output =  testEnvironmentController.runCommand(TestEnvironment.JOB_ADMIN_SERVER,
                     "grep 'Created' ${HOME}/" + testEnvironmentController.ENV.getTESTX() + "/log/HarvestJobManager*",
                     new int[] {0, 1});
-            Pattern finished = Pattern.compile(".*Created ([0-9]+) jobs([^<>]*)[(]" + harvestName + "[)].*",
+            final String harvestNamePattern = ".*Created ([0-9]+) jobs([^<>]*)[(]" + harvestName + "[)].*";
+            Pattern finished = Pattern.compile(harvestNamePattern,
                     Pattern.DOTALL);
+            log.debug("Matching '" + harvestNamePattern + "' against '" + output + "'");
             final Matcher matcher = finished.matcher(output);
             if (matcher.matches()) {
                 return true;
