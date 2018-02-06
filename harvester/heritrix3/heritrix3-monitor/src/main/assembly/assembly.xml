@@ -16,7 +16,7 @@
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>com.antiaction:bootstrap-agent:zip:overlay</include>
+                <include>com.antiaction:bootstrap-agent-tomcat:zip:overlay</include>
             </includes>
             <unpack>true</unpack>
             <unpackOptions>
