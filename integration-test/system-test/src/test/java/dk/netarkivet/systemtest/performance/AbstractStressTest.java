@@ -171,19 +171,19 @@ public abstract class AbstractStressTest extends SeleniumTest {
             addFixture("Restoring harvestdb schema");
             String createRelationsHarvestDB =
                     "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
-                            + " -d stresstest_harvestdb  --no-owner -s --schema public /tmp/" + backupEnv
+                            + " -d stresstest_harvestdb --no-privileges  --no-owner -s --schema public /tmp/" + backupEnv
                             + "_harvestdb.dump.out" + compressionSuffix;
             String populateSchemaVersionsHarvestDB =
                     "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
-                            + " -d stresstest_harvestdb  --no-owner -t schemaversions --clean --schema public /tmp/"
+                            + " -d stresstest_harvestdb --no-privileges  --no-owner -t schemaversions --clean --schema public /tmp/"
                             + backupEnv + "_harvestdb.dump.out" + compressionSuffix;
             String populateOrdertemplatesHarvestDB =
                     "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
-                            + " -d stresstest_harvestdb  --no-owner -t ordertemplates --clean --schema public /tmp/"
+                            + " -d stresstest_harvestdb --no-privileges  --no-owner -t ordertemplates --clean --schema public /tmp/"
                             + backupEnv + "_harvestdb.dump.out" + compressionSuffix;
             String populateSchedulesDB =
                     "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER
-                            + " -d stresstest_harvestdb  --no-owner -t schedules --clean --schema public /tmp/"
+                            + " -d stresstest_harvestdb --no-privileges  --no-owner -t schedules --clean --schema public /tmp/"
                             + backupEnv + "_harvestdb.dump.out" + compressionSuffix;
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, createRelationsHarvestDB);
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, populateSchemaVersionsHarvestDB);
@@ -201,7 +201,7 @@ public abstract class AbstractStressTest extends SeleniumTest {
             addFixture("Ingesting full production harvestdb backup");
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                     "pg_restore -U " + TestEnvironment.DEPLOYMENT_USER + " -d " + ENV.getTESTX().toLowerCase()
-                            + "_harvestdb  --no-owner --schema public /tmp/" + backupEnv + "_harvestdb.dump.out" + compressionSuffix);
+                            + "_harvestdb  --no-owner --no-privileges  --schema public /tmp/" + backupEnv + "_harvestdb.dump.out" + compressionSuffix);
 
             addFixture("Replacing checksum database with prod data");
             testController.runTestXCommand(TestEnvironment.CHECKSUM_SERVER, "rm -rf CS");
