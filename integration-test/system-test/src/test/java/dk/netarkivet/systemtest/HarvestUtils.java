@@ -25,17 +25,23 @@ package dk.netarkivet.systemtest;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import dk.netarkivet.systemtest.environment.TestEnvironment;
+import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
 public class HarvestUtils {
+
+    protected static final TestLogger log = new TestLogger(HarvestUtils.class);
     public static String DEFAULT_DOMAIN = "pligtaflevering.dk";
     public static final int MAX_MINUTES_TO_WAIT_FOR_HARVEST = 60;
 
@@ -158,6 +164,51 @@ public class HarvestUtils {
             if (PageHelper.getWebDriver().getPageSource().contains(harvestName)) {
                 keepWaiting = false;
             }
+        }
+    }
+
+    public static void waitForJobGeneration(String harvestName, TestEnvironmentController testEnvironmentController) {
+        boolean keepWaiting = true;
+        int secondsWaitingForJob = 0;
+        int maxSecondsToWaitForAllHarvests = 360;
+        while (keepWaiting) {
+            System.err.print(".");
+
+            try {
+                Thread.sleep(10000);
+                secondsWaitingForJob = secondsWaitingForJob + 10;
+            } catch (InterruptedException e) {
+            }
+            if (secondsWaitingForJob > maxSecondsToWaitForAllHarvests) {
+                throw new RuntimeException("The job for " + harvestName + " took to long (more that "
+                        + maxSecondsToWaitForAllHarvests + "s) to finish, " + "aborting");
+            }
+            keepWaiting = isFinished(harvestName, testEnvironmentController);
+        }
+    }
+
+
+    /**
+     * Looks for a log statement like "Created 212 jobs for harvest hgj8hy".
+     * @return
+     */
+    static boolean isFinished(String harvestName, TestEnvironmentController testEnvironmentController) {
+        try {
+            String output =  testEnvironmentController.runCommand(TestEnvironment.JOB_ADMIN_SERVER,
+                    "grep 'Created' ${HOME}/" + testEnvironmentController.ENV.getTESTX() + "/log/HarvestJobManager*",
+                    new int[] {0, 1});
+            final String harvestNamePattern = ".*Created ([0-9]+) jobs([^<>]*)[(]" + harvestName + "[)].*";
+            Pattern finished = Pattern.compile(harvestNamePattern,
+                    Pattern.DOTALL);
+            log.debug("Matching '" + harvestNamePattern + "' against '" + output + "'");
+            final Matcher matcher = finished.matcher(output);
+            if (matcher.matches()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
