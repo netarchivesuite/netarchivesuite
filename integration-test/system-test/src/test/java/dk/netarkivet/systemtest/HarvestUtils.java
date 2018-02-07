@@ -200,7 +200,7 @@ public class HarvestUtils {
             final String harvestNamePattern = ".*Created ([0-9]+) jobs([^<>]*)[(]" + harvestName + "[)].*";
             Pattern finished = Pattern.compile(harvestNamePattern,
                     Pattern.DOTALL);
-            log.debug("Matching '" + harvestNamePattern + "' against '" + output + "'");
+            log.info("Matching '" + harvestNamePattern + "' against '" + output + "'");
             final Matcher matcher = finished.matcher(output);
             if (matcher.matches()) {
                 return true;
