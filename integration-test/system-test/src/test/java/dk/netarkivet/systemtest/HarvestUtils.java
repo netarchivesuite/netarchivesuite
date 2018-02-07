@@ -183,7 +183,7 @@ public class HarvestUtils {
                 throw new RuntimeException("The job for " + harvestName + " took to long (more that "
                         + maxSecondsToWaitForAllHarvests + "s) to finish, " + "aborting");
             }
-            keepWaiting = isFinished(harvestName, testEnvironmentController);
+            keepWaiting = !isFinished(harvestName, testEnvironmentController);
         }
     }
 
@@ -200,7 +200,7 @@ public class HarvestUtils {
             final String harvestNamePattern = ".*Created ([0-9]+) jobs([^<>]*)[(]" + harvestName + "[)].*";
             Pattern finished = Pattern.compile(harvestNamePattern,
                     Pattern.DOTALL);
-            log.info("Matching '" + harvestNamePattern + "' against '" + output + "'");
+            log.debug("Matching '" + harvestNamePattern + "' against '" + output + "'");
             final Matcher matcher = finished.matcher(output);
             if (matcher.matches()) {
                 return true;
