@@ -1553,6 +1553,58 @@ public class DomainDBDAO extends DomainDAO {
             }
         }; // Here ends the above return-statement
     }
+    
+    /**
+     * Retrieve HarvestInfo for a given harvestdefinition and domain combination.
+     * @param harvestDefinition a given harvestdefinition
+     * @param domain a given domain
+     * @return null, if no HarvestInfo found for the given harvestdefinition and domain combination, otherwise it returns the first matching HarvestInfo found and gives a warning if more than one match exist.
+     */
+    @Override
+    public HarvestInfo getHarvestInfoForDomainInHarvest(final HarvestDefinition harvestDefinition, final Domain domain) {
+        PreparedStatement s = null;
+        Connection c = HarvestDBConnection.get();
+        try {
+            s = c.prepareStatement("SELECT h.stopreason, h.objectcount, h.bytecount, c.name, h.job_id, h.harvest_time FROM historyinfo as h, configurations as c WHERE "
+                + " c.config_id=h.config_id AND c.domain_id=? AND h.harvest_id=?");
+            s.setLong(1, domain.getID());
+            s.setLong(2, harvestDefinition.getOid());
+            ResultSet res = s.executeQuery();
+            List<HarvestInfo> infoFoundForDomain = new ArrayList<HarvestInfo>();
+            while (res.next()) {
+                int stopreasonNum = res.getInt(1);
+                StopReason stopreason = StopReason.getStopReason(stopreasonNum);
+                long objectCount = res.getLong(2);
+                long byteCount = res.getLong(3);
+                String configName = res.getString(4);
+                Long jobId = res.getLong(5);
+                if (res.wasNull()) {
+                    jobId = null;
+                }
+                long harvestId = harvestDefinition.getOid();
+                Date harvestTime = new Date(res.getTimestamp(6).getTime());
+                HarvestInfo hi;
+
+                hi = new HarvestInfo(harvestId, jobId, domain.getName(), configName, harvestTime, byteCount, objectCount, stopreason);
+                infoFoundForDomain.add(hi);
+            }
+            if (infoFoundForDomain.isEmpty()) {
+                return null;
+            } else if (infoFoundForDomain.size() == 1) {
+                return infoFoundForDomain.get(0);
+            } else {
+                log.warn("Found {} harvestInfo entries for domain '{}' and harvestdefinition '{}'. Selecting the first", infoFoundForDomain.size(), domain.getName(), harvestDefinition.getName());
+                return infoFoundForDomain.get(0);
+            }
+        } catch (SQLException e) {
+            throw new IOFailure("Error while fetching HarvestInfo for domain '" + domain.getName() + "' in harvest '" + harvestDefinition.getName() + "':", e);
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
+        }
+    }
+    
+    
 
     @Override
     public DomainHistory getDomainHistory(String domainName) {

@@ -157,17 +157,29 @@ public class FullHarvest extends HarvestDefinition {
     public Iterator<DomainConfiguration> getDomainConfigurations() {
         if (previousHarvestDefinitionOid == null) {
             // The first snapshot harvest
-            //HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
             return hdDaoProvider.get().getSnapShotConfigurations();
+        } else { // An iterative snapshot harvest
+            return getDomainConfigurationsForIterativeHarvest();
         }
-
-        // An iterative snapshot harvest
+    }
+    
+    /**
+     * @return a iterator of DomainConfigurations not finished in previous SnapShot harvest  
+     */
+    public Iterator<DomainConfiguration> getDomainConfigurationsForIterativeHarvest() {
         final DomainDAO dao = domainDAOProvider.get();
-        // Get what has been harvested
-        Iterator<HarvestInfo> i = dao.getHarvestInfoBasedOnPreviousHarvestDefinition(getPreviousHarvestDefinition());
-        //
-        return new FilterIterator<HarvestInfo, DomainConfiguration>(i) {
-            protected DomainConfiguration filter(HarvestInfo harvestInfo) {
+        final HarvestDefinition hd = getPreviousHarvestDefinition();
+        log.debug("Retrieving a list of domainconfigurations to continue SnapshotHarvest HD #{}({}) in HD #{} ({})", hd.getOid(), hd.getName(), getOid(), getName() );
+        Iterator<Domain> j = dao.getAllDomainsInSnapshotHarvestOrder();
+        
+        return new FilterIterator<Domain, DomainConfiguration>(j) {
+
+            @Override
+            protected DomainConfiguration filter(Domain d) {
+                HarvestInfo harvestInfo = dao.getHarvestInfoForDomainInHarvest(hd, d);
+                if (harvestInfo == null) { // Domain not found in HarvestInfo
+                    return null;
+                }
 
                 if (harvestInfo.getStopReason() == StopReason.DOWNLOAD_COMPLETE
                         || harvestInfo.getStopReason() == StopReason.DOWNLOAD_UNFINISHED) {
@@ -175,8 +187,8 @@ public class FullHarvest extends HarvestDefinition {
                     // in an unclean fashion
                     return null;
                 }
-
                 DomainConfiguration config = getConfigurationFromPreviousHarvest(harvestInfo, dao);
+                // Check if max_bytes was reached
                 if (harvestInfo.getStopReason() == StopReason.CONFIG_SIZE_LIMIT) {
                     // Check if MaxBytes limit for DomainConfiguration have
                     // been raised since previous harvest.
@@ -188,7 +200,6 @@ public class FullHarvest extends HarvestDefinition {
                         return config;
                     }
                 }
-
                 if (harvestInfo.getStopReason() == StopReason.CONFIG_OBJECT_LIMIT) {
                     // Check if MaxObjects limit for DomainConfiguration have
                     // been raised since previous harvest.
@@ -200,8 +211,6 @@ public class FullHarvest extends HarvestDefinition {
                         return config;
                     }
                 }
-                Domain d = dao.read(config.getDomainName());
-
                 if (d.getAliasInfo() != null && !d.getAliasInfo().isExpired()) {
                     // Don't include aliases
                     return null;
@@ -211,7 +220,7 @@ public class FullHarvest extends HarvestDefinition {
             }
         };
     }
-
+ 
     /**
      * Get the configuration used in a previous harvest. If the configuration in the harvestinfo cannot be found
      * (deleted), uses the default configuration.

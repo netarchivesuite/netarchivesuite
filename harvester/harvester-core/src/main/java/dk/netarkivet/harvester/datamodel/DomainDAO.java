@@ -351,6 +351,14 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
 	
 	
 	public abstract List<String> getAllDomainNames();
-	
+
+	/**
+     * Retrieve HarvestInfo for a given harvestdefinition and domain combination.
+     * @param harvestDefinition a given harvestdefinition
+     * @param domain a given domain
+     * @return null, if no HarvestInfo found for the given harvestdefinition and domain combination, otherwise it returns the first matching HarvestInfo found and gives a warning if more than one match exist.
+     */
+    public abstract HarvestInfo getHarvestInfoForDomainInHarvest(
+            HarvestDefinition harvestDefinition, Domain domain);
 	
 }
