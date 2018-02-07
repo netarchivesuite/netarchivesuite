@@ -210,6 +210,7 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
         driver.findElement(By.cssSelector("input[value=\""+harvestName+"\"]")).submit();
         //HarvestUtils.waitForJobGeneration(harvestName);
         HarvestUtils.waitForJobGeneration(harvestName, this.getTestController());
+        PageHelper.gotoPage(PageHelper.MenuPages.AllJobs);
         List<WebElement> links = PageHelper.getWebDriver().findElements(By.partialLinkText(harvestName));
         assertEquals(links.size(), 4, "Expected to generate one job per distinct configuration.");
 
