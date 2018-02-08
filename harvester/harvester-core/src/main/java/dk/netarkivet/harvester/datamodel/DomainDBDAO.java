@@ -786,7 +786,7 @@ public class DomainDBDAO extends DomainDAO {
                     insertList.add(trap);
                 }
             }
-            log.debug("Found {} crawlertraps for domain '{}' in database", insertList.size(), domainName);
+            log.trace("Found {} crawlertraps for domain '{}' in database", insertList.size(), domainName);
             d.setCrawlerTraps(insertList, strictMode);
             d.setID(domainId);
             d.setEdition(edition);

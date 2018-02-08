@@ -825,7 +825,9 @@ public class Domain extends ExtendableEntity implements Named {
             log.warn(errMsgs.size() +  " errors were found: " + StringUtils.conjoin(",", errMsgs));
         }
         crawlerTraps = Collections.unmodifiableList(cleanedListOfCrawlerTraps);
-        log.debug("Domain {} has {} crawlertraps", domainName, crawlerTraps.size());
+        if (!crawlerTraps.isEmpty()) {
+            log.debug("Domain {} has {} crawlertraps", domainName, crawlerTraps.size());
+        }
     }
 
     /**

@@ -180,7 +180,7 @@ public class FullHarvest extends HarvestDefinition {
                 if (harvestInfo == null) { // Domain not found in HarvestInfo
                     return null;
                 }
-
+                log.debug("Found harvestInfo for domain '{}'", d.getName());
                 if (harvestInfo.getStopReason() == StopReason.DOWNLOAD_COMPLETE
                         || harvestInfo.getStopReason() == StopReason.DOWNLOAD_UNFINISHED) {
                     // Don't include the ones that finished or died
