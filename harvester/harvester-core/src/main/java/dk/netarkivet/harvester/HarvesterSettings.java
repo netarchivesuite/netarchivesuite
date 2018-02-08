@@ -222,11 +222,11 @@ public class HarvesterSettings {
     public static String JOB_TIMEOUT_TIME = "settings.harvester.scheduler.jobtimeouttime";
 
     /**
-     * <b>settings.harvester.scheduler.jobgenerationperiode</b>: <br>
+     * <b>settings.harvester.scheduler.jobgenerationperiod</b>: <br>
      * The period between checking if new jobs should be generated, in seconds. This is one minute because that's the
      * finest we can define in a harvest definition.
      */
-    public static String GENERATE_JOBS_PERIOD = "settings.harvester.scheduler.jobgenerationperiode";
+    public static String GENERATE_JOBS_PERIOD = "settings.harvester.scheduler.jobgenerationperiod";
 
     /**
      * <b>settings.harvester.harvesting.serverDir</b>: <br>
