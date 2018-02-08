@@ -131,7 +131,8 @@ National Library.
             <hideInactiveTemplates>false</hideInactiveTemplates>
         </webinterface>
         <topLevelDomains>
-        <!-- add extra top level domains not included in embedded https://publicsuffix.org/list/public_suffix_list.dat
+        <silentlyIgnoreStarredTlds>true</silentlyIgnoreStarredTlds>
+        <!-- add extra top level domains here not included in embedded https://publicsuffix.org/list/public_suffix_list.dat
         	e.g: <tld> anothertld </tld> 
          -->
         </topLevelDomains>

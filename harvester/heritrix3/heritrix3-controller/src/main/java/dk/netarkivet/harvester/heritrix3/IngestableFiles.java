@@ -128,30 +128,32 @@ public class IngestableFiles {
 
     /**
      * Marks generated metadata as final, closes the writer, and moves the temporary metadata file to its final
-     * position, if successful.
+     * position.
      *
-     * @param success True if metadata was successfully generated, false otherwise.
      * @throws PermissionDenied If the metadata has already been marked as ready, or if no metadata file exists upon
      * success.
      * @throws IOFailure if there is an error marking the metadata as ready.
      */
-    public void setMetadataGenerationSucceeded(boolean success) {
+    public void closeMetadataFile() {
         if (isMetadataReady()) {
             throw new PermissionDenied("Metadata file " + getMetadataFile().getAbsolutePath() + " already exists");
         }
-
-        if (success) {
-            writer.close(); // close writer down
-            if (!getTmpMetadataFile().exists()) {
-                String message = "No metadata was generated despite claims that metadata generation was successful.";
-                throw new PermissionDenied(message);
-            }
-            getTmpMetadataFile().renameTo(getMetadataFile());
-        } else {
-            error = true;
+        writer.close(); // close writer down
+        if (!getTmpMetadataFile().exists()) {
+            String message = "No metadata was generated despite claims that metadata generation was successful.";
+            throw new PermissionDenied(message);
         }
+        getTmpMetadataFile().renameTo(getMetadataFile());
     }
-
+    
+    /**
+     * Set error state. 
+     * @param isError True, if error, otherwise false;
+     */
+    public void setErrorState(boolean isError) {
+        error = isError;
+    }
+    
     /**
      * Get a MetaDatafileWriter for the temporary metadata file. Successive calls to this method on the same object will
      * return the same writer. Once the metadata have been finalized, calling this method will fail.
@@ -261,11 +263,7 @@ public class IngestableFiles {
     public File getReportsDir() {
         return new File(heritrixJobDir, "latest/reports");
     }
-    
-    
-    
-    
-    
+        
     /**
      * Get a list of all WARC files that should get ingested. Any open files should be closed with closeOpenFiles first.
      *
