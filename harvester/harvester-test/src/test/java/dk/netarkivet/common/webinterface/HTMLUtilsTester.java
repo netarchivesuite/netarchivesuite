@@ -116,7 +116,9 @@ public class HTMLUtilsTester {
         // Test navigation tree
         for (SiteSection ss : SiteSection.getSections()) {
             JspWriterMockup jwm = new JspWriterMockup();
-            ss.generateNavigationTree(jwm, "http://foo.bar", new Locale("da"));
+            StringBuilder sb = new StringBuilder();
+            ss.generateNavigationTree(sb, "http://foo.bar", new Locale("da"));
+            jwm.print(sb.toString());
             String tree = jwm.sw.toString();
             StringAsserts.assertStringContains("Should contain site section navigation tree for this sitesection",
                     tree, result);

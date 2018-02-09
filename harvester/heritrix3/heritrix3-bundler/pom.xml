@@ -33,7 +33,6 @@
       <artifactId>heritrix-contrib</artifactId>
     </dependency>
 
-
     <dependency>
       <groupId>is.landsbokasafn.crawl-rss</groupId>
       <artifactId>crawl-rss</artifactId>
@@ -41,7 +40,6 @@
       <classifier>dist</classifier>
       <type>zip</type>
     </dependency>
-
   </dependencies>
 
   <build>

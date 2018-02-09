@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.datamodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -131,27 +132,26 @@ public class PartialHarvestTester extends DataModelTestCase {
     @Test
     public void testAddSeedsInvalid() {
         Set<String> seedlist = new HashSet<String>();
+        String badSeed1 = "http:// /";
+        String badSeed2 = "www x";
+        String badSeed3 = "http://x.y/ /";
         seedlist.add("http://www.x.dk/page1.jsp?aparam=avalue");
-        seedlist.add("http:// /");
+        seedlist.add(badSeed1);
         seedlist.add("www");
-        seedlist.add("www x");
+        seedlist.add(badSeed2);
         seedlist.add("http://a.b//");
-        seedlist.add("http://x.y/ /");
+        seedlist.add(badSeed3);
 
         final long maxbytes = 30000L;
         final int maxobjects = -1;
-
-        try {
-            harvest.addSeeds(seedlist, order1xml, maxbytes, maxobjects, attributeValues);
-            fail("Should fail on wrong seeds");
-        } catch (ArgumentNotValid e) {
-            assertTrue("Wrong seeds must be in message: " + e, e.getMessage().contains("http:// /"));
-            assertTrue("Wrong seeds must be in message: " + e, e.getMessage().contains("http://www x"));
-            assertTrue("Wrong seeds must be in message: " + e, e.getMessage().contains("http://x.y/ /"));
-        }
+        Set<String> illegalSeeds = harvest.addSeeds(seedlist, order1xml, maxbytes, maxobjects, attributeValues);
+        assertTrue("Wrong seed '" + badSeed1 + "' must be in illegalSeeds list ", illegalSeeds.contains(badSeed1));
+        assertTrue("Wrong seed '" + badSeed2 + "' must be in illegalSeeds list ", illegalSeeds.contains(badSeed2));
+        assertTrue("Wrong seed '" + badSeed3 + "' must be in illegalSeeds list ", illegalSeeds.contains(badSeed3));
+        
         PartialHarvest updatedHarvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(
                 harvestName);
-        assertNull("No harvest should be generated", updatedHarvest);
+        assertNotNull("No harvest should be generated", updatedHarvest);
     }
 
     /**

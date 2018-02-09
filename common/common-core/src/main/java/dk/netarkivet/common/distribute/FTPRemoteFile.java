@@ -365,10 +365,11 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
         if (filesize == 0) {
             return;
         }
+        boolean deleted = false;
         log.debug("Deleting file '{}' from ftp server", ftpFileName);
         try {
             cm.logOn();
-            cm.getFTPClient().deleteFile(ftpFileName);
+            deleted = cm.getFTPClient().deleteFile(ftpFileName);
         } catch (Exception e) {
             log.warn("Error while deleting ftp file '{}' for file '{}'", ftpFileName, file.getName(), e);
         } finally {
@@ -379,7 +380,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 log.warn("Unexpected error while logging out ", e);
             }
         }
-        log.debug("File '{}' deleted from ftp server. Cleanup finished.", ftpFileName);
+        log.debug("File '{}' {} deleted from ftp server. Cleanup finished.", ftpFileName, deleted?"was":"was not");
     }
 
     /**

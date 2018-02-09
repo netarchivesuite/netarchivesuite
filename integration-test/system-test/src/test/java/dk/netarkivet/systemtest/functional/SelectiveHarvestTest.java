@@ -32,6 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
@@ -45,10 +47,12 @@ import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.HarvestUtils;
 import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.SeleniumTest;
+import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
+import dk.netarkivet.systemtest.performance.AbstractStressTest;
 
 /**
  * Test specification: http://netarchive.dk/suite/TEST1 .
@@ -204,7 +208,9 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
         driver.findElement(By.name("snapshot_byte_limit")).sendKeys("1000000");
         driver.findElement(By.name("snapshot_byte_limit")).submit();
         driver.findElement(By.cssSelector("input[value=\""+harvestName+"\"]")).submit();
-        HarvestUtils.waitForJobGeneration(harvestName);
+        //HarvestUtils.waitForJobGeneration(harvestName);
+        HarvestUtils.waitForJobGeneration(harvestName, this.getTestController());
+        PageHelper.gotoPage(PageHelper.MenuPages.AllJobs);
         List<WebElement> links = PageHelper.getWebDriver().findElements(By.partialLinkText(harvestName));
         assertEquals(links.size(), 4, "Expected to generate one job per distinct configuration.");
 
@@ -221,5 +227,7 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
         DomainConfigurationPageHelper.setExtractJavascript(extractJavascript);
         DomainConfigurationPageHelper.submitChanges();
     }
+
+
 
 }

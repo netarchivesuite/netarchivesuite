@@ -297,7 +297,9 @@ public class SiteSectionTester {
         };
         // English, URL not in site section
         JspWriterMockup jwm = new JspWriterMockup();
-        site.generateNavigationTree(jwm, "http://foo.bar", new Locale("en"));
+        StringBuilder sb = new StringBuilder();
+        site.generateNavigationTree(sb, "http://foo.bar", new Locale("en"));
+        jwm.print(sb.toString());
         String result = jwm.sw.toString();
         StringAsserts.assertStringContains("Should contain main title in English", "Harvest name", result);
         StringAsserts.assertStringNotContains("Should not contain subpage 1 title", "title1", result);
@@ -305,7 +307,9 @@ public class SiteSectionTester {
 
         // English, URL in site section
         jwm = new JspWriterMockup();
-        site.generateNavigationTree(jwm, "http://foo.bar/HarvestDefinition/pref-page3.jsp", new Locale("en"));
+        sb.setLength(0);
+        site.generateNavigationTree(sb, "http://foo.bar/HarvestDefinition/pref-page3.jsp", new Locale("en"));
+        jwm.print(sb.toString());
         result = jwm.sw.toString();
         StringAsserts.assertStringContains("Should contain main title in English", "Harvest name", result);
         StringAsserts.assertStringContains("Should contain subpage", "page1", result);
@@ -317,7 +321,9 @@ public class SiteSectionTester {
 
         // Danish, URL in site section
         jwm = new JspWriterMockup();
-        site.generateNavigationTree(jwm, "http://foo.bar/HarvestDefinition/pref-page3.jsp", new Locale("da"));
+        sb.setLength(0);
+        site.generateNavigationTree(sb, "http://foo.bar/HarvestDefinition/pref-page3.jsp", new Locale("da"));
+        jwm.print(sb.toString());
         result = jwm.sw.toString();
         StringAsserts.assertStringContains("Should contain main title in Danish", "Høstning", result);
         StringAsserts.assertStringContains("Should contain subpage", "page1", result);

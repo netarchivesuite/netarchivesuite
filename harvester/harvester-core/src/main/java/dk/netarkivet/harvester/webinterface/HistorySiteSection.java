@@ -42,8 +42,8 @@ public class HistorySiteSection extends SiteSection {
                         {"alljobs", "pagetitle;all.jobs"},
                         //{"deprecatedperdomain", "pagetitle;all.jobs.per.domain"},
                         {"running", "pagetitle;all.jobs.running"},
-                        {"running-jobdetails", "pagetitle;running.job.details"},
                         {"history/", "pagetitle;h3.remote.access"}, // refer to webpage outside of webpages directory
+                        {"running-jobdetails", "pagetitle;running.job.details"},
                         {"perhd", "pagetitle;all.jobs.per.harvestdefinition"},
                         {"perharvestrun", "pagetitle;all.jobs.per.harvestrun"},
                         {"jobdetails", "pagetitle;details.for.job"},

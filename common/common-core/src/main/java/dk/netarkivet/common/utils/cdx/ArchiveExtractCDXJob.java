@@ -60,6 +60,9 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
     /** An encoding for the standard included metadata fields with checksum. */
     private static final String[] STD_FIELDS_INCL_CHECKSUM = {"A", "e", "b", "m", "n", "g", "v", "c"};
 
+    /** Buffer size used to read the http header. */
+    private int HTTP_HEADER_BUFFER_SIZE = 1024 * 1024;
+
     /** The fields to be included in CDX output. */
     private String[] fields;
 
@@ -141,7 +144,7 @@ public class ArchiveExtractCDXJob extends ArchiveBatchJob {
             }
             mimeType = contentType.toStringShort();
         }
-        ByteCountingPushBackInputStream pbin = new ByteCountingPushBackInputStream(record.getInputStream(), 8192);
+        ByteCountingPushBackInputStream pbin = new ByteCountingPushBackInputStream(record.getInputStream(), HTTP_HEADER_BUFFER_SIZE);
         HttpHeader httpResponse = null;
         if (bResponse) {
             try {

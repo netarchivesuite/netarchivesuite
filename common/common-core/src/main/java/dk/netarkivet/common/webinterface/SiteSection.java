@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.jsp.JspWriter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,12 +142,12 @@ public abstract class SiteSection {
      * @param locale The locale to generate the navigation tree for.
      * @throws IOException If there is a problem writing to the page.
      */
-    public void generateNavigationTree(JspWriter out, String url, Locale locale) throws IOException {
+    public void generateNavigationTree(StringBuilder sb, String url, Locale locale) throws IOException {
         String firstPage = pagesAndTitles.keySet().iterator().next();
-        out.print("<tr>");
-        out.print("<td><a href=\"/" + HTMLUtils.encode(dirname) + "/" + HTMLUtils.encode(firstPage) + "\">"
+        sb.append("<tr>");
+        sb.append("<td><a href=\"/" + HTMLUtils.encode(dirname) + "/" + HTMLUtils.encode(firstPage) + "\">"
                 + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, mainname)) + "</a></td>\n");
-        out.print("</tr>");
+        sb.append("</tr>");
         // If we are on the above page or one of its subpages, display the
         // next level down in the tree
         String page = getPage(url);
@@ -162,13 +160,13 @@ public abstract class SiteSection {
                 if (i == visiblePages) {
                     break;
                 }
-                out.print("<tr>");
-                out.print("<td>&nbsp; &nbsp; <a href=\"/" + HTMLUtils.encode(dirname) + "/"
+                sb.append("<tr>");
+                sb.append("<td>&nbsp; &nbsp; <a href=\"/" + HTMLUtils.encode(dirname) + "/"
                         + pageAndTitle.getKey() 
                         + "\"> "
                         + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, pageAndTitle.getValue()))
                         + "</a></td>");
-                out.print("</tr>\n");
+                sb.append("</tr>\n");
                 i++;
             }
         }
@@ -230,7 +228,7 @@ public abstract class SiteSection {
         if (sections == null) {
             sections = new ArrayList<>();
             String[] sitesections = Settings.getAll(CommonSettings.SITESECTION_CLASS);
-            log.debug("Loading {} site section.", sitesections.length);
+            log.debug("Loading {} site section(s).", sitesections.length);
             for (String sitesection : sitesections) {
                 log.debug("Loading site section {}.", sitesection.toString());
                 try {
@@ -246,7 +244,7 @@ public abstract class SiteSection {
     }
 
     /**
-     * Clean up sitesections. This method calls close on all deployed site sections, and resets the list of site
+     * Clean up site sections. This method calls close on all deployed site sections, and resets the list of site
      * sections.
      */
     public static synchronized void cleanup() {

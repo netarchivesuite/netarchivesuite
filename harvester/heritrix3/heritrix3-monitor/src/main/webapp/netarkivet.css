@@ -1,0 +1,361 @@
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $NielsGamborg$
+ * Date:        $2016-04-07$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *
+ * CSS style rules for the webarchive interface
+ */
+
+
+body {
+    background-color: #ffffff;
+    font-family: Verdana, Arial, Helvetica, Geneva, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: #8b0000;
+    font-weight: bold;
+    font-size: 240%;
+}
+
+h2 {
+    color: black;
+    font-weight: bold;
+    font-size: 140%;
+}
+
+h3 {
+    background-color: transparent;
+    color: #113366;
+    font-size:24px;
+    font-weight:bold;
+    margin: .6em 0 0.5em;
+    padding: .2em 0px;
+}
+
+h4 {
+    color: black;
+    font-weight: bold;
+    font-size: 120%;
+}
+
+h5 {
+    color: black;
+    font-weight: bold;
+    font-size: 100%;
+}
+
+h6 {
+    color: black;
+    font-weight: bold;
+    font-size: 90%;
+}
+
+
+a {
+    color: #336699;
+    cursor: pointer;
+    font-family: verdana, Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    text-decoration:none;
+}
+
+a:hover {
+    color: #1e3b57;
+    text-decoration:underline ;
+}
+
+a:active {
+    text-decoration:underline ;
+}
+
+h3 a{
+    text-decoration: underline;
+}
+
+
+p{
+    margin: .5em 0;
+}
+
+br{
+    margin: .5em 0;
+}
+
+hr{
+    border-bottom: 0;
+    border-top: 1px solid #999;
+}
+
+pre{
+    margin: .2em 0;
+}
+
+img {
+    border-width: 0;
+}
+
+/* Input styles */
+input, select{
+    margin: 0.2em 20px 0.2em 0;
+}
+
+input[type="submit"]{
+    margin: .5em .5em .5em 0;
+}
+
+[readonly="readonly"] {
+    background-color: #eee;
+}
+
+input[name=addDomains] {
+    position:relative;
+}
+
+/* Table styles */
+table{
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 1em;
+}
+
+tr.row0 {
+    background-color: #f0f0f0;
+}
+
+tr.row1 {
+    background-color: white;
+}
+
+tr.row0  td, th{
+    border: 1px solid white;
+}
+
+tr.row1  td, #system_state_table tr td{
+    border: 1px solid #f0f0f0;
+}
+
+tr.row1  td:first-child, #system_state_table tr td:first-child{
+    border-left: 0px;
+}
+
+tr.row1  td:last-child, #system_state_table tr td:last-child{
+    border-right: 0px;
+}
+
+th{
+    background-color: #b5d0eb;
+    font-size: 14px;
+    padding: 0.5em 10px;
+}
+
+td {
+    padding: 0.5em 10px;
+}
+
+/* Table special case styles */
+#main_table, .selection_table  {
+    width:100%;
+}
+
+.selection_table th {
+    text-align: left;
+}
+
+#main_table > tbody > tr > td{
+    border: 0;
+    padding: 20px;
+}
+
+#main_table > tbody > tr > td:last-child{
+    padding: 0 20px 0 20px;
+}
+
+table.selection_table, table#system_state_table {
+    margin-top: 1em;
+}
+
+/* Going for 3 successive colored rows because this patterne is used in all other tables in the Netarchive Suite */
+#system_state_table tr:nth-child(6n + 2), #system_state_table tr:nth-child(6n + 3), #system_state_table tr:nth-child(6n + 4){
+    background-color: #f0f0f0;
+}
+
+#system_state_table tr:nth-child(6n + 2) td, #system_state_table tr:nth-child(6n + 3) td, #system_state_table tr:nth-child(6n + 4) td{
+    border: 1px solid white;
+}
+
+/* Overwriting inline stylesheet for templates */
+table[id="templates"]{
+    margin-top: 1em;
+}
+
+table table[id="templates"] tr.light td, table table[id="templates"] tr.dark td { /* Many selectors to overwrite inline style */
+    border: 1px solid white;
+    padding: 3px 10px;
+}
+
+table table[id="templates"] tr.dark td {
+    background-color: white; /*#dde4e9;*/
+    border: 1px solid #f0f0f0;
+}
+
+table table[id="templates"] tr.light td { /* Many selectors to overwrite inline style */
+    background-color: #f0f0f0; /*#eaf1f6;*/
+}
+
+table table[id="templates"] td a {
+    color: #336699;
+}
+
+table table[id="templates"] tr td:first-child{
+    border-left: 0px;
+}
+
+table table[id="templates"] tr td:last-child{
+    border-right: 0px;
+}
+
+/* Menu styles */
+td#menu, table#menu_table{
+    background-color: #f0f0f0;
+    width: 20em;
+}
+
+table#menu_table td{
+    border: 0;
+    padding: 0;
+}
+
+table#menu_table a{
+    display: inline-block;
+    padding: .2em 0;
+}
+
+.sidebarHeader {
+    font-family: sans-serif;
+    font-size: 18pt;
+    color: black;
+    line-height: 54px;
+    margin-bottom: .5em;
+    margin-top: .2em;
+}
+
+.sidebarHeader:hover {
+    text-decoration: none;
+}
+
+.sidebarHeader img {
+    vertical-align: middle;
+}
+
+/* Logo */
+#main_table > tbody > tr > td > a > img{
+    margin-top: 2em;
+}
+
+/* Language bar styles */
+.languagelinks{
+    margin-right: -20px;
+    padding-top: .2em;
+    text-align: right;
+}
+
+.languagelinks a{
+    border-right: 1px solid #ccc;
+    color: #666;
+    display: inline-block;
+    font-size: 12px;
+    padding: .1em 0.4em .1em .2em;
+}
+
+.languagelinks a:last-child{
+    border-right: 0px;
+}
+
+/* Special case styles */
+.edit_box{
+    border: 1px solid #D4ECFB;
+    padding: 0 1em;
+}
+
+#error_message, #message{
+    background-color:#ffffcc;
+    font-size: 16px;
+    border: 1px solid black;
+    padding: 1em;
+}
+
+#message a{
+    font-size: 14pt;
+}
+
+form.inlineform {
+    display: inline;
+    font-size: 12pt;
+    border-style:none;
+}
+
+form h4{ /* Statuspage with no header */
+    font-weight: normal;
+    margin-top: 2em;
+}
+
+form h4 select[name="JOB_STATUS"]{ /* Statuspage top select */
+    margin-bottom: 1em;
+    vertical-align: top;
+}
+
+#configuration input, #configuration textarea{
+    margin-bottom: 1em;
+}
+
+/* Footer styles */
+.systeminfo {
+    background-color: #f0f0f0;
+    color: #f04e23; /*#666;*/
+    font-size: 12px;
+    margin-top: 2em;
+    padding: .2em 20px;
+    text-align: center;
+}
+
+/* only in history-gui */
+.selection_table .harvestHeader {
+    text-align: center;
+    background-color: #cce1f4;
+    font-size:14px;
+    font-weight:bold;
+}
+
+.selection_table .spacerRowSmall td{
+    font-size: 50%; /* To minimize height of these empty rows */
+    padding: 0;
+}
+
+.crawlerHost a:link {
+    font-weight:bold;
+}
+
+.crawlerhost a:visited {
+    color: #660099;
+}

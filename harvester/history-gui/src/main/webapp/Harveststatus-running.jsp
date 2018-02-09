@@ -43,7 +43,7 @@ This page displays a list of running jobs.
                 dk.netarkivet.common.utils.StringUtils,
                 dk.netarkivet.common.utils.TableSort,
                 dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort,
-                dk.netarkivet.harvester.webinterface.servlet.HistoryServlet"
+                dk.netarkivet.heritrix3.monitor.HistoryServlet"
         pageEncoding="UTF-8" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
