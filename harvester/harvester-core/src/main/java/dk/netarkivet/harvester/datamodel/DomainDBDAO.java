@@ -1089,30 +1089,66 @@ public class DomainDBDAO extends DomainDAO {
 
     @Override
     public Iterator<Domain> getAllDomainsInSnapshotHarvestOrder() {
+        return getDomainsInSnapshotHarvestOrder(null);
+    }
+    
+    @Override
+    public Iterator<Domain> getDomainsInSnapshotHarvestOrder(Long hid) {
         Connection c = HarvestDBConnection.get();
+        List<String> domainNames = null;
+        List<String> domainNamesWithAttributes = null;
         try {
-            log.info("Starting a select of all domains used for Snapshot harvesting");
-            // Note: maxbytes are ordered with largest first for symmetry
-            // with HarvestDefinition.CompareConfigDesc
-            List<String> domainNames = DBUtils.selectStringList(c, "SELECT domains.name"
-                    + " FROM domains, configurations, ordertemplates"
-                    + " WHERE domains.defaultconfig=configurations.config_id" + " AND configurations.template_id"
-                    + "=ordertemplates.template_id" + " ORDER BY" + " ordertemplates.name,"
-                    + " configurations.maxbytes DESC," + " domains.name");
-            log.info("Retrieved all {} domains used for Snapshot harvesting without searching for attributes for their default configs", domainNames.size());
-            List<String> domainNamesWithAttributes = DBUtils.selectStringList(c, // Don't order this - it will be ordered later
-                    "SELECT DISTINCT domains.name"
-                            + " FROM domains, configurations, eav_attribute"
-                            + " WHERE domains.defaultconfig=configurations.config_id"
-                            + " AND configurations.config_id=eav_attribute.entity_id");
-            log.info("Retrieved all {} domains used for Snapshot harvesting that has attributes for their default configs", domainNamesWithAttributes.size());
-            domainNames = domainNames.stream().filter(DomainUtils::isValidDomainName).collect(Collectors.toList());
-            //  Remove the content of domainNamesWithAttributes from domainNames
-            domainNames.removeAll(domainNamesWithAttributes);
-            log.info("Removed all {} domains with attributes from the total list, reducing total-list to {}", domainNamesWithAttributes.size(), domainNames.size());
-            // Add the remainder of domainNames to domainNamesWithAttributes, so the domain configs with attributes will be handled first.
-            domainNamesWithAttributes.addAll(domainNames);
-            log.info("Remainder of total list merged with list of domains w/ attributes");
+            if (hid==null) {
+                log.info("Starting a select of all domains used for Snapshot harvesting");
+                // Note: maxbytes are ordered with largest first for symmetry
+                // with HarvestDefinition.CompareConfigDesc
+                domainNames = DBUtils.selectStringList(c, "SELECT domains.name"
+                        + " FROM domains, configurations, ordertemplates"
+                        + " WHERE domains.defaultconfig=configurations.config_id" + " AND configurations.template_id"
+                        + "=ordertemplates.template_id" + " ORDER BY" + " ordertemplates.name,"
+                        + " configurations.maxbytes DESC," + " domains.name");
+                log.info("Retrieved all {} domains used for Snapshot harvesting without searching for attributes for their default configs", domainNames.size());
+                domainNamesWithAttributes = DBUtils.selectStringList(c, // Don't order this - it will be ordered later
+                        "SELECT DISTINCT domains.name"
+                        + " FROM domains, configurations, eav_attribute"
+                        + " WHERE domains.defaultconfig=configurations.config_id"
+                        + " AND configurations.config_id=eav_attribute.entity_id");
+                log.info("Retrieved all {} domains used for Snapshot harvesting that has attributes for their default configs", domainNamesWithAttributes.size());
+                domainNames = domainNames.stream().filter(DomainUtils::isValidDomainName).collect(Collectors.toList());
+                //  Remove the content of domainNamesWithAttributes from domainNames
+                domainNames.removeAll(domainNamesWithAttributes);
+                log.info("Removed all {} domains with attributes from the total list, reducing total-list to {}", domainNamesWithAttributes.size(), domainNames.size());
+                // Add the remainder of domainNames to domainNamesWithAttributes, so the domain configs with attributes will be handled first.
+                domainNamesWithAttributes.addAll(domainNames);
+                log.info("Remainder of total list merged with list of domains w/ attributes is size {}", domainNamesWithAttributes.size()); 
+            } else {
+                log.info("Starting a select of all domains harvested in previous snapshot harvest #{}", hid);
+                domainNames = DBUtils.selectStringList(c, "SELECT domains.name"
+                        + " FROM domains, configurations, ordertemplates, historyinfo"
+                        + " WHERE domains.defaultconfig=configurations.config_id" + " AND configurations.template_id"
+                        + "=ordertemplates.template_id" 
+                        + " AND configurations.config_id=historyinfo.config_id "
+                        + " AND historyinfo.harvest_id=" + hid
+                        + " ORDER BY" + " ordertemplates.name,"
+                        + " configurations.maxbytes DESC," + " domains.name");
+                log.info("Retrieved all {} domains harvested in previous snapshot harvest #{}", domainNames.size(), hid);
+                domainNamesWithAttributes = DBUtils.selectStringList(c, // Don't order this - it will be ordered later
+                        "SELECT DISTINCT domains.name"
+                        + " FROM domains, configurations, eav_attribute, historyinfo"
+                        + " WHERE domains.defaultconfig=configurations.config_id"
+                        + " AND configurations.config_id=eav_attribute.entity_id"
+                        + " AND historyinfo.config_id=configurations.config_id"
+                        + " AND historyinfo.harvest_id=" + hid
+                        );
+                log.info("Retrieved all {} domains harvested in previous snapshot harvest that has attributes for their default configs", domainNamesWithAttributes.size());
+                domainNames = domainNames.stream().filter(DomainUtils::isValidDomainName).collect(Collectors.toList());
+                //  Remove the content of domainNamesWithAttributes from domainNames
+                domainNames.removeAll(domainNamesWithAttributes);
+                log.info("Removed all {} domains with attributes from the total list, reducing total-list to {}", domainNamesWithAttributes.size(), domainNames.size());
+                // Add the remainder of domainNames to domainNamesWithAttributes, so the domain configs with attributes will be handled first.
+                domainNamesWithAttributes.addAll(domainNames);
+                log.info("Remainder of total list merged with list of domains w/ attributes is size {}", domainNamesWithAttributes.size());   
+            }
 
             return new FilterIterator<String, Domain>(domainNamesWithAttributes.iterator()) {
                 public Domain filter(String s) {
@@ -1121,7 +1157,7 @@ public class DomainDBDAO extends DomainDAO {
             };
         } finally {
             HarvestDBConnection.release(c);
-        }
+        }   
     }
 
     @Override

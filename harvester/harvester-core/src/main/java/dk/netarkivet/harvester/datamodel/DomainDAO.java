@@ -360,5 +360,7 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
      */
     public abstract HarvestInfo getHarvestInfoForDomainInHarvest(
             HarvestDefinition harvestDefinition, Domain domain);
+
+    public abstract Iterator<Domain> getDomainsInSnapshotHarvestOrder(Long previousHid);
 	
 }

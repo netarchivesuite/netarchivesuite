@@ -170,7 +170,7 @@ public class FullHarvest extends HarvestDefinition {
         final DomainDAO dao = domainDAOProvider.get();
         final HarvestDefinition hd = getPreviousHarvestDefinition();
         log.debug("Retrieving a list of domainconfigurations to continue SnapshotHarvest HD #{}({}) in HD #{} ({})", hd.getOid(), hd.getName(), getOid(), getName() );
-        Iterator<Domain> j = dao.getAllDomainsInSnapshotHarvestOrder();
+        Iterator<Domain> j = dao.getDomainsInSnapshotHarvestOrder(hd.getOid());
         
         return new FilterIterator<Domain, DomainConfiguration>(j) {
 
@@ -180,7 +180,7 @@ public class FullHarvest extends HarvestDefinition {
                 if (harvestInfo == null) { // Domain not found in HarvestInfo
                     return null;
                 }
-                log.debug("Found harvestInfo for domain '{}'", d.getName());
+                log.trace("Found harvestInfo for domain '{}'", d.getName());
                 if (harvestInfo.getStopReason() == StopReason.DOWNLOAD_COMPLETE
                         || harvestInfo.getStopReason() == StopReason.DOWNLOAD_UNFINISHED) {
                     // Don't include the ones that finished or died

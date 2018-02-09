@@ -159,8 +159,8 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                                 NotificationsFactory.getInstance().notify(errMsg, NotificationType.WARNING);
                             }
                         } else {
-                            log.debug("We'll skip HD #{}. Already being scheduled rigth now since {}", id, 
-                                    schedulingStartedMap.get(id) );
+                            log.debug("We'll skip HD #{}. Jobgeneration of it has been running since {}", id, 
+                                    new Date(schedulingStartedMap.get(id)) );
                             continue;
                         }
                     } else {
