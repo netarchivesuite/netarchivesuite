@@ -52,7 +52,7 @@ public abstract class HeritrixTemplate implements Serializable {
 	protected static final String HARVESTINFO_ORDERXMLUPDATEDATE = "harvestInfo.templateLastUpdateDate";
 	protected static final String HARVESTINFO_ORDERXMLDESCRIPTION = "harvestInfo.templateDescription";
 	protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
-	protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONNCOMMENTS = "harvestInfo.origHarvestDefinitionComments";
+	protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS = "harvestInfo.origHarvestDefinitionComments";
 	protected static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
 	protected static final String HARVESTINFO_HARVESTFILENAMEPREFIX = "harvestInfo.harvestFilenamePrefix";
 	protected static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";

@@ -651,7 +651,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		
 		if(StringUtils.isNotEmpty(origHarvestdefinitionComments)) {
 			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNCOMMENTS + valuePart + 
+			sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS + valuePart + 
 				origHarvestdefinitionComments + endMetadataEntry);
 		}
 		
