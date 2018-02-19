@@ -140,13 +140,14 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
         for (File request : requests) {
             if (request.isFile()) {
                 final IndexRequestMessage msg = restoreMessage(request);
+                //synchronized (this) {      // TODO
                 synchronized (currentJobs) {
-                    if (!currentJobs.containsKey(msg.getID())) {
-                        currentJobs.put(msg.getID(), msg);
-                    } else {
-                        log.debug("Skipped message w/id='{}'. Already among current jobs", msg.getID());
-                        continue;
-                    }
+                        if (!currentJobs.containsKey(msg.getID())) {
+                            currentJobs.put(msg.getID(), msg);
+                        } else {
+                            log.debug("Skipped message w/id='{}'. Already among current jobs", msg.getID());
+                            continue;
+                        }
 
                 }
                 // Start a new thread to handle the actual request.
@@ -211,6 +212,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
         // save new msg to requestDir
         try {
             saveMsg(irMsg);
+            //synchronized (this) {  // TODO
             synchronized (currentJobs) {
                 if (!currentJobs.containsKey(irMsg.getID())) {
                     currentJobs.put(irMsg.getID(), irMsg);
@@ -400,6 +402,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
             irMsg.setNotOk(t);
         } finally {
             // Remove job from currentJobs Set
+            //synchronized (this) {  // TODO
             synchronized (currentJobs) {
                 currentJobs.remove(irMsg.getID());
             }
