@@ -1123,7 +1123,7 @@ public class DomainDBDAO extends DomainDAO {
                 log.info("Remainder of total list merged with list of domains w/ attributes is size {}", domainNamesWithAttributes.size()); 
             } else {
                 log.info("Starting a select of all domains harvested in previous snapshot harvest #{}", hid);
-                domainNames = DBUtils.selectStringList(c, "SELECT domains.name"
+                domainNames = DBUtils.selectStringList(c, "SELECT DISTINCT domains.name"
                         + " FROM domains, configurations, ordertemplates, historyinfo"
                         + " WHERE domains.defaultconfig=configurations.config_id" + " AND configurations.template_id"
                         + "=ordertemplates.template_id" 
