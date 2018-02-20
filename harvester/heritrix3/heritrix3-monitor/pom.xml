@@ -37,7 +37,7 @@
       </exclusions>
     </dependency>
 
-<!--
+    <!-- Required by the SiteSection navigation tree. -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>archive-core</artifactId>
@@ -49,8 +49,8 @@
         </exclusion>
       </exclusions>
     </dependency>
--->
-<!--
+
+    <!-- Required by the SiteSection navigation tree. -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>monitor-core</artifactId>
@@ -62,7 +62,6 @@
         </exclusion>
       </exclusions>
     </dependency>
--->
 
     <dependency>
       <groupId>com.sun.messaging.mq</groupId>
@@ -103,7 +102,12 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

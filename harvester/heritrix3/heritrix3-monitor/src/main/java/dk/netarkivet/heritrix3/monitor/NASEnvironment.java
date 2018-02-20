@@ -10,12 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -29,13 +24,11 @@ import com.antiaction.common.templateengine.TemplateMaster;
 import com.antiaction.common.templateengine.login.LoginTemplateHandler;
 import com.antiaction.common.templateengine.storage.TemplateFileStorageManager;
 
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringTree;
 import dk.netarkivet.harvester.Constants;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.heritrix3.monitor.resources.H3JobResource;
@@ -67,6 +60,8 @@ public class NASEnvironment {
 
     public static String servicePath;
 
+    public HttpLocaleUtils httpLocaleUtils;
+
     public static class StringMatcher {
         public String str;
         public Pattern p;
@@ -76,14 +71,6 @@ public class NASEnvironment {
     public List<StringMatcher> h3HostPortAllowRegexList = new ArrayList<StringMatcher>();
 
     public final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
-
-    public final LinkedHashMap<String, Language> laguangeLHM = new LinkedHashMap<String, Language>();
-
-    public static class Language {
-        String language;
-        String language_name;
-        Locale locale;
-    }
 
     public String getResourceAsString(String resource) throws IOException {
         InputStream in = H3JobResource.class.getClassLoader().getResourceAsStream(resource);
@@ -98,36 +85,7 @@ public class NASEnvironment {
     }
 
     public NASEnvironment(ServletContext servletContext, ServletConfig theServletConfig) throws ServletException {
-        Map<String, Locale> localeMap = new HashMap<String, Locale>();
-        Locale[] locales = Locale.getAvailableLocales();
-        Locale locale;
-        String languageStr;
-        String countryStr;
-        for ( int i=0; i<locales.length; ++i ) {
-            locale = locales[ i ];
-            languageStr = locale.getLanguage();
-            countryStr = locale.getCountry();
-            if (countryStr != null) {
-                localeMap.put(languageStr + '_' + countryStr, locale);
-                if (!localeMap.containsKey(languageStr)) {
-                    localeMap.put(languageStr, locale);
-                }
-            }
-            else {
-                localeMap.put(languageStr, locale);
-            }
-            localeMap.put(locale.getLanguage(), locale);
-        }
-
-        StringTree<String> webinterfaceSettings = Settings.getTree(CommonSettings.WEBINTERFACE_SETTINGS);
-        Language languageObj;
-        for (StringTree<String> languageSetting : webinterfaceSettings.getSubTrees(CommonSettings.WEBINTERFACE_LANGUAGE)) {
-            languageObj = new Language();
-            languageObj.language = languageSetting.getValue(CommonSettings.WEBINTERFACE_LANGUAGE_LOCALE);
-            languageObj.language_name = languageSetting.getValue(CommonSettings.WEBINTERFACE_LANGUAGE_NAME);
-            languageObj.locale = localeMap.get(languageObj.language);
-            laguangeLHM.put(languageObj.language, languageObj);
-        }
+    	httpLocaleUtils = HttpLocaleUtils.getInstance();
 
         try {
             NAS_GROOVY_SCRIPT = getResourceAsString(NAS_GROOVY_RESOURCE_PATH);
@@ -213,32 +171,6 @@ public class NASEnvironment {
             }
         }
         return bAllowed;
-    }
-
-    public String generateLanguageLinks(Locale locale) {
-        String languageStr = locale.getLanguage();
-        StringBuilder sb = new StringBuilder();
-        sb.append("<div class=\"languagelinks\">");
-        Iterator<Language> languageIter = laguangeLHM.values().iterator();
-        Language language;
-        while (languageIter.hasNext()) {
-            language = languageIter.next();
-            if (languageStr.equalsIgnoreCase(language.language)) {
-                sb.append("<a href=\"#\">");
-                sb.append("<b>");
-                sb.append(language.language_name);
-                sb.append("</b>");
-                sb.append("</a>&nbsp;");
-            } else {
-                sb.append("<a href=\"?locale=");
-                sb.append(language.language);
-                sb.append("\">");
-                sb.append(language.language_name);
-                sb.append("</a>&nbsp;");
-            }
-        }
-        sb.append("</div>");
-        return sb.toString();
     }
 
     /**
@@ -339,4 +271,5 @@ public class NASEnvironment {
                 .map(url -> normalizeDomainUrl(url))
                 .anyMatch(url -> searchedDomain.equalsIgnoreCase(url));
     }
+
 }

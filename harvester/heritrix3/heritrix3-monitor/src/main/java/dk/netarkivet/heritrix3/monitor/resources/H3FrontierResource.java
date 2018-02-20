@@ -24,6 +24,7 @@ import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.Pagination;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleUtils.HttpLocale;
 
 public class H3FrontierResource implements ResourceAbstract {
 
@@ -42,7 +43,7 @@ public class H3FrontierResource implements ResourceAbstract {
     }
 
     @Override
-    public void resource_service(ServletContext servletContext, NASUser nas_user, HttpServletRequest req, HttpServletResponse resp, int resource_id, List<Integer> numerics, String pathInfo) throws IOException {
+    public void resource_service(ServletContext servletContext, NASUser nas_user, HttpServletRequest req, HttpServletResponse resp, HttpLocale httpLocale, int resource_id, List<Integer> numerics, String pathInfo) throws IOException {
         if (NASEnvironment.contextPath == null) {
             NASEnvironment.contextPath = req.getContextPath();
         }
@@ -52,13 +53,13 @@ public class H3FrontierResource implements ResourceAbstract {
         String method = req.getMethod().toUpperCase();
         if (resource_id == R_FRONTIER) {
             if ("GET".equals(method) || "POST".equals(method)) {
-                frontier_list(req, resp, numerics);
+                frontier_list(req, resp, httpLocale, numerics);
             }
         }
     }
 
-    public void frontier_list(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        Locale locale = resp.getLocale();
+    public void frontier_list(HttpServletRequest req, HttpServletResponse resp, HttpLocale httpLocale, List<Integer> numerics) throws IOException {
+        Locale locale = httpLocale.locale;
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
         Caching.caching_disable_headers(resp);
@@ -219,9 +220,9 @@ public class H3FrontierResource implements ResourceAbstract {
             sb.append(" is not running.");
         }
 
-        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), h3Job);
+        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), req, locale, h3Job);
 
-        masterTplBuilder.insertContent("Job " + jobId + " Frontier", menuSb.toString(), environment.generateLanguageLinks(locale),
+        masterTplBuilder.insertContent("Job " + jobId + " Frontier", menuSb.toString(), httpLocale.generateLanguageLinks(),
         		"Job " + jobId + " Frontier", sb.toString(), "").write(out);
 
         out.flush();

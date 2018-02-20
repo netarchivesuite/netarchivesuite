@@ -57,22 +57,22 @@ public class SiteSectionTester {
             }
         };
         assertEquals("Should generate correct title for page1", "title1",
-                site.getTitle("http://foo.dk/HarvestDefinition/pref-page1.jsp", Locale.getDefault()));
+                site.getTitle(null, "http://foo.dk/HarvestDefinition/pref-page1.jsp", Locale.getDefault()));
         assertEquals("Should generate correct title for page2 in Danish", "Jobdetaljer",
-                site.getTitle("http://foo.dk/page1/HarvestDefinition/pref-page2.jsp", new Locale("da")));
+                site.getTitle(null, "http://foo.dk/page1/HarvestDefinition/pref-page2.jsp", new Locale("da")));
         assertEquals("Should generate correct title for page2 in English", "Details for Job",
-                site.getTitle("http://foo.dk/page1/HarvestDefinition/pref-page2.jsp", new Locale("en")));
+                site.getTitle(null, "http://foo.dk/page1/HarvestDefinition/pref-page2.jsp", new Locale("en")));
         assertNull("Should generate no title for invalid url",
-                site.getTitle("http://foo.d:ge2.jsp", Locale.getDefault()));
+                site.getTitle(null, "http://foo.d:ge2.jsp", Locale.getDefault()));
         assertNull("Should generate no title for wrong url",
-                site.getTitle("http://foo.dk/page1/HarvestDefinition/perf-page2.jsp", Locale.getDefault()));
+                site.getTitle(null, "http://foo.dk/page1/HarvestDefinition/perf-page2.jsp", Locale.getDefault()));
         assertNull("Should generate no title for wrong url",
-                site.getTitle("http://foo.dk/page1/HarvestDefinition/pref-page2.jp", Locale.getDefault()));
+                site.getTitle(null, "http://foo.dk/page1/HarvestDefinition/pref-page2.jp", Locale.getDefault()));
         assertNull("Should generate no title for wrong url",
-                site.getTitle("http://foo.dk/HarvestDefinition/pref-page2.jsp/page1", Locale.getDefault()));
+                site.getTitle(null, "http://foo.dk/HarvestDefinition/pref-page2.jsp/page1", Locale.getDefault()));
         assertNull("Should generate no title for wrong url",
-                site.getTitle("http://foo.dk/NotHD/pref-page2.jsp", Locale.getDefault()));
-        assertNull("Should generate no title for null url", site.getTitle(null, Locale.getDefault()));
+                site.getTitle(null, "http://foo.dk/NotHD/pref-page2.jsp", Locale.getDefault()));
+        assertNull("Should generate no title for null url", site.getTitle(null, null, Locale.getDefault()));
     }
 
     @Test
@@ -298,7 +298,7 @@ public class SiteSectionTester {
         // English, URL not in site section
         JspWriterMockup jwm = new JspWriterMockup();
         StringBuilder sb = new StringBuilder();
-        site.generateNavigationTree(sb, "http://foo.bar", new Locale("en"));
+        site.generateNavigationTree(sb, null, "http://foo.bar", null, new Locale("en"));
         jwm.print(sb.toString());
         String result = jwm.sw.toString();
         StringAsserts.assertStringContains("Should contain main title in English", "Harvest name", result);
@@ -308,7 +308,7 @@ public class SiteSectionTester {
         // English, URL in site section
         jwm = new JspWriterMockup();
         sb.setLength(0);
-        site.generateNavigationTree(sb, "http://foo.bar/HarvestDefinition/pref-page3.jsp", new Locale("en"));
+        site.generateNavigationTree(sb, null, "http://foo.bar/HarvestDefinition/pref-page3.jsp", null, new Locale("en"));
         jwm.print(sb.toString());
         result = jwm.sw.toString();
         StringAsserts.assertStringContains("Should contain main title in English", "Harvest name", result);
@@ -322,7 +322,7 @@ public class SiteSectionTester {
         // Danish, URL in site section
         jwm = new JspWriterMockup();
         sb.setLength(0);
-        site.generateNavigationTree(sb, "http://foo.bar/HarvestDefinition/pref-page3.jsp", new Locale("da"));
+        site.generateNavigationTree(sb, null, "http://foo.bar/HarvestDefinition/pref-page3.jsp", null, new Locale("da"));
         jwm.print(sb.toString());
         result = jwm.sw.toString();
         StringAsserts.assertStringContains("Should contain main title in Danish", "Høstning", result);

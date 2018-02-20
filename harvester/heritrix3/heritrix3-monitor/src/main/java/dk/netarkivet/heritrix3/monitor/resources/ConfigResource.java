@@ -20,6 +20,7 @@ import dk.netarkivet.heritrix3.monitor.NASEnvironment.StringMatcher;
 import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleUtils.HttpLocale;
 
 public class ConfigResource implements ResourceAbstract {
 
@@ -38,7 +39,7 @@ public class ConfigResource implements ResourceAbstract {
     }
 
     @Override
-    public void resource_service(ServletContext servletContext, NASUser nas_user, HttpServletRequest req, HttpServletResponse resp, int resource_id, List<Integer> numerics, String pathInfo) throws IOException {
+    public void resource_service(ServletContext servletContext, NASUser nas_user, HttpServletRequest req, HttpServletResponse resp, HttpLocale httpLocale, int resource_id, List<Integer> numerics, String pathInfo) throws IOException {
         if (NASEnvironment.contextPath == null) {
             NASEnvironment.contextPath = req.getContextPath();
         }
@@ -48,13 +49,13 @@ public class ConfigResource implements ResourceAbstract {
         String method = req.getMethod().toUpperCase();
         if (resource_id == R_CONFIG) {
             if ("GET".equals(method) || "POST".equals(method)) {
-                config(req, resp, numerics);
+                config(req, resp, httpLocale, numerics);
             }
         }
     }
 
-    public void config(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        Locale locale = resp.getLocale();
+    public void config(HttpServletRequest req, HttpServletResponse resp, HttpLocale httpLocale, List<Integer> numerics) throws IOException {
+        Locale locale = httpLocale.locale;
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
         Caching.caching_disable_headers(resp);
@@ -133,9 +134,9 @@ public class ConfigResource implements ResourceAbstract {
             }
         }
 
-        StringBuilder menuSb = configTplBuilder.buildMenu(new StringBuilder(), null);
+        StringBuilder menuSb = configTplBuilder.buildMenu(new StringBuilder(), req, locale, null);
 
-        configTplBuilder.insertContent("H3 Remote Access Config", menuSb.toString(), environment.generateLanguageLinks(locale), "H3 Remote Access Config",
+        configTplBuilder.insertContent("H3 Remote Access Config", menuSb.toString(), httpLocale.generateLanguageLinks(), "H3 Remote Access Config",
         		enabledhostsSb.toString(), sb.toString(), "").write(out);
 
         out.flush();

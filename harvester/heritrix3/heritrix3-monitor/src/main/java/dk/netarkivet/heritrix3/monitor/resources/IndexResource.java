@@ -26,6 +26,7 @@ import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleUtils.HttpLocale;
 
 public class IndexResource implements ResourceAbstract {
 
@@ -44,7 +45,7 @@ public class IndexResource implements ResourceAbstract {
     }
 
     @Override
-    public void resource_service(ServletContext servletContext, NASUser nas_user, HttpServletRequest req, HttpServletResponse resp, int resource_id, List<Integer> numerics, String pathInfo) throws IOException {
+    public void resource_service(ServletContext servletContext, NASUser nas_user, HttpServletRequest req, HttpServletResponse resp, HttpLocale httpLocale, int resource_id, List<Integer> numerics, String pathInfo) throws IOException {
         if (NASEnvironment.contextPath == null) {
             NASEnvironment.contextPath = req.getContextPath();
         }
@@ -54,7 +55,7 @@ public class IndexResource implements ResourceAbstract {
         String method = req.getMethod().toUpperCase();
         if (resource_id == R_INDEX) {
             if ("GET".equals(method)) {
-                index(req, resp, numerics);
+                index(req, resp, httpLocale, numerics);
             }
         }
     }
@@ -67,8 +68,8 @@ public class IndexResource implements ResourceAbstract {
         }
     }
 
-    public void index(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        Locale locale = resp.getLocale();
+    public void index(HttpServletRequest req, HttpServletResponse resp, HttpLocale httpLocale, List<Integer> numerics) throws IOException {
+        Locale locale = httpLocale.locale;
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
         Caching.caching_disable_headers(resp);
@@ -207,11 +208,12 @@ public class IndexResource implements ResourceAbstract {
             }
         }
 
-        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), null);
+        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), req, locale, null);
         //String url = req.getPathInfo();
         //HTMLUtils.generateNavigationTree(menuSb, url, locale);
 
-        masterTplBuilder.insertContent("H3 Remote Access", menuSb.toString(), environment.generateLanguageLinks(locale), "H3 Remote Access", sb.toString(),
+        masterTplBuilder.insertContent("H3 Remote Access", menuSb.toString(), httpLocale.generateLanguageLinks(),
+        		environment.I18N.getString(locale, "pagetitle;h3.remote.access"), sb.toString(),
         		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
         out.flush();

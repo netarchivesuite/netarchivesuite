@@ -1,5 +1,10 @@
 package dk.netarkivet.heritrix3.monitor.resources;
 
+import java.io.IOException;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.antiaction.common.templateengine.TemplateBuilderBase;
 import com.antiaction.common.templateengine.TemplateBuilderPlaceHolder;
 import com.antiaction.common.templateengine.TemplatePlaceHolder;
@@ -7,6 +12,7 @@ import com.antiaction.common.templateengine.TemplatePlaceHolder;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 
@@ -40,17 +46,21 @@ public class MasterTemplateBuilder extends TemplateBuilderBase {
     @TemplateBuilderPlaceHolder("refresh")
     public TemplatePlaceHolder refreshPlace;
 
-    public StringBuilder buildMenu(StringBuilder menuSb, Heritrix3JobMonitor h3Job) {
+    public StringBuilder buildMenu(StringBuilder menuSb, HttpServletRequest req, Locale locale, Heritrix3JobMonitor h3Job) throws IOException {
+    	String subMenu = null;
         if (h3Job != null) {
-            menuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
-            menuSb.append(NASEnvironment.servicePath);
-            menuSb.append("job/");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("/");
-            menuSb.append("\"> Job ");
-            menuSb.append(h3Job.jobId);
-            menuSb.append("</a></td></tr>");
+        	StringBuilder subMenuSb = new StringBuilder();
+        	subMenuSb.append("<tr><td>&nbsp; &nbsp; &nbsp; <a href=\"");
+        	subMenuSb.append(NASEnvironment.servicePath);
+        	subMenuSb.append("job/");
+            subMenuSb.append(h3Job.jobId);
+            subMenuSb.append("/");
+            subMenuSb.append("\"><b> Job ");
+            subMenuSb.append(h3Job.jobId);
+            subMenuSb.append("</b></a></td></tr>");
+            subMenu = subMenuSb.toString();
         }
+        HTMLUtils.generateNavigationTree(menuSb, req, req.getRequestURL().toString(), subMenu, locale);
         return menuSb;
     }
 

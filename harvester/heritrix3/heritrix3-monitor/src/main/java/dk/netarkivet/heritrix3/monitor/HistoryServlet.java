@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,8 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.antiaction.common.servlet.AutoIncrement;
 import com.antiaction.common.servlet.PathMap;
 
-import dk.netarkivet.common.webinterface.HTMLUtils;
-import dk.netarkivet.heritrix3.monitor.NASEnvironment.Language;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleUtils.HttpLocale;
 import dk.netarkivet.heritrix3.monitor.resources.ConfigResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3BudgetResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3CrawlLogCachedResource;
@@ -151,7 +148,7 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
                 //current_user = environment.loginHandler.loginFromCookie(req, resp, session, this);
             }
 
-            locale_get_set(req, resp);
+            HttpLocale httpLocale = environment.httpLocaleUtils.localeGetSet(req, resp);
 
             String action = req.getParameter("action");
 
@@ -176,7 +173,7 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
                         //environment.loginHandler.loginFromForm(req, resp, session, this);
                         resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, pathInfo);
                     } else {
-                        resource.resources.resource_service(this.getServletContext(), current_user, req, resp, resource.resource_id, numerics, pathInfo);
+                        resource.resources.resource_service(this.getServletContext(), current_user, req, resp, httpLocale, resource.resource_id, numerics, pathInfo);
                     }
                 } else {
                     resp.sendError(HttpServletResponse.SC_NOT_FOUND, pathInfo);
@@ -202,50 +199,6 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
             out.write( sb.toString().getBytes( "UTF-8" ) );
             out.flush();
             out.close();
-        }
-    }
-
-    public void locale_get_set(HttpServletRequest req, HttpServletResponse resp) {
-        // Request parameter.
-        String languageStr = req.getParameter("locale");
-        Language languageObj = null;
-        if (languageStr != null) {
-            languageObj = environment.laguangeLHM.get(languageStr);
-            if (languageObj != null) {
-                Cookie cookie = new Cookie("locale", languageStr);
-                cookie.setPath("/");
-                //Keep the cookie for a year
-                cookie.setMaxAge(365 * 24 * 60 * 60);
-                resp.addCookie(cookie);
-            }
-        }
-        // Cookie.
-        if (languageObj == null) {
-            Cookie[] cookies = req.getCookies();
-            if (cookies != null) {
-                for (Cookie c : cookies) {
-                    if (c.getName().equals("locale")) {
-                        languageStr = c.getValue();
-                        languageObj = environment.laguangeLHM.get(languageStr);
-                    }
-                }
-            }
-        }
-        // Request.
-        if (languageObj == null) {
-            languageStr = HTMLUtils.getLocale(req);
-            if (languageStr != null) {
-                languageObj = environment.laguangeLHM.get(languageStr);
-            }
-            if (languageObj == null) {
-                languageObj = environment.laguangeLHM.get("en");
-            }
-        }
-        // Locale.
-        Locale locale = null;
-        if (languageObj != null) {
-            locale = languageObj.locale;
-            resp.setLocale(locale);
         }
     }
 

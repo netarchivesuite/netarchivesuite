@@ -86,22 +86,7 @@ function submitForm(formId) {
   <body onload="giveFocus()">
 <table id ="main_table">
 <tr>
-<td valign="top" id="menu">
-<table id="menu_table">
-<tr><td><a class="sidebarHeader" href="/"><img src="/History/transparent_menu_logo.png" alt="Menu"/> Menu</a></td></tr>
-<tr><td><a href="/HarvestDefinition/Definitions-selective-harvests.jsp">Definitions</a></td></tr>
-<tr><td><a href="/History/Harveststatus-alljobs.jsp">Harvest status</a></td></tr>
-<tr><td>&nbsp; &nbsp; <a href="/History/Harveststatus-alljobs.jsp"> All Jobs</a></td></tr>
-<!--<tr><td>&nbsp; &nbsp; <a href="/History/Harveststatus-deprecatedperdomain.jsp"> All Jobs per domain</a></td></tr>-->
-<tr><td>&nbsp; &nbsp; <a href="/History/Harveststatus-running.jsp"> All Running Jobs</a></td></tr>
-<tr><td>&nbsp; &nbsp; <a href="/History/history/"> H3 Remote Access</a></td></tr>
 <placeholder id="menu" />
-<tr><td><a href="/HarvestChannel/HarvestChannel-edit-harvest-mappings.jsp">Harvest Channels</a></td></tr>
-<tr><td><a href="/BitPreservation/Bitpreservation-filestatus.jsp">Bitpreservation</a></td></tr>
-<tr><td><a href="/QA/QA-status.jsp">Quality Assurance</a></td></tr>
-<tr><td><a href="/Status/Monitor-JMXsummary.jsp">Systemstate</a></td></tr>
-</table>
-</td>
 <td valign = "top" >
 <placeholder id="languages" />
 

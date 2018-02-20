@@ -21,6 +21,7 @@ import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.Pagination;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleUtils.HttpLocale;
 
 public class H3FrontierDeleteResource implements ResourceAbstract {
 
@@ -39,7 +40,7 @@ public class H3FrontierDeleteResource implements ResourceAbstract {
     }
 
     @Override
-    public void resource_service(ServletContext servletContext, NASUser nas_user, HttpServletRequest req, HttpServletResponse resp, int resource_id, List<Integer> numerics, String pathInfo) throws IOException {
+    public void resource_service(ServletContext servletContext, NASUser nas_user, HttpServletRequest req, HttpServletResponse resp, HttpLocale httpLocale, int resource_id, List<Integer> numerics, String pathInfo) throws IOException {
         if (NASEnvironment.contextPath == null) {
             NASEnvironment.contextPath = req.getContextPath();
         }
@@ -49,13 +50,13 @@ public class H3FrontierDeleteResource implements ResourceAbstract {
         String method = req.getMethod().toUpperCase();
         if (resource_id == R_FRONTIER_DELETE) {
             if ("GET".equals(method) || "POST".equals(method)) {
-                frontier_delete(req, resp, numerics, "POST".equals(method));
+                frontier_delete(req, resp, httpLocale, numerics, "POST".equals(method));
             }
         }
     }
 
-    public void frontier_delete(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics, boolean bPost) throws IOException {
-        Locale locale = resp.getLocale();
+    public void frontier_delete(HttpServletRequest req, HttpServletResponse resp, HttpLocale httpLocale, List<Integer> numerics, boolean bPost) throws IOException {
+        Locale locale = httpLocale.locale;
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
         Caching.caching_disable_headers(resp);
@@ -179,9 +180,9 @@ public class H3FrontierDeleteResource implements ResourceAbstract {
             sb.append(" is not running.");
         }
 
-        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), h3Job);
+        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), req, locale, h3Job);
 
-        masterTplBuilder.insertContent("Job " + jobId + " Frontier", menuSb.toString(), environment.generateLanguageLinks(locale),
+        masterTplBuilder.insertContent("Job " + jobId + " Frontier", menuSb.toString(), httpLocale.generateLanguageLinks(),
         		"Job " + jobId + " Frontier", sb.toString(), "").write(out);
 
         out.flush();

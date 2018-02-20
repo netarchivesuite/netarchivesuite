@@ -27,6 +27,7 @@ import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleUtils.HttpLocale;
 
 public class H3JobResource implements ResourceAbstract {
 
@@ -45,7 +46,7 @@ public class H3JobResource implements ResourceAbstract {
     }
 
     @Override
-    public void resource_service(ServletContext servletContext, NASUser nas_user, HttpServletRequest req, HttpServletResponse resp, int resource_id, List<Integer> numerics, String pathInfo) throws IOException {
+    public void resource_service(ServletContext servletContext, NASUser nas_user, HttpServletRequest req, HttpServletResponse resp, HttpLocale httpLocale, int resource_id, List<Integer> numerics, String pathInfo) throws IOException {
         if (NASEnvironment.contextPath == null) {
             NASEnvironment.contextPath = req.getContextPath();
         }
@@ -55,13 +56,13 @@ public class H3JobResource implements ResourceAbstract {
         String method = req.getMethod().toUpperCase();
         if (resource_id == R_JOB) {
             if ("GET".equals(method)) {
-                job(req, resp, numerics);
+                job(req, resp, httpLocale, numerics);
             }
         }
     }
 
-    public void job(HttpServletRequest req, HttpServletResponse resp, List<Integer> numerics) throws IOException {
-        Locale locale = resp.getLocale();
+    public void job(HttpServletRequest req, HttpServletResponse resp, HttpLocale httpLocale, List<Integer> numerics) throws IOException {
+        Locale locale = httpLocale.locale;
         NumberFormat numberFormat = NumberFormat.getInstance(locale);
         resp.setContentType("text/html; charset=UTF-8");
         ServletOutputStream out = resp.getOutputStream();
@@ -571,9 +572,9 @@ public class H3JobResource implements ResourceAbstract {
             }
         }
 
-        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), h3Job);
+        StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), req, locale, h3Job);
 
-        masterTplBuilder.insertContent("Details and Actions on Running Job " + jobId, menuSb.toString(), environment.generateLanguageLinks(locale),
+        masterTplBuilder.insertContent("Details and Actions on Running Job " + jobId, menuSb.toString(), httpLocale.generateLanguageLinks(),
         		"Details and Actions on Running Job " + jobId, sb.toString(),
         		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
