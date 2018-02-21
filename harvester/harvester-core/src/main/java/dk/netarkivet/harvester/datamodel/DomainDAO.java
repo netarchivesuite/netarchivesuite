@@ -361,6 +361,11 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
     public abstract HarvestInfo getHarvestInfoForDomainInHarvest(
             HarvestDefinition harvestDefinition, Domain domain);
 
+    /**
+     * Gets list of all domains in the order expected by the snapshot harvest job generation, that is order by template
+     * name, then byte limit (descending), then domain name.
+     * @param previousHid The harvestDefinitionId of the harvestdefinition that we are continuing. If null, we start from scratch.
+     * @return List of all added domains
+     */
     public abstract Iterator<Domain> getDomainsInSnapshotHarvestOrder(Long previousHid);
-	
 }

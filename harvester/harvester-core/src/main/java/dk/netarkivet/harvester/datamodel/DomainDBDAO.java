@@ -1128,9 +1128,11 @@ public class DomainDBDAO extends DomainDAO {
                         + " WHERE domains.defaultconfig=configurations.config_id" + " AND configurations.template_id"
                         + "=ordertemplates.template_id" 
                         + " AND configurations.config_id=historyinfo.config_id "
-                        + " AND historyinfo.harvest_id=" + hid
-                        + " ORDER BY" + " ordertemplates.name,"
-                        + " configurations.maxbytes DESC," + " domains.name");
+                        + " AND historyinfo.harvest_id=" + hid);
+                        // NOTE: the ordering has now been skipped to prevent duplicates
+                        //  + " ORDER BY" + " ordertemplates.name," 
+                        //  + " configurations.maxbytes DESC");
+                        // "," + " domains.name");
                 log.info("Retrieved all {} domains harvested in previous snapshot harvest #{}", domainNames.size(), hid);
                 domainNamesWithAttributes = DBUtils.selectStringList(c, // Don't order this - it will be ordered later
                         "SELECT DISTINCT domains.name"
@@ -1619,9 +1621,8 @@ public class DomainDBDAO extends DomainDAO {
                 }
                 long harvestId = harvestDefinition.getOid();
                 Date harvestTime = new Date(res.getTimestamp(6).getTime());
-                HarvestInfo hi;
 
-                hi = new HarvestInfo(harvestId, jobId, domain.getName(), configName, harvestTime, byteCount, objectCount, stopreason);
+                HarvestInfo hi = new HarvestInfo(harvestId, jobId, domain.getName(), configName, harvestTime, byteCount, objectCount, stopreason);
                 infoFoundForDomain.add(hi);
             }
             if (infoFoundForDomain.isEmpty()) {
@@ -1629,8 +1630,17 @@ public class DomainDBDAO extends DomainDAO {
             } else if (infoFoundForDomain.size() == 1) {
                 return infoFoundForDomain.get(0);
             } else {
-                log.warn("Found {} harvestInfo entries for domain '{}' and harvestdefinition '{}'. Selecting the first", infoFoundForDomain.size(), domain.getName(), harvestDefinition.getName());
-                return infoFoundForDomain.get(0);
+                HarvestInfo selected = infoFoundForDomain.get(0);
+                Long latest = selected.getDate().getTime();
+                for (int i=1; i < infoFoundForDomain.size(); i++) {
+                    if (infoFoundForDomain.get(i).getDate().getTime() > latest) {
+                        latest = infoFoundForDomain.get(i).getDate().getTime();
+                        selected = infoFoundForDomain.get(i);
+                    }
+                }
+                log.warn("Found {} harvestInfo entries for domain '{}' and harvestdefinition '{}'. Selecting the latest entry: {}", infoFoundForDomain.size(), domain.getName(), 
+                        harvestDefinition.getName(), selected);
+                return selected;
             }
         } catch (SQLException e) {
             throw new IOFailure("Error while fetching HarvestInfo for domain '" + domain.getName() + "' in harvest '" + harvestDefinition.getName() + "':", e);

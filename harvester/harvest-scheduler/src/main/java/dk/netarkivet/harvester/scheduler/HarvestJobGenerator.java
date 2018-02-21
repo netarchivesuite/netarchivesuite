@@ -136,7 +136,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
         void generateJobs(Date timeToGenerateJobsFor) {
             final Iterable<Long> readyHarvestDefinitions = haDefinitionDAO
                     .getReadyHarvestDefinitions(timeToGenerateJobsFor);
-            log.debug("Generating jobs for harvests that should run at time '{}'", timeToGenerateJobsFor);
+            log.trace("Generating jobs for harvests that should run at time '{}'", timeToGenerateJobsFor);
             HarvestChannelDAO hChanDao = HarvestChannelDAO.getInstance();
             
             for (final Long id : readyHarvestDefinitions) {
