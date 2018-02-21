@@ -16,23 +16,47 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
 import dk.netarkivet.heritrix3.monitor.AcceptLanguageParser.AcceptLanguage;
 
-public class HttpLocaleUtils {
+/**
+ * A class used to determine the appropriate locale/language to use for generating a HTTP response.
+ * Uses the HTTP request "Accept-Language" header, locale cookie or default locale.
+ * Also caches a structure of all available locale combinations in the execution environment.
+ */
+public class HttpLocaleHandler {
 
+	/** <code>Map</code> of all Locale objects registered by the execution environment. */
     public final Map<String, Locale> localeMap = new HashMap<String, Locale>();
 
+    /** Structure including the */
     public final LinkedHashMap<String, Language> languageLHM = new LinkedHashMap<String, Language>();
 
+    /**
+     * Object constructed from language configuration in the settings xml file.
+     */
     public static class Language {
+    	/** Locate string identifier. */
         public String language;
+        /* Localized language description. */
         public String language_name;
+        /** Execution environment <code>Locale</code> object retrieved from the identifier. */
         public Locale locale;
     }
 
+    /**
+     * HTTP locale object with information about the best matched locale based on Accept-Language header,
+     * cookie usage and the NAS language object.
+     */
     public class HttpLocale {
+    	/** Did the HTTP request include a locale cookie. */
         public boolean bCookie;
+        /** Language object based on NAS language configuration. */
         public Language languageObj;
+        /** Best match locale object. */
         public Locale locale;
 
+        /**
+         * Generate language selection HTML based on the matched locale and cookie usage.
+         * @return generated language HTML
+         */
         public String generateLanguageLinks() {
             String languageStr = languageObj.locale.getLanguage();
             StringBuilder sb = new StringBuilder();
@@ -76,11 +100,19 @@ public class HttpLocaleUtils {
         }
     }
 
-    public HttpLocaleUtils() {
+    /**
+     * Constructor should only be used locally or in unit test.
+     */
+    protected HttpLocaleHandler() {
     }
 
-    public static HttpLocaleUtils getInstance() {
-        HttpLocaleUtils httpLocaleUtils = new HttpLocaleUtils();
+    /**
+     * Construct a HTTP locale handler. Reads all available locates in the execution environment
+     * and in the NAS settings XML.
+     * @return initialised HTTP locale handler
+     */
+    public static HttpLocaleHandler getInstance() {
+        HttpLocaleHandler httpLocaleHandler = new HttpLocaleHandler();
         Locale[] locales = Locale.getAvailableLocales();
         Locale locale;
         String languageStr;
@@ -90,15 +122,15 @@ public class HttpLocaleUtils {
             languageStr = locale.getLanguage();
             countryStr = locale.getCountry();
             if (countryStr != null) {
-                httpLocaleUtils.localeMap.put(languageStr + '-' + countryStr, locale);
-                if (!httpLocaleUtils.localeMap.containsKey(languageStr)) {
-                    httpLocaleUtils.localeMap.put(languageStr, locale);
+                httpLocaleHandler.localeMap.put(languageStr + '-' + countryStr, locale);
+                if (!httpLocaleHandler.localeMap.containsKey(languageStr)) {
+                    httpLocaleHandler.localeMap.put(languageStr, locale);
                 }
             }
             else {
-                httpLocaleUtils.localeMap.put(languageStr, locale);
+                httpLocaleHandler.localeMap.put(languageStr, locale);
             }
-            httpLocaleUtils.localeMap.put(locale.getLanguage(), locale);
+            httpLocaleHandler.localeMap.put(locale.getLanguage(), locale);
         }
 
         StringTree<String> webinterfaceSettings = Settings.getTree(CommonSettings.WEBINTERFACE_SETTINGS);
@@ -107,13 +139,22 @@ public class HttpLocaleUtils {
             languageObj = new Language();
             languageObj.language = languageSetting.getValue(CommonSettings.WEBINTERFACE_LANGUAGE_LOCALE);
             languageObj.language_name = languageSetting.getValue(CommonSettings.WEBINTERFACE_LANGUAGE_NAME);
-            languageObj.locale = httpLocaleUtils.localeMap.get(languageObj.language);
-            httpLocaleUtils.languageLHM.put(languageObj.language, languageObj);
+            languageObj.locale = httpLocaleHandler.localeMap.get(languageObj.language);
+            httpLocaleHandler.languageLHM.put(languageObj.language, languageObj);
         }
 
-        return httpLocaleUtils;
+        return httpLocaleHandler;
     }
 
+    /**
+     * Determine the closest locale that matches the information in the HTTP request.
+     * Depending on usage it manages a cookie.
+     * If no cookie exists reads/parses the HTTP request "Accept-Language" header. 
+     * 
+     * @param req HTTP request object
+     * @param resp HTTP response object
+     * @return <code>HttpLocale</code> object determined to be the closest match to what the request wants
+     */
     public HttpLocale localeGetSet(HttpServletRequest req, HttpServletResponse resp) {
         HttpLocale httpLocale = new HttpLocale();
         boolean bCookieDeleted = false;

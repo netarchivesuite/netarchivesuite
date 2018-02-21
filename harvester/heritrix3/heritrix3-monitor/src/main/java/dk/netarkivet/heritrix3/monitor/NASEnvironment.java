@@ -60,7 +60,7 @@ public class NASEnvironment {
 
     public static String servicePath;
 
-    public HttpLocaleUtils httpLocaleUtils;
+    public HttpLocaleHandler httpLocaleUtils;
 
     public static class StringMatcher {
         public String str;
@@ -85,7 +85,7 @@ public class NASEnvironment {
     }
 
     public NASEnvironment(ServletContext servletContext, ServletConfig theServletConfig) throws ServletException {
-    	httpLocaleUtils = HttpLocaleUtils.getInstance();
+    	httpLocaleUtils = HttpLocaleHandler.getInstance();
 
         try {
             NAS_GROOVY_SCRIPT = getResourceAsString(NAS_GROOVY_RESOURCE_PATH);

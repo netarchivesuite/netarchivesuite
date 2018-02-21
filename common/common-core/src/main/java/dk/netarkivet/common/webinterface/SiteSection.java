@@ -51,7 +51,6 @@ public abstract class SiteSection {
 
     private static final Logger log = LoggerFactory.getLogger(SiteSection.class);
 
-
     /** The overall human-readable name of the section. */
     private final String mainname;
     /** The number of pages that should be visible in the sidebar. */
@@ -115,6 +114,7 @@ public abstract class SiteSection {
     /**
      * Given a URL, returns the corresponding page title.
      *
+     * @param req the HTTP request object to respond to
      * @param url a given URL.
      * @param locale the current locale.
      * @return the corresponding page title, or null if it is not in this section, or is null.
@@ -137,6 +137,7 @@ public abstract class SiteSection {
     /**
      * Returns the page name from a URL, if the page is in this hierarchy, null otherwise.
      *
+     * @param req the HTTP request object to respond to
      * @param url Url to check
      * @return Page name, or null for not in this hierarchy.
      */
@@ -158,19 +159,26 @@ public abstract class SiteSection {
         } else {
             contextPath = req.getContextPath();
             if (url.startsWith('/' + contextPath + '/')) {
-            	// Context path is only /path.
-            	page = url.substring(contextPath.length() + 2);
+                // Context path is only /path.
+                page = url.substring(contextPath.length() + 2);
             }
         }
         if (page != null) {
-        	index = page.indexOf('/');
-        	if (index != -1) {
-        		page = page.substring(0, index + 1);
-        	}
+            index = page.indexOf('/');
+            if (index != -1) {
+                page = page.substring(0, index + 1);
+            }
         }
         return page;
     }
 
+    /**
+     * Given a URL, returns the path part without schema, context path and query string.
+     * 
+     * @param req the HTTP request object to respond to
+     * @param url a given URL.
+     * @return the path part of a URL without the schema, context path and query string
+     */
     public String getPath(HttpServletRequest req, String url) {
         URL parsed;
         String tmpPath;
@@ -187,7 +195,7 @@ public abstract class SiteSection {
         tmpPath = parsed.getPath();
         index = tmpPath.indexOf('?');
         if (index != -1) {
-        	tmpPath = tmpPath.substring(0, index);
+            tmpPath = tmpPath.substring(0, index);
         }
         path = null;
         index = tmpPath.lastIndexOf(dirname + "/");
@@ -196,20 +204,26 @@ public abstract class SiteSection {
         } else {
             contextPath = req.getContextPath();
             if (url.startsWith('/' + contextPath + '/')) {
-            	// Context path is only /path.
-            	path = url.substring(contextPath.length() + 2);
+                // Context path is only /path.
+                path = url.substring(contextPath.length() + 2);
             }
         }
         return path;
     }
 
+    /**
+     * Returns the first sub path of a given path without schema, context path and query string.
+     * 
+     * @param page a processed path without schema, context path and query string
+     * @return
+     */
     public String getPageFromPage(String page) {
-    	int index;
+        int index;
         if (page != null) {
-        	index = page.indexOf('/');
-        	if (index != -1) {
-        		page = page.substring(0, index + 1);
-        	}
+            index = page.indexOf('/');
+            if (index != -1) {
+                page = page.substring(0, index + 1);
+            }
         }
         return page;
     }
@@ -257,16 +271,16 @@ public abstract class SiteSection {
                 sb.append(link);
                 sb.append("\"> ");
                 if (path.equals(link)) {
-                	sb.append("<b>");
+                    sb.append("<b>");
                     sb.append(HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, pageAndTitle.getValue())));
-                	sb.append("</b>");
+                    sb.append("</b>");
                 } else {
                     sb.append(HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, pageAndTitle.getValue())));
                 }
                 sb.append("</a></td>");
                 sb.append("</tr>\n");
                 if (subMenu != null && page != null && path.startsWith(link) && path.length() > link.length()) {
-                	sb.append(subMenu);
+                    sb.append(subMenu);
                 }
                 ++i;
             }
@@ -279,7 +293,7 @@ public abstract class SiteSection {
      * @return The dirname.
      */
     public String getDirname() {
-    	return dirname;
+        return dirname;
     }
 
     /**

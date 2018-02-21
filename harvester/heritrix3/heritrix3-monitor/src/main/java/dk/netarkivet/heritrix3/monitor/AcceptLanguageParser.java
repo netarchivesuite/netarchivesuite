@@ -7,22 +7,42 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * HTTP accept-language header state machine based parser.
+ * Example: "da, en-gb;q=0.8, en;q=0.7".
+ */
 public class AcceptLanguageParser {
 
+	/** Start state. Look for a language. */
     public static final int S_START_SPC = 0;
+    /** Language state. Look for country, qvalue or start of next locale. */
     public static final int S_LANG = 1;
+    /** Country state. Look for a country. */
     public static final int S_COUNTRY = 2;
+    /** Country parsed state. Look for qvalue or next locale. */
     public static final int S_COUNTRY_SPC = 3;
+    /** Semicolon state. Look for an optional qvalue. */
     public static final int S_SEMICOLON = 4;
+    /** State name. Look for attribute name. */
     public static final int S_NAME = 5;
+    /** State parsed name. Look for value or next attribute or next locale. */
     public static final int S_NAME_SPC = 6;
+    /** State equal. Look for first value character or next attribute or next locale. */
     public static final int S_EQ = 7;
+    /** State value. Look for the rest of the value and next attribute or next locale. */
     public static final int S_VALUE = 8;
 
+    /**
+     * Parsed language, country, locale and qvalue.
+     */
     public static class AcceptLanguage {
+    	/** Language type string. */
         public String language;
+        /** Country subtype string. */
         public String country;
+        /** Combined locale string. */
         public String locale;
+        /** Optional qvalue, defaults to 1. */
         public float qvalue = 1.0f;
     }
 
@@ -33,12 +53,25 @@ public class AcceptLanguageParser {
         }
     }
 
+    /** Reusable comparator used to sort languages by their qvalue. */
     public static AcceptLanguageComparator acceptLanguageComparator = new AcceptLanguageComparator();
 
+    /**
+     * Parses a HTTP accept-language header, if present, from the supplied HTTP request and returns a sorted list of valid languages.
+     * Languages are sorted by their qvalue.
+     * @param acceptLanguageStr accept language header string from a HTTP request
+     * @return <code>List</code> of valid languages sorted by their qvalue
+     */
     public static List<AcceptLanguage> parseHeader(HttpServletRequest req) {
         return parseHeader(req.getHeader("Accept-Language"));
     }
 
+    /**
+     * Parses a HTTP accept-language header string and returns a sorted list of valid languages.
+     * Languages are sorted by their qvalue.
+     * @param acceptLanguageStr accept language header string from a HTTP request
+     * @return <code>List</code> of valid languages sorted by their qvalue
+     */
     public static List<AcceptLanguage> parseHeader(String acceptLanguageStr) {
         List<AcceptLanguage> acceptLanguages = new ArrayList<>();
         char[] charArr;

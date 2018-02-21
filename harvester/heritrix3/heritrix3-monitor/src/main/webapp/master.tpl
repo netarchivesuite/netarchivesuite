@@ -86,7 +86,6 @@ function submitForm(formId) {
   <body onload="giveFocus()">
 <table id ="main_table">
 <tr>
-<!-- Navifation menu -->
 <placeholder id="menu" />
 <td valign = "top" >
 <placeholder id="languages" />

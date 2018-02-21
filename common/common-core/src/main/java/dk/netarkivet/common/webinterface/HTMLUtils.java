@@ -297,8 +297,10 @@ public class HTMLUtils {
      * Prints out the navigation tree appearing as a <td>in the left column of the "main_table" table. Subpages are
      * shown only for the currently-active main-heading of the sections defined in settings.
      *
-     * @param out the writer to which the output must be written.
+     * @param sb the <code>StringBuilder</code> to which the output must be written.
+     * @param req the HTTP request object to respond to
      * @param url the url of the page.
+     * @param subMenu submenu HTML to insert when required by non JSP pages
      * @param locale The locale selecting the language.
      * @throws IOException if the output cannot be written.
      */
@@ -525,6 +527,7 @@ public class HTMLUtils {
     /**
      * Given a URL in the sitesection hierarchy, returns the corresponding page title.
      *
+     * @param req the HTTP request object to respond to
      * @param url a given URL
      * @param locale the current locale
      * @return the corresponding page title, or string about "(no title)" if no title can be found
@@ -935,8 +938,7 @@ public class HTMLUtils {
     }
     
     public static void log(String classname, String msg) {
-    	 log.info(classname + ":" +  msg);
+         log.info(classname + ":" +  msg);
     }
-    
-    
+
 }

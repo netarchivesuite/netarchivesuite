@@ -7,7 +7,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import dk.netarkivet.heritrix3.monitor.HttpLocaleUtils.HttpLocale;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 
 public interface ResourceAbstract {
 

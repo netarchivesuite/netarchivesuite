@@ -21,7 +21,7 @@ import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.Pagination;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
-import dk.netarkivet.heritrix3.monitor.HttpLocaleUtils.HttpLocale;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 
 public class H3FrontierDeleteResource implements ResourceAbstract {
 
