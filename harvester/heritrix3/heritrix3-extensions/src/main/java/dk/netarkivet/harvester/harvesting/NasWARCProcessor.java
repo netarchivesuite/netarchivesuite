@@ -52,6 +52,7 @@ public class NasWARCProcessor extends WARCWriterProcessor {
 	private static final String HARVESTINFO_ORDERXMLUPDATEDATE = "harvestInfo.templateLastUpdateDate";
 	private static final String HARVESTINFO_ORDERXMLDESCRIPTION = "harvestInfo.templateDescription";
 	private static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
+	private static final String HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS = "harvestInfo.origHarvestDefinitionComments";
 	private static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
 	private static final String HARVESTINFO_HARVESTFILENAMEPREFIX = "harvestInfo.harvestFilenamePrefix";
 	private static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";
@@ -178,6 +179,11 @@ public class NasWARCProcessor extends WARCWriterProcessor {
         		recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONNAME,
         				(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONNAME));
 
+        		if (metadataMap.containsKey(HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS)) {
+        			recordNAS.addLabelValue(HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS,
+        					(String) metadataMap.get(HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS));
+        		}
+        		
         		if (metadataMap.containsKey(HARVESTINFO_SCHEDULENAME)) {
         			recordNAS.addLabelValue(HARVESTINFO_SCHEDULENAME,
         					(String) metadataMap.get(HARVESTINFO_SCHEDULENAME));

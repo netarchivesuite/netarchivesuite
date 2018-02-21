@@ -819,7 +819,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 
     @Override
 	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
-			String scheduleName, String performer) {
+			String origHarvestdefinitionComments, String scheduleName, String performer) {
 		
 		Node WARCWRITERNODE = template.selectSingleNode(WARCWRITERPROCESSOR_XPATH);
 		if (WARCWRITERNODE == null) {
@@ -868,6 +868,10 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
         metadataItem = metadataMap.addElement("string");
         metadataItem.addAttribute("name", HARVESTINFO_ORIGHARVESTDEFINITIONNAME);
         metadataItem.addText(origHarvestdefinitionName);
+        
+        metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS);
+        metadataItem.addText(origHarvestdefinitionComments);
         
         /* optional schedule-name, only for selective harvests. */
 		if (scheduleName != null) {
