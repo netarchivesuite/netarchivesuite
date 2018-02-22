@@ -102,7 +102,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
 
     long objectLimit = dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS;
     Long oldHarvestOid = null;
-    if (hd != null) {
+    if (hd != null) { // We're editing an existing snapshot harvest
         objectLimit = hd.getMaxCountObjects();
         oldHarvestOid = hd.getPreviousHarvestDefinitionOid();
     }
@@ -138,7 +138,6 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
           <% } %>
             </td>
         </tr>
-
         <tr>
             <%
             long dftMaxObjects =
@@ -154,7 +153,6 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
                    %>"/>
              </td>
         </tr>
-        
         <tr>
             <%
             long dftMaxBytes =
@@ -274,43 +272,35 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
        HTMLUtils.escapeHtmlValues(hd != null?hd.getComments():"")
     %></textarea>
     <br/><br/>
-
-    <table class="selection_table">
-        <tr>
-            <th colspan="2"><fmt:message key="prompt;harvest.only.unfinished.domains"/> </th>
-        </tr>
-        <tr class="row0">
-            <td>
-                <em><fmt:message key="none"/></em>
-            </td>
-            <td>
-                <input type="radio" name="<%= Constants.OLDSNAPSHOT_PARAM %>"
-                       <%=oldHarvestOid == null?" checked=\"checked\"":""%>
-                        value=""/>
-            </td>
-        </tr>
+	<!-- select harvest to continue BEGINS -->
+	<fmt:message key="prompt;harvest.only.unfinished.domains"/>
+	<select name="<%= Constants.OLDSNAPSHOT_PARAM %>" size="1">
+	<%
+	String selectedPrevious="";
+	String noneSelected="";
+	if (oldHarvestOid == null) {
+	    noneSelected="selected ";
+	}
+	%>
+	<option <%=noneSelected%>value=''><fmt:message key="none"/></option>
+	<% 
+	for (SparseFullHarvest previousHarvest
+            : HarvestDefinitionDAO.getInstance().getAllSparseFullHarvestDefinitions()) {
+        if (previousHarvest.getName().equals(harvestName)) {
+            continue;
+        }
+        if (oldHarvestOid != null && oldHarvestOid.equals(previousHarvest.getOid())) {
+            selectedPrevious = "selected ";
+        }
+        %>
+        <option <%=selectedPrevious%>value='<%=previousHarvest.getOid() %>'><%=HTMLUtils.escapeHtmlValues(previousHarvest.getName())%></option>
         <%
-            int rowcount = 0;
-            for (SparseFullHarvest oldHarvest
-                    : HarvestDefinitionDAO.getInstance().getAllSparseFullHarvestDefinitions()) {
-                if (oldHarvest.getName().equals(harvestName)) {
-                    continue;
-                }
-        %>
-        <tr class="<%= HTMLUtils.getRowClass(rowcount++)%>">
-            <td><%=HTMLUtils.escapeHtmlValues(oldHarvest.getName())%></td>
-            <td><input 
-                     type="radio" 
-                     name="<%=Constants.OLDSNAPSHOT_PARAM%>"
-                     value="<%=oldHarvest.getOid()%>"
-                  <%=oldHarvest.getOid().equals(oldHarvestOid) ?
-                     "checked=\"checked\"":""%>/>
-            </td>
-        </tr>
-                    <%
-            }
-        %>
-    </table>
+        // reset selectedPrevious value
+        selectedPrevious="";
+	}
+	%>
+    </select>
+    <!--   select harvest to continue ENDS -->
     <br/>
     <input type="submit" value="<fmt:message key="save"/>">
 </form>

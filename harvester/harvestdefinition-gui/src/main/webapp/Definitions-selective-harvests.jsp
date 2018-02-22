@@ -108,6 +108,12 @@ inactive or vice-versa.
 
 <p>
         <% } else { %>
+<!-- Add link to create new selective harvestdefinition both before and after the table of existing definitions -->
+<p>
+<a href="Definitions-edit-selective-harvest.jsp?createnew=1">
+    <fmt:message key="create.new.selective.harvestdefinition"/>
+</a>
+<p>
 <table class="selection_table" cols="6">
     <tr>
         <th><fmt:message key="harvestdefinition.selective.header.harvestdefinition"/></th>
