@@ -156,7 +156,7 @@ public abstract class SiteSection {
         int index = path.lastIndexOf(dirname + "/");
         if (index != -1) {
             page = path.substring(index + dirname.length() + 1);
-        } else {
+        } else if (req != null) {
             contextPath = req.getContextPath();
             if (url.startsWith('/' + contextPath + '/')) {
                 // Context path is only /path.
@@ -201,7 +201,7 @@ public abstract class SiteSection {
         index = tmpPath.lastIndexOf(dirname + "/");
         if (index != -1) {
             path = tmpPath.substring(index + dirname.length() + 1);
-        } else {
+        } else if (req != null) {
             contextPath = req.getContextPath();
             if (url.startsWith('/' + contextPath + '/')) {
                 // Context path is only /path.
