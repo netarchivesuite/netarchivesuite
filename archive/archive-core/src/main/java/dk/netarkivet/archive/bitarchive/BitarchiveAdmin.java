@@ -114,43 +114,16 @@ public final class BitarchiveAdmin {
             for (String filedirname : filedirnames) {
                 File basedir = new File(filedirname).getCanonicalFile();
                 File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
-
                 // Ensure that 'filedir' exists. If it doesn't, it is created
-                try {
-                    ApplicationUtils.dirMustExist(filedir);
-                }
-                catch(PermissionDenied e2) {
-                    if (!readOnlyAllowed) {
-                        throw e2;
-                    }
-                    log.info("Ignoring PermissionDenied in '{}' due to readOnlyAllowed Setting", filedir.getAbsolutePath());
-                }
+                ApplicationUtils.dirMustExist(filedir);
 
                 File tempdir = new File(basedir, Constants.TEMPORARY_DIRECTORY_NAME);
-
                 // Ensure that 'tempdir' exists. If it doesn't, it is created
-                try {
-                    ApplicationUtils.dirMustExist(tempdir);
-                }
-                catch(PermissionDenied e2) {
-                    if (!readOnlyAllowed) {
-                        throw e2;
-                    }
-                    log.info("Ignoring PermissionDenied in '{}' due to readOnlyAllowed Setting", tempdir.getAbsolutePath());
-                }
+                ApplicationUtils.dirMustExist(tempdir);
 
                 File atticdir = new File(basedir, Constants.ATTIC_DIRECTORY_NAME);
-
                 // Ensure that 'atticdir' exists. If it doesn't, it is created
-                try {
-                    ApplicationUtils.dirMustExist(atticdir);
-                }
-                catch(PermissionDenied e2) {
-                    if (!readOnlyAllowed) {
-                        throw e2;
-                    }
-                    log.info("Ignoring PermissionDenied in '{}' due to readOnlyAllowed Setting", atticdir.getAbsolutePath());
-                }
+                ApplicationUtils.dirMustExist(atticdir);
 
                 // initialise the variables archivedFiles and archiveTime
                 archivedFiles.put(basedir, new ArrayList<String>());
