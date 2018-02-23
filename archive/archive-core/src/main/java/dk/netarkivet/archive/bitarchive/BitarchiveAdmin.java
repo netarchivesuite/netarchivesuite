@@ -76,6 +76,9 @@ public final class BitarchiveAdmin {
     /** How much space we require available *in every dir* after we have accepted an upload. */
     private final long minSpaceRequired;
 
+    /** Are readOnly Directories allowed. */
+    private final boolean readOnlyAllowed;
+
     /**
      * Creates a new BitarchiveAdmin object for an existing bit archive. Reads the directories to use from settings.
      *
@@ -87,6 +90,10 @@ public final class BitarchiveAdmin {
     private BitarchiveAdmin() throws ArgumentNotValid, PermissionDenied, IOFailure {
         String[] filedirnames = Settings.getAll(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR);
         minSpaceLeft = Settings.getLong(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT);
+        readOnlyAllowed = Settings.getBoolean(ArchiveSettings.BITARCHIVE_READ_ONLY_ALLOWED);
+
+        log.info("readOnlyAllowed is: {}", readOnlyAllowed);
+
         // Check, if value of minSpaceLeft is greater than zero
         if (minSpaceLeft <= 0L) {
             log.warn("Wrong setting of minSpaceLeft read from Settings: {}", minSpaceLeft);
@@ -109,16 +116,41 @@ public final class BitarchiveAdmin {
                 File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
 
                 // Ensure that 'filedir' exists. If it doesn't, it is created
-                ApplicationUtils.dirMustExist(filedir);
+                try {
+                    ApplicationUtils.dirMustExist(filedir);
+                }
+                catch(PermissionDenied e2) {
+                    if (!readOnlyAllowed) {
+                        throw e2;
+                    }
+                    log.info("Ignoring PermissionDenied in '{}' due to readOnlyAllowed Setting", filedir.getAbsolutePath());
+                }
+
                 File tempdir = new File(basedir, Constants.TEMPORARY_DIRECTORY_NAME);
 
                 // Ensure that 'tempdir' exists. If it doesn't, it is created
-                ApplicationUtils.dirMustExist(tempdir);
+                try {
+                    ApplicationUtils.dirMustExist(tempdir);
+                }
+                catch(PermissionDenied e2) {
+                    if (!readOnlyAllowed) {
+                        throw e2;
+                    }
+                    log.info("Ignoring PermissionDenied in '{}' due to readOnlyAllowed Setting", tempdir.getAbsolutePath());
+                }
 
                 File atticdir = new File(basedir, Constants.ATTIC_DIRECTORY_NAME);
 
                 // Ensure that 'atticdir' exists. If it doesn't, it is created
-                ApplicationUtils.dirMustExist(atticdir);
+                try {
+                    ApplicationUtils.dirMustExist(atticdir);
+                }
+                catch(PermissionDenied e2) {
+                    if (!readOnlyAllowed) {
+                        throw e2;
+                    }
+                    log.info("Ignoring PermissionDenied in '{}' due to readOnlyAllowed Setting", atticdir.getAbsolutePath());
+                }
 
                 // initialise the variables archivedFiles and archiveTime
                 archivedFiles.put(basedir, new ArrayList<String>());
@@ -335,6 +367,12 @@ public final class BitarchiveAdmin {
      */
     private boolean checkArchiveDir(File file) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(file, "file");
+
+        if (readOnlyAllowed) {
+            log.info("checkArchiveDir skipped for Directory '{}'. Assuming directory is ok due to readOnlyAllowed-Setting set to true", file);
+            return true;
+        }
+
         if (!file.exists()) {
             log.warn("Directory '{}' does not exist", file);
             return false;
