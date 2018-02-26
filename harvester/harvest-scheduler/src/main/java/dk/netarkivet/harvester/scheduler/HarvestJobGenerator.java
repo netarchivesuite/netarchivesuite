@@ -118,7 +118,7 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
         }
 
         @Override
-        public synchronized void run() {
+        public void run() {
             try {
                 generateJobs(new Date());
             } catch (Exception e) {
