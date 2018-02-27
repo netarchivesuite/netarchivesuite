@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
@@ -130,9 +129,15 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     protected Long cacheData(Long id) {
         final String replicaUsed = Settings.get(CommonSettings.USE_REPLICA_ID);
         final String metadataFilePatternSuffix = Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
-        log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}{}' on replica '{}'", job
-                .getClass().getName(), id, metadataFilePatternSuffix, replicaUsed);
+        //FIXME The current specifiedPattern also accepts files that that includes the Id in the metadatafile name, either
+        // as a prefix, infix, or suffix (NAS-1712)
         final String specifiedPattern = ".*" + id + ".*" + metadataFilePatternSuffix;
+        // This suggested solution below is incompatible with the prefix pattern 
+        // introduced in harvester/harvester-core/src/main/java/dk/netarkivet/harvester/harvesting/metadata/MetadataFileWriter.java
+        // part of release 5.3.1
+        //final String specifiedPattern = id + metadataFilePatternSuffix; 
+        log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}' on replica '{}'", job
+                .getClass().getName(), specifiedPattern, replicaUsed);
         job.processOnlyFilesMatching(specifiedPattern);
         BatchStatus b = arcrep.batch(job, replicaUsed);
         // This check ensures that we got data from at least one file.
@@ -182,7 +187,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
      */
     private void migrateDuplicates(Long id, String replicaUsed, String specifiedPattern, BatchStatus originalBatchJob) {
         File cacheFileName = getCacheFile(id);
-        Pattern duplicatePattern = Pattern.compile(".*duplicate:\"([^,]+),([0-9]+),.*");
+        Pattern duplicatePattern = Pattern.compile(".*duplicate:\"([^,]+),([0-9]+).*");
         if (urlPattern.pattern().equals(MetadataFile.CRAWL_LOG_PATTERN)) {
             GetMetadataArchiveBatchJob job2 = new GetMetadataArchiveBatchJob(Pattern.compile(".*duplicationmigration.*"), Pattern.compile("text/plain"));
             job2.processOnlyFilesMatching(specifiedPattern);
@@ -202,11 +207,18 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 log.info("Doing migration for {}", id);
                 try {
                     final List<String> migrationLines = org.apache.commons.io.FileUtils.readLines(migration);
-                    log.info("{} migration records found.", migrationLines.size());
+                    log.info("{} migration records found for job {}", migrationLines.size(), id);
+                    // duplicationmigration lines should look like this: "FILENAME 496812 393343 1282069269000"
+                    // But only the first 3 entries are used.
                     for (String line : migrationLines) {
+                    	// duplicationmigration lines look like this: "FILENAME 496812 393343 1282069269000"
                         String[] splitLine = StringUtils.split(line);
-                        lookup.put(new Pair<String, Long>(splitLine[0], Long.parseLong(splitLine[1])),
-                                Long.parseLong(splitLine[2]));
+                        if (splitLine.length >= 3) { 
+                            lookup.put(new Pair<String, Long>(splitLine[0], Long.parseLong(splitLine[1])),
+                                 Long.parseLong(splitLine[2])); 
+                          } else {
+                               log.warn("Line '" + line + "' has a wrong format. Ignoring line");
+                          }
                     }
                 } catch (IOException e) {
                     throw new IOFailure("Could not read " + migration.getAbsolutePath());
@@ -223,13 +235,17 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 }
                 originalBatchJob.copyResults(crawllog);
                 try {
+                    int matches = 0;
+                    int errors = 0;
                     for (String line :  org.apache.commons.io.FileUtils.readLines(crawllog)) {
                         Matcher m = duplicatePattern.matcher(line);
                         if (m.matches()) {
+                            matches++;
                             Long newOffset = lookup.get(new Pair<String, Long>(m.group(1), Long.parseLong(m.group(2))));
                             if (newOffset == null) {
                                 log.warn("Could not migrate duplicate in " + line);
                                 FileUtils.appendToFile(cacheFileName, line);
+                                errors++;
                             } else {
                                 String newLine = line.substring(0, m.start(2)) + newOffset + line.substring(m.end(2));
                                 newLine = newLine.replace(m.group(1), m.group(1) + ".gz");
@@ -239,6 +255,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                             FileUtils.appendToFile(cacheFileName, line);
                         }
                     }
+                    log.info("Found and migrated {} duplicate lines for job {} with {} errors", matches, id, errors); 
                 } catch (IOException e) {
                     throw new IOFailure("Could not read " + crawllog.getAbsolutePath());
                 } finally {
