@@ -129,9 +129,15 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     protected Long cacheData(Long id) {
         final String replicaUsed = Settings.get(CommonSettings.USE_REPLICA_ID);
         final String metadataFilePatternSuffix = Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
-        log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}{}' on replica '{}'", job
-                .getClass().getName(), id, metadataFilePatternSuffix, replicaUsed);
-        final String specifiedPattern = ".*" + id + ".*" + metadataFilePatternSuffix; // FIXME I think this pattern accepts too many metadatafilenames
+        //FIXME The current specifiedPattern also accepts files that that includes the Id in the metadatafile name, either
+        // as a prefix, infix, or suffix (NAS-1712)
+        final String specifiedPattern = ".*" + id + ".*" + metadataFilePatternSuffix;
+        // This suggested solution below is incompatible with the prefix pattern 
+        // introduced in harvester/harvester-core/src/main/java/dk/netarkivet/harvester/harvesting/metadata/MetadataFileWriter.java
+        // part of release 5.3.1
+        // final String specifiedPattern = id + metadataFilePatternSuffix; //This is incompatible with prefix pattern
+        log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}' on replica '{}'", job
+                .getClass().getName(), specifiedPattern, replicaUsed);
         job.processOnlyFilesMatching(specifiedPattern);
         BatchStatus b = arcrep.batch(job, replicaUsed);
         // This check ensures that we got data from at least one file.
