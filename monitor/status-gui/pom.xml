@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>monitor</artifactId>
-    <version>5.3.1</version>
+    <version>5.3.2-RC2</version>
   </parent>
 
   <artifactId>status-gui</artifactId>

@@ -5,7 +5,7 @@
 
   <groupId>org.netarchivesuite</groupId>
   <artifactId>netarchivesuite</artifactId>
-  <version>5.3.1</version>
+  <version>5.3.2-RC2</version>
   <packaging>pom</packaging>
 
   <name>NetarchiveSuite</name>
@@ -846,7 +846,7 @@
             <dependency>
               <groupId>org.netarchivesuite</groupId>
               <artifactId>build-tools</artifactId>
-              <version>5.3.1</version>
+              <version>5.3.2-RC2</version>
             </dependency>
           </dependencies>
         </plugin>
