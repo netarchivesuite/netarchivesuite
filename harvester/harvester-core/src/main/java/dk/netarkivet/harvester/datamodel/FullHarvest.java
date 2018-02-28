@@ -34,6 +34,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FilterIterator;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 
 /**
@@ -169,11 +171,86 @@ public class FullHarvest extends HarvestDefinition {
     public Iterator<DomainConfiguration> getDomainConfigurationsForIterativeHarvest() {
         final DomainDAO dao = domainDAOProvider.get();
         final HarvestDefinition hd = getPreviousHarvestDefinition();
-        log.debug("Retrieving a list of domainconfigurations to continue SnapshotHarvest HD #{}({}) in HD #{} ({})", hd.getOid(), hd.getName(), getOid(), getName() );
-        Iterator<Domain> j = dao.getDomainsInSnapshotHarvestOrder(hd.getOid());
+        boolean useAlternateMethod = Settings.getBoolean(HarvesterSettings.USE_ALTERNATE_SNAPSHOT_JOBGENERATION_METHOD);
+        log.debug("Retrieving a list of domainconfigurations to continue SnapshotHarvest HD #{}({}) in HD #{} ({}). Using alternative snapshot generation method='{}'", 
+                hd.getOid(), hd.getName(), getOid(), getName(), useAlternateMethod);
+        if (useAlternateMethod) {
+            return getAlternativeSnapshotJobGenerationMethod(dao, hd);
+        } else {
+            return getExistingSnapshotJobGenerationMethod(dao, hd);
+        }
+    }
+    
+    /**
+     * Implements the old way of finding the DomainConfigurations for a iterative snapshot harvest.
+     * It fetches all the HarvestInfo records for the previous harvest, and then checks for each record 
+     * if the domain was fully harvested in the previous harvest. If it was, the domain is skipped in the next harvest.
+     * 
+     * @param dao a DomainDAO object.
+     * @param hd a HarvestDefinition object.
+     * @return a iterator of DomainConfigurations for a iterative snapshot harvest.
+     */
+    private Iterator<DomainConfiguration> getExistingSnapshotJobGenerationMethod(final DomainDAO dao, final HarvestDefinition hd) {
+        // Get a iterator of what has been harvested in the previous harvestdefinition
+        Iterator<HarvestInfo> i = dao.getHarvestInfoBasedOnPreviousHarvestDefinition(getPreviousHarvestDefinition());
         
-        return new FilterIterator<Domain, DomainConfiguration>(j) {
+        return new FilterIterator<HarvestInfo, DomainConfiguration>(i) {
+            protected DomainConfiguration filter(HarvestInfo harvestInfo) {
 
+                if (harvestInfo.getStopReason() == StopReason.DOWNLOAD_COMPLETE
+                        || harvestInfo.getStopReason() == StopReason.DOWNLOAD_UNFINISHED) {
+                    // Don't include the ones that finished or died
+                    // in an unclean fashion
+                    return null;
+                }
+
+                DomainConfiguration config = getConfigurationFromPreviousHarvest(harvestInfo, dao);
+                if (harvestInfo.getStopReason() == StopReason.CONFIG_SIZE_LIMIT) {
+                    // Check if MaxBytes limit for DomainConfiguration have
+                    // been raised since previous harvest.
+                    // If this is the case, return the configuration
+                    int compare = NumberUtils.compareInf(config.getMaxBytes(), harvestInfo.getSizeDataRetrieved());
+                    if (compare < 1) {
+                        return null;
+                    } else {
+                        return config;
+                    }
+                }
+
+                if (harvestInfo.getStopReason() == StopReason.CONFIG_OBJECT_LIMIT) {
+                    // Check if MaxObjects limit for DomainConfiguration have
+                    // been raised since previous harvest.
+                    // If this is the case, return the configuration
+                    int compare = NumberUtils.compareInf(config.getMaxObjects(), harvestInfo.getCountObjectRetrieved());
+                    if (compare < 1) {
+                        return null;
+                    } else {
+                        return config;
+                    }
+                }
+                Domain d = dao.read(config.getDomainName());
+
+                if (d.getAliasInfo() != null && !d.getAliasInfo().isExpired()) {
+                    // Don't include aliases
+                    return null;
+                } else {
+                    return config;
+                }
+            }
+        };
+    }
+   
+    
+    /**
+     * Implements a new way of finding the DomainConfigurations for a iterative snapshot harvest.
+     * It identifies the domains harvested in the previous harvest, and then looks up the harvestInfo for this domain for that harvest.
+     * @param dao a DomainDAO object.
+     * @param hd a HarvestDefinition object.
+     * @return a iterator of DomainConfigurations for a iterative snapshot harvest.
+     */
+    private Iterator<DomainConfiguration> getAlternativeSnapshotJobGenerationMethod(final DomainDAO dao, final HarvestDefinition hd) {
+        Iterator<Domain> j = dao.getDomainsInSnapshotHarvestOrder(hd.getOid());
+        return new FilterIterator<Domain, DomainConfiguration>(j) {
             @Override
             protected DomainConfiguration filter(Domain d) {
                 HarvestInfo harvestInfo = dao.getHarvestInfoForDomainInHarvest(hd, d);

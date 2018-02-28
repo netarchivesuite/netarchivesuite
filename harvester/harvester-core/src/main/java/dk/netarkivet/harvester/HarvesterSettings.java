@@ -216,6 +216,13 @@ public class HarvesterSettings {
     public static String OBJECT_LIMIT_SET_BY_QUOTA_ENFORCER = "settings.harvester.scheduler.jobGen.objectLimitIsSetByQuotaEnforcer";
 
     /**
+     * <b>settings.harvester.scheduler.jobGen.useAlternateSnapShotJobgenerationMethod</b>:</br>
+     * If value is true, we use an alternate method for jobgeneration of a snapshotharvest continuing a previous harvest.
+     * Default value is false.
+     */
+    public static String USE_ALTERNATE_SNAPSHOT_JOBGENERATION_METHOD = "settings.harvester.scheduler.jobGen.useAlternateSnapshotJobgenerationMethod";
+    
+    /**
      * <b>settings.harvester.scheduler.jobtimeouttime</b>:<br />
      * Time before a STARTED job times out and change status to FAILED. In seconds.
      */

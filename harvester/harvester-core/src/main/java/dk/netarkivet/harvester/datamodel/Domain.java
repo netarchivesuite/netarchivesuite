@@ -826,7 +826,7 @@ public class Domain extends ExtendableEntity implements Named {
         }
         crawlerTraps = Collections.unmodifiableList(cleanedListOfCrawlerTraps);
         if (!crawlerTraps.isEmpty()) {
-            log.debug("Domain {} has {} crawlertraps", domainName, crawlerTraps.size());
+            log.trace("Domain {} has {} crawlertraps", domainName, crawlerTraps.size());
         }
     }
 

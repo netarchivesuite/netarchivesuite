@@ -65,12 +65,13 @@ National Library.
                 <!-- used to set a limit on how long Heritrix should run. 0 means no limit. -->
                 <maxTimeToCompleteJob>0</maxTimeToCompleteJob>
                 <domainConfigSubsetSize>10000</domainConfigSubsetSize>
+                <useAlternateSnapshotJobgenerationMethod>false</useAlternateSnapshotJobgenerationMethod>
                 <config>
                     <!-- Only used by DefaultJobGenerator -->
                     <splitByObjectLimit>false</splitByObjectLimit>
                     <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
                     <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
-                    <maxTotalSize>2000000</maxTotalSize>
+                    <maxTotalSize>8000000</maxTotalSize>
                     <errorFactorPrevResult>10</errorFactorPrevResult>
                     <errorFactorBestGuess>2</errorFactorBestGuess>
                     <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
