@@ -77,6 +77,7 @@ abstract class AbstractJobGenerator implements JobGenerator {
         log.info("Generating jobs for harvestdefinition #{} using class '{}'", harvest.getOid(), this.getClass());
         int jobsMade = 0;
         final Iterator<DomainConfiguration> domainConfigurations = harvest.getDomainConfigurations();
+        log.info("Now ready to iterate over the domainConfigurations for harvestdefinition #{}", harvest.getOid());
         harvest.setNumEvents(harvest.getNumEvents() + 1);
         if (harvest.isSnapShot()) {
             HarvestDefinitionDAO.getInstance().update(harvest);

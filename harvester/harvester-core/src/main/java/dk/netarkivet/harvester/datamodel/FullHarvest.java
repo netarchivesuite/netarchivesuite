@@ -170,14 +170,14 @@ public class FullHarvest extends HarvestDefinition {
      */
     public Iterator<DomainConfiguration> getDomainConfigurationsForIterativeHarvest() {
         final DomainDAO dao = domainDAOProvider.get();
-        final HarvestDefinition hd = getPreviousHarvestDefinition();
+        final HarvestDefinition previousHd = getPreviousHarvestDefinition();
         boolean useAlternateMethod = Settings.getBoolean(HarvesterSettings.USE_ALTERNATE_SNAPSHOT_JOBGENERATION_METHOD);
         log.debug("Retrieving a list of domainconfigurations to continue SnapshotHarvest HD #{}({}) in HD #{} ({}). Using alternative snapshot generation method='{}'", 
-                hd.getOid(), hd.getName(), getOid(), getName(), useAlternateMethod);
+                previousHd.getOid(), previousHd.getName(), getOid(), getName(), useAlternateMethod);
         if (useAlternateMethod) {
-            return getAlternativeSnapshotJobGenerationMethod(dao, hd);
+            return getAlternativeSnapshotJobGenerationMethod(dao, previousHd);
         } else {
-            return getExistingSnapshotJobGenerationMethod(dao, hd);
+            return getExistingSnapshotJobGenerationMethod(dao, previousHd);
         }
     }
     
@@ -187,13 +187,14 @@ public class FullHarvest extends HarvestDefinition {
      * if the domain was fully harvested in the previous harvest. If it was, the domain is skipped in the next harvest.
      * 
      * @param dao a DomainDAO object.
-     * @param hd a HarvestDefinition object.
+     * @param previousHd the previousHD for this fullharvest
      * @return a iterator of DomainConfigurations for a iterative snapshot harvest.
      */
-    private Iterator<DomainConfiguration> getExistingSnapshotJobGenerationMethod(final DomainDAO dao, final HarvestDefinition hd) {
+    private Iterator<DomainConfiguration> getExistingSnapshotJobGenerationMethod(final DomainDAO dao, final HarvestDefinition previousHd) {
+        log.info("Running existing method for finding domainconfigs for iterative harvest #{} continuing harvest #{}", getOid(), previousHd.getOid());
         // Get a iterator of what has been harvested in the previous harvestdefinition
-        Iterator<HarvestInfo> i = dao.getHarvestInfoBasedOnPreviousHarvestDefinition(getPreviousHarvestDefinition());
-        
+        Iterator<HarvestInfo> i = dao.getHarvestInfoBasedOnPreviousHarvestDefinition(previousHd);
+        log.info("Completed making iterator of HarvestInfo records from HD#{} to be used for HD#{}", previousHd.getOid(),  getOid());
         return new FilterIterator<HarvestInfo, DomainConfiguration>(i) {
             protected DomainConfiguration filter(HarvestInfo harvestInfo) {
 
@@ -245,15 +246,16 @@ public class FullHarvest extends HarvestDefinition {
      * Implements a new way of finding the DomainConfigurations for a iterative snapshot harvest.
      * It identifies the domains harvested in the previous harvest, and then looks up the harvestInfo for this domain for that harvest.
      * @param dao a DomainDAO object.
-     * @param hd a HarvestDefinition object.
+     * @param previousHD the previousHD for this fullharvest
      * @return a iterator of DomainConfigurations for a iterative snapshot harvest.
      */
-    private Iterator<DomainConfiguration> getAlternativeSnapshotJobGenerationMethod(final DomainDAO dao, final HarvestDefinition hd) {
-        Iterator<Domain> j = dao.getDomainsInSnapshotHarvestOrder(hd.getOid());
+    private Iterator<DomainConfiguration> getAlternativeSnapshotJobGenerationMethod(final DomainDAO dao, final HarvestDefinition previousHd) {
+        log.info("Running alternate method for finding domainconfigs for iterative harvest #{} continuing harvest #{}", getOid(), previousHd.getOid());
+        Iterator<Domain> j = dao.getDomainsInSnapshotHarvestOrder(previousHd.getOid());
         return new FilterIterator<Domain, DomainConfiguration>(j) {
             @Override
             protected DomainConfiguration filter(Domain d) {
-                HarvestInfo harvestInfo = dao.getHarvestInfoForDomainInHarvest(hd, d);
+                HarvestInfo harvestInfo = dao.getHarvestInfoForDomainInHarvest(previousHd, d);
                 if (harvestInfo == null) { // Domain not found in HarvestInfo
                     return null;
                 }

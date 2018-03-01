@@ -1578,7 +1578,10 @@ public class DomainDBDAO extends DomainDAO {
         ArgumentNotValid.checkNotNull(previousHarvestDefinition, "previousHarvestDefinition");
         // For each domainConfig, get harvest infos if there is any for the
         // previous harvest definition
-        return new FilterIterator<DomainConfiguration, HarvestInfo>(previousHarvestDefinition.getDomainConfigurations()) {
+        log.debug("We start the Iterator<HarvestInfo> process with getting an iterator of DomainConfigs in the previous HD#{}", previousHarvestDefinition.getOid());
+        Iterator<DomainConfiguration> previousDomainConfigs = previousHarvestDefinition.getDomainConfigurations();
+        log.debug("Now finished getting an iterator of DomainConfigs in the previous HD#{}. We can now return the FilterIterator<DomainConfiguration, HarvestInfo>", previousHarvestDefinition.getOid());
+        return new FilterIterator<DomainConfiguration, HarvestInfo>(previousDomainConfigs) {
             /**
              * @see FilterIterator#filter(Object)
              */
