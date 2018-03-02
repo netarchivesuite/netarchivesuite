@@ -81,6 +81,13 @@ public class ArchiveSettings {
     public static String BITARCHIVE_SERVER_FILEDIR = "settings.archive.bitarchive.baseFileDir";
 
     /**
+     * <b>settings.archive.bitarchive.readOnlyAllowed</b>: <br>
+     * true/false - The possibility to have ready-only directories in your list (default false) - If true the
+     * application is not throwing a PermissionDenied Exception
+     */
+    public static String BITARCHIVE_READ_ONLY_ALLOWED = "settings.archive.bitarchive.readOnlyAllowed";
+
+    /**
      * <b>settings.archive.bitarchive.heartbeatFrequency</b>: <br>
      * The frequency in milliseconds of heartbeats that are sent by each BitarchiveServer to the BitarchiveMonitor.
      */

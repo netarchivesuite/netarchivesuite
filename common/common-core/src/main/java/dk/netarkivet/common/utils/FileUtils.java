@@ -670,7 +670,8 @@ public class FileUtils {
         if (!dir.canWrite()) {
             String msg = "Cannot write to required directory '" + dir.getAbsolutePath() + "'";
             log.warn(msg);
-            throw new PermissionDenied(msg);
+            // not failing anymore. To due https://sbforge.org/jira/browse/NAS-2710
+            //throw new PermissionDenied(msg);
         }
         return didCreate;
     }
