@@ -227,7 +227,7 @@
         <scheduler>
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
-            <jobgenerationperiode>60</jobgenerationperiode>
+            <jobgenerationperiod>60</jobgenerationperiod>
             <jobGen>
                 <class>dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator</class>
                 <domainConfigSubsetSize>10000</domainConfigSubsetSize>

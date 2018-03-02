@@ -34,6 +34,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FilterIterator;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 
 /**
@@ -157,15 +159,42 @@ public class FullHarvest extends HarvestDefinition {
     public Iterator<DomainConfiguration> getDomainConfigurations() {
         if (previousHarvestDefinitionOid == null) {
             // The first snapshot harvest
-            //HarvestDefinitionDAO hdDao = HarvestDefinitionDAO.getInstance();
             return hdDaoProvider.get().getSnapShotConfigurations();
+        } else { // An iterative snapshot harvest
+            return getDomainConfigurationsForIterativeHarvest();
         }
-
-        // An iterative snapshot harvest
+    }
+    
+    /**
+     * @return a iterator of DomainConfigurations not finished in previous SnapShot harvest  
+     */
+    public Iterator<DomainConfiguration> getDomainConfigurationsForIterativeHarvest() {
         final DomainDAO dao = domainDAOProvider.get();
-        // Get what has been harvested
-        Iterator<HarvestInfo> i = dao.getHarvestInfoBasedOnPreviousHarvestDefinition(getPreviousHarvestDefinition());
-        //
+        final HarvestDefinition previousHd = getPreviousHarvestDefinition();
+        boolean useAlternateMethod = Settings.getBoolean(HarvesterSettings.USE_ALTERNATE_SNAPSHOT_JOBGENERATION_METHOD);
+        log.debug("Retrieving a list of domainconfigurations to continue SnapshotHarvest HD #{}({}) in HD #{} ({}). Using alternative snapshot generation method='{}'", 
+                previousHd.getOid(), previousHd.getName(), getOid(), getName(), useAlternateMethod);
+        if (useAlternateMethod) {
+            return getAlternativeSnapshotJobGenerationMethod(dao, previousHd);
+        } else {
+            return getExistingSnapshotJobGenerationMethod(dao, previousHd);
+        }
+    }
+    
+    /**
+     * Implements the old way of finding the DomainConfigurations for a iterative snapshot harvest.
+     * It fetches all the HarvestInfo records for the previous harvest, and then checks for each record 
+     * if the domain was fully harvested in the previous harvest. If it was, the domain is skipped in the next harvest.
+     * 
+     * @param dao a DomainDAO object.
+     * @param previousHd the previousHD for this fullharvest
+     * @return a iterator of DomainConfigurations for a iterative snapshot harvest.
+     */
+    private Iterator<DomainConfiguration> getExistingSnapshotJobGenerationMethod(final DomainDAO dao, final HarvestDefinition previousHd) {
+        log.info("Running existing method for finding domainconfigs for iterative harvest #{} continuing harvest #{}", getOid(), previousHd.getOid());
+        // Get a iterator of what has been harvested in the previous harvestdefinition
+        Iterator<HarvestInfo> i = dao.getHarvestInfoBasedOnPreviousHarvestDefinition(previousHd);
+        log.info("Completed making iterator of HarvestInfo records from HD#{} to be used for HD#{}", previousHd.getOid(),  getOid());
         return new FilterIterator<HarvestInfo, DomainConfiguration>(i) {
             protected DomainConfiguration filter(HarvestInfo harvestInfo) {
 
@@ -211,7 +240,66 @@ public class FullHarvest extends HarvestDefinition {
             }
         };
     }
-
+   
+    
+    /**
+     * Implements a new way of finding the DomainConfigurations for a iterative snapshot harvest.
+     * It identifies the domains harvested in the previous harvest, and then looks up the harvestInfo for this domain for that harvest.
+     * @param dao a DomainDAO object.
+     * @param previousHD the previousHD for this fullharvest
+     * @return a iterator of DomainConfigurations for a iterative snapshot harvest.
+     */
+    private Iterator<DomainConfiguration> getAlternativeSnapshotJobGenerationMethod(final DomainDAO dao, final HarvestDefinition previousHd) {
+        log.info("Running alternate method for finding domainconfigs for iterative harvest #{} continuing harvest #{}", getOid(), previousHd.getOid());
+        Iterator<Domain> j = dao.getDomainsInSnapshotHarvestOrder(previousHd.getOid());
+        return new FilterIterator<Domain, DomainConfiguration>(j) {
+            @Override
+            protected DomainConfiguration filter(Domain d) {
+                HarvestInfo harvestInfo = dao.getHarvestInfoForDomainInHarvest(previousHd, d);
+                if (harvestInfo == null) { // Domain not found in HarvestInfo
+                    return null;
+                }
+                log.trace("Found harvestInfo for domain '{}'", d.getName());
+                if (harvestInfo.getStopReason() == StopReason.DOWNLOAD_COMPLETE
+                        || harvestInfo.getStopReason() == StopReason.DOWNLOAD_UNFINISHED) {
+                    // Don't include the ones that finished or died
+                    // in an unclean fashion
+                    return null;
+                }
+                DomainConfiguration config = getConfigurationFromPreviousHarvest(harvestInfo, dao);
+                // Check if max_bytes was reached
+                if (harvestInfo.getStopReason() == StopReason.CONFIG_SIZE_LIMIT) {
+                    // Check if MaxBytes limit for DomainConfiguration have
+                    // been raised since previous harvest.
+                    // If this is the case, return the configuration
+                    int compare = NumberUtils.compareInf(config.getMaxBytes(), harvestInfo.getSizeDataRetrieved());
+                    if (compare < 1) {
+                        return null;
+                    } else {
+                        return config;
+                    }
+                }
+                if (harvestInfo.getStopReason() == StopReason.CONFIG_OBJECT_LIMIT) {
+                    // Check if MaxObjects limit for DomainConfiguration have
+                    // been raised since previous harvest.
+                    // If this is the case, return the configuration
+                    int compare = NumberUtils.compareInf(config.getMaxObjects(), harvestInfo.getCountObjectRetrieved());
+                    if (compare < 1) {
+                        return null;
+                    } else {
+                        return config;
+                    }
+                }
+                if (d.getAliasInfo() != null && !d.getAliasInfo().isExpired()) {
+                    // Don't include aliases
+                    return null;
+                } else {
+                    return config;
+                }
+            }
+        };
+    }
+ 
     /**
      * Get the configuration used in a previous harvest. If the configuration in the harvestinfo cannot be found
      * (deleted), uses the default configuration.
