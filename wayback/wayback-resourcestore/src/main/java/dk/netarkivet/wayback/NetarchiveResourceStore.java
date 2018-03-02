@@ -26,17 +26,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.format.ArchiveFileConstants;
-import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecordHeader;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
-import org.archive.resource.arc.ARCResource;
 import org.archive.wayback.ResourceStore;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.core.Resource;
@@ -46,7 +42,6 @@ import org.archive.wayback.resourcestore.resourcefile.ArcResource;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
-import dk.netarkivet.common.utils.InputStreamUtils;
 
 /**
  * This is the connector between netarchivesuite and wayback. And is based on PrototypeNetarchiveResourceStore.java
@@ -56,10 +51,7 @@ public class NetarchiveResourceStore implements ResourceStore {
 
     /** JMS ArcRepositoryClient. */
     protected ViewerArcRepositoryClient client;
-
-    /** Pattern for matching http version header. */
-    private static final Pattern HTTP_HEADER_PATTERN = Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
-
+    
     /** Logger. */
     private Log logger = LogFactory.getLog(getClass().getName());
 
