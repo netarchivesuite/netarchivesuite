@@ -28,9 +28,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.math3.util.Pair;
 import org.archive.wayback.UrlCanonicalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +52,7 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     private static final String cdxDateFormatString = "yyyyMMddHHmmss";
     private static final SimpleDateFormat crawlDateFormat = new SimpleDateFormat(crawlDateFormatString);
     private static final SimpleDateFormat cdxDateFormat = new SimpleDateFormat(cdxDateFormatString);
-
+    
     /** Pattern representing the part of a crawl log entry describing a duplicate record. */
     private static final String duplicateRecordPatternString = "duplicate:\"([^,]*),([^,]*)\",(.*)";	//e.g. duplicate:"arcfile,offset"
     // The extended format is made to preserve the date of the record pointed to by arcfile,offset argument
@@ -65,11 +67,15 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     /** String for identifying crawl-log entries representing duplicates. */
     private static final String DUPLICATE_MATCHING_STRING = "duplicate:";
 
+    /** lookup table for updating duplicate entries on-the-fly with data from the duplicationMigration record */
+    private Hashtable<Pair<String, Long>, Long> lookup;
+    
     /**
      * Default constructor. Initializes the canonicalizer.
      */
     public DeduplicateToCDXAdapter() {
         canonicalizer = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
+        
     }
 
     /**
@@ -97,30 +103,7 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 String digest = crawlElements[9].replaceAll("sha1:", "");
                 result.append(digest).append(" - ");
                 String duplicateRecord = crawlElements[11];
-                if (!duplicateRecord.startsWith(DUPLICATE_MATCHING_STRING)) {
-                    // Probably an Exception starting with "le:" is injected before the
-                    // DUPLICATE_MATCHING_STRING, Try splitting on duplicate:
-                    String[] parts = duplicateRecord.split(DUPLICATE_MATCHING_STRING);
-                    if (parts.length == 2) {
-                        String newDuplicateRecord = DUPLICATE_MATCHING_STRING + parts[1];
-                        log.warn("Duplicate-record changed from '{}' to '{}'", duplicateRecord, newDuplicateRecord);
-                        duplicateRecord = newDuplicateRecord;
-                    }
-                }
-                Matcher m = duplicateRecordPattern.matcher(duplicateRecord);
-                Matcher m1 = extendedDuplicateRecordPattern.matcher(duplicateRecord);
-                if (m.matches()) {
-                    String arcfile = m.group(1);
-                    String offset = m.group(2);
-                    result.append(offset).append(' ').append(arcfile);
-                } else if (m1.matches()) {
-                	String arcfile = m1.group(1);
-                	String offset = m1.group(2);
-                	result.append(offset).append(' ').append(arcfile);
-                } else {
-                    throw new ArgumentNotValid("crawl record did not match " + "expected pattern for duplicate"
-                            + " record: '" + duplicateRecord + "'");
-                }
+                handleDuplicateRecord(duplicateRecord, result);
                 return result.toString();
             } catch (Exception e) {
                 log.error("Could not adapt deduplicate record to CDX line: '{}'", line, e);
@@ -130,6 +113,62 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
             return null;
         }
     }
+
+    /**
+     * Handle the duplicate-record. If a lookup table exists, it tries to lookup the file, offset in the lookup table.
+     * @param duplicateRecord
+     * @param result
+     */
+    private void handleDuplicateRecord(String duplicateRecord,
+            StringBuffer result) {
+        if (!duplicateRecord.startsWith(DUPLICATE_MATCHING_STRING)) {
+            // Probably an Exception starting with "le:" is injected before the
+            // DUPLICATE_MATCHING_STRING, Try splitting on duplicate:
+            String[] parts = duplicateRecord.split(DUPLICATE_MATCHING_STRING);
+            if (parts.length == 2) {
+                String newDuplicateRecord = DUPLICATE_MATCHING_STRING + parts[1];
+                log.debug("Duplicate-record changed from '{}' to '{}'", duplicateRecord, newDuplicateRecord);
+                duplicateRecord = newDuplicateRecord;
+            }
+        }
+        Matcher m = duplicateRecordPattern.matcher(duplicateRecord);
+        Matcher m1 = extendedDuplicateRecordPattern.matcher(duplicateRecord);
+        if (m.matches()) {
+            String arcfile = m.group(1);
+            String offset = m.group(2);
+            Long newoffset = null;
+            if (lookup != null) {
+                newoffset = lookup.get(new Pair<String, Long>(arcfile, Long.parseLong(offset)));
+                if (newoffset != null) {
+                    offset = Long.toString(newoffset);
+                    arcfile = arcfile + ".gz";
+                    System.out.println("New offset for compressed arcfile (" + arcfile + "): " + offset);
+                } else {
+                    System.err.println("No match in lookup table for arcfile,offset=(" +  arcfile + "," + offset + ")");
+                }
+            }
+            result.append(offset).append(' ').append(arcfile);
+        } else if (m1.matches()) {
+                String arcfile = m1.group(1);
+                String offset = m1.group(2);
+                Long newoffset = null;
+                if (lookup != null) {
+                    newoffset = lookup.get(new Pair<String, Long>(arcfile, Long.parseLong(offset)));
+                    if (newoffset != null) {
+                        offset = Long.toString(newoffset);
+                        arcfile = arcfile + ".gz";
+                        System.out.println("New offset for compressed arcfile (" + arcfile + "): " + offset);
+                    } else {
+                        System.err.println("No match in lookup table for arcfile,offset=(" +  arcfile + "," + offset + ")");
+                    }
+                }
+                result.append(offset).append(' ').append(arcfile);
+            } else {
+                throw new ArgumentNotValid("crawl record did not match " + "expected pattern for duplicate"
+                        + " record: '" + duplicateRecord + "'");
+            }
+        }
+
 
     /**
      * Reads an input stream representing a crawl log line by line and converts any lines representing duplicate entries
@@ -153,5 +192,9 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
         } catch (IOException e) {
             log.error("Exception reading crawl log;", e);
         }
+    }
+
+    public void setLookup(Hashtable<Pair<String, Long>, Long> lookup) {
+        this.lookup = lookup;
     }
 }

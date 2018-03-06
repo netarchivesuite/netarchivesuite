@@ -171,7 +171,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
         GetMessage requestGetMsg = new GetMessage(Channels.getTheRepos(), replyQ, arcfile, index);
         NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(requestGetMsg, getTimeout);
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply received after {} seconds", (timePassed / MILLISECONDS_PER_SECOND));
+        log.debug("Reply for record({}:{}) received after {} milliseconds ({} seconds)", arcfile, index, 
+                timePassed, (timePassed / MILLISECONDS_PER_SECOND));
         if (replyNetMsg == null) {
             log.info("Request for record({}:{}) timed out after {} seconds. Returning null BitarchiveRecord", arcfile,
                     index, (getTimeout / MILLISECONDS_PER_SECOND));
@@ -215,6 +216,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
         } else {
             getFileMessage.getData(toFile);
         }
+        log.debug("File '{}' received from '{}'", arcfilename, replica);
     }
 
     /**
