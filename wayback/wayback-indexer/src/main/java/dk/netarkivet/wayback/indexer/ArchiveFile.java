@@ -23,12 +23,18 @@
 package dk.netarkivet.wayback.indexer;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +46,12 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCUtils;
+import dk.netarkivet.common.utils.archive.GetMetadataArchiveBatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.warc.WARCUtils;
+import dk.netarkivet.wayback.Constants;
 import dk.netarkivet.wayback.WaybackSettings;
-import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
+import dk.netarkivet.wayback.batch.DeduplicateToCDXAdapter;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
 
@@ -52,7 +60,7 @@ import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
  */
 @Entity
 public class ArchiveFile {
-
+    
     /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(ArchiveFile.class);
 
@@ -192,7 +200,9 @@ public class ArchiveFile {
         // may be of value when we begin to add warc support.
         FileBatchJob theJob = null;
         if (filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX))) {
-            theJob = new DeduplicationCDXExtractionBatchJob();
+            // All the work is redelegated to the generateDeduplicationCdx method
+            generateDeduplicationCdx(filename);
+            return;
         } else if (ARCUtils.isARC(filename)) {
             theJob = new WaybackCDXExtractionARCBatchJob();
         } else if (WARCUtils.isWarc(filename)) {
@@ -239,8 +249,8 @@ public class ArchiveFile {
 
         // Read the name of the temporary output directory and create it if
         // necessary
-        String tempBatchOutputDir = Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR);
-        final File outDir = new File(tempBatchOutputDir);
+        String tempBatchOutputDirName = Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR);
+        final File outDir = new File(tempBatchOutputDirName);
         FileUtils.createDir(outDir);
 
         // Copy the batch output to the temporary directory.
@@ -264,6 +274,76 @@ public class ArchiveFile {
         isIndexed = true;
         log.info("Indexed '{}' to '{}'", this.filename, finalFile.getAbsolutePath());
         (new ArchiveFileDAO()).update(this);
+    }
+    
+    private void generateDeduplicationCdx(String filename) {
+        File crawllogfile = new File(FileUtils.getTempDir(), UUID.randomUUID().toString());
+        File deduplicationMigrationFile = new File(FileUtils.getTempDir(), UUID.randomUUID().toString());
+        PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
+        String replicaId = Settings.get(WaybackSettings.WAYBACK_REPLICA);
+        FileBatchJob crawlLogJob = new GetMetadataArchiveBatchJob(
+                Pattern.compile(Constants.CRAWL_LOG_URL_PATTERN_STRING), Pattern.compile("text/plain"));
+        crawlLogJob.processOnlyFileNamed(filename);
+        FileBatchJob deduplicatioMigrationJob = new GetMetadataArchiveBatchJob(
+                Pattern.compile(Constants.DEDUPLICATION_MIGRATION_URL_PATTERN_STRING), Pattern.compile("text/plain"));
+        deduplicatioMigrationJob.processOnlyFileNamed(filename);
+        log.info("Submitting {} for {} to {}", crawlLogJob.getClass().getName(), getFilename(), replicaId.toString());
+        BatchStatus batchStatus = client.batch(crawlLogJob, replicaId);
+        try {
+            // Normally expect exactly one file per job.
+            if (!batchStatus.getFilesFailed().isEmpty() || batchStatus.getNoOfFilesProcessed() == 0
+                    || !batchStatus.getExceptions().isEmpty()) {
+                logBatchError(batchStatus);
+            } else {
+                if (batchStatus.getNoOfFilesProcessed() > 1) {
+                    log.warn(
+                            "Processed '{}' files for {}.\n This may indicate a doublet in the arcrepository. Proceeding with caution.",
+                            batchStatus.getNoOfFilesProcessed(), this.getFilename());
+                }
+                // Retrieve logfile from batchresult
+                batchStatus.copyResults(crawllogfile);
+                // Try to find a duplicationmigration record in the same file
+                batchStatus = client.batch(deduplicatioMigrationJob, replicaId);
+                if (batchStatus.hasResultFile()) {
+                    batchStatus.copyResults(deduplicationMigrationFile);
+                }
+                boolean doMigration = deduplicationMigrationFile.exists() && deduplicationMigrationFile.length() > 0;
+                File resultfile = new File(FileUtils.getTempDir(), UUID.randomUUID().toString());
+                FileOutputStream fos = new FileOutputStream(resultfile);
+                DeduplicateToCDXAdapter adapter = new DeduplicateToCDXAdapter();
+                Hashtable<Pair<String, Long>, Long> lookup = null;
+                if (doMigration) {
+                    log.info("Migration record found and retrieved from file {}", filename);
+                    lookup = DeduplicationMigration.parseMigrationRecords(deduplicationMigrationFile, filename);
+                }
+                FileInputStream inputStream = new FileInputStream(crawllogfile);
+                adapter.setLookup(lookup);
+                adapter.adaptStream(inputStream, fos);
+                fos.close();
+                
+                // Finish process
+                log.info("Finished collecting dedupindex for '{}' to '{}'", this.getFilename(), resultfile.getAbsolutePath());
+                String finalBatchOutputDir = Settings.get(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
+                final File finalDirectory = new File(finalBatchOutputDir);
+                FileUtils.createDir(finalDirectory);
+
+                // Move the output file from the temporary directory to the final
+                // directory
+                File finalFile = new File(finalDirectory, resultfile.getName());
+                resultfile.renameTo(finalFile);
+
+                // Update the file status in the object store
+                originalIndexFileName = resultfile.getName();
+                isIndexed = true;
+                log.info("Indexed '{}' to '{}'", this.filename, finalFile.getAbsolutePath());
+                (new ArchiveFileDAO()).update(this);
+            }
+        } catch (IOException e) {
+            log.error("Unexpected exception while making cdx-generation for file {}: {}", filename, e);
+        } finally {
+            crawllogfile.delete();
+            deduplicationMigrationFile.delete();
+        }
     }
 
     /**

@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -78,6 +79,7 @@ public class WaybackIndexer implements CleanupIF {
      * Private constructor.
      */
     private WaybackIndexer() {
+        ApplicationUtils.dirMustExist(FileUtils.getTempDir());
         File temporaryBatchDir = Settings.getFile(WaybackSettings.WAYBACK_INDEX_TEMPDIR);
         File batchOutputDir = Settings.getFile(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
         FileUtils.createDir(temporaryBatchDir);

@@ -142,9 +142,9 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 if (newoffset != null) {
                     offset = Long.toString(newoffset);
                     arcfile = arcfile + ".gz";
-                    System.out.println("New offset for compressed arcfile (" + arcfile + "): " + offset);
+                    log.debug("Found new offset for compressed arcfile '{}': {}", arcfile, offset);
                 } else {
-                    System.err.println("No match in lookup table for arcfile,offset=(" +  arcfile + "," + offset + ")");
+                    log.warn("No match in lookup table for arcfile,offset=({},{})", arcfile, offset);
                 }
             }
             result.append(offset).append(' ').append(arcfile);
@@ -157,9 +157,9 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                     if (newoffset != null) {
                         offset = Long.toString(newoffset);
                         arcfile = arcfile + ".gz";
-                        System.out.println("New offset for compressed arcfile (" + arcfile + "): " + offset);
+                        log.debug("Found new offset for compressed arcfile '{}': {}", arcfile, offset);
                     } else {
-                        System.err.println("No match in lookup table for arcfile,offset=(" +  arcfile + "," + offset + ")");
+                        log.warn("No match in lookup table for arcfile,offset=({},{})", arcfile, offset);
                     }
                 }
                 result.append(offset).append(' ').append(arcfile);
