@@ -72,7 +72,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     private final Map<String, Long> bitarchiveSignsOfLife = Collections.synchronizedMap(new HashMap<String, Long>());
 
     /** The acceptable delay in milliseconds between signs of life. */
-    private final long acceptableSignOfLifeDelay;
+    private  long acceptableSignOfLifeDelay;
 
     /**
      * Map from the ID of batch jobs sent to bitarchives, to tuple class of status for this batch job. The Map contains
