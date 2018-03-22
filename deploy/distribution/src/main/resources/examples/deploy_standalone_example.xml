@@ -161,6 +161,7 @@ National Library.
       </applicationName>
       <applicationName name="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication">
         <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+        <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
         <settings>
           <common>
             <jmx>
@@ -176,6 +177,7 @@ National Library.
       </applicationName>
       <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
         <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+        <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
         <settings>
           <common>
             <jmx>
@@ -191,6 +193,7 @@ National Library.
       </applicationName>
       <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
         <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+        <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
         <settings>
           <common>
             <jmx>
