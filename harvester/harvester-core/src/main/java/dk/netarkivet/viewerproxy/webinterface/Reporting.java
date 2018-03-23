@@ -210,12 +210,12 @@ public class Reporting {
     public static File getCrawlLoglinesMatchingRegexp(long jobid, String regexp) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         ArgumentNotValid.checkNotNullOrEmpty(regexp, "String regexp");
-        log.debug("Getting crawlLogLines from job {} matching regexp '{}'", jobid, regexp);
+        log.info("Getting crawlLogLines from job {} matching regexp '{}'", jobid, regexp);
         FileBatchJob crawlLogBatchJob = null;
         try {
             crawlLogBatchJob = new CrawlLogLinesMatchingRegexp(regexp);
         } catch (PatternSyntaxException e) {
-            log.warn("The given regex '{}' is not a valid pattern: {}", regexp, e);
+            log.warn("The given regex '{}' is not a valid pattern:", regexp, e);
         }
         if (crawlLogBatchJob == null) {
             return null;
