@@ -32,8 +32,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -58,6 +62,8 @@ public class Reporting {
      */
     private Reporting() {
     }
+    /** Logger. */
+    private static final Logger log = LoggerFactory.getLogger(Reporting.class);
 
     /** The suffix for the data arc/warc files produced by Heritrix. */
     static final String archivefile_suffix = ".*\\.(w)?arc(\\.gz)?";
@@ -184,6 +190,10 @@ public class Reporting {
         }
         BatchStatus status = ArcRepositoryClientFactory.getViewerInstance().batch(batchJob,
                 Settings.get(CommonSettings.USE_REPLICA_ID));
+        log.debug("Files processed with job {}: {}", batchJob, status.getNoOfFilesProcessed());
+        if (status.getFilesFailed().size() > 0){
+            log.warn("Processing failed on files: {}", StringUtils.join(status.getFilesFailed(), ","));
+        }
         status.getResultFile().copyTo(f);
         FileUtils.sortCrawlLogOnTimestamp(f, fsorted);
         FileUtils.remove(f);
@@ -200,7 +210,16 @@ public class Reporting {
     public static File getCrawlLoglinesMatchingRegexp(long jobid, String regexp) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         ArgumentNotValid.checkNotNullOrEmpty(regexp, "String regexp");
-        FileBatchJob crawlLogBatchJob = new CrawlLogLinesMatchingRegexp(regexp);
+        log.debug("Getting crawlLogLines from job {} matching regexp '{}'", jobid, regexp);
+        FileBatchJob crawlLogBatchJob = null;
+        try {
+            crawlLogBatchJob = new CrawlLogLinesMatchingRegexp(regexp);
+        } catch (PatternSyntaxException e) {
+            log.warn("The given regex '{}' is not a valid pattern: {}", regexp, e);
+        }
+        if (crawlLogBatchJob == null) {
+            return null;
+        }
         crawlLogBatchJob.processOnlyFilesMatching(getMetadataFilePatternForJobId(jobid));
         return getResultFile(crawlLogBatchJob);
     }
@@ -213,6 +232,8 @@ public class Reporting {
     private static String getMetadataFilePatternForJobId(long jobid) {
     	// The old invalid metadataFilePattern
     	//return ".*"+jobid + ".*" + metadatafile_suffix;
-    	return jobid + metadatafile_suffix;
+        String metadataFilePattern = jobid + metadatafile_suffix;
+        log.debug("Using '{}' as metadataFilePattern");
+    	return metadataFilePattern;
     }
 }

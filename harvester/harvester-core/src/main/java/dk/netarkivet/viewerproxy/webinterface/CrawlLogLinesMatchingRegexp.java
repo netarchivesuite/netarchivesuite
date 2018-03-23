@@ -27,6 +27,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +50,6 @@ import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
 
     /** The logger. */
-    //private final Log log = LogFactory.getLog(getClass().getName());
     private static final Logger log = LoggerFactory.getLogger(CrawlLogLinesMatchingRegexp.class);
 
     /** Metadata URL for crawl logs. */
@@ -62,11 +63,15 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
      * Initialise the batch job.
      *
      * @param regexp The regexp to match in the crawl.log lines.
+     * @throws PatternSyntaxException if the given regexp is an incorrect Pattern
      */
     public CrawlLogLinesMatchingRegexp(String regexp) {
         ArgumentNotValid.checkNotNullOrEmpty(regexp, "regexp");
         this.regexp = regexp;
-
+        // Test compilation of given regexp at construction time
+        // Should throw PatternSyntaxException if pattern is incorrect
+        Pattern.compile(regexp);
+        
         /**
          * One week in milliseconds.
          */

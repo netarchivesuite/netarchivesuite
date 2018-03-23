@@ -86,20 +86,23 @@ domain - the domain to get the log for
             		+ domain.replaceAll("\\.", "\\\\.") +  "($|\\/|\\w|\\s).*";
         	crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
         }
-        LineNumberReader reader = new LineNumberReader(new FileReader(crawlLogExtract));
-        reader.skip(Long.MAX_VALUE);
-        int linesInFile = reader.getLineNumber();
-        int maxLinesInBrowser =
+        // Check for null crawlLogExtract; don't do anything if null result
+        if (crawlLogExtract != null) {
+        	LineNumberReader reader = new LineNumberReader(new FileReader(crawlLogExtract));
+        	reader.skip(Long.MAX_VALUE);
+       	 	int linesInFile = reader.getLineNumber();
+        	int maxLinesInBrowser =
                 Settings.getInt(HarvesterSettings.MAX_CRAWLLOG_IN_BROWSER);
-        if (linesInFile > maxLinesInBrowser) {
-            response.setHeader("Content-Type", "binary/octet-stream");
-            response.setHeader("Content-Disposition", "Attachment; filename=crawl_log_extract.txt");
-            final ServletOutputStream outputStream = response.getOutputStream();
-            IOUtils.copy(new FileInputStream(crawlLogExtract), outputStream);
-            outputStream.flush();
-            outputStream.close();
-            FileUtils.remove(crawlLogExtract);
-            return;
+        	if (linesInFile > maxLinesInBrowser) {
+            	response.setHeader("Content-Type", "binary/octet-stream");
+            	response.setHeader("Content-Disposition", "Attachment; filename=crawl_log_extract.txt");
+            	final ServletOutputStream outputStream = response.getOutputStream();
+            	IOUtils.copy(new FileInputStream(crawlLogExtract), outputStream);
+            	outputStream.flush();
+            	outputStream.close();
+            	FileUtils.remove(crawlLogExtract);
+            	return;
+        	}
         }
     } catch (ForwardedToErrorPage e) {
         return;
@@ -112,8 +115,12 @@ domain - the domain to get the log for
 </fmt:message></h3>
 <pre>
 <%
-    StreamUtils.copyInputStreamToJspWriter(new FileInputStream(crawlLogExtract), out);
-    FileUtils.remove(crawlLogExtract);
+	if (crawlLogExtract != null) {
+    	StreamUtils.copyInputStreamToJspWriter(new FileInputStream(crawlLogExtract), out);
+    	FileUtils.remove(crawlLogExtract);
+	} else {
+	    out.println("Some error occurred: Null result for regexp '" + regexp + "' and job '" + jobid + "'");
+	}
 %>
 </pre>
 <%
