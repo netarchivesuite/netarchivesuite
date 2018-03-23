@@ -46,8 +46,8 @@ import dk.netarkivet.heritrix3.monitor.resources.ConfigResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3BudgetResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3CrawlLogCachedResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3FilterResource;
-import dk.netarkivet.heritrix3.monitor.resources.H3FrontierDeleteResource;
-import dk.netarkivet.heritrix3.monitor.resources.H3FrontierResource;
+import dk.netarkivet.heritrix3.monitor.resources.H3FrontierQueueDeleteResource;
+import dk.netarkivet.heritrix3.monitor.resources.H3FrontierQueueResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3JobResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3ReportResource;
 import dk.netarkivet.heritrix3.monitor.resources.H3ScriptResource;
@@ -96,11 +96,11 @@ public class HistoryServlet extends HttpServlet implements ResourceManagerAbstra
         h3CrawlLogCachedResource.resources_init(environment);
         h3CrawlLogCachedResource.resources_add(this);
 
-        H3FrontierResource h3FrontierResource = new H3FrontierResource();
+        H3FrontierQueueResource h3FrontierResource = new H3FrontierQueueResource();
         h3FrontierResource.resources_init(environment);
         h3FrontierResource.resources_add(this);
 
-        H3FrontierDeleteResource h3FrontierDeleteResource = new H3FrontierDeleteResource();
+        H3FrontierQueueDeleteResource h3FrontierDeleteResource = new H3FrontierQueueDeleteResource();
         h3FrontierDeleteResource.resources_init(environment);
         h3FrontierDeleteResource.resources_add(this);
 

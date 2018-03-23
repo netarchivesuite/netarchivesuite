@@ -49,12 +49,12 @@ import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
 import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 
-public class H3FrontierResource implements ResourceAbstract {
+public class H3FrontierQueueResource implements ResourceAbstract {
 
     private NASEnvironment environment;
 
-    protected int R_FRONTIER = -1;
-    
+    protected int R_FRONTIER_QUEUE = -1;
+
     @Override
     public void resources_init(NASEnvironment environment) {
         this.environment = environment;
@@ -62,7 +62,7 @@ public class H3FrontierResource implements ResourceAbstract {
 
     @Override
     public void resources_add(ResourceManagerAbstract resourceManager) {
-        R_FRONTIER = resourceManager.resource_add(this, "/job/<numeric>/frontier/", false);
+        R_FRONTIER_QUEUE = resourceManager.resource_add(this, "/job/<numeric>/frontier/", false);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class H3FrontierResource implements ResourceAbstract {
             NASEnvironment.servicePath = req.getContextPath() + req.getServletPath() + "/";
         }
         String method = req.getMethod().toUpperCase();
-        if (resource_id == R_FRONTIER) {
+        if (resource_id == R_FRONTIER_QUEUE) {
             if ("GET".equals(method) || "POST".equals(method)) {
                 frontier_list(req, resp, httpLocale, numerics);
             }
