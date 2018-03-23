@@ -50,21 +50,36 @@ void logEvent(String e) {
     }
 }
 
+/**
+ * Dump the frontier queue to a text file in the job directory.
+ * The job MUST be paused.
+ */
+void exportPendingUris() {
+    if (!job.crawlController.isPaused()) {
+	    rawOut.println "Error: This job is not in a Paused state. Wait until job is paused and try again."
+	    return
+    }
+    rawOut.println("Exported: " + job.exportPendingUris())
+}
+
 void deleteFromFrontier(String regex) {
     //job.crawlController.requestCrawlPause()
-    if (job.crawlController.isPaused()) {
-	    count = job.crawlController.frontier.deleteURIs(".*", regex)
-	    //rawOut.println "REMINDER: This job is now in a Paused state."
-	    logEvent("Deleted " + count + " URIs from frontier matching regex '" + regex + "'")
-	    rawOut.println count + " URIs were deleted from the frontier."
-	    rawOut.println("This action has been logged in " + logfilePrefix + ".log")
+    if (job.crawlController.isPausing()) {
+	    rawOut.println "Error: This job is not in a Paused state. Wait until job is paused and try again."
+	    return
     }
-    else {
-	    rawOut.println "This job is not in a Paused state. Wait until job is pause and try again."
-    }
+    count = job.crawlController.frontier.deleteURIs(".*", regex)
+    //rawOut.println "REMINDER: This job is now in a Paused state."
+    logEvent("Deleted " + count + " URIs from frontier matching regex '" + regex + "'")
+    rawOut.println count + " URIs were deleted from the frontier."
+    rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
 
 void getNumberOfUrlsInFrontier() {
+    if (job.crawlController.isPausing()) {
+	    htmlOut.println "Error: This job is not in a Paused state. Wait until job is paused and try again."
+	    return
+	}
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
     pendingUrisCount = pendingUris.pendingUrisDB.count()
@@ -72,6 +87,10 @@ void getNumberOfUrlsInFrontier() {
 }
 
 void getNumberOfMatchedUrlsInFrontier(String regex) {
+    if (job.crawlController.isPausing()) {
+	    rawOut.println "Error: This job is not in a Paused state. Wait until job is paused and try again."
+	    return
+	}
     matchingCount = 0
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues

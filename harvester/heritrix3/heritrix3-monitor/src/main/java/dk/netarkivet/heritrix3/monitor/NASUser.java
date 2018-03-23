@@ -47,7 +47,7 @@ public class NASUser implements LoginTemplateUser {
     public static NASUser getDefaultUser() {
         NASUser u = new NASUser();
         u.active=true;
-        u.id = "svc@kb.dk";
+        u.id = "null@kb.dk";
         u.username="admin";
         return u;
     }

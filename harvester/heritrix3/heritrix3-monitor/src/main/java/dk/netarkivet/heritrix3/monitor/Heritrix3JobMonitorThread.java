@@ -126,7 +126,6 @@ public class Heritrix3JobMonitorThread implements Runnable {
         try {
             LOG.info("Heritrix3 Job Monitor Thread started.");
 
-            //File tmpFolder = new File("/tmp/");
             File tmpFolder = environment.tempPath;
             File[] oldFiles = tmpFolder.listFiles(new FilenameFilter() {
                 @Override
@@ -250,6 +249,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
     public Set<Long> getRunningJobs() {
         try {
             //@SuppressWarnings("unchecked")
+        	// TODO Check if run standalone or with the rest of the GUI.
             //Set<Long> orgJobs = harvestMonitor.getRunningJobs();
             Set<Long> orgJobs = RunningJobsInfoDAO.getInstance().getHistoryRecordIds();
             Set<Long> jobs = new TreeSet<Long>(orgJobs);

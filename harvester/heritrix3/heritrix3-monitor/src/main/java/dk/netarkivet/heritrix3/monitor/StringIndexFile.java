@@ -26,9 +26,25 @@ package dk.netarkivet.heritrix3.monitor;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+/**
+ * Paged text reader using a separate line feed index file.
+ * The index file is just a file of long index values pointing in to the text file
+ *
+ * @author nicl
+ */
 public class StringIndexFile {
 
-    public static byte[] readPage(RandomAccessFile idxRaf, RandomAccessFile logRaf, long page, long itemsPerPage, boolean descending) throws IOException {
+	/**
+	 * Uses an index file to read a page from a text file.
+	 * @param idxRaf index file with pointers to all the lines in the text file
+	 * @param textRaf indexed text file 
+	 * @param page page to return
+	 * @param itemsPerPage item per page
+	 * @param descending start from the beginning or end of the index/text file
+	 * @return
+	 * @throws IOException if an I/O exception occurs while reading a page
+	 */
+    public static byte[] readPage(RandomAccessFile idxRaf, RandomAccessFile textRaf, long page, long itemsPerPage, boolean descending) throws IOException {
         byte[] bytes = null;;
         if (page < 1) {
             throw new IllegalArgumentException();
@@ -49,9 +65,9 @@ public class StringIndexFile {
                 fromIdx = idxRaf.readLong();
                 idxRaf.seek(toIdx);
                 toIdx = idxRaf.readLong();
-                logRaf.seek(fromIdx);
+                textRaf.seek(fromIdx);
                 bytes = new byte[(int)(toIdx - fromIdx)];
-                logRaf.readFully(bytes, 0, (int)(toIdx - fromIdx));
+                textRaf.readFully(bytes, 0, (int)(toIdx - fromIdx));
             } else {
                 // Backwards.
                 long toIdx = length - ((page - 1) * itemsPerPage * 8);
@@ -84,15 +100,15 @@ public class StringIndexFile {
                             | (pageIdxArr[pos++] & 255) << 24 | (pageIdxArr[pos++] & 255) << 16 | (pageIdxArr[pos++] & 255) << 8 | (pageIdxArr[pos++] & 255);
                     idxArr[dstIdx++] = l;
                 }
-                // Load the crawllog lines for page.
+                // Load the text lines for page.
                 pos = 0;
                 limit /= 8;
                 fromIdx = idxArr[pos];
                 toIdx = idxArr[limit - 1];
-                logRaf.seek(fromIdx);
+                textRaf.seek(fromIdx);
                 byte[] tmpBytes = new byte[(int)(toIdx - fromIdx)];
-                logRaf.readFully(tmpBytes, 0, (int)(toIdx - fromIdx));
-                // Reverse crawllog lines for page.
+                textRaf.readFully(tmpBytes, 0, (int)(toIdx - fromIdx));
+                // Reverse text lines for page.
                 bytes = new byte[tmpBytes.length];
                 long base = idxArr[pos++];
                 fromIdx = base;

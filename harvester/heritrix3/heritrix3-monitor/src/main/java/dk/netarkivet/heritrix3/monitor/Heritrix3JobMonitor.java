@@ -97,7 +97,7 @@ public class Heritrix3JobMonitor implements Pageable {
     }
 
     public synchronized void init() {
-    	try {
+        try {
             if (bActive && !bInitialized) {
                 if (job == null) {
                     job = Heritrix3JobMonitorThread.jobDAO.read(jobId);
@@ -128,19 +128,20 @@ public class Heritrix3JobMonitor implements Pageable {
                     } else {
                         idxRaf.seek(idxRaf.length() - 8);
                         lastIndexed = idxRaf.readLong();
-                    	totalCachedLines = (idxRaf.length() / 8) - 1;
+                        totalCachedLines = (idxRaf.length() / 8) - 1;
                     }
                     idxRaf.seek(idxRaf.length());
                     logRaf.seek(logRaf.length());
                     bInitialized = true;
                 }
             }
-    	} catch (Throwable t) {
-    	}
+        } catch (Throwable t) {
+        	// TODO Save this state internally.
+        }
     }
 
     public synchronized void update() {
-    	try {
+        try {
             if (job != null) {
                 Job tmpJob = job = Heritrix3JobMonitorThread.jobDAO.read(jobId);
                 if (tmpJob != null) {
@@ -153,8 +154,9 @@ public class Heritrix3JobMonitor implements Pageable {
                     jobResult = tmpJobResult;
                 }
             }
-    	} catch (Throwable t) {
-    	}
+        } catch (Throwable t) {
+        	// TODO Save this state internally.
+        }
     }
 
     public synchronized void updateCrawlLog(byte[] tmpBuf) {
@@ -174,15 +176,15 @@ public class Heritrix3JobMonitor implements Pageable {
                     pos = logRaf.length();
                     to = pos;
                     if (jobResult != null && jobResult.job != null && jobResult.job.crawlLogFilePath != null) {
-                    	long rangeFrom = pos;
-                    	long rangeTo = pos + tmpBuf.length - 1;
+                        long rangeFrom = pos;
+                        long rangeTo = pos + tmpBuf.length - 1;
                         StreamResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, null, null, true);
                         if (anypathResult != null && rangeFrom < anypathResult.contentLength) {
                             LOG.info("Crawllog length for job {}={}.", jobId, anypathResult.contentLength);
-                        	if (rangeTo >= anypathResult.contentLength) {
-                        		rangeTo = anypathResult.contentLength - 1;
-                        	}
-                        	anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, rangeFrom, rangeTo);
+                            if (rangeTo >= anypathResult.contentLength) {
+                                rangeTo = anypathResult.contentLength - 1;
+                            }
+                            anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, rangeFrom, rangeTo);
                             LOG.info("Crawllog byterange download for job {}. ({}-{})", jobId, rangeFrom, rangeTo);
                             if (anypathResult != null && anypathResult.byteRange != null && anypathResult.in != null) {
                                 byteRange = anypathResult.byteRange;
@@ -227,11 +229,12 @@ public class Heritrix3JobMonitor implements Pageable {
                 }
             }
         } catch (Throwable t) {
+        	// TODO Save this state internally.
         }
     }
 
     public synchronized void cleanup(List<File> oldFilesList) {
-    	try {
+        try {
             bActive = false;
             bInitialized = false;
             hostUrl = null;
@@ -248,13 +251,14 @@ public class Heritrix3JobMonitor implements Pageable {
             SearchResult sr;
             while (srIter.hasNext()) {
                 sr = srIter.next();
+                oldFilesList.add(sr.srTextFile);
                 oldFilesList.add(sr.srIdxFile);
-                oldFilesList.add(sr.srLogFile);
-                sr.cleanup();
+                sr.close();
             }
             qSearchResultMap.clear();
-    	} catch (Throwable t) {
-    	}
+        } catch (Throwable t) {
+        	LOG.error("Error while closing monitor for job {}!", t, jobId);
+        }
     }
 
     @Override
@@ -268,7 +272,7 @@ public class Heritrix3JobMonitor implements Pageable {
     }
     
     public long getTotalCachedLines() {
-    	return totalCachedLines;
+        return totalCachedLines;
     }
 
     @Override
@@ -280,14 +284,22 @@ public class Heritrix3JobMonitor implements Pageable {
         return (bActive && bInitialized);
     }
 
+    /** Map of cached search results. */
     protected Map<String, SearchResult> qSearchResultMap = new HashMap<String, SearchResult>();
 
+    /** Internal counter used when storing cached search files. */
     protected int searchResultNr = 1;
 
+    /**
+     * Returns a <code>SearchResult</code> object used to search in the crawllog.
+     * @param q search string
+     * @return a <code>SearchResult</code> object used to search in the crawllog
+     * @throws IOException if an I/O exceptions occurs whule creating a <code>SearchResult</code> object 
+     */
     public synchronized SearchResult getSearchResult(String q) throws IOException {
         SearchResult searchResult = qSearchResultMap.get(q);
         if (searchResult == null) {
-            searchResult = new SearchResult(environment, this, q, searchResultNr++);
+            searchResult = new SearchResult(logFile, new File(environment.tempPath, "crawllog-" + jobId), q, searchResultNr++);
             qSearchResultMap.put(q, searchResult);
         }
         return searchResult;
@@ -295,10 +307,10 @@ public class Heritrix3JobMonitor implements Pageable {
 
     /**
      * Set the file path to the crawl log
-     *
      * @param crawlLogFilePath File path to the crawl log
      */
     public void setCrawlLogFilePath(String crawlLogFilePath) {
         this.crawlLogFilePath = crawlLogFilePath;
     }
+
 }

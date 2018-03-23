@@ -36,22 +36,26 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.antiaction.common.filter.Caching;
 import com.antiaction.common.templateengine.TemplateBuilderFactory;
 
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitorThread;
 import dk.netarkivet.heritrix3.monitor.HistoryServlet;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
-import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 
 public class IndexResource implements ResourceAbstract {
+
+    /** The logger for this class. */
+    private static final Logger LOG = LoggerFactory.getLogger(NASEnvironment.class);
 
     private NASEnvironment environment;
 
@@ -119,7 +123,7 @@ public class IndexResource implements ResourceAbstract {
                                 newH3JobMonitor.start();
                             }
                             catch (Throwable t) {
-                            	t.printStackTrace();
+                            	LOG.error("H3 monitor thread could not be start!", t);
                             }
                             environment.h3JobMonitorThread = newH3JobMonitor; 
                         }
@@ -180,6 +184,8 @@ public class IndexResource implements ResourceAbstract {
             	if (channelStr != null) {
                     hcs = hcMap.get(channelStr);
                     hcs.h3JobList.add(h3Job);
+            	} else {
+                	LOG.error("Channel missing from job {}!", h3Job.job.getJobID());
             	}
             }
         }
@@ -232,12 +238,10 @@ public class IndexResource implements ResourceAbstract {
         }
 
         StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), req, locale, null);
-        //String url = req.getPathInfo();
-        //HTMLUtils.generateNavigationTree(menuSb, url, locale);
 
         masterTplBuilder.insertContent("H3 Remote Access", menuSb.toString(), httpLocale.generateLanguageLinks(),
         		environment.I18N.getString(locale, "pagetitle;h3.remote.access"), sb.toString(),
-        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
+        		environment.nasJobWrapper.getMetaRefreshHeaderHtml()).write(out);
 
         out.flush();
         out.close();

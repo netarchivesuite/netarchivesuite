@@ -43,6 +43,9 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.antiaction.common.templateengine.TemplateMaster;
 import com.antiaction.common.templateengine.login.LoginTemplateHandler;
 import com.antiaction.common.templateengine.storage.TemplateFileStorageManager;
@@ -55,27 +58,43 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.Constants;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.heritrix3.monitor.resources.H3JobResource;
+import dk.netarkivet.heritrix3.monitor.resources.MasterTemplateBuilder;
 
+/**
+ * This class contains all the configuration and common objects used by the HistoryServlet and all of the resource pages. 
+ * It is constructed when the HistoryServlet is first constructed.
+ */
 public class NASEnvironment {
 
+    /** The logger for this class. */
+    private static final Logger LOG = LoggerFactory.getLogger(NASEnvironment.class);
+
+    /** Location of the Groovy script used by some of the resources. */
     private static final String NAS_GROOVY_RESOURCE_PATH = "dk/netarkivet/heritrix3/monitor/nas.groovy";
 
+    /** Cached Groovy script. */
     public String NAS_GROOVY_SCRIPT;
 
     /** servletConfig. */
     protected ServletConfig servletConfig = null;
 
+    /** Template master used to generate HTML. */
     public TemplateMaster templateMaster = null;
 
+    /** Template file used on the login page. */
     protected String login_template_name = null;
 
+    /** Login template handler used by the login mechanism. */
     protected LoginTemplateHandler<NASUser> loginHandler = null;
 
+    /** Temporary path used to store cached crawllog and search results. */
     public File tempPath;
 
     public String h3AdminName;
 
     public String h3AdminPassword;
+
+    public NASJobWrapper nasJobWrapper;
 
     public Heritrix3JobMonitorThread h3JobMonitorThread;
 
@@ -95,6 +114,12 @@ public class NASEnvironment {
 
     public final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
 
+    /**
+     * 
+     * @param resource path to the requested resource
+     * @return resource read in to a String
+     * @throws IOException if an I/O exception occurs while reading the resource
+     */
     public String getResourceAsString(String resource) throws IOException {
         InputStream in = H3JobResource.class.getClassLoader().getResourceAsStream(resource);
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
@@ -141,17 +166,25 @@ public class NASEnvironment {
         h3AdminName = Settings.get(HarvesterSettings.HERITRIX_ADMIN_NAME);
         h3AdminPassword = Settings.get(HarvesterSettings.HERITRIX_ADMIN_PASSWORD);
 
+        nasJobWrapper = new NASJobWrapper();
+
+        MasterTemplateBuilder.versionString = nasJobWrapper.versionString;
+        MasterTemplateBuilder.environmentName = nasJobWrapper.environmentName;
+
         this.servletConfig = theServletConfig;
         h3JobMonitorThread = new Heritrix3JobMonitorThread(this);
     }
 
+    /**
+     * Initialise and start the H3 job monitor background thread.
+     */
     public void start() {
         try {
         	h3JobMonitorThread.init();
             h3JobMonitorThread.start();
         }
         catch (Throwable t) {
-        	t.printStackTrace();
+        	LOG.error("H3 monitor thread could not be start!", t);
         }
     }
 

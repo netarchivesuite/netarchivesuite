@@ -39,14 +39,12 @@ import org.netarchivesuite.heritrix3wrapper.jaxb.Report;
 import com.antiaction.common.filter.Caching;
 import com.antiaction.common.templateengine.TemplateBuilderFactory;
 
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
-import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 
 public class H3ReportResource implements ResourceAbstract {
 
@@ -141,7 +139,7 @@ public class H3ReportResource implements ResourceAbstract {
         StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), req, locale, h3Job);
 
         masterTplBuilder.insertContent("Job "+ jobId + " Reports", menuSb.toString(), httpLocale.generateLanguageLinks(), "Job " + jobId + " Reports", sb.toString(),
-        		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
+        		environment.nasJobWrapper.getMetaRefreshHeaderHtml()).write(out);
 
         out.flush();
         out.close();

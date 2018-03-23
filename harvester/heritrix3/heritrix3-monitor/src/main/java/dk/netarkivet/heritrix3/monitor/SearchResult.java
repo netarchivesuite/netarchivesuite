@@ -23,6 +23,7 @@
 
 package dk.netarkivet.heritrix3.monitor;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -33,55 +34,87 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 
-public class SearchResult implements Pageable {
+/**
+ * Class used to perform regex search and cached the result on disk.
+ * Supports updating the search if the original file increased after a previous search.
+ * Also used the <code>StringIndexFile</code> class to show a paged view of the search results.
+ *
+ * @author nicl
+ */
+public class SearchResult implements Pageable, Closeable {
 
-    protected Heritrix3JobMonitor h3Job;
+	/** Original text file to search in. */
+	protected File textFile;
 
+	/** Reusable regex pattern object. */
     protected Pattern p;
+
+    /** Reusable regex matches object. */
     protected Matcher m;
 
-    protected File srLogFile;
+    /** Search result text file. */
+    protected File srTextFile;
 
-    protected RandomAccessFile srLogRaf;
+    /** Search result text random access file. */
+    protected RandomAccessFile srTextRaf;
 
+    /** Search result index file. */
     protected File srIdxFile;
 
+    /** Search result index random access file. */
     protected RandomAccessFile srIdxRaf;
 
+    /** Last position in the original text file which has been searched. */
     protected long lastIndexed;
 
-    public SearchResult(NASEnvironment environment, Heritrix3JobMonitor h3Job, String q, int searchResultNr) throws IOException {
-        this.h3Job = h3Job;
+    /**
+     * Create a search result object and prepare the stored cache files.
+     * @param textFile original text file
+     * @param srBaseFile base file(name) to use when creating the search result text and index files
+     * @param q regex string
+     * @param searchResultNr unique sequential search result number used to store cache files
+     * @throws IOException if an I/O exception occurs whule creating cache files
+     */
+    public SearchResult(File textFile, File srBaseFile, String q, int searchResultNr) throws IOException {
+    	this.textFile = textFile;
         p = Pattern.compile(q, Pattern.CASE_INSENSITIVE);
         // Create a reusable pattern matcher object for use with the reset method.
         m = p.matcher("42");
-        srLogFile = new File(environment.tempPath, "crawllog-" + h3Job.jobId + "-" + searchResultNr + ".log");
-        srLogRaf = new RandomAccessFile(srLogFile, "rw");
-        srLogRaf.setLength(0);
-        srIdxFile = new File(environment.tempPath, "crawllog-" + h3Job.jobId + "-" + searchResultNr + ".idx");
+        srTextFile = new File(srBaseFile, "-" + searchResultNr + ".log");
+        srTextRaf = new RandomAccessFile(srTextFile, "rw");
+        srTextRaf.setLength(0);
+        srIdxFile = new File(srBaseFile, "-" + searchResultNr + ".idx");
         srIdxRaf = new RandomAccessFile(srIdxFile, "rw");
         srIdxRaf.setLength(0);
         srIdxRaf.writeLong(0);
         lastIndexed = 0;
     }
 
+    /**
+     * Perform an update search on the part of the original text file that has not yet been read.
+     * @throws IOException if an I/O exception occurs while updaing the cached search result files
+     */
     public synchronized void update() throws IOException {
-        RandomAccessFile logRaf = new RandomAccessFile(h3Job.logFile, "r");
-        logRaf.seek(lastIndexed);
-        srLogRaf.seek(srLogRaf.length());
+    	// Check to see if the search result is up to date.
+    	if (lastIndexed >= textFile.length()) {
+    		return;
+    	}
+        RandomAccessFile textRaf = new RandomAccessFile(textFile, "r");
+        textRaf.seek(lastIndexed);
+        srTextRaf.seek(srTextRaf.length());
         srIdxRaf.seek(srIdxRaf.length());
-        FileChannel logChannel = logRaf.getChannel();
+        FileChannel textChannel = textRaf.getChannel();
         byte[] bytes = new byte[1024*1024];
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
         String tmpStr;
         //long index = lastIndex;
-        long index = srLogRaf.length();
+        long index = srTextRaf.length();
         int pos;
         int to;
         int mark;
         int limit;
         boolean b;
-        while (logChannel.read(byteBuffer) != -1) {
+        while (textChannel.read(byteBuffer) != -1) {
             byteBuffer.flip();
             pos = byteBuffer.position();
             mark = pos;
@@ -97,7 +130,7 @@ public class SearchResult implements Pageable {
                         tmpStr = new String(bytes, mark, to - mark, "UTF-8");
                         m.reset(tmpStr);
                         if (m.matches()) {
-                            srLogRaf.write(bytes, mark, pos - mark);
+                            srTextRaf.write(bytes, mark, pos - mark);
                             index += pos - mark;
                             srIdxRaf.writeLong(index);
                         }
@@ -114,7 +147,7 @@ public class SearchResult implements Pageable {
             byteBuffer.position(mark);
             byteBuffer.compact();
         }
-        logRaf.close();
+        textRaf.close();
     }
 
     @Override
@@ -124,15 +157,17 @@ public class SearchResult implements Pageable {
 
     @Override
     public long getLastIndexed() {
-        return srLogFile.length();
+        return srTextFile.length();
     }
 
     @Override
     public synchronized byte[] readPage(long page, long itemsPerPage, boolean descending) throws IOException {
-        return StringIndexFile.readPage(srIdxRaf, srLogRaf, page, itemsPerPage, descending);
+        return StringIndexFile.readPage(srIdxRaf, srTextRaf, page, itemsPerPage, descending);
     }
 
-    public synchronized void cleanup() {
+    @Override
+    public synchronized void close() {
+        IOUtils.closeQuietly(srTextRaf);
         IOUtils.closeQuietly(srIdxRaf);
     }
 

@@ -32,9 +32,6 @@ import com.antiaction.common.templateengine.TemplateBuilderBase;
 import com.antiaction.common.templateengine.TemplateBuilderPlaceHolder;
 import com.antiaction.common.templateengine.TemplatePlaceHolder;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
@@ -46,10 +43,10 @@ import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 public class MasterTemplateBuilder extends TemplateBuilderBase {
 
 	/** Get and cache the versions string from the jar manifest file. */
-    protected final String version = Constants.getVersionString(true);
+    public static String versionString;
 
     /** Get and cache the environment name used for this installation. */
-    protected final String environment = Settings.get(CommonSettings.ENVIRONMENT_NAME);
+    public static String environmentName;
 
     /** Hook into the template to insert title content. */
 	@TemplateBuilderPlaceHolder("title")
@@ -139,10 +136,10 @@ public class MasterTemplateBuilder extends TemplateBuilderBase {
             contentPlace.setText(content);
         }
         if (versionPlace != null) {
-            versionPlace.setText(version);
+            versionPlace.setText(versionString);
         }
         if (environmentPlace != null) {
-            environmentPlace.setText(environment);
+            environmentPlace.setText(environmentName);
         }
         if (refreshPlace != null) {
         	refreshPlace.setText(refresh);
