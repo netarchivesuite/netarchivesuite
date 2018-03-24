@@ -104,6 +104,18 @@ public class NASEnvironment {
 
     public HttpLocaleHandler httpLocaleUtils;
 
+    public long cacheCrawllogThreshold = 10000;
+
+    public boolean bCacheCrawllog = true;
+
+    public long pauseQueueThreshold = 10000;
+
+    public boolean bPauseQueueThreshold = true;
+
+    public boolean bFrontierQueueDump = true;
+
+    public boolean bFrontierQueueCache = true;
+
     public static class StringMatcher {
         public String str;
         public Pattern p;

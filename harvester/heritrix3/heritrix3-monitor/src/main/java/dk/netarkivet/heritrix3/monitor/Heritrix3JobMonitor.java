@@ -247,8 +247,8 @@ public class Heritrix3JobMonitor implements Pageable {
             IOUtils.closeQuietly(idxRaf);
             oldFilesList.add(logFile);
             oldFilesList.add(idxFile);
-            Iterator<SearchResult> srIter = qSearchResultMap.values().iterator();
-            SearchResult sr;
+            Iterator<IndexedTextFileSearchResult> srIter = qSearchResultMap.values().iterator();
+            IndexedTextFileSearchResult sr;
             while (srIter.hasNext()) {
                 sr = srIter.next();
                 oldFilesList.add(sr.srTextFile);
@@ -277,7 +277,7 @@ public class Heritrix3JobMonitor implements Pageable {
 
     @Override
     public synchronized byte[] readPage(long page, long itemsPerPage, boolean descending) throws IOException {
-        return StringIndexFile.readPage(idxRaf, logRaf, page, itemsPerPage, descending);
+        return IndexedTextFile.readPage(idxRaf, logRaf, page, itemsPerPage, descending);
     }
 
     public synchronized boolean isReady() {
@@ -285,7 +285,7 @@ public class Heritrix3JobMonitor implements Pageable {
     }
 
     /** Map of cached search results. */
-    protected Map<String, SearchResult> qSearchResultMap = new HashMap<String, SearchResult>();
+    protected Map<String, IndexedTextFileSearchResult> qSearchResultMap = new HashMap<String, IndexedTextFileSearchResult>();
 
     /** Internal counter used when storing cached search files. */
     protected int searchResultNr = 1;
@@ -296,10 +296,10 @@ public class Heritrix3JobMonitor implements Pageable {
      * @return a <code>SearchResult</code> object used to search in the crawllog
      * @throws IOException if an I/O exceptions occurs whule creating a <code>SearchResult</code> object 
      */
-    public synchronized SearchResult getSearchResult(String q) throws IOException {
-        SearchResult searchResult = qSearchResultMap.get(q);
+    public synchronized IndexedTextFileSearchResult getSearchResult(String q) throws IOException {
+        IndexedTextFileSearchResult searchResult = qSearchResultMap.get(q);
         if (searchResult == null) {
-            searchResult = new SearchResult(logFile, new File(environment.tempPath, "crawllog-" + jobId), q, searchResultNr++);
+            searchResult = new IndexedTextFileSearchResult(logFile, new File(environment.tempPath, "crawllog-" + jobId), q, searchResultNr++);
             qSearchResultMap.put(q, searchResult);
         }
         return searchResult;

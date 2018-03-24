@@ -32,7 +32,7 @@ import java.io.RandomAccessFile;
  *
  * @author nicl
  */
-public class StringIndexFile {
+public class IndexedTextFile {
 
 	/**
 	 * Uses an index file to read a page from a text file.

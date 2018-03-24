@@ -43,7 +43,7 @@ import dk.netarkivet.heritrix3.monitor.Pageable;
 import dk.netarkivet.heritrix3.monitor.Pagination;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
-import dk.netarkivet.heritrix3.monitor.SearchResult;
+import dk.netarkivet.heritrix3.monitor.IndexedTextFileSearchResult;
 import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 
 public class H3CrawlLogCachedResource implements ResourceAbstract {
@@ -140,7 +140,7 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
             long totalCachedLines = h3Job.getTotalCachedLines();
             long totalCachedSize = h3Job.getLastIndexed();
 
-            SearchResult searchResult = null;
+            IndexedTextFileSearchResult searchResult = null;
             
             if (q != null) {
                 searchResult = h3Job.getSearchResult(q);

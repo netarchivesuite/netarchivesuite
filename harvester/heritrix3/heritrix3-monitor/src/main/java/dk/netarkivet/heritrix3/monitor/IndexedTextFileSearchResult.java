@@ -41,7 +41,7 @@ import org.apache.commons.io.IOUtils;
  *
  * @author nicl
  */
-public class SearchResult implements Pageable, Closeable {
+public class IndexedTextFileSearchResult implements Pageable, Closeable {
 
 	/** Original text file to search in. */
 	protected File textFile;
@@ -75,7 +75,7 @@ public class SearchResult implements Pageable, Closeable {
      * @param searchResultNr unique sequential search result number used to store cache files
      * @throws IOException if an I/O exception occurs whule creating cache files
      */
-    public SearchResult(File textFile, File srBaseFile, String q, int searchResultNr) throws IOException {
+    public IndexedTextFileSearchResult(File textFile, File srBaseFile, String q, int searchResultNr) throws IOException {
     	this.textFile = textFile;
         p = Pattern.compile(q, Pattern.CASE_INSENSITIVE);
         // Create a reusable pattern matcher object for use with the reset method.
@@ -162,7 +162,7 @@ public class SearchResult implements Pageable, Closeable {
 
     @Override
     public synchronized byte[] readPage(long page, long itemsPerPage, boolean descending) throws IOException {
-        return StringIndexFile.readPage(srIdxRaf, srTextRaf, page, itemsPerPage, descending);
+        return IndexedTextFile.readPage(srIdxRaf, srTextRaf, page, itemsPerPage, descending);
     }
 
     @Override
