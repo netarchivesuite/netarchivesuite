@@ -5,7 +5,7 @@ Author:     $Author: mss $
 Date:       $Date: 2012-02-09 08:28:35 +0100 (Thu, 09 Feb 2012) $
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2017 The Royal Danish Library,
+Copyright 2004-2018 The Royal Danish Library,
 the National Library of France and the Austrian
 National Library.
 

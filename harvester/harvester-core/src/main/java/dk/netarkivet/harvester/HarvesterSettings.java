@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -216,17 +216,24 @@ public class HarvesterSettings {
     public static String OBJECT_LIMIT_SET_BY_QUOTA_ENFORCER = "settings.harvester.scheduler.jobGen.objectLimitIsSetByQuotaEnforcer";
 
     /**
+     * <b>settings.harvester.scheduler.jobGen.useAlternateSnapShotJobgenerationMethod</b>:</br>
+     * If value is true, we use an alternate method for jobgeneration of a snapshotharvest continuing a previous harvest.
+     * Default value is false.
+     */
+    public static String USE_ALTERNATE_SNAPSHOT_JOBGENERATION_METHOD = "settings.harvester.scheduler.jobGen.useAlternateSnapshotJobgenerationMethod";
+    
+    /**
      * <b>settings.harvester.scheduler.jobtimeouttime</b>:<br />
      * Time before a STARTED job times out and change status to FAILED. In seconds.
      */
     public static String JOB_TIMEOUT_TIME = "settings.harvester.scheduler.jobtimeouttime";
 
     /**
-     * <b>settings.harvester.scheduler.jobgenerationperiode</b>: <br>
+     * <b>settings.harvester.scheduler.jobgenerationperiod</b>: <br>
      * The period between checking if new jobs should be generated, in seconds. This is one minute because that's the
      * finest we can define in a harvest definition.
      */
-    public static String GENERATE_JOBS_PERIOD = "settings.harvester.scheduler.jobgenerationperiode";
+    public static String GENERATE_JOBS_PERIOD = "settings.harvester.scheduler.jobgenerationperiod";
 
     /**
      * <b>settings.harvester.harvesting.serverDir</b>: <br>

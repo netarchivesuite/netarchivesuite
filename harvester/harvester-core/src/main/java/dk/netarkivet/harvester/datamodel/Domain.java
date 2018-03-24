@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -825,7 +825,9 @@ public class Domain extends ExtendableEntity implements Named {
             log.warn(errMsgs.size() +  " errors were found: " + StringUtils.conjoin(",", errMsgs));
         }
         crawlerTraps = Collections.unmodifiableList(cleanedListOfCrawlerTraps);
-        log.debug("Domain {} has {} crawlertraps", domainName, crawlerTraps.size());
+        if (!crawlerTraps.isEmpty()) {
+            log.trace("Domain {} has {} crawlertraps", domainName, crawlerTraps.size());
+        }
     }
 
     /**

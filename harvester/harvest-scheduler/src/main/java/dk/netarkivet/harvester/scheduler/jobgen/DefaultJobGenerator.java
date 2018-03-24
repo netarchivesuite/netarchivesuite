@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -215,6 +215,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 && CONFIG_COUNT_SNAPSHOT > 0
                 && job.getDomainConfigurationMap().size() >= CONFIG_COUNT_SNAPSHOT
                 ) {
+            log.debug("Job for HD #{} has now reached the CONFIG_COUNT_SNAPSHOT limit {}", job.getOrigHarvestDefinitionID(), CONFIG_COUNT_SNAPSHOT);
             return false;
         }
 
@@ -228,12 +229,16 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             if (NumberUtils.compareInf(cfg.getMaxObjects(), forceMaxObjectsPerDomain) < 0
                     || (job.isConfigurationSetsObjectLimit() && NumberUtils.compareInf(cfg.getMaxObjects(),
                             forceMaxObjectsPerDomain) != 0)) {
+                log.debug("Job for HD #{} OBJECT_LIMIT of config (domain,config={},{}) incompatible with current job", 
+                        job.getOrigHarvestDefinitionID(), cfg.getDomainName(), cfg.getName());
                 return false;
             }
         } else {
             if (NumberUtils.compareInf(cfg.getMaxBytes(), forceMaxBytesPerDomain) < 0
                     || (job.isConfigurationSetsByteLimit() && NumberUtils.compareInf(cfg.getMaxBytes(),
                             forceMaxBytesPerDomain) != 0)) {
+                log.debug("Job for HD #{} BYTE_LIMIT of config (domain,config={},{}) incompatible with current job", 
+                        job.getOrigHarvestDefinitionID(), cfg.getDomainName(), cfg.getName());
                 return false;
             }
         }
@@ -250,6 +255,8 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         // Check if total count is exceeded
         long totalCountObjects = job.getTotalCountObjects();
         if ((totalCountObjects > 0) && ((expectation + totalCountObjects) > LIM_MAX_TOTAL_SIZE)) {
+            log.debug("Job for HD #{} will exceed LIM_MAX_TOTAL_SIZE({}), if config(domain,config={},{}) with expected object count {} is added", 
+                    job.getOrigHarvestDefinitionID(), LIM_MAX_TOTAL_SIZE, cfg.getDomainName(), cfg.getName(), expectation);
             return false;
         }
 
@@ -285,6 +292,8 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
 
         float relDiff = (float) xmaxCountObjects / (float) yminCountObjects;
         if (relDiff > LIM_MAX_REL_SIZE) {
+            log.debug("Job for HD #{} will be incompatible with LIM_MAX_REL_SIZE({}), if config(domain,config={},{}) with relDiff {} is added", 
+                    job.getOrigHarvestDefinitionID(), LIM_MAX_REL_SIZE, cfg.getDomainName(), cfg.getName(), relDiff);
             return false;
         }
 

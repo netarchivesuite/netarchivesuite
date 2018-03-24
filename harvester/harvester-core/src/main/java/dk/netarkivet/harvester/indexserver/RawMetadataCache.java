@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -72,7 +72,10 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
 
     /** The actual pattern to be used for matching the url in the metadata record */
     private Pattern urlPattern;
-
+ 
+   /** The actual pattern to be used for matching the mimetype in the metadata record */ 
+    private Pattern mimePattern;
+ 
     /**
      * Create a new RawMetadataCache. For a given job ID, this will fetch and cache selected content from metadata files
      * (&lt;ID&gt;-metadata-[0-9]+.arc). Any entry in a metadata file that matches both patterns will be returned. The
@@ -100,6 +103,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         } else {
             mimeMatcher1 = MATCH_ALL_PATTERN;
         }
+        mimePattern = mimeMatcher1;
         log.info("Metadata cache for '{}' is fetching metadata with urls matching '{}' and mimetype matching '{}'",
                 prefix, urlMatcher1.toString(), mimeMatcher1);
         job = new GetMetadataArchiveBatchJob(urlMatcher1, mimeMatcher1);
@@ -132,12 +136,12 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         //FIXME The current specifiedPattern also accepts files that that includes the Id in the metadatafile name, either
         // as a prefix, infix, or suffix (NAS-1712)
         final String specifiedPattern = ".*" + id + ".*" + metadataFilePatternSuffix;
-        // This suggested solution below is incompatible with the prefix pattern 
+        // This suggested solution below is incompatible with the prefix pattern (see NAS-2714) 
         // introduced in harvester/harvester-core/src/main/java/dk/netarkivet/harvester/harvesting/metadata/MetadataFileWriter.java
         // part of release 5.3.1
-        // final String specifiedPattern = id + metadataFilePatternSuffix; //This is incompatible with prefix pattern
-        log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}' on replica '{}'", job
-                .getClass().getName(), specifiedPattern, replicaUsed);
+        //final String specifiedPattern = id + metadataFilePatternSuffix; 
+        log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}' on replica '{}'. Url pattern is '{}' and mimepattern is '{}'", job
+                .getClass().getName(), specifiedPattern, replicaUsed, urlPattern, mimePattern);
         job.processOnlyFilesMatching(specifiedPattern);
         BatchStatus b = arcrep.batch(job, replicaUsed);
         // This check ensures that we got data from at least one file.
