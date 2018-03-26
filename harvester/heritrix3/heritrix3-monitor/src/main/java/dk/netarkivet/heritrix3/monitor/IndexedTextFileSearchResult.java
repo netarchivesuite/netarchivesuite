@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,7 +66,10 @@ public class IndexedTextFileSearchResult implements Pageable, Closeable {
     protected RandomAccessFile srIdxRaf;
 
     /** Last position in the original text file which has been searched. */
-    protected long lastIndexed;
+    protected long lastIndexedTextPosition;
+
+    /** Indexed text lines. */
+    public long indexedTextLines;
 
     /**
      * Create a search result object and prepare the stored cache files.
@@ -75,19 +79,57 @@ public class IndexedTextFileSearchResult implements Pageable, Closeable {
      * @param searchResultNr unique sequential search result number used to store cache files
      * @throws IOException if an I/O exception occurs whule creating cache files
      */
-    public IndexedTextFileSearchResult(File textFile, File srBaseFile, String q, int searchResultNr) throws IOException {
+    public IndexedTextFileSearchResult(File textFile, File dir, String srBaseFilename, String q, int searchResultNr) throws IOException {
     	this.textFile = textFile;
         p = Pattern.compile(q, Pattern.CASE_INSENSITIVE);
         // Create a reusable pattern matcher object for use with the reset method.
         m = p.matcher("42");
-        srTextFile = new File(srBaseFile, "-" + searchResultNr + ".log");
+        srTextFile = new File(dir, srBaseFilename + "-" + searchResultNr + ".log");
         srTextRaf = new RandomAccessFile(srTextFile, "rw");
         srTextRaf.setLength(0);
-        srIdxFile = new File(srBaseFile, "-" + searchResultNr + ".idx");
+        srIdxFile = new File(dir, srBaseFilename + "-" + searchResultNr + ".idx");
         srIdxRaf = new RandomAccessFile(srIdxFile, "rw");
         srIdxRaf.setLength(0);
         srIdxRaf.writeLong(0);
-        lastIndexed = 0;
+        lastIndexedTextPosition = 0;
+        indexedTextLines = 0;
+    }
+
+    @Override
+    public synchronized void close() {
+        indexedTextLines = 0;
+        IOUtils.closeQuietly(srTextRaf);
+        IOUtils.closeQuietly(srIdxRaf);
+    }
+
+    @Override
+    public long getTextFilesize() {
+        return srTextFile.length();
+    }
+
+    @Override
+    public long getIndexFilesize() {
+        return srIdxFile.length();
+    }
+
+    @Override
+    public long getLastIndexedTextPosition() {
+        return lastIndexedTextPosition;
+    }
+
+    @Override
+    public long getIndexedTextLines() {
+        return indexedTextLines;
+    }
+
+    @Override
+    public synchronized byte[] readPage(long page, long itemsPerPage, boolean descending) throws IOException {
+        return IndexedTextFile.readPage(srIdxRaf, srTextRaf, page, itemsPerPage, descending);
+    }
+
+    public void addFilesToOldFilesList(List<File> oldFilesList) {
+        oldFilesList.add(srTextFile);
+        oldFilesList.add(srIdxFile);
     }
 
     /**
@@ -96,11 +138,11 @@ public class IndexedTextFileSearchResult implements Pageable, Closeable {
      */
     public synchronized void update() throws IOException {
     	// Check to see if the search result is up to date.
-    	if (lastIndexed >= textFile.length()) {
+    	if (lastIndexedTextPosition >= textFile.length()) {
     		return;
     	}
         RandomAccessFile textRaf = new RandomAccessFile(textFile, "r");
-        textRaf.seek(lastIndexed);
+        textRaf.seek(lastIndexedTextPosition);
         srTextRaf.seek(srTextRaf.length());
         srIdxRaf.seek(srIdxRaf.length());
         FileChannel textChannel = textRaf.getChannel();
@@ -130,11 +172,12 @@ public class IndexedTextFileSearchResult implements Pageable, Closeable {
                         tmpStr = new String(bytes, mark, to - mark, "UTF-8");
                         m.reset(tmpStr);
                         if (m.matches()) {
-                            srTextRaf.write(bytes, mark, pos - mark);
+                        	srTextRaf.write(bytes, mark, pos - mark);
                             index += pos - mark;
                             srIdxRaf.writeLong(index);
+                        	++indexedTextLines;
                         }
-                        lastIndexed += pos - mark;
+                        lastIndexedTextPosition += pos - mark;
                         // next
                         mark = pos;
                         //index += pos - mark;
@@ -148,27 +191,6 @@ public class IndexedTextFileSearchResult implements Pageable, Closeable {
             byteBuffer.compact();
         }
         textRaf.close();
-    }
-
-    @Override
-    public long getIndexSize() {
-        return srIdxFile.length();
-    }
-
-    @Override
-    public long getLastIndexed() {
-        return srTextFile.length();
-    }
-
-    @Override
-    public synchronized byte[] readPage(long page, long itemsPerPage, boolean descending) throws IOException {
-        return IndexedTextFile.readPage(srIdxRaf, srTextRaf, page, itemsPerPage, descending);
-    }
-
-    @Override
-    public synchronized void close() {
-        IOUtils.closeQuietly(srTextRaf);
-        IOUtils.closeQuietly(srIdxRaf);
     }
 
 }

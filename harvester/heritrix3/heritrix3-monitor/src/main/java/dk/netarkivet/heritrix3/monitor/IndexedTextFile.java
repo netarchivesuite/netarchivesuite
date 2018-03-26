@@ -23,8 +23,14 @@
 
 package dk.netarkivet.heritrix3.monitor;
 
+import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.util.List;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  * Paged text reader using a separate line feed index file.
@@ -32,9 +38,108 @@ import java.io.RandomAccessFile;
  *
  * @author nicl
  */
-public class IndexedTextFile {
+public class IndexedTextFile implements Pageable, Closeable {
 
-	/**
+    /** Text file. */
+    public File textFile;
+
+    /** Text random access file. */
+    public RandomAccessFile textRaf;
+
+    /** Index file. */
+    public File idxFile;
+
+    /** Search result index random access file. */
+    public RandomAccessFile idxRaf;
+
+    /** Last position in the original text file which has been searched. */
+    public long lastIndexedTextPosition;
+
+    /** Indexed text lines. */
+    public long indexedTextLines;
+
+    public IndexedTextFile(File dir, String baseFilename) throws IOException {
+        textFile = new File(dir, baseFilename + ".log");
+        idxFile = new File(dir, baseFilename + ".idx");
+    }
+
+    public synchronized void init() throws IOException {
+        textRaf = new RandomAccessFile(textFile, "rw");
+        idxRaf = new RandomAccessFile(idxFile, "rw");
+        if (idxRaf.length() == 0) {
+            idxRaf.writeLong(0);
+            lastIndexedTextPosition = 0;
+            indexedTextLines = 0;
+        } else {
+            idxRaf.seek(idxRaf.length() - 8);
+            lastIndexedTextPosition = idxRaf.readLong();
+            indexedTextLines = (idxRaf.length() / 8) - 1;
+        }
+        idxRaf.seek(idxRaf.length());
+        textRaf.seek(textRaf.length());
+    }
+
+    @Override
+    public void close() {
+        indexedTextLines = 0;
+        IOUtils.closeQuietly(textRaf);
+        IOUtils.closeQuietly(idxRaf);
+    }
+
+    public void addFilesToOldFilesList(List<File> oldFilesList) {
+        oldFilesList.add(textFile);
+        oldFilesList.add(idxFile);
+    }
+
+    @Override
+    public long getTextFilesize() {
+        return textFile.length();
+    }
+
+    @Override
+    public long getIndexFilesize() {
+        return idxFile.length();
+    }
+
+    @Override
+    public long getLastIndexedTextPosition() {
+        return lastIndexedTextPosition;
+    }
+
+    @Override
+    public long getIndexedTextLines() {
+        return indexedTextLines;
+    }
+
+    @Override
+    public synchronized byte[] readPage(long page, long itemsPerPage, boolean descending) throws IOException {
+        return IndexedTextFile.readPage(idxRaf, textRaf, page, itemsPerPage, descending);
+    }
+
+    public long write(InputStream in, byte[] tmpBuf, long to) throws IOException {
+        int read;
+        int idx;
+        long pos = textRaf.length();
+        textRaf.seek(pos);
+        idxRaf.seek(idxRaf.length());
+        while ((read = in.read(tmpBuf)) != -1) {
+            textRaf.write(tmpBuf, 0, read);
+            to += read;
+            idx = 0;
+            while (read > 0) {
+                ++pos;
+                --read;
+                if (tmpBuf[idx++] == '\n') {
+                    idxRaf.writeLong(pos);
+                    lastIndexedTextPosition = pos;
+                    ++indexedTextLines;
+                }
+            }
+        }
+    	return to;
+    }
+
+    /**
 	 * Uses an index file to read a page from a text file.
 	 * @param idxRaf index file with pointers to all the lines in the text file
 	 * @param textRaf indexed text file 

@@ -49,6 +49,7 @@ import dk.netarkivet.heritrix3.monitor.HistoryServlet;
 import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
+import dk.netarkivet.heritrix3.monitor.Pageable;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
 
@@ -190,6 +191,8 @@ public class IndexResource implements ResourceAbstract {
             }
         }
 
+        Pageable pageable;
+        long lines;
         for (int i=0; i<hcList.size(); ++i) {
             hcs = hcList.get(i);
             sb.append("<h5>");
@@ -222,11 +225,14 @@ public class IndexResource implements ResourceAbstract {
                     sb.append("\" class=\"btn btn-default\">");
                     sb.append("Job ");
                     sb.append(h3Job.jobId);
-                    long lines = (h3Job.idxFile.length() / 8) - 1;
-                    if (lines > 0) {
-                        sb.append(" (");
-                        sb.append(lines);
-                        sb.append(")");
+                    pageable = h3Job.indexedCrawllog;
+                    if (pageable != null) {
+                        lines = (pageable.getIndexFilesize() / 8) - 1;
+                        if (lines > 0) {
+                            sb.append(" (");
+                            sb.append(lines);
+                            sb.append(")");
+                        }
                     }
                     sb.append("</a>\n");
                 }

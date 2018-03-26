@@ -203,8 +203,8 @@ public class Heritrix3JobMonitorThread implements Runnable {
                     while (jobmonitorIter.hasNext()) {
                         jobmonitor = jobmonitorIter.next();
                         if (oldFilesMap != null) {
-                            oldFilesMap.remove(jobmonitor.logFile.getName());
-                            oldFilesMap.remove(jobmonitor.idxFile.getName());
+                            oldFilesMap.remove(jobmonitor.indexedCrawllog.textFile.getName());
+                            oldFilesMap.remove(jobmonitor.indexedCrawllog.idxFile.getName());
                         }
                         if (!jobmonitor.bInitialized) {
                             jobmonitor.init();

@@ -25,7 +25,6 @@ package dk.netarkivet.heritrix3.monitor;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 
-public class Heritrix3JobMonitor implements Pageable {
+public class Heritrix3JobMonitor {
 
     /** The logger for this class. */
     private static final Logger LOG = LoggerFactory.getLogger(Heritrix3JobMonitorThread.class);
@@ -71,17 +70,7 @@ public class Heritrix3JobMonitor implements Pageable {
 
     public String crawlLogFilePath;
 
-    public File logFile;
-
-    public RandomAccessFile logRaf;
-
-    public File idxFile;
-
-    public RandomAccessFile idxRaf;
-
-    public long lastIndexed = 0;
-    
-    public long totalCachedLines = 0;
+    public IndexedTextFile indexedCrawllog;
 
     protected Heritrix3JobMonitor() {
     }
@@ -90,8 +79,7 @@ public class Heritrix3JobMonitor implements Pageable {
         Heritrix3JobMonitor jobmonitor = new Heritrix3JobMonitor();
         jobmonitor.environment = environment;
         jobmonitor.jobId = jobId;
-        jobmonitor.logFile = new File(environment.tempPath, "crawllog-" + jobId + ".log");
-        jobmonitor.idxFile = new File(environment.tempPath, "crawllog-" + jobId + ".idx");
+        jobmonitor.indexedCrawllog = new IndexedTextFile(environment.tempPath, "crawllog-" + jobId);
         jobmonitor.init();
         return jobmonitor;
     }
@@ -121,17 +109,7 @@ public class Heritrix3JobMonitor implements Pageable {
                     crawlLogFilePath = jobResult.job.crawlLogFilePath;
                 }
                 if (crawlLogFilePath != null) {
-                    logRaf = new RandomAccessFile(logFile, "rw");
-                    idxRaf = new RandomAccessFile(idxFile, "rw");
-                    if (idxRaf.length() == 0) {
-                        idxRaf.writeLong(0);
-                    } else {
-                        idxRaf.seek(idxRaf.length() - 8);
-                        lastIndexed = idxRaf.readLong();
-                        totalCachedLines = (idxRaf.length() / 8) - 1;
-                    }
-                    idxRaf.seek(idxRaf.length());
-                    logRaf.seek(logRaf.length());
+                	indexedCrawllog.init();
                     bInitialized = true;
                 }
             }
@@ -162,7 +140,6 @@ public class Heritrix3JobMonitor implements Pageable {
     public synchronized void updateCrawlLog(byte[] tmpBuf) {
         long pos;
         long to;
-        int idx;
         boolean bLoop;
         ByteRange byteRange;
         try {
@@ -172,8 +149,7 @@ public class Heritrix3JobMonitor implements Pageable {
             if (bActive && bInitialized) {
                 bLoop = true;
                 while (bLoop) {
-                    idxRaf.seek(idxRaf.length());
-                    pos = logRaf.length();
+                    pos = indexedCrawllog.getTextFilesize();
                     to = pos;
                     if (jobResult != null && jobResult.job != null && jobResult.job.crawlLogFilePath != null) {
                         long rangeFrom = pos;
@@ -189,27 +165,7 @@ public class Heritrix3JobMonitor implements Pageable {
                             if (anypathResult != null && anypathResult.byteRange != null && anypathResult.in != null) {
                                 byteRange = anypathResult.byteRange;
                                 if (byteRange.contentLength > 0) {
-                                    logRaf.seek(pos);
-                                    int read;
-                                    try {
-                                        while ((read = anypathResult.in.read(tmpBuf)) != -1) {
-                                            logRaf.write(tmpBuf, 0, read);
-                                            to += read;
-                                            idx = 0;
-                                            while (read > 0) {
-                                                ++pos;
-                                                --read;
-                                                if (tmpBuf[idx++] == '\n') {
-                                                    idxRaf.writeLong(pos);
-                                                    lastIndexed = pos;
-                                                    totalCachedLines++;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+                                	to = indexedCrawllog.write(anypathResult.in, tmpBuf, to);
                                     IOUtils.closeQuietly(anypathResult);
                                     if (byteRange.contentLength == to) {
                                         bLoop = false;
@@ -242,42 +198,19 @@ public class Heritrix3JobMonitor implements Pageable {
             jobname = null;
             jobResult = null;
             crawlLogFilePath = null;
-            totalCachedLines = 0;
-            IOUtils.closeQuietly(logRaf);
-            IOUtils.closeQuietly(idxRaf);
-            oldFilesList.add(logFile);
-            oldFilesList.add(idxFile);
+            indexedCrawllog.close();
+            indexedCrawllog.addFilesToOldFilesList(oldFilesList);
             Iterator<IndexedTextFileSearchResult> srIter = qSearchResultMap.values().iterator();
             IndexedTextFileSearchResult sr;
             while (srIter.hasNext()) {
                 sr = srIter.next();
-                oldFilesList.add(sr.srTextFile);
-                oldFilesList.add(sr.srIdxFile);
                 sr.close();
+                sr.addFilesToOldFilesList(oldFilesList);
             }
             qSearchResultMap.clear();
         } catch (Throwable t) {
         	LOG.error("Error while closing monitor for job {}!", t, jobId);
         }
-    }
-
-    @Override
-    public synchronized long getIndexSize() {
-        return idxFile.length();
-    }
-
-    @Override
-    public long getLastIndexed() {
-        return lastIndexed;
-    }
-    
-    public long getTotalCachedLines() {
-        return totalCachedLines;
-    }
-
-    @Override
-    public synchronized byte[] readPage(long page, long itemsPerPage, boolean descending) throws IOException {
-        return IndexedTextFile.readPage(idxRaf, logRaf, page, itemsPerPage, descending);
     }
 
     public synchronized boolean isReady() {
@@ -299,7 +232,7 @@ public class Heritrix3JobMonitor implements Pageable {
     public synchronized IndexedTextFileSearchResult getSearchResult(String q) throws IOException {
         IndexedTextFileSearchResult searchResult = qSearchResultMap.get(q);
         if (searchResult == null) {
-            searchResult = new IndexedTextFileSearchResult(logFile, new File(environment.tempPath, "crawllog-" + jobId), q, searchResultNr++);
+            searchResult = new IndexedTextFileSearchResult(indexedCrawllog.textFile, environment.tempPath, "crawllog-" + jobId, q, searchResultNr++);
             qSearchResultMap.put(q, searchResult);
         }
         return searchResult;

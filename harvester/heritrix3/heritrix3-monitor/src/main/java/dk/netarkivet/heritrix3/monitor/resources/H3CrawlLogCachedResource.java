@@ -127,7 +127,7 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
 
         long jobId = numerics.get(0);
         Heritrix3JobMonitor h3Job = environment.h3JobMonitorThread.getRunningH3Job(jobId);
-        Pageable pageable = h3Job;
+        Pageable pageable = h3Job.indexedCrawllog;
 
         if (h3Job != null && h3Job.isReady()) {
             String actionStr = req.getParameter("action");
@@ -136,9 +136,10 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
                 byte[] tmpBuf = new byte[1024 * 1024];
                 h3Job.updateCrawlLog(tmpBuf);
             }
-            
-            long totalCachedLines = h3Job.getTotalCachedLines();
-            long totalCachedSize = h3Job.getLastIndexed();
+
+            // FIXME Check for null pageable if nothing is cached yet.
+            long totalCachedLines = pageable.getIndexedTextLines();
+            long totalCachedSize = pageable.getLastIndexedTextPosition();
 
             IndexedTextFileSearchResult searchResult = null;
             
@@ -150,7 +151,7 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
                 q = ".*";
             }
 
-            lines = pageable.getIndexSize();
+            lines = pageable.getIndexFilesize();
 
             if (lines > 0) {
                 lines = (lines / 8) - 1;
