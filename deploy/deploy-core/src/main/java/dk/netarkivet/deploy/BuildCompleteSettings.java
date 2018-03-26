@@ -39,10 +39,10 @@ import dk.netarkivet.common.utils.FileUtils;
  * Class for combining the different setting files into a complete settings file. The different settings are listed
  * here: {@link Constants#BUILD_SETTING_FILES}
  * <p>
- * export NAS_SRC=$HOME/workspace/netarchivesuite cd $NAS_SRC ant jarfiles export
- * CLASSPATH=$NAS_SRC/lib/dk.netarkivet.harvester.jar:$NAS_SRC/lib/dk.netarkivet.archive.jar:\
- * $NAS_SRC/lib/dk.netarkivet.wayback.jar:$NAS_SRC/lib/dk.netarkivet.deploy.jar: cd src java
- * dk.netarkivet.deploy.BuildCompleteSettings
+ * This is used when updating the deploy/deploy-core/src/main/resources/dk/netarkivet/deploy/complete_settings.xml before a new release of Netarchivesuite.
+ * From your IDE, run this program (dk.netarkivet.deploy.BuildCompleteSettings) with no arguments.
+ * And then copy then output-file 'complete_settings.xml' to deploy/deploy-core/src/main/resources/dk/netarkivet/deploy/complete_settings.xml
+ * Finally commit the changes to github.
  */
 public final class BuildCompleteSettings {
     /**
@@ -50,16 +50,18 @@ public final class BuildCompleteSettings {
      */
     private BuildCompleteSettings() {
     }
-
+    /** The default path to the output file. */
+    public static final String defaultCompleteSettingsPath = "complete_settings.xml";
+    
     /**
-     * Run the program. This loads and merges all the setting files into a single file.
+     * Run the program. This loads and merges all the different settings files into a single outputfile.
      *
-     * @param args Optional argument for name of complete settings file. E.g. /home/myUser/myDir/default_settings.xml
+     * @param args Optional argument for name of complete settings file. E.g. /home/myUser/myDir/default_settings.xml, otherwise the default "complete_settings.xml" is used
      * @throws IOException For input/output errors.
      */
     public static void main(String[] args) {
         if (args.length < 1) {
-            buildCompleteSettings(Constants.BUILD_COMPLETE_SETTINGS_FILE_PATH);
+            buildCompleteSettings(defaultCompleteSettingsPath);
         } else {
             buildCompleteSettings(args[0]);
         }
@@ -67,8 +69,11 @@ public final class BuildCompleteSettings {
 
     public static void buildCompleteSettings(String completeSettingsPath) {
         ArgumentNotValid.checkNotNullOrEmpty(completeSettingsPath, "completeSettingsPath");
+        File completeSettingsFile = new File(completeSettingsPath);
+        System.out.println("Writing complete settings to file: " + completeSettingsFile.getAbsolutePath());
         XmlStructure settings = null;
         for (String path : Constants.BUILD_SETTING_FILES) {
+            System.out.println("Adding settingfile '" + path + "' to completesettings file");
             File tmpFile = FileUtils.getResourceFileFromClassPath(path);
             if (settings == null) {
                 settings = new XmlStructure(tmpFile, Charset.defaultCharset().name());
@@ -90,6 +95,7 @@ public final class BuildCompleteSettings {
         } catch (IOException e) {
             throw new RuntimeException("Failed to write new settings", e);
         }
+        System.out.println("Complete settings successfully written to file: " + completeSettingsFile.getAbsolutePath());
     }
 
     /**
