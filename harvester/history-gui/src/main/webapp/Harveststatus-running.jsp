@@ -301,7 +301,7 @@ This page displays a list of running jobs.
         for (StartedJobInfo info : infoList) {
             long jobId = info.getJobId();
 
-            if (searchedDomainName != null && !searchedDomainName.equals("")) {
+            if (searchedDomainName != null && !searchedDomainName.isEmpty()) {
                 // Something's been searched for, so let's see if this job should be skipped according to the search...
                 if (HistoryServlet.environment != null
                         && !HistoryServlet.environment.jobHarvestsDomain(jobId, searchedDomainName, null)) {
@@ -309,7 +309,6 @@ This page displays a list of running jobs.
                     continue;
                 }
             }
-
     %>
 
     <%-- Generate the rows of data --%>

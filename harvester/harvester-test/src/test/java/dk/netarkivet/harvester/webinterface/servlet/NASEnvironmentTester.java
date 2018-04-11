@@ -37,7 +37,6 @@ public class NASEnvironmentTester extends DataModelTestCase {
     /**
      * Test that getCrawledUrls() gets the crawled URLs of the crawllog for the running job with the given job id
      */
-    @Test
     public void testGetCrawledUrls() throws Exception {
         // Create a mock crawllog file
         String mockCrawllogContent
@@ -61,6 +60,7 @@ public class NASEnvironmentTester extends DataModelTestCase {
         ServletConfig servletConfig = mock(ServletConfig.class);
 
         NASEnvironment environment = new NASEnvironment(servletContext, servletConfig);
+        
 
         Heritrix3JobMonitor h3Job = Heritrix3JobMonitor.getInstance(42L, environment);
         h3Job.setCrawlLogFilePath(crawlLogFilePath);
