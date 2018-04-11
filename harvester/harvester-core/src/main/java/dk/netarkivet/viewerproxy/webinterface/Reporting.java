@@ -213,6 +213,7 @@ public class Reporting {
     private static String getMetadataFilePatternForJobId(long jobid) {
     	// The old invalid metadataFilePattern
     	//return ".*"+jobid + ".*" + metadatafile_suffix;
-    	return jobid + metadatafile_suffix;
+    	// return jobid + metadatafile_suffix;
+    	return "(.*-)?" + jobid + "(-.*)?" + metadatafile_suffix;
     }
 }
