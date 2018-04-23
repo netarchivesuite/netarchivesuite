@@ -171,8 +171,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
                                     // could not be found.
                                     try {
                                         // New H3 job.
-                                        jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId,
-                                                environment);
+                                        jobmonitor = Heritrix3WrapperManager.getJobMonitor(jobId, environment);
                                     } catch (IOException e) {
                                         LOG.debug("IOException assigning to job monitor");
                                     	// Ignored because exceptions can occur communicating with H3 in this call.
@@ -209,6 +208,7 @@ public class Heritrix3JobMonitorThread implements Runnable {
                         if (!jobmonitor.bInitialized) {
                             jobmonitor.init();
                         }
+                        jobmonitor.update();
                         checkH3HostnamePort(jobmonitor);
                         isH3HostnamePortEnabled(jobmonitor);
                         if (jobmonitor.bPull) {

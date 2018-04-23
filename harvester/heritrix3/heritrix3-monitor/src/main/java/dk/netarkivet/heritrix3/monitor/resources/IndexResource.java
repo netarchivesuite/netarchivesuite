@@ -137,7 +137,7 @@ public class IndexResource implements ResourceAbstract {
         sb.append(NASEnvironment.servicePath);
         sb.append("config/");
         sb.append("\" class=\"btn btn-default\">");
-        sb.append(environment.I18N.getString(locale, "configure"));
+        sb.append(environment.getString(locale, "configure"));
         sb.append("</a>");
         sb.append("<br />\n");
         sb.append("<br />\n");
@@ -202,12 +202,12 @@ public class IndexResource implements ResourceAbstract {
             }
             sb.append("&nbsp;");
             sb.append("(");
-            sb.append(environment.I18N.getString(locale, "harvest.channel.type"));
+            sb.append(environment.getString(locale, "harvest.channel.type"));
             sb.append(": ");
             if (hcs.hc.isSnapshot()) {
-                sb.append(environment.I18N.getString(locale, "harvest.channel.type.broad"));
+                sb.append(environment.getString(locale, "harvest.channel.type.broad"));
             } else {
-                sb.append(environment.I18N.getString(locale, "harvest.channel.type.focused"));
+                sb.append(environment.getString(locale, "harvest.channel.type.focused"));
             }
             sb.append(")");
             sb.append("</h5>\n");
@@ -238,7 +238,7 @@ public class IndexResource implements ResourceAbstract {
                 }
             } else {
                 sb.append("<p>");
-                sb.append(environment.I18N.getString(locale, "running.jobs.monitor.not.on.this.channel"));
+                sb.append(environment.getString(locale, "running.jobs.monitor.not.on.this.channel"));
                 sb.append("</p>\n");
             }
         }
@@ -246,7 +246,7 @@ public class IndexResource implements ResourceAbstract {
         StringBuilder menuSb = masterTplBuilder.buildMenu(new StringBuilder(), req, locale, null);
 
         masterTplBuilder.insertContent("H3 Remote Access", menuSb.toString(), httpLocale.generateLanguageLinks(),
-        		environment.I18N.getString(locale, "pagetitle;h3.remote.access"), sb.toString(),
+        		environment.getString(locale, "pagetitle;h3.remote.access"), sb.toString(),
         		environment.nasJobWrapper.getMetaRefreshHeaderHtml()).write(out);
 
         out.flush();

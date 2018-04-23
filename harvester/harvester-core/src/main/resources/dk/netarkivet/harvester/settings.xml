@@ -212,6 +212,10 @@ National Library.
             </metadata>
             <monitor>
                 <tempPath></tempPath>
+                <cacheCrawllogFrontierQueueThreshold>0</cacheCrawllogFrontierQueueThreshold>
+                <pauseFrontierQueueThreshold>0</pauseFrontierQueueThreshold>
+                <DumpFrontierQueue>false</DumpFrontierQueue>
+                <CacheFrontierQueue>false</CacheFrontierQueue>
             </monitor>
         </harvesting>
         <indexserver>

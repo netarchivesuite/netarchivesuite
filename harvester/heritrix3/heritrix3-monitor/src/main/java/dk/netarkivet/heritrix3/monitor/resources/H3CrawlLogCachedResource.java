@@ -37,14 +37,14 @@ import com.antiaction.common.filter.Caching;
 import com.antiaction.common.templateengine.TemplateBuilderFactory;
 
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
+import dk.netarkivet.heritrix3.monitor.IndexedTextFileSearchResult;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.Pageable;
 import dk.netarkivet.heritrix3.monitor.Pagination;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
-import dk.netarkivet.heritrix3.monitor.IndexedTextFileSearchResult;
-import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 
 public class H3CrawlLogCachedResource implements ResourceAbstract {
 
@@ -138,15 +138,19 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
             }
 
             // FIXME Check for null pageable if nothing is cached yet.
-            long totalCachedLines = pageable.getIndexedTextLines();
-            long totalCachedSize = pageable.getLastIndexedTextPosition();
+            long cachedLines = pageable.getIndexedTextLines();
+            long cachedSize = pageable.getLastIndexedTextPosition();
 
             IndexedTextFileSearchResult searchResult = null;
+            Long searchCachedLines = null;
+            Long searchCachedSize = null;
             
             if (q != null) {
                 searchResult = h3Job.getSearchResult(q);
                 searchResult.update();
                 pageable = searchResult;
+                searchCachedLines = pageable.getIndexedTextLines();
+                searchCachedSize = pageable.getLastIndexedTextPosition();
             } else  {
                 q = ".*";
             }
@@ -165,14 +169,42 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
 
             sb.append("<div style=\"margin-bottom:20px;\">\n");
             sb.append("<div style=\"float:left;min-width:180px;\">\n");
-            sb.append("Total cached lines: ");
-            sb.append(totalCachedLines);
-            sb.append(" URIs<br />\n");
-            sb.append("Total cached size: ");
-            sb.append(totalCachedSize);
-            sb.append(" bytes\n");
+            sb.append("Cached crawllog lines: ");
+            sb.append(cachedLines);
+            sb.append(" [");
+            sb.append(cachedSize);
+            if (h3Job.h3CrawlLogFileLength != null) {
+            	double percentage = 0.0;
+            	if (h3Job.h3CrawlLogFileLength > 0) {
+            		percentage = (double)cachedSize / (double)h3Job.h3CrawlLogFileLength * 100.0;
+            	}
+            	sb.append(" / ");
+            	sb.append(h3Job.h3CrawlLogFileLength);
+            	sb.append(" ");
+            	sb.append(String.format("(%.2f%%)", percentage));
+            }
+            sb.append("]\n");
             sb.append("</div>\n");
-            
+
+            if (searchResult != null) {
+                sb.append("<div style=\"float:left;min-width:180px;\">\n");
+                sb.append("Matched crawllog lines: ");
+                sb.append(searchCachedLines);
+                sb.append(" [");
+                sb.append(searchCachedSize);
+            	double percentage = 0.0;
+            	if (searchResult.getTextFilesize() > 0) {
+            		percentage = (double)searchResult.getLastIndexedTextPosition() / (double)searchResult.getTextFilesize() * 100.0;
+            	}
+            	sb.append(" / ");
+            	sb.append(h3Job.h3CrawlLogFileLength);
+            	sb.append(" ");
+            	sb.append(String.format("(%.2f%%)", percentage));
+                sb.append("]\n");
+                sb.append("</div>\n");
+            }
+
+            sb.append("\n<br />");
             sb.append("<div style=\"float:left;\">\n");
             sb.append("<a href=\"");
             sb.append("?action=update");
@@ -182,8 +214,10 @@ public class H3CrawlLogCachedResource implements ResourceAbstract {
             //sb.append("the cache manually ");
             sb.append("</div>\n");
 
+            /*
             sb.append("<div style=\"clear:both;\"></div>\n");
             sb.append("</div>\n");
+            */
 
             sb.append("<div style=\"margin-bottom:20px;\">\n");
 

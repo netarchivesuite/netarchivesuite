@@ -41,25 +41,36 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo;
 
+/**
+ * 
+ */
 public class Heritrix3JobMonitor {
 
     /** The logger for this class. */
     private static final Logger LOG = LoggerFactory.getLogger(Heritrix3JobMonitorThread.class);
 
+    /** The global servlet environment. */
     protected NASEnvironment environment;
 
+    /** Is this job monitor still active. */
     public boolean bActive = true;
+
+    /** Is this job monitor fully initialized. */
+    public boolean bInitialized;
 
     public boolean bPull = false;
 
-    public boolean bInitialized;
-
+    /** NAS job id we are monitoring with this object. */
     public long jobId;
 
+    /** NAS job object updated regularly with the latest status information. */
     public Job job;
 
+    /** Heritrix3 wrapper object used to communicate with the H3 instance running the crawl. */
     public Heritrix3Wrapper h3wrapper;
 
+    /** Heritrix3 hostname and port. */
+    // FIXME Look at this.
     public String h3HostnamePort;
 
     public String hostUrl;
@@ -68,13 +79,31 @@ public class Heritrix3JobMonitor {
 
     public JobResult jobResult;
 
+    public String anypathJobBase;
+
     public String crawlLogFilePath;
+
+    public String pendingUrisFilePath;
+
+    public Long h3CrawlLogFileLength;
+
+    public Long h3PendingUrisFileLength;
 
     public IndexedTextFile indexedCrawllog;
 
+    /**
+     * Internal constructor.
+     */
     protected Heritrix3JobMonitor() {
     }
 
+    /**
+     * Construct a new H3 job monitor object with the given arguments.
+     * @param jobId NAS job id
+     * @param environment global servlet environment
+     * @return H3 job monitor object
+     * @throws IOException if an I/O exception is throwns while constructing this object.
+     */
     public static Heritrix3JobMonitor getInstance(Long jobId, NASEnvironment environment) throws IOException {
         Heritrix3JobMonitor jobmonitor = new Heritrix3JobMonitor();
         jobmonitor.environment = environment;
@@ -84,6 +113,9 @@ public class Heritrix3JobMonitor {
         return jobmonitor;
     }
 
+    /**
+     * Initialise job monitor. Is called repeatedly until everything is initialised.
+     */
     public synchronized void init() {
         try {
             if (bActive && !bInitialized) {
@@ -105,8 +137,13 @@ public class Heritrix3JobMonitor {
                 if ((jobResult == null || jobResult.job == null) && jobname != null) {
                     jobResult = h3wrapper.job(jobname);
                 }
-                if (jobResult != null && jobResult.job != null) {
+                if (crawlLogFilePath == null && jobResult != null && jobResult.job != null) {
                     crawlLogFilePath = jobResult.job.crawlLogFilePath;
+                    int idx = crawlLogFilePath.indexOf("logs/crawl.log");
+                    if (idx != 0) {
+                    	anypathJobBase = crawlLogFilePath.substring(0, idx);
+                    	pendingUrisFilePath = anypathJobBase + "pendingUris.txt";
+                    }
                 }
                 if (crawlLogFilePath != null) {
                 	indexedCrawllog.init();
@@ -118,18 +155,42 @@ public class Heritrix3JobMonitor {
         }
     }
 
+    /**
+     * Returns a boolean indicating if this job active and initialized.
+     * @return a boolean indicating if this job active and initialized
+     */
+    public synchronized boolean isReady() {
+        return (bActive && bInitialized);
+    }
+
+    /**
+     * Update job status by reading NAS job state, H3 job state and the file lengths of the remote crawl log and dumped frontier queue.
+     */
     public synchronized void update() {
+        Job tmpJob;
+        JobResult tmpJobResult;
+    	StreamResult anypathResult;
         try {
             if (job != null) {
-                Job tmpJob = job = Heritrix3JobMonitorThread.jobDAO.read(jobId);
+                tmpJob = job = Heritrix3JobMonitorThread.jobDAO.read(jobId);
                 if (tmpJob != null) {
                     job = tmpJob;
                 }
             }
             if (jobResult != null && jobResult.job != null && jobname != null) {
-                JobResult tmpJobResult = h3wrapper.job(jobname);
+                tmpJobResult = h3wrapper.job(jobname);
                 if (tmpJobResult != null) {
                     jobResult = tmpJobResult;
+                    if (jobResult.job.crawlLogFilePath != null) {
+                        anypathResult = h3wrapper.anypath(crawlLogFilePath, null, null, true);
+                        if (anypathResult != null && anypathResult.responseCode == 200) {
+                        	h3CrawlLogFileLength = anypathResult.contentLength;
+                        }
+                        anypathResult = h3wrapper.anypath(pendingUrisFilePath, null, null, true);
+                        if (anypathResult != null && anypathResult.responseCode == 200) {
+                        	h3PendingUrisFileLength = anypathResult.contentLength;
+                        }
+                    }
                 }
             }
         } catch (Throwable t) {
@@ -137,6 +198,10 @@ public class Heritrix3JobMonitor {
         }
     }
 
+    /**
+     * 
+     * @param tmpBuf
+     */
     public synchronized void updateCrawlLog(byte[] tmpBuf) {
         long pos;
         long to;
@@ -156,6 +221,7 @@ public class Heritrix3JobMonitor {
                         long rangeTo = pos + tmpBuf.length - 1;
                         StreamResult anypathResult = h3wrapper.anypath(jobResult.job.crawlLogFilePath, null, null, true);
                         if (anypathResult != null && rangeFrom < anypathResult.contentLength) {
+                        	h3CrawlLogFileLength = anypathResult.contentLength;
                             LOG.info("Crawllog length for job {}={}.", jobId, anypathResult.contentLength);
                             if (rangeTo >= anypathResult.contentLength) {
                                 rangeTo = anypathResult.contentLength - 1;
@@ -189,6 +255,10 @@ public class Heritrix3JobMonitor {
         }
     }
 
+    /**
+     * Clean up this object for garbage collection.
+     * @param oldFilesList a list of files that can be deleted
+     */
     public synchronized void cleanup(List<File> oldFilesList) {
         try {
             bActive = false;
@@ -211,10 +281,6 @@ public class Heritrix3JobMonitor {
         } catch (Throwable t) {
         	LOG.error("Error while closing monitor for job {}!", t, jobId);
         }
-    }
-
-    public synchronized boolean isReady() {
-        return (bActive && bInitialized);
     }
 
     /** Map of cached search results. */

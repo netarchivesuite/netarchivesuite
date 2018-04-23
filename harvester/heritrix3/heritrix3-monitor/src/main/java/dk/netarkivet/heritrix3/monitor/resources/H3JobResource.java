@@ -35,6 +35,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.netarchivesuite.heritrix3wrapper.JobResult;
 import org.netarchivesuite.heritrix3wrapper.jaxb.Job;
 
 import com.antiaction.common.filter.Caching;
@@ -46,11 +47,11 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitorThread;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
-import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 
 public class H3JobResource implements ResourceAbstract {
 
@@ -106,6 +107,7 @@ public class H3JobResource implements ResourceAbstract {
             h3Job.init();
         }
 
+        // TODO Handle SQL down better. Or leave this update to a background thread.
     	dk.netarkivet.harvester.datamodel.Job nasJob = Heritrix3JobMonitorThread.jobDAO.read(jobId);
 
     	String action = req.getParameter("action");
@@ -142,32 +144,32 @@ public class H3JobResource implements ResourceAbstract {
             	}
             } else {
                 if (action != null && action.length() > 0) {
+                	JobResult jobResult = null;
                     if ("build".equalsIgnoreCase(action)) {
-                        h3Job.h3wrapper.buildJobConfiguration(h3Job.jobname);
+                    	jobResult = h3Job.h3wrapper.buildJobConfiguration(h3Job.jobname);
                     }
                     if ("launch".equalsIgnoreCase(action)) {
-                        h3Job.h3wrapper.launchJob(h3Job.jobname);
+                    	jobResult = h3Job.h3wrapper.launchJob(h3Job.jobname);
                     }
                     if ("pause".equalsIgnoreCase(action)) {
-                        h3Job.h3wrapper.pauseJob(h3Job.jobname);
+                    	jobResult = h3Job.h3wrapper.pauseJob(h3Job.jobname);
                     }
                     if ("unpause".equalsIgnoreCase(action)) {
-                        h3Job.h3wrapper.unpauseJob(h3Job.jobname);
+                    	jobResult = h3Job.h3wrapper.unpauseJob(h3Job.jobname);
                     }
                     if ("checkpoint".equalsIgnoreCase(action)) {
-                        h3Job.h3wrapper.checkpointJob(h3Job.jobname);
+                    	jobResult = h3Job.h3wrapper.checkpointJob(h3Job.jobname);
                     }
                     if ("terminate".equalsIgnoreCase(action)) {
-                        h3Job.h3wrapper.terminateJob(h3Job.jobname);
+                    	jobResult = h3Job.h3wrapper.terminateJob(h3Job.jobname);
                     }
                     if ("teardown".equalsIgnoreCase(action)) {
-                        h3Job.h3wrapper.teardownJob(h3Job.jobname);
+                    	jobResult = h3Job.h3wrapper.teardownJob(h3Job.jobname);
+                    }
+                    if (jobResult != null) {
+                    	h3Job.jobResult = jobResult;
                     }
                 }
-
-                //job.setStatus(JobStatus.FAILED);
-
-                h3Job.update();
 
                 sb.append("<div>\n");
 
@@ -176,6 +178,9 @@ public class H3JobResource implements ResourceAbstract {
                 sb.append("JobId: <a href=\"/History/Harveststatus-jobdetails.jsp?jobID="+h3Job.jobId+"\">");
                 sb.append(h3Job.jobId);
                 sb.append("</a><br />\n");
+                sb.append("Status: ");
+                sb.append(h3Job.job.getStatus().toString());
+                sb.append("<br />\n");
                 if (h3Job.jobResult != null && h3Job.jobResult.job != null) {
                 	sb.append("JobState: ");
                 	sb.append(h3Job.jobResult.job.crawlControllerState);
@@ -380,7 +385,7 @@ public class H3JobResource implements ResourceAbstract {
                     sb.append("</a>");
 
                     sb.append("&nbsp;");
-                    
+
                     /* View scripting_events.log */
                     File logDir = new File(h3Job.crawlLogFilePath);
                     
@@ -390,8 +395,16 @@ public class H3JobResource implements ResourceAbstract {
                     sb.append("\" class=\"btn btn-default\">");
                     sb.append("View scripting_events.log");
                     sb.append("</a>");
-                    
+
                     sb.append("</div>\n");
+
+                    sb.append("crawllogSize: ");
+                    sb.append(h3Job.h3CrawlLogFileLength);
+                    sb.append("<br />\n");
+                    sb.append("pendingUrisSize: ");
+                    sb.append(h3Job.h3PendingUrisFileLength);
+                    sb.append("<br />\n");
+                    sb.append("<br />\n");
 
                     sb.append("shortName: ");
                     sb.append(job.shortName);

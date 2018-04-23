@@ -831,6 +831,19 @@ public class HarvesterSettings {
      */
     public static String HERITRIX3_CERTIFICATE_PASSWORD = "settings.harvester.harvesting.heritrix3.certificatePassword";
 
+    /** Temporary path where cached crawllog and frontier dump files are stored. (H3 monitor) */
     public static String HERITRIX3_MONITOR_TEMP_PATH = "settings.harvester.harvesting.monitor.tempPath";
+
+    /** Cache crawllog when the frontierqueue gets above this threshold. (H3 monitor) */ 
+    public static String HERITRIX3_MONITOR_CACHE_CRAWLLOG_FRONTIERQUEUE_THRESHOLD = "cacheCrawllogFrontierQueueThreshold";
+
+    /** Pause job when frontierqueue gets above this threshold. (H3 monitor) */
+    public static String HERITRIX3_MONITOR_PAUSE_FRONTIERQUEUE_THRESHOLD = "pauseFrontierQueueThreshold";
+
+    /** Dump frontierqueue after it is paused. (H3 monitor) */
+    public static String HERITRIX3_MONITOR_DUMP_FRONTIERQUEUE = "DumpFrontierQueue";
+
+    /** Cache frontierqueue after is has been dumped. (H3 monitor) */
+    public static String HERITRIX3_MONITOR_CACHE_FRONTIERQUEUE = "CacheFrontierQueue";
 
 }

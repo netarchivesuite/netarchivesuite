@@ -38,12 +38,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.antiaction.common.filter.Caching;
 import com.antiaction.common.templateengine.TemplateBuilderFactory;
 
+import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment.StringMatcher;
 import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
-import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 
 public class ConfigResource implements ResourceAbstract {
 
@@ -117,7 +117,7 @@ public class ConfigResource implements ResourceAbstract {
 
         if (invalidPatternsList.size() > 0) {
             sb.append("<h5>");
-            sb.append(environment.I18N.getString(locale, "h5.invalid.regexes"));
+            sb.append(environment.getString(locale, "h5.invalid.regexes"));
             sb.append(":</h5>\n");
         	for (int i=0; i<invalidPatternsList.size(); ++i) {
                 sb.append(invalidPatternsList.get(i));
@@ -127,7 +127,7 @@ public class ConfigResource implements ResourceAbstract {
 
         synchronized (environment.h3JobMonitorThread.h3HostnamePortEnabledList) {
             sb.append("<h5>");
-            sb.append(environment.I18N.getString(locale, "running.jobs.monitor.crawllog.cache.enabled.for"));
+            sb.append(environment.getString(locale, "running.jobs.monitor.crawllog.cache.enabled.for"));
             sb.append(":</h5>\n");
             if (environment.h3JobMonitorThread.h3HostnamePortEnabledList.size() > 0) {
                 for (int i=0; i<environment.h3JobMonitorThread.h3HostnamePortEnabledList.size(); ++i) {
@@ -136,14 +136,14 @@ public class ConfigResource implements ResourceAbstract {
                 }
             } else {
                 sb.append("<p>");
-                sb.append(environment.I18N.getString(locale, "running.jobs.monitor.no.hosts.enabled"));
+                sb.append(environment.getString(locale, "running.jobs.monitor.no.hosts.enabled"));
                 sb.append("</p>\n");
             }
         }
         sb.append("<br />\n");
         synchronized (environment.h3JobMonitorThread.h3HostnamePortDisabledList) {
             sb.append("<h5>");
-            sb.append(environment.I18N.getString(locale, "running.jobs.monitor.crawllog.cache.disabled.for"));
+            sb.append(environment.getString(locale, "running.jobs.monitor.crawllog.cache.disabled.for"));
             sb.append("</h5>\n");
             if (environment.h3JobMonitorThread.h3HostnamePortDisabledList.size() > 0) {
                 for (int i=0; i<environment.h3JobMonitorThread.h3HostnamePortDisabledList.size(); ++i) {
@@ -152,7 +152,7 @@ public class ConfigResource implements ResourceAbstract {
                 }
             } else {
                 sb.append("<p>");
-                sb.append(environment.I18N.getString(locale, "running.jobs.monitor.no.hosts.disable"));
+                sb.append(environment.getString(locale, "running.jobs.monitor.no.hosts.disable"));
                 sb.append("</p>\n");
             }
         }

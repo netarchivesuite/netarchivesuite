@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -53,9 +54,7 @@ import com.antiaction.common.templateengine.storage.TemplateFileStorageManager;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
-import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.Constants;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.heritrix3.monitor.resources.H3JobResource;
 import dk.netarkivet.heritrix3.monitor.resources.MasterTemplateBuilder;
@@ -87,34 +86,41 @@ public class NASEnvironment {
     /** Login template handler used by the login mechanism. */
     protected LoginTemplateHandler<NASUser> loginHandler = null;
 
-    /** Temporary path used to store cached crawllog and search results. */
+    /** Temporary path where cached crawllog and frontier dump files are stored. */
     public File tempPath;
 
+    /** Remote H3 admin user. */
     public String h3AdminName;
 
+    /** Remote H3 admin password. */
     public String h3AdminPassword;
 
+    /** */
     public NASJobWrapper nasJobWrapper;
 
+    /** Reference to running H3 job monitor thread. */
     public Heritrix3JobMonitorThread h3JobMonitorThread;
 
+    /** Context path where the History Servlet is running. */
     public static String contextPath;
 
+    /** Full path (servlet-mapping) to the History Servlet. */
     public static String servicePath;
 
+    /** Utility class to handle HTTP locale stuff and HTML generation. */
     public HttpLocaleHandler httpLocaleUtils;
 
-    public long cacheCrawllogThreshold = 10000;
+    /** Cache crawllog when the frontierqueue gets above this threshold. (H3 monitor) */ 
+    public long cacheCrawllogFrontierQueueThreshold = 0;
 
-    public boolean bCacheCrawllog = true;
+    /** Pause job when frontierqueue gets above this threshold. (H3 monitor) */
+    public long pauseFrontierQueueThreshold = 0;
 
-    public long pauseQueueThreshold = 10000;
+    /** Dump frontierqueue after it is paused. (H3 monitor) */
+    public boolean bFrontierQueueDump = false;
 
-    public boolean bPauseQueueThreshold = true;
-
-    public boolean bFrontierQueueDump = true;
-
-    public boolean bFrontierQueueCache = true;
+    /** Cache frontierqueue after is has been dumped. (H3 monitor) */
+    public boolean bFrontierQueueCache = false;
 
     public static class StringMatcher {
         public String str;
@@ -123,8 +129,6 @@ public class NASEnvironment {
     }
 
     public List<StringMatcher> h3HostPortAllowRegexList = new ArrayList<StringMatcher>();
-
-    public final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
 
     /**
      * 
@@ -142,6 +146,18 @@ public class NASEnvironment {
         }
         in.close();
         return new String(bOut.toByteArray(), "UTF-8");
+    }
+
+    /**
+     * Get a localized message for a given locale and label, and optionally arguments.
+     * @param locale The locale to get the string for
+     * @param label The label of the string in the resource bundle
+     * @param args Any args required for formatting the label
+     * @return The localised string, or the label if the string could not be found or the format is invalid or does not match the args.
+     * @throws ArgumentNotValid on null or empty local or label.
+     */
+    public String getString(Locale locale, String label, Object... args) {
+        return nasJobWrapper.getString(locale, label, args);
     }
 
     public NASEnvironment(ServletContext servletContext, ServletConfig theServletConfig) throws ServletException {
@@ -177,6 +193,11 @@ public class NASEnvironment {
 
         h3AdminName = Settings.get(HarvesterSettings.HERITRIX_ADMIN_NAME);
         h3AdminPassword = Settings.get(HarvesterSettings.HERITRIX_ADMIN_PASSWORD);
+
+        cacheCrawllogFrontierQueueThreshold = Settings.getLong(HarvesterSettings.HERITRIX3_MONITOR_CACHE_CRAWLLOG_FRONTIERQUEUE_THRESHOLD);
+        pauseFrontierQueueThreshold = Settings.getLong(HarvesterSettings.HERITRIX3_MONITOR_PAUSE_FRONTIERQUEUE_THRESHOLD);
+        bFrontierQueueDump = Settings.getBoolean(HarvesterSettings.HERITRIX3_MONITOR_DUMP_FRONTIERQUEUE);
+        bFrontierQueueCache = Settings.getBoolean(HarvesterSettings.HERITRIX3_MONITOR_CACHE_FRONTIERQUEUE);
 
         nasJobWrapper = new NASJobWrapper();
 

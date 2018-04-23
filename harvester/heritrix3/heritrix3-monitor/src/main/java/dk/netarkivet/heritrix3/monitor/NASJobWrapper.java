@@ -23,8 +23,12 @@
 
 package dk.netarkivet.heritrix3.monitor;
 
+import java.util.Locale;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
@@ -44,6 +48,8 @@ public class NASJobWrapper {
     /** Get and cache the environment name used for this installation. */
     public final String environmentName;
 
+    public final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
+
     public NASJobWrapper() {
         metaRefreshHeaderHtml = "<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n";
         versionString = Constants.getVersionString(true);
@@ -60,6 +66,18 @@ public class NASJobWrapper {
 
     public String getEnvironmentName() {
         return environmentName;
+    }
+
+    /**
+     * Get a localized message for a given locale and label, and optionally arguments.
+     * @param locale The locale to get the string for
+     * @param label The label of the string in the resource bundle
+     * @param args Any args required for formatting the label
+     * @return The localised string, or the label if the string could not be found or the format is invalid or does not match the args.
+     * @throws ArgumentNotValid on null or empty local or label.
+     */
+    public String getString(Locale locale, String label, Object... args) {
+        return I18N.getString(locale, label, args);
     }
 
 }
