@@ -115,6 +115,14 @@ public class FindRunningJobQuery {
             log.info("Found {} jobs in status STARTED harvesting domain {}", runningJobIds.size(), domainName);
         }
     }
+    /**
+     * 
+     * @param jobId The jobId to match in the list of runningJobIds. 
+     * @return true, if the given jobId is contained in list of runningJobIds, otherwise false
+     */
+    public boolean found(Long jobId) {
+        return runningJobIds.contains(jobId);
+    }
 
     /**
      * @return the domain name to search for.
