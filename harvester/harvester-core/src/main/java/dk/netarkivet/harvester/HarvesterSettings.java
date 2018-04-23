@@ -840,6 +840,10 @@ public class HarvesterSettings {
      */
     public static String HERITRIX3_CERTIFICATE_PASSWORD = "settings.harvester.harvesting.heritrix3.certificatePassword";
 
+    /**
+     * <b>settings.harvester.harvesting.monitor.tempPath</b>: The directory used to cache the h3 crawllogs.
+     * Default value: cached_crawllogs
+     */
     public static String HERITRIX3_MONITOR_TEMP_PATH = "settings.harvester.harvesting.monitor.tempPath";
 
 }

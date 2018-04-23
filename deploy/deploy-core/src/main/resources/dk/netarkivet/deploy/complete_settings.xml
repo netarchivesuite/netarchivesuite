@@ -410,7 +410,7 @@
                 </filename>
             </metadata>
             <monitor>
-                <tempPath/>
+                <tempPath>cached_crawllogs</tempPath>
             </monitor>
         </harvesting>
         <indexserver>
@@ -436,6 +436,7 @@
         </viewerproxy>
         <webinterface>
             <maxCrawlLogInBrowser>1000</maxCrawlLogInBrowser>
+            <runningjobsFilteringMethod>database</runningjobsFilteringMethod>
         </webinterface>
     </harvester><monitor>
         <jmxUsername>monitorRole</jmxUsername>
