@@ -84,17 +84,15 @@ This page displays a list of running jobs.
     if (searchedDomainName != null){
         searchedDomainValue = searchedDomainName; 
     }
-    // Try finding the runningsjobs in the database matching the searchDomainName
-    FindRunningJobQuery findJobQuery = new FindRunningJobQuery(request);
-    // We don't need to retrieve this, because we use the findJobQuery.found(jobId) method instead
-    //Long[] jobIdsForDomain = findJobQuery.getRunningJobIds();
     
-    // Find out the filtering method used cachedLogs or database (using jobIdsForDomain)
+    // Find out which filtering method to use: database or cachedLogs 
     String filteringMethod = Settings.get(HarvesterSettings.RUNNINGJOBS_FILTERING_METHOD);
     boolean useCachedLogsFiltering = true;
+    FindRunningJobQuery findJobQuery = null;
     if (filteringMethod.equalsIgnoreCase("database")) {
         useCachedLogsFiltering = false; 
-    }
+        findJobQuery = new FindRunningJobQuery(request);
+    } 
     
     HTMLUtils.setUTF8(request);
     HTMLUtils.generateHeader(
