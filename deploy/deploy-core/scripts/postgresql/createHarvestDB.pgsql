@@ -249,6 +249,7 @@ CREATE TABLE harvestdefinitions (
      submitted timestamp NOT NULL,
      isactive bool NOT NULL,
      edition bigint NOT NULL,
+     channel_id bigint,
      audience varchar(100)
 );
 
@@ -544,9 +545,11 @@ INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )
 CREATE TABLE harvestchannel (
     id bigint NOT NULL PRIMARY KEY,
     name varchar(300) NOT NULL UNIQUE,
+    issnapshot boolean NOT NULL,
     isdefault bool NOT NULL,
     comments varchar(30000)
 );
+
 
 CREATE SEQUENCE harvestchannel_id_seq OWNED BY harvestchannel.id;
 ALTER TABLE harvestchannel ALTER COLUMN id SET DEFAULT NEXTVAL('harvestchannel_id_seq');
@@ -555,3 +558,11 @@ CREATE INDEX harvestchannelnameid on harvestchannel(name) TABLESPACE tsindex;
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE harvestchannel TO netarchivesuite;
 GRANT USAGE ON SEQUENCE harvestchannel_id_seq TO netarchivesuite;
+
+-- insert harvestchannel used by the quickstart system 
+INSERT INTO harvestchannel(name, issnapshot, isdefault, comments) 
+    VALUES ('FOCUSED', false, true, 'Channel for focused harvests');
+INSERT INTO harvestchannel(name, issnapshot, isdefault, comments) 
+    VALUES ('SNAPSHOT', true, false, 'Channel for snapshot harvests');
+
+
