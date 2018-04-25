@@ -1,8 +1,3 @@
--- File:        $Id: createArchiveDB.sql 1359 2010-04-15 13:04:12Z svc $
--- Revision:    $Revision: 1359 $
--- Author:      $Author: svc $
--- Date:        $Date: 2010-04-15 15:04:12 +0200 (Thu, 15 Apr 2010) $
---
 -- The Netarchive Suite - Software to harvest and preserve websites
 -- Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
 --
@@ -20,11 +15,30 @@
 -- License along with this library; if not, write to the Free Software
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
--- See createArchiveDB.sql for information of the semantics of these fields.
+-- See file ../derby/createArchiveDB.sql for information of the semantics of these fields.
  
-----------------------------------------------
--- FIXME MISSING CONNECT INFORMATION FOR postgreSQL
-----------------------------------------------
+-- Assuming database is called 'admindb', the user is 'netarchivesuite' the following procedure can be used to create this database
+
+-- Step 1. This is mandatory, but it makes it simpler to access the database
+-- As root or postgres user modify pg_hba.conf so 'ident' is replaced by 'trust' for all rules. So we get a pg_hba.conf looking something like this
+
+--    host    all   all         127.0.0.1/32          trust
+--    local   all   all                               trust
+
+-- Step 2. Create the database 'admindb', a user 'netarchivesuite'
+
+--  sudo su - postgres
+--  psql
+--   CREATE DATABASE admindb WITH ENCODING 'UTF8';
+--   CREATE USER netarchivesuite WITH PASSWORD 'netarchivesuite';
+--   \q
+--  pg_ctl reload
+
+-- Step 3. Create database tables using this script
+-- psql admindb -U netarchivesuite < createArchiveDB.pgsql
+
+-- Step 4. You are now done
+
 
 --Q1: Which difference if any are there between 'int' and 'integer' in postgreSQL?
 --Q2: which indices are necessary?

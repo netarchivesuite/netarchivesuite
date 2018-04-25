@@ -161,7 +161,7 @@ quotaenforcer.groupMaxFetchSuccesses=%{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLA
 quotaenforcer.groupMaxAllKb=%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}
 
 ## sample overrides of the warcwriter
-warcWriter.template=${prefix}-${timestamp17}-${serialno}-ciblee_2015_${heritrix.hostname}
+#warcWriter.template=${prefix}-${timestamp17}-${serialno}-ciblee_2015_${heritrix.hostname}
 warcWriter.writeRequests=false
 warcWriter.writeMetadata=false
 warcWriter.poolMaxActive=3

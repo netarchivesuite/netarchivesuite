@@ -748,9 +748,18 @@ public class HarvesterSettings {
     public static String ALLOW_FILE_DOWNLOADS = "settings.harvester.viewerproxy.allowFileDownloads";
 
     /**
-     * The maximum length (in lines) of crawllog to be displayed in a browser window.
+     * <b>settings.harvester.webinterface.maxCrawlLogInBrowser</b>: The maximum length (in lines) of 
+     * crawllog to be displayed in a browser window.
+     * default value: 1000
      */
     public static String MAX_CRAWLLOG_IN_BROWSER = "settings.harvester.webinterface.maxCrawlLogInBrowser";
+
+    /**
+     * <b>settings.harvester.webinterface.runningjobsFilteringMethod</b>: The filtering method using on the running jobs page.
+     * There are two available methods. Searching in the cached crawllogs (cachedLogs) or in the harvest database (database)  
+     * default: database
+     */
+    public static String RUNNINGJOBS_FILTERING_METHOD = "settings.harvester.webinterface.runningjobsFilteringMethod";
 
    /**
      * <b>settings.harvester.harvesting.heritrix</b>: <br>
@@ -831,6 +840,10 @@ public class HarvesterSettings {
      */
     public static String HERITRIX3_CERTIFICATE_PASSWORD = "settings.harvester.harvesting.heritrix3.certificatePassword";
 
+    /**
+     * <b>settings.harvester.harvesting.monitor.tempPath</b>: The directory used to cache the h3 crawllogs.
+     * Default value: cached_crawllogs
+     */
     public static String HERITRIX3_MONITOR_TEMP_PATH = "settings.harvester.harvesting.monitor.tempPath";
 
 }

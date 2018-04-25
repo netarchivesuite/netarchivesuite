@@ -25,6 +25,7 @@ package dk.netarkivet.heritrix3.monitor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -33,6 +34,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -130,19 +132,26 @@ public class NASEnvironment {
 
         try {
             tempPath = Settings.getFile(HarvesterSettings.HERITRIX3_MONITOR_TEMP_PATH);
+            writeDiagnostics("Trying to use tempPath '" + tempPath.getAbsolutePath() + "' as read from setting: " +
+                    HarvesterSettings.HERITRIX3_MONITOR_TEMP_PATH);
+            if (!tempPath.isDirectory()) { // Try to create tempPath if it doesn't exist already
+                tempPath.mkdirs();
+            }
         } catch (Exception e) {
             //This is normal if tempPath is unset, so system directory is used.
             tempPath = new File(System.getProperty("java.io.tmpdir"));
         }
-        if (tempPath == null || !tempPath.isDirectory() || !tempPath.isDirectory()) {
+        // Fallback to System.getProperty("java.io.tmpdir")
+        if (tempPath == null || !tempPath.isDirectory()) {
             tempPath = new File(System.getProperty("java.io.tmpdir"));
         }
-
+        writeDiagnostics("Using dir '" + tempPath.getAbsolutePath() + "' as tempPath");
         h3AdminName = Settings.get(HarvesterSettings.HERITRIX_ADMIN_NAME);
         h3AdminPassword = Settings.get(HarvesterSettings.HERITRIX_ADMIN_PASSWORD);
 
         this.servletConfig = theServletConfig;
         h3JobMonitorThread = new Heritrix3JobMonitorThread(this);
+        writeDiagnostics("Initialized " + this.getClass().getName());
     }
 
     public void start() {
@@ -152,6 +161,20 @@ public class NASEnvironment {
         }
         catch (Throwable t) {
         	t.printStackTrace();
+        }
+    }
+    
+    private synchronized void writeDiagnostics(String logEntry) {
+        File logFile = new File(tempPath, "h3monitor.log");
+        String dateStamp= "[" + new Date() + "] ";
+        try (FileWriter logFileWriter = new FileWriter(logFile, true);) {
+            logFileWriter.write(dateStamp);
+            logFileWriter.write(logEntry);
+            logFileWriter.write(System.lineSeparator());
+            logFileWriter.flush();
+            logFileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -237,9 +260,22 @@ public class NASEnvironment {
                 return Stream.empty();
             }
         }
-        String crawlLogPath = h3Job.crawlLogFilePath;
+        String crawlLogPath = h3Job.logFile.getAbsolutePath();
+        writeDiagnostics("Trying to getCrawledUrls from job " + jobId + " using cached crawllog '" + crawlLogPath + "'");
+        long cachedLines = h3Job.totalCachedLines;
 
+        if (cachedLines == 0) {
+            writeDiagnostics("No cached crawllog-lines for job " + jobId);
+            return Stream.empty();
+        } else {
+            writeDiagnostics("Number of cached crawllog-lines for job " + jobId + ": " +  cachedLines);
+        }
         try {
+            // test that the crawllog-exists if not, return an empty stream 
+            if (!Paths.get(crawlLogPath).toFile().isFile()) {
+                writeDiagnostics("The file '" + crawlLogPath + "' doesn't correspond to a file. returning an empty stream");
+                return Stream.empty();
+            }
             Stream<String> attemptedHarvestedUrlsFromCrawllog = Files.lines(Paths.get(crawlLogPath),
                     Charset.forName("UTF-8"))
                     .filter(line -> urlInLineIsAttemptedHarvested(line))
