@@ -187,7 +187,7 @@ $netarchiveinstalltherest = <<NETARCHIVEINSTALLTHEREST
 	# Extract sql-init-file for database from NetarchiveSuite zip-file
 	unzip -j /home/vagrant/netarchive/NetarchiveSuite.zip scripts/postgresql/netarchivesuite_init.sql -d /home/vagrant/tmp/
 
-	unzip -j /home/vagrant/netarchive/NetarchiveSuite.zip scripts/sql/createArchiveDB.pgsql -d /home/vagrant/tmp/
+	unzip -j /home/vagrant/netarchive/NetarchiveSuite.zip scripts/postgresql/createArchiveDB.pgsql -d /home/vagrant/tmp/
 
 	# Copy in testdata
 	cp /home/vagrant/gitting/netarchivesuite/quickstart-vagrant-environment/harvestdb.testdata.sql /home/vagrant/tmp/
