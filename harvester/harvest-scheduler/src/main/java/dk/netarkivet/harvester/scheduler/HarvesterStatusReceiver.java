@@ -26,6 +26,7 @@ import java.util.Enumeration;
 
 import javax.jms.JMSException;
 import javax.jms.QueueBrowser;
+import javax.jms.QueueSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -174,10 +175,12 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
      * @return the number of current messages defined by the given queueID
      */
     private int getCount(ChannelID queueID) {
+        QueueSession qSession;
     	QueueBrowser qBrowser;
     	int count=0;
     	try {
-    		qBrowser = jmsConnection.createQueueBrowser(queueID);
+    	    qSession = jmsConnection.getQueueSession();
+    		qBrowser = jmsConnection.createQueueBrowser(queueID, qSession);
     		Enumeration msgs = qBrowser.getEnumeration();
 
     		if ( !msgs.hasMoreElements() ) {
@@ -189,6 +192,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
     			}
     		}
     		qBrowser.close();
+    		qSession.close();
     	} catch (JMSException e) {
     		log.warn("JMSException thrown: ", e);
     	} catch (Throwable e1) {
