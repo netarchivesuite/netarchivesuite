@@ -51,7 +51,7 @@ public class QueueController {
         QueueBrowser qBrowser;
         int submittedCounter = 0;
         try {
-            if (callCounter > CALL_LIMIT) {
+            if (callCounter >= CALL_LIMIT) {
                 callCounter=0;
                 jmsConnection.cleanup();
                 jmsConnection = new JMSConnectionSunMQ();
