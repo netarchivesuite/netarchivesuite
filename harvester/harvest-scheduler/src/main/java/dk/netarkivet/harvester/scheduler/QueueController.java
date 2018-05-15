@@ -11,34 +11,25 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.distribute.JMSConnectionSunMQ;
-import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.distribute.JMSConnectionFactory;
 
+/**
+ * Helper class to test the status of the number of submitted jobs on our JMS Queues.
+ * Uses the same QueueSession for all calls to getCount() to avoid memory-leak caused by accumulation
+ * of imqConsumerReader threads.
+ */
 public class QueueController {
 
     /** The logger to use. */
     private static final Logger log = LoggerFactory.getLogger(QueueController.class);
     
     /** Connection to JMS provider. */
-    private JMSConnection jmsConnection;
-    /** Limit to the number of calls to getCount before resetting the jmsconnection. */
-    private static int CALL_LIMIT = 100;
-    /** Setting to override the CALL_LIMIT of 100. */ 
-    private static String QUEUECOUNTER_RESET_LIMIT = "settings.harvester.scheduler.queuecounterResetLimit";
-    /** JMSBroker host */
+    private JMSConnection jmsConnection; 
+    /** The current qSession. */
+    QueueSession qSession = null;
     
-    
-    private int callCounter;
     public QueueController() {
-        this.jmsConnection = new JMSConnectionSunMQ();
-        this.callCounter = 0;
-        try {
-            CALL_LIMIT = Settings.getInt(QUEUECOUNTER_RESET_LIMIT);
-            log.debug("Setting {} overrided in settings to {}", QUEUECOUNTER_RESET_LIMIT, CALL_LIMIT);
-        } catch (UnknownID e) {
-            log.debug("Setting {} not overrided in settings. Keeping hardwired value of {}", QUEUECOUNTER_RESET_LIMIT, CALL_LIMIT);
-        }
+        this.jmsConnection = JMSConnectionFactory.getInstance();
     }
     
     /**
@@ -47,21 +38,13 @@ public class QueueController {
      * @return the number of current messages defined by the given queueID
      */
     synchronized int getCount(ChannelID queueID) {
-        QueueSession qSession;
         QueueBrowser qBrowser;
         int submittedCounter = 0;
         try {
-            if (callCounter >= CALL_LIMIT) {
-                callCounter=0;
-                jmsConnection.cleanup();
-                jmsConnection = new JMSConnectionSunMQ();
-                log.debug("Resetting the JMSConnection for the QueueController class");
-            } else {
-                callCounter++;
-                log.debug("Now reached the {} call to the getCount method. Argument queueID is {}", callCounter, queueID);
+            if (qSession == null) {
+                qSession = jmsConnection.getQueueSession();
+                log.info("Created a new QueueSession");
             }
-            
-            qSession = jmsConnection.getQueueSession();
             qBrowser = jmsConnection.createQueueBrowser(queueID, qSession);
             Enumeration msgs = qBrowser.getEnumeration();
 
@@ -74,10 +57,11 @@ public class QueueController {
                 }
             }
             qBrowser.close();
-            qSession.close();
+            qBrowser = null;
         } catch (JMSException e) {
             log.warn("JMSException thrown: ", e);
             jmsConnection.onException(e); // See if we want to reconnect now
+            qSession = null;
         } catch (Throwable e1) {
             log.warn("Unexpected exception of type {} thrown: ", e1.getClass().getName(), e1);
         }
