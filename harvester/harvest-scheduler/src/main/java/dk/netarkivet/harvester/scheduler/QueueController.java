@@ -41,6 +41,10 @@ public class QueueController {
         QueueBrowser qBrowser;
         int submittedCounter = 0;
         try {
+            if (jmsConnection == null) {
+                jmsConnection = JMSConnectionFactory.getInstance();
+                log.info("Fetched a new JMSConnection from the factory");
+            }
             if (qSession == null) {
                 qSession = jmsConnection.getQueueSession();
                 log.info("Created a new QueueSession");
@@ -60,9 +64,9 @@ public class QueueController {
             qBrowser = null;
         } catch (JMSException e) {
             log.warn("JMSException thrown: ", e);
-            jmsConnection.onException(e); // See if we want to reconnect now
+            jmsConnection = null; 
             qSession = null;
-        } catch (Throwable e1) {
+        } catch (Exception e1) {
             log.warn("Unexpected exception of type {} thrown: ", e1.getClass().getName(), e1);
         }
 
