@@ -38,7 +38,7 @@ public class QueueController {
      * @return the number of current messages defined by the given queueID
      */
     synchronized int getCount(ChannelID queueID) {
-        QueueBrowser qBrowser;
+        QueueBrowser qBrowser = null;
         int submittedCounter = 0;
         try {
             if (jmsConnection == null) {
@@ -60,14 +60,21 @@ public class QueueController {
                     submittedCounter++;
                 }
             }
-            qBrowser.close();
-            qBrowser = null;
         } catch (JMSException e) {
             log.warn("JMSException thrown: ", e);
             jmsConnection = null; 
             qSession = null;
         } catch (Exception e1) {
             log.warn("Unexpected exception of type {} thrown: ", e1.getClass().getName(), e1);
+        } finally {
+            if (qBrowser != null) {
+                try {
+                    qBrowser.close();
+                } catch (JMSException e) {
+                    log.debug("JMSException while trying to close the qBrowser.", e);
+                }
+                qBrowser = null;
+            }
         }
 
         return submittedCounter;
