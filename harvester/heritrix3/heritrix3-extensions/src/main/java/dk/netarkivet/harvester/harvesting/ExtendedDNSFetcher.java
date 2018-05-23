@@ -40,9 +40,18 @@ import dk.netarkivet.common.utils.DomainUtils;
  * 
  * Based on version of FetchDNS taken from https://github.com/internetarchive/heritrix3/commit/aee83dfe26ea5a36a4eb3092380e1b0d7b242aab
  * 
- * Makes it possible to 
+ * Makes it possible to avoid lookup of bad hostnames, e.g. 'components' or 'www' without any valid domain-information
  *  
  * @author multiple
+ * sample usage:
+ * bean id="fetchDns" class="dk.netarkivet.harvester.harvesting.ExtendedDNSFetcher">
+        <property name="enabled" value="true" />
+        <property name="acceptNonDnsResolves" value="false" />
+        <property name="disableJavaDnsResolves" value="false" />
+        <property name="digestContent" value="true" />
+        <property name="digestAlgorithm" value="sha1" />
+        <property name="prevalidateHostname" value="false" />
+    </bean>
  */
 public class ExtendedDNSFetcher extends Processor {
 
@@ -115,20 +124,6 @@ public class ExtendedDNSFetcher extends Processor {
     }
 
     /**
-     * Whether or not to prevalidate dnsname as a valid hostname.     */
-    {
-        setPrevalidateHostname(true);
-    }
-    public boolean getPrevalidateHostname() {
-        return (Boolean) kp.get("prevalidateHostname");
-    }
-    
-    public void setPrevalidateHostname(boolean prevalidateHostname) {
-        kp.put("prevalidateHostname",prevalidateHostname);
-    }
-    
-    
-    /**
      * Which algorithm (for example MD5 or SHA-1) to use to perform an 
      * on-the-fly digest hash of retrieved content-bodies.
      */
@@ -139,6 +134,25 @@ public class ExtendedDNSFetcher extends Processor {
     public void setDigestAlgorithm(String digestAlgorithm) {
         this.digestAlgorithm = digestAlgorithm;
     }
+    
+    /**
+     * Whether or not to prevalidate dnsname as a valid host 
+     */
+    {
+        setPrevalidateHostname(false);
+    }
+    public boolean getPrevalidateHostname() {
+        return (Boolean) kp.get("prevalidateHostname");
+    }
+    
+    public void setPrevalidateHostname(boolean prevalidateHostname) {
+        kp.put("prevalidateHostname",prevalidateHostname);
+    }
+    
+    
+    
+    
+    
 
     private static final long DEFAULT_TTL_FOR_NON_DNS_RESOLVES
         = 6 * 60 * 60; // 6 hrs
