@@ -88,7 +88,7 @@ void getNumberOfMatchedUrlsInFrontier(String regex) {
                 continue
             }
             curi = pendingUris.crawlUriBinding.entryToObject(value)
-            if (pattern.matcher(curi.toString())) {
+            if (pattern.matcher(curi.toString()).matches()) {
                 ++matchingCount
             }
         }
@@ -156,7 +156,7 @@ void listFrontier(String regex, long itemsPerPage, long page) {
                     continue
                 }
                 curi = pendingUris.crawlUriBinding.entryToObject(value)
-                if (pattern.matcher(curi.toString())) {
+                if (pattern.matcher(curi.toString()).matches()) {
                     if (((long)index) >= ((long)(page * itemsPerPage)) && ((long)index) < ((long)((page + 1) * itemsPerPage))) {
                         sb << curi << '\n'
                     }
