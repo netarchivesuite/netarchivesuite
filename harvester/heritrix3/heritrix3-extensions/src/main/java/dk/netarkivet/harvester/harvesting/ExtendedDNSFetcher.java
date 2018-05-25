@@ -68,6 +68,7 @@ public class ExtendedDNSFetcher extends Processor {
     /**
      * If a DNS lookup fails, whether or not to fall back to InetAddress
      * resolution, which may use local 'hosts' files or other mechanisms.
+     * It is disabled by default.
      */
     {
         setAcceptNonDnsResolves(false);
@@ -85,6 +86,7 @@ public class ExtendedDNSFetcher extends Processor {
      * 
      * This should not generally be used in production as it will prevent 
      * DNS lookups from being recorded properly.
+     * It is disabled by default.
      * 
      */
     {
@@ -111,7 +113,7 @@ public class ExtendedDNSFetcher extends Processor {
     
     /**
      * Whether or not to perform an on-the-fly digest hash of retrieved
-     * content-bodies.
+     * content-bodies. It is enabled by default
      */
     {
         setDigestContent(true);
@@ -125,7 +127,7 @@ public class ExtendedDNSFetcher extends Processor {
 
     /**
      * Which algorithm (for example MD5 or SHA-1) to use to perform an 
-     * on-the-fly digest hash of retrieved content-bodies.
+     * on-the-fly digest hash of retrieved content-bodies. The default is 'sha1'
      */
     protected String digestAlgorithm = "sha1"; 
     public String getDigestAlgorithm() {
@@ -136,7 +138,7 @@ public class ExtendedDNSFetcher extends Processor {
     }
     
     /**
-     * Whether or not to prevalidate dnsname as a valid host 
+     * Whether or not to prevalidate dnsname as a valid host. It is disabled by default.
      */
     {
         setPrevalidateHostname(false);
@@ -148,11 +150,6 @@ public class ExtendedDNSFetcher extends Processor {
     public void setPrevalidateHostname(boolean prevalidateHostname) {
         kp.put("prevalidateHostname",prevalidateHostname);
     }
-    
-    
-    
-    
-    
 
     private static final long DEFAULT_TTL_FOR_NON_DNS_RESOLVES
         = 6 * 60 * 60; // 6 hrs
@@ -200,7 +197,10 @@ public class ExtendedDNSFetcher extends Processor {
         
         if (getPrevalidateHostname()) {
             if (!validHostName(dnsName)) {
-                setUnresolvable(curi, targetHost);
+                targetHost.setIP(null, 0);
+                curi.setFetchStatus(S_DOMAIN_UNRESOLVABLE); // or S_UNFETCHABLE_URI
+                logger.info("URI '" + curi.getURI() + "' rejected, as hostname '" + dnsName + "' is considered invalid");
+                return;
             }
         }      
         
