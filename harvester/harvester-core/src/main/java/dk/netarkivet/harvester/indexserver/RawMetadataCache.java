@@ -111,6 +111,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         job = new GetMetadataArchiveBatchJob(urlMatcher1, mimeMatcher1);
         // Should we try to migrate duplicaterecords, yes or no.
         tryToMigrateDuplicationRecords = Settings.getBoolean(HarvesterSettings.INDEXSERVER_INDEXING_TRY_TO_MIGRATE_DUPLICATION_RECORDS);
+        log.info("Migration of duplicate records is " + (tryToMigrateDuplicationRecords? "enabled":"disabled"));
     }
 
     /**
@@ -137,14 +138,9 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     protected Long cacheData(Long id) {
         final String replicaUsed = Settings.get(CommonSettings.USE_REPLICA_ID);
         final String metadataFilePatternSuffix = Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
+        // Same pattern here as defined in class dk.netarkivet.viewerproxy.webinterface.Reporting
+        final String specifiedPattern = "(.*-)?" + id + "(-.*)?" + metadataFilePatternSuffix;
         
-        //FIXME The current specifiedPattern also accepts files that that includes the Id in the metadatafile name, either
-        // as a prefix, infix, or suffix (NAS-1712)
-        final String specifiedPattern = ".*" + id + ".*" + metadataFilePatternSuffix;
-        // This suggested solution below is incompatible with the prefix pattern (see NAS-2714) 
-        // introduced in harvester/harvester-core/src/main/java/dk/netarkivet/harvester/harvesting/metadata/MetadataFileWriter.java
-        // part of release 5.3.1
-        //final String specifiedPattern = id + metadataFilePatternSuffix; 
         log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}' on replica '{}'. Url pattern is '{}' and mimepattern is '{}'", job
                 .getClass().getName(), specifiedPattern, replicaUsed, urlPattern, mimePattern);
         job.processOnlyFilesMatching(specifiedPattern);
