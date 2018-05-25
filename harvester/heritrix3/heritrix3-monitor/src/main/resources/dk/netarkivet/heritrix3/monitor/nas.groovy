@@ -129,7 +129,7 @@ void listFrontier(String regex, long itemsPerPage, long page) {
     try {
         fIdx = (long)(page * itemsPerPage)
         tIdx = (long)(fIdx + itemsPerPage)
-        if ("".compareTo(regex) == 0) {
+        if ("".compareTo(regex) == 0 || ".*".compareTo(regex) == 0) {
             /*
             if (fIdx > 0) {
                 index = skipNext(fIdx - 1, key, value, LockMode.READ_UNCOMMITTED)

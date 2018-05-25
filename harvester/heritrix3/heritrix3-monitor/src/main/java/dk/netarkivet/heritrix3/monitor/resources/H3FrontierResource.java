@@ -124,7 +124,7 @@ public class H3FrontierResource implements ResourceAbstract {
         }
 
         tmpStr = req.getParameter("q");
-        if (tmpStr != null && tmpStr.length() > 0 && !tmpStr.equalsIgnoreCase(".*")) {
+        if (tmpStr != null && tmpStr.length() > 0) {
             q = tmpStr;
         } else {
         	q = "";
