@@ -106,12 +106,13 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             mimeMatcher1 = MATCH_ALL_PATTERN;
         }
         mimePattern = mimeMatcher1;
-        log.info("Metadata cache for '{}' is fetching metadata with urls matching '{}' and mimetype matching '{}'",
-                prefix, urlMatcher1.toString(), mimeMatcher1);
-        job = new GetMetadataArchiveBatchJob(urlMatcher1, mimeMatcher1);
         // Should we try to migrate duplicaterecords, yes or no.
         tryToMigrateDuplicationRecords = Settings.getBoolean(HarvesterSettings.INDEXSERVER_INDEXING_TRY_TO_MIGRATE_DUPLICATION_RECORDS);
-        log.info("Migration of duplicate records is " + (tryToMigrateDuplicationRecords? "enabled":"disabled"));
+        log.info("Metadata cache for '{}' is fetching metadata with urls matching '{}' and mimetype matching '{}'. Migration of duplicate records is " 
+                + (tryToMigrateDuplicationRecords? "enabled":"disabled"), 
+                prefix, urlMatcher1.toString(), mimeMatcher1);
+        job = new GetMetadataArchiveBatchJob(urlMatcher1, mimeMatcher1);
+        
     }
 
     /**
