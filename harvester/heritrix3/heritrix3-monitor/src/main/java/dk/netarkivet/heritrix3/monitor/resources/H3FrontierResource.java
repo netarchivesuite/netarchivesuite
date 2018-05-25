@@ -206,7 +206,9 @@ public class H3FrontierResource implements ResourceAbstract {
                     sb.append("</pre>");
                 } else {
                     sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");
-                    sb.append("<span>Matching lines: ");
+                    sb.append("<span>Matching lines (max ");
+                    sb.append(linesPerPage);
+                    sb.append(") ");
                     sb.append(lines);
                     sb.append(" URIs</span>\n");
                     sb.append("</div>\n");

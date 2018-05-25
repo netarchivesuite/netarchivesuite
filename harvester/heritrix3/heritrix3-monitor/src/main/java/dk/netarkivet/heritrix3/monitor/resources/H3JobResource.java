@@ -293,7 +293,7 @@ public class H3JobResource implements ResourceAbstract {
                 sb.append(h3Job.jobId);
                 sb.append("/frontier/");
                 sb.append("\" class=\"btn btn-default\">");
-                sb.append("Show/delete Frontier");
+                sb.append("Browse/delete Frontier");
                 sb.append("</a>");
 
                 sb.append("&nbsp;");
