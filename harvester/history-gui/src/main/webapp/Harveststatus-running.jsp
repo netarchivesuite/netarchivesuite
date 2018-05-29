@@ -43,7 +43,9 @@ This page displays a list of running jobs.
                 dk.netarkivet.common.utils.StringUtils,
                 dk.netarkivet.common.utils.TableSort,
                 dk.netarkivet.harvester.webinterface.HarvestStatusRunningTablesSort,
-                dk.netarkivet.heritrix3.monitor.HistoryServlet"
+                dk.netarkivet.heritrix3.monitor.HistoryServlet,
+                dk.netarkivet.harvester.HarvesterSettings,
+                dk.netarkivet.common.utils.Settings"
         pageEncoding="UTF-8" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
@@ -78,7 +80,20 @@ This page displays a list of running jobs.
 
     // Get domain name that user has searched for (if any, otherwise null)
     String searchedDomainName = request.getParameter(FindRunningJobQuery.UI_FIELD.DOMAIN_NAME.name());
-
+	String searchedDomainValue = "";
+    if (searchedDomainName != null){
+        searchedDomainValue = searchedDomainName; 
+    }
+    
+    // Find out which filtering method to use: database or cachedLogs 
+    String filteringMethod = Settings.get(HarvesterSettings.RUNNINGJOBS_FILTERING_METHOD);
+    boolean useCachedLogsFiltering = true;
+    FindRunningJobQuery findJobQuery = null;
+    if (filteringMethod.equalsIgnoreCase("database")) {
+        useCachedLogsFiltering = false; 
+        findJobQuery = new FindRunningJobQuery(request);
+    } 
+    
     HTMLUtils.setUTF8(request);
     HTMLUtils.generateHeader(
             pageContext,
@@ -111,7 +126,7 @@ This page displays a list of running jobs.
             <input type="text"
                    name="<%=FindRunningJobQuery.UI_FIELD.DOMAIN_NAME.name()%>"
                    size="30"
-                   value=""/>
+                   value="<%=searchedDomainValue%>"/>
         </fmt:param>
     </fmt:message>
 
@@ -119,7 +134,6 @@ This page displays a list of running jobs.
            name="search"
            value="<fmt:message key="running.jobs.finder.submit"/>"/>
 </form>
-
 
 <table class="selection_table">
     <%
@@ -301,15 +315,20 @@ This page displays a list of running jobs.
         for (StartedJobInfo info : infoList) {
             long jobId = info.getJobId();
 
-            if (searchedDomainName != null && !searchedDomainName.equals("")) {
-                // Something's been searched for, so let's see if this job should be skipped according to the search...
-                if (HistoryServlet.environment != null
-                        && !HistoryServlet.environment.jobHarvestsDomain(jobId, searchedDomainName, null)) {
-                    // Current job doesn't harvest searched domain, so don't show it. Continue from the next job.
-                    continue;
+            if (searchedDomainName != null && !searchedDomainName.isEmpty()) {
+             // Something's been searched for, so let's see if this job should be skipped according to the search...
+                if (useCachedLogsFiltering){ 
+                	if (HistoryServlet.environment != null
+                        	&& !HistoryServlet.environment.jobHarvestsDomain(jobId, searchedDomainName, null)) {
+                    	// Current job doesn't harvest searched domain, so don't show it. Continue from the next job.
+                    	continue;
+                	}
+                } else { // Look for jobId in list of jobIds matching the given domainsearch
+                    if (!findJobQuery.found(jobId)) {
+                        continue;
+                    }
                 }
             }
-
     %>
 
     <%-- Generate the rows of data --%>

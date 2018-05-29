@@ -211,7 +211,7 @@ National Library.
                 </filename>
             </metadata>
             <monitor>
-                <tempPath></tempPath>
+                <tempPath>cached_crawllogs</tempPath>
             </monitor>
         </harvesting>
         <indexserver>
@@ -237,6 +237,7 @@ National Library.
         </viewerproxy>
         <webinterface>
             <maxCrawlLogInBrowser>1000</maxCrawlLogInBrowser>
+            <runningjobsFilteringMethod>database</runningjobsFilteringMethod>
         </webinterface>
     </harvester>
 </settings>

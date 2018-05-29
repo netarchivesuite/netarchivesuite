@@ -36,7 +36,7 @@ import dk.netarkivet.testutils.preconfigured.TestConfigurationIF;
  * JobIndexCache mockup that either returns null, throws exception, waits, or returns a file with the given jobids.
  */
 public class MockupMultiFileBasedCache extends MultiFileBasedCache<Long> implements TestConfigurationIF {
-    private Object o;
+    private final Object o = new Object();
     private static final int TIMEOUT = 2000;
 
     /**
@@ -62,7 +62,6 @@ public class MockupMultiFileBasedCache extends MultiFileBasedCache<Long> impleme
         cacheCalled = 0;
         mode = Mode.SILENT;
         cacheParameter = null;
-        o = new Object();
         woken = false;
     }
 
