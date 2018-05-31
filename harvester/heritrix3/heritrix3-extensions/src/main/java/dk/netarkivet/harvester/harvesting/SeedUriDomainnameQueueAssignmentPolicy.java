@@ -46,7 +46,20 @@ import dk.netarkivet.common.utils.DomainUtils;
  * 
  */
 public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignmentPolicy {
-    
+
+    /**
+     * If true, dns lookups are queued by seed. If false, each dns lookup gets its own queue. Default true.
+     */
+    private boolean treatDnsLikeHttp = true;
+
+    public boolean isTreatDnsLikeHttp() {
+        return treatDnsLikeHttp;
+    }
+
+    public void setTreatDnsLikeHttp(boolean treatDnsLikeHttp) {
+        this.treatDnsLikeHttp = treatDnsLikeHttp;
+    }
+
     /** A key used for the cases when we can't figure out the URI.
      *  This is taken from parent, where it has private access.  Parent returns
      *  this on things like about:blank.
@@ -73,7 +86,7 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
     public String getClassKey(CrawlURI cauri) {
         log.debug("Finding classKey for cauri: " + cauri);
         String key = null;
-        if (!isDns(cauri)) {
+        if (treatDnsLikeHttp || !isDns(cauri)) {
             key = getKeyFromSeed(cauri);
         }
         if (key == null) {
