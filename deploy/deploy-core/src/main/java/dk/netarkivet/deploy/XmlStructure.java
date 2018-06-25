@@ -157,7 +157,7 @@ public class XmlStructure {
                 e = e.element(n);
             } else {
                 // the element does not exist
-                log.debug("Element {} is not a branch in the tree. Null returned", n);
+                log.debug("Element {} is not a branch in the tree {}. Null returned", n, name);
                 return null;
             }
         }
@@ -201,7 +201,7 @@ public class XmlStructure {
         if (e != null && e.isTextOnly()) {
             return e.getText().trim();
         } else {
-            log.debug("Element is not text. Null returned.");
+            log.debug("Element is not text. Null returned. Path given to getLeafValue {}", path);
             return null;
         }
     }
