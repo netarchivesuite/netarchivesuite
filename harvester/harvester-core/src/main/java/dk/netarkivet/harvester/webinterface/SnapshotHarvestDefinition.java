@@ -268,11 +268,16 @@ public class SnapshotHarvestDefinition {
                             // The client for requesting job index.
                             JobIndexCache jobIndexCache = IndexClientFactory.getDedupCrawllogInstance();
                             Long harvestId = fhd.getOid();
+                            log.info("Snapshot harvest #{} activated. Requesting preparation of deduplicationIndex before jobgeneration can commence", harvestId);
                             Set<Long> jobSet = hdDaoProvider.get().getJobIdsForSnapshotDeduplicationIndex(harvestId);
                             jobIndexCache.requestIndex(jobSet, harvestId);
+                            // fhd.setIndexReady(true); // will be set to true later, when Indexserver announces, that deduplication index is ready
+                            // by sending a IndexReadyMessage back to the scheduler (i.e. the HarvestJobManager). 
+                            // See dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer#doProcessIndexRequestMessage()
                         } else {
                             // If deduplication disabled set indexReady to true
                             // right now, so the job generation can proceed.
+                            log.info("Snapshot harvest #{} activated. Deduplication is disabled, so jobgeneration can commence now ", fhd.getOid());  
                             fhd.setIndexReady(true);
                         }
                     } else { // hd is not Fullharvest

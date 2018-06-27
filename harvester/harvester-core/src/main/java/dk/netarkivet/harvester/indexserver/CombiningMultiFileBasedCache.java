@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
@@ -44,6 +47,9 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>> exte
 
     /** The raw data cache that this cache gets data from. */
     protected FileBasedCache<T> rawcache;
+    
+    /** The log. */
+    private static final Logger log = LoggerFactory.getLogger(CombiningMultiFileBasedCache.class);
 
     /**
      * Constructor for a CombiningMultiFileBasedCache.
@@ -66,11 +72,15 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>> exte
      * filled, though some data may be cached at a lower level.
      */
     protected Set<T> cacheData(Set<T> ids) {
+        log.info("Preparing combine for a set of {} jobid's", ids.size() );
         Map<T, File> filesFound = prepareCombine(ids);
         File resultFile = getCacheFile(ids);
+        log.info("Found data for {} jobs out of {} requested jobs", filesFound.size(), ids.size());
         if (filesFound.size() == ids.size()) {
+            log.info("Combining data for all {} required jobs", ids.size());
             combine(filesFound);
         } else {
+            log.info("No combining of data done here, as we only got data for {} jobs", filesFound.size());
             FileUtils.remove(resultFile);
         }
         return filesFound.keySet();

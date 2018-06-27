@@ -192,7 +192,11 @@ public class HarvestSchedulerMonitorServer
         ArgumentNotValid.checkNotNull(msg, "msg");
         processIndexReadyMessage(msg);
     }
-
+    
+    /**
+     * Processing message sent from the IndexRequestServer
+     * @param msg An IndexReadyMessage from the IndexServer.
+     */
     private void processIndexReadyMessage(IndexReadyMessage msg) {
         // Set isindexready to true if Indexisready is true
         Long harvestId = msg.getHarvestId();
