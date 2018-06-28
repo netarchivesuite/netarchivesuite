@@ -17,7 +17,7 @@
 -- purpose. In order to create a tablespace, the following procedure should be
 -- used (tested on Ubuntu 9.10):
 --
--- identify the data directory (cf. /etc/postgresql/8.4/main//postgresql.conf)
+-- identify the data directory (cf. /etc/postgresql/8.4/main/postgresql.conf)
 -- execute the following commands :
 --      PG_DATA=/var/lib/postgresql/8.4/main
 --      sudo mkdir $PG_DATA/tsindex
@@ -36,6 +36,7 @@
 
 --------------------------------------------------------------------------------
 -- Create user for application and add privileges
+-- replace '' with the wanted passwd below
 --------------------------------------------------------------------------------
 
 --CREATE ROLE netarchivesuite PASSWORD '' LOGIN;
