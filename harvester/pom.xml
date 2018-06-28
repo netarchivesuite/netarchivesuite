@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>netarchivesuite</artifactId>
-    <version>5.4-SNAPSHOT</version>
+    <version>5.4.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>harvester</artifactId>
@@ -15,7 +15,6 @@
 
   <modules>
     <module>harvester-core</module>
-    <module>heritrix1</module>
     <module>heritrix3</module>
     <module>harvest-scheduler</module>
     <module>harvestchannel-gui</module>

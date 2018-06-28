@@ -5,7 +5,7 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2017 The Royal Danish Library,
+Copyright 2004-2018 The Royal Danish Library,
 the National Library of France and the Austrian
 National Library.
 
@@ -67,6 +67,11 @@ if (!ihd.iterator().hasNext()) { %>
    <fmt:message key="harvestdefinition.snapshot.no.harvestdefinition"/>
    <p>
 <% } else { %>
+<!-- Add link to create a new snapshot harvestdefinition both before and after the table of existing definitions -->
+<a href="Definitions-edit-snapshot-harvest.jsp?<%=Constants.CREATENEW_PARAM%>=1">
+          <fmt:message key="create.new.snapshot.harvestdefinition"/>
+</a>
+<p>
 <table class="selection_table">
     <tr>
         <th><fmt:message key="harvestdefinition.snapshot.header.harvestdefinition"/></th>

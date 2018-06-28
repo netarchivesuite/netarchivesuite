@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ public final class DomainUtils {
 
     /**
      * Return a domain name. A domain name is defined as either an IP address if the given host is an IP address, or a
-     * postfix of the given host name containing one hostnamepart and a TLD as defined in settings.
+     * postfix of the given host name containing one hostname part and a TLD as defined in settings.
      * <p>
      * E.g. if '.dk' and 'co.uk' are valid TLDs, www.netarchive.dk will be become netarchive.dk and news.bbc.co.uk will
      * be come bbc.co.uk

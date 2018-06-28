@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -69,14 +69,15 @@ abstract class AbstractJobGenerator implements JobGenerator {
      */
     private final long DOMAIN_CONFIG_SUBSET_SIZE = Settings.getLong(HarvesterSettings.JOBGEN_DOMAIN_CONFIG_SUBSET_SIZE);
 
-    /** Is deduplication enabled or disabled in the settings* */
+    /** Is deduplication enabled or disabled in the settings? */
     private final boolean DEDUPLICATION_ENABLED = Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);
 
     @Override
     public int generateJobs(HarvestDefinition harvest) {
-        log.info("Generating jobs for harvestdefinition #{}", harvest.getOid());
+        log.info("Generating jobs for harvestdefinition #{} using class '{}'", harvest.getOid(), this.getClass());
         int jobsMade = 0;
         final Iterator<DomainConfiguration> domainConfigurations = harvest.getDomainConfigurations();
+        log.info("Now ready to iterate over the domainConfigurations for harvestdefinition #{}", harvest.getOid());
         harvest.setNumEvents(harvest.getNumEvents() + 1);
         if (harvest.isSnapShot()) {
             HarvestDefinitionDAO.getInstance().update(harvest);
@@ -93,7 +94,15 @@ abstract class AbstractJobGenerator implements JobGenerator {
             Collections.sort(subset, domainConfigurationSubsetComparator);
             log.trace("{} domainconfigs now sorted and ready to processing for harvest #{}", subset.size(),
                     harvest.getOid());
+            if (subset.size() == 0) {
+                log.warn("Processing a domain config subset of zero size for HD #{}.", harvest.getOid());
+            }
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
+            if (jobsMade == 0) {
+                log.warn("Created 0 jobs for HD #{} from domain cfg subset size {}.", harvest.getOid(), subset.size());
+            } else {
+                log.info("Now created {} jobs for HD #{} from domain cfg subset size {}.", jobsMade, harvest.getOid(), subset.size());
+            }
         }
 
         if (!harvest.isSnapShot()) {
@@ -179,11 +188,16 @@ abstract class AbstractJobGenerator implements JobGenerator {
 
     @Override
     public boolean canAccept(Job job, DomainConfiguration cfg, DomainConfiguration previousCfg) {
-        log.trace("Comparing current cfg {} with previous cfg {}", cfg, previousCfg);
+        log.trace("Comparing current cfg {} with previous cfg {} when adding configs to HD #{}", cfg, previousCfg, job.getOrigHarvestDefinitionID());
         if (!checkAddDomainConfInvariant(job, cfg, previousCfg)) {
+            log.debug("Unable to add incompatible config(domain,configname='{}','{}') to current job for HD #{}", cfg.getDomainName(), cfg.getName(), job.getOrigHarvestDefinitionID());
             return false;
         }
-        return checkSpecificAcceptConditions(job, cfg);
+        boolean specificAcceptConditionsIsOk = checkSpecificAcceptConditions(job, cfg);
+        if (!specificAcceptConditionsIsOk) {
+            log.debug("Unable to add config(domain,configname='{}','{}') to current job for HD #{}. The specific accept conditions fail", cfg.getDomainName(), cfg.getName(), job.getOrigHarvestDefinitionID());
+        }
+        return specificAcceptConditionsIsOk;
     }
     
     /**
@@ -215,8 +229,9 @@ abstract class AbstractJobGenerator implements JobGenerator {
      * Tests that:
      * <ol>
      * <li>The given domain configuration and job are not null.</li>
+     * <li>The EAV attributes are the same for the the given domain configuration and the previous one if any.
      * <li>The job does not already contain the given domain configuration.</li>
-     * <li>The domain configuration has the same order xml name as the first inserted domain config.</li>
+     * <li>The domain configuration has the same orderXmlName as the first inserted domain config.</li>
      * <li>If the previous configuration is not null, check that all attributes are identical between the two configurations</li>
      * </ol>
      *

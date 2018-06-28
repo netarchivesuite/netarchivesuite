@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -272,15 +272,18 @@ public class PostProcessing {
                 NotificationsFactory.getInstance().notify(errMsg, NotificationType.WARNING);
             } else {
                 if (!inf.getArcFiles().isEmpty()) {
+                	log.info("Beginning upload of {} ARC files", inf.getArcFiles().size());
                     uploadFiles(inf.getArcFiles(), errorMessage, failedFiles);
                 }
                 if (!inf.getWarcFiles().isEmpty()) {
+                	log.info("Beginning upload of {} WARC files", inf.getWarcFiles().size());
                     uploadFiles(inf.getWarcFiles(), errorMessage, failedFiles);
                 }
             }
 
             // Now the ARC/WARC files have been uploaded,
             // we finally upload the metadata archive file.
+            log.info("Beginning upload of the {} metadafile(s) ", inf.getMetadataArcFiles().size());
             uploadFiles(inf.getMetadataArcFiles(), errorMessage, failedFiles);
             
             // Make the harvestReport ready for transfer back to the scheduler 
@@ -304,9 +307,11 @@ public class PostProcessing {
     private void uploadFiles(List<File> files, StringBuilder errorMessage, List<File> failedFiles) {
         // Upload all archive files
         if (files != null) {
+        	int count=0;
             for (File f : files) {
+            	count++;
                 try {
-                    log.info("Uploading file '{}' to arcrepository.", f.getName());
+                    log.info("Uploading file #{} - '{}' to arcrepository.", count, f.getName());
                     arcRepController.store(f);
                     log.info("File '{}' uploaded successfully to the arcrepository.", f.getName());
                 } catch (Exception e) {

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -31,6 +31,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient;
@@ -72,6 +73,14 @@ public class ReportingWarcTester {
         // "2-metadata-1.warc" to our local
         // archive accessed using a TrivalArcRepositoryClient
         TestFileUtils.copyDirectoryNonCVS(TestInfo.WARC_ORIGINALS_DIR, dir);
+        // Duplicate 2-2-20120903165904-00000-kb-test-har-002.kb.dk.warc as 22-2-20120903165904-00000-kb-test-har-002.kb.dk.warc
+        // and 2-metadata-1.warc as 22-metadata-1.warc
+        File source = new File(dir, "2-2-20120903165904-00000-kb-test-har-002.kb.dk.warc");
+        File dest = new File(dir, "22-2-20120903165904-00000-kb-test-har-002.kb.dk.warc");
+        FileUtils.copyFile(source, dest);
+        source = new File(dir, "2-metadata-1.warc");
+        dest = new File(dir, "22-metadata-1.warc");
+        FileUtils.copyFile(source, dest);
     }
 
     @After
@@ -86,7 +95,8 @@ public class ReportingWarcTester {
         utrf.tearDown();
         rs.tearDown();
     }
-
+    
+    @Test
     public void testGetFilesForJob() throws Exception {
         try {
             Reporting.getFilesForJob(-1, "2-1");
@@ -103,7 +113,7 @@ public class ReportingWarcTester {
         CollectionAsserts.assertListEquals("Job 2 chould contain two files", Reporting.getFilesForJob(2, "2-2"),
                 "2-2-20120903165904-00000-kb-test-har-002.kb.dk.warc", "2-metadata-1.warc");
     }
-
+    @Test
     public void testGetMetadataCDXRecordsForJob() throws Exception {
         List<CDXRecord> recordsForJob = Reporting.getMetadataCDXRecordsForJob(2);
         // for (CDXRecord rec : recordsForJob) {
@@ -126,6 +136,7 @@ public class ReportingWarcTester {
      *
      * @throws Exception Now works again after resolving bug NAS-2266
      */
+    @Test
     public void testGetCrawlLogForDomainInJob() throws Exception {
         int jobId = 2;
         // Find the crawl-log lines for domain netarkivet.dk in metadata file for job 2

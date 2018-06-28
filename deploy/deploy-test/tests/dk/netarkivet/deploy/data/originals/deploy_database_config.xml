@@ -453,7 +453,7 @@
                         </harvesting>
                     </harvester>
                 </settings>
-            </applicationName>
+                       </applicationName>
         </deployMachine>
 
         <deployMachine name="sb-test-bar-001.statsbiblioteket.dk">

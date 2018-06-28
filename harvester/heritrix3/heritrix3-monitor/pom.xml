@@ -1,0 +1,200 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.netarchivesuite</groupId>
+    <artifactId>heritrix3</artifactId>
+    <version>5.4.3-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>heritrix3-monitor</artifactId>
+
+  <name>NetarchiveSuite - heritrix3 monitor</name>
+
+  <properties>
+      <bootstrap-agent-tomcat.version>0.2.0-SNAPSHOT</bootstrap-agent-tomcat.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.antiaction</groupId>
+      <artifactId>bootstrap-agent-tomcat</artifactId>
+      <version>${bootstrap-agent-tomcat.version}</version>
+      <classifier>overlay</classifier>
+      <type>zip</type>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>common-core</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.netpreserve.commons</groupId>
+          <artifactId>webarchive-commons</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Required by the SiteSection navigation tree. -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>archive-core</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Required by the SiteSection navigation tree. -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>monitor-core</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.messaging.mq</groupId>
+      <artifactId>jms</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.gnu.inet</groupId>
+      <artifactId>libidn</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>harvester-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.netarchivesuite</groupId>
+      <artifactId>heritrix3-wrapper</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+<!--
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <excludeScope>provided</excludeScope>
+-->
+              <!--excludeTransitive>true</excludeTransitive-->
+              <!--includeGroupIds>...</includeGroupIds-->
+<!--
+              <excludeGroupIds>junit,org.hamcrest</excludeGroupIds>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+-->
+<!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${maven-jar-plugin.version}</version>
+        <configuration>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+            <manifest>
+              <addClasspath>true</addClasspath>
+-->
+              <!--classpathPrefix>lib/</classpathPrefix-->
+              <!--mainClass>com.antiaction.bootstrap.tomcat.TomcatLauncher</mainClass-->
+<!--
+            </manifest>
+            <manifestEntries>
+              <Specification-Title>${project.name}</Specification-Title>
+              <Specification-Version>${project.version}</Specification-Version>
+-->
+              <!--Specification-Vendor>${project.specification_vendor}</Specification-Vendor-->
+<!--
+              <Implementation-Title>${project.groupId}.${project.artifactId}</Implementation-Title>
+-->
+              <!--Implementation-Version>${git.revision}</Implementation-Version-->
+              <!--Implementation-Vendor>${project.implementation_vendor}</Implementation-Vendor-->
+              <!--X-Git-Branch>${git.branch}</X-Git-Branch-->
+              <!--X-Git-Tag>${git.tag}</X-Git-Tag-->
+              <!--X-Git-Commits-Count>${git.commitsCount}</X-Git-Commits-Count-->
+<!--
+              <Sealed>false</Sealed>
+            </manifestEntries>
+          </archive>
+          <forceCreation>true</forceCreation>
+          <finalName>${project.build.finalName}</finalName>
+          <outputDirectory>${project.build.directory}/lib</outputDirectory>
+        </configuration>
+      </plugin>
+-->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>distro-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <appendAssemblyId>false</appendAssemblyId>
+              <classifier>prod</classifier>
+              <finalName>NetarchiveSuite-${project.artifactId}-${project.version}</finalName>
+              <descriptors>
+                <descriptor>src/main/assembly/assembly.xml</descriptor>
+              </descriptors>
+              <tarLongFileMode>gnu</tarLongFileMode>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

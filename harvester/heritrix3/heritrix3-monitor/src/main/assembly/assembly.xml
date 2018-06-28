@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    <id>heritrix3-dist</id>
+
+    <formats>
+		<format>tar.gz</format>
+        <format>zip</format>
+    </formats>
+
+    <includeBaseDirectory>true</includeBaseDirectory >
+
+    <!-- groupId:artifactId:type[:classifier]:version -->
+    <dependencySets>
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>com.antiaction:bootstrap-agent-tomcat:zip:overlay</include>
+            </includes>
+            <unpack>true</unpack>
+            <unpackOptions>
+<!--
+                <includes>
+                  <include>..</include>
+                </includes>
+                <excludes>
+                  <exclude>..</exclude>
+                </excludes>
+-->
+            </unpackOptions>
+            <outputDirectory></outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>true</useProjectArtifact>
+            <includes>
+                <include>*:jar</include>
+            </includes>
+            <excludes>
+<!--
+                <exclude>commons-fileupload:commons-fileupload:jar</exclude>
+                <exclude>commons-httpclient:commons-httpclient:jar</exclude>
+                <exclude>commons-cli:commons-cli:jar</exclude>
+                <exclude>commons-codec:commons-codec:jar</exclude>
+                <exclude>commons-io:commons-io:jar</exclude>
+                <exclude>commons-lang:commons-lang:jar</exclude>
+                <exclude>commons-logging:commons-logging:jar</exclude>
+                <exclude>commons-net:commons-net:jar</exclude>
+                <exclude>org.jwat:jwat-common:jar</exclude>
+-->
+                <exclude>org.slf4j:*:jar</exclude>
+                <exclude>ch.qos.logback:*:jar</exclude>
+                <!-- tomcat -->
+                <exclude>org.apache.tomcat.embed:*:jar</exclude>
+                <exclude>org.apache.tomcat:*:jar</exclude>
+                <!-- junk -->
+                <exclude>fastutil:fastutil:jar</exclude>
+                <exclude>com.google.guava:guava:jar</exclude>
+                <exclude>berkeleydb:je:jar</exclude>
+                <!-- hibernate -->
+                <exclude>org.hibernate:*:jar</exclude>
+                <exclude>antlr:antlr:jar</exclude>
+                <exclude>commons-collections:commons-collections:jar</exclude>
+                <!-- jetty -->
+                <exclude>org.eclipse.jetty:*:jar</exclude>
+                <exclude>org.eclipse.jetty.websocket:*:jar</exclude>
+                <exclude>org.eclipse.jetty.orbit:*:jar</exclude>
+                <exclude>org.glassfish:*:jar</exclude>
+                <exclude>org.glassfish.web:*:jar</exclude>
+                <exclude>javax.servlet:*:jar</exclude>
+                <exclude>javax.servlet.jsp:*:jar</exclude>
+                <exclude>org.ow2.asm:*:jar</exclude>
+                <!-- jfreechat-->
+                <exclude>jfree:*:jar</exclude>
+                <!-- mail -->
+                <exclude>javax.mail:mail:jar</exclude>
+                <exclude>javax.activation:activation:jar</exclude>
+                <!-- xml -->
+                <!--exclude>jaxen:jaxen:jar</exclude-->
+                <exclude>jdom:jdom:jar</exclude>
+                <exclude>xml-apis:xml-apis:jar</exclude>
+                <exclude>xom:xom:jar</exclude>
+                <exclude>xalan:xalan:jar</exclude>
+                <exclude>xerces:*:jar</exclude>
+                <exclude>com.ibm.icu:icu4j:jar</exclude>
+                <!-- Removing duplicates. -->
+                <exclude>commons-configuration:commons-configuration:jar:1.6</exclude>
+                <exclude>org.apache.httpcomponents:httpclient:jar:4.2.5</exclude>
+                <exclude>org.apache.httpcomponents:httpcore:jar:4.2.4</exclude>
+            </excludes>
+            <outputDirectory>webapp/History/WEB-INF/lib/</outputDirectory>
+        </dependencySet>
+    </dependencySets>
+
+    <fileSets>
+        <fileSet>
+            <directory>${basedir}/src/main/webapp/</directory>
+            <outputDirectory>webapp/History/</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>

@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Intern note (EBE): dette job forventer at mvn-kommandoen er i default PATH, hvilket ikke er tilfældet.&#xd;
+&#xd;
+Oprindelig note:&#xd;
+&#xd;
+Installs a Quickstart system according to the quickstart manuel.&lt;p&gt;&#xd;
+&#xd;
+The deployed quickstart can be accessed here: &lt;a href=http://kb-prod-udv-001.kb.dk:8074/HarvestDefinition&gt;kb-prod-udv-001&lt;/a&gt;&#xd;
+&#xd;
+Seems to reinstall the broker (under devel user) and deploys the latest distribution from nexus &#xd;
+(does that mean release or snapshot?). There should probably be at least a sanity test at the end that the system is started.</description>
+  <logRotator class="hudson.tasks.LogRotator">
+    <daysToKeep>-1</daysToKeep>
+    <numToKeep>10</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>-1</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.security.AuthorizationMatrixProperty>
+      <permission>hudson.scm.SCM.Tag:netarchive-project</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Delete:netarchive-project</permission>
+      <permission>hudson.model.Item.Release:netarchive-project</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.ManageDomains:netarchive-project</permission>
+      <permission>hudson.model.Item.Read:netarchive-project</permission>
+      <permission>hudson.model.Item.Workspace:netarchive-project</permission>
+      <permission>hudson.model.Item.Configure:netarchive-project</permission>
+      <permission>hudson.model.Run.Delete:netarchive-project</permission>
+      <permission>hudson.model.Item.Discover:netarchive-project</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.View:netarchive-project</permission>
+      <permission>hudson.model.Item.Build:netarchive-project</permission>
+      <permission>hudson.model.Item.Cancel:netarchive-project</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Create:netarchive-project</permission>
+      <permission>hudson.model.Item.Delete:netarchive-project</permission>
+      <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Update:netarchive-project</permission>
+      <permission>hudson.model.Run.Update:netarchive-project</permission>
+    </hudson.security.AuthorizationMatrixProperty>
+    <hudson.plugins.jiraapi.JiraProjectKeyJobProperty plugin="hudson-jiraapi-plugin@3.3.0">
+      <key></key>
+    </hudson.plugins.jiraapi.JiraProjectKeyJobProperty>
+    <org.jenkinsci.plugins.mavenrepocleaner.MavenRepoCleanerProperty plugin="maven-repo-cleaner@1.2">
+      <notOnThisProject>false</notOnThisProject>
+    </org.jenkinsci.plugins.mavenrepocleaner.MavenRepoCleanerProperty>
+    <de.pellepelster.jenkins.walldisplay.WallDisplayJobProperty plugin="jenkinswalldisplay@0.6.30"/>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://github.com/netarchivesuite/netarchivesuite.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>NetarchiveSuite</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>Java7</jdk>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>echo &quot;Removing previous test artifacts&quot;
+ssh test@kb-prod-udv-001.kb.dk &quot;
+source /etc/bashrc; source /etc/profile;source ~/.bash_profile;
+cd ~/QUICKSTART;
+conf/killall.sh; 
+sleep 5;
+rm -rf ../QUICKSTART;
+&quot;</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo &quot;Installing broker&quot;
+ssh devel@kb-prod-udv-001.kb.dk &quot;
+cd quickstart-test;
+wget -N https://raw.githubusercontent.com/netarchivesuite/netarchivesuite/master/deploy/deploy-core/scripts/openmq/mq.sh;
+sh mq.sh install &lt; /dev/null &gt; start_broker.log 2&gt;&amp;1;
+&quot;</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>cd $WORKSPACE
+mvn -DskipTests clean package
+echo &quot;Copying to devel server&quot;
+scp ./deploy/distribution/target/NetarchiveSuite-*.zip devel@kb-prod-udv-001.kb.dk:quickstart-test/NetarchiveSuite.zip
+scp ./harvester/heritrix3/heritrix3-bundler/target/NetarchiveSuite-heritrix3-bundler-*.zip devel@kb-prod-udv-001.kb.dk:quickstart-test/NetarchiveSuite-bundler.zip
+scp ./deploy/deploy-core/scripts/RunNetarchiveSuite.sh devel@kb-prod-udv-001.kb.dk:quickstart-test
+scp ./deploy/distribution/src/main/resources/examples/deploy_standalone_example.xml devel@kb-prod-udv-001.kb.dk:quickstart-test
+
+echo &quot;Installing NetarchiveSuite&quot;
+ssh devel@kb-prod-udv-001.kb.dk &quot;
+source /etc/bashrc;
+source /etc/profile;
+source ~/.bash_profile;
+
+cd ~/quickstart-test;
+sh mq.sh status
+chmod +x RunNetarchiveSuite.sh;
+rm -rf deploy;
+./RunNetarchiveSuite.sh NetarchiveSuite.zip deploy_standalone_example.xml deploy NetarchiveSuite-bundler.zip;
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.Mailer plugin="mailer@1.16">
+      <recipients>csr@statsbiblioteket.dk</recipients>
+      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
+  <buildWrappers/>
+</project>

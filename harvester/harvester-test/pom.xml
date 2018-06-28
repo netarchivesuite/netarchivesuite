@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>harvester</artifactId>
-    <version>5.4-SNAPSHOT</version>
+    <version>5.4.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>harvester-test</artifactId>
@@ -44,6 +44,11 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>heritrix3-monitor</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- Test dependencies. -->
 

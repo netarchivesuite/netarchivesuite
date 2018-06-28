@@ -238,7 +238,7 @@ table table[id="templates"] tr td:last-child{
 /* Menu styles */
 td#menu, table#menu_table{
     background-color: #f0f0f0;
-    width: 20em;
+    width: 22em;
 }
 
 table#menu_table td{

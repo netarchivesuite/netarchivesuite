@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
@@ -73,7 +72,10 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
 
     /** The actual pattern to be used for matching the url in the metadata record */
     private Pattern urlPattern;
-
+ 
+   /** The actual pattern to be used for matching the mimetype in the metadata record */ 
+    private Pattern mimePattern;
+ 
     /**
      * Create a new RawMetadataCache. For a given job ID, this will fetch and cache selected content from metadata files
      * (&lt;ID&gt;-metadata-[0-9]+.arc). Any entry in a metadata file that matches both patterns will be returned. The
@@ -101,6 +103,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         } else {
             mimeMatcher1 = MATCH_ALL_PATTERN;
         }
+        mimePattern = mimeMatcher1;
         log.info("Metadata cache for '{}' is fetching metadata with urls matching '{}' and mimetype matching '{}'",
                 prefix, urlMatcher1.toString(), mimeMatcher1);
         job = new GetMetadataArchiveBatchJob(urlMatcher1, mimeMatcher1);
@@ -130,9 +133,15 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     protected Long cacheData(Long id) {
         final String replicaUsed = Settings.get(CommonSettings.USE_REPLICA_ID);
         final String metadataFilePatternSuffix = Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
-        log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}{}' on replica '{}'", job
-                .getClass().getName(), id, metadataFilePatternSuffix, replicaUsed);
+        //FIXME The current specifiedPattern also accepts files that that includes the Id in the metadatafile name, either
+        // as a prefix, infix, or suffix (NAS-1712)
         final String specifiedPattern = ".*" + id + ".*" + metadataFilePatternSuffix;
+        // This suggested solution below is incompatible with the prefix pattern (see NAS-2714) 
+        // introduced in harvester/harvester-core/src/main/java/dk/netarkivet/harvester/harvesting/metadata/MetadataFileWriter.java
+        // part of release 5.3.1
+        //final String specifiedPattern = id + metadataFilePatternSuffix; 
+        log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}' on replica '{}'. Url pattern is '{}' and mimepattern is '{}'", job
+                .getClass().getName(), specifiedPattern, replicaUsed, urlPattern, mimePattern);
         job.processOnlyFilesMatching(specifiedPattern);
         BatchStatus b = arcrep.batch(job, replicaUsed);
         // This check ensures that we got data from at least one file.
@@ -203,10 +212,17 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 try {
                     final List<String> migrationLines = org.apache.commons.io.FileUtils.readLines(migration);
                     log.info("{} migration records found for job {}", migrationLines.size(), id);
+                    // duplicationmigration lines should look like this: "FILENAME 496812 393343 1282069269000"
+                    // But only the first 3 entries are used.
                     for (String line : migrationLines) {
+                    	// duplicationmigration lines look like this: "FILENAME 496812 393343 1282069269000"
                         String[] splitLine = StringUtils.split(line);
-                        lookup.put(new Pair<String, Long>(splitLine[0], Long.parseLong(splitLine[1])),
-                                Long.parseLong(splitLine[2]));
+                        if (splitLine.length >= 3) { 
+                            lookup.put(new Pair<String, Long>(splitLine[0], Long.parseLong(splitLine[1])),
+                                 Long.parseLong(splitLine[2])); 
+                          } else {
+                               log.warn("Line '" + line + "' has a wrong format. Ignoring line");
+                          }
                     }
                 } catch (IOException e) {
                     throw new IOFailure("Could not read " + migration.getAbsolutePath());

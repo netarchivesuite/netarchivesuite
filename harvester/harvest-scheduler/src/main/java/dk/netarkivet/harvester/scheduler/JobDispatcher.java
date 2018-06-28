@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -67,6 +67,7 @@ public class JobDispatcher {
     /**
      * @param jmsConnection The JMS connection to use.
      * @param hDao The HarvestDefinitionDAO to use.
+     * @param jobDao The JobDAO to use.
      */
     public JobDispatcher(JMSConnection jmsConnection, HarvestDefinitionDAO hDao, JobDAO jobDao) {
         log.info("Creating JobDispatcher");
@@ -136,7 +137,7 @@ public class JobDispatcher {
     }
 
     /**
-     * Will read the next job ready to run from the db and set the job to submitted. If no jobs are ready, null will be
+     * Will read the next job ready to run from the database and set the job to submitted. If no jobs are ready, null will be
      * returned.
      * <p>
      * Note the operation is synchronized, so only one thread may start the submission of a job.
@@ -215,12 +216,8 @@ public class JobDispatcher {
         if (usingWarcAsArchiveFormat()) {
         	log.info("As we're using WARC as archiveFormat WarcInfoMetadata is now added to the template");
         	HeritrixTemplate ht = job.getOrderXMLdoc();
-            if (job.getContinuationOf() == null ) {
-                ht.insertWarcInfoMetadata(job, origHarvestName, origHarvestSchedule,
+                ht.insertWarcInfoMetadata(job, origHarvestName, origHarvestDesc, origHarvestSchedule,
                         Settings.get(HarvesterSettings.PERFORMER));
-            } else {
-                log.info("Job is a continuation of " + job.getContinuationOf() + " so no need to replace WarcInfoMetadata");
-            }
             job.setOrderXMLDoc(ht);
         } else {
         	log.info("As we're using ARC as archiveFormat no WarcInfoMetadata was added to the template");

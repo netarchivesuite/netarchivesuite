@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>harvester</artifactId>
-    <version>5.4-SNAPSHOT</version>
+    <version>5.4.3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -17,5 +17,6 @@
     <module>heritrix3-extensions</module>
     <module>heritrix3-bundler</module>
     <module>heritrix3-controller</module>
+    <module>heritrix3-monitor</module>
   </modules>
 </project>

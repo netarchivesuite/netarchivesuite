@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -677,7 +677,14 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + " FROM partialharvests, harvestdefinitions"
                     + " WHERE harvestdefinitions.harvest_id = partialharvests.harvest_id"
                     + " AND isactive = ? AND nextdate IS NOT NULL AND nextdate < ?", true, now));
-            return ids;
+            Set<Long> distinctIds = new HashSet<>();
+            distinctIds.addAll(ids);
+            if (distinctIds.size() != ids.size()) {
+                log.warn("Query returned multiple identical ids {}. These have been sanitized.", ids);
+                return distinctIds;
+            } else {
+                return ids;
+            }
         } finally {
             HarvestDBConnection.release(connection);
         }

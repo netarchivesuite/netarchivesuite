@@ -1,31 +1,47 @@
--- File:        $Id: createArchiveDB.sql 1359 2010-04-15 13:04:12Z svc $
--- Revision:    $Revision: 1359 $
--- Author:      $Author: svc $
--- Date:        $Date: 2010-04-15 15:04:12 +0200 (Thu, 15 Apr 2010) $
---
 -- The Netarchive Suite - Software to harvest and preserve websites
--- Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
---
--- This library is free software; you can redistribute it and/or
--- modify it under the terms of the GNU Lesser General Public
--- License as published by the Free Software Foundation; either
--- version 2.1 of the License, or (at your option) any later version.
---
--- This library is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
--- Lesser General Public License for more details.
---
--- You should have received a copy of the GNU Lesser General Public
--- License along with this library; if not, write to the Free Software
--- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-- Copyright (C) 2005 - 2018 The Royal Danish Library, 
+             the National Library of France and the Austrian National Library.
 
--- See derby/createArchiveDB.sql for information of the semantics of these fields.
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU Lesser General Public License as
+-- published by the Free Software Foundation, either version 2.1 of the
+-- License, or (at your option) any later version.
  
-----------------------------------------------
--- FIXME - MISSING CONNECT INFORMATION FOR postgreSQL
--- FIXME - Add any missing indices, if necessary
-----------------------------------------------
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Lesser Public License for more details.
+
+-- You should have received a copy of the GNU General Lesser Public
+-- License along with this program.  If not, see <http://www.gnu.org/licenses/lgpl-2.1.html>.
+
+
+-----------------------------------------------------------------------------------------------
+-- See file ../derby/createArchiveDB.sql for information of the semantics of these fields.
+-----------------------------------------------------------------------------------------------
+ 
+-- Assuming database is called 'admindb', the user is 'netarchivesuite' the following procedure can be used to create this database
+
+-- Step 1. This is mandatory, but it makes it simpler to access the database
+-- As root or postgres user modify pg_hba.conf so 'ident' is replaced by 'trust' for all rules. So we get a pg_hba.conf looking something like this
+
+--    host    all   all         127.0.0.1/32          trust
+--    local   all   all                               trust
+
+-- Step 2. Create the database 'admindb', a user 'netarchivesuite'
+
+--  sudo su - postgres
+--  psql
+--   CREATE DATABASE admindb WITH ENCODING 'UTF8';
+--   CREATE USER netarchivesuite WITH PASSWORD 'netarchivesuite';
+--   \q
+--  pg_ctl reload
+
+-- Step 3. Create database tables using this script
+-- psql admindb -U netarchivesuite < createArchiveDB.pgsql
+
+-- Step 4. You are now done
+
 
 --***************************************************************************--
 -- Area: Basics

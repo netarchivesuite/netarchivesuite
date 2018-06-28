@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import javax.servlet.jsp.JspWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -596,7 +597,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 //  </property>
 
 	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
-			String scheduleName, String performer) {
+			String origHarvestdefinitionComments, String scheduleName, String performer) {
 		if (!template.contains(METADATA_ITEMS_PLACEHOLDER)) {
 			throw new IllegalState("The placeholder for the property '" + METADATA_ITEMS_PLACEHOLDER  
 					+ "' was not found. Maybe the placeholder has already been replaced with the correct value. The template looks like this: " 
@@ -647,6 +648,12 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + valuePart + 
 				origHarvestdefinitionName + endMetadataEntry);
+		
+		if(StringUtils.isNotEmpty(origHarvestdefinitionComments)) {
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS + valuePart + 
+				origHarvestdefinitionComments + endMetadataEntry);
+		}
 		
 		/* optional schedule-name - only inserted if not null and not-empty. */
 		if (scheduleName != null && !scheduleName.isEmpty()) {

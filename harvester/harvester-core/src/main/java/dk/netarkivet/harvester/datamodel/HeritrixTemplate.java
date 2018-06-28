@@ -52,6 +52,7 @@ public abstract class HeritrixTemplate implements Serializable {
 	protected static final String HARVESTINFO_ORDERXMLUPDATEDATE = "harvestInfo.templateLastUpdateDate";
 	protected static final String HARVESTINFO_ORDERXMLDESCRIPTION = "harvestInfo.templateDescription";
 	protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
+	protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS = "harvestInfo.origHarvestDefinitionComments";
 	protected static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
 	protected static final String HARVESTINFO_HARVESTFILENAMEPREFIX = "harvestInfo.harvestFilenamePrefix";
 	protected static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";
@@ -171,7 +172,7 @@ public abstract class HeritrixTemplate implements Serializable {
 		int trapCount=crawlerTraps.size();
 		for (String trap: crawlerTraps){
 		    if (trap.isEmpty()) { // Ignore empty traps in the trapcount (NAS-2480)
-		        log.warn("Found empty trap for domain", cfg.getDomainName());
+		        log.warn("Found empty trap for domain {}", cfg.getDomainName());
 		        trapCount--; 
 		    }
 		}
@@ -270,7 +271,7 @@ public abstract class HeritrixTemplate implements Serializable {
 	 * @param performer The name of organisation/person doing this harvest 
 	 */
 	public abstract void insertWarcInfoMetadata(Job ajob,
-			String origHarvestdefinitionName, String scheduleName,
-			String performer);
+			String origHarvestdefinitionName, String origHarvestdefinitionComments,
+			String scheduleName, String performer);
 
 }

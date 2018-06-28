@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -139,18 +139,20 @@ public class HarvesterChannels {
     /**
      * Returns the queue which is used by the scheduler to send doOneCrawl to Harvest Controllers listening on the given
      * harvest channel.
-     *
+     * @param harvestChannel
+     * 
      * @return That channel (queue)
      */
     public static ChannelID getHarvestJobChannelId(HarvestChannel harvestChannel) {
-        String prefix = (harvestChannel.isSnapshot() ? JOB_SNAPSHOT_CHANNEL_PREFIX : JOB_PARTIAL_CHANNEL_PREFIX) + "_"
-                + harvestChannel.getName().toUpperCase();
-        return new ChannelID(prefix, ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+        return getHarvestJobChannelId(harvestChannel.getName(),harvestChannel.isSnapshot());
     }
 
     /**
      * Returns the queue which is used by the scheduler to send doOneCrawl to Harvest Controllers listening on the given
      * harvest channel.
+     *
+     * @param harvestChannelName
+     * @param isSnapshot
      *
      * @return That channel (queue)
      */
@@ -159,5 +161,5 @@ public class HarvesterChannels {
                 + harvestChannelName.toUpperCase();
         return new ChannelID(prefix, ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
     }
-
+    
 }

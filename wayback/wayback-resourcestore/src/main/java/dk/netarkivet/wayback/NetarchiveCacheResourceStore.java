@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - wayback
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ public class NetarchiveCacheResourceStore implements ResourceStore {
     /** Logger. */
     private Log logger = LogFactory.getLog(getClass().getName());
     /** The filecache being used by this class. */
-    private LRUCache fileCache;
+    private final LRUCache fileCache;
     /** The replica being used by this class. */
     private Replica replicaUsed;
 

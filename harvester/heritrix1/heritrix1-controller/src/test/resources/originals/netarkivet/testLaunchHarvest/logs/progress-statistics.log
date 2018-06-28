@@ -1,5 +1,0 @@
-20060726143926 CRAWL RESUMED - Running
-           timestamp  discovered      queued   downloaded       doc/s(avg)  KB/s(avg)   dl-failures   busy-thread   mem-use-KB  heap-size-KB   congestion   max-depth   avg-depth
-20060726143930 CRAWL ENDING - Finished
-2006-07-26T16:39:30Z          33           0           33       11.0(11.0)     77(77)             0             0        29913         53952          NaN           0           0
-20060726143930 CRAWL ENDED - Finished

@@ -5,7 +5,7 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2017 The Royal Danish Library,
+Copyright 2004-2018 The Royal Danish Library,
 the National Library of France and the Austrian
 National Library.
 
@@ -27,17 +27,49 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 This page provides an interface for entering and updating information referring
 to a particular selective harvest.
 
-Parameters:
+This page has major side effects in that it will during then addSeeds function:
+1) Create any unknown domains present in the seedlist 
+2) Create for every seedlist a configuration and seedlist formed from the
+name of the harvest and the orderTemplate and add that configuration to the
+harvest.
+
+General parameters:
 harvestname:
      the name of the harvest definition.  If this is not set, the user is
      allowed to enter a new name, otherwise a harvest definition of that
      name must exist and the name cannot be changed.
-
-The following parameters are posted by the page to itself:
-
 update:
      if defined, the harvest definition database will be updated from the
      submitted fields.
+
+The following parameters are only posted by page Definitions-add-event-seeds.jsp
+
+seeds:
+	A whitespace-separated list of seed urls to be added
+orderTemplate:
+	The name of the order template to use with these seeds
+addSeeds: 
+     if defined, either the arguments seeds contain a list of the seeds to be added or they are in a file
+     Note that this variable is not directly accessable if the request is a multipart-posting. 
+     See line: ServletFileUpload.isMultipartContent(request)
+upload_file:
+     contains the reference to the file with the seeds, if we are dealing with a multipart-posting.
+     Is read in the EventHarvestUtil#processMultidataForm() method.
+maxRate:
+     maxRate value to use when creating new configurations. The value is not used currently
+maxObjects:
+	 maxObjects value to use when creating new configurations
+maxBytes:
+	maxBytes value to use when creating new configurations
+MAX_HOPS:
+    max Hops value to use when creating new configurations
+EXTRACT_JAVASCRIPT:
+     value to use when creating new configurations for extract javascript argument: '1' means true, 'null' means javascript extraction is disableed
+HONOR_ROBOTS_DOT_TXT:
+     value to use when creating new configurations for robots.txt. '1' means honoring robots.txt, 'null' means robots.txt is ignored 
+
+The following parameters are only posted by the page to itself:
+
 createnew:
      Set when creating new harvest, to indicate that rather than throwing a
      fit when no harvest exists called harvestname, it should be created.  This
@@ -74,9 +106,14 @@ DomainConfigurations are posted as pairs
 
 --%><%@ page import="java.util.ArrayList,
                  java.util.List,
+                 java.util.HashMap,
+                 java.util.Map,
+                 java.util.Set,
+                 java.io.File,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.utils.StringUtils,
+                 dk.netarkivet.common.utils.FileUtils,  
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
@@ -87,7 +124,16 @@ DomainConfigurations are posted as pairs
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.SelectiveHarvestUtil,
-                 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes"
+                 dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes,
+                 org.apache.commons.fileupload.FileItemFactory,
+                 org.apache.commons.fileupload.disk.DiskFileItemFactory,
+                 org.apache.commons.fileupload.servlet.ServletFileUpload,
+                 org.apache.commons.fileupload.FileItem,
+                 dk.netarkivet.harvester.webinterface.EventHarvestUtil,
+                 dk.netarkivet.harvester.datamodel.eav.EAV,
+                 dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType,
+                 com.antiaction.raptor.dao.AttributeTypeBase,
+                 com.antiaction.raptor.dao.AttributeBase"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -95,31 +141,40 @@ DomainConfigurations are posted as pairs
 <%!private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%>
   	<%HTMLUtils.setUTF8(request);
-
+  	String SAVE_PARAM_ARG = request.getParameter(Constants.SAVE_PARAM); // remember the SAVE_PARAM
+  	String harvestName = request.getParameter(Constants.HARVEST_PARAM); // remember the HARVEST_PARAM
+  	
     HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
     // Update all relevant HD data from request, some results are saved in
     // string buffers
     List<String> unknownDomains = new ArrayList<String>();
     List<String> illegalDomains = new ArrayList<String>();
-    try {
-        SelectiveHarvestUtil.processRequest(pageContext, I18N,
-                unknownDomains, illegalDomains);
-    } catch (ForwardedToErrorPage e) {
-        return;
-    }
+    List<String> illegalSeeds = new ArrayList<String>(); // produced by EventHarvestUtils.addconfigurations
+    String ADD_SEEDS_PARAM = request.getParameter(Constants.ADD_SEEDS_PARAM);
+    boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
 
+    if (!isMultiPart && ADD_SEEDS_PARAM == null) { // we're dealing with the original processRequest for this page. 
+       	SelectiveHarvestUtil.processRequest(pageContext, I18N,
+               unknownDomains, illegalDomains);
+    } else {
+    		Map<String,String> attributeMap = new HashMap<String,String>(); 
+			Set<String> attributeNames = EAV.getAttributeNames(EAV.DOMAIN_TREE_ID);
+			EventHarvestUtil.processAddSeeds(pageContext, isMultiPart, I18N, harvestName, illegalSeeds, attributeMap);
+			if (harvestName == null) { // is null if multiPart, read the harvestname from the attributeMap
+				harvestName = attributeMap.get(Constants.HARVEST_PARAM);
+			}
+    }		
     //Redirect if we just saved the HD
-    if (request.getParameter(Constants.SAVE_PARAM) != null) {
+    if (SAVE_PARAM_ARG != null) {
         response.sendRedirect("Definitions-selective-harvests.jsp");
         return;
     }
 
-    // Preload default parameter values
+    // Preload default parameter values 
     SparsePartialHarvest hdd = null;
 
     // Now, unless we are creating a new definition from scratch, we read in the
     // current values from the dao
-    String harvestName = request.getParameter(Constants.HARVEST_PARAM);
     if (harvestName != null) {
         hdd = hddao.getSparsePartialHarvest(harvestName);
         if (hdd == null) {
@@ -269,8 +324,6 @@ int extendedFieldType = ExtendedFieldTypes.HARVESTDEFINITION;
 <%@ include file="extendedfields_element.jspf" %>
 
 
-
-
 <%
 }
 
@@ -392,6 +445,28 @@ if (hdd != null) {
         <td>
             <textarea rows="<%= illegalDomains.size()%>" cols="30"><%=
                 HTMLUtils.escapeHtmlValues(StringUtils.conjoin("\n", illegalDomains))
+            %></textarea>
+        </td>
+    </tr>
+</table>
+<%
+    }
+%>
+<%
+
+  if (illegalSeeds.size() > 0) {
+%>
+<br/>
+<table class="selection_table">
+    <tr>
+        <th>
+            <fmt:message key="illegal.seeds.not.addable"/>
+        </th>
+    </tr>
+    <tr>
+        <td>
+            <textarea rows="<%= illegalSeeds.size()%>" cols="150"><%=
+                HTMLUtils.escapeHtmlValues(StringUtils.conjoin("\n", illegalSeeds))
             %></textarea>
         </td>
     </tr>
