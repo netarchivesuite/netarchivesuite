@@ -84,7 +84,7 @@ public abstract class FileBasedCache<T> {
      * Get the file that caches content for the given ID.
      *
      * @param id Some sort of id that uniquely identifies the item within the cache.
-     * @return A file (possibly nonexistant or empty) that can cache the data for the id.
+     * @return A file (possibly non-existing or empty) that can cache the data for the id.
      */
     public abstract File getCacheFile(T id);
 
@@ -141,8 +141,10 @@ public abstract class FileBasedCache<T> {
                     // Now we know nobody else touches the file.
                     // If the file already exists, just return it.
                     if (cachedFile.exists()) {
+                        log.info("The requested data file '{}' for id '{}' already exists in the cache, so we just return it", cachedFile.getAbsolutePath(), id);
                         return id;
                     }
+                    log.info("Starting generating data file for id '{}'", id);
                     return cacheData(id);
                 } finally {
                     if (lock != null) {
@@ -150,6 +152,7 @@ public abstract class FileBasedCache<T> {
                         lock.release();
                     }
                     lockFile.close();
+                    // TODO shouldn't we try to remove the fileBehindLockFile now?
                 }
             }
         } catch (IOException e) {
