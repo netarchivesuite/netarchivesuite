@@ -93,7 +93,7 @@ public class NASEnvironment {
         public Matcher m;
     }
 
-    public List<StringMatcher> h3HostPortAllowRegexList = new ArrayList<StringMatcher>();
+    public final List<StringMatcher> h3HostPortAllowRegexList = new ArrayList<StringMatcher>();
 
     public final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
 

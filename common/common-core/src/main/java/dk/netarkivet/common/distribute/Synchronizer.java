@@ -42,7 +42,7 @@ public class Synchronizer implements MessageListener {
     private static final Logger log = LoggerFactory.getLogger(Synchronizer.class);
 
     /** Collection containing messages on which a reply is awaited. */
-    private Hashtable<String, NetarkivetMessage> requests;
+    private final Hashtable<String, NetarkivetMessage> requests;
 
     /** Collection containing reply messages which have not yet been returned to the caller. */
     private Hashtable<String, NetarkivetMessage> replies;
