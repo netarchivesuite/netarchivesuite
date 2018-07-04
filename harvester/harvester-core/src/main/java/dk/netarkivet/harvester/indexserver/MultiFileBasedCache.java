@@ -29,8 +29,8 @@ import java.util.Set;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * Implementation of file based cache, that works with the assumption we are working on a set if ids, of which we might
- * only get a subset correct.
+ * Implementation of file based cache, that works with the assumption we are working on a set of ids, of which we might
+ * only get a subset.
  * <p>
  * Implements generating a filename from this.
  *
@@ -42,7 +42,7 @@ public abstract class MultiFileBasedCache<T extends Comparable<T>> extends FileB
      * Creates a new FileBasedCache object. This creates a directory under the main cache directory holding cached
      * files.
      *
-     * @param cacheName Name of this cache (enabling sharing among processes). The directoriy creating in the cachedir
+     * @param cacheName Name of this cache (enabling sharing among processes). The directory creating in the cachedir
      * will have this name.
      */
     public MultiFileBasedCache(String cacheName) {

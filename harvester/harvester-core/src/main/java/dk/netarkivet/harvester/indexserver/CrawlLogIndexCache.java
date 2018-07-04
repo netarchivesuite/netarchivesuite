@@ -107,6 +107,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
         Map<Long, File> returnMap = super.prepareCombine(ids);
         Set<Long> missing = new HashSet<Long>();
         for (Long id : returnMap.keySet()) {
+            log.debug("Trying to retrieve cdxcache for id '{}' ", id);
             Long cached = cdxcache.cache(id);
             if (cached == null) {
                 missing.add(id);
@@ -318,7 +319,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      */
     protected static void indexFile(Long id, File crawllogfile, File cdxfile, DigestIndexer indexer,
             DigestOptions options) {
-        log.debug("Ingesting the crawl.log file '{}' related to job {}", crawllogfile.getAbsolutePath(), id);
+        log.debug("Ingesting the crawl.log file '{}' related to job {} using cdxfile '{}'", crawllogfile.getAbsolutePath(), id, cdxfile.getAbsolutePath());
         boolean blacklist = options.getUseBlacklist();
         final String mimefilter = options.getMimeFilter();
         final boolean verbose = options.getVerboseMode();

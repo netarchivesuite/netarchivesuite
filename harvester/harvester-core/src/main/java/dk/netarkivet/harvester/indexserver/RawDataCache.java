@@ -34,7 +34,7 @@ public interface RawDataCache {
 
     /**
      * Cache the raw data associated with the given ID as a file, or null if we could not find any such data. The data
-     * can be found in the file specified by getCacheFile(ID), if this call is successfull.
+     * can be found in the file specified by getCacheFile(ID), if this call is successful.
      *
      * @param id The job ID to look for data for.
      * @return The data found, or null on failure.
@@ -42,7 +42,7 @@ public interface RawDataCache {
     Long cache(Long id);
 
     /**
-     * Get the raw data files for a set of job IDs. This is commonly a convenience wrapper around cache(Long) and
+     * Get the raw data files for a set of job IDs. This is a convenience wrapper around cache(Long) and
      * getCacheFile(Long), but may reduce overhead.
      *
      * @param ids Set of job IDs to get data for.
