@@ -223,6 +223,7 @@ National Library.
             <indexingtimeout>259200000</indexingtimeout>
             <maxsegments>42</maxsegments>
             <satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
+            <tryToMigrateDuplicationRecords>false</tryToMigrateDuplicationRecords>
             <lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
             <indexrequestserver>
                 <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>

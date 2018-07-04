@@ -23,7 +23,6 @@
             </includes>
             <outputDirectory>/</outputDirectory>
         </fileSet>
-
         <fileSet>
             <directory>${project.basedir}/../deploy-core/</directory>
             <includes>

@@ -36,8 +36,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import dk.netarkivet.common.arcrepository.TestArcRepositoryClient;
-import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -91,6 +92,7 @@ public class RawMetadataCacheTester extends CacheTestCase {
      */
     @Test
     public void testCacheMigratedMetadata() throws Exception {
+        Settings.set(HarvesterSettings.INDEXSERVER_INDEXING_TRY_TO_MIGRATE_DUPLICATION_RECORDS, "true");
         TestArcRepositoryClient tarc = new TestArcRepositoryClient(new File(TestInfo.WORKING_DIR, "arcfiles"));
         Field arcrepfield = ReflectUtils.getPrivateField(RawMetadataCache.class, "arcrep");
         // Try one with just URL pattern.

@@ -22,11 +22,6 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import java.util.Enumeration;
-
-import javax.jms.JMSException;
-import javax.jms.QueueBrowser;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +64,8 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
 	/** The number of submitted messages in each queue. Only used, if the above is true */
 	private final int submittedJobsInQueueThreshold;
 
+    private QueueController qController;
+
     /**
      * Constructor of the <code>HarvesterStatusReceiver</code>.
      * This constructs also reads from settings, if we're limiting the number of submitted messages in each queue, and its limit.
@@ -91,6 +88,9 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         this.harvestChannelRegistry = harvestChannelRegistry;
         this.limitSubmittedJobsInQueue = Settings.getBoolean(HarvesterSettings.SCHEDULER_LIMIT_SUBMITTED_JOBS_IN_QUEUE);
         this.submittedJobsInQueueThreshold = Settings.getInt(HarvesterSettings.SCHEDULER_SUBMITTED_JOBS_IN_QUEUE_LIMIT);
+        if (limitSubmittedJobsInQueue) {
+            this.qController = new QueueController();
+        }
     }
 
     @Override
@@ -127,7 +127,7 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         if (limitSubmittedJobsInQueue) {
         	// Check If already a Message in the JMS queue for this channel
         	ChannelID relevantChannelId = HarvesterChannels.getHarvestJobChannelId(channel);
-        	int currentCount = getCount(relevantChannelId);
+        	int currentCount = qController.getCount(relevantChannelId);
         	if (currentCount < submittedJobsInQueueThreshold) {
         		jobDispatcher.submitNextNewJob(channel);
         	} else {
@@ -166,36 +166,5 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         jmsConnection.send(new HarvesterRegistrationResponse(channelName, isValid, isSnapshot));
         log.info("Sent a message to host {} to notify that harvest channel '{}' is {}", msg.getHostname(), channelName, (isValid ? "valid."
                 : "invalid."));
-    }
-    
-    /**
-     * Retrieve the number of current messages defined by the given queueID. 
-     * @param queueID a given QueueID
-     * @return the number of current messages defined by the given queueID
-     */
-    private int getCount(ChannelID queueID) {
-    	QueueBrowser qBrowser;
-    	int count=0;
-    	try {
-    		qBrowser = jmsConnection.createQueueBrowser(queueID);
-    		Enumeration msgs = qBrowser.getEnumeration();
-
-    		if ( !msgs.hasMoreElements() ) {
-    			return 0;
-    		} else { 
-    			while (msgs.hasMoreElements()) { 
-    				msgs.nextElement();
-    				count++;
-    			}
-    		}
-    		qBrowser.close();
-    	} catch (JMSException e) {
-    		log.warn("JMSException thrown: ", e);
-    	} catch (Throwable e1) {
-    		log.warn("Unexpected exception of type {} thrown: ", e1.getClass().getName(), e1);
-    	}
-
-    	return count;
-    }
-    
+    }    
 }
