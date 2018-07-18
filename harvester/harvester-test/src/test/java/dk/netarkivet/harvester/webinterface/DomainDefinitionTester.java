@@ -338,5 +338,33 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
             // expected
         }
     }
-
+    
+    /**
+     * Tests for https://sbforge.org/jira/browse/NAS-2790
+     */
+    @Test
+    public void test_NAS2790() {
+        DomainDAO ddao = DomainDAO.getInstance();
+        boolean exists;
+        String[] domainsList;
+        String domains;
+    	
+        domains = "test.com";
+        domainsList = domains.split("\\s+");        
+    	DomainDefinition.createDomains(domainsList);
+        exists = ddao.exists("test.com");
+        assertTrue(exists);
+    	
+        domains = "test.com test.com";
+        domainsList = domains.split("\\s+");        
+    	DomainDefinition.createDomains(domainsList);
+        exists = ddao.exists("test.com");
+        assertTrue(exists);
+        
+        domains = "test2.com test2.com";
+        domainsList = domains.split("\\s+");        
+    	DomainDefinition.createDomains(domainsList);
+        exists = ddao.exists("test2.com");
+        assertTrue(exists);
+    }
 }
