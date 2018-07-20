@@ -339,6 +339,7 @@ This page displays a list of running jobs.
             <%
                 String altStatus = "?";
                 String bullet = "?";
+                
                 switch (info.getStatus()) {
                 case PRE_CRAWL:
                     altStatus = "table.running.jobs.status.preCrawl";
@@ -348,6 +349,10 @@ This page displays a list of running jobs.
                     altStatus = "table.running.jobs.status.crawlerRunning";
                     bullet = "greenbullet.png";
                     break;
+                case CRAWLER_EMPTY:
+                	altStatus = "table.running.jobs.status.crawlerEmpty";
+                	bullet = "purplebullet.png";
+                	break;
                 case CRAWLER_PAUSING:
                     altStatus = "table.running.jobs.status.crawlerPausing";
                     bullet = "yellowbullet.png";
@@ -410,6 +415,9 @@ This page displays a list of running jobs.
     <fmt:param>
     <img src="greybullet.png" alt="<%=I18N.getString(request.getLocale(), "table.running.jobs.status.crawlFinished")%>"/>
     </fmt:param>
+    <fmt:param>
+    <img src="purplebullet.png" alt="<%=I18N.getString(request.getLocale(), "table.running.jobs.status.empty")%>"/>
+    </fmt:param>    
 </fmt:message>
 <br/><br/>
 
