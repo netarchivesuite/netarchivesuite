@@ -6,7 +6,7 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2017 The Royal Danish Library,
+ * Copyright 2004-2018 The Royal Danish Library,
 the National Library of France and the Austrian
 National Library.
  *
@@ -131,7 +131,8 @@ National Library.
             <hideInactiveTemplates>false</hideInactiveTemplates>
         </webinterface>
         <topLevelDomains>
-        <!-- add extra top level domains not included in embedded https://publicsuffix.org/list/public_suffix_list.dat
+        <silentlyIgnoreStarredTlds>true</silentlyIgnoreStarredTlds>
+        <!-- add extra top level domains here not included in embedded https://publicsuffix.org/list/public_suffix_list.dat
         	e.g: <tld> anothertld </tld> 
          -->
         </topLevelDomains>

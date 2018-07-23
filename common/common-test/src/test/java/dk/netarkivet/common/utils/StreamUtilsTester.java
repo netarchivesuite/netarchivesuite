@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common - test
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -115,16 +116,23 @@ public class StreamUtilsTester {
     public void testCopyInputStreamToJspWriter() throws Exception {
         JspWriter writer = mock(JspWriter.class);
         String testString = "This is a teststring";
+        //byte[] dataBytes = StreamUtils.inputStreamToBytes(data, dataLength);
         InputStream is = new ByteArrayInputStream(testString.getBytes());
         StreamUtils.copyInputStreamToJspWriter(is, writer);
-
         verify(writer).write(anyString(), anyInt(), anyInt());
+        // TODO read a file that has Bytes-length != String-length
     }
-
+    
     @Test
     public void testGetInputStreamAsString() throws IOException {
         String testfileAsString = FileUtils.readFile(TESTFILE);
-
         assertEquals(testfileAsString, StreamUtils.getInputStreamAsString(new FileInputStream(TESTFILE)));
+        // TODO read a file that has Bytes-length != String-length
     }
+    @Test
+    public void testGetFileReaderAsString() throws IOException {
+        String testfileAsString = FileUtils.readFile(TESTFILE);
+        assertEquals(testfileAsString, StreamUtils.getFileReaderAsString(new FileReader(TESTFILE)));
+    }
+    
 }

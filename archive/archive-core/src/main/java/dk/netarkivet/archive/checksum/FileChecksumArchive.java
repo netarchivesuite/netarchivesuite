@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -266,7 +266,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
         // This should be synchronized to prevent reading the file while it is
         // being written.
-        synchronized (checksumFile) {
+        synchronized (this) {
             entries = FileUtils.readListFromFile(checksumFile);
         }
 
@@ -402,7 +402,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
             // This should be synchronized, so no new entries can be made
             // while recreating the archive file.
-            synchronized (checksumFile) {
+            synchronized (this) {
                 // initialize and create the file.
                 File recreateFile = new File(checksumFile.getParentFile(), makeRecreateFileName());
                 if (!recreateFile.createNewFile()) {
@@ -498,7 +498,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
         // Synchronize to ensure that the file is not overridden during the
         // appending of the new entry.
-        synchronized (checksumFile) {
+        synchronized (this) {
             try {
                 FileWriter fwrite = new FileWriter(checksumFile, appendToFile);
                 try {
@@ -760,7 +760,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
         try {
             // create new temporary file of the archive.
             File tempFile = File.createTempFile("tmp", "tmp", FileUtils.getTempDir());
-            synchronized (checksumFile) {
+            synchronized (this) {
                 FileUtils.copyFile(checksumFile, tempFile);
             }
 

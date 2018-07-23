@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -121,7 +121,10 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
         
         JobStatus jobStatus = JobDAO.getInstance().read(jobId).getStatus();
         if (!JobStatus.STARTED.equals(jobStatus)) {
-        	LOG.warn("Receiving CrawlProgressMessage for job {} registered as state {} instead of STARTED. Ignoring message", jobId, jobStatus);
+            //CrawlProgress messages are read by the GUI, but CrawlStatus messages are read by the HarvestJobManager so
+            //they can sometimes be read out of sequence eg CrawlProgress is read for a job that is already in state DONE
+        	LOG.warn("Receiving CrawlProgressMessage for job {} registered as state {} instead of STARTED. This can "
+                    + "happen if the GUI has been restarted, but should otherwise be rare. Ignoring message", jobId, jobStatus);
             return;
         }
         

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -268,8 +268,14 @@ public class CommonSettings {
      */
     public static String TLDS = "settings.common.topLevelDomains.tld";
     
-    // TODO Currently only used by harvestscheduler - move to harvester
-    // settings?
+    /**
+     * <b>settings.common.topLevelDomains.silentlyIgnoreStarredTlds</b>: <br>
+     * If set to true, silently ignores starred TLDS and excluded tlds which are currently not supported by NetarchiveSuite (NAS-2689).
+     * default: true
+     */
+    public static String TLD_SILENTLY_IGNORE_STARRED_TLDS = "settings.common.topLevelDomains.silentlyIgnoreStarredTlds";
+        
+    // TODO move database settings to harvester settings?
     /**
      * <b>settings.common.database.class</b>: <br>
      * The class that defines DB-specific methods. This class must extend the DBSpecifics class
@@ -539,5 +545,5 @@ public class CommonSettings {
      * the value of this setting with .* will find all metadata files.
      */
     public static String METADATAFILE_REGEX_SUFFIX = "settings.common.metadata.fileregexsuffix";
-
+    
 }

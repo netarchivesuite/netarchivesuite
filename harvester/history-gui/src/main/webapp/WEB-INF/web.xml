@@ -5,7 +5,7 @@ Author:      $Author$
 Date:        $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2017 The Royal Danish Library,
+Copyright 2004-2018 The Royal Danish Library,
 the National Library of France and the Austrian
 National Library.
 
@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     <servlet>
         <servlet-name>HistoryServlet</servlet-name>
         <display-name>HistoryServlet</display-name>
-        <servlet-class>dk.netarkivet.harvester.webinterface.servlet.HistoryServlet</servlet-class>
+        <servlet-class>dk.netarkivet.heritrix3.monitor.HistoryServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
         <init-param>
             <param-name>name</param-name>

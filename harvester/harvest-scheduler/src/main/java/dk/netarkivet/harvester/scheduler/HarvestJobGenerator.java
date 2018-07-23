@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -94,8 +94,9 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
      */
     @Override
     public void start() {
-        genExec = new PeriodicTaskExecutor("JobGeneratorTask", new JobGeneratorTask(harvestChannelRegistry), 0,
-                Settings.getInt(HarvesterSettings.GENERATE_JOBS_PERIOD));
+        int generateJobsPeriod = Settings.getInt(HarvesterSettings.GENERATE_JOBS_PERIOD);
+        genExec = new PeriodicTaskExecutor("JobGeneratorTask", new JobGeneratorTask(harvestChannelRegistry), 0, generateJobsPeriod);
+        log.info("JobGeneratorTask set to run every {} seconds", generateJobsPeriod);
     }
 
     @Override
@@ -111,13 +112,13 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
     static class JobGeneratorTask implements Runnable {
 
         private final HarvestChannelRegistry harvestChannelRegistry;
-
+        
         public JobGeneratorTask(HarvestChannelRegistry harvestChannelRegistry) {
             this.harvestChannelRegistry = harvestChannelRegistry;
         }
 
         @Override
-        public synchronized void run() {
+        public void run() {
             try {
                 generateJobs(new Date());
             } catch (Exception e) {
@@ -135,27 +136,35 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
         void generateJobs(Date timeToGenerateJobsFor) {
             final Iterable<Long> readyHarvestDefinitions = haDefinitionDAO
                     .getReadyHarvestDefinitions(timeToGenerateJobsFor);
-
+            log.trace("Generating jobs for harvests that should run at time '{}'", timeToGenerateJobsFor);
             HarvestChannelDAO hChanDao = HarvestChannelDAO.getInstance();
-
+            
             for (final Long id : readyHarvestDefinitions) {
                 // Make every HD run in its own thread, but at most once.
-                if (harvestDefinitionsBeingScheduled.contains(id)) {
-                    if (takesSuspiciouslyLongToSchedule(id)) {
-                        String harvestName = haDefinitionDAO.getHarvestName(id);
-                        String errMsg = "Possible problem creating jobs for harvestdefinition #" + id + " (" + harvestName + ")"
-                                + " as the previous scheduling is still running. Trying to recover.";
-                        if (haDefinitionDAO.isSnapshot(id)) {
-                            // Log only at level debug if the ID represents
-                            // is a snapshot harvestdefinition, which are only run
-                            // once anyway
-                            log.debug(errMsg);
+                synchronized(harvestDefinitionsBeingScheduled) {
+                    if (harvestDefinitionsBeingScheduled.contains(id)) {
+                        if (takesSuspiciouslyLongToSchedule(id)) {
+                            String harvestName = haDefinitionDAO.getHarvestName(id);
+                            String errMsg = "Possible problem creating jobs for harvestdefinition #" + id + " (" + harvestName + ")"
+                                    + " as the previous scheduling is still running. Trying to recover.";
+                            if (haDefinitionDAO.isSnapshot(id)) {
+                                // Log only at level debug if the ID represents
+                                // is a snapshot harvestdefinition, which are only run
+                                // once anyway
+                                log.debug(errMsg);
+                                continue;
+                            } else { // Log at level WARN, and send a notification, if it is time
+                                log.warn(errMsg);
+                                threadMap.get(id).killScheduling();
+                                NotificationsFactory.getInstance().notify(errMsg, NotificationType.WARNING);
+                            }
+                        } else {
+                            log.debug("We'll skip HD #{}. Jobgeneration of it has been running since {}", id, 
+                                    new Date(schedulingStartedMap.get(id)) );
                             continue;
-                        } else { // Log at level WARN, and send a notification, if it is time
-                            log.warn(errMsg);
-                            threadMap.get(id).killScheduling();
-                            NotificationsFactory.getInstance().notify(errMsg, NotificationType.WARNING);
                         }
+                    } else {
+                        harvestDefinitionsBeingScheduled.add(id); // mark the harvest as being scheduled right now
                     }
                 }
 
@@ -172,11 +181,11 @@ public class HarvestJobGenerator implements ComponentLifeCycle {
                         log.info("Harvest channel '{}' has not yet been registered by any harvester, hence harvest "
                                 + "definition '{}' ({}) cannot be processed by the job generator for now.",
                                 channelName, harvestDefinition.getName(), id);
+                        harvestDefinitionsBeingScheduled.remove(id);
                         continue;
                     }
                 }
-
-                harvestDefinitionsBeingScheduled.add(id);
+                
                 schedulingStartedMap.put(id, System.currentTimeMillis());
 
                 if (!harvestDefinition.runNow(timeToGenerateJobsFor)) {

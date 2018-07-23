@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ import static org.junit.Assert.assertFalse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.jsp.PageContext;
@@ -78,10 +79,8 @@ public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
     /**
      * Tests the simple case of adding a single seed to an empty harvest.
      * <p>
-     * FIXME Fails in Hudson. Rember to reinclude the test case in the webinterface test suite when fixed.
      */
     @Test
-    // @Ignore("fails in hudson")
     public void testAddConfigurationsSimpleAdd() {
         String seedlist = "http://www.mydomain.dk/page1.jsp?aparam=avalue";
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
@@ -94,7 +93,8 @@ public class EventHarvestUtilTester extends HarvesterWebinterfaceTestCase {
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
-        EventHarvestUtil.addConfigurations(pageContext, I18N, harvest.getName());
+        List<String> illegalSeeds = new ArrayList<String>();
+        EventHarvestUtil.addConfigurations(pageContext, I18N, harvest.getName(), illegalSeeds);
         String expectedDomainConfigurationName = harvestName + "_" + order1 + "_1000000000Bytes" + "_4Objects";
         // Check that the domain and configuration have been created
         harvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(harvestName);

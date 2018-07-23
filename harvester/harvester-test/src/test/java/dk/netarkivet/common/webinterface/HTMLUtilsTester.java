@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -116,7 +116,9 @@ public class HTMLUtilsTester {
         // Test navigation tree
         for (SiteSection ss : SiteSection.getSections()) {
             JspWriterMockup jwm = new JspWriterMockup();
-            ss.generateNavigationTree(jwm, "http://foo.bar", new Locale("da"));
+            StringBuilder sb = new StringBuilder();
+            ss.generateNavigationTree(sb, (HttpServletRequest)confRequest, "http://foo.bar", null, new Locale("da"));
+            jwm.print(sb.toString());
             String tree = jwm.sw.toString();
             StringAsserts.assertStringContains("Should contain site section navigation tree for this sitesection",
                     tree, result);

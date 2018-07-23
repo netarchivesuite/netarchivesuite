@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Test that we can upgrade run with the most-recent production database backup and obtain a functional netarchive-suite.&#xd;
+Runs the integration-test maven target on methods test=DatabaseFullMigrationTest#* . Normally this should run on branch &#xd;
+master, and with systemtest.timestamp set to &quot;SystemTest&quot; so it runs on the latest SystemTest build.</description>
+  <logRotator class="hudson.tasks.LogRotator">
+    <daysToKeep>-1</daysToKeep>
+    <numToKeep>-1</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>-1</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.security.AuthorizationMatrixProperty>
+      <permission>hudson.scm.SCM.Tag:netarchive-project</permission>
+      <permission>hudson.model.Run.Delete:netarchive-project</permission>
+      <permission>hudson.model.Item.Release:netarchive-project</permission>
+      <permission>hudson.model.Item.Read:anonymous</permission>
+      <permission>hudson.model.Item.Read:netarchive-project</permission>
+      <permission>hudson.model.Item.Discover:netarchive-project</permission>
+      <permission>hudson.model.Item.Build:netarchive-project</permission>
+      <permission>hudson.model.Item.Cancel:netarchive-project</permission>
+      <permission>hudson.model.Item.Workspace:netarchive-project</permission>
+      <permission>hudson.model.Item.Configure:netarchive-project</permission>
+      <permission>hudson.model.Run.Update:netarchive-project</permission>
+    </hudson.security.AuthorizationMatrixProperty>
+    <hudson.plugins.jiraapi.JiraProjectKeyJobProperty plugin="hudson-jiraapi-plugin@3.3.0">
+      <key></key>
+    </hudson.plugins.jiraapi.JiraProjectKeyJobProperty>
+    <org.jenkinsci.plugins.mavenrepocleaner.MavenRepoCleanerProperty plugin="maven-repo-cleaner@1.2">
+      <notOnThisProject>false</notOnThisProject>
+    </org.jenkinsci.plugins.mavenrepocleaner.MavenRepoCleanerProperty>
+    <de.pellepelster.jenkins.walldisplay.WallDisplayJobProperty plugin="jenkinswalldisplay@0.6.30"/>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://github.com/netarchivesuite/netarchivesuite.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>NetarchiveSuite</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>Java8</jdk>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Maven>
+      <targets>clean package</targets>
+      <mavenName>Maven3</mavenName>
+      <properties>skipTests=true</properties>
+      <usePrivateRepository>false</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+    </hudson.tasks.Maven>
+    <hudson.tasks.Shell>
+      <command>cd $WORKSPACE
+scp ./deploy/distribution/target/NetarchiveSuite-*.zip devel@kb-prod-udv-001.kb.dk:nas_versions/NetarchiveSuite-SystemTest.zip
+scp ./harvester/heritrix3/heritrix3-bundler/target/NetarchiveSuite-heritrix3-bundler-*.zip devel@kb-prod-udv-001.kb.dk:nas_versions/bundler/NetarchiveSuite-heritrix3-bundler-systemtest.zip
+
+ssh devel@kb-prod-udv-001.kb.dk &quot;source /etc/bashrc;source /etc/profile;source ~/.bash_profile;cd devel-config; 
+scripts/setup-configurations.sh
+scripts/copy_prod_data.sh
+&quot;</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Maven>
+      <targets>-Psbforge-nexus,systemTest
+clean
+integration-test</targets>
+      <mavenName>Maven3</mavenName>
+      <properties>systemtest.port=8073
+systemtest.mailreceivers=csr@statsbiblioteket.dk
+systemtest.host=kb-test-adm-001.kb.dk
+test=DatabaseFullMigrationTest#*
+failIfNoTests=false
+systemtest.backupage=365
+systemtest.timestamp=SystemTest</properties>
+      <usePrivateRepository>false</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+    </hudson.tasks.Maven>
+  </builders>
+  <publishers>
+    <hudson.plugins.jiraapi.JiraIssueIndexerRecorder plugin="hudson-jiraapi-plugin@3.3.0"/>
+    <hudson.plugins.testng.Publisher plugin="testng-plugin@1.10">
+      <reportFilenamePattern>**netarchivesuite-integration-test/target/surefire-reports/testng-results.xml</reportFilenamePattern>
+      <escapeTestDescp>true</escapeTestDescp>
+      <escapeExceptionMsg>true</escapeExceptionMsg>
+      <showFailedBuilds>false</showFailedBuilds>
+      <unstableOnSkippedTests>false</unstableOnSkippedTests>
+      <failureOnFailedTestConfig>false</failureOnFailedTestConfig>
+    </hudson.plugins.testng.Publisher>
+    <hudson.plugins.claim.ClaimPublisher plugin="claim@2.7"/>
+    <hudson.tasks.Mailer plugin="mailer@1.16">
+      <recipients>csr@statsbiblioteket.dk</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
+  <buildWrappers/>
+</project>

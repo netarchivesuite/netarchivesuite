@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -147,7 +147,7 @@ public class HTMLUtils {
         ArgumentNotValid.checkNotNull(context, "context");
         String url = ((HttpServletRequest) context.getRequest()).getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
-        String title = getTitle(url, locale);
+        String title = getTitle((HttpServletRequest)context.getRequest(), url, locale);
         generateHeader(title, context);
     }
 
@@ -163,7 +163,7 @@ public class HTMLUtils {
         ArgumentNotValid.checkNotNull(context, "context");
         String url = ((HttpServletRequest) context.getRequest()).getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
-        String title = getTitle(url, locale);
+        String title = getTitle((HttpServletRequest)context.getRequest(), url, locale);
         generateHeader(title, context, jsToInclude);
     }
 
@@ -180,7 +180,7 @@ public class HTMLUtils {
         ArgumentNotValid.checkNotNull(context, "context");
         String url = ((HttpServletRequest) context.getRequest()).getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
-        String title = getTitle(url, locale);
+        String title = getTitle((HttpServletRequest)context.getRequest(), url, locale);
         generateHeader(title, refreshInSeconds, context);
     }
 
@@ -215,7 +215,9 @@ public class HTMLUtils {
         // Start the two column / one row table which fills the page
         out.print("<table id =\"main_table\"><tr>\n");
         // fill in data in the left column
-        generateNavigationTree(out, url, locale);
+        StringBuilder sb = new StringBuilder();
+        generateNavigationTree(sb, (HttpServletRequest)context.getRequest(), url, "", locale);
+        out.print(sb.toString());
         // The right column contains the active form content for this page
         out.print("<td valign = \"top\" >\n");
         // Language links
@@ -249,7 +251,9 @@ public class HTMLUtils {
         // Start the two column / one row table which fills the page
         out.print("<table id =\"main_table\"><tr>\n");
         // fill in data in the left column
-        generateNavigationTree(out, url, locale);
+        StringBuilder sb = new StringBuilder();
+        generateNavigationTree(sb, (HttpServletRequest)context.getRequest(), url, "", locale);
+        out.print(sb.toString());
         // The right column contains the active form content for this page
         out.print("<td valign = \"top\" >\n");
         // Language links
@@ -293,31 +297,38 @@ public class HTMLUtils {
      * Prints out the navigation tree appearing as a <td>in the left column of the "main_table" table. Subpages are
      * shown only for the currently-active main-heading of the sections defined in settings.
      *
-     * @param out the writer to which the output must be written.
+     * @param sb the <code>StringBuilder</code> to which the output must be written.
+     * @param req the HTTP request object to respond to
      * @param url the url of the page.
+     * @param subMenu submenu HTML to insert when required by non JSP pages
      * @param locale The locale selecting the language.
      * @throws IOException if the output cannot be written.
      */
-    private static void generateNavigationTree(JspWriter out, String url, Locale locale) throws IOException {
-        out.print("<td valign=\"top\" id=\"menu\">\n");
-        // The list of menu items is presented as a 1-column table
-        out.print("<table id=\"menu_table\">\n");
+    public static void generateNavigationTree(StringBuilder sb, HttpServletRequest req, String url, String subMenu, Locale locale) throws IOException {
         String s = I18N.getString(locale, "sidebar.title.menu");
-        out.print("<tr><td><a class=\"sidebarHeader\" href=\"index.jsp\">"
-                + "<img src=\"transparent_menu_logo.png\" alt=\"" + s + "\"/> " + s + "</a></td></tr>\n");
+        sb.append("<td valign=\"top\" id=\"menu\">\n");
+        // The list of menu items is presented as a 1-column table
+        sb.append("<table id=\"menu_table\">\n");
+        sb.append("<tr><td><a class=\"sidebarHeader\" href=\"index.jsp\"><img src=\"");
+        sb.append(req.getContextPath());
+        sb.append("/transparent_menu_logo.png\" alt=\"");
+        sb.append(s);
+        sb.append("\"/> ");
+        sb.append(s);
+        sb.append("</a></td></tr>\n");
 
         final List<SiteSection> sections = SiteSection.getSections();
         log.debug("Generating Navigation Tree for " + sections.size() + " site sections.");
         for (SiteSection section : sections) {
             try {
                 log.debug("Generating navigation tree for " + section.getDirname() + " from url " + url);
-                section.generateNavigationTree(out, url, locale);
+                section.generateNavigationTree(sb, req, url, subMenu, locale);
             } catch (IOException e) {
                 log.warn("Error generating navigation tree for " + section.getDirname() + " from url " + url, e);
             }
         }
-        out.print("</table>\n");
-        out.print("</td>\n");
+        sb.append("</table>\n");
+        sb.append("</td>\n");
     }
 
     /**
@@ -516,16 +527,17 @@ public class HTMLUtils {
     /**
      * Given a URL in the sitesection hierarchy, returns the corresponding page title.
      *
+     * @param req the HTTP request object to respond to
      * @param url a given URL
      * @param locale the current locale
      * @return the corresponding page title, or string about "(no title)" if no title can be found
      * @throws ArgumentNotValid if the given url or locale is null or url is empty.
      */
-    public static String getTitle(String url, Locale locale) {
+    public static String getTitle(HttpServletRequest req, String url, Locale locale) {
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
         ArgumentNotValid.checkNotNullOrEmpty(url, "String url");
         for (SiteSection section : SiteSection.getSections()) {
-            String title = section.getTitle(url, locale);
+            String title = section.getTitle(req, url, locale);
             if (title != null) {
                 return title;
             }
@@ -924,4 +936,9 @@ public class HTMLUtils {
         SimpleDateFormat fmt = new SimpleDateFormat(DATE_FMT_STRING);
         return timestamp != null ? fmt.format(timestamp) : "-";
     }
+    
+    public static void log(String classname, String msg) {
+         log.info(classname + ":" +  msg);
+    }
+
 }

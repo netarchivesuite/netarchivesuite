@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -63,11 +63,19 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
  * This class responds to JMS doOneCrawl messages from the HarvestScheduler and launches a Heritrix crawl with the
  * received job description. The generated ARC files are uploaded to the bitarchives once a harvest job has been
  * completed.
+ * 
+ * Initially, the HarvestControllerServer registers its channel with the Scheduler by sending a HarvesterRegistrationRequest and waits for a 
+ * positive HarvesterRegistrationResponse that its channel is recognized. 
+ * If not recognized by the Scheduler, the HarvestControllerServer will send a notification about this, 
+ * and then close down the application.
  * <p>
  * During its operation CrawlStatus messages are sent to the HarvestSchedulerMonitorServer. When starting the actual
  * harvesting a message is sent with status 'STARTED'. When the harvesting has finished a message is sent with either
  * status 'DONE' or 'FAILED'. Either a 'DONE' or 'FAILED' message with result should ALWAYS be sent if at all possible,
  * but only ever one such message per job.
+ * While the harvestControllerServer is waiting for the harvesting to finish, it sends HarvesterReadyMessages to the scheduler.
+ * The interval between each HarvesterReadyMessage being sent is defined by the setting 'settings.harvester.harvesting.sendReadyDelay'.    
+ * 
  * <p>
  * It is necessary to be able to run the Heritrix harvester on several machines and several processes on each machine.
  * Each instance of Heritrix is started and monitored by a HarvestControllerServer.

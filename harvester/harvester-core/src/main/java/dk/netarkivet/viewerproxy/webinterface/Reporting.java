@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -59,12 +59,16 @@ public class Reporting {
     private Reporting() {
     }
 
-    /** The suffix for the data arc/warc files produced by Heritrix. */
+    /** The suffix for the data arc/warc files produced by Heritrix. 
+     * TODO This should be configurable 
+     */
     static final String archivefile_suffix = ".*\\.(w)?arc(\\.gz)?";
 
-    /** The suffix for the data arc/warc metadata file created by NetarchiveSuite. */
+    /** The suffix for the data arc/warc metadata file created by NetarchiveSuite. 
+     * should probably replaced by: Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
+     */
     static final String metadatafile_suffix = "-metadata-[0-9]+\\.(w)?arc(\\.gz)?";
-
+    
     /**
      * Submit a batch job to list all files for a job, and report result in a sorted list.
      *
@@ -211,8 +215,6 @@ public class Reporting {
      * @return metadatafilePattern for the given jobid
      */
     private static String getMetadataFilePatternForJobId(long jobid) {
-    	// The old invalid metadataFilePattern
-    	//return ".*"+jobid + ".*" + metadatafile_suffix;
-    	return jobid + metadatafile_suffix;
+    	return "(.*-)?" + jobid + "(-.*)?" + metadatafile_suffix;
     }
 }

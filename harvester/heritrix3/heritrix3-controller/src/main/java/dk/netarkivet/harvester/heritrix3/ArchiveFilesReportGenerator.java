@@ -10,7 +10,6 @@ import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 
 
@@ -57,10 +56,12 @@ class ArchiveFilesReportGenerator {
      * Parses heritrix.out and generates the ARC/WARC files report.
      *
      * @return the generated report file.
+     * @throws IOException If problem with writing the report to disk
      */
-    protected File generateReport() {
+    protected File generateReport() throws IOException {
         File reportFile = new File(ingestablefiles.getCrawlDir(), REPORT_FILE_NAME);
         File reportTmpFile = new File(ingestablefiles.getCrawlDir(), REPORT_FILE_NAME + ".open");
+        String logPrefix = "Failed to create " + reportFile.getName() + ". ";
         if (reportFile.exists()) {
         	log.warn("The report file '{}' does already exist. We don't try to make another one!", reportFile);
         	return reportFile;
@@ -69,30 +70,27 @@ class ArchiveFilesReportGenerator {
         	log.warn("We attempted to create the {} previously on date {}, as an temporary file exists. Deleting the temporary file {}", reportFile, new Date(reportTmpFile.lastModified()), reportTmpFile);
         	reportTmpFile.delete();
         }
-        try {
-            boolean created = reportTmpFile.createNewFile();
-            if (!created) {
-                throw new IOException("Unable to create temporary reportfile '" + reportTmpFile.getAbsolutePath() + "'.");
-            }
-            PrintWriter out = new PrintWriter(reportTmpFile);
-
-            out.println(REPORT_FILE_HEADER);
-
-            for (File arcfile : ingestablefiles.getArcFiles()) {
-                out.println(arcfile.getName() + " " + ISO_8601_DATE_FORMAT.format(new Date(arcfile.lastModified())) + " " + arcfile.length());
-            }
-            for (File warcfile : ingestablefiles.getWarcFiles()) {
-                out.println(warcfile.getName() + " " + ISO_8601_DATE_FORMAT.format(new Date(warcfile.lastModified())) + " " + warcfile.length());
-            }
-
-            out.close();
-            boolean success = reportTmpFile.renameTo(reportFile);
-            if (!success) {
-            	throw new IOException("Failed to rename '" + reportTmpFile.getAbsolutePath() + "' to '" + reportFile.getAbsolutePath() +"'");
-            }
-        } catch (IOException e) {
-            throw new IOFailure("Failed to create " + reportFile.getName(), e);
+        boolean created = reportTmpFile.createNewFile();
+        if (!created) {
+        	throw new IOException(logPrefix + "Unable to create temporary reportfile '" + reportTmpFile.getAbsolutePath() + "'.");
         }
+        PrintWriter out = new PrintWriter(reportTmpFile);
+
+        out.println(REPORT_FILE_HEADER);
+
+        for (File arcfile : ingestablefiles.getArcFiles()) {
+        	out.println(arcfile.getName() + " " + ISO_8601_DATE_FORMAT.format(new Date(arcfile.lastModified())) + " " + arcfile.length());
+        }
+        for (File warcfile : ingestablefiles.getWarcFiles()) {
+        	out.println(warcfile.getName() + " " + ISO_8601_DATE_FORMAT.format(new Date(warcfile.lastModified())) + " " + warcfile.length());
+        }
+
+        out.close();
+        boolean success = reportTmpFile.renameTo(reportFile);
+        if (!success) {
+        	throw new IOException(logPrefix + "Failed to rename '" + reportTmpFile.getAbsolutePath() + "' to '" + reportFile.getAbsolutePath() +"'");
+        }
+
 
         return reportFile;
     }

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -153,11 +153,11 @@ public class HarvestDocumentation {
                 log.warn("Found no archive directory with ARC og WARC files. Looked for dirs '{}' and '{}'.",
                         arcFilesDir.getAbsolutePath(), warcFilesDir.getAbsolutePath());
             }
-            ingestables.setMetadataGenerationSucceeded(true);
+            ingestables.closeMetadataFile();
         } finally {
             // If at this point metadata is not ready, an error occurred.
             if (!ingestables.isMetadataReady()) {
-                ingestables.setMetadataGenerationSucceeded(false);
+                ingestables.setErrorState(true);
             } else {
                 for (File fileAdded : filesAddedAndNowDeletable) {
                     FileUtils.remove(fileAdded);
@@ -306,9 +306,15 @@ public class HarvestDocumentation {
         
         boolean genArcFilesReport = Settings.getBoolean(Heritrix3Settings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
         if (genArcFilesReport) {
-            log.debug("Creating an arcfiles-report.txt if not already created");
-            files.add(new MetadataFile(new ArchiveFilesReportGenerator(ingestableFiles).generateReport(), harvestID, jobID,
+        	String reportName = ArchiveFilesReportGenerator.REPORT_FILE_NAME;
+        	try {
+        		log.debug("Creating an " + reportName + " file, if not already created");
+        		files.add(new MetadataFile(new ArchiveFilesReportGenerator(ingestableFiles).generateReport(), harvestID, jobID,
                     heritrixVersion));
+        		log.debug("The report '" + reportName + "' was created successfully or existed already.");
+        	} catch (IOException e) {
+        		log.warn("Skipping the addition of the " + reportName + ". It was not created successfully", e);
+        	}
         } else {
             log.debug("Creation of the arcfiles-report.txt has been disabled by the setting '{}'!",
             		Heritrix3Settings.METADATA_GENERATE_ARCHIVE_FILES_REPORT);
@@ -364,7 +370,7 @@ public class HarvestDocumentation {
                 iterator.remove();
             }
         }
-        return filesAdded;
+        return filesAdded; // Files now added to the metadata file - and now deletable
     }
   
 }

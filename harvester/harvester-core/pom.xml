@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>harvester</artifactId>
-    <version>5.4-SNAPSHOT</version>
+    <version>5.4.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>harvester-core</artifactId>
@@ -31,7 +31,6 @@
       <groupId>org.netarchivesuite</groupId>
       <artifactId>heritrix3-wrapper</artifactId>
     </dependency>
-
 
     <!-- not in Maven Central -->
 <!--
@@ -151,7 +150,6 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
     </dependency>
-
   </dependencies>
 
   <build>
@@ -184,6 +182,9 @@
               <addClasspath>true</addClasspath>
               <classpathPrefix />
             </manifest>
+            <manifestEntries>
+	      <class-path>heritrix3-monitor-${project.version}.jar</class-path>
+            </manifestEntries>
           </archive>
         </configuration>
         <!-- test-jar containing test utils needed by harvester-test module -->
@@ -198,24 +199,24 @@
           </execution>
         </executions>
       </plugin>
-    <plugin>
-    <groupId>org.jacoco</groupId>
-    <artifactId>jacoco-maven-plugin</artifactId>
-    <version>${jacoco.version}</version>
-    <configuration>
-        <destFile>${sonar.jacoco.reportPath}</destFile>
-        <append>true</append>
-    </configuration>
-    <executions>
-        <execution>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <configuration>
+          <destFile>${sonar.jacoco.reportPath}</destFile>
+          <append>true</append>
+        </configuration>
+        <executions>
+          <execution>
             <id>agent</id>
             <goals>
-                <goal>prepare-agent</goal>
+              <goal>prepare-agent</goal>
             </goals>
-        </execution>
-    </executions>
-</plugin>
-
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>

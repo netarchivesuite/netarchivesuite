@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>heritrix3</artifactId>
-    <version>5.4-SNAPSHOT</version>
+    <version>5.4.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>heritrix3-extensions</artifactId>
@@ -69,6 +69,12 @@
     <dependency>
       <groupId>org.archive.heritrix</groupId>
       <artifactId>heritrix-engine</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.sleepycat</groupId>
+          <artifactId>je</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -77,8 +83,9 @@
     </dependency>
 
     <dependency>    
-      <groupId>berkeleydb</groupId>
+      <groupId>com.sleepycat</groupId>
       <artifactId>je</artifactId>
+      <version>5.0.73</version>
     </dependency>
 
     <dependency>

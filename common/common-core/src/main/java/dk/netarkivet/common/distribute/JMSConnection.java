@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -256,6 +256,21 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         ArgumentNotValid.checkNotNull(queueID, "ChannelID queueID");
         Queue queue = getQueueSession().createQueue(queueID.getName());
         return getQueueSession().createBrowser(queue);
+    }
+    
+    /**
+     * Creates a QueueBrowser object to peek at the messages on the specified queue.
+     *
+     * @param queueID The ChannelID for a specified queue.
+     * @param QSession The QueueSession to use.
+     * @return A new QueueBrowser instance with access to the specified queue
+     * @throws JMSException If unable to create the specified queue browser
+     */
+    public QueueBrowser createQueueBrowser(ChannelID queueID, QueueSession QSession) throws JMSException {
+        ArgumentNotValid.checkNotNull(queueID, "ChannelID queueID");
+        ArgumentNotValid.checkNotNull(QSession, "QueueSession QSession");
+        Queue queue = QSession.createQueue(queueID.getName());
+        return QSession.createBrowser(queue);
     }
 
     /**

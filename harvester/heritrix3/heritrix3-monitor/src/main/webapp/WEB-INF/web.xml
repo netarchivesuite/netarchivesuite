@@ -1,0 +1,50 @@
+<!--
+File:        $Id$
+Revision:    $Revision$
+Author:      $Author$
+Date:        $Date$
+
+The Netarchive Suite - Software to harvest and preserve websites
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
+National Library.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<web-app
+   xmlns="http://java.sun.com/xml/ns/javaee"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+   metadata-complete="true"
+   version="2.5">
+
+    <display-name>
+        Heritrix 3 Monitor
+    </display-name>
+    <servlet>
+        <servlet-name>HistoryServlet</servlet-name>
+        <display-name>HistoryServlet</display-name>
+        <servlet-class>dk.netarkivet.heritrix3.monitor.HistoryServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <init-param>
+            <param-name>name</param-name>
+            <param-value>value</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HistoryServlet</servlet-name>
+        <url-pattern>/history/*</url-pattern>
+    </servlet-mapping>
+</web-app>

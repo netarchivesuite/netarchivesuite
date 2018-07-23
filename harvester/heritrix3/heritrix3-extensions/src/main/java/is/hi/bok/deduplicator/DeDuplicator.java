@@ -498,7 +498,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
         stats.totalAmount += curi.getContentSize();
         Statistics currHostStats = null;
         if(statsPerHost){
-            synchronized (perHostStats) {
+            synchronized (this) {
                 String host = getServerCache().getHostFor(curi.getUURI()).getHostName();
                 currHostStats = perHostStats.get(host);
                 if(currHostStats==null){
@@ -813,7 +813,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
                 ret.append(" [no timestamp]");
             }
             ret.append("\n");
-            synchronized (perHostStats) {
+            synchronized (this) {
                 Iterator<String> it = perHostStats.keySet().iterator();
                 while(it.hasNext()){
                     String key = it.next();

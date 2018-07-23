@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -365,10 +365,11 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
         if (filesize == 0) {
             return;
         }
+        boolean deleted = false;
         log.debug("Deleting file '{}' from ftp server", ftpFileName);
         try {
             cm.logOn();
-            cm.getFTPClient().deleteFile(ftpFileName);
+            deleted = cm.getFTPClient().deleteFile(ftpFileName);
         } catch (Exception e) {
             log.warn("Error while deleting ftp file '{}' for file '{}'", ftpFileName, file.getName(), e);
         } finally {
@@ -379,7 +380,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 log.warn("Unexpected error while logging out ", e);
             }
         }
-        log.debug("File '{}' deleted from ftp server. Cleanup finished.", ftpFileName);
+        log.debug("File '{}' {} deleted from ftp server. Cleanup finished.", ftpFileName, deleted?"was":"was not");
     }
 
     /**

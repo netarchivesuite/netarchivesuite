@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -96,7 +96,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
     private QueueConnection qConnection;
 
     /** Constructor. */
-    private JMSConnectionSunMQ() {
+    public JMSConnectionSunMQ() {
         super();
         log.info("Creating instance of {}", getClass().getName());
         initConnection();

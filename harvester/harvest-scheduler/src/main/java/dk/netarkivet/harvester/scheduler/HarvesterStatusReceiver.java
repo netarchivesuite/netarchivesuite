@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,6 @@
  * #L%
  */
 package dk.netarkivet.harvester.scheduler;
-
-import java.util.Enumeration;
-
-import javax.jms.JMSException;
-import javax.jms.QueueBrowser;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -64,13 +59,23 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
     private final HarvestChannelDAO harvestChannelDao;
 
     private final HarvestChannelRegistry harvestChannelRegistry;
-
+    /** Is the feature to limit the number of submitted messages in each queue enabled? */
 	private final Boolean limitSubmittedJobsInQueue;
+	/** The number of submitted messages in each queue. Only used, if the above is true */
+	private final int submittedJobsInQueueThreshold;
+
+    private QueueController qController;
 
     /**
+     * Constructor of the <code>HarvesterStatusReceiver</code>.
+     * This constructs also reads from settings, if we're limiting the number of submitted messages in each queue, and its limit.
+     * If the setting 'settings.harvester.scheduler.limitSubmittedJobsInQueue' is false, no limit is enforced, otherwise the limit is
+     * defined by setting 'settings.harvester.scheduler.submittedJobsInQueueLimit'.
      * @param jobDispatcher The <code>JobDispatcher</code> to delegate the dispatching of new jobs to, when a 'Ready for
-     * job' event is received.
+     * job' event is received. 
      * @param jmsConnection The JMS connection by which {@link HarvesterReadyMessage} is received.
+     * @param harvestChannelDao The specific HarvestChannelDAO instance to use 
+     * @param harvestChannelRegistry The specific HarvestChannelRegistry instance to use
      */
     public HarvesterStatusReceiver(JobDispatcher jobDispatcher, JMSConnection jmsConnection,
             HarvestChannelDAO harvestChannelDao, HarvestChannelRegistry harvestChannelRegistry) {
@@ -82,12 +87,20 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         this.harvestChannelDao = harvestChannelDao;
         this.harvestChannelRegistry = harvestChannelRegistry;
         this.limitSubmittedJobsInQueue = Settings.getBoolean(HarvesterSettings.SCHEDULER_LIMIT_SUBMITTED_JOBS_IN_QUEUE);
+        this.submittedJobsInQueueThreshold = Settings.getInt(HarvesterSettings.SCHEDULER_SUBMITTED_JOBS_IN_QUEUE_LIMIT);
+        if (limitSubmittedJobsInQueue) {
+            this.qController = new QueueController();
+        }
     }
 
     @Override
     public void start() {
         jmsConnection.setListener(HarvesterChannels.getHarvesterStatusChannel(), this);
         jmsConnection.setListener(HarvesterChannels.getHarvesterRegistrationRequestChannel(), this);
+        log.info("limitSubmittedJobsInQueue: {}", limitSubmittedJobsInQueue);
+        if (limitSubmittedJobsInQueue) {
+        	log.info("submittedJobsInQueueThreshold: {}", submittedJobsInQueueThreshold);
+        }
     }
 
     @Override
@@ -114,8 +127,13 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         if (limitSubmittedJobsInQueue) {
         	// Check If already a Message in the JMS queue for this channel
         	ChannelID relevantChannelId = HarvesterChannels.getHarvestJobChannelId(channel);
-        	if (getCount(relevantChannelId) > 0) {
+        	int currentCount = qController.getCount(relevantChannelId);
+        	if (currentCount < submittedJobsInQueueThreshold) {
         		jobDispatcher.submitNextNewJob(channel);
+        	} else {
+        		log.debug("No jobs submitted to channel {} after receiving ready message from {}. "
+        				+ "Already {} jobs submitted to channel ", relevantChannelId, message.getApplicationInstanceId(),
+        				currentCount);
         	}
         } else { // If no limit, always submit new job, if a job in status NEW exists scheduled for this channel
         	jobDispatcher.submitNextNewJob(channel);
@@ -148,38 +166,5 @@ public class HarvesterStatusReceiver extends HarvesterMessageHandler implements 
         jmsConnection.send(new HarvesterRegistrationResponse(channelName, isValid, isSnapshot));
         log.info("Sent a message to host {} to notify that harvest channel '{}' is {}", msg.getHostname(), channelName, (isValid ? "valid."
                 : "invalid."));
-    }
-    
-    /**
-     * Retrieve the number of current messages defined by the given queueID. 
-     * @param queueID a given QueueID
-     * @return the number of current messages defined by the given queueID
-     */
-    private int getCount(ChannelID queueID) {
-    	QueueBrowser qBrowser;
-    	int count=0;
-    	try {
-    		qBrowser = jmsConnection.createQueueBrowser(queueID);
-    		Enumeration msgs = qBrowser.getEnumeration();
-
-    		if ( !msgs.hasMoreElements() ) {
-    			return 0;
-    		} else { 
-    			while (msgs.hasMoreElements()) { 
-    				//Message tempMsg = (Message)msgs.nextElement();
-    				msgs.nextElement();
-    				//System.out.println("Message # " + count + ": "+ tempMsg);
-    				count++;
-    			}
-    		}
-    		qBrowser.close();
-    	} catch (JMSException e) {
-    		log.warn("JMSException thrown: ", e);
-    	} catch (java.lang.NullPointerException e1) {
-    		//log.warn("NullPointerException thrown: ", e1);
-    	}
-
-    	return count;
-    }
-    
+    }    
 }

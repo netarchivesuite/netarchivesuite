@@ -4,7 +4,7 @@
  * Date:        $Date: 2013-05-03 18:38:47 +0200 (Fri, 03 May 2013) $
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2017 The Royal Danish Library,
+ * Copyright 2004-2018 The Royal Danish Library,
  * the National Library of France and the Austrian
  * National Library.
  *

@@ -4,7 +4,7 @@
 * $Author: svc $
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2017 The Royal Danish Library,
+* Copyright 2004-2018 The Royal Danish Library,
  * the National Library of France and the Austrian
  * National Library.
 *

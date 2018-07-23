@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.jsp.JspWriter;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +50,6 @@ import dk.netarkivet.common.utils.Settings;
 public abstract class SiteSection {
 
     private static final Logger log = LoggerFactory.getLogger(SiteSection.class);
-
 
     /** The overall human-readable name of the section. */
     private final String mainname;
@@ -115,14 +114,15 @@ public abstract class SiteSection {
     /**
      * Given a URL, returns the corresponding page title.
      *
+     * @param req the HTTP request object to respond to
      * @param url a given URL.
      * @param locale the current locale.
      * @return the corresponding page title, or null if it is not in this section, or is null.
      * @throws ArgumentNotValid on null locale.
      */
-    public String getTitle(String url, Locale locale) {
+    public String getTitle(HttpServletRequest req, String url, Locale locale) {
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
-        String page = getPage(url);
+        String page = getPage(req, url);
         if (page == null) {
             return null;
         }
@@ -135,52 +135,14 @@ public abstract class SiteSection {
     }
 
     /**
-     * Generate this section's part of the navigation tree (sidebar). This outputs balanced HTML to the JspWriter. It
-     * uses a locale to generate the right titles.
-     *
-     * @param out A place to write our HTML
-     * @param url The url of the page we're currently viewing. The list of subpages will only be displayed if the page
-     * we're viewing is one that belongs to this section.
-     * @param locale The locale to generate the navigation tree for.
-     * @throws IOException If there is a problem writing to the page.
-     */
-    public void generateNavigationTree(JspWriter out, String url, Locale locale) throws IOException {
-        String firstPage = pagesAndTitles.keySet().iterator().next();
-        out.print("<tr>");
-        out.print("<td><a href=\"/" + HTMLUtils.encode(dirname) + "/" + HTMLUtils.encode(firstPage) + "\">"
-                + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, mainname)) + "</a></td>\n");
-        out.print("</tr>");
-        // If we are on the above page or one of its subpages, display the
-        // next level down in the tree
-        String page = getPage(url);
-        if (page == null) {
-            return;
-        }
-        if (pagesAndTitles.containsKey(page)) {
-            int i = 0;
-            for (Map.Entry<String, String> pageAndTitle : pagesAndTitles.entrySet()) {
-                if (i == visiblePages) {
-                    break;
-                }
-                out.print("<tr>");
-                out.print("<td>&nbsp; &nbsp; <a href=\"/" + HTMLUtils.encode(dirname) + "/"
-                        + pageAndTitle.getKey() 
-                        + "\"> "
-                        + HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, pageAndTitle.getValue()))
-                        + "</a></td>");
-                out.print("</tr>\n");
-                i++;
-            }
-        }
-    }
-
-    /**
      * Returns the page name from a URL, if the page is in this hierarchy, null otherwise.
      *
+     * @param req the HTTP request object to respond to
      * @param url Url to check
      * @return Page name, or null for not in this hierarchy.
      */
-    private String getPage(String url) {
+    private String getPage(HttpServletRequest req, String url) {
+        String contextPath;
         URL parsed = null;
         try {
             parsed = new URL(url);
@@ -190,13 +152,139 @@ public abstract class SiteSection {
             return null;
         }
         String path = parsed.getPath();
-        String page;
+        String page = null;
         int index = path.lastIndexOf(dirname + "/");
-        if (index == -1) {
+        if (index != -1) {
+            page = path.substring(index + dirname.length() + 1);
+        } else if (req != null) {
+            contextPath = req.getContextPath();
+            if (url.startsWith('/' + contextPath + '/')) {
+                // Context path is only /path.
+                page = url.substring(contextPath.length() + 2);
+            }
+        }
+        if (page != null) {
+            index = page.indexOf('/');
+            if (index != -1) {
+                page = page.substring(0, index + 1);
+            }
+        }
+        return page;
+    }
+
+    /**
+     * Given a URL, returns the path part without schema, context path and query string.
+     * 
+     * @param req the HTTP request object to respond to
+     * @param url a given URL.
+     * @return the path part of a URL without the schema, context path and query string
+     */
+    public String getPath(HttpServletRequest req, String url) {
+        URL parsed;
+        String tmpPath;
+        int index;
+        String contextPath;
+        String path;
+        try {
+            parsed = new URL(url);
+        } catch (MalformedURLException e) {
+            return null;
+        } catch (NullPointerException e) {
             return null;
         }
-        page = path.substring(index + dirname.length() + 1);
+        tmpPath = parsed.getPath();
+        index = tmpPath.indexOf('?');
+        if (index != -1) {
+            tmpPath = tmpPath.substring(0, index);
+        }
+        path = null;
+        index = tmpPath.lastIndexOf(dirname + "/");
+        if (index != -1) {
+            path = tmpPath.substring(index + dirname.length() + 1);
+        } else if (req != null) {
+            contextPath = req.getContextPath();
+            if (url.startsWith('/' + contextPath + '/')) {
+                // Context path is only /path.
+                path = url.substring(contextPath.length() + 2);
+            }
+        }
+        return path;
+    }
+
+    /**
+     * Returns the first sub path of a given path without schema, context path and query string.
+     * 
+     * @param page a processed path without schema, context path and query string
+     * @return
+     */
+    public String getPageFromPage(String page) {
+        int index;
+        if (page != null) {
+            index = page.indexOf('/');
+            if (index != -1) {
+                page = page.substring(0, index + 1);
+            }
+        }
         return page;
+    }
+
+    /**
+     * Generate this section's part of the navigation tree (sidebar). This outputs balanced HTML to the JspWriter. It
+     * uses a locale to generate the right titles.
+     *
+     * @param out A place to write our HTML
+     * @param url The url of the page we're currently viewing. The list of subpages will only be displayed if the page
+     * we're viewing is one that belongs to this section.
+     * @param locale The locale to generate the navigation tree for.
+     * @throws IOException If there is a problem writing to the page.
+     */
+    public void generateNavigationTree(StringBuilder sb, HttpServletRequest req, String url, String subMenu, Locale locale) throws IOException {
+        String firstPage = pagesAndTitles.keySet().iterator().next();
+        sb.append("<tr>");
+        sb.append("<td><a href=\"/");
+        sb.append(HTMLUtils.encode(dirname));
+        sb.append("/");
+        sb.append(HTMLUtils.encode(firstPage));
+        sb.append("\">");
+        sb.append(HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, mainname)));
+        sb.append("</a></td>\n");
+        sb.append("</tr>");
+        // If we are on the above page or one of its subpages, display the
+        // next level down in the tree
+        String path = getPath(req, url);
+        String page = getPageFromPage(path);
+        if (page == null) {
+            return;
+        }
+        if (pagesAndTitles.containsKey(page)) {
+            int i = 0;
+            String link;
+            for (Map.Entry<String, String> pageAndTitle : pagesAndTitles.entrySet()) {
+                if (i == visiblePages) {
+                    break;
+                }
+                link = pageAndTitle.getKey();
+                sb.append("<tr>");
+                sb.append("<td>&nbsp; &nbsp; <a href=\"/");
+                sb.append(HTMLUtils.encode(dirname));
+                sb.append("/");
+                sb.append(link);
+                sb.append("\"> ");
+                if (path.equals(link)) {
+                    sb.append("<b>");
+                    sb.append(HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, pageAndTitle.getValue())));
+                    sb.append("</b>");
+                } else {
+                    sb.append(HTMLUtils.escapeHtmlValues(I18n.getString(bundle, locale, pageAndTitle.getValue())));
+                }
+                sb.append("</a></td>");
+                sb.append("</tr>\n");
+                if (subMenu != null && page != null && path.startsWith(link) && path.length() > link.length()) {
+                    sb.append(subMenu);
+                }
+                ++i;
+            }
+        }
     }
 
     /**
@@ -205,7 +293,7 @@ public abstract class SiteSection {
      * @return The dirname.
      */
     public String getDirname() {
-    	return dirname;
+        return dirname;
     }
 
     /**
@@ -230,7 +318,7 @@ public abstract class SiteSection {
         if (sections == null) {
             sections = new ArrayList<>();
             String[] sitesections = Settings.getAll(CommonSettings.SITESECTION_CLASS);
-            log.debug("Loading {} site section.", sitesections.length);
+            log.debug("Loading {} site section(s).", sitesections.length);
             for (String sitesection : sitesections) {
                 log.debug("Loading site section {}.", sitesection.toString());
                 try {
@@ -246,7 +334,7 @@ public abstract class SiteSection {
     }
 
     /**
-     * Clean up sitesections. This method calls close on all deployed site sections, and resets the list of site
+     * Clean up site sections. This method calls close on all deployed site sections, and resets the list of site
      * sections.
      */
     public static synchronized void cleanup() {

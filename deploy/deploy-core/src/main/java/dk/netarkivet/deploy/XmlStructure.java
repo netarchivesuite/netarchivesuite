@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - deploy
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -157,7 +157,7 @@ public class XmlStructure {
                 e = e.element(n);
             } else {
                 // the element does not exist
-                log.debug("Element {} is not a branch in the tree. Null returned", n);
+                log.debug("Element {} is not a branch in the tree {}. Null returned", n, name);
                 return null;
             }
         }
@@ -201,7 +201,7 @@ public class XmlStructure {
         if (e != null && e.isTextOnly()) {
             return e.getText().trim();
         } else {
-            log.debug("Element is not text. Null returned.");
+            log.debug("Element is not text. Null returned. Path given to getLeafValue {}", path);
             return null;
         }
     }

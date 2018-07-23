@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Test that we can ingest a small backup database and domain list and run the same tests we later run as a stress test on the&#xd;
+full production database.</description>
+  <logRotator class="hudson.tasks.LogRotator">
+    <daysToKeep>-1</daysToKeep>
+    <numToKeep>10</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>-1</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.security.AuthorizationMatrixProperty>
+      <permission>hudson.scm.SCM.Tag:netarchive-project</permission>
+      <permission>hudson.model.Run.Delete:netarchive-project</permission>
+      <permission>hudson.model.Item.Release:netarchive-project</permission>
+      <permission>hudson.model.Item.Read:anonymous</permission>
+      <permission>hudson.model.Item.Read:netarchive-project</permission>
+      <permission>hudson.model.Item.Discover:netarchive-project</permission>
+      <permission>hudson.model.Item.Build:netarchive-project</permission>
+      <permission>hudson.model.Item.Cancel:netarchive-project</permission>
+      <permission>hudson.model.Item.Workspace:netarchive-project</permission>
+      <permission>hudson.model.Item.Configure:netarchive-project</permission>
+      <permission>hudson.model.Run.Update:netarchive-project</permission>
+    </hudson.security.AuthorizationMatrixProperty>
+    <hudson.plugins.jiraapi.JiraProjectKeyJobProperty plugin="hudson-jiraapi-plugin@3.3.0">
+      <key></key>
+    </hudson.plugins.jiraapi.JiraProjectKeyJobProperty>
+    <org.jenkinsci.plugins.mavenrepocleaner.MavenRepoCleanerProperty plugin="maven-repo-cleaner@1.2">
+      <notOnThisProject>false</notOnThisProject>
+    </org.jenkinsci.plugins.mavenrepocleaner.MavenRepoCleanerProperty>
+    <de.pellepelster.jenkins.walldisplay.WallDisplayJobProperty plugin="jenkinswalldisplay@0.6.30"/>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://github.com/netarchivesuite/netarchivesuite.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>NetarchiveSuite</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>Java8</jdk>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command></command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Maven>
+      <targets>-Psbforge-nexus,systemTest
+clean
+integration-test
+-rf :system-test</targets>
+      <mavenName>Maven3</mavenName>
+      <properties>systemtest.port=8073
+systemtest.mailrecievers=csr@statsbiblioteket.dk
+systemtest.host=kb-test-adm-001.kb.dk
+test=DatabaseFullMigrationTest#*
+failIfNoTests=false
+systemtest.backupage=720
+systemtest.backupenv=pligt
+stresstest.minchecksumtime=0
+stresstest.snapshottimedivider=10</properties>
+      <usePrivateRepository>false</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+    </hudson.tasks.Maven>
+  </builders>
+  <publishers>
+    <hudson.plugins.testng.Publisher plugin="testng-plugin@1.10">
+      <reportFilenamePattern>**system-test/target/surefire-reports/testng-results.xml</reportFilenamePattern>
+      <escapeTestDescp>true</escapeTestDescp>
+      <escapeExceptionMsg>true</escapeExceptionMsg>
+      <showFailedBuilds>false</showFailedBuilds>
+      <unstableOnSkippedTests>false</unstableOnSkippedTests>
+      <failureOnFailedTestConfig>false</failureOnFailedTestConfig>
+    </hudson.plugins.testng.Publisher>
+    <hudson.plugins.claim.ClaimPublisher plugin="claim@2.7"/>
+    <hudson.tasks.Mailer plugin="mailer@1.16">
+      <recipients>csr@statsbiblioteket.dk</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>Netarchivesuite-db-full-migration-test</childProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
+  </publishers>
+  <buildWrappers/>
+</project>

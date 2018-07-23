@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2017 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -114,6 +114,14 @@ public class FindRunningJobQuery {
             }
             log.info("Found {} jobs in status STARTED harvesting domain {}", runningJobIds.size(), domainName);
         }
+    }
+    /**
+     * 
+     * @param jobId The jobId to match in the list of runningJobIds. 
+     * @return true, if the given jobId is contained in list of runningJobIds, otherwise false
+     */
+    public boolean found(Long jobId) {
+        return runningJobIds.contains(jobId);
     }
 
     /**
