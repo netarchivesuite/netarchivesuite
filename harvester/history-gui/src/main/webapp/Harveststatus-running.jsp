@@ -413,11 +413,11 @@ This page displays a list of running jobs.
     <img src="redbullet.png" alt="<%=I18N.getString(request.getLocale(), "table.running.jobs.status.crawlerPaused")%>"/>
     </fmt:param>
     <fmt:param>
+    <img src="purplebullet.png" alt="<%=I18N.getString(request.getLocale(), "table.running.jobs.status.crawlerEmpty")%>"/>
+    </fmt:param>  
+    <fmt:param>
     <img src="greybullet.png" alt="<%=I18N.getString(request.getLocale(), "table.running.jobs.status.crawlFinished")%>"/>
     </fmt:param>
-    <fmt:param>
-    <img src="purplebullet.png" alt="<%=I18N.getString(request.getLocale(), "table.running.jobs.status.empty")%>"/>
-    </fmt:param>    
 </fmt:message>
 <br/><br/>
 
