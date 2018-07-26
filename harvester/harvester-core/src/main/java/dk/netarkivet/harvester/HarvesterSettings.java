@@ -835,15 +835,15 @@ public class HarvesterSettings {
     public static String HERITRIX3_MONITOR_TEMP_PATH = "settings.harvester.harvesting.monitor.tempPath";
 
     /** Cache crawllog when the frontierqueue gets above this threshold. (H3 monitor) */ 
-    public static String HERITRIX3_MONITOR_CACHE_CRAWLLOG_FRONTIERQUEUE_THRESHOLD = "cacheCrawllogFrontierQueueThreshold";
+    public static String HERITRIX3_MONITOR_CACHE_CRAWLLOG_FRONTIERQUEUE_THRESHOLD = "settings.harvester.harvesting.monitor.cacheCrawllogFrontierQueueThreshold";
 
     /** Pause job when frontierqueue gets above this threshold. (H3 monitor) */
-    public static String HERITRIX3_MONITOR_PAUSE_FRONTIERQUEUE_THRESHOLD = "pauseFrontierQueueThreshold";
+    public static String HERITRIX3_MONITOR_PAUSE_FRONTIERQUEUE_THRESHOLD = "settings.harvester.harvesting.monitor.pauseFrontierQueueThreshold";
 
     /** Dump frontierqueue after it is paused. (H3 monitor) */
-    public static String HERITRIX3_MONITOR_DUMP_FRONTIERQUEUE = "DumpFrontierQueue";
+    public static String HERITRIX3_MONITOR_DUMP_FRONTIERQUEUE = "settings.harvester.harvesting.monitor.DumpFrontierQueue";
 
     /** Cache frontierqueue after is has been dumped. (H3 monitor) */
-    public static String HERITRIX3_MONITOR_CACHE_FRONTIERQUEUE = "CacheFrontierQueue";
+    public static String HERITRIX3_MONITOR_CACHE_FRONTIERQUEUE = "settings.harvester.harvesting.monitor.CacheFrontierQueue";
 
 }

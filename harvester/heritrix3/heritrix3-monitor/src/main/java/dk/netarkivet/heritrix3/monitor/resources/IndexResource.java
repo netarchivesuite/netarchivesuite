@@ -163,6 +163,19 @@ public class IndexResource implements ResourceAbstract {
             }
         }
 
+        sb.append("Cache crawllog frontierqueue threshold: ");
+        sb.append(environment.cacheCrawllogFrontierQueueThreshold);
+        sb.append("&nbsp;-&nbsp;");
+        sb.append("Pause frontier queue threshold: ");
+        sb.append(environment.pauseFrontierQueueThreshold);
+        sb.append("&nbsp;-&nbsp;");
+        sb.append("Dump paused frontier queue remotely: ");
+        sb.append(environment.bFrontierQueueDump);
+        sb.append("&nbsp;-&nbsp;");
+        sb.append("Cache dumped frontier queue locally: ");
+        sb.append(environment.bFrontierQueueCache);
+        sb.append("<br />\n");
+
         List<HarvestChannelStructure> hcList = new ArrayList<HarvestChannelStructure>();
         Map<String, HarvestChannelStructure> hcMap = new HashMap<String, HarvestChannelStructure>();
 
