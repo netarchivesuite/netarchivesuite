@@ -326,9 +326,9 @@ public class NASEnvironment {
                 return Stream.empty();
             }
         }
-        String crawlLogPath = h3Job.logFile.getAbsolutePath();
+        String crawlLogPath = h3Job.indexedCrawllog.textFile.getAbsolutePath();
         writeDiagnostics("Trying to getCrawledUrls from job " + jobId + " using cached crawllog '" + crawlLogPath + "'");
-        long cachedLines = h3Job.totalCachedLines;
+        long cachedLines = h3Job.indexedCrawllog.indexedTextLines;
 
         if (cachedLines == 0) {
             writeDiagnostics("No cached crawllog-lines for job " + jobId);
