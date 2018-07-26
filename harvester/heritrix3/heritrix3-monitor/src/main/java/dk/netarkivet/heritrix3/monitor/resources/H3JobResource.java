@@ -130,7 +130,7 @@ public class H3JobResource implements ResourceAbstract {
             if (h3Job == null || !h3Job.isReady()) {
                 sb.append("Job ");
                 sb.append(jobId);
-                sb.append(" is not currently monitored. Maybe Heritric 3 is not running at this point in time.");
+                sb.append(" is not currently monitored. Maybe Heritrix 3 is not running at this point in time.");
                 if (nasJob != null && nasJob.getStatus() == JobStatus.STARTED && (h3Job == null || !h3Job.isReady())) {
                     sb.append("<br />\n");
                     sb.append("<a href=\"?action=");
@@ -298,7 +298,7 @@ public class H3JobResource implements ResourceAbstract {
                 sb.append(h3Job.jobId);
                 sb.append("/frontier/");
                 sb.append("\" class=\"btn btn-default\">");
-                sb.append("Show/delete Frontier");
+                sb.append("Browse/delete Frontier");
                 sb.append("</a>");
 
                 sb.append("&nbsp;");

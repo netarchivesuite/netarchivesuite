@@ -11,16 +11,6 @@
     <includeBaseDirectory>false</includeBaseDirectory >
 
     <fileSets>
-<!--
-        <fileSet>
-            <directory>${project.basedir}/../../unclassified/</directory>
-            <includes>
-                <include>archivedatabasedir/**</include>
-                <include>harvestdefinitionbasedir/**</include>
-            </includes>
-            <outputDirectory>/</outputDirectory>
-        </fileSet>
--->
         <fileSet>
             <directory>${project.basedir}/src/main/resources/</directory>
             <includes>
@@ -33,23 +23,6 @@
             </includes>
             <outputDirectory>/</outputDirectory>
         </fileSet>
-
-        <fileSet>
-            <directory>${project.basedir}/src/main/resources/heritrix/</directory>
-            <includes>
-                <include>modules/**</include>
-            </includes>
-            <outputDirectory>/</outputDirectory>
-        </fileSet>
-
-        <fileSet>
-            <directory>${project.basedir}/src/main/resources/</directory>
-            <includes>
-                <include>heritrix/**</include>
-            </includes>
-            <outputDirectory>/lib/</outputDirectory>
-        </fileSet>
-
         <fileSet>
             <directory>${project.basedir}/../deploy-core/</directory>
             <includes>

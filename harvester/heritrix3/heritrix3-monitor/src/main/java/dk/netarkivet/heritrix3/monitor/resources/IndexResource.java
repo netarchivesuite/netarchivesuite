@@ -102,7 +102,8 @@ public class IndexResource implements ResourceAbstract {
         ServletOutputStream out = resp.getOutputStream();
         Caching.caching_disable_headers(resp);
 
-        TemplateBuilderFactory<MasterTemplateBuilder> masterTplBuilderFactory = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
+        TemplateBuilderFactory<MasterTemplateBuilder> masterTplBuilderFactory = TemplateBuilderFactory.getInstance(
+                environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = masterTplBuilderFactory.getTemplateBuilder();
 
         StringBuilder sb = new StringBuilder();

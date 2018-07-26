@@ -96,7 +96,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
     private QueueConnection qConnection;
 
     /** Constructor. */
-    private JMSConnectionSunMQ() {
+    public JMSConnectionSunMQ() {
         super();
         log.info("Creating instance of {}", getClass().getName());
         initConnection();

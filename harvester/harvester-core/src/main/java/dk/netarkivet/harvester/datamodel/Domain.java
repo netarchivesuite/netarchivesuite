@@ -818,11 +818,12 @@ public class Domain extends ExtendableEntity implements Named {
                 		+ e.getDescription() + " . Please correct the expression.");
             }
         }
-        if (strictMode) 
-        	if (errMsgs.size() > 0) {
-            throw new ArgumentNotValid(errMsgs.size() +  " errors were found: " + StringUtils.conjoin(",", errMsgs));
-        } else {
-            log.warn(errMsgs.size() +  " errors were found: " + StringUtils.conjoin(",", errMsgs));
+        if (errMsgs.size() > 0) {
+            if (strictMode){ 
+                throw new ArgumentNotValid(errMsgs.size() +  " errors were found: " + StringUtils.conjoin(",", errMsgs));
+            } else {
+                log.warn(errMsgs.size() +  " errors were found: " + StringUtils.conjoin(",", errMsgs));
+            }
         }
         crawlerTraps = Collections.unmodifiableList(cleanedListOfCrawlerTraps);
         if (!crawlerTraps.isEmpty()) {

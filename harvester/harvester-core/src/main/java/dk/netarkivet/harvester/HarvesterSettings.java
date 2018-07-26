@@ -697,10 +697,17 @@ public class HarvesterSettings {
      */
     public static String INDEXSERVER_INDEXING_LISTENING_INTERVAL = "settings.harvester.indexserver.listeningcheckinterval";
     /**
-     * <b>settings.archive.indexserver.satisfactorythresholdpercentage</b>: <br>
+     * <b>settings.harvester.indexserver.satisfactorythresholdpercentage</b>: <br>
      * Setting for the satisfactory threshold of the indexing result as a percentage. The default is 70 percent
      */
     public static String INDEXSERVER_INDEXING_SATISFACTORYTHRESHOLD_PERCENTAGE = "settings.harvester.indexserver.satisfactorythresholdpercentage";
+    
+    /**
+     * <b>settings.harvester.indexserver.tryToMigrateDuplicationRecords</b>: <br>
+     * Setting for trying to migrate deduplicate information from old jobs with duplicationmigration records.
+     * The default is false;
+     */
+    public static String INDEXSERVER_INDEXING_TRY_TO_MIGRATE_DUPLICATION_RECORDS = "settings.harvester.indexserver.tryToMigrateDuplicationRecords";
 
     /**
      * <b>settings.harvester.indexserver.indexrequestserver.class</b>: <br>
@@ -748,9 +755,18 @@ public class HarvesterSettings {
     public static String ALLOW_FILE_DOWNLOADS = "settings.harvester.viewerproxy.allowFileDownloads";
 
     /**
-     * The maximum length (in lines) of crawllog to be displayed in a browser window.
+     * <b>settings.harvester.webinterface.maxCrawlLogInBrowser</b>: The maximum length (in lines) of 
+     * crawllog to be displayed in a browser window.
+     * default value: 1000
      */
     public static String MAX_CRAWLLOG_IN_BROWSER = "settings.harvester.webinterface.maxCrawlLogInBrowser";
+
+    /**
+     * <b>settings.harvester.webinterface.runningjobsFilteringMethod</b>: The filtering method using on the running jobs page.
+     * There are two available methods. Searching in the cached crawllogs (cachedLogs) or in the harvest database (database)  
+     * default: database
+     */
+    public static String RUNNINGJOBS_FILTERING_METHOD = "settings.harvester.webinterface.runningjobsFilteringMethod";
 
    /**
      * <b>settings.harvester.harvesting.heritrix</b>: <br>
@@ -831,7 +847,10 @@ public class HarvesterSettings {
      */
     public static String HERITRIX3_CERTIFICATE_PASSWORD = "settings.harvester.harvesting.heritrix3.certificatePassword";
 
-    /** Temporary path where cached crawllog and frontier dump files are stored. (H3 monitor) */
+    /**
+     * <b>settings.harvester.harvesting.monitor.tempPath</b>: The directory used to cache the h3 crawllogs.
+     * Default value: cached_crawllogs
+     */
     public static String HERITRIX3_MONITOR_TEMP_PATH = "settings.harvester.harvesting.monitor.tempPath";
 
     /** Cache crawllog when the frontierqueue gets above this threshold. (H3 monitor) */ 

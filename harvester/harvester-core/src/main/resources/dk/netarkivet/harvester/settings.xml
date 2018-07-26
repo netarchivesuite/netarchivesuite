@@ -211,7 +211,7 @@ National Library.
                 </filename>
             </metadata>
             <monitor>
-                <tempPath></tempPath>
+                <tempPath>cached_crawllogs</tempPath>
                 <cacheCrawllogFrontierQueueThreshold>0</cacheCrawllogFrontierQueueThreshold>
                 <pauseFrontierQueueThreshold>0</pauseFrontierQueueThreshold>
                 <DumpFrontierQueue>false</DumpFrontierQueue>
@@ -227,6 +227,7 @@ National Library.
             <indexingtimeout>259200000</indexingtimeout>
             <maxsegments>42</maxsegments>
             <satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
+            <tryToMigrateDuplicationRecords>false</tryToMigrateDuplicationRecords>
             <lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
             <indexrequestserver>
                 <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>
@@ -241,6 +242,7 @@ National Library.
         </viewerproxy>
         <webinterface>
             <maxCrawlLogInBrowser>1000</maxCrawlLogInBrowser>
+            <runningjobsFilteringMethod>database</runningjobsFilteringMethod>
         </webinterface>
     </harvester>
 </settings>

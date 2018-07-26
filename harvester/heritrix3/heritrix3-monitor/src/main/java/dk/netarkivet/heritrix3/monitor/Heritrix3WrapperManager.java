@@ -39,7 +39,7 @@ public class Heritrix3WrapperManager {
     protected Heritrix3WrapperManager() {
     }
 
-    public static Map<String, Heritrix3Wrapper> h3wrapperMap = new HashMap<String, Heritrix3Wrapper>();
+    public static final Map<String, Heritrix3Wrapper> h3wrapperMap = new HashMap<String, Heritrix3Wrapper>();
 
     public static Heritrix3Wrapper getHeritrix3Wrapper(String h3EngineUrl, String username, String password) {
         Heritrix3Wrapper h3wrapper = null;
@@ -67,7 +67,7 @@ public class Heritrix3WrapperManager {
         return h3wrapper;
     }
 
-    public static Map<Long, String> h3jobnameMap = new TreeMap<Long, String>();
+    public static final Map<Long, String> h3jobnameMap = new TreeMap<Long, String>();
 
     public static String getJobname(Heritrix3Wrapper h3wrapper, long jobId) {
         String jobname;
@@ -97,7 +97,7 @@ public class Heritrix3WrapperManager {
         return jobname;
     }
 
-    public static Map<Long, Heritrix3JobMonitor> h3JobmonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
+    public static final Map<Long, Heritrix3JobMonitor> h3JobmonitorMap = new TreeMap<Long, Heritrix3JobMonitor>();
 
     public static Heritrix3JobMonitor getJobMonitor(long jobId, NASEnvironment environment) throws IOException {
         Heritrix3JobMonitor jobmonitor;

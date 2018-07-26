@@ -1,7 +1,21 @@
--- $Id: netarchivesuite_init.sql 1414 2010-05-31 15:52:06Z ngiraud $
--- $Revision: 1414 $
--- $Date: 2010-05-31 17:52:06 +0200 (Mon, 31 May 2010) $
--- $Author: ngiraud $
+-- The Netarchive Suite - Software to harvest and preserve websites
+-- Copyright (C) 2005 - 2018 The Royal Danish Library, 
+--            the National Library of France and the Austrian National Library.
+
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU Lesser General Public License as
+-- published by the Free Software Foundation, either version 2.1 of the
+-- License, or (at your option) any later version.
+ 
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Lesser Public License for more details.
+
+-- You should have received a copy of the GNU General Lesser Public
+-- License along with this program.  If not, see <http://www.gnu.org/licenses/lgpl-2.1.html>.
+
+-------------------------------------------------------------------------------------------------------------
 
 -- PostgreSQL creation scripts
 -- presupposes PostgresSQL 8.3+
@@ -12,18 +26,34 @@
 -- purpose. In order to create a tablespace, the following procedure should be
 -- used (tested on Ubuntu 9.10):
 --
--- identify the data directory (cf. /etc/postgresql/8.4/main//postgresql.conf)
--- execute the following commands :
---      PG_DATA=/var/lib/postgresql/8.4/main
---      sudo mkdir $PG_DATA/tsindex
---      sudo chown postgres:postgres $PG_DATA/tsindex
--- start psql : psql -U postgres -W
--- execute the query :
---      create tablespace tsindex location '/var/lib/postgresql/8.4/main/tsindex';
 
---
--- How to use:
--- psql -U <user name> -W [DB name] < netarchivesuite_init.sql
+-- Step 1. This is mandatory, but it makes it simpler to access the database
+-- As root or postgres user modify pg_hba.conf so 'ident' is replaced by 'trust' for all rules. So we get a pg_hba.conf looking something like this
+
+--    host    all   all         127.0.0.1/32          trust
+--    local   all   all                               trust
+
+-- Step 2. Create the database 'harvestdb', a user 'netarchivesuite', and a tablespace 'tsindex'
+
+--  sudo su - postgres
+--  mkdir /var/lib/pgsql/tsindex
+--  psql
+--   CREATE DATABASE harvestdb WITH ENCODING 'UTF8';
+--   CREATE USER netarchivesuite WITH PASSWORD 'netarchivesuite';
+--   CREATE TABLESPACE tsindex OWNER netarchivesuite LOCATION '/var/lib/pgsql/tsindex';
+--   \q
+--  pg_ctl reload
+
+-- Step 3. Create database tables using this script
+-- psql harvestdb -U netarchivesuite < 5.2.2/scripts/sql/createHarvestDB.pgsql
+
+-- Step 4. Add Default order xml to ordertemplates table (can only be done after installation is complete)
+--  cd INSTALLDIR/scripts
+--  cp HarvestTemplateApplication-template.sh HarvestTemplateApplication.sh
+--  Update the line 'export INSTALLDIR=/home/test/QUICKSTART' to match your INSTALLDIR
+--  bash HarvestTemplateApplication.sh  create default_orderxml order_templates_dist/default_orderxml.xml  
+
+-- Step 5. Netarchivesuite should now be able to use postgresql as its harvestdatabase.
 
 
 -- *****************************************************************************
@@ -62,9 +92,9 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'schedules', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'ordertemplates', 1);
+    VALUES ( 'ordertemplates', 2);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'jobs', 9);
+    VALUES ( 'jobs', 10);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'job_configs', 1);
 INSERT INTO schemaversions (tablename, version )
@@ -87,7 +117,10 @@ INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'extendedfieldhistoryvalue', 1);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'harvestchannel', 1);
-
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'eav_attribute', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'eav_type_attribute', 1);
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE schemaversions TO netarchivesuite;
 
@@ -249,6 +282,7 @@ CREATE TABLE harvestdefinitions (
      submitted timestamp NOT NULL,
      isactive bool NOT NULL,
      edition bigint NOT NULL,
+     channel_id bigint,
      audience varchar(100)
 );
 
@@ -316,6 +350,19 @@ ALTER TABLE schedules ALTER COLUMN schedule_id SET DEFAULT NEXTVAL('schedules_id
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE schedules TO netarchivesuite;
 GRANT USAGE ON SEQUENCE schedules_id_seq TO netarchivesuite;
 
+-- ****************************** insert default schedules ************************
+INSERT INTO schedules (schedule_id, name, comments, startdate, enddate, maxrepeats, timeunit, numtimeunits, anytime, onminute, onhour, ondayofweek, ondayofmonth, edition)
+  VALUES (1, 'Once_a_day', 'Run once every day',    null,      null,    null,       2,        1,            true,       null,     null,   null,        null,         1);
+INSERT INTO schedules (schedule_id, name, comments, startdate, enddate, maxrepeats, timeunit, numtimeunits, anytime, onminute, onhour, ondayofweek, ondayofmonth, edition)
+  VALUES (2, 'Once_a_month', 'Run once every month',null,      null,    null,       4,        1,            true,       null,     null,   null,        null,         1);
+INSERT INTO schedules (schedule_id, name, comments, startdate, enddate, maxrepeats, timeunit, numtimeunits, anytime, onminute, onhour, ondayofweek, ondayofmonth, edition)
+  VALUES (3, 'Once_a_week', 'Run once every week',  null,      null,    null,       3,        1,            true,       null,     null,   null,        null,         1);
+INSERT INTO schedules (schedule_id, name, comments, startdate, enddate, maxrepeats, timeunit, numtimeunits, anytime, onminute, onhour, ondayofweek, ondayofmonth, edition)
+  VALUES (4, 'Once_an_hour', 'Run every hour',      null,      null,    null,       1,        1,            true,       null,     null,   null,        null,         1);
+INSERT INTO schedules (schedule_id, name, comments, startdate, enddate, maxrepeats, timeunit, numtimeunits, anytime, onminute, onhour, ondayofweek, ondayofmonth, edition)
+  VALUES (5, 'Once', 'Only run once',               null,      null,    1,          1,        1,            true,       null,     null,   null,        null,         1);
+ 
+
 -- *****************************************************************************
 -- Area: Templates
 -- *****************************************************************************
@@ -324,7 +371,8 @@ GRANT USAGE ON SEQUENCE schedules_id_seq TO netarchivesuite;
 CREATE TABLE ordertemplates (
     template_id bigint NOT NULL PRIMARY KEY,
     name varchar(300) NOT NULL UNIQUE,
-    orderxml text NOT NULL
+    orderxml text NOT NULL,
+    isActive bool NOT NULL DEFAULT TRUE
 );
 
 CREATE SEQUENCE ordertemplates_id_seq OWNED BY ordertemplates.template_id;
@@ -342,9 +390,11 @@ CREATE TABLE jobs (
     job_id bigint NOT NULL PRIMARY KEY,
     harvest_id bigint NOT NULL,
     status int NOT NULL,
-    priority int NOT NULL,
+    channel varchar(300) NOT NULL,
+    snapshot bool NOT NULL,
     forcemaxbytes bigint NOT NULL default -1,
     forcemaxcount bigint,
+    forcemaxrunningtime bigint NOT NULL DEFAULT 0,
     orderxml varchar(300) NOT NULL,
     orderxmldoc text NOT NULL,
     seedlist text NOT NULL,
@@ -355,16 +405,14 @@ CREATE TABLE jobs (
     upload_error_details varchar(10000),
     startdate timestamp,
     enddate timestamp,
-    num_configs int NOT NULL default 0,
-    edition bigint NOT NULL,
     submitteddate timestamp,
     creationdate timestamp,
-    resubmitted_as_job bigint,
+    resubmitted_as_job bigint, 
+    num_configs int NOT NULL default 0,
+    edition bigint NOT NULL,
     continuationof bigint,
-    forcemaxrunningtime bigint NOT NULL DEFAULT 0,
     harvestname_prefix varchar(100)	
 );
-
 
 CREATE INDEX jobstatus on jobs(status) TABLESPACE tsindex;
 CREATE INDEX jobharvestid on jobs(harvest_id) TABLESPACE tsindex;
@@ -544,9 +592,11 @@ INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )
 CREATE TABLE harvestchannel (
     id bigint NOT NULL PRIMARY KEY,
     name varchar(300) NOT NULL UNIQUE,
+    issnapshot boolean NOT NULL,
     isdefault bool NOT NULL,
     comments varchar(30000)
 );
+
 
 CREATE SEQUENCE harvestchannel_id_seq OWNED BY harvestchannel.id;
 ALTER TABLE harvestchannel ALTER COLUMN id SET DEFAULT NEXTVAL('harvestchannel_id_seq');
@@ -555,3 +605,70 @@ CREATE INDEX harvestchannelnameid on harvestchannel(name) TABLESPACE tsindex;
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE harvestchannel TO netarchivesuite;
 GRANT USAGE ON SEQUENCE harvestchannel_id_seq TO netarchivesuite;
+
+-- insert harvestchannel used by the quickstart system 
+INSERT INTO harvestchannel(name, issnapshot, isdefault, comments) 
+    VALUES ('FOCUSED', false, true, 'Channel for focused harvests');
+INSERT INTO harvestchannel(name, issnapshot, isdefault, comments) 
+    VALUES ('SNAPSHOT', true, true, 'Channel for snapshot harvests');
+
+CREATE TABLE eav_type_attribute (
+	tree_id INTEGER NOT NULL,
+	id INTEGER NOT NULL,
+	name VARCHAR(96) NOT NULL,
+	class_namespace VARCHAR(96) NOT NULL,
+	class_name VARCHAR(96) NOT NULL,
+	datatype INTEGER NOT NULL,
+	viewtype INTEGER NOT NULL,
+	def_int INTEGER NULL,
+	def_datetime TIMESTAMP NULL,
+	def_varchar VARCHAR(8000) NULL,
+	def_text TEXT NULL
+);
+
+ALTER TABLE eav_type_attribute ADD CONSTRAINT eav_type_attribute_pkey PRIMARY KEY (tree_id, id);
+
+CREATE UNIQUE INDEX eav_type_attribute_idx on eav_type_attribute(tree_id, id) TABLESPACE tsindex;
+
+CREATE SEQUENCE eav_attribute_seq;
+
+CREATE TABLE eav_attribute (
+	tree_id INTEGER NOT NULL,
+	id INTEGER NOT NULL DEFAULT NEXTVAL('eav_attribute_seq'),
+	entity_id INTEGER NOT NULL,
+	type_id INTEGER NOT NULL,
+	val_int INTEGER NULL,
+	val_datetime TIMESTAMP NULL,
+	val_varchar VARCHAR(8000) NULL,
+	val_text TEXT NULL
+);
+
+ALTER TABLE eav_attribute ADD CONSTRAINT eav_attribute_pkey PRIMARY KEY (tree_id, id);
+
+CREATE INDEX eav_attribute_idx on eav_attribute(tree_id, entity_id) TABLESPACE tsindex;
+
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE eav_attribute TO netarchivesuite;
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE eav_type_attribute TO netarchivesuite;
+GRANT USAGE ON SEQUENCE eav_attribute_seq TO netarchivesuite;
+
+--
+-- INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
+-- VALUES(1, 1, 'MAX_HOPS', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 1, 20, null, null, null);
+--
+-- INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
+-- VALUES(1, 2, 'HONOR_ROBOTS_DOT_TXT', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 6, 0, null, null, null);
+--
+-- INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
+-- VALUES(1, 3, 'EXTRACT_JAVASCRIPT', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 5, 1, null, null, null);
+
+INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
+VALUES(2, 1, 'MAX_HOPS', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 1, 20, null, null, null);
+
+INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
+VALUES(2, 2, 'HONOR_ROBOTS_DOT_TXT', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 6, 0, null, null, null);
+
+INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
+VALUES(2, 3, 'EXTRACT_JAVASCRIPT', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 5, 1, null, null, null);
+
+
+
