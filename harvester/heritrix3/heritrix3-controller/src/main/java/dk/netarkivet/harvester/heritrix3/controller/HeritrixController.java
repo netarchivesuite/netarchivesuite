@@ -526,7 +526,10 @@ public class HeritrixController extends AbstractRestHeritrixController {
         jStatus.setStatus(newStatus);
 
         switch (newStatus) {
-        case "PAUSE":
+        case "PAUSING":
+            cpm.setStatus(CrawlStatus.CRAWLER_PAUSING);
+            break;
+        case "PAUSED":
             cpm.setStatus(CrawlStatus.CRAWLER_PAUSED);
             break;
         case "EMPTY":

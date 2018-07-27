@@ -226,7 +226,7 @@ public class H3FrontierResource implements ResourceAbstract {
                         if (scriptResult.script.rawOutput != null) {
                             sb.append("<fieldset><!--<legend>rawOut</legend>-->");
                             sb.append("<pre>");
-                            sb.append(scriptResult.script.rawOutput);
+                            sb.append(scriptResult.script.rawOutput.replaceFirst("URIs", lines + " URIs"));
                             sb.append("</pre>");
                             sb.append("</fieldset><br />\n");
                         }
