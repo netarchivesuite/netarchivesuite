@@ -210,6 +210,8 @@ public class JobDispatcher {
             IOFailure {
 
         final String umbra = "UMBRA";
+        String rabbitMQUrl = "amqp://guest:guest@activemq:5672/%2f";
+        String limitSearchRegEx = "^$|.*L";
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
 
@@ -229,7 +231,7 @@ public class JobDispatcher {
         {
             log.info("Since we now are sure that it is an umbra channel we can insert umbra information");
             HeritrixTemplate ht = job.getOrderXMLdoc();
-            ht.insertUmbrabean(job);
+            ht.insertUmbrabean(job, rabbitMQUrl, limitSearchRegEx);
         }
 
         DoOneCrawlMessage nMsg = new DoOneCrawlMessage(job, HarvesterChannels.getHarvestJobChannelId(channel),

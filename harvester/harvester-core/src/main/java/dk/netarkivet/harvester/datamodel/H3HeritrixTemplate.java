@@ -234,10 +234,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	}
 
 	@Override
-	public void insertUmbrabean(Job aJob)
+	public void insertUmbrabean(Job aJob, String rabbitMQUrl, String limitSearchRegEx)
 	{
 		String tmp = template;
-		this.template = tmp.replace(UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER, getUmbraBeanInformationInSimpleoverridesBean(aJob));
+		this.template = tmp.replace(UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER,
+				getUmbraBeanInformationInSimpleoverridesBean(aJob, rabbitMQUrl, limitSearchRegEx));
 		this.template = tmp.replace(UMBRA_BEAN_PLACEHOLDER, getUmbrabeanPlaceholder());
 		this.template = tmp.replace(AMQP_URLRECEIVER_PLACEHOLDER, getAmqpUrlreceiverPlaceholder());
 		this.template = tmp.replace(CALL_UMBRABEAN_PLACEHOLDER, getCallUmbrabean());
@@ -249,7 +250,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	 * Umbrabean text from the current harvest job that will replace the placeholder in the Simpleoverride bean
 	 * @param aJob The job for the current harvest
 	 */
-	public String getUmbraBeanInformationInSimpleoverridesBean(Job aJob) {
+	public String getUmbraBeanInformationInSimpleoverridesBean(Job aJob, String rabbitMQUrl, String limitSearchRegEx) {
 		//	umbraBean.clientId=MySpecialJobName
 		//	umbraBean.amqpUri=amqp://guest:guest@activemq:5672/%2f
 		//	## The following rule restricts umbra to processing only on seeds or links, leaving embeds and redirects
@@ -258,10 +259,10 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
 		StringBuilder umbrabeanBuilder = new StringBuilder();
 		umbrabeanBuilder.append("umbraBean.clientId="+aJob.getJobID());
-		umbrabeanBuilder.append("umbraBean.amqpUri=amqp://guest:guest@activemq:5672/%2f");
+		umbrabeanBuilder.append("umbraBean.amqpUri="+rabbitMQUrl);
 		umbrabeanBuilder.append("## The following rule restricts umbra to processing only on seeds or links, leaving embeds and redirects");
 		umbrabeanBuilder.append("## to be handled by the browser itself");
-		umbrabeanBuilder.append("umbraBean.shouldProcessRule.rules[1].regex=^$|.*L");
+		umbrabeanBuilder.append("umbraBean.shouldProcessRule.rules[1].regex="+limitSearchRegEx);
 
 		return umbrabeanBuilder.toString();
 	}

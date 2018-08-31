@@ -278,6 +278,6 @@ public abstract class HeritrixTemplate implements Serializable {
 	 * Method to add beans in case the job is an umbra job.
 	 * @param ajob a HarvestJob for the current harvest
 	 */
-	public abstract void insertUmbrabean(Job ajob);
+	public abstract void insertUmbrabean(Job ajob, String rabbitMQUrl, String limitSearchRegEx);
 
 }
