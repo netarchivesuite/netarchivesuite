@@ -227,7 +227,7 @@ public class JobDispatcher {
         }
         if (job.getChannel().equals(umbra))
         {
-            log.info("As we're using WARC as archiveFormat WarcInfoMetadata is now added to the template");
+            log.info("Since we now are sure that it is an umbra channel we can insert umbra information");
             HeritrixTemplate ht = job.getOrderXMLdoc();
             ht.insertUmbrabean(job);
         }
