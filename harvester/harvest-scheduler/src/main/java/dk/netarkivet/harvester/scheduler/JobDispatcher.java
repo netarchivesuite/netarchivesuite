@@ -191,6 +191,7 @@ public class JobDispatcher {
         return metadata;
     }
 
+
     /**
      * Submit an doOneCrawl request to a HarvestControllerServer.
      *
@@ -207,6 +208,8 @@ public class JobDispatcher {
     public void doOneCrawl(Job job, String origHarvestName, String origHarvestDesc, String origHarvestSchedule,
             HarvestChannel channel, String origHarvestAudience, List<MetadataEntry> metadata) throws ArgumentNotValid,
             IOFailure {
+
+        final String umbra = "UMBRA";
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
 
@@ -222,9 +225,15 @@ public class JobDispatcher {
         } else {
         	log.info("As we're using ARC as archiveFormat no WarcInfoMetadata was added to the template");
         }
-        
+        if (job.getChannel().equals(umbra))
+        {
+            log.info("As we're using WARC as archiveFormat WarcInfoMetadata is now added to the template");
+            HeritrixTemplate ht = job.getOrderXMLdoc();
+            ht.insertUmbrabean(job);
+        }
+
         DoOneCrawlMessage nMsg = new DoOneCrawlMessage(job, HarvesterChannels.getHarvestJobChannelId(channel),
-                new HarvestDefinitionInfo(origHarvestName, origHarvestDesc, origHarvestSchedule), metadata);
+            new HarvestDefinitionInfo(origHarvestName, origHarvestDesc, origHarvestSchedule), metadata);
         log.debug("Send crawl request: {}", nMsg);
         jmsConnection.send(nMsg);
     }

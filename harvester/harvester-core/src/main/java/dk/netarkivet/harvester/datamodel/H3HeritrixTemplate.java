@@ -72,11 +72,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     private static final Logger log = LoggerFactory.getLogger(H3HeritrixTemplate.class);
 
     private String template;
-    
+
     /** QuotaEnforcer states for this template. TODO necessary?? */
     private Long forceMaxbytesPerDomain;
-    private Long forceMaxobjectsPerDomain; 
-   
+    private Long forceMaxobjectsPerDomain;
+
     /** Has this HeritrixTemplate been verified. */
     private boolean verified;
 
@@ -87,47 +87,47 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     public static final Pattern DEDUPLICATION_BEAN_REFERENCE_PATTERN = Pattern.compile(".*ref.*bean.*DeDuplicator.*", Pattern.DOTALL);
 
     public static final Pattern DEDUPLICATION_BEAN_PATTERN =  Pattern.compile(".*bean.*id.*DeDuplicator.*", Pattern.DOTALL);
-    public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER 
-    	= "%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}"; 
+    public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER
+    	= "%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}";
 
     public static final String ARCHIVE_FILE_PREFIX_PLACEHOLDER = "%{ARCHIVE_FILE_PREFIX_PLACEHOLDER}";
-        
-    public static final String FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER 
+
+    public static final String FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER
     	= "%{FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER}";
-    
-    public static final String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER = 
+
+    public static final String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER =
     		"%{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER}";
-    
-    public static final String QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER 
+
+    public static final String QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER
     	= "%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}";
 
 	public static final String DEDUPLICATION_ENABLED_PLACEHOLDER = "%{DEDUPLICATION_ENABLED_PLACEHOLDER}";
-    
-    
+
+
     // PLACEHOLDERS for archiver beans (Maybe not necessary)
-    final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";	
+    final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";
 	final String ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER = "%{ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER}";
-	
+
 	//match theses properties in crawler-beans.cxml to add them into harvestInfo.xml
 	//for preservation purpose
 	public enum MetadataInfo {
 		TEMPLATE_DESCRIPTION("metadata\\.description=.+[\\r\\n]"),
 		TEMPLATE_UPDATE_DATE("metadata\\.date=.+[\\r\\n]"),
 		OPERATOR("metadata\\.operator=.+[\\r\\n]");
-		
+
 		private final String regex;
-		
+
 		private MetadataInfo(String regex) {
 			this.regex = regex;
 		}
-		
+
 		public String toString() {
 			return this.regex;
 		}
 	};
-	
+
 	public Map<MetadataInfo, String> metadataInfoMap;
-	
+
     /**
      * Constructor for HeritrixTemplate class.
      *
@@ -139,7 +139,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
         ArgumentNotValid.checkNotNull(template, "String template");
         this.template_id = template_id;
         this.template = template;
-        
+
         metadataInfoMap = new HashMap<MetadataInfo, String> ();
         for(MetadataInfo metadataInfo : MetadataInfo.values()) {
             Pattern p = Pattern.compile(metadataInfo.regex);
@@ -151,7 +151,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
             }
         }
     }
-    
+
 	/**
      * return the template.
      *
@@ -178,30 +178,29 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     public String getXML() {
         return template;
     }
-    
+
     /**
      * Update the maxTimeSeconds property in the heritrix3 template, if possible.
-     * @param maxJobRunningTimeSecondsL Force the harvestJob to end after this number of seconds 
+     * @param maxJobRunningTimeSecondsL Force the harvestJob to end after this number of seconds
      * Property of the org.archive.crawler.framework.CrawlLimitEnforcer
      * <!-- <property name="maxTimeSeconds" value="0" /> -->
      */
     @Override
 	public void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL) {
 		if (template.contains(MAX_TIME_SECONDS_PLACEHOLDER)) {
-	    	this.template = template.replace(MAX_TIME_SECONDS_PLACEHOLDER, 
+	    	this.template = template.replace(MAX_TIME_SECONDS_PLACEHOLDER,
 	    			Long.toString(maxJobRunningTimeSecondsL));
 		} else {
-			log.warn("The placeholder '" + MAX_TIME_SECONDS_PLACEHOLDER 
+			log.warn("The placeholder '" + MAX_TIME_SECONDS_PLACEHOLDER
 					+ "' was not found in the template. Therefore maxRunningTime not set");
 		}
 	}
 
-    
 	@Override
 	public void setMaxBytesPerDomain(Long maxbytesL) {
-		this.forceMaxbytesPerDomain = maxbytesL;		
-	}	
-  
+		this.forceMaxbytesPerDomain = maxbytesL;
+	}
+
 
 	@Override
 	public Long getMaxBytesPerDomain() {
@@ -217,7 +216,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	public Long getMaxObjectsPerDomain() {
 		return this.forceMaxobjectsPerDomain;
 	}
-    
+
 	@Override
 	public boolean isValid() {
 		/*
@@ -232,6 +231,142 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		&& template.contains(deduplicationBeanPattern)
 		*/
 		return true;
+	}
+
+	@Override
+	public void insertUmbrabean(Job aJob)
+	{
+		String tmp = template;
+		this.template = tmp.replace(UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER, getUmbraBeanInformationInSimpleoverridesBean(aJob));
+		this.template = tmp.replace(UMBRA_BEAN_PLACEHOLDER, getUmbrabeanPlaceholder());
+		this.template = tmp.replace(AMQP_URLRECEIVER_PLACEHOLDER, getAmqpUrlreceiverPlaceholder());
+		this.template = tmp.replace(CALL_UMBRABEAN_PLACEHOLDER, getCallUmbrabean());
+	}
+
+	public static final String UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER = "%{UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER}";
+
+	/**
+	 * Umbrabean text from the current harvest job that will replace the placeholder in the Simpleoverride bean
+	 * @param aJob The job for the current harvest
+	 */
+	public String getUmbraBeanInformationInSimpleoverridesBean(Job aJob) {
+		//	umbraBean.clientId=MySpecialJobName
+		//	umbraBean.amqpUri=amqp://guest:guest@activemq:5672/%2f
+		//	## The following rule restricts umbra to processing only on seeds or links, leaving embeds and redirects
+		//	## to be handled by the browser itself
+		//	umbraBean.shouldProcessRule.rules[1].regex=^$|.*L
+
+		StringBuilder umbrabeanBuilder = new StringBuilder();
+		umbrabeanBuilder.append("umbraBean.clientId="+aJob.getJobID());
+		umbrabeanBuilder.append("umbraBean.amqpUri=amqp://guest:guest@activemq:5672/%2f");
+		umbrabeanBuilder.append("## The following rule restricts umbra to processing only on seeds or links, leaving embeds and redirects");
+		umbrabeanBuilder.append("## to be handled by the browser itself");
+		umbrabeanBuilder.append("umbraBean.shouldProcessRule.rules[1].regex=^$|.*L");
+
+		return umbrabeanBuilder.toString();
+	}
+
+	public static final String UMBRA_BEAN_PLACEHOLDER = "%{UMBRA_BEAN_PLACEHOLDER}";
+
+	/**
+	 * Umbrabean text that will replace UMBRA_BEAN_PLACEHOLDER in the template	 *
+	 */
+	public String getUmbrabeanPlaceholder() {
+		// <!--
+		//				Bean that sends messages (urls) to umbra.
+		//		-->
+		// <bean id="umbraBean" class="org.archive.modules.AMQPPublishProcessor">
+		//  <property name="clientId" value="[see override]"/>
+		//  <property name="amqpUri" value="[see override]"/>
+		//  <property name="shouldProcessRule">
+		//   <bean class="org.archive.modules.deciderules.DecideRuleSequence">
+		//    <property name="rules">
+		//     <list>
+		//      <bean class="org.archive.modules.deciderules.RejectDecideRule" />
+		//      <bean class="org.archive.modules.deciderules.HopsPathMatchesRegexDecideRule">
+		//       <property name="regex" value="[see override]"/>
+		//      </bean>
+		//     </list>
+		//    </property>
+		//   </bean>
+		//  </property>
+		// </bean>
+
+		StringBuilder umbrabeanBuilder = new StringBuilder();
+		umbrabeanBuilder.append("<!-- Bean that sends messages (urls) to umbra. -->");
+		umbrabeanBuilder.append("<bean id=\"umbraBean\" class=\"org.archive.modules.AMQPPublishProcessor\">");
+		umbrabeanBuilder.append("<property name=\"clientId\" value=\"[see override]\"/>");
+		umbrabeanBuilder.append("<property name=\"amqpUri\" value=\"[see override]\"/>");
+		umbrabeanBuilder.append("  <property name=\"shouldProcessRule\">");
+		umbrabeanBuilder.append("   <bean class=\"org.archive.modules.deciderules.DecideRuleSequence\">");
+		umbrabeanBuilder.append("    <property name=\"rules\">");
+		umbrabeanBuilder.append("     <list>");
+		umbrabeanBuilder.append("      <bean class=\"org.archive.modules.deciderules.RejectDecideRule\" />");
+		umbrabeanBuilder.append("      <bean class=\"org.archive.modules.deciderules.HopsPathMatchesRegexDecideRule\">");
+		umbrabeanBuilder.append("       <property name=\"regex\" value=\"[see override]\"/>");
+		umbrabeanBuilder.append("      </bean>");
+		umbrabeanBuilder.append("     </list>");
+		umbrabeanBuilder.append("    </property>");
+		umbrabeanBuilder.append("   </bean>");
+		umbrabeanBuilder.append("  </property>");
+		umbrabeanBuilder.append(" </bean>");
+
+		return umbrabeanBuilder.toString();
+	}
+
+	public static final String AMQP_URLRECEIVER_PLACEHOLDER = "%{AMQP_URLRECEIVER_PLACEHOLDER}";
+
+	/**
+	 * AMQP url receiver text that will replace AMQP_URLRECEIVER_PLACEHOLDER in the template	 *
+	 */
+	public String getAmqpUrlreceiverPlaceholder() {
+		// <!--
+		//	Bean that receives messages (urls) from umbra and places them in the Heritrix frontier.
+		//			-->
+		// <bean class="org.archive.crawler.frontier.AMQPUrlReceiver">
+		//  <property name="amqpUri">
+		//   <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+		//          <property name="targetObject" ref="umbraBean"/>
+		//          <property name="propertyPath" value="amqpUri" />
+		//         </bean>
+		//  </property>
+		//  <property name="queueName">
+		//      <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+		//       <property name="targetObject" ref="umbraBean"/>
+		//       <property name="propertyPath" value="clientId" />
+		//      </bean>
+		//  </property>
+		// </bean>
+
+		StringBuilder amqpUrlReceiverBeanBuilder = new StringBuilder();
+		amqpUrlReceiverBeanBuilder.append("<!-- Bean that receives messages (urls) from umbra and places them in the Heritrix frontier -->");
+		amqpUrlReceiverBeanBuilder.append("<bean class=\"org.archive.crawler.frontier.AMQPUrlReceiver\">");
+		amqpUrlReceiverBeanBuilder.append(" <property name=\"amqpUri\">");
+		amqpUrlReceiverBeanBuilder.append("   <bean class=\"org.springframework.beans.factory.config.PropertyPathFactoryBean\">");
+		amqpUrlReceiverBeanBuilder.append("    <property name=\"targetObject\" ref=\"umbraBean\"/>");
+		amqpUrlReceiverBeanBuilder.append("    <property name=\"propertyPath\" value=\"amqpUri\" />");
+		amqpUrlReceiverBeanBuilder.append("      </bean>");
+		amqpUrlReceiverBeanBuilder.append("    </property>");
+		amqpUrlReceiverBeanBuilder.append(" <property name=\"queueName\">");
+		amqpUrlReceiverBeanBuilder.append("   <bean class=\"org.springframework.beans.factory.config.PropertyPathFactoryBean\">");
+		amqpUrlReceiverBeanBuilder.append("    <property name=\"targetObject\" ref=\"umbraBean\"/>");
+		amqpUrlReceiverBeanBuilder.append("    <property name=\"propertyPath\" value=\"clientId\" />");
+		amqpUrlReceiverBeanBuilder.append("   </bean>");
+		amqpUrlReceiverBeanBuilder.append(" </property>");
+		amqpUrlReceiverBeanBuilder.append("</bean>");
+
+		return amqpUrlReceiverBeanBuilder.toString();
+	}
+
+	public static final String CALL_UMBRABEAN_PLACEHOLDER ="%{CALL_UMBRABEAN_PLACEHOLDER}";
+
+	/**
+	 * Call of the Umbra bean text that will replace CALL_UMBRABEAN_PLACEHOLDER in the template	 *
+	 */
+	public String getCallUmbrabean() {
+		//	    <ref bean="umbraBean"/>
+
+		return "    <ref bean=\"umbraBean\"/>";
 	}
 
 	@Override
