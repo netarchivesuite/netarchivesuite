@@ -210,8 +210,8 @@ public class JobDispatcher {
             IOFailure {
 
         final String umbra = "UMBRA";
-        String rabbitMQUrl = "amqp://guest:guest@activemq:5672/%2f";
-        String limitSearchRegEx = "^$|.*L";
+        String rabbitMQUrl = Settings.get(HarvesterSettings.UMBRA_URL);
+        String limitSearchRegEx = Settings.get(HarvesterSettings.UMBRA_HOPS_SHOULD_PROCESS);
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
 

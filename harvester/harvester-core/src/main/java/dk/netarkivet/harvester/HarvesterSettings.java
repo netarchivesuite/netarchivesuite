@@ -348,7 +348,21 @@ public class HarvesterSettings {
      * Default value is: 1
      */
 	public static String SCHEDULER_SUBMITTED_JOBS_IN_QUEUE_LIMIT = "settings.harvester.scheduler.submittedJobsInQueueLimit";
-	
+
+    /**
+     * Url of the socket-endpoint ("amqp://") for the rabbitmq broker which feeds umbra
+     * Default values is amqp://guest:guest@localhost:8998/%2f
+     */
+    public static String UMBRA_URL = "settings.harvester.harvesting.umbra.rabbitmqUrl";
+
+    /**
+     * Regex specifying the Heritrix discovery path of Urls to be sent to Umbra.
+     * The default value "^$|.*L"
+     * selects only seeds (the empty string) or hops (strings ending in L). Included elements on webpages are
+     * therefore not sent to umbra.
+     */
+    public static String UMBRA_HOPS_SHOULD_PROCESS = "settings.harvester.harvesting.umbra.hopsShouldProcess";
+
     /**
      * <b>settings.harvester.harvesting.frontier.frontierReportWaitTime</b>:<br>
      * Time interval in seconds to wait between two requests to generate a full frontier report. Default value is 600
