@@ -93,7 +93,7 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
      * </ol>
      */
     public void doCrawl() throws IOFailure {
-        setupOrderfile(getHeritrixFiles());
+        setupOrderfile(, getHeritrixFiles());
         heritrixController = new HeritrixController(getHeritrixFiles(), jobName);
         
         try {

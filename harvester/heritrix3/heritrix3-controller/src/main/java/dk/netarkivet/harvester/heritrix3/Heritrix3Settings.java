@@ -32,6 +32,23 @@ public class Heritrix3Settings {
 	/** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/harvester/heritrix3/settings.xml";
 
+    public static String UMBRA_IS_ENABLED = "settings.harvester.harvesting.umbra.isEnabled";
+
+    /**
+     * Url of the socket-endpoint ("amqp://") for the rabbitmq broker which feeds umbra
+     * Default values is amqp://guest:guest@localhost:8998/%2f
+     */
+    public static String UMBRA_URL = "settings.harvester.harvesting.umbra.rabbitmqUrl";
+    /**
+     * Regex specifying the Heritrix discovery path of Urls to be sent to Umbra.
+     * The default value "^$|.*L"
+     * selects only seeds (the empty string) or hops (strings ending in L). Included elements on webpages are
+     * therefore not sent to umbra.
+     */
+    public static String UMBRA_HOPS_SHOULD_PROCESS = "settings.harvester.harvesting.umbra.hopsShouldProcess";
+
+
+
     /*
      * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
      * this class, by loading them from a settings.xml file in classpath.

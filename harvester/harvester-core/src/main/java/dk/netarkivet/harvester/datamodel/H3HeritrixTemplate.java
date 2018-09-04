@@ -235,10 +235,10 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	}
 
 	@Override
-	public void insertUmbrabean(Job aJob, String rabbitMQUrl, String limitSearchRegEx)
+	public void insertUmbrabean(String jobName, String rabbitMQUrl, String limitSearchRegEx)
 	{
 		this.template = this.template.replace(UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER,
-				getUmbraBeanInformationInSimpleoverridesBean(aJob, rabbitMQUrl, limitSearchRegEx));
+				getUmbraBeanInformationInSimpleoverridesBean(jobName, rabbitMQUrl, limitSearchRegEx));
 		this.template = this.template.replace(UMBRA_BEAN_PLACEHOLDER, getUmbrabeanPlaceholder());
 		this.template = this.template.replace(AMQP_URLRECEIVER_PLACEHOLDER, getAmqpUrlreceiverPlaceholder());
 		this.template = this.template.replace(CALL_UMBRABEAN_PLACEHOLDER, getCallUmbrabean());
@@ -248,9 +248,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
 	/**
 	 * Umbrabean text from the current harvest job that will replace the placeholder in the Simpleoverride bean
-	 * @param aJob The job for the current harvest
+	 * @param jobName The job for the current harvest
 	 */
-	public String getUmbraBeanInformationInSimpleoverridesBean(Job aJob, String rabbitMQUrl, String limitSearchRegEx) {
+	public String getUmbraBeanInformationInSimpleoverridesBean(String jobName, String rabbitMQUrl, String limitSearchRegEx) {
 		//	umbraBean.clientId=MySpecialJobName
 		//	umbraBean.amqpUri=amqp://guest:guest@activemq:5672/%2f
 		//	## The following rule restricts umbra to processing only on seeds or links, leaving embeds and redirects
@@ -259,7 +259,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 
 		StringBuilder umbrabeanBuilder = new StringBuilder();
 		umbrabeanBuilder.append("\n");
-		umbrabeanBuilder.append("umbraBean.clientId=" + Settings.get(CommonSettings.ENVIRONMENT_NAME) + "_" +aJob.getJobID() + "_" + System.currentTimeMillis());
+		umbrabeanBuilder.append("umbraBean.clientId=" + Settings.get(CommonSettings.ENVIRONMENT_NAME) + "_" + jobName);
 		umbrabeanBuilder.append("\n");
 		umbrabeanBuilder.append("umbraBean.amqpUri="+rabbitMQUrl);
 		umbrabeanBuilder.append("\n");

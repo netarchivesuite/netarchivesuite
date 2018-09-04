@@ -103,10 +103,10 @@ public abstract class HeritrixLauncherAbstract {
         return args;
     }
 
-    public void setupOrderfile(Heritrix3Files files) {
+    public void setupOrderfile(String jobName, Heritrix3Files files) {
     	// Here the last changes of the template is performed
     	log.info("Make the template ready for Heritrix3");
-        makeTemplateReadyForHeritrix3(files);
+        makeTemplateReadyForHeritrix3(jobName, files);
     }
 
     /**
@@ -130,7 +130,7 @@ public abstract class HeritrixLauncherAbstract {
      * @throws IOFailure - When the orderfile could not be saved to disk 
      * @throws IllegalState - When the orderfile is not a H3 template                  
      */
-    public static void makeTemplateReadyForHeritrix3(Heritrix3Files files) throws IOFailure {    	
+    public static void makeTemplateReadyForHeritrix3(String jobName, Heritrix3Files files) throws IOFailure {
     	HeritrixTemplate templ = HeritrixTemplate.read(files.getOrderXmlFile());
     	if (templ instanceof H3HeritrixTemplate) {
     		H3HeritrixTemplate template = (H3HeritrixTemplate) templ;
@@ -147,6 +147,12 @@ public abstract class HeritrixLauncherAbstract {
             //Note that we may need to modify the methods to take the jobname, not the Job object
             //template.insertUmbrabean() etc;
     		// Remove superfluous placeholders in the template (maybe unnecessary)
+            if (Settings.getBoolean(Heritrix3Settings.UMBRA_IS_ENABLED)) {
+                String rabbitMQUrl = Settings.get(Heritrix3Settings.UMBRA_URL);
+                String umbraFilter = Settings.get(Heritrix3Settings.UMBRA_HOPS_SHOULD_PROCESS);
+                template.insertUmbrabean(jobName, rabbitMQUrl, umbraFilter);
+            }
+
     		template.removePlaceholders();
     		files.writeOrderXml(template);
     	} else {

@@ -173,10 +173,6 @@ National Library.
 			<startNewFilesOnCheckpoint>true</startNewFilesOnCheckpoint>
                 </warc>
             </heritrix3>
-            <umbra>
-                <rabbitmqUrl>amqp://guest:guest@localhost:8998/%2f</rabbitmqUrl>
-                <hopsShouldProcess>^$|.*L</hopsShouldProcess>
-            </umbra>
             <frontier>
                 <!-- 10 minutes -->
                 <frontierReportWaitTime>600</frontierReportWaitTime>

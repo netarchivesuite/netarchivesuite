@@ -209,9 +209,6 @@ public class JobDispatcher {
             HarvestChannel channel, String origHarvestAudience, List<MetadataEntry> metadata) throws ArgumentNotValid,
             IOFailure {
 
-        final String umbra = "UMBRA";
-        String rabbitMQUrl = Settings.get(HarvesterSettings.UMBRA_URL);
-        String limitSearchRegEx = Settings.get(HarvesterSettings.UMBRA_HOPS_SHOULD_PROCESS);
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
 
@@ -227,13 +224,6 @@ public class JobDispatcher {
         } else {
         	log.info("As we're using ARC as archiveFormat no WarcInfoMetadata was added to the template");
         }
-        if (job.getChannel().toLowerCase().contains(umbra.toLowerCase()))
-        {
-            log.info("Since we now are sure that it is an umbra channel we can insert umbra information");
-            HeritrixTemplate ht = job.getOrderXMLdoc();
-            ht.insertUmbrabean(job, rabbitMQUrl, limitSearchRegEx);
-        }
-
         DoOneCrawlMessage nMsg = new DoOneCrawlMessage(job, HarvesterChannels.getHarvestJobChannelId(channel),
             new HarvestDefinitionInfo(origHarvestName, origHarvestDesc, origHarvestSchedule), metadata);
         log.debug("Send crawl request: {}", nMsg);
