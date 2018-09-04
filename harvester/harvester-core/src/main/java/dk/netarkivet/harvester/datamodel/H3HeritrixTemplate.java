@@ -237,12 +237,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	@Override
 	public void insertUmbrabean(Job aJob, String rabbitMQUrl, String limitSearchRegEx)
 	{
-		String tmp = template;
-		this.template = tmp.replace(UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER,
+		this.template = this.template.replace(UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER,
 				getUmbraBeanInformationInSimpleoverridesBean(aJob, rabbitMQUrl, limitSearchRegEx));
-		this.template = tmp.replace(UMBRA_BEAN_PLACEHOLDER, getUmbrabeanPlaceholder());
-		this.template = tmp.replace(AMQP_URLRECEIVER_PLACEHOLDER, getAmqpUrlreceiverPlaceholder());
-		this.template = tmp.replace(CALL_UMBRABEAN_PLACEHOLDER, getCallUmbrabean());
+		this.template = this.template.replace(UMBRA_BEAN_PLACEHOLDER, getUmbrabeanPlaceholder());
+		this.template = this.template.replace(AMQP_URLRECEIVER_PLACEHOLDER, getAmqpUrlreceiverPlaceholder());
+		this.template = this.template.replace(CALL_UMBRABEAN_PLACEHOLDER, getCallUmbrabean());
 	}
 
 	public static final String UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER = "%{UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER}";
@@ -917,7 +916,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	public void removePlaceholders() {
 		template = template.replace(METADATA_ITEMS_PLACEHOLDER, "");
 		template = template.replace(CRAWLERTRAPS_PLACEHOLDER, "");
-		
+		template = template.replace(UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER, "")
+				.replace(UMBRA_BEAN_PLACEHOLDER, "")
+				.replace(AMQP_URLRECEIVER_PLACEHOLDER, "")
+				.replace(CALL_UMBRABEAN_PLACEHOLDER, "");
+
 		if (template.contains(METADATA_ITEMS_PLACEHOLDER)) {
 			throw new IllegalState("The placeholder for the property '" + METADATA_ITEMS_PLACEHOLDER  
 					+ "' should have been deleted now."); 
@@ -925,6 +928,6 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		if (template.contains(CRAWLERTRAPS_PLACEHOLDER)) {
 			throw new IllegalState("The placeholder for the property '" + CRAWLERTRAPS_PLACEHOLDER  
 					+ "' should have been deleted now."); 
-		}		
+		}
 	}
 }

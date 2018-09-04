@@ -143,6 +143,7 @@ public abstract class HeritrixLauncherAbstract {
     		} else {
                 log.debug("Template is not dedup-enabled so not setting index location");
             }
+            //TODO here we could actually substitute template placeholders at the HarvestController level
     		// Remove superfluous placeholders in the template (maybe unnecessary)
     		template.removePlaceholders();
     		files.writeOrderXml(template);
