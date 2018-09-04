@@ -258,12 +258,16 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		//	umbraBean.shouldProcessRule.rules[1].regex=^$|.*L
 
 		StringBuilder umbrabeanBuilder = new StringBuilder();
+		umbrabeanBuilder.append("\n");
 		umbrabeanBuilder.append("umbraBean.clientId=" + Settings.get(CommonSettings.ENVIRONMENT_NAME) + "_" +aJob.getJobID() + "_" + System.currentTimeMillis());
+		umbrabeanBuilder.append("\n");
 		umbrabeanBuilder.append("umbraBean.amqpUri="+rabbitMQUrl);
+		umbrabeanBuilder.append("\n");
 		umbrabeanBuilder.append("## The following rule restricts umbra to processing only on seeds or links, leaving embeds and redirects");
 		umbrabeanBuilder.append("## to be handled by the browser itself");
+		umbrabeanBuilder.append("\n");
 		umbrabeanBuilder.append("umbraBean.shouldProcessRule.rules[1].regex="+limitSearchRegEx);
-
+		umbrabeanBuilder.append("\n");
 		return umbrabeanBuilder.toString();
 	}
 
