@@ -227,7 +227,7 @@ public class JobDispatcher {
         } else {
         	log.info("As we're using ARC as archiveFormat no WarcInfoMetadata was added to the template");
         }
-        if (job.getChannel().equals(umbra))
+        if (job.getChannel().toLowerCase().contains(umbra.toLowerCase()))
         {
             log.info("Since we now are sure that it is an umbra channel we can insert umbra information");
             HeritrixTemplate ht = job.getOrderXMLdoc();
