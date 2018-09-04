@@ -920,7 +920,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 	}
 
     @Override
-    public void insertUmbrabean(Job aJob, String rabbitMQUrl, String limitSearchRegEx)
+    public void insertUmbrabean(String jobName, String rabbitMQUrl, String limitSearchRegEx)
     {
         //NOP
         log.debug("In H1 templates we don't do umbra search.");
