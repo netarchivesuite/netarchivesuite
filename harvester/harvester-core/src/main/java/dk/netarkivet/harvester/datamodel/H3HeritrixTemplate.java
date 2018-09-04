@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import com.antiaction.raptor.dao.AttributeBase;
 import com.antiaction.raptor.dao.AttributeTypeBase;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -258,7 +259,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		//	umbraBean.shouldProcessRule.rules[1].regex=^$|.*L
 
 		StringBuilder umbrabeanBuilder = new StringBuilder();
-		umbrabeanBuilder.append("umbraBean.clientId="+aJob.getJobID());
+		umbrabeanBuilder.append("umbraBean.clientId=" + Settings.get(CommonSettings.ENVIRONMENT_NAME) + "_" +aJob.getJobID() + "_" + System.currentTimeMillis());
 		umbrabeanBuilder.append("umbraBean.amqpUri="+rabbitMQUrl);
 		umbrabeanBuilder.append("## The following rule restricts umbra to processing only on seeds or links, leaving embeds and redirects");
 		umbrabeanBuilder.append("## to be handled by the browser itself");
