@@ -144,6 +144,8 @@ public abstract class HeritrixLauncherAbstract {
                 log.debug("Template is not dedup-enabled so not setting index location");
             }
             //TODO here we could actually substitute template placeholders at the HarvestController level
+            //Note that we may need to modify the methods to take the jobname, not the Job object
+            //template.insertUmbrabean() etc;
     		// Remove superfluous placeholders in the template (maybe unnecessary)
     		template.removePlaceholders();
     		files.writeOrderXml(template);
