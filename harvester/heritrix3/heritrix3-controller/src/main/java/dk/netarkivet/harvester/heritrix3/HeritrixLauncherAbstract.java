@@ -143,16 +143,18 @@ public abstract class HeritrixLauncherAbstract {
     		} else {
                 log.debug("Template is not dedup-enabled so not setting index location");
             }
-            //TODO here we could actually substitute template placeholders at the HarvestController level
-            //Note that we may need to modify the methods to take the jobname, not the Job object
-            //template.insertUmbrabean() etc;
-    		// Remove superfluous placeholders in the template (maybe unnecessary)
             if (Settings.getBoolean(Heritrix3Settings.UMBRA_IS_ENABLED)) {
+    		    log.debug("Inserting Umbra-related parameters for job {}.", jobName);
                 String rabbitMQUrl = Settings.get(Heritrix3Settings.UMBRA_URL);
+                if (rabbitMQUrl == null || "".equals(rabbitMQUrl)) {
+                    final String message = "Umbra is enabled but empty Url is specified.";
+                    log.error(message);
+                    throw new ArgumentNotValid(message);
+                }
                 String umbraFilter = Settings.get(Heritrix3Settings.UMBRA_HOPS_SHOULD_PROCESS);
+                log.debug("Url's will be sent to Umbra if their discovery path matches '{}'.", umbraFilter);
                 template.insertUmbrabean(jobName, rabbitMQUrl, umbraFilter);
             }
-
     		template.removePlaceholders();
     		files.writeOrderXml(template);
     	} else {
