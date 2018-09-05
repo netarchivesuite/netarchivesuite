@@ -912,26 +912,20 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 			throw new IOFailure("Unable to write to JspWriter", e);
 		}
 	}
-	
+
 	/**
 	 *  Hack to remove existing placeholders, that is still present after template 
 	 *  manipulation is completed.
 	 */
 	public void removePlaceholders() {
-		template = template.replace(METADATA_ITEMS_PLACEHOLDER, "");
-		template = template.replace(CRAWLERTRAPS_PLACEHOLDER, "");
-		template = template.replace(UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER, "")
-				.replace(UMBRA_BEAN_PLACEHOLDER, "")
-				.replace(AMQP_URLRECEIVER_PLACEHOLDER, "")
-				.replace(CALL_UMBRABEAN_PLACEHOLDER, "");
-
-		if (template.contains(METADATA_ITEMS_PLACEHOLDER)) {
-			throw new IllegalState("The placeholder for the property '" + METADATA_ITEMS_PLACEHOLDER  
-					+ "' should have been deleted now."); 
-		}
-		if (template.contains(CRAWLERTRAPS_PLACEHOLDER)) {
-			throw new IllegalState("The placeholder for the property '" + CRAWLERTRAPS_PLACEHOLDER  
-					+ "' should have been deleted now."); 
+		String[] optionalPlaceholders = new String[] {
+				METADATA_ITEMS_PLACEHOLDER,
+				CRAWLERTRAPS_PLACEHOLDER,
+				UMBRA_BEAN_PLACEHOLDER,
+				UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER,
+				CALL_UMBRABEAN_PLACEHOLDER};
+		for (String placeholder: optionalPlaceholders) {
+			template = template.replace(placeholder, "");
 		}
 	}
 }
