@@ -28,6 +28,23 @@ public class SeedUriDomainnameQueueAssignmentPolicyTest {
         assertEquals(policy.getClassKey(curi1), policy.getClassKey(curi2));
     }
 
+    /**
+     * Test that we can get the right key from the policy even when the seed is missing a schema.
+     * @throws Exception
+     */
+    @Test
+    public void testGetKeyNoSchema() throws Exception {
+            SeedUriDomainnameQueueAssignmentPolicy policy = new SeedUriDomainnameQueueAssignmentPolicy();
+        String url1 = "http://www.ssup.dk";
+        UURI uuri1 = UURIFactory.getInstance(url1);
+
+        CrawlURI curi1 = new CrawlURI(uuri1);
+        curi1.setSeed(true);
+        curi1.setSourceTag("www.ssdown.dk");
+        // Should get the key from the seed, not the url being harvested
+        assertEquals("ssdown.dk", policy.getClassKey(curi1));
+    }
+
     @Test
     public void getClassKeyTestChain() throws Exception {
         SeedUriDomainnameQueueAssignmentPolicy policy = new SeedUriDomainnameQueueAssignmentPolicy();

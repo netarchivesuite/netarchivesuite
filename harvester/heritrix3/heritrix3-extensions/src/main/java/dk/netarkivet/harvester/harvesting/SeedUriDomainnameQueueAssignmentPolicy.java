@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.frontier.HostnameQueueAssignmentPolicy;
 import org.archive.modules.CrawlURI;
 import org.archive.net.UURIFactory;
+import org.archive.url.UsableURI;
 
 import dk.netarkivet.common.utils.DomainUtils;
 
@@ -135,10 +136,14 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
      */
     private String getKeyFromSeed(CrawlURI cauri) {
         String key = null;
+        String seed = cauri.getSourceTag();
+        if (!UsableURI.hasScheme(seed)) {
+            seed = "http://" + seed;
+        }
         try {
-            key = DomainUtils.domainNameFromHostname(UURIFactory.getInstance(cauri.getSourceTag()).getHost());
+            key = DomainUtils.domainNameFromHostname(UURIFactory.getInstance(seed).getHost());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.debug("Could not extract a domain key from seed '" + seed + "'");
         }
         return key;
     }
