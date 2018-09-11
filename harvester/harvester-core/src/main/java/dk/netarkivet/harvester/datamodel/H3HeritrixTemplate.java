@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import javax.servlet.jsp.JspWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -782,17 +783,17 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		tmp = getMetadataInfo(MetadataInfo.TEMPLATE_DESCRIPTION);
 		if (tmp != null && !tmp.isEmpty()){
 			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_ORDERXMLDESCRIPTION + valuePart + tmp  + endMetadataEntry);
+			sb.append(HARVESTINFO_ORDERXMLDESCRIPTION + valuePart + StringEscapeUtils.escapeXml(tmp)  + endMetadataEntry);
 		}
 
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + valuePart + 
-				origHarvestdefinitionName + endMetadataEntry);
+				StringEscapeUtils.escapeXml(origHarvestdefinitionName) + endMetadataEntry);
 		
 		if(StringUtils.isNotEmpty(origHarvestdefinitionComments)) {
 			sb.append(startMetadataEntry);
 			sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS + valuePart + 
-				origHarvestdefinitionComments + endMetadataEntry);
+					StringEscapeUtils.escapeXml(origHarvestdefinitionComments) + endMetadataEntry);
 		}
 		
 		/* optional schedule-name - only inserted if not null and not-empty. */
@@ -808,7 +809,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		/* optional HARVESTINFO_PERFORMER - only inserted if not null and not-empty. */
 		if (performer != null && !performer.isEmpty()){
 			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_PERFORMER + valuePart + performer  + endMetadataEntry);
+			sb.append(HARVESTINFO_PERFORMER + valuePart + StringEscapeUtils.escapeXml(performer)  + endMetadataEntry);
 		}
 		
 		/* optional OPERATOR - only inserted if not null and not-empty. */
@@ -816,13 +817,13 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		String operator = getMetadataInfo(MetadataInfo.OPERATOR);
 		if (operator != null && !operator.isEmpty()){
 			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_OPERATOR + valuePart + operator  + endMetadataEntry);
+			sb.append(HARVESTINFO_OPERATOR + valuePart + StringEscapeUtils.escapeXml(operator)  + endMetadataEntry);
 		}
 		
 		/* optional HARVESTINFO_AUDIENCE - only inserted if not null and not-empty. */
 		if (ajob.getHarvestAudience() != null && !ajob.getHarvestAudience().isEmpty()) {
 			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_AUDIENCE + valuePart + ajob.getHarvestAudience() + endMetadataEntry);
+			sb.append(HARVESTINFO_AUDIENCE + valuePart + StringEscapeUtils.escapeXml(ajob.getHarvestAudience()) + endMetadataEntry);
 		}
 		sb.append("\n</map>\n</property>\n");
 		
