@@ -32,6 +32,9 @@ public class Heritrix3Settings {
 	/** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/harvester/heritrix3/settings.xml";
 
+    /**
+     * Flag indicating whether or not this HarvestControllerApplication is configured to support Umbra
+     */
     public static String UMBRA_IS_ENABLED = "settings.harvester.harvesting.umbra.isEnabled";
 
     /**

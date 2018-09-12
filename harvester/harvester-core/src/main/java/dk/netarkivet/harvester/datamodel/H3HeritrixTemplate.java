@@ -110,6 +110,12 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";
 	final String ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER = "%{ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER}";
 
+	// Placeholders for Umbra integration
+	public static final String UMBRA_SIMPLEOVERRIDES_PLACEHOLDER = "%{UMBRA_SIMPLEOVERRIDES_PLACEHOLDER}";
+	public static final String UMBRA_PUBLISH_BEAN_PLACEHOLDER = "%{UMBRA_PUBLISH_BEAN_PLACEHOLDER}";
+	public static final String UMBRA_RECEIVE_BEAN_PLACEHOLDER = "%{UMBRA_RECEIVE_BEAN_PLACEHOLDER}";
+	public static final String UMBRA_BEAN_REF_PLACEHOLDER ="%{UMBRA_BEAN_REF_PLACEHOLDER}";
+
 	//match theses properties in crawler-beans.cxml to add them into harvestInfo.xml
 	//for preservation purpose
 	public enum MetadataInfo {
@@ -235,21 +241,28 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		return true;
 	}
 
+	/**
+	 * Inserts all nevessary umbra-related beans in this template.
+	 * @param jobName a String representing the job - must be unique for the this NAS environment for all time
+	 * @param rabbitMQUrl the URL of the rabbitMQ socket connection (amqp://) to which umbra requests are to be sent
+	 * @param limitSearchRegEx the regular expression used to limit the heritrix search-path of urls to be sent to Umbra.
+	 */
 	@Override
 	public void insertUmbrabean(String jobName, String rabbitMQUrl, String limitSearchRegEx)
 	{
-		this.template = this.template.replace(UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER,
+		this.template = this.template.replace(UMBRA_SIMPLEOVERRIDES_PLACEHOLDER,
 				getUmbraBeanInformationInSimpleoverridesBean(jobName, rabbitMQUrl, limitSearchRegEx));
-		this.template = this.template.replace(UMBRA_BEAN_PLACEHOLDER, getUmbrabeanPlaceholder());
-		this.template = this.template.replace(AMQP_URLRECEIVER_PLACEHOLDER, getAmqpUrlreceiverPlaceholder());
-		this.template = this.template.replace(CALL_UMBRABEAN_PLACEHOLDER, getCallUmbrabean());
+		this.template = this.template.replace(UMBRA_PUBLISH_BEAN_PLACEHOLDER, getUmbrabeanPlaceholder());
+		this.template = this.template.replace(UMBRA_RECEIVE_BEAN_PLACEHOLDER, getAmqpUrlreceiverPlaceholder());
+		this.template = this.template.replace(UMBRA_BEAN_REF_PLACEHOLDER, getCallUmbrabean());
 	}
 
-	public static final String UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER = "%{UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER}";
 
 	/**
 	 * Umbrabean text from the current harvest job that will replace the placeholder in the Simpleoverride bean
-	 * @param jobName The job for the current harvest
+	 * @param jobName a String representing the job - must be unique for the this NAS environment for all time
+	 * @param rabbitMQUrl the URL of the rabbitMQ socket connection (amqp://) to which umbra requests are to be sent
+	 * @param limitSearchRegEx the regular expression used to limit the heritrix search-path of urls to be sent to Umbra.
 	 */
 	public String getUmbraBeanInformationInSimpleoverridesBean(String jobName, String rabbitMQUrl, String limitSearchRegEx) {
 		//	umbraBean.clientId=MySpecialJobName
@@ -271,8 +284,6 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		umbrabeanBuilder.append("\n");
 		return umbrabeanBuilder.toString();
 	}
-
-	public static final String UMBRA_BEAN_PLACEHOLDER = "%{UMBRA_BEAN_PLACEHOLDER}";
 
 	/**
 	 * Umbrabean text that will replace UMBRA_BEAN_PLACEHOLDER in the template	 *
@@ -320,7 +331,6 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		return umbrabeanBuilder.toString();
 	}
 
-	public static final String AMQP_URLRECEIVER_PLACEHOLDER = "%{AMQP_URLRECEIVER_PLACEHOLDER}";
 
 	/**
 	 * AMQP url receiver text that will replace AMQP_URLRECEIVER_PLACEHOLDER in the template	 *
@@ -364,7 +374,6 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		return amqpUrlReceiverBeanBuilder.toString();
 	}
 
-	public static final String CALL_UMBRABEAN_PLACEHOLDER ="%{CALL_UMBRABEAN_PLACEHOLDER}";
 
 	/**
 	 * Call of the Umbra bean text that will replace CALL_UMBRABEAN_PLACEHOLDER in the template	 *
@@ -922,9 +931,9 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		String[] optionalPlaceholders = new String[] {
 				METADATA_ITEMS_PLACEHOLDER,
 				CRAWLERTRAPS_PLACEHOLDER,
-				UMBRA_BEAN_PLACEHOLDER,
-				UMBRA_BEAN_IN_SIMPLEOVERRIDES_BEAN_PLACEHOLDER,
-				CALL_UMBRABEAN_PLACEHOLDER};
+				UMBRA_PUBLISH_BEAN_PLACEHOLDER,
+				UMBRA_SIMPLEOVERRIDES_PLACEHOLDER,
+				UMBRA_BEAN_REF_PLACEHOLDER};
 		for (String placeholder: optionalPlaceholders) {
 			template = template.replace(placeholder, "");
 		}

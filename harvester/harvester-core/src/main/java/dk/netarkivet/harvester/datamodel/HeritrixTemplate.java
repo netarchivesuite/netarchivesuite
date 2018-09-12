@@ -275,8 +275,10 @@ public abstract class HeritrixTemplate implements Serializable {
 			String scheduleName, String performer);
 
 	/**
-	 * Method to add beans in case the job is an umbra job.
-	 * @param jobName a HarvestJob for the current harvest
+	 * Inserts all nevessary umbra-related beans in this template.
+	 * @param jobName a String representing the job - must be unique for the this NAS environment for all time
+	 * @param rabbitMQUrl the URL of the rabbitMQ socket connection (amqp://) to which umbra requests are to be sent
+	 * @param limitSearchRegEx the regular expression used to limit the heritrix search-path of urls to be sent to Umbra.
 	 */
 	public abstract void insertUmbrabean(String jobName, String rabbitMQUrl, String limitSearchRegEx);
 

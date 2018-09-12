@@ -74,7 +74,7 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
      * Get instance of this class.
      *
      * @param files Object encapsulating location of Heritrix crawldir and configuration files
-     * @param jobName the jobid_timestamp
+     * @param jobName a String uniquely specifying the job in this installation
      * @return {@link HeritrixLauncher} object
      * @throws ArgumentNotValid If either order.xml or seeds.txt does not exist, or argument files is null.
      */
