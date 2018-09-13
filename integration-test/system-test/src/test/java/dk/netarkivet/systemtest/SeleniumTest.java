@@ -24,6 +24,9 @@ package dk.netarkivet.systemtest;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
@@ -94,7 +97,10 @@ public abstract class SeleniumTest extends ExtendedTestCase {
      * @return The startup script to run.
      */
     protected String getStartupScript() {
-        return "all_test.sh 2>&1 | tee all_test_out.txt";
+        Instant instant = Instant.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+        String timestamp = formatter.format(instant.atZone(ZoneId.systemDefault()));
+        return "all_test.sh 2>&1 | tee system_test_logs/all_test_out_" + timestamp + ".txt";
     }
 
     private void initialiseSelenium(){
