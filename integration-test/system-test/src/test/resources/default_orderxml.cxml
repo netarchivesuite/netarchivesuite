@@ -40,6 +40,7 @@
   <property name="properties">
 <!-- Overrides the default values used by Heritrix -->
    <value>
+
 # This Properties map is specified in the Java 'property list' text format
 # http://java.sun.com/javase/6/docs/api/java/util/Properties.html#load%28java.io.Reader%29
 
@@ -48,6 +49,9 @@
 ###
 
 ## Q: can overrides like 'fetchDns.enabled=false' be used to disable the beans?
+
+     %{UMBRA_SIMPLEOVERRIDES_PLACEHOLDER}
+
 
 metadata.jobName=default_orderxml
 metadata.description=Default Profile
@@ -149,6 +153,11 @@ extractorJs.enabled=true
    </value>
   </property>
  </bean>
+
+  %{UMBRA_PUBLISH_BEAN_PLACEHOLDER}
+  %{UMBRA_RECEIVE_BEAN_PLACEHOLDER}
+
+
 
  <!-- overrides from declared <prop> elements, more easily allowing
       multiline values or even declared beans -->
@@ -355,6 +364,9 @@ extractorJs.enabled=true
     <ref bean="extractorJs"/>
     <!-- ...extract oulinks from Flash content... -->
     <ref bean="extractorSwf"/>
+
+     %{UMBRA_BEAN_REF_PLACEHOLDER}
+
    </list>
   </property>
  </bean>
