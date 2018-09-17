@@ -265,37 +265,49 @@ extractorJs.enabled=true
     after a URI is fetched and analyzed/link-extracted.
   -->
   
- <!-- CANDIDATE CHAIN --> 
- <!-- processors declared as named beans -->
- <bean id="candidateScoper" class="org.archive.crawler.prefetch.CandidateScoper">
- </bean>
- <bean id="preparer" class="org.archive.crawler.prefetch.FrontierPreparer">
-  <!-- <property name="preferenceDepthHops" value="-1" /> -->
-  <!-- <property name="preferenceEmbedHops" value="1" /> -->
-  <!-- <property name="canonicalizationPolicy"> 
-        <ref bean="canonicalizationPolicy" />
-       </property> -->
-   <property name="queueAssignmentPolicy"> 
-        <ref bean="queueAssignmentPolicy" /> 
-<!-- Bundled with NAS is two queueAssignPolicies (code is in heritrix3-extensions): 
- dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
- dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy 
--->
-       </property>
-  
- <!-- <property name="uriPrecedencePolicy"> 
-        <ref bean="uriPrecedencePolicy" />
-       </property> -->
-  <!-- <property name="costAssignmentPolicy"> 
-        <ref bean="costAssignmentPolicy" />
-       </property> -->
- </bean>
- <!-- assembled into ordered CandidateChain bean -->
- <bean id="candidateProcessors" class="org.archive.modules.CandidateChain">
-  <property name="processors">
-   <list>
-    <!-- apply scoping rules to each individual candidate URI... -->
-    <ref bean="candidateScoper"/>
+ <!-- CANDIDATE CHAIN -->
+  <!-- processors declared as named beans -->
+  <bean id="candidateScoper" class="org.archive.crawler.prefetch.CandidateScoper">
+  </bean>
+
+  <!-- QUEUE ASSIGNMENT POLICY (START) -->
+  <bean id="NASQueueAssignmentPolicy" class="dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy">
+    <!-- default forceQueueAssignment is "" -->
+    <property name="forceQueueAssignment" value="" />
+    <!-- default deferToPrevious is true -->
+    <property name="deferToPrevious" value="true" />
+    <!-- dafault parallelQueues is 1 -->
+    <property name="parallelQueues" value="1" />
+  </bean>
+  <!-- QUEUE ASSIGNMENT POLICY (END) -->
+
+  <bean id="preparer" class="org.archive.crawler.prefetch.FrontierPreparer">
+    <!-- <property name="preferenceDepthHops" value="-1" /> -->
+    <!-- <property name="preferenceEmbedHops" value="1" /> -->
+    <!-- <property name="canonicalizationPolicy">
+          <ref bean="canonicalizationPolicy" />
+         </property> -->
+    <property name="queueAssignmentPolicy">
+      <ref bean="NASQueueAssignmentPolicy" />
+      <!-- Bundled with NAS is two queueAssignPolicies (code is in heritrix3-extensions):
+  dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
+  dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy
+ -->
+    </property>
+
+    <!-- <property name="uriPrecedencePolicy">
+           <ref bean="uriPrecedencePolicy" />
+          </property> -->
+    <!-- <property name="costAssignmentPolicy">
+          <ref bean="costAssignmentPolicy" />
+         </property> -->
+  </bean>
+  <!-- assembled into ordered CandidateChain bean -->
+  <bean id="candidateProcessors" class="org.archive.modules.CandidateChain">
+    <property name="processors">
+      <list>
+        <!-- apply scoping rules to each individual candidate URI... -->
+        <ref bean="candidateScoper"/>
     <!-- ...then prepare those ACCEPTed for enqueuing to frontier. -->
     <ref bean="preparer"/>
    </list>
