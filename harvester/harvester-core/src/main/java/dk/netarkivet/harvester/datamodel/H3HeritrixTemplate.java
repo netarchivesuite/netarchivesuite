@@ -933,7 +933,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 				CRAWLERTRAPS_PLACEHOLDER,
 				UMBRA_PUBLISH_BEAN_PLACEHOLDER,
 				UMBRA_SIMPLEOVERRIDES_PLACEHOLDER,
-				UMBRA_BEAN_REF_PLACEHOLDER};
+				UMBRA_BEAN_REF_PLACEHOLDER,
+				UMBRA_RECEIVE_BEAN_PLACEHOLDER};
 		for (String placeholder: optionalPlaceholders) {
 			template = template.replace(placeholder, "");
 		}
