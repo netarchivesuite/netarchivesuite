@@ -93,11 +93,11 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
         if (key == null) {
             key = getKeyFromUriHostname(cauri);
         }
-        if (key != null) {
-            return key;
-        } else {
-            return DEFAULT_CLASS_KEY;
+        if (key == null) {
+            key = DEFAULT_CLASS_KEY;
         }
+        cauri.addExtraInfo("Queuename", key);
+        return key;
     }
 
     private boolean isDns(CrawlURI cauri) {
