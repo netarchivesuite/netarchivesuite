@@ -96,7 +96,7 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
         if (key == null) {
             key = DEFAULT_CLASS_KEY;
         }
-        cauri.getAnnotations().add("Queue: " + key);
+        cauri.getAnnotations().add("Queue:" + key);
         return key;
     }
 
