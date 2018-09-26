@@ -63,7 +63,7 @@ public final class Constants {
     /** Current version of Heritrix 3 used by netarkivet-code. 
      * This should be the same value as the property 'heritrix3.version' in the main pom.xml.
      * TODO: Could this be tested? */
-    private static final String HERITRIX3_VERSION = "3.3.0-BDB-5.0.x";
+    private static final String HERITRIX3_VERSION = "3.3.0-BDB-5.0.x-NAS-1.0-SNAPSHOT";
 
     /**
      * Read this much data when copying data from a file channel. Note that due to a bug in java, this should never be
