@@ -45,6 +45,7 @@
                 <excludes>
                     <exclude>lib/slf4j-api-1.5.8.jar</exclude>
                     <exclude>lib/slf4j-log4j12-1.5.8.jar</exclude>
+                    <exclude>lib/jcl-over-slf4j-1.5.8.jar</exclude>
                 </excludes>
             </unpackOptions>
             <outputDirectory>/heritrix-${heritrix3.version}/</outputDirectory>
