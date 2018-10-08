@@ -121,7 +121,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         //driver = new FirefoxDriver(fxProfile);
         driver = new SeleniumSession<>();
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
+        baseUrl = "http://" + testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         TestGUIController.waitForGUIToStart(60);
         TestEventManager.getInstance().addFixture("Selecting English as language");
