@@ -26,6 +26,7 @@ public class SeleniumSession<U extends WebDriver & JavascriptExecutor> implement
         } catch (AssertionError error) { //The chromedriver does not exist
             createdDriver = htmlUnitDriver();
         }*/
+
         createdDriver = htmlUnitDriver();
         driver = createdDriver;
     }
@@ -36,7 +37,8 @@ public class SeleniumSession<U extends WebDriver & JavascriptExecutor> implement
     }
 
     private U htmlUnitDriver() {
-        HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.CHROME) {
+
+        HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.CHROME, false) {
             {   // Nessesary for the login reload to work
                 // https://stackoverflow.com/a/44163031
                 this.getWebClient().getCache().setMaxSize(0);
