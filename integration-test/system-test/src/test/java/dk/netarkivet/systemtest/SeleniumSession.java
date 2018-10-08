@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class SeleniumSession<U extends WebDriver & JavascriptExecutor> implements AutoCloseable,WebDriver,JavascriptExecutor {
 
-    private final U driver;
+    public final U driver;
 
     public SeleniumSession() {
         U createdDriver;

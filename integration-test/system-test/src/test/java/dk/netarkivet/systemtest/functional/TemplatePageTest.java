@@ -41,12 +41,14 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.NASAssert;
+import dk.netarkivet.systemtest.SeleniumSession;
 import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
@@ -59,6 +61,7 @@ public class TemplatePageTest extends AbstractSystemTest {
 
     @Test(priority=-1, groups = {"guitest", "functest"})
     public void updateTemplateTest() throws Exception {
+        ((HtmlUnitDriver)  ((SeleniumSession) driver).driver).setJavascriptEnabled(true);
         addDescription("Tests that harvest tempplates can be updated.");
         addStep("Goto the template page", "The template page should load");
         PageHelper.gotoPage(PageHelper.MenuPages.EditHarvestTemplates);
