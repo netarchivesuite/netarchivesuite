@@ -104,7 +104,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
     }
 
     private void initialiseSelenium(){
-        FirefoxProfile fxProfile = new FirefoxProfile();
+       /* FirefoxProfile fxProfile = new FirefoxProfile();
             fxProfile.setPreference("browser.download.folderList",2);
             fxProfile.setPreference("browser.download.manager.showWhenStarting",false);
         try {
@@ -115,10 +115,11 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         fxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk","text/csv");
         fxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk","text/xml");
         fxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk","binary/octet-stream");
+*/
 
 
-
-        driver = new FirefoxDriver(fxProfile);
+        //driver = new FirefoxDriver(fxProfile);
+        driver = new SeleniumSession<>();
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
