@@ -1,6 +1,5 @@
 package dk.netarkivet.systemtest;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 //import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -13,6 +12,8 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
+
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 
 public class SeleniumSession<U extends WebDriver & JavascriptExecutor> implements AutoCloseable,WebDriver,JavascriptExecutor {
 
@@ -38,7 +39,7 @@ public class SeleniumSession<U extends WebDriver & JavascriptExecutor> implement
 
     private U htmlUnitDriver() {
 
-        HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.CHROME, false) {
+        HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.CHROME) {
             {   // Nessesary for the login reload to work
                 // https://stackoverflow.com/a/44163031
                 this.getWebClient().getCache().setMaxSize(0);
@@ -130,4 +131,7 @@ public class SeleniumSession<U extends WebDriver & JavascriptExecutor> implement
     public Object executeAsyncScript(String s, Object... objects) {
         return driver.executeAsyncScript(s, objects);
     }
+
+    public void setJavascriptEnabled(boolean b) {((HtmlUnitDriver) driver).setJavascriptEnabled(b);}
+
 }

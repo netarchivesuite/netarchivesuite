@@ -38,11 +38,7 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
+
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -162,7 +158,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
      * @param result The result which TestNG will inject
      */
     public void onFailure(ITestResult result) {
-        if (!result.isSuccess()) {
+/*        if (!result.isSuccess()) {
             log.info("Test failure, dumping screenshot as " + "target/failurescreendumps/" + result.getMethod()
                     + ".png");
             File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
@@ -172,7 +168,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
             } catch (IOException e) {
                 log.error("Failed to save screendump on error");
             }
-        }
+        }*/
     }
 
     public TestEnvironmentController getTestController() {

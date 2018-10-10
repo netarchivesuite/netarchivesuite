@@ -27,6 +27,7 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -36,6 +37,7 @@ import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.HarvestUtils;
+import dk.netarkivet.systemtest.SeleniumSession;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.HarvestHistoryPageHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
@@ -45,7 +47,15 @@ import dk.netarkivet.systemtest.page.PageHelper;
  * run alle the harvests needed here. */
 public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
 
-    @Test(priority=10, groups = {"guitest", "functest", "slow"})
+    @BeforeMethod
+    public void initialiseHelper() {
+        driver = new SeleniumSession<>();
+        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        baseUrl = "http://" + testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
+        PageHelper.initialize(driver, baseUrl);
+    }
+
+    @Test(priority=10, groups = {"guitest", "functest", "slow"}, enabled = false)
     public void sortableHistoryTableTest() throws Exception {
         addDescription("Tests that the jobs listed on the 'Harvest History' page for a domain are"
                 + "sortable by clicking on the .");
@@ -143,7 +153,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
         assertColumnIsSorted(8, false);
     }
 
-    @Test(priority=10, groups = {"guitest", "functest", "slow"})
+    @Test(priority=10, groups = {"guitest", "functest", "slow"}, enabled = false)
     public void historyTablePagingTest() throws Exception {
         addDescription("Testes that the paging functionality works correctly " + "for the harvest history");
         addStep("Ensure that at least harvests have finished for the default domain", "");
@@ -208,7 +218,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
         }
     }
 
-    @Test(priority=10, groups = {"guitest", "functest", "slow"})
+    @Test(priority=10, groups = {"guitest", "functest", "slow"}, enabled = false)
     public void historySortedTablePagingTest() throws Exception {
         addDescription("Tests that sorting is maintained when paging through " + "the harvest history");
         addStep("Ensure that at least harvests have finished for the default domain", "");
@@ -317,6 +327,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
     @BeforeMethod(alwaysRun = true)
     @AfterMethod(alwaysRun = true)
     private void cleanupGUIConfiguration() {
+        addDescription("Cleaning up GUI by restoring original page size.");
         try {
             getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                     "if [ -f conf/settings_GUIApplication.xml.original ]; then "

@@ -268,6 +268,14 @@
         <version>${je.version}</version>
       </dependency>
 
+      <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+      <dependency>
+          <groupId>org.seleniumhq.selenium</groupId>
+          <artifactId>selenium-java</artifactId>
+          <version>3.14.0</version>
+      </dependency>
+
+<!--
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-api</artifactId>
@@ -285,13 +293,14 @@
         <artifactId>selenium-support</artifactId>
         <version>${selenium-api.version}</version>
       </dependency>
-
+      
+      
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-htmlunit-driver</artifactId>
-        <version>${selenium-api.version}</version>
+        <artifactId>htmlunit-driver</artifactId>
+        <version></version>
       </dependency>
-
+      -->
 
       <dependency>
         <groupId>org.jaccept</groupId>
