@@ -116,19 +116,21 @@ public class SelectiveHarvestPageHelper {
     }
 
     public static void deactivateAllHarvests() {
-       /* TestEventManager.getInstance().addStimuli("Deactivating all harvests");
+       TestEventManager.getInstance().addStimuli("Deactivating all harvests");
         PageHelper.gotoPage(PageHelper.MenuPages.SelectiveHarvests);
         if (PageHelper.getWebDriver().getPageSource().contains("Hide inactive harvest definitions")) {
             PageHelper.getWebDriver().findElement(By.linkText("Hide inactive harvest definitions")).click();
         }
         while (!PageHelper.getWebDriver().getPageSource().contains("No selective harvests defined")) {
             // Ensure page is loaded
-            PageHelper.getWebDriver().findElement(By.linkText("Create new selective harvest definition"));
+            final WebDriver webDriver = PageHelper.getWebDriver();
+            webDriver.findElement(By.linkText("Create new selective harvest definition"));
             WebElement table = PageHelper.getWebDriver().findElement(By.className("selection_table"));
             List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
             TestEventManager.getInstance().addStimuli(
                     "Deactivating harvest: " + tr_collection.get(1).findElements(By.xpath("td")).get(0).getText());
+            ((SeleniumSession) webDriver).setJavascriptEnabled(true);
             tr_collection.get(1).findElement(By.linkText("Deactivate")).click();
-        }*/
+        }
     }
 }
