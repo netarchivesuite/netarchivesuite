@@ -39,14 +39,13 @@ public class SeleniumSession<U extends WebDriver & JavascriptExecutor> implement
 
     private U htmlUnitDriver() {
 
-        HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.CHROME) {
+       /* HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.CHROME) {
             {   // Nessesary for the login reload to work
                 // https://stackoverflow.com/a/44163031
                 this.getWebClient().getCache().setMaxSize(0);
             }
-        };
-        return  (U) htmlUnitDriver;
-    }
+        };*/
+        return (U) new HtmlUnitDriver();
 
 /*    private U chromeDriver() {
         String driverString = "/usr/lib/chromium-browser/chromedriver";
@@ -54,7 +53,7 @@ public class SeleniumSession<U extends WebDriver & JavascriptExecutor> implement
         Assert.assertTrue("Chromedriver '"+driverString+"' does not exist",new File(driverString).exists());
         return  (U) new ChromeDriver();
     }*/
-
+    }
 
     @Override
     public void close()  {

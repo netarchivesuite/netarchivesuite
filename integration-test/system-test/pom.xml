@@ -97,7 +97,7 @@
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>htmlunit-driver</artifactId>
-      <version>2.33.0</version>
+      <!--<version>2.33.0</version>-->
       <scope>test</scope>
     </dependency>
     <!--<dependency>
@@ -106,7 +106,7 @@
       <version>2.46.0</version>
       <scope>test</scope>
     </dependency> -->
-    <dependency>
+   <!-- <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-api</artifactId>
       <version>2.53.0</version>
@@ -123,7 +123,7 @@
       <artifactId>selenium-firefox-driver</artifactId>
       <version>2.53.0</version>
       <scope>test</scope>
-    </dependency>
+    </dependency> -->
 
   </dependencies>
 
