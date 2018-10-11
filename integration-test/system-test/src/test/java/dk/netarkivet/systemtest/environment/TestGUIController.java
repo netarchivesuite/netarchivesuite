@@ -39,6 +39,7 @@ public class TestGUIController {
         try {
             log.info("Restarting GUI");
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/kill_GUIApplication.sh; sleep 10");
+            Thread.sleep(3000);
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/start_GUIApplication.sh");
             waitForGUIToStart(120);
         } catch (Exception e) {
@@ -78,5 +79,6 @@ public class TestGUIController {
             } catch (InterruptedException ie) {
             }
         }
+        throw new RuntimeException("GUI did not start after " + numberOfSecondsToWaiting + " seconds.");
     }
 }

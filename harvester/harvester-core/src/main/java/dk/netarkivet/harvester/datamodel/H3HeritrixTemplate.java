@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import javax.servlet.jsp.JspWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import com.antiaction.raptor.dao.AttributeBase;
 import com.antiaction.raptor.dao.AttributeTypeBase;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -72,11 +74,11 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     private static final Logger log = LoggerFactory.getLogger(H3HeritrixTemplate.class);
 
     private String template;
-    
+
     /** QuotaEnforcer states for this template. TODO necessary?? */
     private Long forceMaxbytesPerDomain;
-    private Long forceMaxobjectsPerDomain; 
-   
+    private Long forceMaxobjectsPerDomain;
+
     /** Has this HeritrixTemplate been verified. */
     private boolean verified;
 
@@ -87,47 +89,53 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     public static final Pattern DEDUPLICATION_BEAN_REFERENCE_PATTERN = Pattern.compile(".*ref.*bean.*DeDuplicator.*", Pattern.DOTALL);
 
     public static final Pattern DEDUPLICATION_BEAN_PATTERN =  Pattern.compile(".*bean.*id.*DeDuplicator.*", Pattern.DOTALL);
-    public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER 
-    	= "%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}"; 
+    public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER
+    	= "%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}";
 
     public static final String ARCHIVE_FILE_PREFIX_PLACEHOLDER = "%{ARCHIVE_FILE_PREFIX_PLACEHOLDER}";
-        
-    public static final String FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER 
+
+    public static final String FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER
     	= "%{FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER}";
-    
-    public static final String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER = 
+
+    public static final String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER =
     		"%{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER}";
-    
-    public static final String QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER 
+
+    public static final String QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER
     	= "%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}";
 
 	public static final String DEDUPLICATION_ENABLED_PLACEHOLDER = "%{DEDUPLICATION_ENABLED_PLACEHOLDER}";
-    
-    
+
+
     // PLACEHOLDERS for archiver beans (Maybe not necessary)
-    final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";	
+    final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";
 	final String ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER = "%{ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER}";
-	
+
+	// Placeholders for Umbra integration
+	public static final String UMBRA_SIMPLEOVERRIDES_PLACEHOLDER = "%{UMBRA_SIMPLEOVERRIDES_PLACEHOLDER}";
+	public static final String UMBRA_PUBLISH_BEAN_PLACEHOLDER = "%{UMBRA_PUBLISH_BEAN_PLACEHOLDER}";
+	public static final String UMBRA_RECEIVE_BEAN_PLACEHOLDER = "%{UMBRA_RECEIVE_BEAN_PLACEHOLDER}";
+	public static final String UMBRA_BEAN_REF_PLACEHOLDER ="%{UMBRA_BEAN_REF_PLACEHOLDER}";
+
 	//match theses properties in crawler-beans.cxml to add them into harvestInfo.xml
 	//for preservation purpose
 	public enum MetadataInfo {
 		TEMPLATE_DESCRIPTION("metadata\\.description=.+[\\r\\n]"),
 		TEMPLATE_UPDATE_DATE("metadata\\.date=.+[\\r\\n]"),
 		OPERATOR("metadata\\.operator=.+[\\r\\n]");
-		
+
 		private final String regex;
-		
+
 		private MetadataInfo(String regex) {
 			this.regex = regex;
 		}
-		
+
 		public String toString() {
 			return this.regex;
 		}
 	};
-	
+
 	public Map<MetadataInfo, String> metadataInfoMap;
-	
+
     /**
      * Constructor for HeritrixTemplate class.
      *
@@ -139,7 +147,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
         ArgumentNotValid.checkNotNull(template, "String template");
         this.template_id = template_id;
         this.template = template;
-        
+
         metadataInfoMap = new HashMap<MetadataInfo, String> ();
         for(MetadataInfo metadataInfo : MetadataInfo.values()) {
             Pattern p = Pattern.compile(metadataInfo.regex);
@@ -151,7 +159,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
             }
         }
     }
-    
+
 	/**
      * return the template.
      *
@@ -178,30 +186,29 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     public String getXML() {
         return template;
     }
-    
+
     /**
      * Update the maxTimeSeconds property in the heritrix3 template, if possible.
-     * @param maxJobRunningTimeSecondsL Force the harvestJob to end after this number of seconds 
+     * @param maxJobRunningTimeSecondsL Force the harvestJob to end after this number of seconds
      * Property of the org.archive.crawler.framework.CrawlLimitEnforcer
      * <!-- <property name="maxTimeSeconds" value="0" /> -->
      */
     @Override
 	public void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL) {
 		if (template.contains(MAX_TIME_SECONDS_PLACEHOLDER)) {
-	    	this.template = template.replace(MAX_TIME_SECONDS_PLACEHOLDER, 
+	    	this.template = template.replace(MAX_TIME_SECONDS_PLACEHOLDER,
 	    			Long.toString(maxJobRunningTimeSecondsL));
 		} else {
-			log.warn("The placeholder '" + MAX_TIME_SECONDS_PLACEHOLDER 
+			log.warn("The placeholder '" + MAX_TIME_SECONDS_PLACEHOLDER
 					+ "' was not found in the template. Therefore maxRunningTime not set");
 		}
 	}
 
-    
 	@Override
 	public void setMaxBytesPerDomain(Long maxbytesL) {
-		this.forceMaxbytesPerDomain = maxbytesL;		
-	}	
-  
+		this.forceMaxbytesPerDomain = maxbytesL;
+	}
+
 
 	@Override
 	public Long getMaxBytesPerDomain() {
@@ -217,7 +224,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	public Long getMaxObjectsPerDomain() {
 		return this.forceMaxobjectsPerDomain;
 	}
-    
+
 	@Override
 	public boolean isValid() {
 		/*
@@ -232,6 +239,149 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		&& template.contains(deduplicationBeanPattern)
 		*/
 		return true;
+	}
+
+	/**
+	 * Inserts all nevessary umbra-related beans in this template.
+	 * @param jobName a String representing the job - must be unique for the this NAS environment for all time
+	 * @param rabbitMQUrl the URL of the rabbitMQ socket connection (amqp://) to which umbra requests are to be sent
+	 * @param limitSearchRegEx the regular expression used to limit the heritrix search-path of urls to be sent to Umbra.
+	 */
+	@Override
+	public void insertUmbrabean(String jobName, String rabbitMQUrl, String limitSearchRegEx)
+	{
+		this.template = this.template.replace(UMBRA_SIMPLEOVERRIDES_PLACEHOLDER,
+				getUmbraBeanInformationInSimpleoverridesBean(jobName, rabbitMQUrl, limitSearchRegEx));
+		this.template = this.template.replace(UMBRA_PUBLISH_BEAN_PLACEHOLDER, getUmbrabeanPlaceholder());
+		this.template = this.template.replace(UMBRA_RECEIVE_BEAN_PLACEHOLDER, getAmqpUrlreceiverPlaceholder());
+		this.template = this.template.replace(UMBRA_BEAN_REF_PLACEHOLDER, getCallUmbrabean());
+	}
+
+
+	/**
+	 * Umbrabean text from the current harvest job that will replace the placeholder in the Simpleoverride bean
+	 * @param jobName a String representing the job - must be unique for the this NAS environment for all time
+	 * @param rabbitMQUrl the URL of the rabbitMQ socket connection (amqp://) to which umbra requests are to be sent
+	 * @param limitSearchRegEx the regular expression used to limit the heritrix search-path of urls to be sent to Umbra.
+	 */
+	public String getUmbraBeanInformationInSimpleoverridesBean(String jobName, String rabbitMQUrl, String limitSearchRegEx) {
+		//	umbraBean.clientId=MySpecialJobName
+		//	umbraBean.amqpUri=amqp://guest:guest@activemq:5672/%2f
+		//	## The following rule restricts umbra to processing only on seeds or links, leaving embeds and redirects
+		//	## to be handled by the browser itself
+		//	umbraBean.shouldProcessRule.rules[1].regex=^$|.*L
+
+		StringBuilder umbrabeanBuilder = new StringBuilder();
+		umbrabeanBuilder.append("\n");
+		umbrabeanBuilder.append("umbraBean.clientId=" + Settings.get(CommonSettings.ENVIRONMENT_NAME) + "_" + jobName);
+		umbrabeanBuilder.append("\n");
+		umbrabeanBuilder.append("umbraBean.amqpUri="+rabbitMQUrl);
+		umbrabeanBuilder.append("\n");
+		umbrabeanBuilder.append("## The following rule restricts umbra to processing only on seeds or links, leaving embeds and redirects");
+		umbrabeanBuilder.append("## to be handled by the browser itself");
+		umbrabeanBuilder.append("\n");
+		umbrabeanBuilder.append("umbraBean.shouldProcessRule.rules[1].regex="+limitSearchRegEx);
+		umbrabeanBuilder.append("\n");
+		return umbrabeanBuilder.toString();
+	}
+
+	/**
+	 * Umbrabean text that will replace UMBRA_BEAN_PLACEHOLDER in the template	 *
+	 */
+	public String getUmbrabeanPlaceholder() {
+		// <!--
+		//				Bean that sends messages (urls) to umbra.
+		//		-->
+		// <bean id="umbraBean" class="org.archive.modules.AMQPPublishProcessor">
+		//  <property name="clientId" value="[see override]"/>
+		//  <property name="amqpUri" value="[see override]"/>
+		//  <property name="shouldProcessRule">
+		//   <bean class="org.archive.modules.deciderules.DecideRuleSequence">
+		//    <property name="rules">
+		//     <list>
+		//      <bean class="org.archive.modules.deciderules.RejectDecideRule" />
+		//      <bean class="org.archive.modules.deciderules.HopsPathMatchesRegexDecideRule">
+		//       <property name="regex" value="[see override]"/>
+		//      </bean>
+		//     </list>
+		//    </property>
+		//   </bean>
+		//  </property>
+		// </bean>
+
+		StringBuilder umbrabeanBuilder = new StringBuilder();
+		umbrabeanBuilder.append("<!-- Bean that sends messages (urls) to umbra. -->");
+		umbrabeanBuilder.append("<bean id=\"umbraBean\" class=\"org.archive.modules.AMQPPublishProcessor\">");
+		umbrabeanBuilder.append("<property name=\"clientId\" value=\"[see override]\"/>");
+		umbrabeanBuilder.append("<property name=\"amqpUri\" value=\"[see override]\"/>");
+		umbrabeanBuilder.append("  <property name=\"shouldProcessRule\">");
+		umbrabeanBuilder.append("   <bean class=\"org.archive.modules.deciderules.DecideRuleSequence\">");
+		umbrabeanBuilder.append("    <property name=\"rules\">");
+		umbrabeanBuilder.append("     <list>");
+		umbrabeanBuilder.append("      <bean class=\"org.archive.modules.deciderules.RejectDecideRule\" />");
+		umbrabeanBuilder.append("      <bean class=\"org.archive.modules.deciderules.HopsPathMatchesRegexDecideRule\">");
+		umbrabeanBuilder.append("       <property name=\"regex\" value=\"[see override]\"/>");
+		umbrabeanBuilder.append("      </bean>");
+		umbrabeanBuilder.append("     </list>");
+		umbrabeanBuilder.append("    </property>");
+		umbrabeanBuilder.append("   </bean>");
+		umbrabeanBuilder.append("  </property>");
+		umbrabeanBuilder.append(" </bean>");
+
+		return umbrabeanBuilder.toString();
+	}
+
+
+	/**
+	 * AMQP url receiver text that will replace AMQP_URLRECEIVER_PLACEHOLDER in the template	 *
+	 */
+	public String getAmqpUrlreceiverPlaceholder() {
+		// <!--
+		//	Bean that receives messages (urls) from umbra and places them in the Heritrix frontier.
+		//			-->
+		// <bean class="org.archive.crawler.frontier.AMQPUrlReceiver">
+		//  <property name="amqpUri">
+		//   <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+		//          <property name="targetObject" ref="umbraBean"/>
+		//          <property name="propertyPath" value="amqpUri" />
+		//         </bean>
+		//  </property>
+		//  <property name="queueName">
+		//      <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+		//       <property name="targetObject" ref="umbraBean"/>
+		//       <property name="propertyPath" value="clientId" />
+		//      </bean>
+		//  </property>
+		// </bean>
+
+		StringBuilder amqpUrlReceiverBeanBuilder = new StringBuilder();
+		amqpUrlReceiverBeanBuilder.append("<!-- Bean that receives messages (urls) from umbra and places them in the Heritrix frontier -->");
+		amqpUrlReceiverBeanBuilder.append("<bean class=\"org.archive.crawler.frontier.AMQPUrlReceiver\">");
+		amqpUrlReceiverBeanBuilder.append(" <property name=\"amqpUri\">");
+		amqpUrlReceiverBeanBuilder.append("   <bean class=\"org.springframework.beans.factory.config.PropertyPathFactoryBean\">");
+		amqpUrlReceiverBeanBuilder.append("    <property name=\"targetObject\" ref=\"umbraBean\"/>");
+		amqpUrlReceiverBeanBuilder.append("    <property name=\"propertyPath\" value=\"amqpUri\" />");
+		amqpUrlReceiverBeanBuilder.append("      </bean>");
+		amqpUrlReceiverBeanBuilder.append("    </property>");
+		amqpUrlReceiverBeanBuilder.append(" <property name=\"queueName\">");
+		amqpUrlReceiverBeanBuilder.append("   <bean class=\"org.springframework.beans.factory.config.PropertyPathFactoryBean\">");
+		amqpUrlReceiverBeanBuilder.append("    <property name=\"targetObject\" ref=\"umbraBean\"/>");
+		amqpUrlReceiverBeanBuilder.append("    <property name=\"propertyPath\" value=\"clientId\" />");
+		amqpUrlReceiverBeanBuilder.append("   </bean>");
+		amqpUrlReceiverBeanBuilder.append(" </property>");
+		amqpUrlReceiverBeanBuilder.append("</bean>");
+
+		return amqpUrlReceiverBeanBuilder.toString();
+	}
+
+
+	/**
+	 * Call of the Umbra bean text that will replace CALL_UMBRABEAN_PLACEHOLDER in the template	 *
+	 */
+	public String getCallUmbrabean() {
+		//	    <ref bean="umbraBean"/>
+
+		return "    <ref bean=\"umbraBean\"/>";
 	}
 
 	@Override
@@ -642,17 +792,17 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		tmp = getMetadataInfo(MetadataInfo.TEMPLATE_DESCRIPTION);
 		if (tmp != null && !tmp.isEmpty()){
 			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_ORDERXMLDESCRIPTION + valuePart + tmp  + endMetadataEntry);
+			sb.append(HARVESTINFO_ORDERXMLDESCRIPTION + valuePart + StringEscapeUtils.escapeXml(tmp)  + endMetadataEntry);
 		}
 
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + valuePart + 
-				origHarvestdefinitionName + endMetadataEntry);
+				StringEscapeUtils.escapeXml(origHarvestdefinitionName) + endMetadataEntry);
 		
 		if(StringUtils.isNotEmpty(origHarvestdefinitionComments)) {
 			sb.append(startMetadataEntry);
 			sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS + valuePart + 
-				origHarvestdefinitionComments + endMetadataEntry);
+					StringEscapeUtils.escapeXml(origHarvestdefinitionComments) + endMetadataEntry);
 		}
 		
 		/* optional schedule-name - only inserted if not null and not-empty. */
@@ -668,7 +818,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		/* optional HARVESTINFO_PERFORMER - only inserted if not null and not-empty. */
 		if (performer != null && !performer.isEmpty()){
 			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_PERFORMER + valuePart + performer  + endMetadataEntry);
+			sb.append(HARVESTINFO_PERFORMER + valuePart + StringEscapeUtils.escapeXml(performer)  + endMetadataEntry);
 		}
 		
 		/* optional OPERATOR - only inserted if not null and not-empty. */
@@ -676,13 +826,13 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		String operator = getMetadataInfo(MetadataInfo.OPERATOR);
 		if (operator != null && !operator.isEmpty()){
 			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_OPERATOR + valuePart + operator  + endMetadataEntry);
+			sb.append(HARVESTINFO_OPERATOR + valuePart + StringEscapeUtils.escapeXml(operator)  + endMetadataEntry);
 		}
 		
 		/* optional HARVESTINFO_AUDIENCE - only inserted if not null and not-empty. */
 		if (ajob.getHarvestAudience() != null && !ajob.getHarvestAudience().isEmpty()) {
 			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_AUDIENCE + valuePart + ajob.getHarvestAudience() + endMetadataEntry);
+			sb.append(HARVESTINFO_AUDIENCE + valuePart + StringEscapeUtils.escapeXml(ajob.getHarvestAudience()) + endMetadataEntry);
 		}
 		sb.append("\n</map>\n</property>\n");
 		
@@ -772,22 +922,21 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 			throw new IOFailure("Unable to write to JspWriter", e);
 		}
 	}
-	
+
 	/**
 	 *  Hack to remove existing placeholders, that is still present after template 
 	 *  manipulation is completed.
 	 */
 	public void removePlaceholders() {
-		template = template.replace(METADATA_ITEMS_PLACEHOLDER, "");
-		template = template.replace(CRAWLERTRAPS_PLACEHOLDER, "");
-		
-		if (template.contains(METADATA_ITEMS_PLACEHOLDER)) {
-			throw new IllegalState("The placeholder for the property '" + METADATA_ITEMS_PLACEHOLDER  
-					+ "' should have been deleted now."); 
+		String[] optionalPlaceholders = new String[] {
+				METADATA_ITEMS_PLACEHOLDER,
+				CRAWLERTRAPS_PLACEHOLDER,
+				UMBRA_PUBLISH_BEAN_PLACEHOLDER,
+				UMBRA_SIMPLEOVERRIDES_PLACEHOLDER,
+				UMBRA_BEAN_REF_PLACEHOLDER,
+				UMBRA_RECEIVE_BEAN_PLACEHOLDER};
+		for (String placeholder: optionalPlaceholders) {
+			template = template.replace(placeholder, "");
 		}
-		if (template.contains(CRAWLERTRAPS_PLACEHOLDER)) {
-			throw new IllegalState("The placeholder for the property '" + CRAWLERTRAPS_PLACEHOLDER  
-					+ "' should have been deleted now."); 
-		}		
 	}
 }

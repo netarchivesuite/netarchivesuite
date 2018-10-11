@@ -114,6 +114,11 @@ National Library.
                 <metadataFormat>warc</metadataFormat>
                 <metadataFileNameFormat>default</metadataFileNameFormat>
             </metadata>
+            <umbra>
+                <isEnabled>false</isEnabled>
+                <rabbitmqUrl>amqp://guest:guest@localhost:5672/%2f</rabbitmqUrl>
+                <hopsShouldProcess>^$|.*L</hopsShouldProcess>
+            </umbra>
         </harvesting>
     </harvester>
 </settings>
