@@ -44,7 +44,14 @@ import dk.netarkivet.systemtest.page.PageHelper;
 
 /** The tests here are run with a low priority, eg. they are run last thereby enabling other tests to run harvests
  * prior to the tests here. This will prevent the  calls to 'ensureNumberOfHarvestsForDefaultDomain' from having to
- * run alle the harvests needed here. */
+ * run alle the harvests needed here.
+ *
+ * TODO There is nothing wrong with these tests in principle but there is something borked in the sequencing of the
+ * various annotated before & after methods which results in race conditions where sometimes the tests run either before
+ * the "old" GUI is killed or before the "new" GUI is started, leading to weird failure modes. The tests need to be
+ * rewrittend simplified to it is clean exactly what initialisations and finalisations occur.
+ *
+ * */
 public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
 
     @BeforeMethod
@@ -326,9 +333,8 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
 
     @BeforeMethod(alwaysRun = true)
     @AfterMethod(alwaysRun = true)
-    private void cleanupGUIConfiguration() {
+    private void cleanupGUIConfiguration() throws Exception {
         addDescription("Cleaning up GUI by restoring original page size.");
-        try {
             getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                     "if [ -f conf/settings_GUIApplication.xml.original ]; then "
                             + "echo conf/settings_GUIApplication.xml.original exist, moving back.; "
@@ -336,9 +342,6 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
                             + "cp conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
                             + " conf/start_GUIApplication.sh; " + "fi");
             TestGUIController.waitForGUIToStart(120);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void assertColumnIsSorted(int column, boolean ascending) {
