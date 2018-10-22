@@ -22,13 +22,12 @@
  */
 package dk.netarkivet.systemtest.performance;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.TestLogger;
-import dk.netarkivet.systemtest.environment.TestGUIController;
+import dk.netarkivet.systemtest.environment.testGUIController;
 
 /**
  * Tests to be run against the full production-load database.
@@ -86,7 +85,7 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
         if (snapshotTimeDivider != 1) {
             log.info("Dividing timescale for snapshot test by a factor {} (stresstest.snapshottimedivider).", snapshotTimeDivider);
         }
-        TestGUIController TestGUIController = new TestGUIController(testController);
+        testGUIController testGUIController = new testGUIController(testController);
         LongRunningJob snapshotJob = new GenerateSnapshotJob(this, testController, this.driver,
                 2*HOUR/snapshotTimeDivider, 30*MINUTE/snapshotTimeDivider, 20*HOUR/snapshotTimeDivider, "SnapshotGenerationJob"
                 );
@@ -101,7 +100,7 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
 
     private void doUpdateFileStatus() {
         //WebDriver driver = new FirefoxDriver();
-        TestGUIController TestGUIController = new TestGUIController(testController);
+        testGUIController testGUIController = new testGUIController(testController);
         UpdateFileStatusJob updateFileStatusJob = new UpdateFileStatusJob(this, this.driver, 0L, 5*MINUTE, 5*HOUR, "Update FileStatus Job");
         updateFileStatusJob.run();
     }

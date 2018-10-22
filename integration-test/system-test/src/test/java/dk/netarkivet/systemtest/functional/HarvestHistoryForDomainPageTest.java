@@ -25,7 +25,6 @@ package dk.netarkivet.systemtest.functional;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -328,7 +327,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
         getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                         " cp " + newFileName + " conf/settings_GUIApplication.xml");
 
-        TestGUIController.restartGUI();
+        testGUIController.restartGUI();
     }
 
     @BeforeMethod(alwaysRun = true)
@@ -341,7 +340,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
                             + "conf/kill_GUIApplication.sh; sleep 20;"
                             + "cp conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
                             + " conf/start_GUIApplication.sh; " + "fi");
-            TestGUIController.waitForGUIToStart(120);
+            testGUIController.waitForGUIToStart(120);
     }
 
     private void assertColumnIsSorted(int column, boolean ascending) {

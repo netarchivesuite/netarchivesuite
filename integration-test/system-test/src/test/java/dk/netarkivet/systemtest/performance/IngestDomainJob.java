@@ -15,7 +15,7 @@ import org.openqa.selenium.WebElement;
 
 import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.environment.TestEnvironmentController;
-import dk.netarkivet.systemtest.environment.TestGUIController;
+import dk.netarkivet.systemtest.environment.testGUIController;
 import dk.netarkivet.systemtest.page.PageHelper;
 
 /**
@@ -33,11 +33,11 @@ class IngestDomainJob extends GenericWebJob {
     @Override void startJob() {
         String backupEnv = System.getProperty("systemtest.backupenv", "prod");
         TestEnvironmentController testController = stressTest.testController;
-        TestGUIController TestGUIController = new TestGUIController(testController);
+        testGUIController testGUIController = new testGUIController(testController);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         String baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        TestGUIController.waitForGUIToStart(60);
+        testGUIController.waitForGUIToStart(60);
         stressTest.addFixture("Opening initial page " + baseUrl);
         File domainsFile = null;
         try {

@@ -22,21 +22,15 @@
  */
 package dk.netarkivet.systemtest;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
 import org.jaccept.TestEventManager;
 import org.jaccept.structure.ExtendedTestCase;
 import org.jaccept.testreport.ReportGenerator;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 import org.testng.ITestResult;
@@ -45,7 +39,7 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 import dk.netarkivet.systemtest.environment.TestEnvironmentController;
-import dk.netarkivet.systemtest.environment.TestGUIController;
+import dk.netarkivet.systemtest.environment.testGUIController;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
@@ -55,7 +49,7 @@ import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 @SuppressWarnings({"unused"})
 public abstract class SeleniumTest extends ExtendedTestCase {
     protected TestEnvironmentController testController;
-    protected static TestGUIController TestGUIController;
+    protected static testGUIController testGUIController;
     private static ReportGenerator reportGenerator;
     protected final TestLogger log = new TestLogger(getClass());
     protected static WebDriver driver;
@@ -67,7 +61,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
 
     @BeforeSuite(alwaysRun = true)
     public void setupTest() {
-        TestGUIController = new TestGUIController(testController);
+        testGUIController = new testGUIController(testController);
         deployTestSystem();
         initialiseSelenium();
         setupFixture();
@@ -86,7 +80,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
             }
         } else {
             if (System.getProperty("systemtest.redeploy.gui", "false").equals("true")) {
-                TestGUIController.redeployGUI();
+                testGUIController.redeployGUI();
             }
         }
     }
@@ -103,7 +97,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         return "all_test.sh 2>&1 | tee system_test_logs/all_test_out_" + timestamp + ".txt";
     }
 
-    private void initialiseSelenium(){
+    protected void initialiseSelenium(){
        /* FirefoxProfile fxProfile = new FirefoxProfile();
             fxProfile.setPreference("browser.download.folderList",2);
             fxProfile.setPreference("browser.download.manager.showWhenStarting",false);
@@ -124,7 +118,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         baseUrl = "http://" + testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        TestGUIController.waitForGUIToStart(60);
+        testGUIController.waitForGUIToStart(60);
         TestEventManager.getInstance().addFixture("Selecting English as language");
         driver.findElement(By.linkText("English")).click();
     }

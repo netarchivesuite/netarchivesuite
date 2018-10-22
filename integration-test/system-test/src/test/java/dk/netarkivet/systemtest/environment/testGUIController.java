@@ -27,11 +27,11 @@ import org.jaccept.TestEventManager;
 import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.page.PageHelper;
 
-public class TestGUIController {
+public class testGUIController {
     protected final TestLogger log = new TestLogger(getClass());
     private final TestEnvironmentController testController;
 
-    public TestGUIController(TestEnvironmentController testController) {
+    public testGUIController(TestEnvironmentController testController) {
         this.testController = testController;
     }
 
