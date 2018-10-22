@@ -80,29 +80,29 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
     }
 
     private void doGenerateSnapshot() {
-        WebDriver driver = new FirefoxDriver();
+        //WebDriver driver = new FirefoxDriver();
         String snapshotTimeDividerString = System.getProperty("stresstest.snapshottimedivider", "1");
         Integer snapshotTimeDivider = Integer.parseInt(snapshotTimeDividerString);
         if (snapshotTimeDivider != 1) {
             log.info("Dividing timescale for snapshot test by a factor {} (stresstest.snapshottimedivider).", snapshotTimeDivider);
         }
         TestGUIController TestGUIController = new TestGUIController(testController);
-        LongRunningJob snapshotJob = new GenerateSnapshotJob(this, testController, driver,
+        LongRunningJob snapshotJob = new GenerateSnapshotJob(this, testController, this.driver,
                 2*HOUR/snapshotTimeDivider, 30*MINUTE/snapshotTimeDivider, 20*HOUR/snapshotTimeDivider, "SnapshotGenerationJob"
                 );
         snapshotJob.run();
     }
 
     private void doIngestDomains() {
-        WebDriver driver = new FirefoxDriver();
-        IngestDomainJob ingestDomainJob = new IngestDomainJob(this, driver, 60*HOUR);
+        //WebDriver driver = new FirefoxDriver();
+        IngestDomainJob ingestDomainJob = new IngestDomainJob(this, this.driver, 60*HOUR);
         ingestDomainJob.run();
     }
 
     private void doUpdateFileStatus() {
-        WebDriver driver = new FirefoxDriver();
+        //WebDriver driver = new FirefoxDriver();
         TestGUIController TestGUIController = new TestGUIController(testController);
-        UpdateFileStatusJob updateFileStatusJob = new UpdateFileStatusJob(this, driver, 0L, 5*MINUTE, 5*HOUR, "Update FileStatus Job");
+        UpdateFileStatusJob updateFileStatusJob = new UpdateFileStatusJob(this, this.driver, 0L, 5*MINUTE, 5*HOUR, "Update FileStatus Job");
         updateFileStatusJob.run();
     }
 
