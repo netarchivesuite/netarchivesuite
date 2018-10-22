@@ -66,7 +66,7 @@ public class DatabaseMigrationSanityTest extends AbstractStressTest {
         SeleniumTest.testGUIController = testGUIController;
         initialiseSelenium();
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
+        String baseUrl = "http://" + testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         testGUIController.waitForGUIToStart(60);
         addFixture("Opening NAS front page.");
