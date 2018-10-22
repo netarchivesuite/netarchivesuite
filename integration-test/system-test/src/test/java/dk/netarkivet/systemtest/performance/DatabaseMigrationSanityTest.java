@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -62,7 +61,7 @@ public class DatabaseMigrationSanityTest extends AbstractStressTest {
      */
     @Test(groups = {"performancetest"})
     public void dbMigrationSanityTest() throws Exception {
-        WebDriver driver = new FirefoxDriver();
+        //WebDriver driver = new FirefoxDriver();
         TestGUIController TestGUIController = new TestGUIController(testController);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         String baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
