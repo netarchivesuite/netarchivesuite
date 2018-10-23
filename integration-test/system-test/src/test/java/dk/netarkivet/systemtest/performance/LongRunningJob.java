@@ -2,6 +2,8 @@ package dk.netarkivet.systemtest.performance;
 
 import static org.testng.Assert.fail;
 
+import java.io.IOException;
+
 import org.jaccept.TestEventManager;
 
 import dk.netarkivet.systemtest.TestLogger;
@@ -100,7 +102,7 @@ public abstract class LongRunningJob {
         }
     }
 
-    abstract void startJob();
+    abstract void startJob() throws IOException, InterruptedException;
 
     abstract boolean isStarted();
 

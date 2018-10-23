@@ -6,9 +6,12 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -30,7 +33,7 @@ class IngestDomainJob extends GenericWebJob {
           super(stressTest, stressTest.testController, webDriver, 0L, 60L, maxTime, "Ingest Domain Job");
     }
 
-    @Override void startJob() {
+    @Override void startJob() throws IOException, InterruptedException {
         String backupEnv = System.getProperty("systemtest.backupenv", "prod");
         TestEnvironmentController testController = stressTest.testController;
         testGUIController testGUIController = new testGUIController(testController);
@@ -58,23 +61,19 @@ class IngestDomainJob extends GenericWebJob {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            final String truncateCommand = "head -n 20000 " + domainsFile.getAbsolutePath() + " > " + tempFile.getAbsolutePath();
-            try {
-                Process p = Runtime.getRuntime().exec(
-                        truncateCommand);
-                returnCode = p.waitFor();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            LineIterator lineIterator = FileUtils.lineIterator(domainsFile);
+            List<String> lines = new ArrayList<>();
+            int lineCount=0;
+            while (lineCount < 20000) {
+                lines.add(lineIterator.next());
+                lineCount++;
             }
+            FileUtils.writeLines(tempFile, lines);
             domainsFile = tempFile;
         }
-        try {
-            Process p = Runtime.getRuntime().exec(
-                    command);
-            returnCode = p.waitFor();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        Process p = Runtime.getRuntime().exec(
+                command);
+        returnCode = p.waitFor();
         assertEquals(returnCode, 0, "Return code from scp command " + command + " is " + returnCode);
         stressTest.addStep("Checking for existence of domains file", "The file should exist.");
         assertThat("Domain file " + domainsFile.getAbsolutePath() + " is too short", domainsFile.length(), greaterThan(10000L));
