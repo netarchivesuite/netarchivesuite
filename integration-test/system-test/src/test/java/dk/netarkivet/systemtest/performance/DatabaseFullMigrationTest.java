@@ -22,6 +22,7 @@
  */
 package dk.netarkivet.systemtest.performance;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -41,7 +42,7 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
     protected final TestLogger log = new TestLogger(getClass());
 
     @Test ( enabled = false )
-    public void testUpdateFileStatus() {
+    public void testUpdateFileStatus() throws IOException, InterruptedException {
         addDescription("Test updating the file status for all files in one bitarchive replica. This procedure takes around one hour to run for " +
                 "a full production load. Because there are no actual files present in the test system, the test will eventually show that all files are " +
                 "missing in this replica.");
@@ -49,13 +50,13 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
     }
 
     @Test ( enabled = false )
-    public void testUpdateChecksumStatus() {
+    public void testUpdateChecksumStatus() throws IOException, InterruptedException {
         addDescription("Test updating checksum status for all files in one checksum-replica. This takes about four hours to run in a full production load.");
         doUpdateChecksumAndFileStatus();
     }
 
     @Test ( enabled = true )
-    public void testIngestDomains() {
+    public void testIngestDomains() throws IOException, InterruptedException {
         addDescription("Test ingesting domains from a textual list of about 2 million domains. This is not a particularly heavy" +
                 " operation but tests some browser functionality which is not easily testable elsewhere - specifically that the 'keep-alive' " +
                 "functionality allows the browser to follow the complete upload/ingest of all the domains without timing out.");
@@ -63,7 +64,7 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
     }
 
     @Test  ( enabled = true )
-    public void testGenerateSnapshot() {
+    public void testGenerateSnapshot() throws IOException, InterruptedException {
         addDescription("Test generating snapshot jobs with a maximum number of bytes per domain of 100 000. This takes about ten hours to complete. The" +
                 " number of jobs generated is determined roughly by the parameter settings.harvester.scheduler.jobGen.domainConfigSubsetSize which is" +
                 " set to 10000 by default. Ie there is a maximum of 10000 domains per job, although there are also a small number of jobs with much fewer domains" +
@@ -93,7 +94,7 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
         testGUIController.waitForGUIToStart(60);
     }
 
-    private void doGenerateSnapshot() {
+    private void doGenerateSnapshot() throws IOException, InterruptedException {
         //WebDriver driver = new FirefoxDriver();
         String snapshotTimeDividerString = System.getProperty("stresstest.snapshottimedivider", "1");
         Integer snapshotTimeDivider = Integer.parseInt(snapshotTimeDividerString);
@@ -107,18 +108,18 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
         snapshotJob.run();
     }
 
-    private void doIngestDomains() {
+    private void doIngestDomains() throws IOException, InterruptedException {
         //WebDriver driver = new FirefoxDriver();
         IngestDomainJob ingestDomainJob = new IngestDomainJob(this, this.driver, 60*HOUR);
         ingestDomainJob.run();
     }
 
-    private void doUpdateFileStatus() {
+    private void doUpdateFileStatus() throws IOException, InterruptedException {
         UpdateFileStatusJob updateFileStatusJob = new UpdateFileStatusJob(this, this.driver, 0L, 5*MINUTE, 5*HOUR, "Update FileStatus Job");
         updateFileStatusJob.run();
     }
 
-    private void doUpdateChecksumAndFileStatus() {
+    private void doUpdateChecksumAndFileStatus() throws IOException, InterruptedException {
         Long stepTimeout = DAY;
         String minStepTimeHoursString = System.getProperty("stresstest.minchecksumtime", "1");
         log.debug("Checksum checking must take at least {} (stresstest.minchecksumtime) hours to complete.", minStepTimeHoursString);

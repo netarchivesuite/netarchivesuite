@@ -54,7 +54,7 @@ public abstract class LongRunningJob {
      * Run the job.
      * @return True if the job completed successfully.
      */
-    protected boolean run() {
+    protected boolean run() throws IOException, InterruptedException {
         Long startTime = System.currentTimeMillis();
         startJob();
         startWait();
