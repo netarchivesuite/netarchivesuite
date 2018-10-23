@@ -51,6 +51,23 @@ class IngestDomainJob extends GenericWebJob {
         //        .getAbsolutePath();
         final String command = "scp devel@kb-prod-udv-001.kb.dk:prod-backup/domain.*.txt " + domainsFile
                 .getAbsolutePath();
+        if (!backupEnv.equals("prod")) {
+            File tempFile = null;
+            try {
+                tempFile = File.createTempFile("domains", "txt");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            final String truncateCommand = "head -n 20000 " + domainsFile.getAbsolutePath() + " > " + tempFile.getAbsolutePath();
+            try {
+                Process p = Runtime.getRuntime().exec(
+                        truncateCommand);
+                returnCode = p.waitFor();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            domainsFile = tempFile;
+        }
         try {
             Process p = Runtime.getRuntime().exec(
                     command);
