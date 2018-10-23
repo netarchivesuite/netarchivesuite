@@ -54,7 +54,7 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
         doUpdateChecksumAndFileStatus();
     }
 
-    @Test
+    @Test ( enabled = false )
     public void testIngestDomains() {
         addDescription("Test ingesting domains from a textual list of about 2 million domains. This is not a particularly heavy" +
                 " operation but tests some browser functionality which is not easily testable elsewhere - specifically that the 'keep-alive' " +
