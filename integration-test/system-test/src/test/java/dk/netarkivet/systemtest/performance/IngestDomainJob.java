@@ -2,6 +2,7 @@ package dk.netarkivet.systemtest.performance;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -65,7 +66,9 @@ class IngestDomainJob extends GenericWebJob {
             List<String> lines = new ArrayList<>();
             int lineCount=0;
             while (lineCount < 20000) {
-                lines.add(lineIterator.next());
+                final String next = lineIterator.next();
+                System.out.println("Adding " + next);
+                lines.add(next);
                 lineCount++;
             }
             FileUtils.writeLines(tempFile, lines);
