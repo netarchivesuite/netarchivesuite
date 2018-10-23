@@ -26,7 +26,7 @@ abstract class GenericWebJob extends LongRunningJob {
         this.driver = driver;
         this.testGUIController = new testGUIController(testController);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = testController.ENV
+        String baseUrl = "http://" + testController.ENV
                 .getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
         testGUIController.waitForGUIToStart(60);
