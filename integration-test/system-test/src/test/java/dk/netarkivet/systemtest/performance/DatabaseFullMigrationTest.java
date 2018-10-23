@@ -22,12 +22,16 @@
  */
 package dk.netarkivet.systemtest.performance;
 
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.TestLogger;
 import dk.netarkivet.systemtest.environment.testGUIController;
+import dk.netarkivet.systemtest.page.PageHelper;
 
 /**
  * Tests to be run against the full production-load database.
@@ -76,6 +80,17 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
         replaceDatabasesWithProd(false);
         upgradeHarvestDatabase();
         startTestSystem();
+        initialiseDriver();
+    }
+
+    private void initialiseDriver() {
+        testGUIController testGUIController = new testGUIController(testController);
+        SeleniumTest.testGUIController = testGUIController;
+        initialiseSelenium();
+        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        String baseUrl = "http://" + testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
+        PageHelper.initialize(driver, baseUrl);
+        testGUIController.waitForGUIToStart(60);
     }
 
     private void doGenerateSnapshot() {
@@ -99,8 +114,6 @@ public class DatabaseFullMigrationTest extends AbstractStressTest {
     }
 
     private void doUpdateFileStatus() {
-        //WebDriver driver = new FirefoxDriver();
-        testGUIController testGUIController = new testGUIController(testController);
         UpdateFileStatusJob updateFileStatusJob = new UpdateFileStatusJob(this, this.driver, 0L, 5*MINUTE, 5*HOUR, "Update FileStatus Job");
         updateFileStatusJob.run();
     }
