@@ -45,7 +45,7 @@ class IngestDomainJob extends GenericWebJob {
         stressTest.addFixture("Opening initial page " + baseUrl);
         File domainsFile = null;
         try {
-            domainsFile = File.createTempFile("domains", "txt");
+            domainsFile = File.createTempFile("domains", "txt", new File("."));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -57,11 +57,8 @@ class IngestDomainJob extends GenericWebJob {
                 .getAbsolutePath();
         if (!backupEnv.equals("prod")) {
             File tempFile = null;
-            try {
-                tempFile = File.createTempFile("domains", "txt");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            tempFile = File.createTempFile("domains", "txt", new File("."));
+            System.out.println("Domains file size: " + FileUtils.sizeOf(domainsFile));
             LineIterator lineIterator = FileUtils.lineIterator(domainsFile);
             List<String> lines = new ArrayList<>();
             int lineCount=0;
