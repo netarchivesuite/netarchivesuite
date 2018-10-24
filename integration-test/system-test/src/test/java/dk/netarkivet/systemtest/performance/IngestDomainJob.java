@@ -63,13 +63,11 @@ class IngestDomainJob extends GenericWebJob {
         if (!backupEnv.equals("prod")) {
             File tempFile = null;
             tempFile = File.createTempFile("domains", "txt", new File("."));
-            System.out.println("Domains file size: " + FileUtils.sizeOf(domainsFile));
             LineIterator lineIterator = FileUtils.lineIterator(domainsFile);
             List<String> lines = new ArrayList<>();
             int lineCount=0;
             while (lineCount < 20000) {
                 final String next = lineIterator.next();
-                System.out.println("Adding " + next);
                 lines.add(next);
                 lineCount++;
             }
