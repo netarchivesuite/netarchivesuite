@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>monitor</artifactId>
-    <version>5.0-RC3-SNAPSHOT</version>
+    <version>5.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>monitor-test</artifactId>
@@ -17,19 +17,19 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>common-core</artifactId>
-      <version>5.0-RC3-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>harvester-core</artifactId>
-      <version>5.0-RC3-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>monitor-core</artifactId>
-      <version>5.0-RC3-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- Test dependencies. -->
@@ -42,14 +42,13 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>common-test</artifactId>
-      <version>5.0-RC3-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -73,6 +72,24 @@
           </argLine>
         </configuration>
       </plugin>
+     <plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>${jacoco.version}</version>
+    <configuration>
+        <destFile>${sonar.jacoco.reportPath}</destFile>
+        <append>true</append>
+    </configuration>
+    <executions>
+        <execution>
+            <id>agent</id>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+
     </plugins>
   </build>
 </project>

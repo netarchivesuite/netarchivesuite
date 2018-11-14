@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import dk.netarkivet.systemtest.SeleniumSession;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import org.apache.commons.lang.RandomStringUtils;
@@ -37,7 +38,8 @@ class GenerateSnapshotJob extends GenericWebJob {
                 "Expect to create a snapshot harvest definition.");
         driver.findElement(By.linkText("Definitions")).click();
         driver.findElement(By.linkText("Snapshot Harvests")).click();
-        driver.findElement(By.partialLinkText("Create new")).click();
+        final WebElement element = driver.findElement(By.partialLinkText("Create new"));
+        element.click();
         List<WebElement> inputs = driver.findElements(By.tagName("input"));
         WebElement submit = null;
         for (WebElement input: inputs) {
@@ -54,6 +56,10 @@ class GenerateSnapshotJob extends GenericWebJob {
                 input.sendKeys("100000");
             }
         }
+        if (submit == null) {
+            throw new RuntimeException("Failed to find submit button for the snapshot job on the relevat page. The GUI application"
+                    + " has probably died.");
+        }
         submit.submit();
         stressTest.addStep("Activate harvest", "Expect to generate a substantial number of jobs.");
         List<WebElement> allForms = driver.findElements(By.tagName("form"));
@@ -63,7 +69,9 @@ class GenerateSnapshotJob extends GenericWebJob {
                 activationForm = form;
             }
         }
+        ((SeleniumSession) driver).setJavascriptEnabled(true);
         activationForm.findElement(By.linkText("Activate")).click();
+        ((SeleniumSession) driver).setJavascriptEnabled(false);
     }
 
     /**

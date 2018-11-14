@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -33,11 +33,15 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.harvester.datamodel.eav.ContentAttrType_Generic;
+import dk.netarkivet.harvester.datamodel.eav.ContentAttribute_Generic;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
 import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
 
 /**
@@ -170,7 +174,7 @@ public class DomainConfigurationTest {
     public void testExpectedNumberOfObjectsNewerSmallUnfinishedHarvest() {
         DomainConfiguration dc = createDefaultDomainConfiguration();
         addHistoryObject( dc, 200L, 1L, StopReason.DOWNLOAD_COMPLETE);
-        addSecondHistoryObject( dc, 100L, 1L, StopReason.SIZE_LIMIT);
+        addSecondHistoryObject(dc, 100L, 1L, StopReason.SIZE_LIMIT);
         assertEquals("Newer smaller unfinished harvest should not affect expectation", 400L,
                 dc.getExpectedNumberOfObjects(2200L, -1L));
     }
@@ -234,7 +238,7 @@ public class DomainConfigurationTest {
         Domain mockDomain = mock(Domain.class);
         when(mockDomain.getSeedList(seedlistName)).thenReturn(domainSeedList);
 
-        dc.setSeedLists(mockDomain, Arrays.asList (new SeedList[] {domainSeedList}));
+        dc.setSeedLists(mockDomain, Arrays.asList(new SeedList[] {domainSeedList}));
         SeedList confSeedList = dc.getSeedLists().next();
         assertEquals(domainSeedList, confSeedList);
     }
@@ -262,6 +266,8 @@ public class DomainConfigurationTest {
         dc.setSeedLists(mockDomain, Arrays.asList (new SeedList[] {newSeedList}));
     }
 
+
+
     private void addHistoryObject(DomainConfiguration dc, final long countObjectRetrieved,
             long sizeDataRetrieved, final StopReason stopReason) {
         dc.getDomainhistory().addHarvestInfo(
@@ -286,8 +292,55 @@ public class DomainConfigurationTest {
         SeedList seedList = new SeedList("SeedList1", "netarchivesuite.org");
         DomainConfiguration domainConfiguration = new DomainConfiguration(
                 name, name, new DomainHistory(),
-                new ArrayList<>(), Arrays.asList(new SeedList[] {seedList}), new ArrayList<>());
+                new ArrayList<String>(), Arrays.asList(new SeedList[] {seedList}), new ArrayList<Password>());
         domainConfiguration.setOrderXmlName(OrderXmlBuilder.DEFAULT_ORDER_XML_NAME);
         return domainConfiguration;
     }
+
+
+
+    public static List<EAV.AttributeAndType> getAttributes(int maxHops, boolean obeyRobots, boolean extractJS) {
+        List<EAV.AttributeAndType> attributeAndTypes = new ArrayList<>();
+        ContentAttrType_Generic atMaxHops = new ContentAttrType_Generic();
+        atMaxHops.tree_id = 2;
+        atMaxHops.id = 1;
+        atMaxHops.datatype = 1;
+        atMaxHops.viewtype = 1;
+        atMaxHops.def_int = 20;
+        ContentAttribute_Generic aatMaxHops = new ContentAttribute_Generic(atMaxHops);
+        aatMaxHops.setInteger(maxHops);
+        attributeAndTypes.add(new EAV.AttributeAndType(atMaxHops, aatMaxHops));
+
+        ContentAttrType_Generic atHonorRobots = new ContentAttrType_Generic();
+        atHonorRobots.tree_id = 2;
+        atHonorRobots.id = 2;
+        atHonorRobots.datatype = 1;
+        atHonorRobots.viewtype = 6;
+        atHonorRobots.def_int = 0;
+        ContentAttribute_Generic aatHonorRobots = new ContentAttribute_Generic(atHonorRobots);
+        if (obeyRobots) {
+            aatHonorRobots.setInteger(1);
+        } else {
+            aatHonorRobots.setInteger(0);
+        }
+        attributeAndTypes.add(new EAV.AttributeAndType(atHonorRobots, aatHonorRobots));
+
+        ContentAttrType_Generic atExtractJS = new ContentAttrType_Generic();
+        atExtractJS.tree_id = 2;
+        atExtractJS.id = 3;
+        atExtractJS.datatype = 1;
+        atExtractJS.viewtype = 5;
+        atExtractJS.def_int = 1;
+        ContentAttribute_Generic aatExtractJS = new ContentAttribute_Generic(atExtractJS);
+        if (extractJS) {
+            aatExtractJS.setInteger(1);
+        } else {
+            aatExtractJS.setInteger(0);
+        }
+        attributeAndTypes.add(new EAV.AttributeAndType(atExtractJS, aatExtractJS));
+
+        return attributeAndTypes;
+    }
+
+
 }

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -71,7 +71,7 @@ public class HarvestJobManager extends LifeCycleComponent {
         super.shutdown();
         HarvestDBConnection.cleanup();
     }
-
+/*
     public static Provider<JMSConnection> getJMSConnectionProvider() {
         return () -> JMSConnectionFactory.getInstance();
     }
@@ -84,4 +84,39 @@ public class HarvestJobManager extends LifeCycleComponent {
     public static Provider<Notifications> getNotificationsProvider() {
         return () -> NotificationsFactory.getInstance();
     }
+*/
+
+    public static Provider<JMSConnection> getJMSConnectionProvider() {
+        return new Provider<JMSConnection>() {
+
+            @Override
+            public JMSConnection get() {
+                return JMSConnectionFactory.getInstance();
+            }};
+    }
+    public static Provider<JobDAO> getJobDAOProvider() {
+        return new Provider<JobDAO>() {
+
+            @Override
+            public JobDAO get() {
+                return JobDAO.getInstance();
+            }};
+    }
+    public static Provider<HarvestDefinitionDAO> getHarvestDefinitionDAOProvider() {
+        return new Provider<HarvestDefinitionDAO>() {
+
+            @Override
+            public HarvestDefinitionDAO get() {
+                return HarvestDefinitionDAO.getInstance();
+            }};
+    }
+    public static Provider<Notifications> getNotificationsProvider() {
+        return new Provider<Notifications>() {
+
+            @Override
+            public Notifications get() {
+                return NotificationsFactory.getInstance();
+            }};
+    }
+ 
 }

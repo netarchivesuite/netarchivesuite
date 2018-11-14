@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -23,23 +23,31 @@
 package dk.netarkivet.harvester.indexserver;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.common.utils.archive.GetMetadataArchiveBatchJob;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 
 /**
  * This is an implementation of the RawDataCache specialized for data out of metadata files. It uses regular expressions
@@ -62,6 +70,14 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     /** The job that we use to dig through metadata files. */
     private final ArchiveBatchJob job;
 
+    /** The actual pattern to be used for matching the url in the metadata record */
+    private Pattern urlPattern;
+ 
+    /** The actual pattern to be used for matching the mimetype in the metadata record */ 
+    private Pattern mimePattern;
+ 
+    /** Try to migrate jobs with a duplicationmigration record. */
+    private boolean tryToMigrateDuplicationRecords;
     /**
      * Create a new RawMetadataCache. For a given job ID, this will fetch and cache selected content from metadata files
      * (&lt;ID&gt;-metadata-[0-9]+.arc). Any entry in a metadata file that matches both patterns will be returned. The
@@ -82,15 +98,21 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         } else {
             urlMatcher1 = MATCH_ALL_PATTERN;
         }
+        urlPattern = urlMatcher1;
         Pattern mimeMatcher1;
         if (mimeMatcher != null) {
             mimeMatcher1 = mimeMatcher;
         } else {
             mimeMatcher1 = MATCH_ALL_PATTERN;
         }
-        log.info("Metadata cache for '{}' is fetching metadata with urls matching '{}' and mimetype matching '{}'",
+        mimePattern = mimeMatcher1;
+        // Should we try to migrate duplicaterecords, yes or no.
+        tryToMigrateDuplicationRecords = Settings.getBoolean(HarvesterSettings.INDEXSERVER_INDEXING_TRY_TO_MIGRATE_DUPLICATION_RECORDS);
+        log.info("Metadata cache for '{}' is fetching metadata with urls matching '{}' and mimetype matching '{}'. Migration of duplicate records is " 
+                + (tryToMigrateDuplicationRecords? "enabled":"disabled"), 
                 prefix, urlMatcher1.toString(), mimeMatcher1);
         job = new GetMetadataArchiveBatchJob(urlMatcher1, mimeMatcher1);
+        
     }
 
     /**
@@ -116,17 +138,24 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
      */
     protected Long cacheData(Long id) {
         final String replicaUsed = Settings.get(CommonSettings.USE_REPLICA_ID);
-        log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}{}' on replica '{}'", job
-                .getClass().getName(), id, Constants.METADATA_FILE_PATTERN_SUFFIX, replicaUsed);
-        job.processOnlyFilesMatching(id + Constants.METADATA_FILE_PATTERN_SUFFIX);
+        final String metadataFilePatternSuffix = Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
+        // Same pattern here as defined in class dk.netarkivet.viewerproxy.webinterface.Reporting
+        final String specifiedPattern = "(.*-)?" + id + "(-.*)?" + metadataFilePatternSuffix;
+        
+        log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}' on replica '{}'. Url pattern is '{}' and mimepattern is '{}'", job
+                .getClass().getName(), specifiedPattern, replicaUsed, urlPattern, mimePattern);
+        job.processOnlyFilesMatching(specifiedPattern);
         BatchStatus b = arcrep.batch(job, replicaUsed);
-
         // This check ensures that we got data from at least one file.
         // Mind you, the data may be empty, but at least one file was
         // successfully processed.
         if (b.hasResultFile() && b.getNoOfFilesProcessed() > b.getFilesFailed().size()) {
             File cacheFileName = getCacheFile(id);
-            b.copyResults(cacheFileName);
+            if (tryToMigrateDuplicationRecords) {
+                migrateDuplicates(id, replicaUsed, specifiedPattern, b, cacheFileName);
+            } else {
+                b.copyResults(cacheFileName);
+            }
             log.debug("Cached data for job '{}' for '{}'", id, prefix);
             return id;
         } else {
@@ -142,14 +171,16 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                     if (rep.getType().equals(ReplicaType.BITARCHIVE) && !rep.getId().equals(replicaUsed)) {
                         log.debug("Trying to retrieve index data for job '{}' from '{}'.", id, rep.getId());
                         b = arcrep.batch(job, rep.getId());
-
                         // Perform same check as for the batchresults from
                         // the default replica.
                         if (b.hasResultFile() && (b.getNoOfFilesProcessed() > b.getFilesFailed().size())) {
                             File cacheFileName = getCacheFile(id);
-                            b.copyResults(cacheFileName);
-                            log.info("Cached data for job '{}' for '{}' from '{}' instead of '{}'", id, prefix, rep,
-                                    replicaUsed);
+                            if (tryToMigrateDuplicationRecords) {
+                                migrateDuplicates(id, rep.getId(), specifiedPattern, b, cacheFileName);
+                            } else {
+                                b.copyResults(cacheFileName);
+                            }
+                            log.debug("Cached data for job '{}' for '{}'", id, prefix);
                             return id;
                         } else {
                             log.trace("No data found for job '{}' for '{}' in bitarchive '{}'. ", id, prefix, rep);
@@ -162,4 +193,97 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         }
     }
 
+    /**
+     * If this cache represents a crawllog cache then this method will attempt to migrate any duplicate annotations in
+     * the crawl log using data in the duplicationmigration metadata record. This migrates filename/offset
+     * pairs from uncompressed to compressed (w)arc files. This method has the side effect of copying the index
+     * cache (whether migrated or not) into the cache file whose name is generated from the id.
+     * @param id the id of the cache
+     * @param replicaUsed which replica to look the file up in
+     * @param specifiedPattern the pattern specifying the files to be found
+     * @param originalBatchJob the original batch job which returned the unmigrated data.
+     */
+    private void migrateDuplicates(Long id, String replicaUsed, String specifiedPattern, BatchStatus originalBatchJob, File cacheFileName) {
+        Pattern duplicatePattern = Pattern.compile(".*duplicate:\"([^,]+),([0-9]+).*");
+        log.debug("Looking for a duplicationmigration record for id {}", id);
+        if (urlPattern.pattern().equals(MetadataFile.CRAWL_LOG_PATTERN)) {
+            GetMetadataArchiveBatchJob job2 = new GetMetadataArchiveBatchJob(Pattern.compile(".*duplicationmigration.*"), Pattern.compile("text/plain"));
+            job2.processOnlyFilesMatching(specifiedPattern);
+            BatchStatus b2 = arcrep.batch(job2, replicaUsed);
+            File migration = null;
+            try {
+                migration = File.createTempFile("migration", "txt");
+            } catch (IOException e) {
+                throw new IOFailure("Could not create temporary output file.");
+            }
+            if (b2.hasResultFile()) {
+                b2.copyResults(migration);
+            }
+            boolean doMigration =  migration.exists() && migration.length() > 0;
+            Hashtable<Pair<String, Long>, Long> lookup = new Hashtable<>();
+            if (doMigration) {
+                log.info("Found a nonempty duplicationmigration record. Now we do the migration for job {}", id);
+                try {
+                    final List<String> migrationLines = org.apache.commons.io.FileUtils.readLines(migration);
+                    log.info("{} migration records found for job {}", migrationLines.size(), id);
+                    // duplicationmigration lines should look like this: "FILENAME 496812 393343 1282069269000"
+                    // But only the first 3 entries are used.
+                    for (String line : migrationLines) {
+                    	// duplicationmigration lines look like this: "FILENAME 496812 393343 1282069269000"
+                        String[] splitLine = StringUtils.split(line);
+                        if (splitLine.length >= 3) { 
+                            lookup.put(new Pair<String, Long>(splitLine[0], Long.parseLong(splitLine[1])),
+                                 Long.parseLong(splitLine[2])); 
+                          } else {
+                               log.warn("Line '" + line + "' has a wrong format. Ignoring line");
+                          }
+                    }
+                } catch (IOException e) {
+                    throw new IOFailure("Could not read " + migration.getAbsolutePath());
+                } finally {
+                    migration.delete();
+                }
+            }
+            if (doMigration) {
+                File crawllog = null;
+                try {
+                    crawllog = File.createTempFile("dedup", "txt");
+                } catch (IOException e) {
+                    throw new IOFailure("Could not create temporary output file.");
+                }
+                originalBatchJob.copyResults(crawllog);
+                try {
+                    int matches = 0;
+                    int errors = 0;
+                    for (String line :  org.apache.commons.io.FileUtils.readLines(crawllog)) {
+                        Matcher m = duplicatePattern.matcher(line);
+                        if (m.matches()) {
+                            matches++;
+                            Long newOffset = lookup.get(new Pair<String, Long>(m.group(1), Long.parseLong(m.group(2))));
+                            if (newOffset == null) {
+                                log.warn("Could not migrate duplicate in " + line);
+                                FileUtils.appendToFile(cacheFileName, line);
+                                errors++;
+                            } else {
+                                String newLine = line.substring(0, m.start(2)) + newOffset + line.substring(m.end(2));
+                                newLine = newLine.replace(m.group(1), m.group(1) + ".gz");
+                                FileUtils.appendToFile(cacheFileName, newLine);
+                            }
+                        } else {
+                            FileUtils.appendToFile(cacheFileName, line);
+                        }
+                    }
+                    log.info("Found and migrated {} duplicate lines for job {} with {} errors", matches, id, errors); 
+                } catch (IOException e) {
+                    throw new IOFailure("Could not read " + crawllog.getAbsolutePath());
+                } finally {
+                    crawllog.delete();
+                }
+            } else {
+                originalBatchJob.copyResults(cacheFileName);
+            }
+        } else {
+            originalBatchJob.copyResults(cacheFileName);
+        }
+    }
 }

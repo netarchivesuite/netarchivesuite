@@ -9,15 +9,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.Node;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.Constants;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList;
@@ -73,7 +69,7 @@ public abstract class AbstractJobGeneratorTest extends DataModelTestCase {
         Job job = JobTest.createDefaultJob(dc1);
         // should be okay, relative size difference below 3
         job.addConfiguration(dc2);
-        assertFalse(createJobGenerator().canAccept(job, dc3));
+        assertFalse(createJobGenerator().canAccept(job, dc3, null));
     }
 
     protected abstract AbstractJobGenerator createJobGenerator();

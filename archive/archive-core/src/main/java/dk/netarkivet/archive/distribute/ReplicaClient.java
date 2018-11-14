@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -82,8 +82,9 @@ public interface ReplicaClient {
      * Uploads a file to the replica archive. This should create the UploadMessage and send it.
      *
      * @param rf The remote file
+     * @param precomputedChecksum A precomputed checksum 
      */
-    void sendUploadMessage(RemoteFile rf);
+    void sendUploadMessage(RemoteFile rf, String precomputedChecksum);
 
     /**
      * Retrieves the checksum for a specific arc file. The GetChecksumMessage is sent along to the archive.

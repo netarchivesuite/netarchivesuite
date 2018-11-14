@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>netarchivesuite</artifactId>
-    <version>5.0-RC3-SNAPSHOT</version>
+    <version>5.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>harvester</artifactId>
@@ -15,7 +15,6 @@
 
   <modules>
     <module>harvester-core</module>
-    <module>heritrix1</module>
     <module>heritrix3</module>
     <module>harvest-scheduler</module>
     <module>harvestchannel-gui</module>
@@ -29,7 +28,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

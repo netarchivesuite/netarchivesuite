@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.junit.Ignore;
@@ -198,6 +199,8 @@ public class IntegrityTestsFTP {
         /** try to store data to a file on the FTP-server */
         assertTrue("Store operation failed", theFTPClient.storeFile(nameOfUploadedFile2, in));
         upLoadedFiles.add(nameOfUploadedFile2);
+        IOUtils.closeQuietly(in);
+        IOUtils.closeQuietly(in2);
     }
 
     /**

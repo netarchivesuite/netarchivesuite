@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library,
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ public final class BitarchiveAdmin {
 
     /** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(BitarchiveAdmin.class);
-    
+
     /**
      * Map containing the archive directories and their files. The file must be the CanonicalFile (use
      * getCanonicalFile() before access).
@@ -76,13 +76,16 @@ public final class BitarchiveAdmin {
     /** How much space we require available *in every dir* after we have accepted an upload. */
     private final long minSpaceRequired;
 
+    /** Are readOnly Directories allowed. */
+    private final boolean readOnlyAllowed;
+
     /** The name of the directory containing the files (replacement for the Constants.FILE_DIRECTORY_NAME) */
     private final String fileDirectoryName;
 
     /** readonly mode */
     private final boolean readOnlyMode;
 
-    
+
     /**
      * Creates a new BitarchiveAdmin object for an existing bit archive. Reads the directories to use from settings.
      *
@@ -94,6 +97,10 @@ public final class BitarchiveAdmin {
     private BitarchiveAdmin() throws ArgumentNotValid, PermissionDenied, IOFailure {
         String[] filedirnames = Settings.getAll(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR);
         minSpaceLeft = Settings.getLong(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT);
+        readOnlyAllowed = Settings.getBoolean(ArchiveSettings.BITARCHIVE_READ_ONLY_ALLOWED);
+
+        log.info("readOnlyAllowed is: {}", readOnlyAllowed);
+
         fileDirectoryName = Settings.get(ArchiveSettings.FILE_DIRECTORY_NAME);
         readOnlyMode = Settings.getBoolean(ArchiveSettings.READONLY_ARCHIVE_MODE);
         // Check, if value of minSpaceLeft is greater than zero
@@ -115,17 +122,15 @@ public final class BitarchiveAdmin {
         try {
             for (String filedirname : filedirnames) {
                 File basedir = new File(filedirname).getCanonicalFile();
-                File filedir = new File(basedir, fileDirectoryName);
-
+                File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
                 // Ensure that 'filedir' exists. If it doesn't, it is created
                 ApplicationUtils.dirMustExist(filedir);
-                File tempdir = new File(basedir, Constants.TEMPORARY_DIRECTORY_NAME);
 
+                File tempdir = new File(basedir, Constants.TEMPORARY_DIRECTORY_NAME);
                 // Ensure that 'tempdir' exists. If it doesn't, it is created
                 ApplicationUtils.dirMustExist(tempdir);
 
                 File atticdir = new File(basedir, Constants.ATTIC_DIRECTORY_NAME);
-
                 // Ensure that 'atticdir' exists. If it doesn't, it is created
                 ApplicationUtils.dirMustExist(atticdir);
 
@@ -289,20 +294,31 @@ public final class BitarchiveAdmin {
          * Check, that arcFilePath (now known to be TEMPORARY_DIRECTORY_NAME) resides in a recognised Bitarchive
          * Directory.
          */
-        File archivedir = arcFilePath.getParentFile();
-        if (archivedir == null || !isBitarchiveDirectory(archivedir)) {
+        File basedir = arcFilePath.getParentFile();
+        if (basedir == null || !isBitarchiveDirectory(basedir)) {
             throw new IOFailure("Location '" + tempLocation + "' is not in " + "recognised archive directory.");
         }
         /**
          * Move File tempLocation to new location: storageFile
          */
-        File storagePath = new File(archivedir, fileDirectoryName);
+        File storagePath = new File(basedir, Constants.FILE_DIRECTORY_NAME);
         File storageFile = new File(storagePath, arcFileName);
         if (!tempLocation.renameTo(storageFile)) {
             throw new IOFailure("Could not move '" + tempLocation.getPath() + "' to '" + storageFile.getPath() + "'");
         }
         // Update the filelist for the directory with this new file.
-        updateFileList(archivedir);
+        final File canonicalFile;
+        try {
+            canonicalFile = basedir.getCanonicalFile();
+        } catch (IOException e) {
+            throw new IOFailure("Could not find canonical file for " + basedir.getAbsolutePath(), e);
+        }
+        final List<String> fileList = archivedFiles.get(canonicalFile);
+        if (fileList == null) {
+            throw new UnknownID("The directory " + basedir.getAbsolutePath() + " was not found in the map of known directories and files.");
+        }
+        fileList.add(arcFileName);
+        archiveTime.put(canonicalFile, storagePath.lastModified());
         return storageFile;
     }
 
@@ -333,6 +349,12 @@ public final class BitarchiveAdmin {
      */
     private boolean checkArchiveDir(File file) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(file, "file");
+
+        if (readOnlyAllowed) {
+            log.info("checkArchiveDir skipped for Directory '{}'. Assuming directory is ok due to readOnlyAllowed-Setting set to true", file);
+            return true;
+        }
+
         if (!file.exists()) {
             log.warn("Directory '{}' does not exist", file);
             return false;
@@ -517,7 +539,7 @@ public final class BitarchiveAdmin {
         ApplicationUtils.dirMustExist(atticdir);
         return new File(atticdir, arcFileName);
     }
-    
+
     public boolean isReadonlyMode(){
     	return readOnlyMode;
     }

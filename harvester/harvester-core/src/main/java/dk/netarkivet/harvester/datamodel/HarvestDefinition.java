@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -392,5 +392,12 @@ public abstract class HarvestDefinition extends ExtendableEntity implements Name
     protected int getExtendedFieldType() {
         return ExtendedFieldTypes.HARVESTDEFINITION;
     }
-
+    
+    /**
+     * Change the name of the Harvestdefinition to newName. 
+     * @param newName The new name of the Harvestdefinition
+     */
+    public void setName(String newName) {
+    	this.harvestDefName = newName;
+    }
 }

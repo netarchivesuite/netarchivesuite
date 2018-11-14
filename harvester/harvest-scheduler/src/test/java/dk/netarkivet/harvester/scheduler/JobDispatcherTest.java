@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -44,6 +44,7 @@ import org.dom4j.tree.DefaultDocument;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.internal.verification.Times;
 
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -94,8 +95,11 @@ public class JobDispatcherTest {
 
         verify(jobMock).setStatus(JobStatus.SUBMITTED);
         verify(jobMock).setSubmittedDate(any(Date.class));
-        verify(jobDAO).update(jobMock);
+
+        verify(jobDAO, new Times(1)).update(jobMock);
+        
         verify(jmsConnection).send(crawlMessageCaptor.capture());
+        
         assertTrue(jobMock == crawlMessageCaptor.getValue().getJob());
         assertEquals(HarvesterChannels.getHarvestJobChannelId(SELECTIVE_HARVEST_CHANNEL), crawlMessageCaptor.getValue()
                 .getTo());
@@ -182,7 +186,7 @@ public class JobDispatcherTest {
     public void testNullJob() {
         try {
             jobDispatcher.doOneCrawl((Job) null, "test", "test", "test", SELECTIVE_HARVEST_CHANNEL, "unittesters",
-                    new ArrayList<>());
+            		new ArrayList<MetadataEntry>());
             fail("Should throw ArgumentNotValid on NULL job");
         } catch (ArgumentNotValid e) {
             // expected case

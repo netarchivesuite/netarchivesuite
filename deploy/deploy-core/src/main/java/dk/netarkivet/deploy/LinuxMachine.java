@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - deploy
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -59,14 +59,16 @@ public class LinuxMachine extends Machine {
      * @param arcdbFile The name of the archive file.
      * @param resetDir Whether the temporary directory should be reset.
      * @param externalJarFolder The folder containing the external jar library files.
+     * @param logoFile user specific logo png file.
+     * @param menulogoFile user specific menulogo png file.
      * @param deployConfiguration The general deployment configuration.
      */
     public LinuxMachine(Element subTreeRoot, XmlStructure parentSettings, Parameters param,
             String netarchiveSuiteSource, File slf4JConfig, File securityPolicy, File dbFile,
-            File arcdbFile, boolean resetDir, File externalJarFolder,
+            File arcdbFile, boolean resetDir, File externalJarFolder, File logoFile, File menulogoFile,
             DeployConfiguration deployConfiguration) {
         super(subTreeRoot, parentSettings, param, netarchiveSuiteSource, slf4JConfig, securityPolicy, dbFile,
-                arcdbFile, resetDir, externalJarFolder);
+                arcdbFile, resetDir, externalJarFolder, logoFile, menulogoFile);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_LINUX;
@@ -80,10 +82,10 @@ public class LinuxMachine extends Machine {
             if (app.isBundledHarvester()) {
                 bundlesArr = app.getSettingsValues(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
                 if ((bundlesArr == null || bundlesArr.length == 0)
-                        && deployConfiguration.getDefaultBundlerZip().isPresent()) {
-                    bundlesArr = new String[] { deployConfiguration.getDefaultBundlerZip().get().getAbsolutePath() };
-                } else if ((bundlesArr == null || bundlesArr.length == 0)
-                        && !deployConfiguration.getDefaultBundlerZip().isPresent()) {
+                        && deployConfiguration.getDefaultBundlerZip() != null) {
+                    bundlesArr = new String[] { deployConfiguration.getDefaultBundlerZip().getAbsolutePath() };
+                } else if ((bundlesArr == null || bundlesArr.length == 0 || bundlesArr[0].length()==0)
+                        && deployConfiguration.getDefaultBundlerZip() == null) {
                     throw new IllegalArgumentException("A Heritrix bundler needs to be defined for H3 controllers, "
                             + "either directly in the deploy configuration or from the command line with the -B option.");
                 }
@@ -121,7 +123,7 @@ public class LinuxMachine extends Machine {
                     Element heritrixBundleElement =
                             appSettings.getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
                     if (heritrixBundleElement == null) {
-                        appSettings.getSubChild(Constants.SETTINGS_HERITRIX_BRANCH).addElement("bundle");
+                        appSettings.getSubChild(Constants.SETTINGS_HERITRIX3_BRANCH).addElement("bundle");
                         heritrixBundleElement =
                                 appSettings.getSubChild(Constants.SETTINGS_HARVEST_HERITRIX3_BUNDLE_LEAF);
                         heritrixBundleElement.setText((String)bundles.values().toArray()[0]);
@@ -155,6 +157,8 @@ public class LinuxMachine extends Machine {
             "echo unzipping ${netarchiveSuiteFileName} at:${name}",
             // ssh dev@kb-test-adm-001.kb.dk unzip -q -o /home/dev/null.zip -d /home/dev/TEST
             "ssh ${machineUserLogin} \"unzip -q -o ${installDirValue}/${netarchiveSuiteFileName} -d ${installDirValue}/${environmentName}\"",
+            // update Logos.
+            "${osUpdateLogos}",
             // create other directories.
             "${osInstallScriptCreateDir}",
             // echo preparing for copying of settings and scripts
@@ -228,6 +232,7 @@ public class LinuxMachine extends Machine {
         env.put("machineUserLogin", machineUserLogin());
         env.put("installDirValue", machineParameters.getInstallDirValue());
         env.put("environmentName", getEnvironmentName());
+        env.put("osUpdateLogos", osUpdateLogos());
         env.put("osInstallScriptCreateDir", osInstallScriptCreateDir());
         env.put("osInstallExternalJarFiles", osInstallExternalJarFiles());
         env.put("osInstallDatabase", osInstallDatabase());
@@ -543,6 +548,9 @@ public class LinuxMachine extends Machine {
     protected void createApplicationStartScripts(File directory) throws IOFailure {
         // go through all applications and create their start script
         for (Application app : applications) {
+            if (app.getTotalName().contains("GUI")) {
+                 createHarvestDatabaseUpdateScript(directory, true);
+            }
             File appStartScript = new File(directory, Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification()
                     + scriptExtension);
             try {
@@ -1600,10 +1608,10 @@ public class LinuxMachine extends Machine {
     }
 
     @Override
-    protected void createHarvestDatabaseUpdateScript(File dir) {
+    protected void createHarvestDatabaseUpdateScript(File dir, boolean forceCreate) {
         // Ignore if no harvest database directory has been defined or this isn't a harvest server app.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
-        if (dbDir.isEmpty()) {
+        if (dbDir.isEmpty() && !forceCreate) {
             return;
         }
 
@@ -1632,7 +1640,7 @@ public class LinuxMachine extends Machine {
                 // < /dev/null >> start_external_harvest_database.log 2>&1 &
 
                 updateDBPrint.print(ScriptConstants.EXPORT_CLASSPATH);
-                updateDBPrint.print(getHarvestServerClasspath() + ScriptConstants.NEWLINE);
+                updateDBPrint.print(getHarvestServerClasspath() + getHarvesterCoreClasspath() + ScriptConstants.NEWLINE);
 
                 updateDBPrint.print(ScriptConstants.JAVA + Constants.SPACE + "-" + ScriptConstants.OPTION_SETTINGS
                         + getConfDirPath() + updateHarvestDBSettingsFile.getName() + Constants.SPACE);
@@ -1668,12 +1676,40 @@ public class LinuxMachine extends Machine {
 
     private String getHarvestServerClasspath() {
         return getDefaultMachineClasspath() +
-                getInstallDirPath() + Constants.SLASH + "netarchivesuite-harvest-scheduler.jar" + Constants.COLON;
+                getInstallDirPath() + Constants.SLASH + "lib/netarchivesuite-harvest-scheduler.jar" + Constants.COLON;
     }
+
+    private String getHarvesterCoreClasspath() {
+        return getDefaultMachineClasspath() +
+                getInstallDirPath() + Constants.SLASH + "lib/netarchivesuite-harvester-core.jar" + Constants.COLON;
+    }
+
 
     @Override
     protected String getLibDirPath() {
         return getInstallDirPath() + Constants.LIB_DIR_LINUX;
     }
+
+	@Override
+	protected String osUpdateLogos() {
+		if (logoFile == null && menulogoFile == null) {
+			return "";
+		}
+		
+		StringBuilder res = new StringBuilder();
+		
+        res.append(ScriptConstants.ECHO_CHANGING_LOGOS);
+        res.append(Constants.NEWLINE);
+
+        if (logoFile != null) {
+        	res = updateLogofileInWarFiles(res, logoFile, Constants.DEFAULT_LOGO_FILENAME);        	
+        }
+        
+        if (menulogoFile != null) {
+        	res = updateLogofileInWarFiles(res, menulogoFile, Constants.DEFAULT_MENULOGO_FILENAME);        	
+        }
+        
+        return res.toString();
+	}
 
 }

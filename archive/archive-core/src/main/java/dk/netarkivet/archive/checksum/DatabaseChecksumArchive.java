@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -355,6 +355,30 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
             }
         }
     }
+    
+    public synchronized void upload(String checksum, String filename) {
+    	ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
+    	ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+
+    	if (hasEntry(filename)) {
+    		// fetch already stored checksum
+    		String oldChecksum = getChecksum(filename);
+    		if (checksum.equals(oldChecksum)) {
+    			log.warn(
+    					"Cannot upload archivefile '{}', " + "it is already archived with the same checksum: '{}'",
+    					filename, oldChecksum);
+    		} else {
+    			throw new IllegalState("Cannot upload archivefile '" + filename
+    					+ "', it is already archived with different checksum." + " Archive checksum: '"
+    					+ oldChecksum + "' and the uploaded file has: '" + checksum + "'.");
+    		}
+    		// It is considered a success that it already is within the archive,
+    		// thus do not throw an exception.
+    		return;
+    	} else {
+    		put(filename, checksum);
+    	}
+    }
 
     /**
      * Update the database with a new filename and its checksum.
@@ -394,7 +418,9 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         File tempFile = null;
         try {
             tempFile = File.createTempFile("allFilenamesAndChecksums", "tmp", FileUtils.getTempDir());
+            log.debug("Creating temporary file for checksums: " + tempFile.getAbsolutePath());
             dumpDatabaseToFile(tempFile, false);
+            log.debug("Dumped checksums to temporary file: " + tempFile.getAbsolutePath());
         } catch (IOException e) {
             throw new IOFailure(e.toString());
         }

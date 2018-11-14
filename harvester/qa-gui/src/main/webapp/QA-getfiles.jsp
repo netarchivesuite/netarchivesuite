@@ -5,8 +5,8 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -41,7 +41,12 @@ jobid - The id of the job to show files for.
                  dk.netarkivet.viewerproxy.GetDataResolver,
                  dk.netarkivet.viewerproxy.webinterface.Reporting"
          pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%>
+<%@ page import="dk.netarkivet.harvester.HarvesterSettings" %>
+<%@ page import="dk.netarkivet.common.utils.Settings" %>
+<%@ page import="java.util.stream.Collectors" %>
+<%@ page import="java.util.ArrayList" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.viewerproxy.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N = new I18n(
@@ -62,14 +67,20 @@ jobid - The id of the job to show files for.
     }
     HTMLUtils.generateHeader(pageContext);
 %>
-    <h3><fmt:message key="pagetitle;files.for.job.0">
-        <fmt:param value="<%=jobid%>"/>
-    </fmt:message></h3>
-    <p><fmt:message key="helptext;get.job.qa.information.with.viewerproxy"/></p>
-    <%
+<h3><fmt:message key="pagetitle;files.for.job.0">
+    <fmt:param value="<%=jobid%>"/>
+</fmt:message></h3>
+<p><fmt:message key="helptext;get.job.qa.information.with.viewerproxy"/></p>
+<%
+    final boolean allowDownloads = Settings.getBoolean(HarvesterSettings.ALLOW_FILE_DOWNLOADS);
+    if (!allowDownloads) {
+%><p><fmt:message key="file.download.disabled"/></p><%
+    }
     for (String filename : lines) {
-        %><a href="http://<%=CommandResolver.VIEWERPROXY_COMMAND_NAME%><%=GetDataResolver.GET_FILE_COMMAND%>?<%=GetDataResolver.FILE_NAME_PARAMETER%>=<%=filename%>"><%=filename%></a><br>
-    <%
+        if (allowDownloads || filename.contains("metadata")) {
+%><a href="http://<%=CommandResolver.VIEWERPROXY_COMMAND_NAME%><%=GetDataResolver.GET_FILE_COMMAND%>?<%=GetDataResolver.FILE_NAME_PARAMETER%>=<%=filename%>"><%=filename%></a><br>
+<%
+        }
     }
     HTMLUtils.generateFooter(out);
 %>

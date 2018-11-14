@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -57,6 +58,7 @@ import org.junit.Test;
 
 import dk.netarkivet.common.utils.AllDocsCollector;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.StringUtils;
 import is.hi.bok.deduplicator.DigestIndexer;
 
 /**
@@ -81,19 +83,19 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
 
         // "job" #4
         origins.put("http://www.kb.dk/bevarbogen/images/menu_03.gif",
-                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,92248220");
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,92248220,20050506114818000");
         origins.put("http://www.kb.dk/bevarbogen/images/menu_06.gif",
-                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95056820");
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95056820,20050506114822000");
         origins.put("http://www.kb.dk/bevarbogen/images/menu_07.gif",
-                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95468220");
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95468220,20050506114816000");
         origins.put("http://www.kb.dk/bevarbogen/images/menutop.gif",
-                "54-8-20050620183552-00016-kb-prod-har-002.kb.dk.arc,42");
+                "54-8-20050620183552-00016-kb-prod-har-002.kb.dk.arc,42,20050506114820000");
         origins.put("http://www.kb.dk/bevarbogen/script.js", "check-arc,42");
 
         // "job" #1
-        origins.put("http://www.kb.dk/clear.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,55983420");
-        origins.put("http://www.kb.dk/dither.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,53985420");
-        origins.put("http://www.kb.dk/dither_blaa.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,58593420");
+        origins.put("http://www.kb.dk/clear.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,55983420,20050506114732000");
+        origins.put("http://www.kb.dk/dither.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,53985420,20050506114736000");
+        origins.put("http://www.kb.dk/dither_blaa.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,58593420,20050506114734000");
 
         Map<Long, File> files = new HashMap<Long, File>();
         files.put(1L, TestInfo.CRAWL_LOG_1);
@@ -158,7 +160,7 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
 
     private void verifySearchResult(Map<String, String> origins, IndexSearcher index) throws IOException {
         Set<String> urls = new HashSet<String>(origins.keySet());
-
+        List<String> errors = new ArrayList<String>();
         for (String urlValue : urls) {
             BytesRef uriRef = new BytesRef(urlValue);
             Query q = new ConstantScoreQuery(new TermRangeFilter(DigestIndexer.FIELD_URL, uriRef, uriRef, true, true));
@@ -170,7 +172,10 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
                 Document doc = index.doc(docID);
                 String url = doc.get("url");
                 String origin = doc.get("origin");
-                assertEquals("Should have correct origin for url " + url, origins.get(url), origin);
+                if (!origins.get(url).equals(origin)) {
+                	errors.add("Should have correct origin for url '" + url + "' but was: '" + origin + "'");
+                }
+                
                 // Ensure that each occurs only once.
                 String removedValue = origins.remove(url);
                 if (removedValue == null) {
@@ -179,6 +184,9 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
                     // System.out.println("'" + url + "' was found in origins map");
                 }
             }
+        }
+        if (errors.size() > 0) {
+        	fail(errors.size() + " unexpected origins found: " + StringUtils.conjoin(",", errors)); 
         }
     }
 

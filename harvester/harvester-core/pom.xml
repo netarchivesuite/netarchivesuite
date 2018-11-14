@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>harvester</artifactId>
-    <version>5.0-RC3-SNAPSHOT</version>
+    <version>5.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>harvester-core</artifactId>
@@ -28,9 +28,8 @@
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>heritrix1-frontier</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.netarchivesuite</groupId>
+      <artifactId>heritrix3-wrapper</artifactId>
     </dependency>
 
     <!-- not in Maven Central -->
@@ -64,56 +63,48 @@
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-      <version>1.1</version>
     </dependency>
 
     <dependency>
       <groupId>commons-pool</groupId>
       <artifactId>commons-pool</artifactId>
-      <version>1.6</version>
     </dependency>
 
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>2.3</version>
     </dependency>
 
     <dependency>
       <groupId>jfree</groupId>
       <artifactId>jfreechart</artifactId>
-      <version>1.0.13</version>
     </dependency>
 
     <dependency>
       <groupId>org.gnu.inet</groupId>
       <artifactId>libidn</artifactId>
-      <version><!-- FIXME: 0.5.9 -->0.6.5</version>
+      <version>${libidn.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.hp.gagawa</groupId>
       <artifactId>gagawa</artifactId>
-      <version>1.0.1</version>
     </dependency>
 
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>17.0</version>
     </dependency>
 
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
-      <version>1</version>
     </dependency>
 
     <!-- Move to Heritrix specific module when this is ready. -->
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.2</version>
     </dependency>
 
     <!-- HarvestJobManager -->
@@ -121,13 +112,32 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-c3p0</artifactId>
-      <version>4.3.6.Final</version>
     </dependency>
 
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>9.2-1003-jdbc4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.antiaction</groupId>
+      <artifactId>raptor-dbl</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.antiaction</groupId>
+      <artifactId>common-servlet</artifactId>
+      <version>${common-html.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.antiaction</groupId>
+      <artifactId>common-html</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.antiaction</groupId>
+      <artifactId>common-template-engine</artifactId>
     </dependency>
 
     <dependency>
@@ -135,9 +145,32 @@
       <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/../../deploy/deploy-core/scripts/postgresql/migration/</directory>
+        <targetPath>sql-migration/postgresql/</targetPath>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/../../deploy/deploy-core/scripts/mysql/migration/</directory>
+        <targetPath>sql-migration/mysql/</targetPath>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/../../deploy/deploy-core/scripts/derby/migration/</directory>
+        <targetPath>sql-migration/derby/</targetPath>
+      </resource>
+    </resources>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -149,6 +182,9 @@
               <addClasspath>true</addClasspath>
               <classpathPrefix />
             </manifest>
+            <manifestEntries>
+	      <class-path>heritrix3-monitor-${project.version}.jar</class-path>
+            </manifestEntries>
           </archive>
         </configuration>
         <!-- test-jar containing test utils needed by harvester-test module -->
@@ -160,6 +196,24 @@
             <configuration>
               <forceCreation>true</forceCreation>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <configuration>
+          <destFile>${sonar.jacoco.reportPath}</destFile>
+          <append>true</append>
+        </configuration>
+        <executions>
+          <execution>
+            <id>agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>

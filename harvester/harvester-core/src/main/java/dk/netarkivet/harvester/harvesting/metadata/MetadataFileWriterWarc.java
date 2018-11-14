@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -33,10 +33,12 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
+import org.archive.util.Base32;
 import org.jwat.common.ANVLRecord;
 import org.jwat.common.ContentType;
 import org.jwat.common.Uri;
 import org.jwat.warc.WarcConstants;
+import org.jwat.warc.WarcDigest;
 import org.jwat.warc.WarcFileNaming;
 import org.jwat.warc.WarcFileNamingSingleFile;
 import org.jwat.warc.WarcFileWriter;
@@ -73,7 +75,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     public static MetadataFileWriter createWriter(File metadataWarcFile) {
         MetadataFileWriterWarc mtfw = new MetadataFileWriterWarc();
     	WarcFileNaming naming = new WarcFileNamingSingleFile(metadataWarcFile);
-    	WarcFileWriterConfig config = new WarcFileWriterConfig(metadataWarcFile.getParentFile(), false, Long.MAX_VALUE, true);
+    	WarcFileWriterConfig config = new WarcFileWriterConfig(metadataWarcFile.getParentFile(), compressRecords(), Long.MAX_VALUE, true);
         mtfw.writer = WarcFileWriter.getWarcWriterInstance(naming, config);
         mtfw.open();
         return mtfw;
@@ -122,12 +124,13 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         try {
             recordId = new Uri("urn:uuid:" + UUID.randomUUID().toString());
         } catch (URISyntaxException e) {
-            throw new IllegalState("Epic fail creating URI from UUID!");
+            throw new IllegalState("Epic fail creating URI from UUID!", e);
         }
         warcInfoUID = recordId;
         try {
             byte[] payloadAsBytes = payloadToInfoRecord.getUTF8Bytes();
-            String blockDigest = ChecksumCalculator.calculateSha1(new ByteArrayInputStream(payloadAsBytes));
+            byte[] blockDigestBytes = ChecksumCalculator.digestInputStream(new ByteArrayInputStream(payloadAsBytes), "SHA1");
+            WarcDigest blockDigest = WarcDigest.createWarcDigest("SHA1", blockDigestBytes, "base32", Base32.encode(blockDigestBytes));
             WarcRecord record = WarcRecord.createRecord(writer.writer);
             WarcHeader header = record.header;
             header.warcTypeIdx = WarcConstants.RT_IDX_WARCINFO;
@@ -136,7 +139,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             header.addHeader(WarcConstants.FN_WARC_FILENAME, filename);
             header.addHeader(WarcConstants.FN_CONTENT_TYPE, ContentType.parseContentType(WarcConstants.CT_APP_WARC_FIELDS), null);
             header.addHeader(WarcConstants.FN_CONTENT_LENGTH, new Long(payloadAsBytes.length), null);
-            header.addHeader(WarcConstants.FN_WARC_BLOCK_DIGEST, blockDigest);
+            header.addHeader(WarcConstants.FN_WARC_BLOCK_DIGEST, blockDigest, null);
             writer.writer.writeHeader(record);
             ByteArrayInputStream bin = new ByteArrayInputStream(payloadAsBytes);
             writer.writer.streamPayload(bin);
@@ -160,12 +163,13 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             throw new IllegalState("An WarcInfo record has not been inserted yet");
         }
         log.info("{} {}", fileToArchive, fileToArchive.length());
-        String blockDigest = ChecksumCalculator.calculateSha1(fileToArchive);
+        byte[] blockDigestBytes = ChecksumCalculator.digestFile(fileToArchive, "SHA1");
+        WarcDigest blockDigest = WarcDigest.createWarcDigest("SHA1", blockDigestBytes, "base32", Base32.encode(blockDigestBytes));
         Uri recordId;
         try {
             recordId = new Uri("urn:uuid:" + UUID.randomUUID().toString());
         } catch (URISyntaxException e) {
-            throw new IllegalState("Epic fail creating URI from UUID!");
+            throw new IllegalState("Epic fail creating URI from UUID!", e);
         }
         InputStream in = null;
         try {
@@ -177,7 +181,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
             header.addHeader(WarcConstants.FN_WARC_WARCINFO_ID, warcInfoUID, null);
             header.addHeader(WarcConstants.FN_WARC_IP_ADDRESS, SystemUtils.getLocalIP());
             header.addHeader(WarcConstants.FN_WARC_TARGET_URI, URL);
-            header.addHeader(WarcConstants.FN_WARC_BLOCK_DIGEST, blockDigest);
+            header.addHeader(WarcConstants.FN_WARC_BLOCK_DIGEST, blockDigest, null);
             header.addHeader(WarcConstants.FN_CONTENT_TYPE, ContentType.parseContentType(mimetype), null);
             header.addHeader(WarcConstants.FN_CONTENT_LENGTH, new Long(fileToArchive.length()), null);
             writer.writer.writeHeader(record);
@@ -198,12 +202,13 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
     public void write(String uri, String contentType, String hostIP, long fetchBeginTimeStamp, byte[] payload)
             throws java.io.IOException {    	
         ByteArrayInputStream in = new ByteArrayInputStream(payload);
-        String blockDigest = ChecksumCalculator.calculateSha1(in);
+        byte[] blockDigestBytes = ChecksumCalculator.digestInputStream(in, "SHA1");
+        WarcDigest blockDigest = WarcDigest.createWarcDigest("SHA1", blockDigestBytes, "base32", Base32.encode(blockDigestBytes));
         Uri recordId;
         try {
             recordId = new Uri("urn:uuid:" + UUID.randomUUID().toString());
         } catch (URISyntaxException e) {
-            throw new IllegalState("Epic fail creating URI from UUID!");
+            throw new IllegalState("Epic fail creating URI from UUID!", e);
         }
         WarcRecord record = WarcRecord.createRecord(writer.writer);
         WarcHeader header = record.header;
@@ -213,7 +218,7 @@ public class MetadataFileWriterWarc extends MetadataFileWriter {
         header.addHeader(WarcConstants.FN_WARC_WARCINFO_ID, warcInfoUID, null);
         header.addHeader(WarcConstants.FN_WARC_IP_ADDRESS, hostIP);
         header.addHeader(WarcConstants.FN_WARC_TARGET_URI, uri);
-        header.addHeader(WarcConstants.FN_WARC_BLOCK_DIGEST, blockDigest);
+        header.addHeader(WarcConstants.FN_WARC_BLOCK_DIGEST, blockDigest, null);
         header.addHeader(WarcConstants.FN_CONTENT_TYPE, ContentType.parseContentType(contentType), null);
         header.addHeader(WarcConstants.FN_CONTENT_LENGTH, new Long(payload.length), null);
         writer.writer.writeHeader(record);

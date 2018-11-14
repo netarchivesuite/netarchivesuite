@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -46,6 +46,7 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -62,11 +63,19 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataEntry;
  * This class responds to JMS doOneCrawl messages from the HarvestScheduler and launches a Heritrix crawl with the
  * received job description. The generated ARC files are uploaded to the bitarchives once a harvest job has been
  * completed.
+ * 
+ * Initially, the HarvestControllerServer registers its channel with the Scheduler by sending a HarvesterRegistrationRequest and waits for a 
+ * positive HarvesterRegistrationResponse that its channel is recognized. 
+ * If not recognized by the Scheduler, the HarvestControllerServer will send a notification about this, 
+ * and then close down the application.
  * <p>
  * During its operation CrawlStatus messages are sent to the HarvestSchedulerMonitorServer. When starting the actual
  * harvesting a message is sent with status 'STARTED'. When the harvesting has finished a message is sent with either
  * status 'DONE' or 'FAILED'. Either a 'DONE' or 'FAILED' message with result should ALWAYS be sent if at all possible,
  * but only ever one such message per job.
+ * While the harvestControllerServer is waiting for the harvesting to finish, it sends HarvesterReadyMessages to the scheduler.
+ * The interval between each HarvesterReadyMessage being sent is defined by the setting 'settings.harvester.harvesting.sendReadyDelay'.    
+ * 
  * <p>
  * It is necessary to be able to run the Heritrix harvester on several machines and several processes on each machine.
  * Each instance of Heritrix is started and monitored by a HarvestControllerServer.
@@ -110,7 +119,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     private final PostProcessing postProcessing;
 
     /** The CHANNEL of jobs processed by this instance. */
-    private static final String CHANNEL = Settings.get(Heritrix3Settings.HARVEST_CONTROLLER_CHANNEL);
+    private static final String CHANNEL = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_CHANNEL);
 
     /** Jobs are fetched from this queue. */
     private ChannelID jobChannel;
@@ -149,15 +158,18 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
 
         // Make sure serverdir (where active crawl-dirs live) and oldJobsDir
         // (where old crawl dirs are stored) exist.
-        serverDir = new File(Settings.get(Heritrix3Settings.HARVEST_CONTROLLER_SERVERDIR));
+        serverDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
         ApplicationUtils.dirMustExist(serverDir);
         log.info("Serverdir: '{}'", serverDir);
-        minSpaceRequired = Settings.getLong(Heritrix3Settings.HARVEST_SERVERDIR_MINSPACE);
+        minSpaceRequired = Settings.getLong(HarvesterSettings.HARVEST_SERVERDIR_MINSPACE);
         if (minSpaceRequired <= 0L) {
             log.warn("Wrong setting of minSpaceLeft read from Settings: {}", minSpaceRequired);
             throw new ArgumentNotValid("Wrong setting of minSpaceLeft read from Settings: " + minSpaceRequired);
         }
         log.info("Harvesting requires at least {} bytes free.", minSpaceRequired);
+        
+        // If shutdown.txt found in serverdir, just close down the HarvestControllerApplication at once.
+        shutdownNowOrContinue();
 
         // Get JMS-connection
         // Channel THIS_CLIENT is only used for replies to store messages so
@@ -171,6 +183,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         log.debug("Obtained JMS connection.");
 
         status = new CrawlStatus();
+        log.info("SEND_READY_DELAY used by HarvestControllerServer is {}", status.getSendReadyDelay());
 
         // If any unprocessed jobs are left on the server, process them now
         postProcessing.processOldJobs();
@@ -216,15 +229,18 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         if (status.isChannelValid() || !CHANNEL.equals(channelName)) {
             // Controller has already started
             jmsConnection.resend(msg, msg.getTo());
-            if (log.isDebugEnabled()) {
-                log.debug("Resending harvest channel validity message for channel '{}'", channelName);
+            if (log.isTraceEnabled()) {
+                log.trace("Resending harvest channel validity message for channel '{}'", channelName);
             }
             return;
         }
 
         if (!msg.isValid()) {
-            log.error("Received message stating that channel '{}' is invalid. Will stop. "
-            		+ "Probable cause: the channel is not one of the known channels stored in the channels table", channelName);
+        	String errMsg = "Received message stating that channel '" +  channelName + "' is invalid. Will stop. "
+            		+ "Probable cause: the channel is not one of the known channels stored in the channels table"; 
+            log.error(errMsg);
+            // Send a notification about this, ASAP
+            NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR);
             close();
             return;
         }
@@ -280,6 +296,24 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
     private void removeListener() {
         log.debug("Removing listener on CHANNEL '{}'", jobChannel);
         jmsConnection.removeListener(jobChannel, this);
+    }
+    
+    /**
+     * Does the operator want us to shutdown now.
+     * TODO In a later implementation, the harvestControllerServer could
+     * be notified over JMX. Now we just look for a "shutdown.txt" file in the HARVEST_CONTROLLER_SERVERDIR 
+     * log that we're shutting down, send a notification about this, and then shutdown.
+     */
+    private void shutdownNowOrContinue() {
+        File shutdownFile = new File(serverDir, "shutdown.txt");
+        
+        if (shutdownFile.exists()) {
+        	String msg = "Found shutdown-file in serverdir '" +  serverDir.getAbsolutePath() + "'. Shutting down the application"; 
+            log.info(msg);
+            NotificationsFactory.getInstance().notify(msg, NotificationType.INFO);
+            instance.cleanup();
+            System.exit(0);
+        }
     }
 
     /**
@@ -463,22 +497,9 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
                 log.info("Ending crawl of job : {}", job.getJobID());
                 // process serverdir for files not yet uploaded.
                 postProcessing.processOldJobs();
-                shutdownNowOrContinue();
+                instance.shutdownNowOrContinue();
                 startAcceptingJobs();
                 beginListeningIfSpaceAvailable();
-            }
-        }
-
-        /**
-         * Does the operator want us to shutdown now. TODO In a later implementation, the harvestControllerServer could
-         * be notified over JMX. Now we just look for a "shutdown.txt" file in the HARVEST_CONTROLLER_SERVERDIR
-         */
-        private void shutdownNowOrContinue() {
-            File shutdownFile = new File(serverDir, "shutdown.txt");
-            if (shutdownFile.exists()) {
-                log.info("Found shutdown-file in serverdir - " + "shutting down the application");
-                instance.cleanup();
-                System.exit(0);
             }
         }
     }
@@ -497,15 +518,15 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         /** Handles the periodic sending of status messages. */
         private PeriodicTaskExecutor statusTransmitter;
 
-        private final int SEND_READY_DELAY = Settings.getInt(Heritrix3Settings.SEND_READY_DELAY);
+        private final int SEND_READY_DELAY = Settings.getInt(HarvesterSettings.SEND_READY_DELAY);
 
         /**
-         * Starts the sending of status messages.
+         * Starts the sending of status messages. Interval defined by HarvesterSettings.SEND_READY_DELAY .
          */
         public void startSending() {
             this.channelIsValid = true;
             statusTransmitter = new PeriodicTaskExecutor("HarvesterStatus", this, 0,
-            		Settings.getInt(Heritrix3Settings.SEND_READY_INTERVAL));
+            		getSendReadyDelay());
         }
 
         /**
@@ -527,7 +548,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         }
 
         /**
-         * Use for changing the running state.
+         * Used for changing the running state in methods startAcceptingJobs and stopAcceptingJobs 
          * @param running The new status
          */
         public void setRunning(boolean running) {
@@ -544,7 +565,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
         @Override
         public void run() {
             try {
-                Thread.sleep(SEND_READY_DELAY);
+                Thread.sleep(getSendReadyDelay());
             } catch (Exception e) {
                 log.error("Unable to sleep", e);
             }
@@ -554,6 +575,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
             }
         }
 
+        public int getSendReadyDelay() {
+        	return SEND_READY_DELAY;
+        }
+        
     }
 
 }

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ public abstract class AbstractHarvestReport implements HarvestReport{
     /**
      * Constructor from DomainStatsReports.
      *
-     * @param files the result of parsing the crawl.log for domain statistics
+     * @param dsr the result of parsing the crawl.log for domain statistics
      */
     public AbstractHarvestReport(DomainStatsReport dsr) {
         ArgumentNotValid.checkNotNull(dsr, "DomainStatsReport dsr");

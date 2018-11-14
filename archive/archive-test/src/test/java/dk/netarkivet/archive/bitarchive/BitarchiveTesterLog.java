@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@
  */
 package dk.netarkivet.archive.bitarchive;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -39,7 +40,8 @@ import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.testutils.LogbackRecorder;
 
 /**
- * Unit test for Bitarchive API The logging of bitarchive opertions is tested
+ * Unit test for Bitarchive API.
+ * The logging of bitarchive operations is tested
  */
 @SuppressWarnings({"serial"})
 public class BitarchiveTesterLog extends BitarchiveTestCase {
@@ -87,7 +89,13 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
     public void testLogUpload() throws IOException {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         lr.assertLogNotContains("Log does not contain file before uploading.", ARC_FILE_NAME1);
-
+        
+        // Ensure enough free space
+        BitarchiveAdmin admin = BitarchiveAdmin.getInstance();
+        if (!admin.hasEnoughSpace()) {
+        	System.err.println("Skipping test. Not enough space on disk to perform test");
+        	return;
+        }
         archive.upload(new TestRemoteFile(ARC_FILE, false, false, false), ARC_FILE.getName());
 
         lr.assertLogContains("Log contains file after uploading.", ARC_FILE_NAME1);

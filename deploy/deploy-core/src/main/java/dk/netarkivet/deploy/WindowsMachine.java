@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - deploy
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -54,9 +54,9 @@ public class WindowsMachine extends Machine {
      */
     public WindowsMachine(Element root, XmlStructure parentSettings, Parameters param, String netarchiveSuiteSource,
             File slf4JConfig, File securityPolicy, File dbFile, File arcdbFile, boolean resetDir,
-            File externalJarFolder) {
+            File externalJarFolder, File logoFile, File menulogoFile) {
         super(root, parentSettings, param, netarchiveSuiteSource, slf4JConfig, securityPolicy, dbFile,
-                arcdbFile, resetDir, externalJarFolder);
+                arcdbFile, resetDir, externalJarFolder, logoFile, menulogoFile);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_WINDOWS;
@@ -640,7 +640,7 @@ public class WindowsMachine extends Machine {
                 "Else",
                 "  java = javahome & \"\\bin\\java\"",
                 "End If",
-                "Set oExec = WshShell.exec(java & \" ${machineparameters} -classpath \"\"${classpath}\"\""
+                "Set oExec = WshShell.exec(\"\"\"java\"\"\" & \" ${machineparameters} -classpath \"\"${classpath}\"\""
                         + " -Ddk.netarkivet.settings.file=\"\"${confdirpath}settings_${id}.xml\"\""
                         + "${slf4jlogger}" + "${securityManagement}" + " ${appname}" + "\")",
                 "Set fso= CreateObject(\"Scripting.FileSystemObject\")",
@@ -1299,7 +1299,7 @@ public class WindowsMachine extends Machine {
     }
 
     @Override
-    protected void createHarvestDatabaseUpdateScript(File machineDirectory) {
+    protected void createHarvestDatabaseUpdateScript(File machineDirectory, boolean forceCreate) {
         // Ignore if no harvest database directory has been defined.
         String dbDir = machineParameters.getHarvestDatabaseDirValue();
         if (dbDir.isEmpty()) {
@@ -1310,4 +1310,9 @@ public class WindowsMachine extends Machine {
                 + "machine. Please fix your deploy configuration.");
     }
 
+	@Override
+	protected String osUpdateLogos() {
+		// TODO not yer implemented
+		return "";
+	}
 }

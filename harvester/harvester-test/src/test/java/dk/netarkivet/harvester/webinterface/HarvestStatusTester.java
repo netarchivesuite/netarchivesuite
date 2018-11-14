@@ -1,8 +1,8 @@
 /*
- * #%L
+  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +48,15 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.SlowTest;
-import dk.netarkivet.harvester.datamodel.*;
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
+import dk.netarkivet.harvester.datamodel.HarvestChannel;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobDAOTester;
+import dk.netarkivet.harvester.datamodel.JobDBDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.JobStatusInfo;
+import dk.netarkivet.harvester.datamodel.TestInfo;
 
 /**
  * Test of Harvest Status utility method for resubmitting jobs.
@@ -184,8 +193,8 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         Map<String, String[]> params = new HashMap<String, String[]>();
         params.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), new String[] {"ASC"});
-        List<JobStatusInfo> l = HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
-        assertEquals("Number of jobs should be 0", 0, l.size());
+        List<JobStatusInfo> list = HarvestStatus.getjobStatusList(getTestQuery(params)).getJobStatusInfo();
+        assertEquals("Number of jobs should be 0", 0, list.size());
 
         Set<Integer> testStatuscodeSet = new HashSet<Integer>();
         testStatuscodeSet.add(0);
@@ -207,6 +216,17 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         } catch (ArgumentNotValid e) {
             // Expected
         }
+        // Test non failing result
+        // add default job to test-database
+        Job job = JobDAOTester.createDefaultJobInDB(0); // added job with harvestid=TestInfo.HARVESTID (5678L);
+        //System.out.println(job);
+        
+        HarvestStatusQuery hsq = new HarvestStatusQuery(TestInfo.HARVESTID, 0); 
+        HarvestStatus hs = JobDAO.getInstance().getStatusInfo(hsq);
+        List<JobStatusInfo> jobs = hs.getJobStatusInfo();
+        assertTrue(job.getHarvestNum() == 0);
+        assertTrue(job.getOrigHarvestDefinitionID() == TestInfo.HARVESTID);
+        assertTrue("Number of jobs matching harvest #" +  TestInfo.HARVESTID + " should be 1, but was " + jobs.size(), jobs.size() == 1);
     }
 
     @Test
@@ -215,8 +235,8 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         HarvestStatusQuery query = new HarvestStatusQuery(servletRequest);
 
-        // check default
-        assertTrue("Expected other default sort order", query.isSortAscending());
+        // check default sorting, which from NAS 5.2 is Descending.
+        assertFalse("Expected other default sort order", query.isSortAscending());
 
         // check error on faulty parameter
         Map<String, String[]> parms = new HashMap<String, String[]>();
@@ -233,10 +253,10 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
         // check set order parameter
         parms = new HashMap<String, String[]>();
         parms.put(HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(),
-                new String[] {HarvestStatusQuery.SORT_ORDER.DESC.name()});
+                new String[] {HarvestStatusQuery.SORT_ORDER.ASC.name()});
         servletRequest.setParameterMap(parms);
         query = new HarvestStatusQuery(servletRequest);
-        assertFalse("Expected descending sort order", query.isSortAscending());
+        assertTrue("Expected ascending sort order", query.isSortAscending());
     }
 
     @Test
@@ -247,9 +267,9 @@ public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
 
         // check default
         JobStatus[] selectedStatuses = query.getSelectedJobStatuses();
-        assertTrue("Only one statuscode should have selected", selectedStatuses.length == 1);
+        assertTrue("No statuscode (same as ALL) should have selected.", selectedStatuses.length == 0);
 
-        assertTrue("Expected other default sort order", query.isSortAscending());
+        //assertTrue("Expected other default sort order", query.isSortAscending());
 
         // check error on faulty parameter
         Map<String, String[]> parms = new HashMap<String, String[]>();

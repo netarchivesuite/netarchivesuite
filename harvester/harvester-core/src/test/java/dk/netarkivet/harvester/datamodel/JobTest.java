@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -94,7 +94,7 @@ public class JobTest {
         SeedList seedList = new SeedList("pølse.dk", asList(new String[] {seed1, seed2, seed3}));
         DomainConfiguration domainConfiguration = new DomainConfiguration(
                 "pølse.dk", "pølse.dk", new DomainHistory(),
-                new ArrayList<>(), asList(new SeedList[] {seedList}), new ArrayList<>());
+                new ArrayList<String>(), asList(new SeedList[] {seedList}), new ArrayList<Password>());
         Job job = createDefaultJob(domainConfiguration);
 
         Set<String> internationalizedSeeds = Sets.newSet(

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -635,13 +635,14 @@ public class FileUtils {
     }
 
     /**
-     * Check if the directory exists and is writable and create it if needed. The complete path down to the directory is
+     * Check if the directory exists, and create it if needed. The complete path down to the directory is
      * created. If the directory creation fails a PermissionDenied exception is thrown.
+     * If the directory is not writable, a warning is logged
      *
      * @param dir The directory to create
      * @return true if dir created.
      * @throws ArgumentNotValid If dir is null or its name is the empty string
-     * @throws PermissionDenied If directory cannot be created for any reason, or is not writable.
+     * @throws PermissionDenied If directory cannot be created for any reason
      */
     public static boolean createDir(File dir) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(dir, "File dir");
@@ -670,7 +671,6 @@ public class FileUtils {
         if (!dir.canWrite()) {
             String msg = "Cannot write to required directory '" + dir.getAbsolutePath() + "'";
             log.warn(msg);
-            throw new PermissionDenied(msg);
         }
         return didCreate;
     }

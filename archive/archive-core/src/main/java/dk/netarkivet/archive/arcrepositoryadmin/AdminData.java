@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -245,7 +245,7 @@ public abstract class AdminData {
                     validOldVersion = true;
                 }
                 if (!dataVersion.equals(VERSION_NUMBER) && !validOldVersion) {
-                    throw new IOFailure("Invalid version" + dataVersion);
+                    throw new IOFailure("Invalid version '" + dataVersion + "' when reading from adminDataFile '" +  adminDataFile.getAbsolutePath() + "'");
                 }
                 // Now read the data file, depending on version.
                 if (dataVersion.equals(VERSION_NUMBER)) {

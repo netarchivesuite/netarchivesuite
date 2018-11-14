@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 
 /**
  * Abstract class for manipulating Heritrix Templates.
@@ -32,9 +33,14 @@ public abstract class HeritrixTemplate implements Serializable {
 	//private static final CharSequence H3_SIGNATURE = "xmlns=\"http://www.springframework.org/";
 	private static final CharSequence H3_SIGNATURE = "http://www.springframework.org/";
 
+	/**
+	 * Templates for which isActive is false will be hidden in the web-gui by default.
+	 */
+	private boolean isActive = true;
+
 	// Constants for the metadata added to the warcinfo record when using WARC
 
-	protected static final String HARVESTINFO_VERSION_NUMBER = "0.5";
+	protected static final String HARVESTINFO_VERSION_NUMBER = "0.6";
 	protected static final String HARVESTINFO_VERSION = "harvestInfo.version";
 	protected static final String HARVESTINFO_JOBID = "harvestInfo.jobId";
 	protected static final String HARVESTINFO_CHANNEL = "harvestInfo.channel";	
@@ -42,12 +48,16 @@ public abstract class HeritrixTemplate implements Serializable {
 	protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONID = "harvestInfo.origHarvestDefinitionID";
 	protected static final String HARVESTINFO_MAXBYTESPERDOMAIN = "harvestInfo.maxBytesPerDomain";
 	protected static final String HARVESTINFO_MAXOBJECTSPERDOMAIN = "harvestInfo.maxObjectsPerDomain";
-	protected static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.orderXMLName";
+	protected static final String HARVESTINFO_ORDERXMLNAME = "harvestInfo.templateName";
+	protected static final String HARVESTINFO_ORDERXMLUPDATEDATE = "harvestInfo.templateLastUpdateDate";
+	protected static final String HARVESTINFO_ORDERXMLDESCRIPTION = "harvestInfo.templateDescription";
 	protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONNAME = "harvestInfo.origHarvestDefinitionName";
+	protected static final String HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS = "harvestInfo.origHarvestDefinitionComments";
 	protected static final String HARVESTINFO_SCHEDULENAME = "harvestInfo.scheduleName";
 	protected static final String HARVESTINFO_HARVESTFILENAMEPREFIX = "harvestInfo.harvestFilenamePrefix";
 	protected static final String HARVESTINFO_JOBSUBMITDATE = "harvestInfo.jobSubmitDate";
 	protected static final String HARVESTINFO_PERFORMER = "harvestInfo.performer";
+	protected static final String HARVESTINFO_OPERATOR = "harvestInfo.operator";
 	protected static final String HARVESTINFO_AUDIENCE = "harvestInfo.audience";
 
 
@@ -78,6 +88,13 @@ public abstract class HeritrixTemplate implements Serializable {
 	public abstract void configureQuotaEnforcer(
 			boolean maxObjectsIsSetByQuotaEnforcer, long forceMaxBytesPerDomain, long forceMaxObjectsPerDomain);
 
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setIsActive(boolean isActive) {
+		this.isActive = isActive;
+	}
 
 	// Getter/Setter for MaxBytesPerDomain value
 	public abstract void setMaxBytesPerDomain(Long maxbytesL);
@@ -86,6 +103,9 @@ public abstract class HeritrixTemplate implements Serializable {
 	// Getter/Setter for MaxObjectsPerDomain value
 	public abstract void setMaxObjectsPerDomain(Long maxobjectsL);
 	public abstract Long getMaxObjectsPerDomain(); // TODO Is necessary? 
+
+	/** We need the persistent template id if we want to attach any attributes to it. */
+	public long template_id;
 
 	/**
 	 * 
@@ -108,9 +128,8 @@ public abstract class HeritrixTemplate implements Serializable {
 	 * global traps.
 	 *
 	 * @param elementName The name of the added element.
-	 * @param crawlerTraps A list of crawler trap regular expressions to add to this job.
+	 * @param crawlertraps A list of crawler trap regular expressions to add to this job.
 	 */
-
 	public abstract void insertCrawlerTraps(String elementName, List<String> crawlertraps);
 
 	/**
@@ -129,6 +148,12 @@ public abstract class HeritrixTemplate implements Serializable {
 	public abstract void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL);
 
 	/**
+	 * Try to insert the given list of attributes into the template.
+	 * @param attributesAndTypes
+	 */
+	public abstract void insertAttributes(List<AttributeAndType> attributesAndTypes);
+
+	/**
 	 * Updates the order.xml to include a MatchesListRegExpDecideRule for each crawler-trap associated with for the given
 	 * DomainConfiguration.
 	 * <p>
@@ -144,12 +169,18 @@ public abstract class HeritrixTemplate implements Serializable {
 	public void editOrderXMLAddPerDomainCrawlerTraps(DomainConfiguration cfg) {
 		List<String> crawlerTraps = cfg.getCrawlertraps();
 		String elementName = cfg.getDomainName();
-		if (!crawlerTraps.isEmpty()) {
+		int trapCount=crawlerTraps.size();
+		for (String trap: crawlerTraps){
+		    if (trap.isEmpty()) { // Ignore empty traps in the trapcount (NAS-2480)
+		        log.warn("Found empty trap for domain {}", cfg.getDomainName());
+		        trapCount--; 
+		    }
+		}
+		if (trapCount > 0) {
 			log.info("Inserting {} crawlertraps for domain '{}' into the template", crawlerTraps.size(), elementName);
 			insertCrawlerTraps(elementName, crawlerTraps);
 		}
 	}
-
 
 	public abstract void setDeduplicationIndexLocation(String absolutePath);
 	public abstract void setSeedsFilePath(String absolutePath);
@@ -165,16 +196,22 @@ public abstract class HeritrixTemplate implements Serializable {
 	public abstract void writeToFile(File orderXmlFile);
 	public abstract void setRecoverlogNode(File recoverlogGzFile);
 
-	public static HeritrixTemplate getTemplateFromString(String templateAsString){
+	/**
+	 * Construct a H1HeritrixTemplate or H3HeritrixTemplate based on the signature of the given string.
+	 * @param template_id The id of the template
+	 * @param templateAsString The template as a String object
+	 * @return a HeritrixTemplate based on the signature of the given string.
+	 */
+	public static HeritrixTemplate getTemplateFromString(long template_id, String templateAsString){
 		if (templateAsString.contains(H1_SIGNATURE)) {
 			try {
-				return new H1HeritrixTemplate(templateAsString);
+				return new H1HeritrixTemplate(template_id, templateAsString);
 			} catch (DocumentException e) {
 				throw new IOFailure("Unable to recognize as a valid dom4j Document the following string: " 
 						+ templateAsString, e);
 			}
 		} else if (templateAsString.contains(H3_SIGNATURE)) {
-			return new H3HeritrixTemplate(templateAsString);
+			return new H3HeritrixTemplate(template_id, templateAsString);
 		} else {
 			throw new ArgumentNotValid("The given template is neither H1 or H3: " + templateAsString);
 		}
@@ -187,18 +224,20 @@ public abstract class HeritrixTemplate implements Serializable {
 	 */
 	public static HeritrixTemplate read(File orderXmlFile){
 		try {
-			return read(new FileReader(orderXmlFile));
+			return read(-1, new FileReader(orderXmlFile));
 		} catch (FileNotFoundException e) {
 			throw new IOFailure("The file '" + orderXmlFile.getAbsolutePath() + "' was not found", e);
 		}
 	}
 
 	/**
-	 * Read the template using the given Reader
-	 * @param reader A given Reader
+	 * Read the template using the given Reader.
+	 * 
+	 * @param template_id The id of the template
+	 * @param orderTemplateReader A given Reader to read a template
 	 * @return a HeritrixTemplate object
 	 */
-	public static HeritrixTemplate read(Reader orderTemplateReader) {
+	public static HeritrixTemplate read(long template_id, Reader orderTemplateReader) {
 		StringBuilder sb = new StringBuilder();
 		BufferedReader in = new BufferedReader(orderTemplateReader);
 		String line;
@@ -210,7 +249,7 @@ public abstract class HeritrixTemplate implements Serializable {
 		} catch (IOException e) {
 			throw new IOFailure("IOException thrown", e);
 		}
-		return getTemplateFromString((sb.toString()));
+		return getTemplateFromString(template_id, sb.toString());
 	}
 
 
@@ -220,6 +259,11 @@ public abstract class HeritrixTemplate implements Serializable {
 	public abstract void removeDeduplicatorIfPresent();
 
 	/**
+	 *
+	 */
+	public abstract void enableOrDisableDeduplication(boolean enabled);
+
+	/**
 	 * Method to add settings to the WARCWriterProcesser, so that it can generate a proper WARCINFO record. 
 	 * @param ajob a HarvestJob
 	 * @param origHarvestdefinitionName The name of the harvestdefinition behind this job
@@ -227,7 +271,15 @@ public abstract class HeritrixTemplate implements Serializable {
 	 * @param performer The name of organisation/person doing this harvest 
 	 */
 	public abstract void insertWarcInfoMetadata(Job ajob,
-			String origHarvestdefinitionName, String scheduleName,
-			String performer);
+			String origHarvestdefinitionName, String origHarvestdefinitionComments,
+			String scheduleName, String performer);
+
+	/**
+	 * Inserts all nevessary umbra-related beans in this template.
+	 * @param jobName a String representing the job - must be unique for the this NAS environment for all time
+	 * @param rabbitMQUrl the URL of the rabbitMQ socket connection (amqp://) to which umbra requests are to be sent
+	 * @param limitSearchRegEx the regular expression used to limit the heritrix search-path of urls to be sent to Umbra.
+	 */
+	public abstract void insertUmbrabean(String jobName, String rabbitMQUrl, String limitSearchRegEx);
 
 }

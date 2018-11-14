@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>archive</artifactId>
-    <version>5.0-RC3-SNAPSHOT</version>
+    <version>5.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>archive-test</artifactId>
@@ -13,11 +13,77 @@
   <name>NetarchiveSuite - archive - test</name>
 
   <dependencies>
+
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>archive-core</artifactId>
+      <groupId>org.netarchivesuite</groupId>
+      <artifactId>common-core</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
+
+    <dependency>
+         <groupId>org.netarchivesuite</groupId>
+         <artifactId>archive-core</artifactId>
+         <version>${project.version}</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.netpreserve.commons</groupId>
+      <artifactId>webarchive-commons</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.messaging.mq</groupId>
+      <artifactId>jms</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-net</groupId>
+      <artifactId>commons-net</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.netarchivesuite</groupId>
+      <artifactId>netarchivesuite-test-utils</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>berkeleydb</groupId>
+      <artifactId>je</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+
 
     <!-- Test dependencies. -->
 
@@ -30,16 +96,13 @@
 
     <dependency>
       <groupId>mockobjects</groupId>
-      <artifactId>mockobjects-core</artifactId>
-      <version>0.09</version>
+      <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>mockobjects</groupId>
-      <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
-      <version>0.09</version>
-      <scope>test</scope>
+      <artifactId>mockobjects-core</artifactId>
     </dependency>
 
     <dependency>
@@ -58,22 +121,53 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbyclient</artifactId>
-      <version>10.10.1.1</version>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <version>${tomcat-embed-core.version}</version>
+      <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-servlet-api</artifactId>
+      <version>${tomcat-embed-core.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-jsp-api</artifactId>
+      <version>${tomcat-embed-core.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jsp-api-2.1-glassfish</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
-      <version>10.10.1.1</version>
+      <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.derby</groupId>
-      <artifactId>derbytools</artifactId>
-      <version>10.10.1.1</version>
+      <artifactId>derbyclient</artifactId>
     </dependency>
+
+
   </dependencies>
 
   <build>
@@ -102,6 +196,24 @@
           </argLine>
         </configuration>
       </plugin>
+    <plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>${jacoco.version}</version>
+    <configuration>
+        <destFile>${sonar.jacoco.reportPath}</destFile>
+        <append>true</append>
+    </configuration>
+    <executions>
+        <execution>
+            <id>agent</id>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+
     </plugins>
   </build>
 </project>

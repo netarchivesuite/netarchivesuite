@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - deploy
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+//import java.util.Optional;
 
 import org.dom4j.Element;
 
@@ -65,7 +65,12 @@ public class DeployConfiguration {
     private boolean resetDirectory;
     /** The folder containing the external jar library files. */
     private File jarFolder;
-    private final Optional<File> defaultBundlerZip;
+    //private final Optional<File> defaultBundlerZip;
+    private final File defaultBundlerZip;
+    /** The optional choice for a logo png file */
+    private File logoFile;
+    /** The optional choice for a menulogo png file */
+    private File menulogoFile;
 
     /**
      * Constructor. Initialise everything.
@@ -93,7 +98,10 @@ public class DeployConfiguration {
             boolean resetDir,
             File externalJarFolder,
             String sourceEncoding,
-            Optional<File> defaultBundlerZip)
+            //Optional<File defaultBundlerZip
+            File defaultBundlerZip,
+            File logoFile,
+            File menulogoFile)
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(deployConfigFileName, "No config file");
         ArgumentNotValid.checkNotNull(netarchiveSuiteFileName, "No installation file");
@@ -109,6 +117,8 @@ public class DeployConfiguration {
         resetDirectory = resetDir;
         jarFolder = externalJarFolder;
         this.defaultBundlerZip = defaultBundlerZip;
+        this.logoFile = logoFile;
+        this.menulogoFile = menulogoFile;
 
         // get configuration tree, settings and parameters
         config = new XmlStructure(deployConfigFile, sourceEncoding);
@@ -149,7 +159,7 @@ public class DeployConfiguration {
         // get all physical locations into the list
         for (Element elem : physList) {
             physLocs.add(new PhysicalLocation(elem, settings, machineParam, netarchiveSuiteFile.getName(),
-                    slf4jConfigFile, secPolicyFile, databaseFileName, arcDatabaseFileName, resetDirectory, jarFolder,
+                    slf4jConfigFile, secPolicyFile, databaseFileName, arcDatabaseFileName, resetDirectory, jarFolder, logoFile, menulogoFile,
                     this));
         }
     }
@@ -216,7 +226,10 @@ public class DeployConfiguration {
     /**
      * @return The default harvester bundler zip file to use deploy to the relevant harvesters.
      */
-    public Optional<File> getDefaultBundlerZip() {
+    //public Optional<File> getDefaultBundlerZip() {
+    //    return defaultBundlerZip;
+    //}
+    public File getDefaultBundlerZip() {
         return defaultBundlerZip;
     }
 }

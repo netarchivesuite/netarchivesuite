@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -370,6 +370,33 @@ public class JobDBDAO extends JobDAO {
         }
     }
 
+    protected static final String GET_JOB_BY_ID_SQL = ""
+    		+ "SELECT "
+	    		+ "harvest_id,"
+	    		+ "status,"
+	    		+ "channel,"
+	            + "forcemaxcount,"
+	            + "forcemaxbytes,"
+	            + "forcemaxrunningtime,"
+	            + "orderxml,"
+	            + "orderxmldoc,"
+	            + "seedlist,"
+	            + "harvest_num,"
+	            + "harvest_errors,"
+	            + "harvest_error_details,"
+	            + "upload_errors,"
+	            + "upload_error_details,"
+	            + "startdate,"
+	            + "enddate,"
+	            + "submitteddate,"
+	            + "creationdate,"
+	            + "edition,"
+	            + "resubmitted_as_job,"
+	            + "continuationof,"
+	            + "harvestname_prefix,"
+	            + "snapshot "
+            + "FROM jobs WHERE job_id = ?";
+
     /**
      * Read a single job from the job database.
      *
@@ -385,12 +412,7 @@ public class JobDBDAO extends JobDAO {
         }
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("SELECT " + "harvest_id, status, channel, "
-                    + "forcemaxcount, forcemaxbytes, " + "forcemaxrunningtime, orderxml, "
-                    + "orderxmldoc, seedlist, harvest_num," + "harvest_errors, harvest_error_details, "
-                    + "upload_errors, upload_error_details, " + "startdate, enddate, submitteddate, creationdate, "
-                    + "edition, resubmitted_as_job, continuationof, harvestname_prefix, snapshot "
-                    + "FROM jobs WHERE job_id = ?");
+            statement = connection.prepareStatement(GET_JOB_BY_ID_SQL);
             statement.setLong(1, jobID);
             ResultSet result = statement.executeQuery();
             result.next();
@@ -412,7 +434,7 @@ public class JobDBDAO extends JobDAO {
             } else {
                 tmpStr = result.getString(8);
             }
-            orderXMLdoc = HeritrixTemplate.getTemplateFromString(tmpStr);
+            orderXMLdoc = HeritrixTemplate.getTemplateFromString(-1, tmpStr);
             String seedlist = "";
             if (useClobs) {
                 Clob clob = result.getClob(9);
@@ -684,7 +706,10 @@ public class JobDBDAO extends JobDAO {
             // NB this will be a performance bottleneck if the table gets big
             long totalRowsCount = 0;
 
-            s = buildSqlQuery(query, true).getPopulatedStatement(c);
+            final HarvestStatusQueryBuilder harvestStatusQueryBuilder = buildSqlQuery(query, true);
+            log.debug("Unpopulated query is {}.", harvestStatusQueryBuilder);
+            s = harvestStatusQueryBuilder.getPopulatedStatement(c);
+            log.debug("Query is {}.", s);
             ResultSet res = s.executeQuery();
             res.next();
             totalRowsCount = res.getLong(1);
@@ -921,6 +946,10 @@ public class JobDBDAO extends JobDAO {
             super();
         }
 
+        @Override public String toString() {
+            return sqlString;
+        }
+
         /**
          * @param sqlString the sqlString to set
          */
@@ -973,6 +1002,7 @@ public class JobDBDAO extends JobDAO {
             }
             return stm;
         }
+
 
     }
 
@@ -1045,12 +1075,14 @@ public class JobDBDAO extends JobDAO {
         Long harvestRun = query.getHarvestRunNumber();
         if (harvestRun != null) {
             sql.append(" AND jobs.harvest_num = ?");
+            log.debug("Added harvest run number param {}.", harvestRun);
             sq.addParameter(Long.class, harvestRun);
         }
 
         Long harvestId = query.getHarvestId();
         if (harvestId != null) {
             sql.append(" AND harvestdefinitions.harvest_id = ?");
+            log.debug("Added harvest_id param {}.", harvestId);
             sq.addParameter(Long.class, harvestId);
         }
 
@@ -1069,6 +1101,39 @@ public class JobDBDAO extends JobDAO {
             cal.roll(Calendar.DAY_OF_YEAR, 1);
             sq.addParameter(java.sql.Date.class, new java.sql.Date(cal.getTimeInMillis()));
         }
+        
+        List<String> jobIdRangeIds = query.getPartialJobIdRangeAsList(false);
+        List<String> jobIdRanges = query.getPartialJobIdRangeAsList(true);
+        if (!jobIdRangeIds.isEmpty()) {
+        	String comma = "";
+        	sql.append(" AND (jobs.job_id IN (");
+        	for(String id : jobIdRangeIds) {
+        		//id
+        		sql.append(comma);
+        		comma = ",";
+        		sql.append("?");
+                sq.addParameter(Long.class, Long.parseLong(id));
+        	}
+        	sql.append(") ");
+
+        	
+        }
+        if(!jobIdRanges.isEmpty()) {
+        	String andOr = "AND";
+        	if (!jobIdRangeIds.isEmpty()) {
+        		andOr = "OR";
+        	}
+        	
+        	for(String range : jobIdRanges) {
+        		String[] r = range.split("-");
+        		sql.append(" "+andOr+" jobs.job_id BETWEEN ? AND ? ");
+            	sq.addParameter(Long.class, Long.parseLong(r[0]));
+            	sq.addParameter(Long.class, Long.parseLong(r[1]));
+        	}
+        }
+        if (!jobIdRangeIds.isEmpty()) {
+    		sql.append(")");
+    	}
 
         if (!count) {
             sql.append(" ORDER BY jobs.job_id");

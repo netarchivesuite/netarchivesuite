@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.archive.arcrepository;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -35,6 +37,7 @@ import ch.qos.logback.classic.Level;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
+import dk.netarkivet.archive.bitarchive.BitarchiveAdmin;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.utils.ChecksumCalculator;
@@ -73,7 +76,12 @@ public class ArcRepositoryTesterLog {
     public void testLogStore() throws Exception {
         final String FILE_NAME =  "logging1.ARC";
         File f = new File(ORIGINALS_DIR, FILE_NAME);
-
+        BitarchiveAdmin admin = BitarchiveAdmin.getInstance();
+        assertNotNull("Must have admin object.", admin);
+        if (!admin.hasEnoughSpace()) {
+        	System.err.println("Skipping test. Not enough space on disk to perform test");
+        	return;
+        }
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(f.getName(), new StoreMessage(Channels.getThisReposClient(), f),
                 ChecksumCalculator.calculateMd5(f));
@@ -81,7 +89,7 @@ public class ArcRepositoryTesterLog {
                 ReplicaStoreState.UPLOAD_COMPLETED);
         adminData.setState(f.getName(), Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
                 ReplicaStoreState.UPLOAD_COMPLETED);
-
+        
         StoreMessage msg = new StoreMessage(Channels.getError(), f);
         ServerSetUp.getArcRepository().store(msg.getRemoteFile(), msg);
         UploadWaiting.waitForUpload(f, this);

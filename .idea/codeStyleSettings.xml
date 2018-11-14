@@ -31,6 +31,9 @@
         <option name="JD_DO_NOT_WRAP_ONE_LINE_COMMENTS" value="true" />
         <option name="JD_PRESERVE_LINE_FEEDS" value="true" />
         <option name="WRAP_COMMENTS" value="true" />
+        <MarkdownNavigatorCodeStyleSettings>
+          <option name="RIGHT_MARGIN" value="72" />
+        </MarkdownNavigatorCodeStyleSettings>
         <XML>
           <option name="XML_ALIGN_ATTRIBUTES" value="false" />
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
@@ -83,4 +86,3 @@
     <option name="PREFERRED_PROJECT_CODE_STYLE" value="NetarchiveSuite" />
   </component>
 </project>
-

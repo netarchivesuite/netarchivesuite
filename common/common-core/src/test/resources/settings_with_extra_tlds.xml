@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
+National Library.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+-->
+<!--
+    This file contains the default settings used by the common module.
+
+    For documentation of the individual settings, please refer to the
+    javadoc for dk.netarkivet.common.CommonSettings.java
+-->
+<settings>
+    <common>
+        <environmentName>DEV</environmentName>
+        <organization>netarkivet.dk</organization>
+        <tempDir>./tests/commontempdir</tempDir>
+        <remoteFile>
+            <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
+        </remoteFile>
+        <jms> <!-- Connection data for JMS-->
+            <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
+            <retries>3</retries>
+        </jms>
+        <http>
+            <port></port>
+        </http>
+        <arcrepositoryClient>
+            <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
+        </arcrepositoryClient>
+        <monitorregistryClient>
+            <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
+            <reregisterdelay>1</reregisterdelay>
+        </monitorregistryClient>
+        <indexClient>
+            <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestClient</class>
+        </indexClient>
+        <unixSort>
+            <useCommonTempDir>false</useCommonTempDir>
+        </unixSort>
+        <cacheDir>cache</cacheDir>
+        <processTimeout>5000</processTimeout>
+        <notifications>
+            <class>dk.netarkivet.common.utils.EMailNotifications</class>
+        </notifications>
+        <freespaceprovider>
+            <class>dk.netarkivet.common.utils.DefaultFreeSpaceProvider</class>
+        </freespaceprovider>
+        <mail>
+            <server>localhost</server>
+        </mail>
+        <jmx> <!-- JMX logging settings -->
+            <port>8100</port>
+            <rmiPort>8200</rmiPort>
+            <passwordFile>conf/jmxremote.password</passwordFile>
+            <accessFile>conf/jmxremote.access</accessFile>
+            <timeout>120</timeout>
+        </jmx>
+        <webinterface> <!-- Settings for the web GUI -->
+            <language>
+                <locale>da</locale>
+                <name>Dansk</name>
+            </language>
+            <language>
+                <locale>en</locale>
+                <name>English</name>
+            </language>
+            <language>
+                <locale>de</locale>
+                <name>Deutsch</name>
+            </language>
+            <language>
+                <locale>it</locale>
+                <name>Italiano</name>
+            </language>
+            <language>
+                <locale>fr</locale>
+                <name>Français</name>
+            </language>
+            <siteSection>
+                <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
+                <webapplication>webpages/HarvestDefinition.war</webapplication>
+            </siteSection>
+            <siteSection>
+                <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>
+                <webapplication>webpages/History.war</webapplication>
+            </siteSection>
+            <siteSection>
+                <class>dk.netarkivet.harvester.webinterface.HarvestChannelSiteSection</class>
+                <webapplication>webpages/HarvestChannel.war</webapplication>
+            </siteSection>
+            <siteSection>
+                <class>dk.netarkivet.archive.webinterface.BitPreservationSiteSection</class>
+                <webapplication>webpages/BitPreservation.war</webapplication>
+            </siteSection>
+            <siteSection>
+                <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
+                <webapplication>webpages/QA.war</webapplication>
+            </siteSection>
+            <siteSection>
+                <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
+                <webapplication>webpages/Status.war</webapplication>
+            </siteSection>
+            <harvestStatus>
+                <defaultPageSize>100</defaultPageSize>
+            </harvestStatus>
+            <hideInactiveTemplates>false</hideInactiveTemplates>
+        </webinterface>
+        <topLevelDomains>
+        <!-- add extra top level domains not included in embedded https://publicsuffix.org/list/public_suffix_list.dat
+        	e.g: <tld> anothertld </tld> 
+         -->
+        <tld>dummytld.domain</tld>
+	<tld>anotherdummytld.domain</tld>
+        </topLevelDomains>
+        <database>
+            <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
+            <baseUrl>jdbc:derby</baseUrl>
+            <machine>localhost</machine>
+            <port>1527</port>
+            <dir>harvestdefinitionbasedir/fullhddb</dir>
+            <username></username>
+            <password></password>
+            <backupInitHour>3</backupInitHour>
+            <validityCheckTimeout>0</validityCheckTimeout>
+            <pool>
+                <minSize>5</minSize>
+                <maxSize>20</maxSize>
+                <acquireInc>5</acquireInc>
+                <maxStm>0</maxStm>
+                <maxStmPerConn>0</maxStmPerConn>
+                <idleConnTestPeriod>0</idleConnTestPeriod>
+                <idleConnTestQuery></idleConnTestQuery>
+                <idleConnTestOnCheckin>false</idleConnTestOnCheckin>
+                <maxConnectionAge>3600</maxConnectionAge>
+            </pool>
+        </database>
+        <repository>
+            <!-- Currently set to 10 MB -->
+            <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
+        </repository>
+        <batch>
+            <maxExceptions>100</maxExceptions>
+            <!-- Time between logging of batch status default 30 seconds. -->
+            <loggingInterval>30000</loggingInterval>
+            <!-- Batchjobs without a specified timeout will get this value (one week) -->
+            <defaultBatchTimeout>604800000</defaultBatchTimeout>
+            <baseDir>batch</baseDir>
+            <batchjobs>
+                <batchjob>
+                    <class>dk.netarkivet.common.utils.batch.ChecksumJob</class>
+                    <jarfile></jarfile>
+                </batchjob>
+                <batchjob>
+                    <class>dk.netarkivet.common.utils.batch.FileListJob</class>
+                    <jarfile></jarfile>
+                </batchjob>
+            </batchjobs>
+        </batch>
+        <replicas> <!-- The entire settings for replicas. -->
+            <replica>
+                <replicaId>ONE</replicaId>
+                <replicaName>replicaOne</replicaName>
+                <replicaType>bitarchive</replicaType>
+            </replica>
+            <replica>
+                <replicaId>TWO</replicaId>
+                <replicaName>replicaTwo</replicaName>
+                <replicaType>bitarchive</replicaType>
+            </replica>
+            <replica>
+                <replicaId>THREE</replicaId>
+                <replicaName>replicaCs</replicaName>
+                <replicaType>checksum</replicaType>
+            </replica>
+        </replicas>
+        <useReplicaId>TWO</useReplicaId>
+        <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
+        <applicationName>NA</applicationName>
+        <applicationInstanceId></applicationInstanceId>
+    </common>
+</settings>

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -35,13 +35,23 @@ public class HistorySiteSection extends SiteSection {
      * Create a new history SiteSection object.
      */
     public HistorySiteSection() {
-        super("sitesection;history", "Harveststatus", 3, new String[][] { {"alljobs", "pagetitle;all.jobs"},
-                {"deprecatedperdomain", "pagetitle;all.jobs.per.domain"}, {"running", "pagetitle;all.jobs.running"},
-                {"running-jobdetails", "pagetitle;running.job.details"},
-                {"perhd", "pagetitle;all.jobs.per.harvestdefinition"},
-                {"perharvestrun", "pagetitle;all.jobs.per.harvestrun"}, {"jobdetails", "pagetitle;details.for.job"},
-                {"perdomain", "pagetitle;all.jobs.per.domain"}, {"seeds", "pagetitle;seeds.for.harvestdefinition"}},
-                "History", dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+        super("sitesection;history",
+        		"Harveststatus",
+        		3,
+                new String[][] {
+                        {"alljobs", "pagetitle;all.jobs"},
+                        //{"deprecatedperdomain", "pagetitle;all.jobs.per.domain"},
+                        {"running", "pagetitle;all.jobs.running"},
+                        {"history/", "pagetitle;h3.remote.access"}, // refer to webpage outside of webpages directory
+                        {"running-jobdetails", "pagetitle;running.job.details"},
+                        {"perhd", "pagetitle;all.jobs.per.harvestdefinition"},
+                        {"perharvestrun", "pagetitle;all.jobs.per.harvestrun"},
+                        {"jobdetails", "pagetitle;details.for.job"},
+                        {"perdomain", "pagetitle;all.jobs.per.domain"},
+                        {"seeds", "pagetitle;seeds.for.harvestdefinition"}
+                },
+                "History", dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE
+        );
     }
 
     /**

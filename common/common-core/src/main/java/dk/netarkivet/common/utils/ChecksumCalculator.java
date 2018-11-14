@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -167,6 +167,36 @@ public final class ChecksumCalculator {
             hexchars[cIdx++] = hexdigit[ba[i] & 0x0F];
         }
         return new String(hexchars);
+    }
+
+    public static byte[] digestFile(File src, String digestAlgorithm) {
+        ArgumentNotValid.checkNotNull(src, "File src");
+        ArgumentNotValid.checkTrue(src.isFile(), "Argument should be a file");
+        try {
+            FileInputStream fileInputStream = new FileInputStream(src);
+            try {
+                return digestInputStream(fileInputStream, digestAlgorithm);
+            } finally {
+                IOUtils.closeQuietly(fileInputStream);
+            }
+        } catch (FileNotFoundException e) {
+            throw new IOFailure("Could not read file '" + src.getAbsolutePath() + "'", e);
+        }
+    }
+
+    public static byte[] digestInputStream(InputStream instream, String algorithm) {
+        byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
+        MessageDigest messageDigest = getMessageDigest(algorithm);
+        messageDigest.reset();
+        int bytesRead;
+        try {
+            while ((bytesRead = instream.read(buffer)) != -1) {
+                messageDigest.update(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Error making a '" + algorithm + "' digest on the inputstream", e);
+        }
+        return messageDigest.digest();
     }
 
     /**

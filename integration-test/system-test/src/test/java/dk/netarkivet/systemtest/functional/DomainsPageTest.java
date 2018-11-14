@@ -2,7 +2,7 @@
  * #%L
  * NetarchiveSuite System test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ import static dk.netarkivet.systemtest.page.DomainWebTestHelper.HIDE_UNUSED_SEED
 import static dk.netarkivet.systemtest.page.DomainWebTestHelper.SHOW_UNUSED_CONFIGURATIONS_LINK;
 import static dk.netarkivet.systemtest.page.DomainWebTestHelper.SHOW_UNUSED_SEED_LISTS_LINK;
 
+
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -36,18 +37,19 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.NASAssert;
-import dk.netarkivet.systemtest.SeleniumTest;
+import dk.netarkivet.systemtest.SeleniumSession;
 import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 
-public class DomainsPageTest extends AbstractSystemTest {
+public class  DomainsPageTest extends AbstractSystemTest {
     private String domainIDForTest;
     private int domainCounter = 0;
     private DateFormat dateFomatter = new SimpleDateFormat("HHmmss");
@@ -57,6 +59,7 @@ public class DomainsPageTest extends AbstractSystemTest {
         Date startTime = new Date();
         domainIDForTest = getClass().getSimpleName() + "-" + method.getName() + "-" + dateFomatter.format(startTime);
         domainCounter = 1;
+        ((HtmlUnitDriver)  ((SeleniumSession) driver).driver).setJavascriptEnabled(false);
     }
 
     @Test(groups = {"guitest", "functest"})
@@ -197,7 +200,7 @@ public class DomainsPageTest extends AbstractSystemTest {
                 "The seed list should now be listed");
         List<WebElement> configurationRows = readConfigurationTableRows(driver);
         configurationRows.get(0).findElement(By.linkText("Edit")).click();
-        Select seedListSelect = new Select(driver.findElement(By.name("urlListList")));
+        Select seedListSelect = new Select(driver.findElement(By.name("seedListList")));
         seedListSelect.selectByVisibleText(seedList1ID);
         driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
         seedListRows = readSeedListTableRows(driver);
@@ -208,7 +211,7 @@ public class DomainsPageTest extends AbstractSystemTest {
                 "Only the new seed list should now be listed");
         configurationRows = readConfigurationTableRows(driver);
         configurationRows.get(0).findElement(By.linkText("Edit")).click();
-        seedListSelect = new Select(driver.findElement(By.name("urlListList")));
+        seedListSelect = new Select(driver.findElement(By.name("seedListList")));
         seedListSelect.deselectByVisibleText("defaultseeds");
         driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
         seedListRows = readSeedListTableRows(driver);

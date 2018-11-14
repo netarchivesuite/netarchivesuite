@@ -5,8 +5,8 @@ Author:     $Author: mss $
 Date:       $Date: 2012-02-09 08:28:35 +0100 (Thu, 09 Feb 2012) $
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -148,13 +148,13 @@ function onClickCancelEditChannel() {
         <td>
         <% // Only output the date, if the HarvestDefinition is active
         if (ph.isActive()) { %>
-           <fmt:formatDate type="both" value="<%=ph.getNextDate()%>"/>
+           <%= HTMLUtils.parseDate(ph.getNextDate())%>
         <% } else { out.print(Constants.NoNextDate); } %>
         </td>
         <td><%=HTMLUtils.escapeHtmlValues(isActive)%></td>
         <td id="formTd<%=ph.getOid()%>"><%=chan.getName()%></td>
         <td id="linkTd<%=ph.getOid()%>">
-        <a href="#" onClick="onClickEditChannel(<%=ph.getOid()%>, false)">
+        <a href="#" onClick="onClickEditChannel(<%=ph.getOid()%>, false); return false">
         <fmt:message key="edit.harvest.mappings.edit.link"/>
         </a></td>
     </tr>

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ public class TimeoutBatch extends FileBatchJob {
     }
 
     public void initialize(OutputStream os) {
-        // one second in milisecond.
+        // one second in milliseconds.
         start = new Date();
 
         String msg = "timeout: " + getBatchJobTimeout() + "\n";

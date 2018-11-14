@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -237,7 +237,7 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about Heritrix templates. */
     ORDERTEMPLATES {
         static final String NAME = "ordertemplates";
-        static final int REQUIRED_VERSION = 1;
+        static final int REQUIRED_VERSION = 2;
 
         @Override
         public int getRequiredVersion() {
@@ -402,6 +402,36 @@ public enum HarvesterDatabaseTables {
     /** Harvest channels. */
     HARVESTCHANNELS {
         static final String NAME = "harvestchannel";
+        static final int REQUIRED_VERSION = 1;
+
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** Harvest channels. */
+    EAVTYPEATTRIBUTE {
+        static final String NAME = "eav_type_attribute";
+        static final int REQUIRED_VERSION = 1;
+
+        @Override
+        public int getRequiredVersion() {
+            return REQUIRED_VERSION;
+        }
+
+        @Override
+        public String getTablename() {
+            return NAME;
+        }
+    },
+    /** Harvest channels. */
+    EAVATTRIBUTE {
+        static final String NAME = "eav_attribute";
         static final int REQUIRED_VERSION = 1;
 
         @Override

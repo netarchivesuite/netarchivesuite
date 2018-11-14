@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - monitor
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -116,6 +116,8 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
             new Thread() {
                 public void run() {
                     if (connection == null && connecting.compareAndSet(false, true)) {
+                        log.debug("Trying to connect to remote JMX server '{}', port '{}', rmiPort '{}', user '{}'", server,
+                                jmxPort, rmiPort, userName);
                         try {
                             connection = JMXUtils
                                     .getMBeanServerConnection(server, jmxPort, rmiPort, userName, password);
@@ -168,6 +170,8 @@ public class RmiProxyConnectionFactory implements JMXProxyConnectionFactory {
             if (connection == null) {
                 throw new IOFailure("Could not get connection for query '" + query + "'");
             }
+            log.debug("Trying to retrieve MBeanNames from remote JMX server '{}', port '{}', rmiPort '{}', user '{}' matching the query {}",
+                                    server, jmxPort, rmiPort, userName, query);
             try {
                 return connection.queryNames(new ObjectName(query), null);
             } catch (IOException e) {

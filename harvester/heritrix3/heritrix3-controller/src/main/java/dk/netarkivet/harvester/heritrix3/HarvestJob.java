@@ -1,3 +1,25 @@
+/*
+ * #%L
+ * Netarchivesuite - harvester
+ * %%
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
+ *             the National Library of France and the Austrian National Library.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
 package dk.netarkivet.harvester.heritrix3;
 
 import java.io.File;
@@ -14,11 +36,13 @@ import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.harvesting.PersistentJobData;
@@ -34,12 +58,10 @@ public class HarvestJob {
     /** The harvester Job in this thread. */
     private Job job;
 
-    /** Stores documentary information about the harvest. */
-    //private HarvestDefinitionInfo origHarvestInfo;
-
-    /** The list of metadata associated with this Job. */
-    //private List<MetadataEntry> metadataEntries;
-
+    /**
+     * Constructor.
+     * @param hcs a HarvestControllerServer instance
+     */
 	public HarvestJob(HarvestControllerServer hcs) {
 		this.hcs = hcs;
 	}
@@ -49,16 +71,22 @@ public class HarvestJob {
     private Heritrix3Files files;
 
     private String jobName;
-
+   
+    /**
+     * Initialization of the harvestJob.
+     * @param job A job from the jobs table in the harvestdatabase
+     * @param origHarvestInfo metadata about the harvest
+     * @param metadataEntries entries for the metadata file for the harvest
+     */
     public void init(Job job, HarvestDefinitionInfo origHarvestInfo, List<MetadataEntry> metadataEntries) {
         this.job = job;
-        //this.origHarvestInfo = origHarvestInfo;
-        //this.metadataEntries = metadataEntries;
         jobName = job.getJobID() + "_" + System.currentTimeMillis();
         crawlDir = createCrawlDir();
         files = writeHarvestFiles(crawlDir, job, origHarvestInfo, metadataEntries);
 	}
-
+    /**
+     * @return the Heritrix3Files object initialized with the init() method.
+     */
     public Heritrix3Files getHeritrix3Files() {
     	return files;
     }
@@ -87,7 +115,7 @@ public class HarvestJob {
         // Create the crawldir. This is done here in order to be able
         // to send a proper message if something goes wrong.
         try {
-            File baseCrawlDir = new File(Settings.get(Heritrix3Settings.HARVEST_CONTROLLER_SERVERDIR));
+            File baseCrawlDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
             crawlDir = new File(baseCrawlDir, jobName);
             FileUtils.createDir(crawlDir);
             log.info("Created crawl directory: '{}'", crawlDir);
@@ -117,18 +145,19 @@ public class HarvestJob {
         // If this job is a job that tries to continue a previous job
         // using the Heritrix recover.gz log, and this feature is enabled,
         // then try to fetch the recover.log from the metadata-arc-file.
-        if (job.getContinuationOf() != null && Settings.getBoolean(Heritrix3Settings.RECOVERlOG_CONTINUATION_ENABLED)) {
-            //tryToRetrieveRecoverLog(job, files);
-        	log.warn("Continuation of from a RecoverLog is disabled for now!");
+        if (job.getContinuationOf() != null && Settings.getBoolean(HarvesterSettings.RECOVERlOG_CONTINUATION_ENABLED)) {
+        	log.warn("Continuation of crawl from a RecoverLog is not implemented for Heritrix3!");
         }
         
         // Create harvestInfo file in crawldir
         // & create preharvest-metadata-1.arc
         log.debug("Writing persistent job data for job {} to crawldir '{}'", job.getJobID(), crawldir);
-        // TODO Check that harvestInfo does not yet exist
-        
-        // Write job data to persistent storage (harvestinfo file)
-        new PersistentJobData(files.getCrawlDir()).write(job, hdi);
+        if (!PersistentJobData.existsIn(crawldir)) {
+            // Write job data to persistent storage (harvestinfo file)
+            new PersistentJobData(crawldir).write(job, hdi);
+        } else {
+            throw new IllegalState("We already found a harvestInfo.xml for the crawldir " + crawldir.getAbsolutePath());
+        }
         
         // Create jobId-preharvest-metadata-1.arc for this job
         writePreharvestMetadata(job, metadataEntries, crawldir);
@@ -183,8 +212,8 @@ public class HarvestJob {
      *
      * @param metadataEntries list of metadataEntries top get jobIDs from.
      * @return a directory containing the index itself.
-     * @throws IOFailure on errors retrieving the index from the client. FIXME Better forgiving handling of no index
-     * available Add setting for disable deduplication if no index available
+     * @throws IOFailure on errors retrieving the index from the client. 
+     * FIXME Better forgiving handling of no index available. Add setting for disable deduplication if no index available
      */
     private File fetchDeduplicateIndex(List<MetadataEntry> metadataEntries) {
         // Get list of jobs, which should be used for duplicate reduction

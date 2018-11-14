@@ -4,8 +4,8 @@
  * Date:        $Date: 2013-05-05 20:58:18 +0200 (Sun, 05 May 2013) $
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2012 The Royal Danish Library, the Danish State and
- * University Library, the National Library of France and the Austrian
+ * Copyright 2004-2018 The Royal Danish Library,
+ * the National Library of France and the Austrian
  * National Library.
  *
  * This library is free software; you can redistribute it and/or
@@ -24,14 +24,12 @@
  */
 package dk.netarkivet.harvester.harvesting;
 
-import java.util.NoSuchElementException;
-
-import org.apache.commons.httpclient.URIException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.frontier.HostnameQueueAssignmentPolicy;
 import org.archive.modules.CrawlURI;
 import org.archive.net.UURIFactory;
+import org.archive.url.UsableURI;
 
 import dk.netarkivet.common.utils.DomainUtils;
 
@@ -39,8 +37,7 @@ import dk.netarkivet.common.utils.DomainUtils;
  * This is a modified version of the {@link DomainnameQueueAssignmentPolicy}
  * where domainname returned is the domainname of the candidateURI
  * except where the the SeedURI belongs to a different domain. 
- * 
- * 
+ *
  * Using the domain as the queue-name.
  * The domain is defined as the last two names in the entire hostname or
  * the entirety of an IP address.
@@ -49,92 +46,109 @@ import dk.netarkivet.common.utils.DomainUtils;
  * nn.nn.nn.nn -> nn.nn.nn.nn
  * 
  */
-public class SeedUriDomainnameQueueAssignmentPolicy
-        extends HostnameQueueAssignmentPolicy {
-    
+public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignmentPolicy {
+
+    /**
+     * If true, dns lookups are queued by seed. If false, each dns lookup gets its own queue. Default true.
+     */
+    private boolean treatDnsLikeHttp = true;
+
+    public boolean isTreatDnsLikeHttp() {
+        return treatDnsLikeHttp;
+    }
+
+    public void setTreatDnsLikeHttp(boolean treatDnsLikeHttp) {
+        this.treatDnsLikeHttp = treatDnsLikeHttp;
+    }
+
     /** A key used for the cases when we can't figure out the URI.
      *  This is taken from parent, where it has private access.  Parent returns
      *  this on things like about:blank.
      */
     static final String DEFAULT_CLASS_KEY = "default...";
 
-    private Log log
-            = LogFactory.getLog(getClass());
+    private Log log = LogFactory.getLog(getClass());
 
-    /** Return a key for queue names based on domain names (last two parts of
-     * host name) or IP address.  They key may include a #<portnr> at the end.
+
+    /**
+     * The logic is as follows:
+     * We get try to get the queue-name as the domain-name of the seed.
+     * If that fails, or if the uri is a dns entry, we use the "old" logic which is
+     * to take the key from the superclass (in the form host#port or just host) and extract
+     * a domain-name from that. If all that fails, we fall back to a default value,
+     * In practice this means that dns-lookups for non-seed uris each get their own
+     * queue, which is then never used again. This seems like a good idea because the
+     * frontier needs to be able to prioritise dns lookups.  However it turns out _not_ to
+     * be a good idea after all as heritrix doesn't like the dns url's being on a separate
+     * queue. So we have a setting "treatDnsLikeHttp" which results in dns queries being queued
+     * according to their seed, just like every other uri.
      *
-     * @param controller The controller the crawl is running on.
-     * @param cauri A potential URI.
-     * @return a class key (really an arbitrary string), one of <domainOrIP>,
-     * <domainOrIP>#<port>, or "default...".
-     * @see HostnameQueueAssignmentPolicy#getClassKey(
-     *  org.archive.crawler.framework.CrawlController,
-     *  org.archive.crawler.datamodel.CandidateURI)
+     * @param cauri The crawl URI from which to find the key.
+     * @return the key value
      */
-     public String getClassKey(CrawlURI cauri) {
-        String candidate;
-        
-        boolean ignoreSourceSeed =
-                cauri != null &&
-        		cauri.getCanonicalString().startsWith("dns");
-        try {
-            // Since getClassKey has no contract, we must encapsulate it from
-            // errors.
-            candidate = super.getClassKey(cauri);
-        } catch (NullPointerException e) {
-            log.debug("Heritrix broke getting class key candidate for "
-                      + cauri);
-            candidate = DEFAULT_CLASS_KEY;
+    public String getClassKey(CrawlURI cauri) {
+        log.debug("Finding classKey for cauri: " + cauri);
+        String key = null;
+        if (treatDnsLikeHttp || !isDns(cauri)) {
+            key = getKeyFromSeed(cauri);
         }
-        
-        String sourceSeedCandidate = null;
-        if (!ignoreSourceSeed) {
-            sourceSeedCandidate = getCandidateFromSource(cauri);
+        if (key == null) {
+            key = getKeyFromUriHostname(cauri);
         }
-        
-        if (sourceSeedCandidate != null) {
-            return sourceSeedCandidate;
-        } else {
-            // If sourceSeedCandidates are disabled, use the old method:
-        
-            String[] hostnameandportnr = candidate.split("#");
-            if (hostnameandportnr.length == 0 || hostnameandportnr.length > 2) {
-                return candidate;
-            }
-        
-            String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
-            if (domainName == null) { // Not valid according to our rules
-                log.debug("Illegal class key candidate '" + candidate
-                      + "' for '" + cauri + "'");
-                return candidate;
-            }
-            return domainName;
+        if (key == null) {
+            key = DEFAULT_CLASS_KEY;
         }
+        //TODO: The following line should, ideally, be added back in based on a setting.
+        //cauri.getAnnotations().add("Queue:" + key);
+        return key;
     }
 
-     /**
-      * Find a candidate from the source.
-      * @param cauri A potential URI
-      * @return a candidate from the source or null if none found
-      */
-    private String getCandidateFromSource(CrawlURI cauri) {
-        String sourceCandidate = null;  
-        try {
-        	sourceCandidate = cauri.getSourceTag(); 
-        } catch (NoSuchElementException e) {
-            log.warn("source-tag-seeds not set in Heritrix template!");
-            return null;
-        }
-         
-        String hostname = null;
-        try {
-             hostname = UURIFactory.getInstance(sourceCandidate).getHost();
-        } catch (URIException e) {
-            log.warn("Hostname could not be extracted from sourceCandidate: " 
-                    + sourceCandidate);
-            return null;
-        }
-        return DomainUtils.domainNameFromHostname(hostname);
+    private boolean isDns(CrawlURI cauri) {
+        return cauri != null && cauri.getCanonicalString().startsWith("dns");
     }
+
+    /**
+     * Returns the domain name extracted from the URI being crawled itself, without reference to its seed.
+     * @param cauri the uri being crawled.
+     * @return the domain name, if it can be determined. Otherwise null.
+     */
+    private String getKeyFromUriHostname(CrawlURI cauri) {
+        String key = null;
+        try {
+            key = super.getClassKey(cauri);
+        }  catch (NullPointerException e) {
+            log.debug("Heritrix broke getting class key candidate for " + cauri);
+        }
+        if (key != null) {
+            String[] hostnameandportnr = key.split("#");
+            if (hostnameandportnr.length == 1 || hostnameandportnr.length == 2) {
+                key = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
+            } else {
+                log.debug("Illegal class key candidate from superclass: '" + key + "' for '" + cauri + "'");
+                key = null;
+            }
+        }
+        return key;
+    }
+
+    /**
+     * The bean property &lt;property name="sourceTagSeeds" value="true" /&gt; on the TextSeedModule bean in the
+     * heritrix crawler beans, should ensure that the seed is made available in every CrawlURI reached from that seed.
+     * @param cauri the CrawlURI
+     * @return the domain of the seed, if it can be determined. Otherwise null.
+     */
+    private String getKeyFromSeed(CrawlURI cauri) {
+        String key = null;
+        String seed = cauri.getSourceTag();
+        if (!UsableURI.hasScheme(seed)) {
+            seed = "http://" + seed;
+        }
+        try {
+            key = DomainUtils.domainNameFromHostname(UURIFactory.getInstance(seed).getHost());
+        } catch (Exception e) {
+            log.debug("Could not extract a domain key from seed '" + seed + "'");
+        }
+        return key;
+    }
+
 }

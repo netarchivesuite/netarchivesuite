@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.TableSort;
 
 /**
- * class used to manage the sort of tables in the harvest status running screen.
+ * Class used to manage the sort of tables in the harvest status running screen.
+ * Used only by History/Harveststatus-running.jsp
  */
 public class HarvestStatusRunningTablesSort {
     /** list of the column id. */

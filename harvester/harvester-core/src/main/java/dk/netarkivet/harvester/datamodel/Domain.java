@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -46,11 +46,13 @@ import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.Named;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.TLD;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendableEntity;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
+import dk.netarkivet.harvester.utils.CrawlertrapsUtils;
 
 /**
  * Represents known information about a domain A domain is identified by a domain name (ex: kb.dk)
@@ -71,7 +73,7 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 @SuppressWarnings({"rawtypes"})
 public class Domain extends ExtendableEntity implements Named {
 
-    /** Prefix all domain names with this string. */
+    /** The logger for this class. */
     protected static final Logger log = LoggerFactory.getLogger(Domain.class);
 
     /** The identification used to lookup the domain. */
@@ -139,7 +141,7 @@ public class Domain extends ExtendableEntity implements Named {
         ArgumentNotValid.checkNotNullOrEmpty(theDomainName, "theDomainName");
         if (!DomainUtils.isValidDomainName(theDomainName)) {
             throw new ArgumentNotValid("Domain '" + theDomainName + "' does not match the regexp "
-                    + "defining valid domains: " + DomainUtils.VALID_DOMAIN_MATCHER.pattern());
+                    + "defining valid domains: " + TLD.getInstance().getValidDomainMatcher().pattern());
         }
         domainName = theDomainName;
         comments = "";
@@ -800,20 +802,33 @@ public class Domain extends ExtendableEntity implements Named {
             }
         }
         // Validate regexps
+        List<String> errMsgs = new ArrayList<String>();
         for (String regexp : cleanedListOfCrawlerTraps) {
+        	
+        	boolean wellformed = false;
             try {
                 Pattern.compile(regexp);
-            } catch (PatternSyntaxException e) {
-                final String errMsg = "The regular expression '" + regexp + "' is invalid. "
-                        + "Please correct the expression.";
-                if (strictMode) {
-                    throw new ArgumentNotValid(errMsg, e);
-                } else {
-                    log.warn(errMsg, e);
+                wellformed = CrawlertrapsUtils.isCrawlertrapsWellformedXML(regexp);
+                if (!wellformed){
+                	errMsgs.add("The expression '" + regexp + "' is not wellformed XML" 
+                    		+ " . Please correct the expression.");
                 }
+            } catch (PatternSyntaxException e) {
+                errMsgs.add("The expression '" + regexp + "' is not a proper regular expression: " 
+                		+ e.getDescription() + " . Please correct the expression.");
+            }
+        }
+        if (errMsgs.size() > 0) {
+            if (strictMode){ 
+                throw new ArgumentNotValid(errMsgs.size() +  " errors were found: " + StringUtils.conjoin(",", errMsgs));
+            } else {
+                log.warn(errMsgs.size() +  " errors were found: " + StringUtils.conjoin(",", errMsgs));
             }
         }
         crawlerTraps = Collections.unmodifiableList(cleanedListOfCrawlerTraps);
+        if (!crawlerTraps.isEmpty()) {
+            log.trace("Domain {} has {} crawlertraps", domainName, crawlerTraps.size());
+        }
     }
 
     /**

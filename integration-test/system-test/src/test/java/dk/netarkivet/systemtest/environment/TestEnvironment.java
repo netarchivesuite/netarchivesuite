@@ -2,7 +2,7 @@
  * #%L
  * NetarchiveSuite System test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -67,5 +67,11 @@ public interface TestEnvironment {
      * The deployment configuration to use.
      */
     public String getDeployConfig();
+
+    /**
+     * The full path to the heritrix3 bundler file
+     * @return
+     */
+    public String getH3Zip();
 
 }

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -80,8 +80,8 @@ public class BitarchiveMonitorTester {
      */
     @Test
     public void testBatchJobTimout() {
-        TimeoutBatch timeoutBatch = new TimeoutBatch();
-
+    	TimeoutBatch timeoutBatch = new TimeoutBatch();
+    	Channels.reset();
         // jmsARClient.batch(timeoutBatch, "ONE");
         BatchMessage msg = new BatchMessage(Channels.getTheBamon(), Channels.getError(), timeoutBatch,
                 Settings.get(CommonSettings.USE_REPLICA_ID));

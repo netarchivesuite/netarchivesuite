@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -86,10 +86,12 @@ public class GetDataResolverTester {
     @Test
     public void testExecuteCommand() throws Exception {
         String urlPrefix = "http://" + "netarchivesuite.viewerproxy.invalid";
-        URIResolver res = new GetDataResolver(new URIResolver() {
+        URIResolver res = new GetDataResolver(
+                new URIResolver() {
             public int lookup(Request request, Response response) {
                 return 201;
             }
+
         }, arcrep);
         Response response = makeNewResponse();
         File testFile = new File(TestInfo.WORKING_DIR, "fyensdk.arc");
@@ -159,6 +161,10 @@ public class GetDataResolverTester {
 
     private Response makeNewResponse() {
         return new Response() {
+            @Override public int hashCode() {
+                throw new RuntimeException("Not yet implemented");
+            }
+
             int status = 500;
             private String reason = "Never set";
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -178,7 +184,7 @@ public class GetDataResolverTester {
 
             public void addHeaderField(String name, String value) {
                 // TODO: implement method
-                throw new NotImplementedException("Not implemented");
+                // throw new NotImplementedException("Not implemented");
             }
 
             public int getStatus() {

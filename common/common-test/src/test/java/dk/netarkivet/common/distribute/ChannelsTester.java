@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ public class ChannelsTester {
 
     @After
     public void tearDown() {
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         rs.tearDown();
     }
 
@@ -69,7 +69,7 @@ public class ChannelsTester {
         Settings.set(CommonSettings.USE_REPLICA_ID, "TWO");
         assertEquals("Channel name must not change just because setting does", env + "_ONE_THE_BAMON", Channels
                 .getTheBamon().getName());
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         assertEquals("Channel name should change after resetting channels", env + "_TWO_THE_BAMON", Channels
                 .getTheBamon().getName());
     }
@@ -81,14 +81,14 @@ public class ChannelsTester {
      */
     @Test
     public void testBadLocation() throws Exception {
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         String env = Settings.get(CommonSettings.ENVIRONMENT_NAME);
         assertEquals("Channel must have default name before changing settings",
                 env + "_" + Settings.get(CommonSettings.USE_REPLICA_ID) + "_THE_BAMON", Channels.getTheBamon()
                         .getName());
         Settings.set(CommonSettings.USE_REPLICA_ID, "NOWHERE");
         try {
-            ChannelsTesterHelper.resetChannels();
+            Channels.reset();
             Channels.getTheBamon();
             fail("Should fail when getting channel after setting bad location");
         } catch (UnknownID e) {

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -239,7 +239,7 @@ class StartedJobHistoryChartGen {
     /** The dimension of the chart axis. */
     private static final double CHART_AXIS_DIMENSION = 10.0;
     /** The relative path of the output. */
-    private static final String OUTPUT_REL_PATH = "History" + File.separator + "webapp";
+    private static final String OUTPUT_REL_PATH = "History";
 
     /** The job id. */
     private final long jobId;

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@
 package dk.netarkivet.harvester.harvesting;
 
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 
 /**
@@ -42,11 +43,8 @@ public class CollectionPrefixNamingConvention implements ArchiveFileNaming {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
     }
 
-    /** The setting for the collectionName. */
-    private static String COLLECTION_SETTING = "settings.harvester.harvesting.heritrix.archiveNaming.collectionName";
-
     /** The name of the collection embedded in the names. */
-    private static String CollectionName = Settings.get(COLLECTION_SETTING);
+    private static String CollectionName = Settings.get(HarvesterSettings.HERITRIX_PREFIX_COLLECTION_NAME);
 
     public CollectionPrefixNamingConvention() {
     }

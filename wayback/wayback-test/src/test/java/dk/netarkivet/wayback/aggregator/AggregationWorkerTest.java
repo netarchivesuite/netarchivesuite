@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - wayback - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *       the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -57,7 +57,6 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * Verifies that a simple aggregation of two unsorted index files behave correctly the first time the aggregator is
      * run. No intermediate index file merging is performed at this time.
      * <p>
-     * Disabled, see https://sbforge.org/jira/browse/NAS-2326.
      */
     @Test
     public void testFirstAggregationRun() {
@@ -163,7 +162,15 @@ public class AggregationWorkerTest extends AggregatorTestCase {
         assertNull("Unexpected content of aggregated index after roll-over",
                 testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
 
-        FilenameFilter renamedFileFilter = (dir, name) -> name.matches("wayback.*[0-9]+.*cdx");
+        // JAVA 8 required for lambda
+        //FilenameFilter renamedFileFilter = (dir, name) -> name.matches("wayback.*[0-9]+.*cdx");
+        FilenameFilter renamedFileFilter = new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.matches("wayback.*[0-9]+.*cdx");
+			}
+		};
         File[] renamedFiles = AggregationWorker.indexOutputDir.listFiles(renamedFileFilter);
         assertTrue("Should exist a renamed file.", renamedFiles.length > 0);
 
@@ -185,7 +192,16 @@ public class AggregationWorkerTest extends AggregatorTestCase {
         worker.runAggregation();
         prepareSourceIndex(new String[] {inputFile155KName});
         worker.runAggregation();
-        FilenameFilter renamedFileFilter = (dir, name) -> name.matches(".*wayback.*[0-9]+.*cdx");
+     
+     // JAVA 8 required for lambda
+        //FilenameFilter renamedFileFilter = (dir, name) -> name.matches(".*wayback.*[0-9]+.*cdx");
+        FilenameFilter renamedFileFilter = new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.matches(".*wayback.*[0-9]+.*cdx");
+			}
+		};
         File[] renamedFiles = AggregationWorker.indexOutputDir.listFiles(renamedFileFilter);
         assertTrue("Should exist more than one renamed file.", renamedFiles.length == 3 );
     }

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -31,8 +31,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.handler.DefaultHandler;
+//import org.eclipse.jetty.server.Server;
+//import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,6 +115,7 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
      * @param response The object that receives the result
      */
     @Override
+    /*
     public void handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request,
             HttpServletResponse response) {
         HttpResponse netarkivetResponse = new HttpResponse(response);
@@ -128,6 +131,24 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
             createErrorResponse(netarkivetRequest.getURI(), netarkivetResponse, e);
         }
     }
+    */
+    public void handle(String target, HttpServletRequest request,
+    		HttpServletResponse response, int dispatch) {
+    	HttpResponse netarkivetResponse = new HttpResponse(response);
+    	HttpRequest netarkivetRequest = new HttpRequest(request);
+    	try {
+    		//The following is a bad idea because it hides where the
+    		//failure actually happens in the code
+    		//Generate URI to enforce fail-early of illegal URIs 
+    		//uri = new URI(request.getRequestURL().toString());
+    		uriResolver.lookup(netarkivetRequest, netarkivetResponse);
+    		((org.mortbay.jetty.Request) request).setHandled(true);
+    	} catch (Exception e) {
+    		createErrorResponse(netarkivetRequest.getURI(),
+    				netarkivetResponse, e);
+    	}
+    }
+    
 
     /**
      * Generate an appropriate error response when a URI generates an exception. If this fails, it is logged, but
@@ -233,6 +254,9 @@ public class WebProxy extends DefaultHandler implements URIResolverHandler {
          * @param value The value of the header
          */
         public void addHeaderField(String name, String value) {
+            if (hr.isCommitted()) {
+                log.warn("Writing a header {}:{} after the http response is committed.", name, value);
+            }
             hr.addHeader(name, value);
         }
 

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - monitor
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -32,14 +32,21 @@ import java.util.Random;
 
 import javax.management.MalformedObjectNameException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.monitor.Constants;
 import dk.netarkivet.monitor.MonitorSettings;
 
 /**
@@ -47,6 +54,10 @@ import dk.netarkivet.monitor.MonitorSettings;
  * Monitor-JMXsummary.jsp.
  */
 public class JMXSummaryUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(JMXSummaryUtils.class);
+
+
     /** JMX property for remove application button. */
     public static final String JMXRemoveApplication = dk.netarkivet.common.management.Constants.REMOVE_JMX_APPLICATION;
     /** JMX property for the physical location. */
@@ -277,6 +288,7 @@ public class JMXSummaryUtils {
         String query = null;
         try {
             query = createJMXQuery(parameters, request);
+            log.debug("Executing JMX query: " + query);
             return JMXStatusEntry.queryJMX(query);
         } catch (MalformedObjectNameException e) {
             if (query != null) {
@@ -467,4 +479,47 @@ public class JMXSummaryUtils {
             }
         }
     }
+
+    /**
+     * Remove an application. Used by Monitor-JMXsummary.jsp. Code has been moved from the jsp to here to avoid compile errors at
+     * runtime in correlation with the upgrade to java 1.8 and introduction of embedded tomcat to handle jsp pages. This was previously done via jetty 6.
+     *
+     * @param request http request from selvlet
+     * @param response http session for page context Harveststatus-running.jsp
+     * @param pageContext http session for page context Harveststatus-running.jsp
+     */
+    public static void RemoveApplication(HttpServletRequest request, HttpServletResponse response, PageContext pageContext)
+            throws IOException, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(request, "ServletRequest request");
+        ArgumentNotValid.checkNotNull(response, "ServletRequest response");
+        ArgumentNotValid.checkNotNull(pageContext, "PageContext pageContext");
+
+        // remove application if parameter remove is set.
+        String remove = request.getParameter(Constants.REMOVE);
+        if(remove != null) {
+            JMXSummaryUtils.StarredRequest starredRequest =
+                    new JMXSummaryUtils.StarredRequest(request);
+            try {
+                JMXSummaryUtils.unregisterJMXInstance(
+                        JMXSummaryUtils.STARRABLE_PARAMETERS, starredRequest,
+                        pageContext);
+                StringBuilder builder = new StringBuilder("/");
+                builder.append(JMXSummaryUtils.STATUS_MONITOR_JMXSUMMARY);
+                builder.append("?");
+                /**
+                 * oldquery is set in the link to remove an application from the summary view. It is used to
+                 * enable us to return to the previous view after removing an application.
+                 */
+                String oldquery = starredRequest.getParameter("oldquery");
+                if (oldquery != null) {
+                    builder.append(java.net.URLDecoder.decode(oldquery));
+                }
+                response.sendRedirect(builder.toString());
+            } catch (ForwardedToErrorPage e) {
+                return;
+            }
+
+        }
+    }
+
 }

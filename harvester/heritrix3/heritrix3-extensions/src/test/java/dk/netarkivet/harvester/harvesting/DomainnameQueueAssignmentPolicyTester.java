@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,6 @@ import org.archive.net.UURI;
 import org.archive.net.UURIFactory;
 import org.junit.Test;
 
-
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
@@ -57,15 +56,20 @@ public class DomainnameQueueAssignmentPolicyTester {
         assertEquals("Should find IP address from URL", "192.168.0.10", getDomainName("https://192.168.0.10:20/foo"));
         assertEquals("Should not attempt to parse IP-like URL as IP", "11.dk", getDomainName("http://192.168.0.11.dk"));
         assertEquals("Should not attempt to parse IP-like URL as IP", "12.dk", getDomainName("http://168.0.12.dk:192"));
-        assertEquals("Should return original key on illegal hostname", "x.fnord.bar",
-                getDomainName("http://x.fnord.bar"));
+   
+        // As of July 18th 'barbar' is not a public suffix but 'bar' is:  
+        // https://www.publicsuffix.org/list/public_suffix_list.dat
+        String illegalHostname = "x.fnord.barbar";
+        assertEquals("Should return original key on illegal hostname", illegalHostname,
+                getDomainName("http://" + illegalHostname));
+
         //TODO this returns DEFAULT_CLASS_KEY at the moment, but should return "foo.dk"
         //assertEquals("Should get domain name for DNS request", "foo.dk", getDomainName("dns:bar.foo.dk"));
         assertEquals("Should get domain name for DNS request", DEFAULT_CLASS_KEY, getDomainName("dns:bar.foo.dk"));
         
         // See bug 649 for this test.
         assertEquals("Should return default key on illegal scheme", DEFAULT_CLASS_KEY, getDomainName("about:blank"));
-
+        
     }
 
     @Test

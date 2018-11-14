@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -57,6 +57,8 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedField;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDefaultValue;
@@ -245,7 +247,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @param c An open connection to the harvestDatabase
      * @return The next available ID
      */
-    private Long generateNextID(Connection c) {
+    private synchronized Long generateNextID(Connection c) {
         Long maxVal = DBUtils.selectLongValue(c, "SELECT max(harvest_id) FROM harvestdefinitions");
         if (maxVal == null) {
             maxVal = 0L;
@@ -675,7 +677,14 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + " FROM partialharvests, harvestdefinitions"
                     + " WHERE harvestdefinitions.harvest_id = partialharvests.harvest_id"
                     + " AND isactive = ? AND nextdate IS NOT NULL AND nextdate < ?", true, now));
-            return ids;
+            Set<Long> distinctIds = new HashSet<>();
+            distinctIds.addAll(ids);
+            if (distinctIds.size() != ids.size()) {
+                log.warn("Query returned multiple identical ids {}. These have been sanitized.", ids);
+                return distinctIds;
+            } else {
+                return ids;
+            }
         } finally {
             HarvestDBConnection.release(connection);
         }
@@ -935,7 +944,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                                 + "       fullharvests.maxobjects," + "       fullharvests.maxbytes,"
                                 + "       fullharvests.maxjobrunningtime," + "       fullharvests.previoushd, "
                                 + "       harvestdefinitions.channel_id " + "FROM harvestdefinitions, fullharvests"
-                                + " WHERE harvestdefinitions.harvest_id " + "       = fullharvests.harvest_id");
+                                + " WHERE harvestdefinitions.harvest_id " + "       = fullharvests.harvest_id"
+                                + " ORDER BY harvestdefinitions.name");
         ) {
             ResultSet res = s.executeQuery();
             List<SparseFullHarvest> harvests = new ArrayList<SparseFullHarvest>();
@@ -943,6 +953,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 SparseFullHarvest sfh = new SparseFullHarvest(res.getLong(1), res.getString(2), res.getString(3),
                         res.getInt(4), res.getBoolean(5), res.getLong(6), res.getLong(7), res.getLong(8),
                         res.getLong(9), DBUtils.getLongMaybeNull(res, 10), DBUtils.getLongMaybeNull(res, 11));
+                // EAV
+                long oid = sfh.getOid();
+                List<AttributeAndType> attributesAndTypes = EAV.getInstance().getAttributesAndTypes(EAV.SNAPSHOT_TREE_ID, (int)oid);
+                sfh.setAttributesAndTypes(attributesAndTypes);
                 harvests.add(sfh);
             }
             return harvests;
@@ -1043,7 +1057,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 SparseFullHarvest sfh = new SparseFullHarvest(res.getLong(1), harvestName, res.getString(2),
                         res.getInt(3), res.getBoolean(4), res.getLong(5), res.getLong(6), res.getLong(7),
                         res.getLong(8), DBUtils.getLongMaybeNull(res, 9), DBUtils.getLongMaybeNull(res, 10));
-
+                // EAV
+                long oid = sfh.getOid();
+                List<AttributeAndType> attributesAndTypes = EAV.getInstance().getAttributesAndTypes(EAV.SNAPSHOT_TREE_ID, (int)oid);
+                sfh.setAttributesAndTypes(attributesAndTypes);
                 sfh.setExtendedFieldValues(getExtendedFieldValues(sfh.getOid()));
                 return sfh;
             } else {

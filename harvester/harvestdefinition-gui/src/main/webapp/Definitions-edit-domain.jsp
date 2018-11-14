@@ -5,8 +5,8 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -161,9 +161,9 @@ Display all the form information for this domain
                                      .Constants.ALIAS_TIMEOUT_IN_MILLISECONDS);
             Date now = new Date();
             if (aliasTimeoutDate.before(now)) { %>
-                <fmt:message key="expired.0"> <fmt:param><fmt:formatDate type="both" value="<%=aliasTimeoutDate%>"/></fmt:param> </fmt:message>
+                <%=HTMLUtils.parseDate(aliasTimeoutDate)%>
     <%        } else { %>
-                <fmt:message key="valid.until.0"> <fmt:param><fmt:formatDate type="both" value="<%=aliasTimeoutDate%>"/></fmt:param> </fmt:message>
+                <%=HTMLUtils.parseDate(aliasTimeoutDate)%>
     <%        } %>
             <br/><input type='radio' name='<%=Constants.RENEW_ALIAS_PARAM%>'
                         value='no' checked="checked"/> <fmt:message key="dont.renew.alias"/>
@@ -283,8 +283,8 @@ Display all the form information for this domain
                 String rowClass = HTMLUtils.getRowClass(rowcount++);
                 String listName = sl.getName();
                 String editLink = "Definitions-edit-domain-seedlist.jsp?"
-                        + Constants.EDIT_URLLIST_PARAM + "=1&"
-                        + Constants.URLLIST_NAME_PARAM + "="
+                        + Constants.EDIT_SEEDLIST_PARAM + "=1&"
+                        + Constants.SEEDLIST_NAME_PARAM + "="
                         + HTMLUtils.encode(listName) + "&"
                         + Constants.DOMAIN_PARAM + "="
                         + HTMLUtils.encode(domainName);
@@ -302,7 +302,7 @@ Display all the form information for this domain
         <%
             }
             String newSeedLink = "Definitions-edit-domain-seedlist.jsp?"
-                    + Constants.EDIT_URLLIST_PARAM + "=1&"
+                    + Constants.EDIT_SEEDLIST_PARAM + "=1&"
                     + Constants.DOMAIN_PARAM + "="
                     + HTMLUtils.encode(domainName);
         %>

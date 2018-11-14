@@ -3,9 +3,6 @@ package dk.netarkivet.harvester.harvesting;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-
-import dk.netarkivet.common.exceptions.IOFailure;
 
 import org.netarchivesuite.heritrix3wrapper.CommandLauncher;
 import org.netarchivesuite.heritrix3wrapper.EngineResult;
@@ -15,6 +12,8 @@ import org.netarchivesuite.heritrix3wrapper.JobResult;
 import org.netarchivesuite.heritrix3wrapper.LaunchResultHandlerAbstract;
 import org.netarchivesuite.heritrix3wrapper.ResultStatus;
 import org.netarchivesuite.heritrix3wrapper.unzip.UnzipUtils;
+
+import dk.netarkivet.common.exceptions.IOFailure;
 
 //TODO Manually create the adhoc.keystore file (in Heritrix's working directory) that 
 // Heritrix usually generates automatically. This can be done using Java 8 tools with the following command (
@@ -81,7 +80,7 @@ public class H3LaunchTest {
 		} catch (IOException e) {
 			throw new IOFailure("Problem occurred during the copying of files to heritrix job", e);
 		}
-		try {
+
 		engineResult = h3w.rescanJobDirectory();
 		//System.out.println(new String(engineResult.response, "UTF-8"));
 		jobResult = h3w.buildJobConfiguration(jobname);
@@ -91,10 +90,6 @@ public class H3LaunchTest {
 		//System.out.println(new String(jobResult.response, "UTF-8"));
 		jobResult = h3w.waitForJobState(jobname, CrawlControllerState.PAUSED, 60, 1000);
 		jobResult = h3w.unpauseJob(jobname);
-		} catch (UnsupportedEncodingException e) {
-			//TODO Add logging
-			e.printStackTrace();
-		}
 		
 		//System.out.println(new String(jobResult.response, "UTF-8"));
 		
@@ -140,8 +135,8 @@ public class H3LaunchTest {
 		Heritrix3Wrapper h3wrapper;
 		EngineResult engineResult;
 		JobResult jobResult;
-		PrintWriter outputPrinter;
-		PrintWriter errorPrinter;
+		final PrintWriter outputPrinter; // final required by java 7
+		final PrintWriter errorPrinter; // final required by java 7
 		try {
 			UnzipUtils.unzip(zipFileStr, unpackDirStr);
 			File basedir = new File(basedirStr);

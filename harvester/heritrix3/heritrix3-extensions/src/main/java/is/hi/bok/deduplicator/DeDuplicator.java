@@ -36,7 +36,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,6 +53,7 @@ import org.archive.modules.CrawlURI;
 import org.archive.modules.ProcessResult;
 import org.archive.modules.Processor;
 import org.archive.modules.net.ServerCache;
+import org.archive.modules.revisit.IdenticalPayloadDigestRevisit;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.Base32;
 import org.springframework.beans.factory.InitializingBean;
@@ -87,12 +87,42 @@ import dk.netarkivet.common.utils.AllDocsCollector;
         <property name="origin" value=""/>
         <property name="originHandling" value="INDEX"/> Other options: NONE,PROCESSOR
         <property name="statsPerHost" value="true"/>
+        <property name="revisitInWarcs" value="true"/>
 
- * 
- * 
- */
+//          	/**
+//					(FROM deduplicator-commons/src/main/java/is/landsbokasafn/deduplicator/IndexFields.java)
+//        	       * These enums correspond to the names of fields in the Lucene index
+//        	     */
+//        	public enum IndexFields {
+//        	    /** The URL 
+//        	     *  This value is suitable for use in warc/revisit records as the WARC-Refers-To-Target-URI
+//        	     **/
+//        	        URL,
+//        	    /** The content digest as String **/
+//        	        DIGEST,
+//        	    /** The URLs timestamp (time of fetch). Suitable for use in WARC-Refers-To-Date. Encoded according to
+//        	     *  w3c-iso8601  
+//        	     */
+//        	    DATE,
+//        	    /** The document's etag **/
+//        	    ETAG,
+//        	    /** A canonicalized version of the URL **/
+//        	        URL_CANONICALIZED,
+//        	    /** WARC Record ID of original payload capture. Suitable for WARC-Refers-To field. **/
+//        	    ORIGINAL_RECORD_ID;
+//
+//        	}
+ 
 @SuppressWarnings({"unchecked"})
 public class DeDuplicator extends Processor implements InitializingBean {
+
+    @Override public boolean getEnabled() {
+        return super.getEnabled();
+    }
+
+    @Override public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+    }
 
     private static Logger logger =
         Logger.getLogger(DeDuplicator.class.getName());
@@ -286,7 +316,18 @@ public class DeDuplicator extends Processor implements InitializingBean {
     	kp.put(ATTR_ORIGIN_HANDLING, originHandling);
     }
 
-       
+    public final static String ATTR_REVISIT_IN_WARCS = "revisit-in-warcs";
+    {
+    	setRevisitInWarcs(Boolean.TRUE); // the default is true
+    }   
+    
+    public void setRevisitInWarcs(Boolean revisitOn) {
+    	kp.put(ATTR_REVISIT_IN_WARCS, revisitOn);
+	}
+    public Boolean getRevisitInWarcs() {
+        return (Boolean) kp.get(ATTR_REVISIT_IN_WARCS);
+    }
+    
     // Spring configured access to Heritrix resources
     
     // Gain access to the ServerCache for host based statistics.
@@ -294,15 +335,14 @@ public class DeDuplicator extends Processor implements InitializingBean {
     public ServerCache getServerCache() {
         return this.serverCache;
     }
-    @Autowired
+    
+	@Autowired
     public void setServerCache(ServerCache serverCache) {
         this.serverCache = serverCache;
     }
 
     
     // Member variables.
-    
-    //protected IndexSearcher searcher = null;
     protected IndexSearcher indexSearcher = null;
     protected IndexReader indexReader = null;
     
@@ -319,6 +359,10 @@ public class DeDuplicator extends Processor implements InitializingBean {
 
 
     public void afterPropertiesSet() throws Exception {
+        if (!getEnabled()) {
+            logger.info(this.getClass().getName() + " disabled.");
+            return;
+        }
         // Index location
         String indexLocation = getIndexLocation();
         try {
@@ -361,6 +405,10 @@ public class DeDuplicator extends Processor implements InitializingBean {
 
 	@Override
 	protected boolean shouldProcess(CrawlURI curi) {
+        if (!getEnabled()) {
+            logger.finest("Not handling " + curi.toString() + ", deduplication disabled.");
+            return false;
+        }
         if (curi.isSuccess() == false) {
             // Early return. No point in doing comparison on failed downloads.
             logger.finest("Not handling " + curi.toString()
@@ -392,12 +440,11 @@ public class DeDuplicator extends Processor implements InitializingBean {
                     curi.getContentType() + ").");
             return false;
         }
-        if(curi.getData().containsKey(A_CONTENT_STATE_KEY) && 
-                ((Integer)curi.getData().get(A_CONTENT_STATE_KEY)).intValue()==CONTENT_UNCHANGED){
-            // Early return. A previous processor or filter has judged this
-            // CrawlURI as having unchanged content.
+        
+        if(curi.isRevisit()){
+            // A previous processor or filter has judged this CrawlURI to be a revisit
             logger.finest("Not handling " + curi.toString()
-                    + ", already flagged as unchanged.");
+                    + ", already flagged as revisit.");
             return false;
         }
         return true;
@@ -408,9 +455,40 @@ public class DeDuplicator extends Processor implements InitializingBean {
     	throw new AssertionError();
     }
 
-	
+    /**
+     * Return date from 'date' field if date absent in 'origin' field or origin-field-absent
+     * @param duplicate
+     * @return
+     */
+    private String getRefersToDate(Document duplicate) {
+    	String indexedDate = duplicate.get("date"); // DATE.name()
+    	// look for the indexeddate of the revisit date in the origin "arcfile,offset,timestamp" 
+    	String duplicateOrigin = duplicate.get(DigestIndexer.FIELD_ORIGIN);
+    	if (duplicateOrigin != null && !duplicateOrigin.isEmpty()) {
+    		String[] parts = duplicateOrigin.split(",");
+    		if (parts.length == 3)  { // Detect new field-origin format 
+    			indexedDate = parts[2];
+    		}
+    	}
+    	Date readDate = null;
+    	try {
+    		readDate = ArchiveDateConverter.getHeritrixDateFormat().parse(indexedDate);
+    	} catch (ParseException e) {
+    		logger.warning("Unable to parse the indexed date '" + indexedDate 
+    				+ "' as a 17-digit date: " + e); 
+    	}
+    	String refersToDateString = indexedDate;
+    	if (readDate != null) {
+    		refersToDateString = ArchiveDateConverter.getWarcDateFormat().format(readDate); 
+    	}
+    	return refersToDateString;
+    }
+
+
+
 	@Override
 	protected ProcessResult innerProcessResult(CrawlURI curi) throws InterruptedException {
+
         ProcessResult processResult = ProcessResult.PROCEED; // Default. Continue as normal
 
         logger.finest("Processing " + curi.toString() + "(" + 
@@ -420,7 +498,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
         stats.totalAmount += curi.getContentSize();
         Statistics currHostStats = null;
         if(statsPerHost){
-            synchronized (perHostStats) {
+            synchronized (this) {
                 String host = getServerCache().getHostFor(curi.getUURI()).getHostName();
                 currHostStats = perHostStats.get(host);
                 if(currHostStats==null){
@@ -442,6 +520,27 @@ public class DeDuplicator extends Processor implements InitializingBean {
 
         if (duplicate != null){
             // Perform tasks common to when a duplicate is found.
+
+        	//// Code taken from LuceneIndexSearcher.wrap() method //////////////////////////
+        	IdenticalPayloadDigestRevisit duplicateRevisit = new IdenticalPayloadDigestRevisit(
+        			duplicate.get("digest")); //DIGEST.name()));
+
+        	duplicateRevisit.setRefersToTargetURI(
+        			duplicate.get("url"));  // URL.name()
+
+        	
+        	duplicateRevisit.setRefersToDate(getRefersToDate(duplicate));
+        			
+        	
+        	//Check if the record ID information is available in the index.
+        	// This requires that record information is available during indexing
+        	String refersToRecordID = duplicate.get("orig_record_id"); // ORIGINAL_RECORD_ID.name()); 
+        
+        	if (refersToRecordID!=null && !refersToRecordID.isEmpty()) {
+        		duplicateRevisit.setRefersToRecordID(refersToRecordID);
+        	}        	
+
+
             // Increment statistics counters
             stats.duplicateAmount += curi.getContentSize();
             stats.duplicateNumber++;
@@ -464,7 +563,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
                 if(useOriginFromIndex && 
                     duplicate.get(DigestIndexer.FIELD_ORIGIN)!=null){
                     // Index contains origin, use it.
-                    annotation += ":\"" + duplicate.get(DigestIndexer.FIELD_ORIGIN) + "\""; 
+                    annotation += ":\"" + duplicate.get(DigestIndexer.FIELD_ORIGIN) + "\""; // If 
                 } else {
                     String tmp = getOrigin();
                     // Check if an origin value is actually available
@@ -474,50 +573,24 @@ public class DeDuplicator extends Processor implements InitializingBean {
                     }
                 }
             } 
-            // Make note in log
+            // Make duplicate-note in crawl-log
             curi.getAnnotations().add(annotation);
-
-            if(getChangeContentSize()){
-                // Set content size to zero, we are not planning to 
-                // 'write it to disk'
-                // TODO: Reconsider this
-                curi.setContentSize(0);
-            } else if (lookupByURL) {
-            	// A hack to have Heritrix count this as a duplicate.
-            	// TODO: Get gojomo to change how Heritrix decides CURIs are duplicates.
-                int targetHistoryLength = 2;
-		        Map[] history = 
-		            (HashMap[]) (curi.containsDataKey(A_FETCH_HISTORY) 
-				    ? curi.getData().get(A_FETCH_HISTORY) 
-				    : new HashMap[targetHistoryLength]);
+            // Notify Heritrix that this is a revisit if we want revisit records to be written
+            if (getRevisitInWarcs()) {
+            	curi.setRevisitProfile(duplicateRevisit);
+            }
+            
+            /* TODO enable this when moving to indexing based on this data
+            // Add annotation to crawl.log 
+            curi.getAnnotations().add(REVISIT_ANNOTATION_MARKER);
                         
-                // Create space 
-		        if(history.length != targetHistoryLength) {
-		            HashMap[] newHistory = new HashMap[targetHistoryLength];
-		            System.arraycopy(
-		                    history,0,
-		                    newHistory,0,
-		                    Math.min(history.length,newHistory.length));
-		            history = newHistory; 
-		        }
-                
-                // rotate all history entries up one slot except the newest
-                // insert from index at [1]
-                for(int i = history.length-1; i >1; i--) {
-                    history[i] = history[i-1];
-                }
-                // Fake the 'last' entry
-                Map oldVisit = new HashMap();
-                oldVisit.put(A_CONTENT_DIGEST, curi.getContentDigest());
-                history[1]=oldVisit;
-                
-                curi.getData().put(A_FETCH_HISTORY,history);
-            	
-            } // TODO: Handle matching on digest
-            // Mark as duplicate for other processors
-            curi.getData().put(A_CONTENT_STATE_KEY, CONTENT_UNCHANGED);
+            // Write extra logging information (needs to be enabled in CrawlerLoggerModule)
+            curi.addExtraInfo(EXTRA_REVISIT_PROFILE, duplicateRevisit.getProfileName());
+            curi.addExtraInfo(EXTRA_REVISIT_URI, duplicateRevisit.getRefersToTargetURI());
+            curi.addExtraInfo(EXTRA_REVISIT_DATE, duplicateRevisit.getRefersToDate());
+            */
+            
         }
-        
         if(getAnalyzeTimestamp()){
             doAnalysis(curi,currHostStats, duplicate!=null);
         }
@@ -694,6 +767,11 @@ public class DeDuplicator extends Processor implements InitializingBean {
         StringBuffer ret = new StringBuffer();
         ret.append("Processor: is.hi.bok.digest.DeDuplicator\n");
         ret.append("  Function:          Abort processing of duplicate records\n");
+        if (!getEnabled()) {
+            ret.append("Processor is disabled by configuration");
+            ret.append("\n");
+            return ret.toString();
+        }
         ret.append("                     - Lookup by " + 
         		(lookupByURL?"url":"digest") + " in use\n");
         ret.append("  Total handled:     " + stats.handledNumber + "\n");
@@ -735,7 +813,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
                 ret.append(" [no timestamp]");
             }
             ret.append("\n");
-            synchronized (perHostStats) {
+            synchronized (this) {
                 Iterator<String> it = perHostStats.keySet().iterator();
                 while(it.hasNext()){
                     String key = it.next();
@@ -926,7 +1004,7 @@ public class DeDuplicator extends Processor implements InitializingBean {
      *
      * @param fieldName name of the field to look in.
      * @param value The value to query for
-     * @returns A Query for the given value in the given field.
+     * @return A Query for the given value in the given field.
      */
 	protected Query queryField(String fieldName, String value) {
 		Query query = null;

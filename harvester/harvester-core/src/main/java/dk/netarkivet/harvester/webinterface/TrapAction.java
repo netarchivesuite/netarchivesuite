@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -42,7 +42,6 @@ import dk.netarkivet.common.webinterface.HTMLUtils;
 
 public abstract class TrapAction {
 
-    //private static final Log log = LogFactory.getLog(TrapAction.class);
     protected static final Logger log = LoggerFactory.getLogger(TrapAction.class);
     /**
      * This method processes the request to determine which action it corresponds to and passes the request along
@@ -59,6 +58,7 @@ public abstract class TrapAction {
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         log.debug("Processing request");
         HttpServletRequest request = (HttpServletRequest) context.getRequest();
+        
         try {
             if (ServletFileUpload.isMultipartContent(request)) {
                 TrapActionEnum.CREATE_OR_UPDATE.getTrapAction().doAction(context, i18n);
@@ -72,6 +72,7 @@ public abstract class TrapAction {
                 }
             }
         } catch (Throwable e) {
+            log.warn("Error in Global Crawler Traps", e);
             HTMLUtils.forwardWithErrorMessage(context, i18n, e, "errormsg;crawlertrap.action.error");
             throw new ForwardedToErrorPage("Error in Global Crawler Traps", e);
         }

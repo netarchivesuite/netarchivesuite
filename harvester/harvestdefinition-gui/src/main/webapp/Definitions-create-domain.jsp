@@ -5,8 +5,8 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -31,82 +31,20 @@ Parameters:
     domainlist: a whitespace-separated list of domains to be created. Names
     are validated and a list of links to the new domain definition pages is
     displayed.
---%><%@ page import="javax.servlet.RequestDispatcher,
-                 java.util.Arrays,
-                 java.util.Set,
-                 java.util.HashSet,
-                 dk.netarkivet.common.utils.I18n,
+--%><%@ page import="dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
-                 dk.netarkivet.harvester.datamodel.DomainDAO,
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.DomainDefinition"
-          pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
-%><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
-    private static final I18n I18N
-            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-%><%
+          pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"/>
+<fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/>
+<%! private static final I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%>
+<%
     HTMLUtils.setUTF8(request);
-    String domains = request.getParameter(Constants.DOMAINLIST_PARAM);
-    if (domains != null) {
-        String[] domainsList = domains.split("\\s+");
-        Set<String> invalidDomainNames = new HashSet<String>(
-                DomainDefinition.createDomains(domainsList));
-               
-        if (domainsList.length == 1
-                && DomainDAO.getInstance().exists(domainsList[0])) {
-            RequestDispatcher rd =
-                    pageContext.getServletContext().
-                            getRequestDispatcher(
-                                    "/Definitions-edit-domain.jsp?"
-                                            + Constants.DOMAIN_PARAM
-                                            + "=" + HTMLUtils.encode(
-                                            domainsList[0]));
-            rd.forward(request, response);
-            return;
-        } else {
-            StringBuilder message = new StringBuilder();
-            Set<String> validDomains = new HashSet<String>(Arrays.asList(domainsList));
-            validDomains.removeAll(invalidDomainNames);
-            if (!validDomains.isEmpty()) {
-            	message.append("<h4>");
-            	message.append(I18N.getString(response.getLocale(),
-                    "harvestdefinition.domains.created"));
-            	message.append("</h4><br/>");
-            
-            	for (String domain : validDomains) {
-                	if (DomainDAO.getInstance().exists(domain)) {
-                    	message.append(DomainDefinition.makeDomainLink(domain));
-                    	message.append("<br/>");
-                	}
-            	}
-            }
-            if (invalidDomainNames.size() > 0) {
-                message.append("<br/>");
-                message.append(I18N.getString(response.getLocale(),
-                        "harvestdefinition.domains.notcreated"));
-                message.append("<br/>");
-                DomainDAO dao = DomainDAO.getInstance();
-                for (String invalid : invalidDomainNames) {
-                    if (dao.exists(invalid)) {
-                        message.append(
-                                DomainDefinition.makeDomainLink(invalid));
-                    } else {
-                        message.append(invalid);
-                    }
-                    message.append("<br/>");
-                }
-            }
-            request.setAttribute("message", message.toString());
-            RequestDispatcher rd = pageContext.getServletContext().
-                    getRequestDispatcher("/message.jsp");
-            rd.forward(request, response);
-            return;
-        }
-    }
-    HTMLUtils.generateHeader(
-            pageContext);
+
+    DomainDefinition.CreateDomainDefinitionListInRequest(request, response, pageContext, I18N);
+    HTMLUtils.generateHeader(pageContext);
     //We only reach this point if no domainlist was sent in the request
 %>
 

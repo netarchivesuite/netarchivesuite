@@ -1,9 +1,8 @@
 /*
  * #%L
- * Netarchivesuite - harvester
+ * NetarchiveSuite - harvester - core
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
- *             the National Library of France and the Austrian National Library.
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,6 +58,10 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
          * Heritrix is actively crawling.
          */
         CRAWLER_ACTIVE,
+        /**
+         * Heritrix is active but is crawling nothing.
+         */
+        CRAWLER_EMPTY,
         /**
          * Heritrix is crawling but is currently pausing.
          */

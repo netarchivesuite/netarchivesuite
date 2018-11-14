@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -67,7 +67,7 @@ public class MetadataFileWriterArc extends MetadataFileWriter {
     public static MetadataFileWriter createWriter(File metadataARCFile) {
         MetadataFileWriterArc mtfw = new MetadataFileWriterArc();
     	ArcFileNaming naming = new ArcFileNamingSingleFile(metadataARCFile);
-    	ArcFileWriterConfig config = new ArcFileWriterConfig(metadataARCFile.getParentFile(), false, Long.MAX_VALUE, true);
+    	ArcFileWriterConfig config = new ArcFileWriterConfig(metadataARCFile.getParentFile(), compressRecords(), Long.MAX_VALUE, true);
         mtfw.writer = ArcFileWriter.getArcWriterInstance(naming, config);
         mtfw.open();
         return mtfw;

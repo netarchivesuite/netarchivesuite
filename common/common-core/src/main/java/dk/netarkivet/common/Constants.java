@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -46,41 +46,24 @@ public final class Constants {
     public static final Pattern IP_KEY_REGEXP = Pattern.compile("^" + IP_REGEX_STRING + "$");
     /** A full string matcher for an IPv6-address. */
     public static final Pattern IPv6_KEY_REGEXP = Pattern.compile("^([0-9A-F]{1,2}\\:){5}[0-9A-F]{1,2}$");
-    /**
-     * The suffix of a regular expression that matches the metadata files. Add job IDs to the front as necessary.
-     */
-    public static final String METADATA_FILE_PATTERN_SUFFIX = "-metadata-[0-9]+.(w)?arc";
+
     /** The mimetype for a list of CDX entries. */
     public static final String CDX_MIME_TYPE = "application/x-cdx";
-
-    /** Possible states of code. */
-    private static enum CodeStatus {
-        /** Released code. */
-        RELEASE,
-        /** Code is under codefreeze. The code is a release candidate. */
-        CODEFREEZE,
-        /**
-         * The code is not production ready. Although it usually compiles, all code has not necessarily been tested.
-         */
-        UNSTABLE
-    }
 
     /** Extension of XML file names. */
     public static final String XML_EXTENSION = ".xml";
 
-    // It is QA's responsibility to update the following parameters on all
-    // release and codefreeze actions
-    /** Major version number. */
-    public static final int MAJORVERSION = 5;
-    /** Minor version number. */
-    public static final int MINORVERSION = 0;
-    /** Patch version number. */
-    public static final String PATCHVERSION = "0";
-    /** Current status of code. */
-    private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
+    // Version string. */
+    private static String versionHtml;
+    private static String version;
 
-    /** Current version of Heritrix used by netarkivet-code. */
+    /** Current version of Heritrix 1 used by netarkivet-code. */
     private static final String HERITRIX_VERSION = "1.14.4";
+    
+    /** Current version of Heritrix 3 used by netarkivet-code. 
+     * This should be the same value as the property 'heritrix3.version' in the main pom.xml.
+     * TODO: Could this be tested? */
+    private static final String HERITRIX3_VERSION = "3.3.0-BDB-5.0.x-NAS-1.0-SNAPSHOT";
 
     /**
      * Read this much data when copying data from a file channel. Note that due to a bug in java, this should never be
@@ -112,24 +95,34 @@ public final class Constants {
 
     /**
      * Get a human-readable version string.
-     *
+     * @param isHtmlFormat if true, return a html format for the human-readable version string.
      * @return A string telling current version and status of code.
      */
-    public static String getVersionString() {
-        if (BUILDSTATUS.equals(CodeStatus.RELEASE)) {
-            return "Version: " + MAJORVERSION + "." + MINORVERSION + "." + PATCHVERSION + " status " + BUILDSTATUS;
-        } else {
-            String version = "Version: " + MAJORVERSION + "." + MINORVERSION + "." + PATCHVERSION + " status "
-                    + BUILDSTATUS;
+    public static String getVersionString(boolean isHtmlFormat) {
+        if (version == null || versionHtml == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Version: ");
+            sb.append(Constants.class.getPackage().getSpecificationVersion());
             String implementationVersion = Constants.class.getPackage().getImplementationVersion();
-            if (implementationVersion != null) {
-            	if (implementationVersion.length() != 40) {
-                    version += " (r" + implementationVersion + ")";
-            	} else {
-                    version += " (<a href=\"https://github.com/netarchivesuite/netarchivesuite/commit/" + implementationVersion + "\">" + implementationVersion.substring(0, 10) + "</a>)";
-            	}
+            StringBuilder sbHtml = new StringBuilder(sb);
+            if (implementationVersion != null && implementationVersion.length() == 40) {
+            	sbHtml.append(" (<a href=\"https://github.com/netarchivesuite/netarchivesuite/commit/");
+            	sbHtml.append(implementationVersion);
+            	sbHtml.append("\">");
+            	sbHtml.append(implementationVersion.substring(0, 10));
+            	sbHtml.append("</a>)");
+
+            	sb.append(" (https://github.com/netarchivesuite/netarchivesuite/commit/");
+            	sb.append(implementationVersion);
+            	sb.append(")");
             }
-            return version;
+            version = sb.toString();
+            versionHtml = sbHtml.toString();
+        }
+        if(isHtmlFormat) {
+        	return versionHtml;
+        } else {
+        	return version;
         }
     }
 
@@ -169,7 +162,7 @@ public final class Constants {
     /** The current website for the NetarchiveSuite project. */
     public static final String PROJECT_WEBSITE = "https://sbforge.org/display/NAS";
 
-	public static String getHeritrix3VersionString() {
-		return "3.3.0-LBS-2014-03"; 
-	}
+    public static String getHeritrix3VersionString() {
+        return HERITRIX3_VERSION;
+    }
 }

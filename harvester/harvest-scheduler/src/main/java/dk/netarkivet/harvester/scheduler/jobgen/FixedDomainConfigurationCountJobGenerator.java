@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -120,6 +120,12 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     }
 
     /**
+     * Maps jobs currently being filled with domain configurations by harvest template name. These jobs keep getting new
+     * configurations until no more configurations are left to process or the configured size has been reached.
+     */
+    private Map<Long, HarvestJobGenerationState> state;
+
+    /**
      * Compare two configurations in alphabetical order of their name.
      */
     private static class ConfigNamesComparator implements Comparator<DomainConfiguration> {
@@ -144,12 +150,6 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     /** The singleton instance. */
     public static FixedDomainConfigurationCountJobGenerator instance;
 
-    /**
-     * Maps jobs currently being filled with domain configurations by harvest template name. These jobs keep getting new
-     * configurations until no more configurations are left to process or the configured size has been reached.
-     */
-    private Map<Long, HarvestJobGenerationState> state;
-
     /** The job DAO instance (singleton). */
     private JobDAO dao = JobDAO.getInstance();
 
@@ -163,6 +163,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     public synchronized static FixedDomainConfigurationCountJobGenerator getInstance() {
         if (instance == null) {
             instance = new FixedDomainConfigurationCountJobGenerator();
+            log.info("Initialised {} singleton.", FixedDomainConfigurationCountJobGenerator.class);
         }
         return instance;
     }
@@ -180,7 +181,8 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
 
     @Override
     public int generateJobs(HarvestDefinition harvest) {
-        HarvestJobGenerationState jobsUnderConstruction = getStateForHarvest(harvest);
+        //this is a map form domain-cfgs to jobs. It will be empty if newly created.
+        HarvestJobGenerationState jobsUnderConstruction = getOrCreateStateForHarvest(harvest);
 
         try {
             int jobsComplete = super.generateJobs(harvest);
@@ -188,6 +190,8 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
             // Look if we have jobs that have not reached their limit, but are complete
             // as we have finished processing the harvest
             if (!jobsUnderConstruction.isEmpty()) {
+                log.debug("Finished generating jobs for HD #{} and found {} job(s) still under construction. This/these will"
+                        + "now be finalised and committed to the DB.", harvest.getOid(), jobsUnderConstruction.size());
                 for (Job job : jobsUnderConstruction.values()) {
                     // The job is ready, post-process and store it in DB
                     editJobOrderXml(job);
@@ -197,7 +201,6 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
                     ++jobsComplete;
                 }
             }
-
             return jobsComplete;
         } finally {
             dropStateForHarvest(harvest);
@@ -218,24 +221,37 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
                         (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
                 continue;
             }
+            // excluding configs with no active seeds
+            if (ignoreConfiguration(cfg)) {
+            	log.info("Ignoring config '{}' for domain '{}' - no active seeds !");
+            	continue;
+            }
 
             DomainConfigurationKey domainConfigKey = new DomainConfigurationKey(cfg);
+            log.debug("Processing config {} for HD #{}.", domainConfigKey, harvest.getOid());
             Job match = jobsUnderConstruction.get(domainConfigKey);
             if (match == null) {
                 match = initNewJob(harvest, cfg);
+                log.debug("No pre-existing job found for config {} for HD #{} so creating job {}.", domainConfigKey, harvest.getOid(), match);
             } else {
-                if (canAccept(match, cfg)) {
+                if (canAccept(match, cfg, null)) {
+                    log.debug("Pre-existing job found for config {} for HD #{}: {}. Adding.", domainConfigKey, harvest.getOid(), match);
                     match.addConfiguration(cfg);
                 } else {
+                    log.debug("Pre-existing job {} found for config {} for HD #{} but this config cannot be added.",
+                            match, domainConfigKey, harvest.getOid());
                     // The job is ready, post-process and store it in DB
                     editJobOrderXml(match);
+                    log.debug("Storing job {} to DB.", match);
                     dao.create(match);
 
                     // Increment counter
                     ++jobsComplete;
 
                     // Start construction of a new job
-                    initNewJob(harvest, cfg);
+                    match = initNewJob(harvest, cfg);
+                    log.debug("Cannot add config {} for HD #{} to existing job so created new job{}.", domainConfigKey, harvest.getOid(), match);
+
                 }
             }
         }
@@ -252,27 +268,30 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
     private Job initNewJob(HarvestDefinition harvest, DomainConfiguration cfg) {
         HarvestJobGenerationState jobsUnderConstruction = getExistingStateForHarvest(harvest);
         Job job = getNewJob(harvest, cfg);
-        jobsUnderConstruction.put(new DomainConfigurationKey(cfg), job);
+        final DomainConfigurationKey domainConfigurationKey = new DomainConfigurationKey(cfg);
+        jobsUnderConstruction.put(domainConfigurationKey, job);
+        log.debug("Created new job {} for HD #{} with configuration key {}.", job.toString(), harvest.getOid(), domainConfigurationKey);
         return job;
     }
 
     private synchronized HarvestJobGenerationState getStateForHarvest(final HarvestDefinition harvest,
             final boolean failIfNotExists) {
-
         long harvestId = harvest.getOid();
+        log.debug("Checking harvest status of HD #{}.", harvestId);
         HarvestJobGenerationState harvestState = this.state.get(harvestId);
         if (harvestState == null) {
+            log.debug("Harvest status of HD #{} is null", harvestId);
             if (failIfNotExists) {
                 throw new NoSuchElementException("No job generation state for harvest " + harvestId);
             }
             harvestState = new HarvestJobGenerationState();
             this.state.put(harvestId, harvestState);
+            log.debug("Created default harvest state for HD #{}.", harvestId);
         }
-
         return harvestState;
     }
 
-    private HarvestJobGenerationState getStateForHarvest(final HarvestDefinition harvest) {
+    private HarvestJobGenerationState getOrCreateStateForHarvest(final HarvestDefinition harvest) {
         return getStateForHarvest(harvest, false);
     }
 
@@ -282,6 +301,7 @@ public class FixedDomainConfigurationCountJobGenerator extends AbstractJobGenera
 
     private synchronized void dropStateForHarvest(final HarvestDefinition harvest) {
         long harvestId = harvest.getOid();
+        log.debug("Removing harvest state information for HD #{}.", harvestId);
         HarvestJobGenerationState harvestState = this.state.remove(harvestId);
         if (harvestState == null) {
             throw new NoSuchElementException("No job generation state for harvest " + harvestId);

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -47,9 +47,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 import dk.netarkivet.harvester.harvesting.report.Heritrix1Constants;
 
 /**
@@ -164,6 +166,8 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
             + "/boolean[@name='write-requests']";
     public static final String WARCS_WRITE_METADATA_XPATH = WARCWRITERPROCESSOR_XPATH
             + "/boolean[@name='write-metadata']";
+    public static final String WARCS_WRITE_METADATA_OUTLINKS_XPATH = WARCWRITERPROCESSOR_XPATH
+    		+ "/boolean[@name='write-metadata-outlinks']";
     public static final String WARCS_SKIP_IDENTICAL_DIGESTS_XPATH = WARCWRITERPROCESSOR_XPATH
             + "/boolean[@name='skip-identical-digests']";
     public static final String WARCS_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS_XPATH = WARCWRITERPROCESSOR_XPATH
@@ -294,8 +298,9 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
         this(doc, true);
     }
 
-    public H1HeritrixTemplate(String templateAsString) throws DocumentException {
+    public H1HeritrixTemplate(long template_id, String templateAsString) throws DocumentException {
         ArgumentNotValid.checkNotNull(templateAsString, "String template");
+        this.template_id = template_id;
     	this.template = XmlUtils.documentFromString(templateAsString);
 	}
 
@@ -385,19 +390,19 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
         }
     }
 
-    /**
-     * Updates the order.xml to include a MatchesListRegExpDecideRule for each crawlertrap associated with for the given
-     * DomainConfiguration.
-     * <p>
-     * The added nodes have the form
-     * <p>
-     * <newObject name="domain.dk" class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule"> <string
-     * name="decision">REJECT</string> <string name="list-logic">OR</string> <stringList name="regexp-list">
-     * <string>theFirstRegexp</string> <string>theSecondRegexp</string> </stringList> </newObject>
-     *
-     * @param cfg The DomainConfiguration for which to generate crawler trap deciderules
-     * @throws IllegalState If unable to update order.xml due to wrong order.xml format
-     */
+//    /**
+//     * Updates the order.xml to include a MatchesListRegExpDecideRule for each crawlertrap associated with for the given
+//     * DomainConfiguration.
+//     * <p>
+//     * The added nodes have the form
+//     * <p>
+//     * <newObject name="domain.dk" class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule"> <string
+//     * name="decision">REJECT</string> <string name="list-logic">OR</string> <stringList name="regexp-list">
+//     * <string>theFirstRegexp</string> <string>theSecondRegexp</string> </stringList> </newObject>
+//     *
+//     * @param cfg The DomainConfiguration for which to generate crawler trap deciderules
+//     * @throws IllegalState If unable to update order.xml due to wrong order.xml format
+//     */
     // FIXME REMOVE IF NOT USED
     /*
     public static void editOrderXMLAddPerDomainCrawlerTraps(Document orderXmlDoc, DomainConfiguration cfg) {
@@ -620,26 +625,38 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
                     XmlUtils.setNode(orderXML, ARCS_ENABLED_XPATH, "false");
                 }
 
-                // Update the WARCWriterProcessorSettings with settings values
-                setIfFound(orderXML, WARCS_SKIP_IDENTICAL_DIGESTS_XPATH,
-                        HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS,
-                        Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS));
+                String warcParametersOverrideStr = null;
+                try {
+                	warcParametersOverrideStr = Settings.get(HarvesterSettings.HERITRIX_WARC_PARAMETERS_OVERRIDE);
+                } catch (UnknownID e) {
+                	//nothing
+                }
+                //if the parameter is not found or if it exists and equals to true
+                if (warcParametersOverrideStr == null || (warcParametersOverrideStr != null
+                		&& "true".equals(warcParametersOverrideStr))) {
 
-                setIfFound(orderXML, WARCS_WRITE_METADATA_XPATH,
-                        HarvesterSettings.HERITRIX_WARC_WRITE_METADATA,
-                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA));
-
-                setIfFound(orderXML, WARCS_WRITE_REQUESTS_XPATH,
-                        HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS,
-                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS));
-
-                setIfFound(orderXML, WARCS_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS_XPATH,
-                        HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS,
-                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS));
-                setIfFound(orderXML, WARCS_WRITE_REVISIT_FOR_NOT_MODIFIED_XPATH,
-                        HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED,
-                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED));
-
+	                // Update the WARCWriterProcessorSettings with settings values
+	                setIfFound(orderXML, WARCS_SKIP_IDENTICAL_DIGESTS_XPATH,
+	                        HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS,
+	                        Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS));
+	
+	                setIfFound(orderXML, WARCS_WRITE_METADATA_XPATH,
+	                        HarvesterSettings.HERITRIX_WARC_WRITE_METADATA,
+	                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA));
+	                setIfFound(orderXML, WARCS_WRITE_METADATA_OUTLINKS_XPATH,
+	                        HarvesterSettings.HERITRIX_WARC_WRITE_METADATA_OUTLINKS,
+	                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA_OUTLINKS));
+	                setIfFound(orderXML, WARCS_WRITE_REQUESTS_XPATH,
+	                        HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS,
+	                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS));
+	
+	                setIfFound(orderXML, WARCS_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS_XPATH,
+	                        HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS,
+	                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS));
+	                setIfFound(orderXML, WARCS_WRITE_REVISIT_FOR_NOT_MODIFIED_XPATH,
+	                        HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED,
+	                        Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED));
+                }
             } else {
                 throw new IllegalState("Unable to choose WARC as Heritrix archive format because "
                         + " one of the following xpaths are invalid in the given order.xml: "
@@ -795,9 +812,14 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 	    }
 	}
 
-	@Override
+    @Override public void enableOrDisableDeduplication(boolean enabled) {
+        //NOP
+        log.debug("In H1 templates we don't enable/disable deduplication.");
+    }
+
+    @Override
 	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
-			String scheduleName, String performer) {
+			String origHarvestdefinitionComments, String scheduleName, String performer) {
 		
 		Node WARCWRITERNODE = template.selectSingleNode(WARCWRITERPROCESSOR_XPATH);
 		if (WARCWRITERNODE == null) {
@@ -847,6 +869,10 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
         metadataItem.addAttribute("name", HARVESTINFO_ORIGHARVESTDEFINITIONNAME);
         metadataItem.addText(origHarvestdefinitionName);
         
+        metadataItem = metadataMap.addElement("string");
+        metadataItem.addAttribute("name", HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS);
+        metadataItem.addText(origHarvestdefinitionComments);
+        
         /* optional schedule-name, only for selective harvests. */
 		if (scheduleName != null) {
 			metadataItem = metadataMap.addElement("string");
@@ -878,6 +904,12 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 	}
 
 	@Override
+	public void insertAttributes(List<AttributeAndType> attributesAndTypes) {
+		// Unsupported for Heritrix 1 templates at this point.
+	    log.warn("No attribute insertion is done for H1 templates");
+	}
+
+	@Override
 	public void writeTemplate(JspWriter out) throws IOFailure {
 		try {
 			out.write(template.asXML());
@@ -887,4 +919,10 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 		
 	}
 
+    @Override
+    public void insertUmbrabean(String jobName, String rabbitMQUrl, String limitSearchRegEx)
+    {
+        //NOP
+        log.debug("In H1 templates we don't do umbra search.");
+    }
 }

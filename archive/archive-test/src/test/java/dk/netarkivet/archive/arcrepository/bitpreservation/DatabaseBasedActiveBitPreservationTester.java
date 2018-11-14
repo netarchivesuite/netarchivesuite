@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ import dk.netarkivet.archive.arcrepositoryadmin.ArchiveDBConnection;
 import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabase;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -97,7 +97,7 @@ public class DatabaseBasedActiveBitPreservationTester {
     @Before
     public void setUp() throws Exception {
         rs.setUp();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         mtf.setUp();
         jmsConnection.setUp();
         rf.setUp();
@@ -478,8 +478,14 @@ public class DatabaseBasedActiveBitPreservationTester {
                 FileOutputStream os = new FileOutputStream(output);
                 new BatchLocalFiles(in_files).run(job, os);
                 os.close();
-                return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
-                        RemoteFileFactory.getMovefileInstance(output), new ArrayList<>(0));
+                // java 8
+                //return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
+                //        RemoteFileFactory.getMovefileInstance(output), new ArrayList<>(0));
+                return new BatchStatus("BA1", Collections.<File>emptyList(),
+                        in_files.length,
+                        RemoteFileFactory.getMovefileInstance(output),
+                        new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+                
             } catch (IOException e) {
                 fail("IO error during test");
                 return null;

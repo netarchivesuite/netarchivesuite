@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -67,6 +67,7 @@ public class JobDispatcher {
     /**
      * @param jmsConnection The JMS connection to use.
      * @param hDao The HarvestDefinitionDAO to use.
+     * @param jobDao The JobDAO to use.
      */
     public JobDispatcher(JMSConnection jmsConnection, HarvestDefinitionDAO hDao, JobDAO jobDao) {
         log.info("Creating JobDispatcher");
@@ -136,7 +137,7 @@ public class JobDispatcher {
     }
 
     /**
-     * Will read the next job ready to run from the db and set the job to submitted. If no jobs are ready, null will be
+     * Will read the next job ready to run from the database and set the job to submitted. If no jobs are ready, null will be
      * returned.
      * <p>
      * Note the operation is synchronized, so only one thread may start the submission of a job.
@@ -175,7 +176,8 @@ public class JobDispatcher {
             // Add an entry documenting that this job
             // contains domains that has aliases
             metadata.add(aliasMetadataEntry);
-        }
+            log.info("Added alias metadataEntry for job {} ", job.getJobID());
+        } 
 
         if (job.getOrderXMLdoc().IsDeduplicationEnabled()) {
             MetadataEntry duplicateReductionMetadataEntry = MetadataEntry.makeDuplicateReductionMetadataEntry(
@@ -184,9 +186,11 @@ public class JobDispatcher {
             // Always add a duplicationReductionMetadataEntry when deduplication is enabled
             // even if the list of JobIDs for deduplication is empty!
             metadata.add(duplicateReductionMetadataEntry);
+            log.info("Added duplicateReductionMetadataEntry metadataEntry for job {} ", job.getJobID());
         }
         return metadata;
     }
+
 
     /**
      * Submit an doOneCrawl request to a HarvestControllerServer.
@@ -204,6 +208,7 @@ public class JobDispatcher {
     public void doOneCrawl(Job job, String origHarvestName, String origHarvestDesc, String origHarvestSchedule,
             HarvestChannel channel, String origHarvestAudience, List<MetadataEntry> metadata) throws ArgumentNotValid,
             IOFailure {
+
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
 
@@ -213,14 +218,14 @@ public class JobDispatcher {
         if (usingWarcAsArchiveFormat()) {
         	log.info("As we're using WARC as archiveFormat WarcInfoMetadata is now added to the template");
         	HeritrixTemplate ht = job.getOrderXMLdoc();
-        	ht.insertWarcInfoMetadata(job, origHarvestName, origHarvestSchedule, Settings.get(HarvesterSettings.PERFORMER));
-        	job.setOrderXMLDoc(ht);
+                ht.insertWarcInfoMetadata(job, origHarvestName, origHarvestDesc, origHarvestSchedule,
+                        Settings.get(HarvesterSettings.PERFORMER));
+            job.setOrderXMLDoc(ht);
         } else {
         	log.info("As we're using ARC as archiveFormat no WarcInfoMetadata was added to the template");
         }
-        
         DoOneCrawlMessage nMsg = new DoOneCrawlMessage(job, HarvesterChannels.getHarvestJobChannelId(channel),
-                new HarvestDefinitionInfo(origHarvestName, origHarvestDesc, origHarvestSchedule), metadata);
+            new HarvestDefinitionInfo(origHarvestName, origHarvestDesc, origHarvestSchedule), metadata);
         log.debug("Send crawl request: {}", nMsg);
         jmsConnection.send(nMsg);
     }

@@ -5,8 +5,8 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -121,9 +121,6 @@ resubmit - jobID of a job to resubmit.
 <%!
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-
-    private static final SimpleDateFormat DATE_FMT =
-    	new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 %>
 
 <%
@@ -167,11 +164,12 @@ resubmit - jobID of a job to resubmit.
 // Resets the search form to default values.
 function resetForm() {
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_STATUS.name()%>.selectedIndex = 0;
-	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name()%>.selectedIndex = 0;	
+	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name()%>.selectedIndex = 1;	
 
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.HARVEST_NAME.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_DATE.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.END_DATE.name()%>.value = "";
+	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_ID_RANGE.name()%>.value = "";
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.PAGE_SIZE.name()%>.value = "";	
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX.name()%>.value = "";
 }
@@ -225,16 +223,18 @@ function resetPagination() {
 </select>
 </fmt:param>
 <fmt:param>
-
-
 <input name="<%=HarvestStatusQuery.UI_FIELD.HARVEST_NAME%>"
        id="<%=HarvestStatusQuery.UI_FIELD.HARVEST_NAME%>" 
        style="width:200px;"
        value="<%=query.getHarvestName()%>"/>
-
-
-  
-  
+</fmt:param>
+<fmt:message key="status.job.or" var="orString"/>
+<fmt:param>
+<input name="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_RANGE%>"
+       id="<%=HarvestStatusQuery.UI_FIELD.JOB_ID_RANGE%>" 
+       style="width:200px;"
+       placeholder="1 ${orString} 1-10 ${orString} 1,2,3"
+       value="<%=query.getJobIdRange()%>"/>
 </fmt:param>
 <fmt:param>
 <input name="<%=HarvestStatusQuery.UI_FIELD.START_DATE%>"
@@ -254,6 +254,7 @@ setupCalendar("<%=HarvestStatusQuery.UI_FIELD.START_DATE%>", "<%=HarvestStatusQu
 setupCalendar("<%=HarvestStatusQuery.UI_FIELD.END_DATE%>", "<%=HarvestStatusQuery.CALENDAR_UI_DATE_FORMAT%>");
 </script>
 </fmt:param>
+
 </fmt:message>
 <br/>
 <fmt:message key="status.job.filters.group2">
@@ -501,10 +502,10 @@ function resubmitSelectedJobs() {
                         js.getHarvestDefinitionID(), js.getHarvestNum())%>
                 </td>
                 <td>
-                <%= startDate != null ? DATE_FMT.format(startDate) : "-" %>
+                    <%=HTMLUtils.parseDate(startDate)%>
                 </td>
                 <td>
-                <%= endDate != null ? DATE_FMT.format(endDate) : "-" %>
+                    <%=HTMLUtils.parseDate(endDate)%>
                 </td>
                 <td>
                 	<%=jobStatusTdContents%>

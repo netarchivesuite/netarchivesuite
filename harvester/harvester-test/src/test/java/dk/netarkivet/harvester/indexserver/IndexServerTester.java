@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
@@ -40,14 +40,14 @@ public class IndexServerTester {
 
     @Before
     public void setUp() {
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
     @After
     public void tearDown() {
         JMSConnectionMockupMQ.clearTestQueues();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
     }
 
     /**

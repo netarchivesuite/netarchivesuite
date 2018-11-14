@@ -58,6 +58,10 @@ import org.archive.util.UriUtils;
  * browser engines. 
  * 
  * @contributor gojomo
+ * 
+ * 
+ * This class is a modification by Kristinn Sigurdsson of the org.archive.modules.extractor.ExtractorJS 
+ * class that enables you to reject some false positives found by the original ExtractorJS.
  */
 public class IcelandicExtractorJS extends org.archive.modules.extractor.ExtractorJS {
 
@@ -79,7 +83,6 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
     public void setRejectRelativeMatchingRegexList(List<Pattern> patterns) {
         kp.put("rejectRelativeMatchingRegexList", patterns);
     }
-
     
     // finds whitespace-free strings in Javascript
     // (areas between paired ' or " characters, possibly backslash-quoted
@@ -95,7 +98,6 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
     // begins and ends with either '/' or a word-char)
     static final String STRING_URI_DETECTOR =
         "(?:\\w|[\\.]{0,2}/)[\\S&&[^<>]]*(?:\\.|/)[\\S&&[^<>]]*(?:\\w|/)";
-
     
     protected long numberOfCURIsHandled = 0;
 
@@ -109,12 +111,11 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
         };
     
     /**
-     * @param name
+     * Constructor.
      */
     public IcelandicExtractorJS() {
     }
 
-    
     protected boolean shouldExtract(CrawlURI uri) {
         
         // special-cases, for when we know our current JS extractor does poorly.
@@ -154,7 +155,6 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
         return s.startsWith("script");
     }
     
-
     @Override
     protected boolean innerExtract(CrawlURI curi) {
         this.numberOfCURIsHandled++;
@@ -205,8 +205,7 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
                 if (!falsePositive) {
                     falsePositive = shouldIgnorePossibleRelativeLink(string);
                 }
-                
-                
+                       
                 if (falsePositive) {
                 	foundFalsePositives++;
                 } else {
@@ -250,12 +249,9 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
                 return true;
             } 
         }
-        
         return false;
     }
     
-
-
 	@Override
 	public String report() {
         StringBuffer report = new StringBuffer();
@@ -263,6 +259,4 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
         report.append("  False positives eliminated: " + foundFalsePositives + "\n"); 
 		return report.toString();
 	}
-    
-    
 }

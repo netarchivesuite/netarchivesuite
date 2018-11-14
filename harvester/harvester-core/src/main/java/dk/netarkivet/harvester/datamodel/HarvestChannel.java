@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -49,9 +49,6 @@ import dk.netarkivet.common.utils.I18n;
 @SuppressWarnings("serial")
 public class HarvestChannel implements Serializable {
 
-    /** The unique {@link dk.netarkivet.harvester.datamodel.HarvestChannel} for snapshot harvests. */
-    // public static final HarvestChannel SNAPSHOT = new HarvestChannel();
-
     /** Defines acceptable channel names: at least one word character. */
     public static final String ACCEPTABLE_NAME_PATTERN = "^\\w+$";
 
@@ -66,7 +63,7 @@ public class HarvestChannel implements Serializable {
      */
     private String name;
 
-    /* Whether this channels type is snapshot or focused. */
+    /** Whether this channels type is snapshot or focused. */
     private boolean isSnapshot;
 
     /** Whether this channel is the default one for the given type (snapshot or focused). */
@@ -76,15 +73,7 @@ public class HarvestChannel implements Serializable {
     private String comments;
 
     /**
-     * Used to build the {@link #SNAPSHOT} singleton only.
-     */
-    /*
-     * private HarvestChannel() { this.name = Settings.get(HarvesterSettings.SNAPSHOT_HARVEST_CHANNEL_ID);
-     * this.isSnapshot = true; this.isDefault = true; this.comments = ""; }
-     */
-
-    /**
-     * Constructor from name and comments
+     * Constructor from name and comments.
      *
      * @param name channel name
      * @param isSnapshot whether this channels type is snapshot or focused
@@ -103,7 +92,7 @@ public class HarvestChannel implements Serializable {
     }
 
     /**
-     * Constructor from persistent storage
+     * Constructor from persistent storage.
      *
      * @param id the channel id
      * @param name channel name

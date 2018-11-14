@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -29,20 +29,32 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.jsp.JspWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.antiaction.raptor.dao.AttributeBase;
+import com.antiaction.raptor.dao.AttributeTypeBase;
+
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.archive.ArchiveDateConverter;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 
 /**
  * Class encapsulating the Heritrix crawler-beans.cxml file 
@@ -62,52 +74,92 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     private static final Logger log = LoggerFactory.getLogger(H3HeritrixTemplate.class);
 
     private String template;
-    
+
     /** QuotaEnforcer states for this template. TODO necessary?? */
     private Long forceMaxbytesPerDomain;
-    private Long forceMaxobjectsPerDomain; 
-   
+    private Long forceMaxobjectsPerDomain;
+
     /** Has this HeritrixTemplate been verified. */
     private boolean verified;
 
     public final static String METADATA_ITEMS_PLACEHOLDER = "%{METADATA_ITEMS_PLACEHOLDER}";
     public static final String MAX_TIME_SECONDS_PLACEHOLDER = "%{MAX_TIME_SECONDS_PLACEHOLDER}";
     public static final String CRAWLERTRAPS_PLACEHOLDER = "%{CRAWLERTRAPS_PLACEHOLDER}";
-    
-    public static final String DEDUPLICATION_BEAN_REFERENCE_PATTERN = "<ref bean=\"DeDuplicator\"/>";
-    public static final String DEDUPLICATION_BEAN_PATTERN =  "<bean id=\"DeDuplicator\"";
-    public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER 
-    	= "%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}"; 
+
+    public static final Pattern DEDUPLICATION_BEAN_REFERENCE_PATTERN = Pattern.compile(".*ref.*bean.*DeDuplicator.*", Pattern.DOTALL);
+
+    public static final Pattern DEDUPLICATION_BEAN_PATTERN =  Pattern.compile(".*bean.*id.*DeDuplicator.*", Pattern.DOTALL);
+    public static final String DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER
+    	= "%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}";
 
     public static final String ARCHIVE_FILE_PREFIX_PLACEHOLDER = "%{ARCHIVE_FILE_PREFIX_PLACEHOLDER}";
-        
-    public static final String FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER 
+
+    public static final String FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER
     	= "%{FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER}";
-    
-    public static final String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER = 
+
+    public static final String QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER =
     		"%{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER}";
-    
-    public static final String QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER 
-    	= "%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}"; 
-    
-    
+
+    public static final String QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER
+    	= "%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}";
+
+	public static final String DEDUPLICATION_ENABLED_PLACEHOLDER = "%{DEDUPLICATION_ENABLED_PLACEHOLDER}";
+
+
     // PLACEHOLDERS for archiver beans (Maybe not necessary)
-    final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";	
+    final String ARCHIVER_BEAN_REFERENCE_PLACEHOLDER = "%{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}";
 	final String ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER = "%{ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER}";
-	
+
+	// Placeholders for Umbra integration
+	public static final String UMBRA_SIMPLEOVERRIDES_PLACEHOLDER = "%{UMBRA_SIMPLEOVERRIDES_PLACEHOLDER}";
+	public static final String UMBRA_PUBLISH_BEAN_PLACEHOLDER = "%{UMBRA_PUBLISH_BEAN_PLACEHOLDER}";
+	public static final String UMBRA_RECEIVE_BEAN_PLACEHOLDER = "%{UMBRA_RECEIVE_BEAN_PLACEHOLDER}";
+	public static final String UMBRA_BEAN_REF_PLACEHOLDER ="%{UMBRA_BEAN_REF_PLACEHOLDER}";
+
+	//match theses properties in crawler-beans.cxml to add them into harvestInfo.xml
+	//for preservation purpose
+	public enum MetadataInfo {
+		TEMPLATE_DESCRIPTION("metadata\\.description=.+[\\r\\n]"),
+		TEMPLATE_UPDATE_DATE("metadata\\.date=.+[\\r\\n]"),
+		OPERATOR("metadata\\.operator=.+[\\r\\n]");
+
+		private final String regex;
+
+		private MetadataInfo(String regex) {
+			this.regex = regex;
+		}
+
+		public String toString() {
+			return this.regex;
+		}
+	};
+
+	public Map<MetadataInfo, String> metadataInfoMap;
+
     /**
      * Constructor for HeritrixTemplate class.
      *
-     * @param doc the order.xml
-     * @param verify If true, verifies if the given dom4j Document contains the elements required by our software.
-     * @throws ArgumentNotValid if doc is null, or verify is true and doc does not obey the constraints required by our
-     * software.
+     * @param template_id The persistent id of the template in the database
+     * @param template The template as String object
+     * @throws ArgumentNotValid if template is null.
      */
-    public H3HeritrixTemplate(String template) {
+    public H3HeritrixTemplate(long template_id, String template) {
         ArgumentNotValid.checkNotNull(template, "String template");
+        this.template_id = template_id;
         this.template = template;
+
+        metadataInfoMap = new HashMap<MetadataInfo, String> ();
+        for(MetadataInfo metadataInfo : MetadataInfo.values()) {
+            Pattern p = Pattern.compile(metadataInfo.regex);
+            Matcher m = p.matcher(this.template);
+            if(m.find()) {
+    	        String operator = this.template.substring(m.start(), m.end()).trim();
+    	        //return the value of the property after the =
+    	        metadataInfoMap.put(metadataInfo, operator.split("=")[1]);
+            }
+        }
     }
-    
+
 	/**
      * return the template.
      *
@@ -134,30 +186,29 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     public String getXML() {
         return template;
     }
-    
+
     /**
      * Update the maxTimeSeconds property in the heritrix3 template, if possible.
-     * @param maxJobRunningTimeSecondsL Force the harvestJob to end after this number of seconds 
+     * @param maxJobRunningTimeSecondsL Force the harvestJob to end after this number of seconds
      * Property of the org.archive.crawler.framework.CrawlLimitEnforcer
      * <!-- <property name="maxTimeSeconds" value="0" /> -->
      */
     @Override
 	public void setMaxJobRunningTime(Long maxJobRunningTimeSecondsL) {
 		if (template.contains(MAX_TIME_SECONDS_PLACEHOLDER)) {
-	    	this.template = template.replace(MAX_TIME_SECONDS_PLACEHOLDER, 
+	    	this.template = template.replace(MAX_TIME_SECONDS_PLACEHOLDER,
 	    			Long.toString(maxJobRunningTimeSecondsL));
 		} else {
-			log.warn("The placeholder '" + MAX_TIME_SECONDS_PLACEHOLDER 
+			log.warn("The placeholder '" + MAX_TIME_SECONDS_PLACEHOLDER
 					+ "' was not found in the template. Therefore maxRunningTime not set");
 		}
 	}
 
-    
 	@Override
 	public void setMaxBytesPerDomain(Long maxbytesL) {
-		this.forceMaxbytesPerDomain = maxbytesL;		
-	}	
-  
+		this.forceMaxbytesPerDomain = maxbytesL;
+	}
+
 
 	@Override
 	public Long getMaxBytesPerDomain() {
@@ -173,7 +224,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	public Long getMaxObjectsPerDomain() {
 		return this.forceMaxobjectsPerDomain;
 	}
-    
+
 	@Override
 	public boolean isValid() {
 		/*
@@ -190,6 +241,149 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		return true;
 	}
 
+	/**
+	 * Inserts all nevessary umbra-related beans in this template.
+	 * @param jobName a String representing the job - must be unique for the this NAS environment for all time
+	 * @param rabbitMQUrl the URL of the rabbitMQ socket connection (amqp://) to which umbra requests are to be sent
+	 * @param limitSearchRegEx the regular expression used to limit the heritrix search-path of urls to be sent to Umbra.
+	 */
+	@Override
+	public void insertUmbrabean(String jobName, String rabbitMQUrl, String limitSearchRegEx)
+	{
+		this.template = this.template.replace(UMBRA_SIMPLEOVERRIDES_PLACEHOLDER,
+				getUmbraBeanInformationInSimpleoverridesBean(jobName, rabbitMQUrl, limitSearchRegEx));
+		this.template = this.template.replace(UMBRA_PUBLISH_BEAN_PLACEHOLDER, getUmbrabeanPlaceholder());
+		this.template = this.template.replace(UMBRA_RECEIVE_BEAN_PLACEHOLDER, getAmqpUrlreceiverPlaceholder());
+		this.template = this.template.replace(UMBRA_BEAN_REF_PLACEHOLDER, getCallUmbrabean());
+	}
+
+
+	/**
+	 * Umbrabean text from the current harvest job that will replace the placeholder in the Simpleoverride bean
+	 * @param jobName a String representing the job - must be unique for the this NAS environment for all time
+	 * @param rabbitMQUrl the URL of the rabbitMQ socket connection (amqp://) to which umbra requests are to be sent
+	 * @param limitSearchRegEx the regular expression used to limit the heritrix search-path of urls to be sent to Umbra.
+	 */
+	public String getUmbraBeanInformationInSimpleoverridesBean(String jobName, String rabbitMQUrl, String limitSearchRegEx) {
+		//	umbraBean.clientId=MySpecialJobName
+		//	umbraBean.amqpUri=amqp://guest:guest@activemq:5672/%2f
+		//	## The following rule restricts umbra to processing only on seeds or links, leaving embeds and redirects
+		//	## to be handled by the browser itself
+		//	umbraBean.shouldProcessRule.rules[1].regex=^$|.*L
+
+		StringBuilder umbrabeanBuilder = new StringBuilder();
+		umbrabeanBuilder.append("\n");
+		umbrabeanBuilder.append("umbraBean.clientId=" + Settings.get(CommonSettings.ENVIRONMENT_NAME) + "_" + jobName);
+		umbrabeanBuilder.append("\n");
+		umbrabeanBuilder.append("umbraBean.amqpUri="+rabbitMQUrl);
+		umbrabeanBuilder.append("\n");
+		umbrabeanBuilder.append("## The following rule restricts umbra to processing only on seeds or links, leaving embeds and redirects");
+		umbrabeanBuilder.append("## to be handled by the browser itself");
+		umbrabeanBuilder.append("\n");
+		umbrabeanBuilder.append("umbraBean.shouldProcessRule.rules[1].regex="+limitSearchRegEx);
+		umbrabeanBuilder.append("\n");
+		return umbrabeanBuilder.toString();
+	}
+
+	/**
+	 * Umbrabean text that will replace UMBRA_BEAN_PLACEHOLDER in the template	 *
+	 */
+	public String getUmbrabeanPlaceholder() {
+		// <!--
+		//				Bean that sends messages (urls) to umbra.
+		//		-->
+		// <bean id="umbraBean" class="org.archive.modules.AMQPPublishProcessor">
+		//  <property name="clientId" value="[see override]"/>
+		//  <property name="amqpUri" value="[see override]"/>
+		//  <property name="shouldProcessRule">
+		//   <bean class="org.archive.modules.deciderules.DecideRuleSequence">
+		//    <property name="rules">
+		//     <list>
+		//      <bean class="org.archive.modules.deciderules.RejectDecideRule" />
+		//      <bean class="org.archive.modules.deciderules.HopsPathMatchesRegexDecideRule">
+		//       <property name="regex" value="[see override]"/>
+		//      </bean>
+		//     </list>
+		//    </property>
+		//   </bean>
+		//  </property>
+		// </bean>
+
+		StringBuilder umbrabeanBuilder = new StringBuilder();
+		umbrabeanBuilder.append("<!-- Bean that sends messages (urls) to umbra. -->");
+		umbrabeanBuilder.append("<bean id=\"umbraBean\" class=\"org.archive.modules.AMQPPublishProcessor\">");
+		umbrabeanBuilder.append("<property name=\"clientId\" value=\"[see override]\"/>");
+		umbrabeanBuilder.append("<property name=\"amqpUri\" value=\"[see override]\"/>");
+		umbrabeanBuilder.append("  <property name=\"shouldProcessRule\">");
+		umbrabeanBuilder.append("   <bean class=\"org.archive.modules.deciderules.DecideRuleSequence\">");
+		umbrabeanBuilder.append("    <property name=\"rules\">");
+		umbrabeanBuilder.append("     <list>");
+		umbrabeanBuilder.append("      <bean class=\"org.archive.modules.deciderules.RejectDecideRule\" />");
+		umbrabeanBuilder.append("      <bean class=\"org.archive.modules.deciderules.HopsPathMatchesRegexDecideRule\">");
+		umbrabeanBuilder.append("       <property name=\"regex\" value=\"[see override]\"/>");
+		umbrabeanBuilder.append("      </bean>");
+		umbrabeanBuilder.append("     </list>");
+		umbrabeanBuilder.append("    </property>");
+		umbrabeanBuilder.append("   </bean>");
+		umbrabeanBuilder.append("  </property>");
+		umbrabeanBuilder.append(" </bean>");
+
+		return umbrabeanBuilder.toString();
+	}
+
+
+	/**
+	 * AMQP url receiver text that will replace AMQP_URLRECEIVER_PLACEHOLDER in the template	 *
+	 */
+	public String getAmqpUrlreceiverPlaceholder() {
+		// <!--
+		//	Bean that receives messages (urls) from umbra and places them in the Heritrix frontier.
+		//			-->
+		// <bean class="org.archive.crawler.frontier.AMQPUrlReceiver">
+		//  <property name="amqpUri">
+		//   <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+		//          <property name="targetObject" ref="umbraBean"/>
+		//          <property name="propertyPath" value="amqpUri" />
+		//         </bean>
+		//  </property>
+		//  <property name="queueName">
+		//      <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+		//       <property name="targetObject" ref="umbraBean"/>
+		//       <property name="propertyPath" value="clientId" />
+		//      </bean>
+		//  </property>
+		// </bean>
+
+		StringBuilder amqpUrlReceiverBeanBuilder = new StringBuilder();
+		amqpUrlReceiverBeanBuilder.append("<!-- Bean that receives messages (urls) from umbra and places them in the Heritrix frontier -->");
+		amqpUrlReceiverBeanBuilder.append("<bean class=\"org.archive.crawler.frontier.AMQPUrlReceiver\">");
+		amqpUrlReceiverBeanBuilder.append(" <property name=\"amqpUri\">");
+		amqpUrlReceiverBeanBuilder.append("   <bean class=\"org.springframework.beans.factory.config.PropertyPathFactoryBean\">");
+		amqpUrlReceiverBeanBuilder.append("    <property name=\"targetObject\" ref=\"umbraBean\"/>");
+		amqpUrlReceiverBeanBuilder.append("    <property name=\"propertyPath\" value=\"amqpUri\" />");
+		amqpUrlReceiverBeanBuilder.append("      </bean>");
+		amqpUrlReceiverBeanBuilder.append("    </property>");
+		amqpUrlReceiverBeanBuilder.append(" <property name=\"queueName\">");
+		amqpUrlReceiverBeanBuilder.append("   <bean class=\"org.springframework.beans.factory.config.PropertyPathFactoryBean\">");
+		amqpUrlReceiverBeanBuilder.append("    <property name=\"targetObject\" ref=\"umbraBean\"/>");
+		amqpUrlReceiverBeanBuilder.append("    <property name=\"propertyPath\" value=\"clientId\" />");
+		amqpUrlReceiverBeanBuilder.append("   </bean>");
+		amqpUrlReceiverBeanBuilder.append(" </property>");
+		amqpUrlReceiverBeanBuilder.append("</bean>");
+
+		return amqpUrlReceiverBeanBuilder.toString();
+	}
+
+
+	/**
+	 * Call of the Umbra bean text that will replace CALL_UMBRABEAN_PLACEHOLDER in the template	 *
+	 */
+	public String getCallUmbrabean() {
+		//	    <ref bean="umbraBean"/>
+
+		return "    <ref bean=\"umbraBean\"/>";
+	}
+
 	@Override
 	// This method is used to decide, whether to request a deduplication index or not.
 	// Done by checking, if both  
@@ -200,8 +394,8 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	//   - a DeDuplicator reference bean is present in the template
 	public boolean IsDeduplicationEnabled() {
 		return (template.contains(DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER) 
-				&& template.contains(DEDUPLICATION_BEAN_PATTERN)
-				&& template.contains(DEDUPLICATION_BEAN_REFERENCE_PATTERN)); 
+				&& DEDUPLICATION_BEAN_PATTERN.matcher(template).matches()
+				&& DEDUPLICATION_BEAN_REFERENCE_PATTERN.matcher(template).matches());
 	}	
 
 	/**
@@ -259,7 +453,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
      * Make sure that Heritrix will archive its data in the chosen archiveFormat.
      *
      * @param archiveFormat the chosen archiveformat ('arc' or 'warc' supported)
-     * @throw ArgumentNotValid If the chosen archiveFormat is not supported.
+     * @throws ArgumentNotValid If the chosen archiveFormat is not supported.
      */
 	@Override
 	public void setArchiveFormat(String archiveFormat) {
@@ -292,32 +486,54 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     	template = templateNew.replace(ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER, getArcWriterProcessor()); 
     }
     		
-  	private String getArcWriterProcessor() {
-		
-//      <bean id="arcWriter" class="org.archive.modules.writer.ARCWriterProcessor">
-//  	  <!-- <property name="compress" value="true" /> -->
-//  	  <!-- <property name="prefix" value="IAH" /> -->
-//  	  <!-- <property name="suffix" value="${HOSTNAME}" /> -->
-//  	  <!-- <property name="maxFileSizeBytes" value="100000000" /> -->
-//  	  <!-- <property name="poolMaxActive" value="1" /> -->
-//  	  <!-- <property name="poolMaxWaitMs" value="300000" /> -->
-//  	  <!-- <property name="skipIdenticalDigests" value="false" /> -->
-//  	  <!-- <property name="maxTotalBytesToWrite" value="0" /> -->
-//  	  <!-- <property name="directory" value="." /> -->
-//  	  <!-- <property name="storePaths">
-//  	        <list>
-//  	         <value>arcs</value>
-//  	        </list>
-//  	       </property> -->
-//  	 </bean>
-// 
-  	   String arcWriterBean 
-  	   	= "<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">";
-  	   // TODO Read compress value from heritrix3Settings
-  	   arcWriterBean += "\n<property name=\"compress\" value=\"false\"/>"
-  			 + "\n<property name=\"prefix\" value=\"" + ARCHIVE_FILE_PREFIX_PLACEHOLDER  
-  	   		+ "\"/></bean>";
-  	   return arcWriterBean;  			      
+	private String getArcWriterProcessor() {
+
+	    //      <bean id="arcWriter" class="org.archive.modules.writer.ARCWriterProcessor">
+	    //  	  <!-- <property name="compress" value="true" /> -->
+	    //  	  <!-- <property name="prefix" value="IAH" /> -->
+	    //  	  <!-- <property name="suffix" value="${HOSTNAME}" /> -->
+	    //  	  <!-- <property name="maxFileSizeBytes" value="100000000" /> -->
+	    //  	  <!-- <property name="poolMaxActive" value="1" /> -->
+	    //  	  <!-- <property name="poolMaxWaitMs" value="300000" /> -->
+	    //  	  <!-- <property name="skipIdenticalDigests" value="false" /> -->
+	    //  	  <!-- <property name="maxTotalBytesToWrite" value="0" /> -->
+	    //  	  <!-- <property name="directory" value="." /> -->
+	    //  	  <!-- <property name="storePaths">
+	    //  	        <list>
+	    //  	         <value>arcs</value>
+	    //  	        </list>
+	    //  	       </property> -->
+	    //  	 </bean>
+	    // "<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">";
+	    String propertyName="\n<property name=\"";
+	    String valuePrefix = "\" value=\"";
+	    String valueSuffix = "\"";
+	    String propertyEnd="/>";
+
+	    StringBuilder arcWriterBeanBuilder = new StringBuilder();
+	    arcWriterBeanBuilder.append("<bean id=\"arcWriter\" class=\"org.archive.modules.writer.ARCWriterProcessor\">\n");
+	    arcWriterBeanBuilder.append(propertyName + "compress" + valuePrefix
+	            + Settings.get(HarvesterSettings.HERITRIX3_ARC_COMPRESSION) 
+	            + valueSuffix + propertyEnd); 
+	    arcWriterBeanBuilder.append(propertyName + "prefix" + valuePrefix
+	            + ARCHIVE_FILE_PREFIX_PLACEHOLDER
+	            + valueSuffix + propertyEnd);
+//	    arcWriterBeanBuilder.append(propertyName + "suffix" + valuePrefix
+//	            + Settings.get(HarvesterSettings.HERITRIX3_ARC_SUFFIX) 
+//	            + valueSuffix + propertyEnd); 
+	    arcWriterBeanBuilder.append(propertyName + "maxFileSizeBytes" + valuePrefix
+	            + Settings.get(HarvesterSettings.HERITRIX3_ARC_MAXSIZE) 
+	            + valueSuffix + propertyEnd); 
+	    arcWriterBeanBuilder.append(propertyName + "poolMaxActive" + valuePrefix
+	            + Settings.get(HarvesterSettings.HERITRIX3_ARC_POOL_MAXACTIVE) 
+	            + valueSuffix + propertyEnd); 
+	    arcWriterBeanBuilder.append(propertyName + "skipIdenticalDigests" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX3_ARC_SKIP_IDENTICAL_DIGESTS)
+  				+ valueSuffix + propertyEnd);
+
+	    arcWriterBeanBuilder.append("</bean>");
+
+	    return arcWriterBeanBuilder.toString();  			      
   	}
 
 		
@@ -342,36 +558,37 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
   					+ "' is missing");
   		}
   		StringBuilder propertyBuilder = new StringBuilder();
-  		// TODO Read template from Heritrix3Settings
   		propertyBuilder.append(propertyName + "template" + valuePrefix 
-  				+ "${prefix}-${timestamp17}-${serialno}-${heritrix.hostname}"
-  				// Default value: ${prefix}-${timestamp17}-${serialno}-${heritrix.pid}~${heritrix.hostname}~${heritrix.port}
+  		      + Settings.get(HarvesterSettings.HERITRIX3_WARC_TEMPLATE)
+              + valueSuffix + propertyEnd);  				
+  		propertyBuilder.append(propertyName + "compress" + valuePrefix 
+  		      + Settings.get(HarvesterSettings.HERITRIX3_WARC_COMPRESSION) 
   				+ valueSuffix + propertyEnd);
-  		propertyBuilder.append(propertyName + "compress" + valuePrefix + "false"  // TODO Replace false by Heritrix3Settingsvalue 
-  				+ valueSuffix + propertyEnd);
+  		// Note: The prefix value will be replaced later by the setArchiveFilePrefix() method
   		propertyBuilder.append(propertyName + "prefix" + valuePrefix 
   				+ ARCHIVE_FILE_PREFIX_PLACEHOLDER
   				+ valueSuffix + propertyEnd);
+  		propertyBuilder.append(propertyName + "maxFileSizeBytes" + valuePrefix
+  		      + Settings.get(HarvesterSettings.HERITRIX3_WARC_MAXSIZE)
+  		      + valueSuffix + propertyEnd);
+  		propertyBuilder.append(propertyName + "poolMaxActive" + valuePrefix
+                + Settings.get(HarvesterSettings.HERITRIX3_WARC_POOL_MAXACTIVE)
+                + valueSuffix + propertyEnd);
+          
   		propertyBuilder.append(propertyName + "writeRequests" + valuePrefix 
-  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REQUESTS)
+  				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_WRITE_REQUESTS)
   				+ valueSuffix + propertyEnd);
   		propertyBuilder.append(propertyName + "writeMetadata" + valuePrefix 
-  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_METADATA)
+  				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_WRITE_METADATA)
   				+ valueSuffix + propertyEnd);
- /*
-  		propertyBuilder.append(propertyName + "writeRevisitForIdenticalDigests" + valuePrefix 
-  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_IDENTICAL_DIGESTS)
+  		propertyBuilder.append(propertyName + "writeMetadataOutlinks" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_WRITE_METADATA_OUTLINKS)
   				+ valueSuffix + propertyEnd);
-  		propertyBuilder.append(propertyName + "writeRevisitForNotModified" + valuePrefix 
-  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_WRITE_REVISIT_FOR_NOT_MODIFIED)
-  				+ valueSuffix + propertyEnd);
-  */
   		propertyBuilder.append(propertyName + "skipIdenticalDigests" + valuePrefix 
-  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_SKIP_IDENTICAL_DIGESTS)
+  				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_SKIP_IDENTICAL_DIGESTS)
   				+ valueSuffix + propertyEnd);
- 		propertyBuilder.append(		
-  			  propertyName + "startNewFilesOnCheckpoint" + valuePrefix 
-  				+ Settings.get(HarvesterSettings.HERITRIX_WARC_START_NEW_FILES_ON_CHECKPOINT)
+ 		propertyBuilder.append(propertyName + "startNewFilesOnCheckpoint" + valuePrefix 
+  				+ Settings.get(HarvesterSettings.HERITRIX3_WARC_START_NEW_FILES_ON_CHECKPOINT)
   				+ valueSuffix + propertyEnd);
   		
   		warcWriterProcessorBean += propertyBuilder.toString();
@@ -420,6 +637,14 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     		this.template = templateNew;
     	}
  	}
+	
+	public String getMetadataInfo(MetadataInfo info) {
+		String infoStr = null;
+		if(metadataInfoMap.containsKey(info)) {
+			infoStr = metadataInfoMap.get(info);
+		}
+		return infoStr;
+	}
 
 	@Override
 	public void writeTemplate(OutputStream os) throws IOFailure {
@@ -493,10 +718,16 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 	@Override
 	public void removeDeduplicatorIfPresent() {
 		//NOP
-		log.warn("Removing the Deduplicator is not possible with the H3 templates and should not be required with the H3 template.");
+		log.debug("In H3 we don't remove the deduplicator, but just disable it.");
 	}
-	
-//<property name="metadataItems">
+
+	@Override public void enableOrDisableDeduplication(boolean enabled) {
+		final String replacement = Boolean.toString(enabled).toLowerCase();
+		log.debug("Replacing deduplication enabled placeholder {} with {}.", DEDUPLICATION_ENABLED_PLACEHOLDER, replacement);
+		this.template = template.replace(DEDUPLICATION_ENABLED_PLACEHOLDER, replacement);
+	}
+
+	//<property name="metadataItems">
 //  <map>
 //        <entry key="harvestInfo.version" value="1.03"/> <!-- TODO maybe not add this one -->
 //        <entry key="harvestInfo.jobId" value="1"/>
@@ -507,21 +738,22 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 //        <entry key="harvestInfo.maxObjectsPerDomain" value="-1"/>
 //        <entry key="harvestInfo.orderXMLName" value="defaultOrderXml"/>
 //        <entry key="harvestInfo.origHarvestDefinitionName" value="ddddddddd"/>
-//        <entry key="harvestInfo.scheduleName" value="EveryHour"/> <!-- Optional. only relevant for Selective Harvests -->
+//        <entry key="harvestInfo.scheduleName" value="EveryHour"/> <!-- Optional. only relevant for Selective Harvests -- only inserted if not null and not-empty.->
 //        <entry key="harvestInfo.harvestFilenamePrefix" value="netarkivet-1-1"/>
 //        <entry key="harvestInfo.jobSubmitDate" value="22. 10. 2014"/>
-//        <entry key="harvestInfo.performer" value="performer"/> <!-- Optional. -->
-//        <entry key="harvestInfo.audience" value="audience"/> <!-- Optional. -->
+//        <entry key="harvestInfo.performer" value="performer"/> <!-- Optional - only inserted if not null and not-empty. -->
+//        <entry key="harvestInfo.audience" value="audience"/> <!-- Optional - only inserted if not null and not-empty. -->
 //  </map>
 //  </property>
 
 	public void insertWarcInfoMetadata(Job ajob, String origHarvestdefinitionName, 
-			String scheduleName, String performer) {
+			String origHarvestdefinitionComments, String scheduleName, String performer) {
 		if (!template.contains(METADATA_ITEMS_PLACEHOLDER)) {
 			throw new IllegalState("The placeholder for the property '" + METADATA_ITEMS_PLACEHOLDER  
 					+ "' was not found. Maybe the placeholder has already been replaced with the correct value. The template looks like this: " 
 					+ template); 
 		}
+		log.debug("Now in " + getClass().getName());
 		String startMetadataEntry = "\n<entry key=\"";
 		String endMetadataEntry = "\"/>";
 		String valuePart = "\" value=\"";
@@ -547,38 +779,141 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 		sb.append(HARVESTINFO_MAXOBJECTSPERDOMAIN + valuePart + ajob.getMaxObjectsPerDomain() + endMetadataEntry);
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_ORDERXMLNAME + valuePart + ajob.getOrderXMLName() + endMetadataEntry);
+
+		/* orderxml update date - only inserted if not null and not-empty. */
+		/* take info from crawler-beans.cxml */
+		String tmp = getMetadataInfo(MetadataInfo.TEMPLATE_UPDATE_DATE);
+		if (tmp != null && !tmp.isEmpty()){
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_ORDERXMLUPDATEDATE + valuePart + tmp  + endMetadataEntry);
+		}
+		/* orderxml description - only inserted if not null and not-empty. */
+		/* take info from crawler-beans.cxml */
+		tmp = getMetadataInfo(MetadataInfo.TEMPLATE_DESCRIPTION);
+		if (tmp != null && !tmp.isEmpty()){
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_ORDERXMLDESCRIPTION + valuePart + StringEscapeUtils.escapeXml(tmp)  + endMetadataEntry);
+		}
+
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONNAME + valuePart + 
-				origHarvestdefinitionName + endMetadataEntry);
+				StringEscapeUtils.escapeXml(origHarvestdefinitionName) + endMetadataEntry);
 		
-		/* optional schedule-name. */
-		if (scheduleName != null) {
+		if(StringUtils.isNotEmpty(origHarvestdefinitionComments)) {
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_ORIGHARVESTDEFINITIONCOMMENTS + valuePart + 
+					StringEscapeUtils.escapeXml(origHarvestdefinitionComments) + endMetadataEntry);
+		}
+		
+		/* optional schedule-name - only inserted if not null and not-empty. */
+		if (scheduleName != null && !scheduleName.isEmpty()) {
 			sb.append(startMetadataEntry);
 			sb.append(HARVESTINFO_SCHEDULENAME + valuePart + scheduleName + endMetadataEntry);
 		}
 		sb.append(startMetadataEntry);
 		sb.append(HARVESTINFO_HARVESTFILENAMEPREFIX + valuePart + ajob.getHarvestFilenamePrefix() + endMetadataEntry);
 		sb.append(startMetadataEntry);
-		sb.append(HARVESTINFO_JOBSUBMITDATE + valuePart + ajob.getSubmittedDate() + endMetadataEntry);
+		sb.append(HARVESTINFO_JOBSUBMITDATE + valuePart + ArchiveDateConverter.getWarcDateFormat().format(ajob.getSubmittedDate()) + endMetadataEntry);
 		
-		/* optional HARVESTINFO_PERFORMER */
-		if (performer != null){
+		/* optional HARVESTINFO_PERFORMER - only inserted if not null and not-empty. */
+		if (performer != null && !performer.isEmpty()){
 			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_PERFORMER + valuePart + performer  + endMetadataEntry);
+			sb.append(HARVESTINFO_PERFORMER + valuePart + StringEscapeUtils.escapeXml(performer)  + endMetadataEntry);
 		}
 		
-		/* optional HARVESTINFO_PERFORMER */
-		if (ajob.getHarvestAudience() != null) {
+		/* optional OPERATOR - only inserted if not null and not-empty. */
+		/* take info from crawler-beans.cxml */
+		String operator = getMetadataInfo(MetadataInfo.OPERATOR);
+		if (operator != null && !operator.isEmpty()){
 			sb.append(startMetadataEntry);
-			sb.append(HARVESTINFO_AUDIENCE + valuePart + ajob.getHarvestAudience() + endMetadataEntry);
+			sb.append(HARVESTINFO_OPERATOR + valuePart + StringEscapeUtils.escapeXml(operator)  + endMetadataEntry);
+		}
+		
+		/* optional HARVESTINFO_AUDIENCE - only inserted if not null and not-empty. */
+		if (ajob.getHarvestAudience() != null && !ajob.getHarvestAudience().isEmpty()) {
+			sb.append(startMetadataEntry);
+			sb.append(HARVESTINFO_AUDIENCE + valuePart + StringEscapeUtils.escapeXml(ajob.getHarvestAudience()) + endMetadataEntry);
 		}
 		sb.append("\n</map>\n</property>\n");
 		
 		// Replace command
+		log.info("Adding WarcInfoMetadata " + sb.toString());
 		String templateNew = template.replace(METADATA_ITEMS_PLACEHOLDER, sb.toString());
 		this.template = templateNew;
 	}
-	
+
+	@Override
+	public void insertAttributes(List<AttributeAndType> attributesAndTypes) {
+	    ArgumentNotValid.checkNotNull(attributesAndTypes, "List<AttributeAndType> attributesAndTypes");
+	    for (AttributeAndType attributeAndType: attributesAndTypes) {
+	        // initialize temp variables
+	        Integer intVal = null;
+	        String val = null;
+	        AttributeTypeBase attributeType = attributeAndType.attributeType;
+	        AttributeBase attribute = attributeAndType.attribute;
+
+	        log.debug("Trying to insert the attribute {} into the template", attributeType.name);
+	        switch (attributeType.viewtype) {
+	        case 1:
+	            if (attribute != null) {
+	                intVal = attribute.getInteger();
+	                log.debug("Read explicitly value for attribute '{}'", attributeType.name, intVal);
+	            }
+	            if (intVal == null && attributeType.def_int != null) {
+	                intVal = attributeType.def_int;
+	                log.debug("Viewtype 1 attribute '{}' not set explicitly. Using default value '{}'",  attributeType.name, intVal);
+	            }
+	            if (intVal != null) {
+	                val = intVal.toString();
+	            } else {
+	                val = "";
+	            }
+	            log.info("Value selected for attribute {}: {}", attributeType.name, val);
+	            break;
+	        case 5:
+	            if (attribute != null) {
+	                intVal = attribute.getInteger();
+	                log.debug("Read explicitly value for attribute '{}'", attributeType.name, intVal);
+	            }
+	            if (intVal == null && attributeType.def_int != null) {
+	                intVal = attributeType.def_int;
+	                log.debug("Viewtype 5 attribute '{}' not set explicitly. Using default value '{}'", attributeType.name, intVal);
+	            }
+	            if (intVal != null && intVal > 0) {
+	                val = "true";
+	            } else {
+	                val = "false";
+	            }
+	            log.info("Value selected for attribute '{}': '{}'", attributeType.name, val);
+	            break;
+	        case 6:
+	            if (attribute != null) {
+	                intVal = attribute.getInteger();
+	                log.debug("Read explicitly value for attribute '{}'", attributeType.name, intVal);
+	            }
+	            if (intVal == null && attributeType.def_int != null) {
+	                intVal = attributeType.def_int;
+	                log.debug("Viewtype 6 attribute '{}' not set explicitly. Using default value '{}'", attributeType.name, intVal);
+	            }
+	            if (intVal != null && intVal > 0) {
+	                val = "obey";
+	            } else {
+	                val = "ignore";
+	            }
+	            log.info("Value selected for attribute '{}': '{}'", attributeType.name, val);
+	            break;
+	        }
+	        String placeholder = "%{" + attributeType.name.toUpperCase() + "}";
+	        if (template.contains(placeholder)) {
+	            String templateNew = template.replace("%{" + attributeType.name.toUpperCase() + "}", val);
+	            this.template = templateNew;
+	        } else {
+	            log.warn("Placeholder '{}' not found in template. Therefore not substituted by '{}' in this template", 
+	                    placeholder, val); 
+	        }
+	    }
+	}
+
 	@Override
 	public void writeTemplate(JspWriter out) throws IOFailure {
 		try {
@@ -587,22 +922,21 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
 			throw new IOFailure("Unable to write to JspWriter", e);
 		}
 	}
-	
+
 	/**
 	 *  Hack to remove existing placeholders, that is still present after template 
 	 *  manipulation is completed.
 	 */
 	public void removePlaceholders() {
-		template = template.replace(METADATA_ITEMS_PLACEHOLDER, "");
-		template = template.replace(CRAWLERTRAPS_PLACEHOLDER, "");
-		
-		if (template.contains(METADATA_ITEMS_PLACEHOLDER)) {
-			throw new IllegalState("The placeholder for the property '" + METADATA_ITEMS_PLACEHOLDER  
-					+ "' should have been deleted now."); 
+		String[] optionalPlaceholders = new String[] {
+				METADATA_ITEMS_PLACEHOLDER,
+				CRAWLERTRAPS_PLACEHOLDER,
+				UMBRA_PUBLISH_BEAN_PLACEHOLDER,
+				UMBRA_SIMPLEOVERRIDES_PLACEHOLDER,
+				UMBRA_BEAN_REF_PLACEHOLDER,
+				UMBRA_RECEIVE_BEAN_PLACEHOLDER};
+		for (String placeholder: optionalPlaceholders) {
+			template = template.replace(placeholder, "");
 		}
-		if (template.contains(CRAWLERTRAPS_PLACEHOLDER)) {
-			throw new IllegalState("The placeholder for the property '" + CRAWLERTRAPS_PLACEHOLDER  
-					+ "' should have been deleted now."); 
-		}		
 	}
 }

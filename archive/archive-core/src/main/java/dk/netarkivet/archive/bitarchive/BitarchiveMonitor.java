@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -69,10 +69,10 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     private static BitarchiveMonitor instance;
 
     /** The time of the latest sign of life received from each bitarchive. */
-    private Map<String, Long> bitarchiveSignsOfLife = Collections.synchronizedMap(new HashMap<String, Long>());
+    private final Map<String, Long> bitarchiveSignsOfLife = Collections.synchronizedMap(new HashMap<String, Long>());
 
     /** The acceptable delay in milliseconds between signs of life. */
-    private final long acceptableSignOfLifeDelay;
+    private  long acceptableSignOfLifeDelay;
 
     /**
      * Map from the ID of batch jobs sent to bitarchives, to tuple class of status for this batch job. The Map contains

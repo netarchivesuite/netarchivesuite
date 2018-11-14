@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -34,7 +34,6 @@ import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.archive.ArchiveSettings;
@@ -83,6 +82,10 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
     public void testUploadAdminAdded() throws PermissionDenied, IOException {
         BitarchiveAdmin admin = BitarchiveAdmin.getInstance();
         assertNotNull("Must have admin object.", admin);
+        if (!admin.hasEnoughSpace()) {
+        	System.err.println("Skipping test. Not enough space on disk to perform test");
+        	return;
+        }
         // check that the record does not exist in the admin data before upload
         BitarchiveARCFile arcfile = admin.lookup(ARC_FILE_NAME);
         assertNull("Lookup should fail before adding file.", arcfile);
@@ -135,10 +138,8 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
         assertTrue(ARCHIVE_DIR_2 + " should be writeable after creating bitarchive", ARCHIVE_DIR_2.canWrite());
     }
 
-    /** Check that the constructor handles illegal dirs correctly. */
+    /** Check that the constructor handles illegal directories correctly. */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testCTORErrors() {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, "/foo:bar");
         archive.close();

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -32,6 +32,9 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.DomainUtils;
@@ -53,11 +56,15 @@ import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldTypes;
  */
 @SuppressWarnings({"unchecked"})
 public final class SelectiveHarvestUtil {
-    /**
+    
+	static final Logger log = LoggerFactory.getLogger(SelectiveHarvestUtil.class);
+	
+	/**
      * Utility class. No instances.
      */
     private SelectiveHarvestUtil() {
     }
+    
 
     /**
      * Update or create a partial harvest definition.
@@ -74,7 +81,7 @@ public final class SelectiveHarvestUtil {
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         ArgumentNotValid.checkNotNull(unknownDomains, "List unknownDomains");
         ArgumentNotValid.checkNotNull(illegalDomains, "List illegalDomains");
-
+        log.info("Starting method processRequest");
         // Was the set next date button pressed?
         boolean setNextDateOnly = HTMLUtils.parseOptionalBoolean(context, Constants.NEXTDATE_SUBMIT, false);
         if (setNextDateOnly) {
@@ -151,6 +158,10 @@ public final class SelectiveHarvestUtil {
         ServletRequest request = context.getRequest();
         HTMLUtils.forwardOnEmptyParameter(context, Constants.HARVEST_PARAM, Constants.SCHEDULE_PARAM);
         String name = request.getParameter(Constants.HARVEST_PARAM);
+        String oldname = request.getParameter(Constants.HARVEST_OLD_PARAM);
+        if (oldname == null) {
+            oldname = "";
+        }
 
         HTMLUtils.forwardOnMissingParameter(context, Constants.COMMENTS_PARAM, Constants.DOMAINLIST_PARAM,
                 Constants.AUDIENCE_PARAM);
@@ -180,8 +191,18 @@ public final class SelectiveHarvestUtil {
             return hdd;
         } else {
             long edition = HTMLUtils.parseOptionalLong(context, Constants.EDITION_PARAM, Constants.NO_EDITION);
-
-            PartialHarvest hdd = (PartialHarvest) hddao.getHarvestDefinition(name);
+            PartialHarvest hdd;
+            if (oldname.equals(name)) {
+                hdd = (PartialHarvest) hddao.getHarvestDefinition(name);
+            } else {
+                if (hddao.exists(name)) {
+                    HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvest.definition.0.already.exists", name);
+                    throw new ForwardedToErrorPage("A harvest definition " + "called '" + name + "' already exists");
+                } else {
+                    hdd = (PartialHarvest) hddao.getHarvestDefinition(oldname);
+                    hdd.setName(name);
+                }
+            }
             if (hdd.getEdition() != edition) {
                 HTMLUtils.forwardWithRawErrorMessage(context, i18n, "errormsg;harvest.definition.changed.0.retry.1",
                         "<br/><a href=\"Definitions-edit-selective-harvest.jsp?" + Constants.HARVEST_PARAM + "="
@@ -314,5 +335,5 @@ public final class SelectiveHarvestUtil {
         } else {
             return false;
         }
-    }
+    }    
 }
