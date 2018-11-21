@@ -106,6 +106,7 @@
     <module>monitor</module>
     <module>wayback</module>
     <module>integration-test</module>
+    <module>mass-processing</module>
   </modules>
 
   <licenses>
@@ -424,7 +425,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-core</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.pig</groupId>

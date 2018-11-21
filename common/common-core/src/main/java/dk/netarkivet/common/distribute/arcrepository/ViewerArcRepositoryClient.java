@@ -24,6 +24,11 @@ package dk.netarkivet.common.distribute.arcrepository;
 
 import java.io.File;
 
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.PathFilter;
+import org.apache.hadoop.mapreduce.Job;
+
+import dk.netarkivet.common.distribute.hadoop.HadoopBatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
@@ -69,5 +74,8 @@ public interface ViewerArcRepositoryClient {
      * @return The status of the batch job after it ended.
      */
     BatchStatus batch(FileBatchJob job, String replicaId, String... args);
+
+
+//    public HadoopBatchStatus hadoopBatch(Job job, String replicaId, Path inputDir, Class<PathFilter> fileNamePattern);
 
 }
