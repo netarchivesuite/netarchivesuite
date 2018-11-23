@@ -1,13 +1,13 @@
 package dk.netarkivet.common.distribute.hadoop;
 
 import java.io.IOException;
-import java.util.Date;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -16,8 +16,9 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
-public class HadoopViewerArcRepositoryClientTest {
+public class HadoopArcRepositoryClientTest {
 
     public static class MyPathFilter extends Configured implements PathFilter {
 
@@ -58,9 +59,9 @@ public class HadoopViewerArcRepositoryClientTest {
     }
 
 
-    public static class TestMapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT> extends Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT> {
+    public static class TestMapper extends Mapper<Text,ArchiveRecordBase,Text,Text> {
 
-        @Override protected void map(KEYIN key, VALUEIN value, Context context)
+        @Override protected void map(Text key, ArchiveRecordBase value, Context context)
                 throws IOException, InterruptedException {
             try {
                 super.map(key, value, context);
@@ -70,8 +71,8 @@ public class HadoopViewerArcRepositoryClientTest {
         }
     }
 
-    public static class TestReducer<KEYIN,VALUEIN,KEYOUT,VALUEOUT> extends Reducer<KEYIN,VALUEIN,KEYOUT,VALUEOUT> {
-        @Override protected void reduce(KEYIN key, Iterable<VALUEIN> values, Context context)
+    public static class TestReducer extends Reducer<Text, Text, Text, Text> {
+        @Override protected void reduce(Text key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
             super.reduce(key, values, context);
         }
@@ -79,7 +80,7 @@ public class HadoopViewerArcRepositoryClientTest {
     @Test
     public void hadoopBatch() throws IOException {
 
-        HadoopViewerArcRepositoryClient client = new HadoopViewerArcRepositoryClient();
+        HadoopArcRepositoryClient client = new HadoopArcRepositoryClient();
 
         Job job = Job.getInstance();
 
@@ -88,14 +89,36 @@ public class HadoopViewerArcRepositoryClientTest {
         job.setJobName(this.getClass().getName());
         job.setJarByClass(this.getClass());
 
+        Path inputDir = new Path(".");
+        setupArchiveRecordInput(job,conf,inputDir);
+
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(ArchiveRecordBase.class);
+
+
 
         job.setReducerClass(TestReducer.class);
         job.setMapperClass(TestMapper.class);
 
-        Path inputDir = new Path(".");
-        setupInput(job, conf, inputDir);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Text.class);
+
 
         HadoopBatchStatus result = client.hadoopBatch(job, null);
         System.out.println(result);
+    }
+
+
+    private void setupArchiveRecordInput(Job job, Configuration conf, Path inputDir) throws IOException {
+        System.out.println("Inputdir=" + inputDir.makeQualified(inputDir.getFileSystem(conf)));
+        job.setInputFormatClass(ArchiveInputFormat.class);
+        //Filter for filenames
+        try {
+            WholeFileInputFormat.addInputPath(job, inputDir);
+        } catch (IOException e) {
+            throw new IOFailure("message", e);
+        }
+        WholeFileInputFormat.setInputPathFilter(job, MyPathFilter.class);
+        WholeFileInputFormat.setInputDirRecursive(job, true);
     }
 }

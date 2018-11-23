@@ -95,6 +95,8 @@
     <sonar.language>java</sonar.language>
 <!--    <jacoco.version>0.7.2.201409121644</jacoco.version> -->
    <jacoco.version>0.7.9</jacoco.version>
+    <hadoop.version>2.7.3.2.6.5.0-292</hadoop.version>
+
   </properties>
 
   <modules>
@@ -190,7 +192,47 @@
   </repositories>
 
   <dependencyManagement>
+
+    <!--Hadoop needs these specific versions, so override whatever other versions the dependencies use-->
     <dependencies>
+      <dependency>
+        <groupId>xerces</groupId>
+        <artifactId>xercesImpl</artifactId>
+        <version>2.9.1</version>
+      </dependency>
+      <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>xalan</artifactId>
+        <version>2.7.1</version>
+      </dependency>
+
+      <!--Override old version of hbase including in heritrix3-extentions/heritrix-contrib -->
+      <dependency>
+        <groupId>org.apache.hbase</groupId>
+        <artifactId>hbase-client</artifactId>
+        <version>${hadoop.version}</version>
+        <scope>provided</scope>
+        <exclusions>
+          <exclusion>
+            <artifactId>slf4j-log4j12</artifactId>
+            <groupId>org.slf4j</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <!--The hadoop client for batch processing-->
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-client</artifactId>
+        <version>${hadoop.version}</version>
+        <scope>provided</scope>
+        <exclusions>
+          <exclusion>
+            <artifactId>slf4j-log4j12</artifactId>
+            <groupId>org.slf4j</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
       <dependency>
         <groupId>org.json</groupId>

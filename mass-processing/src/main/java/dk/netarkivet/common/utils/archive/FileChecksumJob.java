@@ -1,12 +1,12 @@
 package dk.netarkivet.common.utils.archive;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
@@ -20,14 +20,13 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.hadoop.HadoopBatchStatus;
-import dk.netarkivet.common.distribute.hadoop.HadoopViewerArcRepositoryClient;
+import dk.netarkivet.common.distribute.hadoop.HadoopArcRepositoryClient;
 import dk.netarkivet.common.distribute.hadoop.WholeFileInputFormat;
 import dk.netarkivet.common.exceptions.IOFailure;
 
@@ -39,7 +38,7 @@ public class FileChecksumJob extends Configured implements Tool {
 
     @Override public int run(String[] args) throws Exception {
 
-        HadoopViewerArcRepositoryClient client = new HadoopViewerArcRepositoryClient();
+        HadoopArcRepositoryClient client = new HadoopArcRepositoryClient();
 
         Job job = Job.getInstance();
         Configuration conf = job.getConfiguration();
@@ -113,9 +112,10 @@ public class FileChecksumJob extends Configured implements Tool {
     }
 
     public static class DuplicateReducer extends Reducer<Text, Text, Text, Text> {
-        private static final Logger log = LoggerFactory.getLogger(DuplicateReducer.class);
+        private static final Logger log = LoggerFactory.getLogger(FileChecksumJob.DuplicateReducer.class);
 
-        @Override protected void reduce(Text key, Iterable<Text> values, Context context)
+        @Override
+        protected void reduce(Text key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
 
             //DANGER WILL ROBINSON, THE ITERABLE IS AN ITERATOR AND CAN ONLY BE READ ONCE
@@ -126,17 +126,15 @@ public class FileChecksumJob extends Configured implements Tool {
                 list.add(new Text(next.toString()));
             }
 
-
-            log.info("Found {} files {} with checksum {}", list.size(),list, key.toString());
+            log.info("Found {} files {} with checksum {}", list.size(), list, key.toString());
             if (list.size() > 1) {
-                for (Text value : list) {
-                    log.info("Found file {} with checksum {}", value.toString(), key.toString());
-                    context.write(key, value);
-                }
+                String paths = String.join(
+                        File.pathSeparator,
+                        list.stream().map(Text::toString).collect(Collectors.toList()));
+                context.write(key, new Text(paths));
             }
 
         }
-
     }
 
 }

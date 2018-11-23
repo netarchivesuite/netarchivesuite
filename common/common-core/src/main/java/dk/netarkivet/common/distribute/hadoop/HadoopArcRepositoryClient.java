@@ -2,18 +2,27 @@ package dk.netarkivet.common.distribute.hadoop;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
+import org.apache.hadoop.mapred.TIPStatus;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.MRJobConfig;
+import org.apache.hadoop.mapreduce.TaskReport;
+import org.apache.hadoop.mapreduce.TaskType;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
@@ -25,7 +34,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
-public class HadoopViewerArcRepositoryClient implements ArcRepositoryClient {
+public class HadoopArcRepositoryClient implements ArcRepositoryClient {
+
+    private static final Logger log = LoggerFactory.getLogger(HadoopArcRepositoryClient.class);
+
     @Override public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
         return null;
     }
@@ -83,12 +95,6 @@ public class HadoopViewerArcRepositoryClient implements ArcRepositoryClient {
         Path outputDir = new Path("target/temp" + new Date().getTime());
         TextOutputFormat.setOutputPath(job, outputDir);
 
-//        //Do not retry failures
-//        job.getConfiguration().set(MRJobConfig.MAP_MAX_ATTEMPTS, "1");
-//
-//        //Job is not failed due to failures
-//        job.getConfiguration().set(MRJobConfig.MAP_FAILURES_MAX_PERCENT, "100");
-
         boolean success;
         try {
             success = job.waitForCompletion(true);
@@ -97,6 +103,14 @@ public class HadoopViewerArcRepositoryClient implements ArcRepositoryClient {
         }
         int num_files = Integer.parseInt(job.getConfiguration().get(FileInputFormat.NUM_INPUT_FILES));
 
+        try {
+            Arrays.stream(job.getTaskReports(TaskType.MAP))
+                    .filter(task -> task.getCurrentStatus() == TIPStatus.FAILED)
+                    .map(TaskReport::getDiagnostics)
+                    .forEachOrdered(errors -> log.error(Arrays.asList(errors).toString()));
+        } catch (IOException | InterruptedException e) {
+            throw new IOFailure("message",e);
+        }
         //TODO info about failed tasks
 
         FileSystem srcFS;

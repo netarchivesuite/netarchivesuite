@@ -1,8 +1,12 @@
 package dk.netarkivet.common.utils.archive;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -12,55 +16,61 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
-import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.hadoop.ArchiveInputFormat;
 import dk.netarkivet.common.distribute.hadoop.HadoopBatchStatus;
-import dk.netarkivet.common.distribute.hadoop.HadoopViewerArcRepositoryClient;
-import dk.netarkivet.common.distribute.hadoop.WholeFileInputFormat;
+import dk.netarkivet.common.distribute.hadoop.HadoopArcRepositoryClient;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.InputStreamUtils;
 
-public class ArchiveJob extends Configured implements Tool {
+public class ArchiveChecksumJob extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception {
-        System.exit(ToolRunner.run(new ArchiveJob(), args));
+        System.exit(ToolRunner.run(new ArchiveChecksumJob(), args));
     }
 
     @Override public int run(String[] args) throws Exception {
 
-        HadoopViewerArcRepositoryClient client = new HadoopViewerArcRepositoryClient();
 
         Job job = Job.getInstance();
         Configuration conf = job.getConfiguration();
 
-        job.setJobName(ArchiveJob.class.getName());
-        job.setJarByClass(ArchiveJob.class);
+        job.setJobName(ArchiveChecksumJob.class.getName());
+        job.setJarByClass(ArchiveChecksumJob.class);
+
+        //Do not retry failures
+        conf.set(MRJobConfig.MAP_MAX_ATTEMPTS, "1");
+
+        //Job is not failed due to failures
+        conf.set(MRJobConfig.MAP_FAILURES_MAX_PERCENT, "100");
 
         //Set up input format
         Path inputDir = new Path(args[0]);
         setupArchiveRecordInput(job, conf, inputDir);
 
         job.setMapperClass(ChecksumMapper.class);
+
         job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(ArchiveRecordBase.class);
+        job.setMapOutputValueClass(Text.class);
 
         job.setReducerClass(DuplicateReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
+        HadoopArcRepositoryClient client = new HadoopArcRepositoryClient();
         HadoopBatchStatus result = client.hadoopBatch(job, null);
 
         System.out.println(result);
         try (InputStream resultFile = result.getResultFile().getInputStream()) {
-            IOUtils.copy(resultFile, System.out);
+//            IOUtils.copy(resultFile, System.out);
         } finally {
             result.getResultFile().cleanup();
         }
@@ -74,12 +84,12 @@ public class ArchiveJob extends Configured implements Tool {
         job.setInputFormatClass(ArchiveInputFormat.class);
         //Filter for filenames
         try {
-            WholeFileInputFormat.addInputPath(job, inputDir);
+            ArchiveInputFormat.addInputPath(job, inputDir);
         } catch (IOException e) {
             throw new IOFailure("message", e);
         }
-        WholeFileInputFormat.setInputPathFilter(job, MyPathFilter.class);
-        WholeFileInputFormat.setInputDirRecursive(job, true);
+        ArchiveInputFormat.setInputPathFilter(job, MyPathFilter.class);
+        ArchiveInputFormat.setInputDirRecursive(job, true);
     }
 
     public static class MyPathFilter extends Configured implements PathFilter {
@@ -105,23 +115,41 @@ public class ArchiveJob extends Configured implements Tool {
 
         @Override protected void map(Text key, ArchiveRecordBase value, Context context)
                 throws IOException, InterruptedException {
+            context.setStatus(key.toString());
             try (InputStream in = value.getInputStream()) {
-                String digest = DigestUtils.md5Hex(in);
+
+                String digest;
+                try {
+                    digest = DigestUtils.md5Hex(in);
+                } catch (RuntimeException e) {
+                    throw new RuntimeException("Failed to parse Record for " + key.toString(), e);
+                }
                 context.write(new Text(digest), key);
             }
         }
     }
 
     public static class DuplicateReducer extends Reducer<Text, Text, Text, Text> {
+        private static final Logger log = LoggerFactory.getLogger(FileChecksumJob.DuplicateReducer.class);
 
-        @Override protected void reduce(Text key, Iterable<Text> values, Context context)
+        @Override
+        protected void reduce(Text key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
-            long size = StreamSupport.stream(values.spliterator(), false).count();
-            if (size > 1) {
-                for (Text value : values) {
+
+            //DANGER WILL ROBINSON, THE ITERABLE IS AN ITERATOR AND CAN ONLY BE READ ONCE
+            List<Text> list = new ArrayList<>();
+            Iterator<Text> iterator = values.iterator();
+            while (iterator.hasNext()) {
+                Text next = iterator.next();
+                list.add(new Text(next.toString()));
+            }
+
+            if (list.size() > 1) {
+                for (Text value : list) {
                     context.write(key, value);
                 }
             }
+
         }
     }
 
