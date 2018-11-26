@@ -16,6 +16,7 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
+import org.apache.hadoop.io.MD5Hash;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.MRJobConfig;
@@ -115,15 +116,9 @@ public class ArchiveChecksumJob extends Configured implements Tool {
 
         @Override protected void map(Text key, ArchiveRecordBase value, Context context)
                 throws IOException, InterruptedException {
-            context.setStatus(key.toString());
             try (InputStream in = value.getInputStream()) {
-
                 String digest;
-                try {
-                    digest = DigestUtils.md5Hex(in);
-                } catch (RuntimeException e) {
-                    throw new RuntimeException("Failed to parse Record for " + key.toString(), e);
-                }
+                digest = MD5Hash.digest(in).toString();
                 context.write(new Text(digest), key);
             }
         }

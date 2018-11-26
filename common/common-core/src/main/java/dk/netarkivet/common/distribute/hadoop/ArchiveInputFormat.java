@@ -19,7 +19,6 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
-import org.archive.io.RecoverableIOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,21 +53,21 @@ public class  ArchiveInputFormat extends FileInputFormat<Text, ArchiveRecordBase
 
             Configuration conf = context.getConfiguration();
 
-            length = split.getLength();
+            this.length = split.getLength();
             if (split instanceof FileSplit) {
                 FileSplit fileSplit = (FileSplit) split;
-                archivePath = fileSplit.getPath();
-                start = fileSplit.getStart();
+                this.archivePath = fileSplit.getPath();
+                this.start = fileSplit.getStart();
             }
 
             log.debug("Starting to read records from {}",split);
-            fileSystem = archivePath.getFileSystem(conf);
-            inputStream = fileSystem.open(archivePath);
+            this.fileSystem = archivePath.getFileSystem(conf);
+            this.inputStream = fileSystem.open(archivePath);
             ((FSDataInputStream) inputStream).seek(start);
-            archiveReader = ArchiveReaderFactory.get(archivePath.toString(), inputStream, false);
+            this.archiveReader = ArchiveReaderFactory.get(archivePath.toString(), inputStream, false);
 
             archiveReader.setStrict(false);
-            iterator = archiveReader.iterator();
+            this.iterator = archiveReader.iterator();
             context.setStatus(split.toString());
             Thread.currentThread().setName(split.toString());
         }
