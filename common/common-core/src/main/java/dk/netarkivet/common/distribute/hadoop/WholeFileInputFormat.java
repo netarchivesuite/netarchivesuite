@@ -1,6 +1,7 @@
 package dk.netarkivet.common.distribute.hadoop;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -28,6 +29,10 @@ public class WholeFileInputFormat extends FileInputFormat<Text, BytesWritable> {
     @Override public RecordReader<Text, BytesWritable> createRecordReader(InputSplit split, TaskAttemptContext context)
             throws IOException, InterruptedException {
         return new WholeFileRecordReader();
+    }
+
+    @Override public List<InputSplit> getSplits(JobContext job) throws IOException {
+        return super.getSplits(job);
     }
 
     public static class WholeFileRecordReader extends RecordReader<Text, BytesWritable> {

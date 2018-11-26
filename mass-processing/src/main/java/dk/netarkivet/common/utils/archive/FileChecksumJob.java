@@ -101,13 +101,14 @@ public class FileChecksumJob extends Configured implements Tool {
 
     public static class ChecksumMapper extends Mapper<Text, BytesWritable, Text, Text> {
 
-        private static final Logger log = LoggerFactory.getLogger(DuplicateReducer.class);
+        private static final Logger log = LoggerFactory.getLogger(ChecksumMapper.class);
 
         @Override protected void map(Text key, BytesWritable value, Context context)
                 throws IOException, InterruptedException {
             log.info("Working on file {}", key.toString());
-            //Important to not just pass the object through, as it will be overwritten later
-            context.write(new Text(DigestUtils.md5Hex(value.getBytes())), new Text(key.toString()));
+            Text out_key = new Text(DigestUtils.md5Hex(value.getBytes()));
+            Text out_value = new Text(key.toString());
+            context.write(out_key, out_value);
         }
     }
 
