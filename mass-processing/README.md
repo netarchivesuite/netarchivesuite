@@ -12,7 +12,7 @@ public BatchStatus batch(FileBatchJob job, String replicaId, String... args);
 ```
 and I defined a new method more suitable for hadoop:
 ```java
-    public HadoopBatchStatus hadoopBatch(org.apache.hadoop.mapreduce.Job job, String replicaId);
+public HadoopBatchStatus hadoopBatch(org.apache.hadoop.mapreduce.Job job, String replicaId);
 ```
 
 The difference in the parameters is slight. The only change is really that rather than submitting custom netarchive jobs, you submit standard hadoop mapreduce jobs.
@@ -872,6 +872,76 @@ However, it have turned out to be surprisingly hard to get information about exa
 
 Everything I need to know is of course logged, so it is not like the information is not there, but it is not readily available in a programmatic fashion.
 
+
+## Mass-Processing Dependencies
+
+I found that these dependencies were nessesary for a hadoop job
+
+```xml
+  <dependencyManagement>
+    <!--Hadoop needs these specific versions, so override whatever other versions the dependencies use-->
+    <dependencies>
+      <dependency>
+        <groupId>xerces</groupId>
+        <artifactId>xercesImpl</artifactId>
+        <version>2.9.1</version>
+      </dependency>
+      <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>xalan</artifactId>
+        <version>2.7.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+
+    <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-client -->
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+      <version>2.7.3.2.6.5.0-292</version>
+      <scope>provided</scope>
+    </dependency>
+
+  <!--Override old version of hbase including in heritrix3-extentions/heritrix-contrib -->
+    <dependency>
+      <groupId>org.apache.hbase</groupId>
+      <artifactId>hbase-client</artifactId>
+      <version>2.7.3.2.6.5.0-292</version>
+    <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>slf4j-log4j12</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+  <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>common-core</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+  </dependencies>
+```
+
+First, we define dependency management for `xalan` and `xercesImpl` to solve some version-incompabilities that arose with hadoop. This declaration ensures that these specific versions are used.
+
+Then we include the `hadoop-client` dependency, but with scope provided. When we bundle the job as a jar file (see below), we do not need the hadoop classes, as these will be provided by the system. Including them risk causing version incompatibilities.
+
+The `hbase-client` is solely there to override a dependency from somewhere in the dependency tree, that includes an old version of `hbase-client`.
+
+Notice that I exclude the slf4j dependencies. This is to ensure that the log4j from the hadoop system is the one that is used. Otherwise the logs from the hadoop tasks will not work, which makes figuring out what went wrong with your job extremely painful.
+
+Besides, `common-core` is a library, and SHOULD NOT include logging implementations. The logging implementation is for the end user of the library to decide, not the library. Include `slf4j-api` and no more.
 
 
 ## Testing a Hadoop Job
