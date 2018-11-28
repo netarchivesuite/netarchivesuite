@@ -139,24 +139,31 @@ public class Bitrepository {
      * @throws ArgumentNotValid if configFile is null
      */
     public Bitrepository(File configDir, String bitmagKeyFilename, int maxStoreFailures, String usepillar) {
-    	ArgumentNotValid.checkExistsDirectory(configDir, "File configDir");
+        logger.debug("Initialising bitrepository");
+        ArgumentNotValid.checkExistsDirectory(configDir, "File configDir");
         componentId = BitrepositoryUtils.generateComponentID();
+        logger.info("componentId: " + componentId);
         maxNumberOfFailingPillars = maxStoreFailures;
         this.usepillar = usepillar;
         usepillarListOnly = new ArrayList<String>();
         usepillarListOnly.add(usepillar);
         this.settingsDir = configDir;
+        logger.debug("Reading bitrepository settings from " + configDir);
         if (bitmagKeyFilename == null){
         	this.privateKeyFile = new File(configDir, "dummy-certificate.pem"); // This file should never exist
         } else {
         	this.privateKeyFile = new File(configDir, bitmagKeyFilename);
         }
-        
+        logger.debug("keyfile: " + this.privateKeyFile.getAbsolutePath());
+        logger.debug("Initialising bitrepository settings.");
         initBitmagSettings();
+        logger.debug("Initialising bitrepository security manager.");
         initBitmagSecurityManager(); // Mandatory,even if we point to a nonexisting file dummy-certificate.pem
-        
+
+        logger.debug("Getting bitrepository message bus");
         bitMagMessageBus = ProtocolComponentFactory.getInstance().getMessageBus(
                 bitmagSettings, bitMagSecurityManager); // Is bitMagSecurityManager mandatory?
+        logger.debug("Initialising bitrepository clients");
         initBitMagClients();
     }
 

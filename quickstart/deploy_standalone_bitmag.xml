@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
 *$Id$
 * $Revision$
 * $Author$
@@ -27,9 +27,23 @@ National Library.
 *
 -->
 <!--
-        This is a one-machine quickstart deployment designed to run against a
-        bitrepository.org bitmagasin instance for uploads. The path to the bitmagasin
-        client configuration is currently hardcoded to /home/test/bitmagclientconfig.
+        This file contains an example of a deploy configuration file for the
+        one machine scenario. Kind of running 'quickstart' on another machine.
+        Uses HTTP as file transport agent. Requires the availability of
+        port 7676: JMS broker
+        port 8040-8050 for the http filetransport servers serving the HTTPRemoteFile;
+        port 8070 for the viewerproxy.
+        port 8074 for the GUIApplication webinterface
+        port 8090-8093 for the Heritrix1 GUI
+        port 8094-8097 for the Heritrix3 GUI
+        port 8110-8120: JMX ports
+        port 8210-8220: RMI ports
+        port 8120-8121: databases
+
+        Does not include a checksum replica w/ a ChecksumFileApplication
+        Uses the default ActiveBitPreservation implementation
+        (currently dk.netarkivet.archive.arcrepository.bitpreservation.
+         FileBasedActiveBitPreservation).
 -->
 
 <deployGlobal>
@@ -109,8 +123,8 @@ National Library.
         </mail>
         <notifications>
           <class>dk.netarkivet.common.utils.EMailNotifications</class>
-          <receiver>svc@kb.dk</receiver>
-          <sender>svc@kb.dk</sender>
+          <receiver>example@netarkivet.dk</receiver>
+          <sender>example@netarkivet.dk</sender>
         </notifications>
       </common>
       <viewerproxy>
@@ -144,7 +158,6 @@ National Library.
         </common>
       </settings>
       <applicationName name="dk.netarkivet.common.webinterface.GUIApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10041 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
         <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
         <settings>
@@ -164,9 +177,8 @@ National Library.
         </settings>
       </applicationName>
       <applicationName name="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10042 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
-	<deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
+        <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
         <settings>
           <common>
             <jmx>
@@ -181,9 +193,8 @@ National Library.
         </settings>
       </applicationName>
       <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10043 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
-	<deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
+        <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
         <settings>
           <common>
             <jmx>
@@ -198,10 +209,9 @@ National Library.
         </settings>
       </applicationName>
       <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10044 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
         <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
-	<settings>
+        <settings>
           <common>
             <jmx>
               <port>8113</port>
@@ -220,11 +230,10 @@ National Library.
         </settings>
       </applicationName>
       <applicationName name="dk.netarkivet.harvester.heritrix3.HarvestControllerApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10045 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
         <settings>
           <common>
-            <applicationInstanceId>low</applicationInstanceId>
+            <applicationInstanceId>snapshot1</applicationInstanceId>
             <jmx>
               <port>8114</port>
               <rmiPort>8214</rmiPort>
@@ -243,17 +252,18 @@ National Library.
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>R_D</jmxPassword>
               </heritrix>
-              <serverDir>harvester_low</serverDir>
+              <heritrix3>
+              </heritrix3>
+              <serverDir>harvester_snapshot</serverDir>
             </harvesting>
           </harvester>
         </settings>
       </applicationName>
       <applicationName name="dk.netarkivet.harvester.heritrix3.HarvestControllerApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10046 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
         <settings>
           <common>
-            <applicationInstanceId>high</applicationInstanceId>
+            <applicationInstanceId>focused1</applicationInstanceId>
             <jmx>
               <port>8115</port>
               <rmiPort>8215</rmiPort>
@@ -272,13 +282,14 @@ National Library.
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>R_D</jmxPassword>
               </heritrix>
-              <serverDir>harvester_high</serverDir>
+              <heritrix3>
+              </heritrix3>
+              <serverDir>harvester_focused</serverDir>
             </harvesting>
           </harvester>
         </settings>
       </applicationName>
       <applicationName name="dk.netarkivet.harvester.indexserver.IndexServerApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10047 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
         <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
         <settings>
@@ -295,7 +306,6 @@ National Library.
         </settings>
       </applicationName>
       <applicationName name="dk.netarkivet.viewerproxy.ViewerProxyApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10048 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
         <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
         <settings>
@@ -315,7 +325,6 @@ National Library.
         </settings>
       </applicationName>
       <applicationName name="dk.netarkivet.harvester.scheduler.HarvestJobManagerApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10049 -Xmx1536m</deployJavaOpt>
         <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
         <settings>
           <common>
@@ -330,70 +339,6 @@ National Library.
           </common>
         </settings>
       </applicationName>
-
-      <applicationName name="dk.netarkivet.harvester.heritrix3.HarvestControllerApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10050 -Xmx1536m</deployJavaOpt>
-        <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
-        <settings>
-          <common>
-            <applicationInstanceId>low_h3</applicationInstanceId>
-            <jmx>
-              <port>8119</port>
-              <rmiPort>8219</rmiPort>
-            </jmx>
-            <remoteFile>
-              <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-              <port>8049</port>
-            </remoteFile>
-          </common>
-          <harvester>
-            <harvesting>
-              <channel>SNAPSHOT</channel>
-              <heritrix>
-                <guiPort>18194</guiPort>
-                <jmxPort>18195</jmxPort>
-                <jmxUsername>controlRole</jmxUsername>
-                <jmxPassword>R_D</jmxPassword>
-                <bundle>/home/test/NetarchiveSuite-heritrix3-bundler-5.0-SNAPSHOT.zip</bundle>
-                <certificate>/home/test/h3server.jks</certificate>
-              </heritrix>
-              <serverDir>harvester3_low</serverDir>
-            </harvesting>
-          </harvester>
-        </settings>
-      </applicationName>
-      <applicationName name="dk.netarkivet.harvester.heritrix3.HarvestControllerApplication">
-        <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10051 -Xmx1536m</deployJavaOpt>
-        <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
-        <settings>
-          <common>
-            <applicationInstanceId>high_h3</applicationInstanceId>
-            <jmx>
-              <port>8120</port>
-              <rmiPort>8220</rmiPort>
-            </jmx>
-            <remoteFile>
-              <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-              <port>8050</port>
-            </remoteFile>
-          </common>
-          <harvester>
-            <harvesting>
-              <channel>FOCUSED</channel>
-              <heritrix>
-                <guiPort>18196</guiPort>
-                <jmxPort>18197</jmxPort>
-                <jmxUsername>controlRole</jmxUsername>
-                <jmxPassword>R_D</jmxPassword>
-                <bundle>/home/test/NetarchiveSuite-heritrix3-bundler-5.0-SNAPSHOT.zip</bundle>
-                <certificate>/home/test/h3server.jks</certificate>
-              </heritrix>
-              <serverDir>harvester3_high</serverDir>
-            </harvesting>
-          </harvester>
-        </settings>
-      </applicationName>
-
     </deployMachine>
   </thisPhysicalLocation>
 </deployGlobal>
