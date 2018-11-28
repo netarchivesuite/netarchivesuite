@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -36,10 +36,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import org.apache.commons.collections.IteratorUtils;
 
 import org.junit.After;
 import org.junit.Before;
@@ -47,7 +44,7 @@ import org.junit.Test;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -59,7 +56,13 @@ import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-
+/*
+IMPORTS removed as part of removing JDK 8 stuff
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+*/
 public class ReplicaCacheDatabaseTester {
 
     private ReloadSettings rs = new ReloadSettings();
@@ -71,7 +74,7 @@ public class ReplicaCacheDatabaseTester {
     public void setUp() throws Exception {
         rs.setUp();
         mtf.setUp();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         ArchiveDBConnection.cleanup();
 
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
@@ -153,7 +156,8 @@ public class ReplicaCacheDatabaseTester {
                 cache.getNumberOfMissingFilesInLastUpdate(Replica.getReplicaFromId("THREE")));
 
         // check that the getMissingFilesInLastUpdate works appropriately.
-        List<String> misFiles = toArrayList(cache.getMissingFilesInLastUpdate(
+        //List<String> misFiles = toArrayList(cache.getMissingFilesInLastUpdate(
+        List<String> misFiles = IteratorUtils.toList(cache.getMissingFilesInLastUpdate(
                 Replica.getReplicaFromId("THREE")).iterator());
 
         List<String> allFilenames = new ArrayList<String>();
@@ -192,7 +196,9 @@ public class ReplicaCacheDatabaseTester {
                 FileUtils.countLines(csFile2), cache.getNumberOfFiles(Replica.getReplicaFromId("THREE")));
 
         // Check that all files are wrong for replica 'THREE'
-        List<String> wrongFiles = toArrayList(cache.getWrongFilesInLastUpdate(
+        
+        //List<String> wrongFiles = toArrayList(cache.getWrongFilesInLastUpdate(
+        List<String> wrongFiles = IteratorUtils.toList(cache.getWrongFilesInLastUpdate(
                 Replica.getReplicaFromId("THREE")).iterator());
 
         assertEquals("All the files should be wrong for replica 'THREE': " + wrongFiles + " == " + allFilenames,
@@ -384,9 +390,15 @@ public class ReplicaCacheDatabaseTester {
 
         return res;
     }
-
+    
+    
+    
+    /*
+     JAVA 8 syntax used 
     private static <T> ArrayList<T> toArrayList(final Iterator<T> iterator) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
+    Using IteratorUtils.toList insteaf
+    */   
 }

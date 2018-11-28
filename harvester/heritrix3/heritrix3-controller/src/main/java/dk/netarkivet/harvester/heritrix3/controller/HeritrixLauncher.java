@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -29,8 +29,6 @@ import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.HarvestingAbort;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor;
-import dk.netarkivet.common.lifecycle.PeriodicTaskExecutor.PeriodicTask;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
@@ -40,17 +38,14 @@ import dk.netarkivet.harvester.heritrix3.Heritrix3Settings;
 import dk.netarkivet.harvester.heritrix3.HeritrixLauncherAbstract;
 
 /**
- * BnF specific Heritrix launcher, that forces the use of {@link HeritrixController}. Every turn of the crawl control
- * loop, asks the Heritrix controller to generate a progress report as a {@link CrawlProgressMessage} and then send this
+ * BnF specific Heritrix3 launcher, that forces the use of {@link HeritrixController}. Every turn of the crawl control
+ * loop, asks the Heritrix3 controller to generate a progress report as a {@link CrawlProgressMessage} and then send this
  * message on the JMS bus to be consumed by the {@link HarvestMonitor} instance.
  */
 public class HeritrixLauncher extends HeritrixLauncherAbstract {
 
     /** The class logger. */
     private static final Logger log = LoggerFactory.getLogger(HeritrixLauncher.class);
-
-    /** Wait time in milliseconds (10s). */
-    private static final int SLEEP_TIME_MS = 10 * 60 * 1000;
 
     /** Frequency in seconds for generating the full harvest report. Also serves as delay before the first generation
      *  occurs. */
@@ -61,7 +56,7 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
 
     private String jobName;
 
-    /** Is the heritrix crawl finished. */
+    /** Is the heritrix3 crawl finished. */
     private boolean crawlIsOver = false;
 
     /**
@@ -79,6 +74,7 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
      * Get instance of this class.
      *
      * @param files Object encapsulating location of Heritrix crawldir and configuration files
+     * @param jobName a String uniquely specifying the job in this installation
      * @return {@link HeritrixLauncher} object
      * @throws ArgumentNotValid If either order.xml or seeds.txt does not exist, or argument files is null.
      */
@@ -97,38 +93,31 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
      * </ol>
      */
     public void doCrawl() throws IOFailure {
-        setupOrderfile(getHeritrixFiles());
+        setupOrderfile(jobName, getHeritrixFiles());
         heritrixController = new HeritrixController(getHeritrixFiles(), jobName);
-
-        PeriodicTaskExecutor exec = null;
+        
         try {
             // Initialize Heritrix settings according to the crawler-beans.cxml file.
             heritrixController.initialize();
-            log.debug("Starting crawl..");
+            log.debug("Setup and start new h3 crawl");
             heritrixController.requestCrawlStart();
-
-            // Schedule full frontier report generation
-            
-            log.info("Starting CrawlControl PeriodicTaskExecutor that repeatedly fetches a fullfrontierreport");
-            exec = new PeriodicTaskExecutor(new PeriodicTask("CrawlControl", new CrawlControl(),
-                    CRAWL_CONTROL_WAIT_PERIOD, CRAWL_CONTROL_WAIT_PERIOD) 
-            		//FIXME disabled until further notice
-                    /*						,new PeriodicTask("FrontierReportAnalyzer",
-                    new FrontierReportAnalyzer(heritrixController), FRONTIER_REPORT_GEN_FREQUENCY,
-                    FRONTIER_REPORT_GEN_FREQUENCY)
-                    */
-                    );
-
+                
+            log.info("Starting periodic CrawlControl with CRAWL_CONTROL_WAIT_PERIOD={} seconds", CRAWL_CONTROL_WAIT_PERIOD);            
+          
             while (!crawlIsOver) {
-                // Wait a bit
-                try {
-                    synchronized (this) {
-                        wait(SLEEP_TIME_MS);
+                CrawlControl cc = new CrawlControl();
+                cc.run();
+                FrontierReportAnalyzer fra = new FrontierReportAnalyzer(heritrixController);
+                fra.run();
+                if (!crawlIsOver) {
+                    try {
+                    Thread.sleep(CRAWL_CONTROL_WAIT_PERIOD*1000L);
+                    } catch (InterruptedException e) {
+                        log.warn("Wait interrupted: " + e);
                     }
-                } catch (InterruptedException e) {
-                    log.trace("Waiting thread awoken: {}", e.getMessage(), e);
                 }
             }
+            log.info("CrawlJob is now over");
         } catch (IOFailure e) {
             log.warn("Error during initialisation of crawl", e);
             throw (e);
@@ -136,31 +125,22 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
             log.warn("Exception during crawl", e);
             throw new RuntimeException("Exception during crawl", e);
         } finally {
-            // Stop the crawl control & frontier report analyzer
-            if (exec != null) {
-                exec.shutdown();
-            }
-
             if (heritrixController != null) {
                 heritrixController.cleanup(getHeritrixFiles().getCrawlDir());
             }
         }
-        log.debug("Heritrix has finished crawling...");
+        log.debug("Heritrix3 has finished crawling...");
     }
 
     /**
      * This class executes a crawl control task, e.g. queries the crawler for progress summary, sends the adequate JMS
      * message to the monitor, and checks whether the crawl is finished, in which case crawl control will be ended.
      * <p>
-     * These tasks are scheduled by a {@link CrawlControlExecutor}.
      */
     private class CrawlControl implements Runnable {
-
+       
         @Override
         public void run() {
-            if (crawlIsOver) { // Don't check again; we are already done
-                return;
-            }
             CrawlProgressMessage cpm = null;
             try {
                 cpm = heritrixController.getCrawlProgress();
@@ -173,20 +153,18 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
                 crawlIsOver = true;
                 return;
             }
-
             JMSConnectionFactory.getInstance().send(cpm);
 
             Heritrix3Files files = getHeritrixFiles();
             if (cpm.crawlIsFinished()) {
-                log.info("Job ID: {}: crawl is finished.", files.getJobID());
+                log.info("Job ID {}: crawl is finished.", files.getJobID());
                 crawlIsOver = true;
                 return;
             }
-            /*
+            
             log.info("Job ID: " + files.getJobID() + ", Harvest ID: " + files.getHarvestID() + ", " + cpm.getHostUrl()
                     + "\n" + cpm.getProgressStatisticsLegend() + "\n" + cpm.getJobStatus().getStatus() + " "
                     + cpm.getJobStatus().getProgressStatistics());
-                    */
         }
 
     }

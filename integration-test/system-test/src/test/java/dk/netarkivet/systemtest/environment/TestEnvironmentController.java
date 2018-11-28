@@ -2,7 +2,7 @@
  * #%L
  * NetarchiveSuite System test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -226,11 +226,15 @@ public class TestEnvironmentController {
             }
             String setDeployConfCommand = "true";
             String setTimestampCommand = "true";
+            String setH3zipCommand = "true";
             if (ENV.getTimestamp() != null) {
                 setTimestampCommand = "export VERSION=" + ENV.getTimestamp();
             }
             if (ENV.getDeployConfig() != null) {
                 setDeployConfCommand = "export DEPLOYCONF=" + ENV.getDeployConfig();
+            }
+            if (ENV.getH3Zip() != null) {
+                setH3zipCommand = "export H3ZIP=" + ENV.getH3Zip();
             }
             String setPortCommand = "export PORT=" + ENV.getGuiPort();
             String setMailReceiversCommand = "export MAILRECEIVERS=" + ENV.getMailreceivers();
@@ -238,7 +242,8 @@ public class TestEnvironmentController {
             String setPathCommand = "source /etc/bashrc;source /etc/profile;source ~/.bash_profile";
 
             environmentSetup = setPathCommand + ";" + setTimestampCommand + ";" + setPortCommand + ";"
-                    + setMailReceiversCommand + ";" + setTestCommand + ";" + setDeployConfCommand + ";";
+                    + setMailReceiversCommand + ";" + setTestCommand + ";" + setDeployConfCommand + ";"
+                    + setH3zipCommand + ";";
             this.command = command;
             this.quotes = quotes;
         }

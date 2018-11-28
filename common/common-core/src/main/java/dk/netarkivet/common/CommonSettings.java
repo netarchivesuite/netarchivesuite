@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -215,6 +215,14 @@ public class CommonSettings {
     public static String WEBINTERFACE_SETTINGS = "settings.common.webinterface";
 
     /**
+     * <b>settings.common.webinterface.hideInactiveTemplates</b>;<br/>
+     * Boolean valued String. If true, inactive harvest templates are entirely hidden in the GUI - it will be impossible
+     * to see them or change their state to "active". If false, the GUI will include functionality to change the
+     * status of template from inactive to active and vice-versa.
+     */
+    public static String HIDE_INACTIVE_TEMPLATES = "settings.common.webinterface.hideInactiveTemplates";
+
+    /**
      * settings.common.webinterface.<b>language</b>: <br>
      * The entire language setting structure under the webinterface setting. Is repeated for each language
      */
@@ -251,14 +259,23 @@ public class CommonSettings {
      * The default number of jobs to show in the harvest status section, on one result page.
      */
     public static String HARVEST_STATUS_DFT_PAGE_SIZE = "settings.common.webinterface.harvestStatus.defaultPageSize";
+    
     /**
      * <b>settings.common.topLevelDomains.tld</b>: <br>
-     * Valid top level domain, like .co.uk, .dk, .org. Is part of repeated in settings for each top level domain
+     * Extra valid top level domain, like .co.uk, .dk, .org., not part of current embedded public_suffix_list.dat file 
+     * in common/common-core/src/main/resources/dk/netarkivet/common/utils/public_suffix_list.dat
+     * downloaded from https://www.publicsuffix.org/list/public_suffix_list.dat
      */
     public static String TLDS = "settings.common.topLevelDomains.tld";
-
-    // TODO Currently only used by harvestscheduler - move to harvester
-    // settings?
+    
+    /**
+     * <b>settings.common.topLevelDomains.silentlyIgnoreStarredTlds</b>: <br>
+     * If set to true, silently ignores starred TLDS and excluded tlds which are currently not supported by NetarchiveSuite (NAS-2689).
+     * default: true
+     */
+    public static String TLD_SILENTLY_IGNORE_STARRED_TLDS = "settings.common.topLevelDomains.silentlyIgnoreStarredTlds";
+        
+    // TODO move database settings to harvester settings?
     /**
      * <b>settings.common.database.class</b>: <br>
      * The class that defines DB-specific methods. This class must extend the DBSpecifics class
@@ -369,6 +386,15 @@ public class CommonSettings {
      */
     public static String DB_POOL_IDLE_CONN_TEST_QUERY = "settings.common.database.pool.idleConnTestQuery";
 
+    /**
+     * <b>settings.common.database.pool.maxConnectionAge</b>: <br>
+     * The maxConnectionAge in seconds for each connection in the pool.
+     * The default is one hour (3600 seconds)
+     *
+     * @see <a href="http://www.mchange.com/projects/c3p0/index.html#maxConnectionAge"/>
+     */
+    public static String DB_POOL_MAX_CONNECTION_AGE = "settings.common.database.pool.maxConnectionAge";
+    
     /**
      * The username for login to the harvest database.
      */
@@ -514,4 +540,10 @@ public class CommonSettings {
      */
     public static String ORGANIZATION = "settings.common.organization";
 
+    /**
+     * Specifies the suffix of a regex which can identify valid metadata files by job number. Thus preceding
+     * the value of this setting with .* will find all metadata files.
+     */
+    public static String METADATAFILE_REGEX_SUFFIX = "settings.common.metadata.fileregexsuffix";
+    
 }

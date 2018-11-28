@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -174,12 +174,15 @@ public final class BitarchiveClient implements ReplicaClient {
      * Submit an upload request to the bitarchive.
      *
      * @param rf The file to upload.
+     * @param precomputedChecksum A precomputed checksum
+     * 		
      * @throws IOFailure If access to file denied.
      * @throws ArgumentNotValid If arcfile is null.
      */
-    public void sendUploadMessage(RemoteFile rf) throws IOFailure, ArgumentNotValid {
+    public void sendUploadMessage(RemoteFile rf, String precomputedChecksum) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(rf, "rf");
         UploadMessage up = new UploadMessage(anyBa, clientId, rf);
+        up.setPrecomputedChecksum(precomputedChecksum);
         log.debug("Sending upload message\n{}", up.toString());
         jmsCon.send(up);
     }

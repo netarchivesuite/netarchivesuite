@@ -5,8 +5,8 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -41,6 +41,9 @@ displayed, if no domains are found a message is shown.
   HTMLUtils.setUTF8(request);
   HTMLUtils.generateHeader(pageContext);
 %>
+
+<h3 class="page_heading">Deprecated</h3>
+
 Please find the domain harvest history by:
 <ol>
   <li> Going to the

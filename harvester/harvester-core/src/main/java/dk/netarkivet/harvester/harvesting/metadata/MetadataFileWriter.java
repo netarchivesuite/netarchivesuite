@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -92,16 +92,49 @@ public abstract class MetadataFileWriter {
      * file is ever made.
      * @throws ArgumentNotValid if any parameter was null.
      */
-    public static String getMetadataArchiveFileName(String jobID) throws ArgumentNotValid {
+    public static String getMetadataArchiveFileName(String jobID, Long harvestID) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jobID, "jobID");
+        //retrieving the collectionName
+        String collectionName = "";
+        boolean isPrefix = false;
+        //try to retrieve settings for prefixing or not metadata files
+        String metadataFilenameFormat = "";
+        try {
+        	metadataFilenameFormat = Settings.get(HarvesterSettings.METADATA_FILENAME_FORMAT);
+        } catch (UnknownID e) {
+        	//nothing
+        }
+        if("prefix".equals(metadataFilenameFormat)) {
+            try {
+                //try to retrieve in both <heritrix> and <heritrix3> tags
+                collectionName = Settings.get(HarvesterSettings.HERITRIX_PREFIX_COLLECTION_NAME);
+                isPrefix = true;
+            } catch(UnknownID e) {
+                //nothing
+            }
+		}
         if (metadataFormat == 0) {
             initializeMetadataFormat();
         }
+        boolean compressionOn = compressRecords();
+        String possibleGzSuffix = "";
+        if (compressionOn) {
+            possibleGzSuffix = ".gz";
+        }
+        int versionNumber = Settings.getInt(HarvesterSettings.METADATA_FILE_VERSION_NUMBER);
         switch (metadataFormat) {
         case MDF_ARC:
-            return jobID + "-metadata-" + 1 + ".arc";
+            if(isPrefix) {
+                return collectionName + "-" + jobID + "-" + harvestID + "-metadata-" + versionNumber + ".arc" + possibleGzSuffix;
+            } else {
+                return jobID + "-metadata-" + versionNumber + ".arc" + possibleGzSuffix;
+            }
         case MDF_WARC:
-            return jobID + "-metadata-" + 1 + ".warc";
+            if(isPrefix) {
+                return collectionName + "-" + jobID + "-" + harvestID + "-metadata-" + versionNumber + ".warc" + possibleGzSuffix;
+            } else {
+                return jobID + "-metadata-" + versionNumber + ".warc" + possibleGzSuffix;
+            }
         default:
             throw new ArgumentNotValid("Configuration of '" + HarvesterSettings.METADATA_FORMAT + "' is invalid!");
         }
@@ -306,6 +339,13 @@ public abstract class MetadataFileWriter {
         result += "&" + CDX_URI_JOB_ID_PARAMETER_NAME + "=" + jobID;
         result += "&" + CDX_URI_FILENAME_PARAMETER_NAME + "=" + filename;
         return result;
+    }
+    
+    /**
+     * @return true, if we want to compress out metadata records, false, if not
+     */
+    public static boolean compressRecords() {
+        return Settings.getBoolean(HarvesterSettings.METADATA_COMPRESSION);
     }
     
 }

@@ -27,7 +27,6 @@ updateConfig()
 {
     line="imq.autocreate.queue.maxNumActiveConsumers"
     configfile="$INSTALLDIR/var/mq/instances/imqbroker/props/config.properties"
-                                              Mes
     # Uncomment line
     sed -i "/${line}/ s/# *//" $configfile
     echo "Set maxNumActiveConsumers to 20."
@@ -41,11 +40,25 @@ startBroker()
             echo "Broker is already running."
         else
             echo "Starting broker"
-            $INSTALLDIR/mq/bin/imqbrokerd -vmargs &
+            $INSTALLDIR/mq/bin/imqbrokerd >/dev/null 2>&1 &
             sleep 3
             echo "Broker started"
         fi
 }
+
+startcleanBroker()
+{
+    if pgrep -f "com.sun.messaging.jmq.jmsserver.Broker" >/dev/null 2>&1
+        then
+            echo "Broker is already running."
+        else
+            echo "Starting clean broker  "
+            $INSTALLDIR/mq/bin/imqbrokerd -reset store -tty >/dev/null 2>&1 &
+            sleep 3
+            echo "Broker started"
+        fi
+}
+
 
 stopBroker()
 {
@@ -67,6 +80,9 @@ case $1 in
     start)
         startBroker
         ;;
+    startclean)
+        startcleanBroker
+        ;;
     stop)
         stopBroker
         ;;
@@ -79,6 +95,6 @@ case $1 in
         fi
         ;;
     *)
-        echo "usage: $0 { install | start | stop | status }"
+        echo "usage: $0 { install | start | startclean | stop | status }"
         ;;
 esac

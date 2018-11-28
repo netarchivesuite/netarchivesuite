@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - monitor
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -142,6 +142,7 @@ public class HostForwarding<T> {
         this.connectionFactory = new CachingProxyConnectionFactory(new RmiProxyConnectionFactory());
 
         updateJmx();
+        log.info("Constructing a HostForwarding object for query {} on Mbeanserver {}", mBeanQuery, mBeanServer);
     }
 
     /**
@@ -264,7 +265,7 @@ public class HostForwarding<T> {
             try {
                 createProxyMBeansForHost(hostEntry);
             } catch (Exception e) {
-                log.warn("Failure connecting to remote JMX MBeanserver ({})", hostEntry, e);
+                log.warn("Failure connecting to remote JMX MBeanserver ({}). Creating an error MBean", hostEntry, e);
                 try {
                     // This creates a proxy object that calls the handler on any
                     // invocation of any method on the object.

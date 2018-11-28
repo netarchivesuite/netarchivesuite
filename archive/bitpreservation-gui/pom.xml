@@ -5,23 +5,20 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>archive</artifactId>
-    <version>5.0-RC3-SNAPSHOT</version>
+    <version>5.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>bitpreservation-gui</artifactId>
   <packaging>war</packaging>
 
   <name>NetarchiveSuite - bitpreservation - webapp</name>
-
   <dependencies>
-    <dependency>
+   <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
-      <version>2.3</version>
       <scope>provided</scope>
-    </dependency>
-  </dependencies>
-
+    </dependency>	
+</dependencies>
   <build>
     <finalName>BitPreservation</finalName>
   </build>

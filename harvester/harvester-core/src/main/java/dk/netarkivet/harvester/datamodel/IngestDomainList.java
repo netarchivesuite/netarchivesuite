@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.jsp.JspWriter;
@@ -40,6 +42,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.Constants;
 
 /**
@@ -82,11 +85,17 @@ public class IngestDomainList {
         String domainName;
         BufferedReader in = null;
         int countDomains = 0;
+        List<String> invalidDomains = new ArrayList<String>();
+        int countCreatedDomains = 0;
         boolean print = (out != null);
         try {
             in = new BufferedReader(new InputStreamReader(new FileInputStream(domainList), "UTF-8"));
 
             while ((domainName = in.readLine()) != null) {
+                domainName = domainName.trim();
+                if (domainName.isEmpty()) {
+                	continue; // Skip empty lines
+                }
                 try {
                     countDomains++;
                     if ((countDomains % PRINT_INTERVAL) == 0) {
@@ -105,9 +114,11 @@ public class IngestDomainList {
                         if (!dao.exists(domainName)) {
                             myDomain = Domain.getDefaultDomain(domainName);
                             dao.create(myDomain);
+                            countCreatedDomains++;
                         }
                     } else {
                         log.debug("domain '{}' is not a valid domain Name", domainName);
+                        invalidDomains.add(domainName);
                         if (print) {
                             out.print(I18N.getString(theLocale, "errormsg;domain.0.is.not.a.valid" + ".domainname",
                                     domainName));
@@ -124,6 +135,10 @@ public class IngestDomainList {
                         out.flush();
                     }
                 }
+            }
+            log.info("Looked at {} domains, created {} new domains and found {} invalid domains", countDomains, countCreatedDomains, invalidDomains.size());
+            if (!invalidDomains.isEmpty()) {
+                log.warn("Found the following {} invalid domains during ingest", invalidDomains.size(), StringUtils.conjoin(",", invalidDomains));
             }
         } catch (FileNotFoundException e) {
             String msg = "File '" + domainList.getAbsolutePath() + "' not found";

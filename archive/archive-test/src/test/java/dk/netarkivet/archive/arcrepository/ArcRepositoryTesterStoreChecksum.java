@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -42,7 +42,6 @@ import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
@@ -81,7 +80,7 @@ public class ArcRepositoryTesterStoreChecksum {
     @Before
     public void setUp() {
         rs.setUp();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         ServerSetUp.setUp();
         arcRepos = ServerSetUp.getArcRepository();
         rf.setUp();

@@ -5,8 +5,8 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ This page shows the status of all applications that were known to exist
 when the GUI-application was started. That information is currently taken from
 the 'deploy' element in the setting.xml assigned to the
 dk.netarkivet.common.webinterface.GUIApplication.
-But the actual reading is done in auxiliary class 
+But the actual reading is done in auxiliary class
 dk.netarkivet.monitor.jmx.HostForwarding
 
 If the application is down, this can be seen on this page. Furthermore,
@@ -47,7 +47,9 @@ will not appear here.
                  dk.netarkivet.monitor.webinterface.JMXSummaryUtils,
                  dk.netarkivet.monitor.webinterface.StatusEntry,
                  java.net.URLEncoder,
-                 java.net.URLDecoder"
+                 java.net.URLDecoder,
+                 org.slf4j.LoggerFactory,
+                 org.slf4j.Logger"
          pageEncoding="UTF-8"
         %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"

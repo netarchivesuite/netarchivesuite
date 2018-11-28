@@ -17,7 +17,7 @@ public abstract class AbstractSystemTest extends SeleniumTest {
             TestEnvironment.JOB_ADMIN_SERVER,
             null
     );
-    static TestEnvironmentController testController = new TestEnvironmentController(testEnvironment);
+    public static TestEnvironmentController testController = new TestEnvironmentController(testEnvironment);
 
     public AbstractSystemTest() {
         super(testController);
@@ -27,12 +27,26 @@ public abstract class AbstractSystemTest extends SeleniumTest {
      * Identifies the test on the test system. More concrete this value will be used for the test environment variable.
      */
     protected static String getTestX() {
-        String systemEnvTestX = System.getenv("TESTX");
-        return systemEnvTestX != null ? systemEnvTestX : "SystemTest";
+        String systemEnvTestX = System.getProperty("systemtest.testx");
+        if (systemEnvTestX == null) {
+            systemEnvTestX = System.getenv("TESTX");
+        }
+        if (systemEnvTestX == null) {
+            return "SystemTest";
+        } else {
+            return systemEnvTestX;
+        }
     }
 
     protected static int getPort() {
-        String systemEnvPort = System.getenv("PORT");
-        return Integer.parseInt(systemEnvPort != null ? systemEnvPort : "8071");
+        String systemEnvPort = System.getProperty("systemtest.port");
+        if (systemEnvPort == null) {
+            systemEnvPort = System.getenv("PORT");
+        }
+        if (systemEnvPort == null) {
+            return 8071;
+        } else {
+            return Integer.parseInt(systemEnvPort);
+        }
     }
 }

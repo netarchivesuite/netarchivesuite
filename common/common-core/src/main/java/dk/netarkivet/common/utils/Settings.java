@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -382,6 +382,21 @@ public class Settings {
             }
         }
         throw new UnknownID("No match for key '" + path + "' in settings");
+    }
+    
+    /**
+     * Verify, if the given class exists in the classpath.
+     * @param classname A given class to check for
+     * @return true, if the given class exists in the classpath, else false
+     */
+    public static boolean verifyClass(String classname) {
+    	try {
+    		Class.forName(classname);
+    	} catch (ClassNotFoundException e) {
+    		log.error("The class '" + classname + "' was not found in the classpath");
+    		return false;
+    	}
+    	return true;
     }
 
 }

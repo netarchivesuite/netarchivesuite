@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ package dk.netarkivet.common.distribute;
 import java.io.File;
 
 /**
- * Tests the ChannelID class that defines instances of message queue names.
+ * Some constants used by HTTP(S)RemoteFileTester classes and UseTestRemoteFile.
  */
 public class TestInfo {
     public static final File DATA_DIR = new File("tests/dk/netarkivet/common/distribute/data");
@@ -34,5 +34,4 @@ public class TestInfo {
     public static final File FILE1 = new File(WORKING_DIR, "arc_record0.txt");
     public static final File FILE2 = new File(new File(WORKING_DIR, "local_files"), "Upload3.ARC");
     public static final File TMPDIR = new File(WORKING_DIR, "tmpdir");
-    public static final long SHORT_TIME = 10;
 }

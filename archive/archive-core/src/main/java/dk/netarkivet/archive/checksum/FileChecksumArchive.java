@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -266,7 +266,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
         // This should be synchronized to prevent reading the file while it is
         // being written.
-        synchronized (checksumFile) {
+        synchronized (this) {
             entries = FileUtils.readListFromFile(checksumFile);
         }
 
@@ -402,7 +402,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
             // This should be synchronized, so no new entries can be made
             // while recreating the archive file.
-            synchronized (checksumFile) {
+            synchronized (this) {
                 // initialize and create the file.
                 File recreateFile = new File(checksumFile.getParentFile(), makeRecreateFileName());
                 if (!recreateFile.createNewFile()) {
@@ -498,7 +498,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
         // Synchronize to ensure that the file is not overridden during the
         // appending of the new entry.
-        synchronized (checksumFile) {
+        synchronized (this) {
             try {
                 FileWriter fwrite = new FileWriter(checksumFile, appendToFile);
                 try {
@@ -556,7 +556,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
         // Validate arguments.
         ArgumentNotValid.checkNotNull(file, "RemoteFile file");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-
+        
         InputStream input = null;
 
         try {
@@ -588,6 +588,32 @@ public final class FileChecksumArchive implements ChecksumArchive {
             }
         }
 
+    }
+    
+    public void upload(String checksum, String filename) throws ArgumentNotValid, IllegalState {
+        // Validate arguments.
+        ArgumentNotValid.checkNotNull(checksum, "String checksum");
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+
+        synchronizeMemoryWithFile();
+        if (checksumArchive.containsKey(filename)) {
+        	if (checksumArchive.get(filename).equals(checksum)) {
+        		log.warn("Cannot upload arcfile '{}', it is already archived with the same checksum: '{}",
+        				filename, checksum);
+        	} else {
+        		throw new IllegalState("Cannot upload arcfile '" + filename
+        				+ "', it is already archived with different checksum." + " Archive checksum: '"
+        				+ checksumArchive.get(filename) + "' and the uploaded file has: '" + checksum + "'.");
+        	}
+
+        	// It is considered a success that it already is within the archive,
+        	// thus do not throw an exception.
+        	return;
+        }
+
+        // otherwise put the file into memory and file.
+        appendEntryToFile(filename, checksum);
+        checksumArchive.put(filename, checksum);
     }
 
     /**
@@ -734,7 +760,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
         try {
             // create new temporary file of the archive.
             File tempFile = File.createTempFile("tmp", "tmp", FileUtils.getTempDir());
-            synchronized (checksumFile) {
+            synchronized (this) {
                 FileUtils.copyFile(checksumFile, tempFile);
             }
 

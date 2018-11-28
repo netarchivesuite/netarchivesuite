@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -332,5 +332,40 @@ public abstract class DomainDAO implements DAO, Iterable<Domain> {
      * @return The list of ID for the used configurations.
      */
     public abstract List<Long> findUsedConfigurations(Long domainID);
+    
+    /**
+     * Rename and update a DomainConfiguration for a specific domain.
+     * @param domain The given domain
+     * @param domainConf The given domainConfig
+     * @param configOldName The old name of the domainConfig
+     */
+	public abstract void renameAndUpdateConfig(Domain domain, DomainConfiguration domainConf, String configOldName);
 
+	/**
+     * Get the name of the default configuration for the given domain.
+     *
+     * @param domainName a name of a domain
+     * @return the name of the default configuration for the given domain.
+     */
+	public abstract String getDefaultDomainConfigurationName(String domainName);
+	
+	
+	public abstract List<String> getAllDomainNames();
+
+	/**
+     * Retrieve HarvestInfo for a given harvestdefinition and domain combination.
+     * @param harvestDefinition a given harvestdefinition
+     * @param domain a given domain
+     * @return null, if no HarvestInfo found for the given harvestdefinition and domain combination, otherwise it returns the first matching HarvestInfo found and gives a warning if more than one match exist.
+     */
+    public abstract HarvestInfo getHarvestInfoForDomainInHarvest(
+            HarvestDefinition harvestDefinition, Domain domain);
+
+    /**
+     * Gets list of all domains in the order expected by the snapshot harvest job generation, that is order by template
+     * name, then byte limit (descending), then domain name.
+     * @param previousHid The harvestDefinitionId of the harvestdefinition that we are continuing. If null, we start from scratch.
+     * @return List of all added domains
+     */
+    public abstract Iterator<Domain> getDomainsInSnapshotHarvestOrder(Long previousHid);
 }

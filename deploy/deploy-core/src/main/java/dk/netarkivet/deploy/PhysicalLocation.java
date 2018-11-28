@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - deploy
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -68,6 +68,11 @@ public class PhysicalLocation {
     private boolean resetDirectory;
     /** The folder for the external jar libraries. */
     private File jarFolder;
+    /** user specific logo png file */
+    protected File logoFile;
+    /** user specific menulogo png file */
+    protected File menulogoFile;
+    
     private final DeployConfiguration deployConfiguration;
 
     /**
@@ -88,7 +93,7 @@ public class PhysicalLocation {
      */
     public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, Parameters param,
             String netarchiveSuiteSource, File slf4JConfig, File securityPolicy, File dbFile,
-            File arcdbFile, boolean resetDir, File externalJarFolder, DeployConfiguration deployConfiguration) throws ArgumentNotValid {
+            File arcdbFile, boolean resetDir, File externalJarFolder, File aLogoFile, File aMenulogoFile, DeployConfiguration deployConfiguration) throws ArgumentNotValid {
         // test if valid arguments
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element elem (physLocRoot)");
         ArgumentNotValid.checkNotNull(parentSettings, "XmlStructure parentSettings");
@@ -108,6 +113,8 @@ public class PhysicalLocation {
         arcDatabaseFile = arcdbFile;
         resetDirectory = resetDir;
         jarFolder = externalJarFolder;
+        logoFile = aLogoFile;
+        menulogoFile = aMenulogoFile;
         this.deployConfiguration = deployConfiguration;
 
         // retrieve the specific settings for this instance
@@ -157,10 +164,10 @@ public class PhysicalLocation {
             // equals (not case-sensitive) 'windows'. Else linux machine
             if (os != null && os.equalsIgnoreCase(Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE)) {
                 machines.add(new WindowsMachine(e, settings, machineParameters, netarchiveSuiteFileName,
-                        slf4JConfigFile, securityPolicyFile, databaseFile, arcDatabaseFile, resetDirectory, jarFolder));
+                        slf4JConfigFile, securityPolicyFile, databaseFile, arcDatabaseFile, resetDirectory, jarFolder, logoFile, menulogoFile));
             } else {
                 machines.add(new LinuxMachine(e, settings, machineParameters, netarchiveSuiteFileName,
-                        slf4JConfigFile, securityPolicyFile, databaseFile, arcDatabaseFile, resetDirectory, jarFolder,
+                        slf4JConfigFile, securityPolicyFile, databaseFile, arcDatabaseFile, resetDirectory, jarFolder, logoFile, menulogoFile,
                         deployConfiguration));
             }
         }

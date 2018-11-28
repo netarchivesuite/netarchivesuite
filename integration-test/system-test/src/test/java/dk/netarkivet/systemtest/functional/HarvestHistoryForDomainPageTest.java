@@ -2,7 +2,7 @@
  * #%L
  * NetarchiveSuite System test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -25,8 +25,8 @@ package dk.netarkivet.systemtest.functional;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
-import java.lang.reflect.Method;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -36,16 +36,32 @@ import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.HarvestUtils;
+import dk.netarkivet.systemtest.SeleniumSession;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.HarvestHistoryPageHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 
 /** The tests here are run with a low priority, eg. they are run last thereby enabling other tests to run harvests
  * prior to the tests here. This will prevent the  calls to 'ensureNumberOfHarvestsForDefaultDomain' from having to
- * run alle the harvests needed here. */
+ * run alle the harvests needed here.
+ *
+ * TODO There is nothing wrong with these tests in principle but there is something borked in the sequencing of the
+ * various annotated before & after methods which results in race conditions where sometimes the tests run either before
+ * the "old" GUI is killed or before the "new" GUI is started, leading to weird failure modes. The tests need to be
+ * rewrittend simplified to it is clean exactly what initialisations and finalisations occur.
+ *
+ * */
 public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
 
-    @Test(priority=10, groups = {"guitest", "functest", "slow"})
+    @BeforeMethod
+    public void initialiseHelper() {
+        driver = new SeleniumSession<>();
+        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        baseUrl = "http://" + testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
+        PageHelper.initialize(driver, baseUrl);
+    }
+
+    @Test(priority=10, groups = {"guitest", "functest", "slow"}, enabled = false)
     public void sortableHistoryTableTest() throws Exception {
         addDescription("Tests that the jobs listed on the 'Harvest History' page for a domain are"
                 + "sortable by clicking on the .");
@@ -143,7 +159,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
         assertColumnIsSorted(8, false);
     }
 
-    @Test(priority=10, groups = {"guitest", "functest", "slow"})
+    @Test(priority=10, groups = {"guitest", "functest", "slow"}, enabled = false)
     public void historyTablePagingTest() throws Exception {
         addDescription("Testes that the paging functionality works correctly " + "for the harvest history");
         addStep("Ensure that at least harvests have finished for the default domain", "");
@@ -208,10 +224,12 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
         }
     }
 
-    @Test(priority=10, groups = {"guitest", "functest", "slow"})
+    @Test(priority=10, groups = {"guitest", "functest", "slow"}, enabled = false)
     public void historySortedTablePagingTest() throws Exception {
         addDescription("Tests that sorting is maintained when paging through " + "the harvest history");
         addStep("Ensure that at least harvests have finished for the default domain", "");
+        //Note that this would be more efficient if we ran SelectiveHarvestTest first as there would already be
+        //enough harvest history of pligtaflevering.dk to do this test straight away.
         HarvestUtils.ensureNumberOfHarvestsForDefaultDomain(3);
 
         addStep("Click the 'End time' header link twice", "The table should now be sorted descending according to"
@@ -231,9 +249,9 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
                 "Only 2 harvests should be listed and the next link should be enabled.");
         HarvestUtils.gotoHarvestHistoryForDomain(HarvestUtils.DEFAULT_DOMAIN);
         assertEquals(
-                "Didn't find the expected 2 harvests on the first page",
+                "Didn't find the expected 2 harvests on the first page", 2,
                 PageHelper.getWebDriver()
-                        .findElements(By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size(), 2);
+                        .findElements(By.xpath("//table[@class='selection_table']/tbody/tr[position()>1]")).size());
 
         addStep("Click the 'End time' header link twice",
                 "The table should now again be sorted descending according to End time.");
@@ -288,29 +306,41 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
     }
 
     private void setHarvestStatusPageSize(int size) throws Exception {
+        String originalFileName = "conf/settings_GUIApplication.xml.original";
+        String newFileName = "conf/settings_GUIApplication.xml."+size;
+
         getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
-                "cp conf/settings_GUIApplication.xml conf/settings_GUIApplication.xml.original");
-        getTestController().replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER, "conf/settings_GUIApplication.xml",
+                "if [ ! -f " + originalFileName + " ]; then "
+                + " cp conf/settings_GUIApplication.xml " + originalFileName + ";fi");
+
+        getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+                " cp conf/settings_GUIApplication.xml " + newFileName);
+
+        //getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+        //        "cp conf/settings_GUIApplication.xml conf/settings_GUIApplication.xml.original");
+
+        getTestController().replaceStringInFile(TestEnvironment.JOB_ADMIN_SERVER, newFileName,
                 "</indexClient>", "</indexClient>" + "<webinterface><harvestStatus><defaultPageSize>" + size
                         + "</defaultPageSize></harvestStatus></webinterface>");
 
-        TestGUIController.restartGUI();
+
+        getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
+                        " cp " + newFileName + " conf/settings_GUIApplication.xml");
+
+        testGUIController.restartGUI();
     }
 
     @BeforeMethod(alwaysRun = true)
     @AfterMethod(alwaysRun = true)
-    private void cleanupGUIConfiguration() {
-        try {
+    private void cleanupGUIConfiguration() throws Exception {
+        addDescription("Cleaning up GUI by restoring original page size.");
             getTestController().runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER,
                     "if [ -f conf/settings_GUIApplication.xml.original ]; then "
                             + "echo conf/settings_GUIApplication.xml.original exist, moving back.; "
-                            + "conf/kill_GUIApplication.sh; "
-                            + "mv conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
+                            + "conf/kill_GUIApplication.sh; sleep 20;"
+                            + "cp conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
                             + " conf/start_GUIApplication.sh; " + "fi");
-            TestGUIController.waitForGUIToStart(10);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            testGUIController.waitForGUIToStart(120);
     }
 
     private void assertColumnIsSorted(int column, boolean ascending) {

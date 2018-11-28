@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
+import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
@@ -65,7 +65,7 @@ public class ViewerProxyTester {
     public void setUp() throws Exception {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.TestRemoteFile");
 
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);

@@ -208,6 +208,7 @@ statisticsTracker.intervalSeconds=20
     </bean>
     <!-- ...and REJECT those from a configurable (initially empty) set of URI regexes... -->
     <bean class="org.archive.modules.deciderules.MatchesListRegexDecideRule">
+     <property name="decision" value="REJECT"/>
      <property name="listLogicalOr" value="true" />
      <property name="regexList">
            <list>
@@ -370,12 +371,12 @@ statisticsTracker.intervalSeconds=20
  <bean id="fetchHttp" class="org.archive.modules.fetcher.FetchHTTP">
  </bean>
  <bean id="fetchFtp" class="org.archive.modules.fetcher.FetchFTP">	
-	<property name="userName" value="USERNAME"/>
-	<property name="passWord" value="PASSWORD"/>
+	<property name="username" value="USERNAME"/>
+	<property name="password" value="PASSWORD"/>
 	<property name="extractFromDirs" value="true"/>
 	<property name="extractParent" value="true"/>
 	<property name="maxLengthBytes" value="0"/>
-	<property name="fetchBandwidth" value="0"/>
+	<property name="maxFetchKBSec" value="0"/>
 	<property name="timeoutSeconds" value="1200"/>
  </bean>
 

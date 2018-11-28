@@ -5,8 +5,8 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -142,9 +142,15 @@ and reponse.getLocale use this locale.
                 .makeHarvestRunLink(harvestID,
                                     job.getHarvestNum())%>
         </td>
-        <td><fmt:formatDate type="both" value="<%=job.getCreationDate()%>"/></td>
-        <td><fmt:formatDate type="both" value="<%=job.getActualStart()%>"/></td>
-        <td><fmt:formatDate type="both" value="<%=job.getActualStop()%>"/></td>
+        <td>
+            <%=HTMLUtils.parseDate(job.getCreationDate())%>
+        </td>
+        <td>
+            <%=HTMLUtils.parseDate(job.getActualStart())%>
+        </td>
+        <td>
+            <%=HTMLUtils.parseDate(job.getActualStop())%>
+        </td>
         <td><%=jobstatusTdContents %></td>
         <td><a href="#harvesterror">
             <%=HTMLUtils.escapeHtmlValues(job.getHarvestErrors())%>
@@ -312,10 +318,11 @@ value="<%= jobID %>"/>
 	// make link to harvest template for job
 	String link = "/History/Harveststatus-download-job-harvest-template.jsp?"
 	 + "JobID=" + job.getJobID();
+	String linkWithrequestedType = link + "&requestedContentType=text/plain";        
 %>
 <a href="<%=link %>"><fmt:message key="show.job.0.harvesttemplate">
 <fmt:param value="<%=job.getJobID()%>"/>
-</fmt:message></a>
+</fmt:message></a>&nbsp;(<a href="<%=linkWithrequestedType %>">text/plain</a>)
 
 
 <%

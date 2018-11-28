@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -48,8 +48,9 @@ public class SynchronizerTester {
     private static final ChannelID replyToQ = Channels.getError();
     private JMSConnection con;
 
-    private static final long DELAY_TIME = 20;
+    private static final long DELAY_TIME = 20L;
     private static final int WAIT_TIME = 5;
+    private static final long SHORT_TIME = 10L;
 
     ReloadSettings rs = new ReloadSettings();
 
@@ -340,7 +341,7 @@ public class SynchronizerTester {
         int loops = 0;
         while (!sr.isEnded() && loops < 20) {
             try {
-                Thread.sleep(TestInfo.SHORT_TIME);
+                Thread.sleep(SHORT_TIME);
             } catch (InterruptedException e) {
                 // Ignore
             }

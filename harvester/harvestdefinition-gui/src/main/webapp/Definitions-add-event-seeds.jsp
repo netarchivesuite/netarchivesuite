@@ -5,8 +5,8 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -25,94 +25,37 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%--
 This page is used to add a (potentially) large number of seeds to an event harvest.
-Parameters:
+Previously, the processing was done on this page. The processing is now done from page 
+'Definitions-edit-selective-harvest.jsp'.
+
+Parameters sent to this page:
 harvestName:
-          the harvest to add the seeds to, must be name of a known harvest
-update:
-          if null, the page just displays a form for input. If not null, the backing
-          method  EventHarvest.addConfigurations is called to process the seeds to be added
-seeds:
-          A whitespace-separated list of seed urls to be added
+          the harvest to add the seeds to, must be name of a known harvest 
 usingFileMode:
 		  if null, you enter the seeds in the designated textarea; otherwise, it will ask for a file
 		  that contains the seeds.	         
-orderTemplate:
-          The name of the order template to use with these seeds
-
-This page has major side effects in that it will:
-1) Create any unknown domains present in the seedlist
-2) Create for every seedlist a configuration and seedlist formed from the
-name of the harvest and the orderTemplate and add that configuration to the
-harvest.
+		  
 --%><%@ page import="java.util.Iterator,
                  java.util.List,
-                 java.io.File,
-                 dk.netarkivet.common.utils.FileUtils,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
-                 dk.netarkivet.harvester.datamodel.PartialHarvest,
                  dk.netarkivet.harvester.datamodel.TemplateDAO,
                  dk.netarkivet.harvester.webinterface.Constants,
-                 org.apache.commons.fileupload.FileItemFactory,
-                 org.apache.commons.fileupload.disk.DiskFileItemFactory,
-                 org.apache.commons.fileupload.servlet.ServletFileUpload,
-                 org.apache.commons.fileupload.FileItem,dk.netarkivet.harvester.webinterface.EventHarvestUtil"
+                 dk.netarkivet.harvester.datamodel.eav.EAV,
+                 dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType,
+                 com.antiaction.raptor.dao.AttributeTypeBase,
+                 com.antiaction.raptor.dao.AttributeBase"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);%><%HTMLUtils.setUTF8(request);
     
-    boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
-    String harvestName = null;
-    String mode = null;
-    String update = null;
-    // These fields are necessary
-    File seedsFile = File.createTempFile("seeds", ".txt", 
-                    FileUtils.getTempDir());
-    String maxbytesString = null;
-    String maxobjectsString = null;
-    String orderTemplateString = null;
-    String maxrateString = null;
-    String seedsFileName = "";
-                    
-    if (isMultiPart) {
-    	// Create a factory for disk-based file items
-    	FileItemFactory factory = new DiskFileItemFactory();
-		// Create a new file upload handler
-   		ServletFileUpload upload = new ServletFileUpload(factory);
-        // As the parsing of the formdata has the sideeffect of removing the
-        // formdata from the request(!), we have to extract all possible data
-        // the first time around.
-        List items = upload.parseRequest(request);
-        for (Object o : items) {
-        	FileItem item = (FileItem) o;
-            String fieldName = item.getFieldName();
-            if (fieldName.equals(Constants.HARVEST_PARAM)) {
-            	harvestName = item.getString();
-          	} else if (fieldName.equals(Constants.UPDATE_PARAM)) {
-           		update = item.getString();
-            } else if (fieldName.equals(Constants.MAX_BYTES_PARAM)) {
-           		maxbytesString = item.getString();
-            } else if (fieldName.equals(Constants.MAX_OBJECTS_PARAM)) {
-          		maxobjectsString = item.getString();
-            } else if (fieldName.equals(Constants.MAX_RATE_PARAM)) {
-               	maxrateString = item.getString();             
-            } else if (fieldName.equals(Constants.ORDER_TEMPLATE_PARAM)) {
-             	orderTemplateString = item.getString();
-            } else if (fieldName.equals(Constants.UPLOAD_FILE_PARAM)) {
-              	item.write(seedsFile);
-           		seedsFileName = item.getName();
-            }
-       	}
-    } else {
-    	harvestName = request.getParameter(Constants.HARVEST_PARAM);
-    	mode = request.getParameter(Constants.FROM_FILE_PARAM);
-    	update = request.getParameter(Constants.UPDATE_PARAM);
-    }
-    	
+    String harvestName = request.getParameter(Constants.HARVEST_PARAM);
+    String mode = request.getParameter(Constants.FROM_FILE_PARAM);
+
     if (harvestName == null) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                 "errormsg;missing.parameter.0",
@@ -135,37 +78,9 @@ harvest.
                 harvestName);
         return;
     }
-    // Should we test, that this is in fact a PartialHarvest
-    String harvestComments = hddao.getSparsePartialHarvest(
-    	harvestName).getComments();
+    // Should we test, that this is in fact a PartialHarvest?
+    String harvestComments = hddao.getSparsePartialHarvest(harvestName).getComments();
     
-    if (update != null && update.length() > 0) {
-        try {
-            if (!isMultiPart) {
-			  	EventHarvestUtil.addConfigurations(pageContext, I18N, harvestName);
-			} else {
-				if (!seedsFileName.isEmpty()) { // File exist 		
-					if (seedsFile.length() > 0) { // and has size > 0
-						EventHarvestUtil.addConfigurationsFromSeedsFile(
-							pageContext, I18N, harvestName, seedsFile, maxbytesString, 
-							maxobjectsString, maxrateString, orderTemplateString);
-					}
-				} else {
-					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                	"errormsg;no.seedsfile.was.uploaded");
-        			return;
-        		}
-			}
-        } catch (ForwardedToErrorPage e) {
-            HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                    "errormsg;error.adding.seeds.to.0", harvestName, e);
-            return;
-        }
-        response.sendRedirect("Definitions-edit-selective-harvest.jsp?"
-                + Constants.HARVEST_PARAM + "="
-                + HTMLUtils.encode(harvestName));
-        return;
-    }
     HTMLUtils.generateHeader(pageContext);%>
 
 <h2><fmt:message key="prompt;event.harvest"/>
@@ -180,12 +95,14 @@ the user
     <%=HTMLUtils.escapeHtmlValues(harvestComments)%>
 </div>
 
-<form action="Definitions-add-event-seeds.jsp" 
+ <form action="Definitions-edit-selective-harvest.jsp"
+
 <% if (usingFileMode) { %>enctype="multipart/form-data" <%} %> method="post">
 
     <input type="hidden" name="<%= Constants.UPDATE_PARAM %>" value="1"/>
     <input type="hidden" name="<%= Constants.HARVEST_PARAM %>"
-           value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"/>
+           value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"/>        
+    <input type="hidden" name="<%= Constants.ADD_SEEDS_PARAM %>" value="1"/>
            
     <%--Setting of these variables is not currently supported in the system so we
      just use default values as placeholders for a future upgrade --%>
@@ -225,7 +142,7 @@ the user
             <td>
                 <select name="<%= Constants.ORDER_TEMPLATE_PARAM %>">
                     <% Iterator<String> templates
-                            = TemplateDAO.getInstance().getAll();
+                            = TemplateDAO.getInstance().getAll(true);
                         while (templates.hasNext()) {
                             String template = templates.next();
                             out.println("<option value=\""
@@ -238,6 +155,51 @@ the user
                 </select>
             </td>
         </tr>
+        <!-- ############################################################################ -->
+        <!--  add html for optional attributes -->
+        <!-- ############################################################################ -->
+        <%
+        
+		EAV eav = EAV.getInstance();
+		List<AttributeTypeBase> attributeTypes = eav.getAttributeTypes(EAV.DOMAIN_TREE_ID);
+		AttributeTypeBase attributeType;
+		for (int i=0; i<attributeTypes.size(); ++i) {
+			attributeType = attributeTypes.get(i);
+%>
+	        <tr> <!-- edit area for eav attribute -->
+	            <td style="text-align:right;"><fmt:message key="<%= attributeTypes.get(i).name %>"/></td>
+	            <td> 
+<%
+			switch (attributeType.viewtype) {
+			case 1:
+%>
+  	                <input type="text" id="<%= attributeType.name %>" name="<%= attributeType.name %>" value="<%= attributeType.def_int %>">
+<%
+				break;
+			case 5:
+			case 6:
+				if (attributeType.def_int > 0) {
+%>
+		            <input type="checkbox" id="<%= attributeType.name %>" name="<%= attributeType.name %>" value="1" checked="1">
+<%
+				} else {
+%>
+		            <input type="checkbox" id="<%= attributeType.name %>" name="<%= attributeType.name %>">
+<%
+				}
+				break;
+			}
+%>
+	             </td>
+	        </tr>
+<%
+		}
+%>
+        
+        <!-- ############################################################################ -->
+        <!-- END OF: adding html for optional attributes -->
+        <!-- ############################################################################ -->
+        
         <tr>
             <td colspan="2"><input type="submit"
                                    value="<fmt:message key="insert"/>"/></td>

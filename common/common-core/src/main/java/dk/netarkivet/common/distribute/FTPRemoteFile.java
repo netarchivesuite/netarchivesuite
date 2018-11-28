@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -45,6 +45,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.NotificationType;
+import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 
 /**
@@ -170,6 +172,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 }
                 boolean success = false;
                 int tried = 0;
+                String message = null;
                 while (!success && tried < FTP_RETRIES) {
                     tried++;
                     try {
@@ -179,7 +182,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                                     cm.getFtpErrorMessage());
                         }
                     } catch (IOException e) {
-                        String message = "Write operation to '" + ftpFileName + "' failed on attempt " + tried + " of "
+                        message = "Write operation to '" + ftpFileName + "' failed on attempt " + tried + " of "
                                 + FTP_RETRIES;
                         if (e instanceof CopyStreamException) {
                             CopyStreamException realException = (CopyStreamException) e;
@@ -189,8 +192,11 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                     }
                 }
                 if (!success) {
-                    final String msg = "Failed to upload '" + localFile + "' after " + tried + " attempts";
+                    final String msg = "Failed to upload '" + localFile + "' after " + tried 
+                            + " attempts. Reason for last failure: " +  message;
                     log.warn(msg);
+                    // Send an Notification because of this
+                    NotificationsFactory.getInstance().notify(msg, NotificationType.ERROR);
                     throw new IOFailure(msg);
                 }
                 log.debug("Completed writing the file '{}'", ftpFileName);
@@ -359,10 +365,11 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
         if (filesize == 0) {
             return;
         }
+        boolean deleted = false;
         log.debug("Deleting file '{}' from ftp server", ftpFileName);
         try {
             cm.logOn();
-            cm.getFTPClient().deleteFile(ftpFileName);
+            deleted = cm.getFTPClient().deleteFile(ftpFileName);
         } catch (Exception e) {
             log.warn("Error while deleting ftp file '{}' for file '{}'", ftpFileName, file.getName(), e);
         } finally {
@@ -373,7 +380,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 log.warn("Unexpected error while logging out ", e);
             }
         }
-        log.debug("File '{}' deleted from ftp server. Cleanup finished.", ftpFileName);
+        log.debug("File '{}' {} deleted from ftp server. Cleanup finished.", ftpFileName, deleted?"was":"was not");
     }
 
     /**

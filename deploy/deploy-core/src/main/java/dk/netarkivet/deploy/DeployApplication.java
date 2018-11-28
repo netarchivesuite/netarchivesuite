@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - deploy
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ package dk.netarkivet.deploy;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Optional;
+
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -35,6 +35,10 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 import dk.netarkivet.common.utils.Settings;
+
+// JDK8-import
+//import java.util.Optional;
+
 
 /**
  * The application that is run to generate install and start/stop scripts for all physical locations, machines and
@@ -69,8 +73,15 @@ public final class DeployApplication {
     private static File arcDbFile;
     /** The folder with the external libraries to be deployed. */
     private static File externalJarFolder;
-    private static Optional<File> defaultBundlerZip;
-
+    
+    //private static Optional<File> defaultBundlerZip;
+    private static File defaultBundlerZip;
+    
+    /** The logo png file. */
+    private static File logoFile;
+    /** The menulogo png file. */
+    private static File menulogoFile;
+    
     /**
      * Private constructor to disallow instantiation of this class.
      */
@@ -88,7 +99,8 @@ public final class DeployApplication {
      * (httpportoffset, port, environmentName, mailReceiver) -R [OPTIONAL] For resetting the tempDir (takes arguments
      * 'y' or 'yes') -E [OPTIONAL] Evaluating the deployConfig file (arguments: 'y' or 'yes') -A [OPTIONAL] For archive
      * database. -J [OPTIONAL] For deploying with external jar files. Must be the total path to the directory containing
-     * jar-files. These external files will be placed on every machine, and they have to manually be put into the
+     * jar-files. -l [OPTIONAL] for logo png file. -m [OPTIONAL] for menulogo png file 
+     * These external files will be placed on every machine, and they have to manually be put into the
      * classpath, where they should be used.
      */
     public static void main(String[] args) {
@@ -139,7 +151,11 @@ public final class DeployApplication {
             String arcDbFileName = ap.getCommandLine().getOptionValue(Constants.ARG_ARC_DB);
             // Retrieves the jar-folder name.
             String jarFolderName = ap.getCommandLine().getOptionValue(Constants.ARG_JAR_FOLDER);
-
+            // Retrieves the logo filename.
+            String logoFilename = ap.getCommandLine().getOptionValue(Constants.ARG_LOGO);
+            // Retrieves the menulogo filename.
+            String menulogoFilename = ap.getCommandLine().getOptionValue(Constants.ARG_MENULOGO);
+            
             // Retrieves the source encoding.
             // If not specified get system default
             String sourceEncoding = ap.getCommandLine().getOptionValue(Constants.ARG_SOURCE_ENCODING);
@@ -179,13 +195,17 @@ public final class DeployApplication {
             // check the external jar-files library folder.
             initJarFolder(jarFolderName);
 
-            initBundlerZip(Optional.ofNullable(
-                    ap.getCommandLine().getOptionValue(Constants.ARG_DEFAULT_BUNDLER_ZIP)));
-
+            //initBundlerZip(Optional.ofNullable(
+            //        ap.getCommandLine().getOptionValue(Constants.ARG_DEFAULT_BUNDLER_ZIP)));
+            initBundlerZip(ap.getCommandLine().getOptionValue(Constants.ARG_DEFAULT_BUNDLER_ZIP));
+            
+            // check the logo files
+            initLogos(logoFilename, menulogoFilename);
+            
             // Make the configuration based on the input data
             deployConfig = new DeployConfiguration(deployConfigFile, netarchiveSuiteFile, secPolicyFile,
                     slf4jConfigFile, outputDir, dbFile, arcDbFile, resetDirectory, externalJarFolder, sourceEncoding,
-                    defaultBundlerZip);
+                    defaultBundlerZip, logoFile, menulogoFile);
 
             // Write the scripts, directories and everything
             deployConfig.write();
@@ -442,21 +462,40 @@ public final class DeployApplication {
      *
      * @param defaultBundlerZipName The path to the default bundler zip file to use.
      */
-    public static void initBundlerZip(Optional<String> defaultBundlerZipName) {
-        if (defaultBundlerZipName.isPresent()) {
-            defaultBundlerZip = Optional.of(new File(defaultBundlerZipName.get()));
-
-            if (!defaultBundlerZip.get().exists()) {
+    public static void initBundlerZip(String defaultBundlerZipName) {
+        if (defaultBundlerZipName != null) {
+            defaultBundlerZip = new File(defaultBundlerZipName);
+            if (!defaultBundlerZip.exists()) {
                 System.err.print(Constants.MSG_ERROR_NO_BUNDLER_ZIP_FILE);
                 System.out.println();
-                System.out.println("Couldn't find default bundler file: " + defaultBundlerZip.get().getAbsolutePath());
+                System.out.println("Couldn't find the default bundler file: " + defaultBundlerZip.getAbsolutePath());
                 System.exit(1);
             }
-        } else {
-            defaultBundlerZip = Optional.empty();
         }
     }
 
+    /**
+     * Checks if the logo files exists
+     *
+     * @param logoFilename The absolute path to the logo png file.
+     * @param menulogoFilename The absoluet path to the menu logo png file.
+     */
+    public static void initLogos(String logoFilename, String menulogoFilename) {
+    	if (logoFilename != null) {
+        	logoFile = new File(logoFilename);
+        	if (!logoFile.exists()) {
+        		logoFile = null;
+        	}
+    	}
+    	
+    	if (menulogoFilename != null) {
+        	menulogoFile = new File(menulogoFilename);
+        	if (!menulogoFile.exists()) {
+        		menulogoFile = null;
+        	}
+    	}
+    }
+    
     /**
      * Applies the test arguments.
      * <p>
@@ -545,6 +584,10 @@ public final class DeployApplication {
             options.addOption(Constants.ARG_SOURCE_ENCODING, HAS_ARG, "[OPTIONAL] Encoding to use for source files.");
             options.addOption(Constants.ARG_DEFAULT_BUNDLER_ZIP, HAS_ARG, "[OPTIONAL] The bundled harvester to use. "
                     + "If not provided here the bundler needs to be provided in the settings for each (H3) harvester");
+            options.addOption(null, Constants.ARG_LOGO, HAS_ARG, "[OPTIONAL] The Logo png file to use. "
+                    + "(this is only working for Linux)");
+            options.addOption(null, Constants.ARG_MENULOGO, HAS_ARG, "[OPTIONAL] The Menulogo png file to use. "
+                    + "(this is only working for Linux)");
         }
 
         /**

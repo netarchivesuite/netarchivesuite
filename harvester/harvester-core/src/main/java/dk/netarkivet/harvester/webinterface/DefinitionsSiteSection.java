@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -45,7 +45,6 @@ import dk.netarkivet.harvester.tools.HarvestTemplateApplication;
  */
 public class DefinitionsSiteSection extends SiteSection {
     /** Logger for this class. */
-    //private Log log = LogFactory.getLog(getClass().getName());
     protected static final Logger log = LoggerFactory.getLogger(DefinitionsSiteSection.class);
     /** number of pages visible in the left menu. */
     private static final int PAGES_VISIBLE_IN_MENU = 10;

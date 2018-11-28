@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -36,7 +36,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import dk.netarkivet.archive.distribute.arcrepository.TestInfo;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -58,8 +57,8 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Unit-tests for the class LocalArcRepositoryClient.
  */
 public class LocalArcRepositoryClientTester {
-    MoveTestFiles mtf = new MoveTestFiles(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR,
-            dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR);
+    MoveTestFiles mtf = new MoveTestFiles(TestInfo.DISTRIBUTE_ARCREPOSITORY_ORIGINALS_DIR,
+    		TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR);
     ReloadSettings rs = new ReloadSettings();
     UseTestRemoteFile utrf = new UseTestRemoteFile();
 
@@ -69,7 +68,7 @@ public class LocalArcRepositoryClientTester {
         utrf.setUp();
 
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR.getAbsolutePath());
+        		TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR.getAbsolutePath());
         mtf.setUp();
     }
 
@@ -82,61 +81,61 @@ public class LocalArcRepositoryClientTester {
 
     @Test
     public void testStore() throws Exception {
-        File dir1 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir1");
-        File dir2 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir2");
+        File dir1 = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "dir1");
+        File dir2 = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "dir2");
         Settings.set("settings.common.arcrepositoryClient.fileDir", dir1.getAbsolutePath(), dir2.getAbsolutePath());
         ArcRepositoryClient arcrep = new LocalArcRepositoryClient();
 
-        FileUtils.copyFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE,
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
-        arcrep.store(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
+        FileUtils.copyFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
+        		TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY);
+        arcrep.store(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY);
         assertEquals("Should have stored file in one dir only", 1, dir1.list().length + dir2.list().length);
         assertTrue("Dir1 should contain file", new File(dir1,
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY.getName()).exists());
+        		TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY.getName()).exists());
         // Try to store the same file again. This should provoke an IllegalState
         // exception
         try {
-            FileUtils.copyFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE,
-                    dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
-            arcrep.store(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
+            FileUtils.copyFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
+            		TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY);
+            arcrep.store(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY);
         } catch (IllegalState e) {
             // Expected
         }
         assertEquals("Should not have stored file twice", 1, dir1.list().length + dir2.list().length);
 
         assertTrue("Dir1 should contain file", new File(dir1,
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY.getName()).exists());
+        		TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY.getName()).exists());
         FileUtils.removeRecursively(dir1);
-        FileUtils.copyFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE,
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
-        arcrep.store(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
+        FileUtils.copyFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
+        		TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY);
+        arcrep.store(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY);
         assertEquals("Should have stored file in other dir", 1, dir2.list().length);
         assertTrue("Dir1 should contain file", new File(dir2,
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY.getName()).exists());
+        		TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY.getName()).exists());
     }
 
     @Test
     public void testGetFileMethod() throws IOException {
-        File dir1 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir1");
-        File dir2 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir2");
+        File dir1 = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "dir1");
+        File dir2 = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "dir2");
         Settings.set("settings.common.arcrepositoryClient.fileDir", dir1.getAbsolutePath(), dir2.getAbsolutePath());
         ArcRepositoryClient arcrep = new LocalArcRepositoryClient();
-        FileUtils.copyFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE,
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
-        arcrep.store(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
+        FileUtils.copyFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
+        		TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY);
+        arcrep.store(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY);
         assertFalse("Should have removed sample file original",
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY.exists());
-        arcrep.getFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY.getName(),
+        		TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY.exists());
+        arcrep.getFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY.getName(),
                 Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)),
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
+                TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY);
         assertTrue("Should have fetched sample file",
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY.exists());
+        		TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY.exists());
         assertEquals("Should have same contents as original",
-                FileUtils.readFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE),
-                FileUtils.readFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY));
+                FileUtils.readFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE),
+                FileUtils.readFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY));
         try {
             arcrep.getFile("No Such File", Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)),
-                    dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
+            		TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY);
             fail("Should have died on missing file");
         } catch (IOFailure e) {
             // expected
@@ -145,17 +144,17 @@ public class LocalArcRepositoryClientTester {
 
     @Test
     public void testBatch() {
-        File dir1 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir1");
-        File dir2 = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, "dir2");
+        File dir1 = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "dir1");
+        File dir2 = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "dir2");
         Settings.set("settings.common.arcrepositoryClient.fileDir", dir1.getAbsolutePath(), dir2.getAbsolutePath());
         ArcRepositoryClient arcrep = new LocalArcRepositoryClient();
         FileUtils.getTempDir().mkdir();
         assertTrue("tmpDir is wrong", FileUtils.getTempDir().isDirectory());
         BatchStatus status = arcrep.batch(new FileListJob(), "BA");
         assertEquals("Should have no files processed at outset", 0, status.getNoOfFilesProcessed());
-        FileUtils.copyFile(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE,
-                dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
-        arcrep.store(dk.netarkivet.archive.distribute.arcrepository.TestInfo.SAMPLE_FILE_COPY);
+        FileUtils.copyFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
+        		TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY);
+        arcrep.store(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE_COPY);
         status = arcrep.batch(new FileListJob(), "BA");
         assertEquals("Should have one file processed at end", 1, status.getNoOfFilesProcessed());
     }
@@ -163,7 +162,7 @@ public class LocalArcRepositoryClientTester {
     @Test
     public void testStoreAndGet() {
 
-        File basedir = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR,
+        File basedir = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR,
                 "localArcRepository");
         Settings.set("settings.common.arcrepositoryClient.fileDir", basedir.getAbsolutePath());
 
@@ -171,10 +170,10 @@ public class LocalArcRepositoryClientTester {
 
         ArcRepositoryClient arcrep = new LocalArcRepositoryClient();
 
-        File srcArcFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.ORIGINALS_DIR, "bitarchive1"
+        File srcArcFile = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_ORIGINALS_DIR, "bitarchive1"
                 + File.separator + "filedir" + File.separator + testArcName);
 
-        File uploadFile = new File(dk.netarkivet.archive.distribute.arcrepository.TestInfo.WORKING_DIR, testArcName);
+        File uploadFile = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, testArcName);
         FileUtils.copyFile(srcArcFile, uploadFile);
 
         arcrep.store(uploadFile);
@@ -185,7 +184,7 @@ public class LocalArcRepositoryClientTester {
 
     @Test
     public void testNewFunctions() throws IOException {
-        Settings.set("settings.common.arcrepositoryClient.fileDir", TestInfo.WORKING_DIR.getAbsolutePath()
+        Settings.set("settings.common.arcrepositoryClient.fileDir", TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR.getAbsolutePath()
                 + "/bitarchive2/filedir");
         Settings.set("settings.archive.bitarchive.thisCredentials", "credentials");
         ArcRepositoryClient arcrep = new LocalArcRepositoryClient();

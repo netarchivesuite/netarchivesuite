@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -202,7 +202,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
         for (File request : requests) {
             if (request.isFile()) {
                 final IndexRequestMessage msg = restoreMessage(request);
-                synchronized (currentJobs) {
+                synchronized (this) {
                     if (!currentJobs.containsKey(msg.getID())) {
                         currentJobs.put(msg.getID(), msg);
                     } else {
@@ -273,7 +273,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
         // save new msg to requestDir
         try {
             saveMsg(irMsg);
-            synchronized (currentJobs) {
+            synchronized (this) {
                 if (!currentJobs.containsKey(irMsg.getID())) {
                     currentJobs.put(irMsg.getID(), irMsg);
                 } else {
@@ -410,7 +410,7 @@ public final class TestIndexRequestServer extends HarvesterMessageHandler implem
             irMsg.setNotOk(t);
         } finally {
             // Remove job from currentJobs Set
-            synchronized (currentJobs) {
+            synchronized (this) {
                 currentJobs.remove(irMsg.getID());
             }
             // delete stored message

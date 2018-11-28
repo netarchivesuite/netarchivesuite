@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -46,7 +46,8 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 
 /**
- * Utilities to allow testing databases. //FIXME: Rename without Test as these are not specifically test related.
+ * Utilities to allow testing databases. 
+ * FIXME: Rename without Test as these are not specifically test related.
  */
 public class DatabaseTestUtils {
 
@@ -60,7 +61,7 @@ public class DatabaseTestUtils {
      *
      * @param resourcePath A file that contains a test database.
      * @param dbCreationDir
-     * @return a connection to the database stored in the given file
+     * 
      */
     public static void createDatabase(String resourcePath, String dbname, File dbCreationDir) throws Exception {
         Settings.set(CommonSettings.DB_MACHINE, "");
@@ -131,7 +132,6 @@ public class DatabaseTestUtils {
      *
      * @param resourcePath A file that contains a test database.
      * @param dbCreationDir
-     * @return a connection to the database stored in the given file
      */
     public static void createDatabase(String resourcePath, File dbCreationDir) throws Exception {
         createDatabase(resourcePath, "derivenamefromresource", dbCreationDir);
@@ -143,7 +143,6 @@ public class DatabaseTestUtils {
      *
      * @param resourcePath Location of the sql files to create and populate the test DB.
      * @param dbCreationDir
-     * @return a connection to the given sample harvest definition database
      */
     public static void createHDDB(String resourcePath, String dbname, File dbCreationDir) throws Exception {
         createDatabase(resourcePath, dbname, dbCreationDir);

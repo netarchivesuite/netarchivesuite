@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ public class HarvestSchedulerMonitorServer
         JobStatus newStatus = cmsg.getStatusCode();
         Job job = jobDAOProvider.get().read(Long.valueOf(jobID));
         JobStatus oldStatus = job.getStatus();
-
+        boolean ignoreDomainHarvestReport = false; // Don't ignore DomainHarvestReport unless job already in DONE or FAILED state  
         switch (newStatus) {
         case STARTED:
             if (oldStatus == JobStatus.NEW) {
@@ -113,7 +113,7 @@ public class HarvestSchedulerMonitorServer
                     oldStatus == JobStatus.RESUBMITTED ||
                     oldStatus == JobStatus.NEW) {
                 if (oldStatus != JobStatus.STARTED) {
-                    log.warn("Received CrawlStatusMessage for job {} with new status {}, current state is {}",
+                    log.warn("Received unexpected CrawlStatusMessage for job {} with new status {}, current state is {}",
                             jobID, newStatus ,oldStatus);
                 }
                 if (newStatus == JobStatus.FAILED) {
@@ -130,20 +130,29 @@ public class HarvestSchedulerMonitorServer
                 job.appendUploadErrorDetails(cmsg.getUploadErrorDetails());
             } else {
                 // Received done or failed on already dead job. Bad!
-                String message = "Received CrawlStatusMessage for job " + jobID + " with new status " + newStatus +
-                        ", current state is " + oldStatus+ ". Marking job as FAILED";
-                log.warn(message);
-                job.setStatus(JobStatus.FAILED);
+            	// Marking as FAILED, unless oldStatus is DONE (issue NAS-2612)
+            	JobStatus newStatus1 = JobStatus.FAILED;
+            	// Ignore domainharvestreport if oldstatus either done or failed
+            	if (oldStatus.equals(JobStatus.DONE)) {
+            		newStatus1 = JobStatus.DONE;
+            		ignoreDomainHarvestReport = true;
+            	} else if (oldStatus.equals(JobStatus.FAILED)) {
+                    ignoreDomainHarvestReport = true;
+                }
+            	
+            	String message = "Received unexpected CrawlStatusMessage for job " + jobID + " with new status " + newStatus +
+                        ", current state is " + oldStatus+ ". Marking job as " + newStatus1.name() + ". Reported harvestErrors on job: " +  cmsg.getHarvestErrors();
+                job.setStatus(newStatus1);                
                 job.appendHarvestErrors(cmsg.getHarvestErrors());
                 job.appendHarvestErrors(message);
                 job.appendHarvestErrorDetails(cmsg.getHarvestErrors());
                 job.appendHarvestErrorDetails(message);
-                log.warn("Job {} failed: {}", jobID, job.getHarvestErrorDetails());
+                log.warn(message);
             }
 
             jobDAOProvider.get().update(job);
 
-            if (cmsg.getDomainHarvestReport() != null) {
+            if (!ignoreDomainHarvestReport && cmsg.getDomainHarvestReport() != null) { 
                 cmsg.getDomainHarvestReport().postProcess(job);
             }
 

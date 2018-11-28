@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -64,10 +64,10 @@ public class ArchiveProfile {
 
     /** ARC archive profile. */
     public static final ArchiveProfile ARC_PROFILE = new ArchiveProfile(FileUtils.ARCS_FILTER, FileUtils.ARC_PATTERN,
-            Pattern.compile("([0-9]+)-metadata-([0-9]+).arc"), Constants.ARCDIRECTORY_NAME);
+            Pattern.compile("([\\w]+)-metadata-([0-9]+).arc"), Constants.ARCDIRECTORY_NAME);
 
     /** WARC archive profile. */
     public static final ArchiveProfile WARC_PROFILE = new ArchiveProfile(FileUtils.WARCS_FILTER,
-            FileUtils.WARC_PATTERN, Pattern.compile("([0-9]+)-metadata-([0-9]+).warc"), Constants.WARCDIRECTORY_NAME);
+            FileUtils.WARC_PATTERN, Pattern.compile("([\\w]+)-metadata-([0-9]+).warc"), Constants.WARCDIRECTORY_NAME);
 
 }

@@ -218,9 +218,10 @@ public class DigestIndexer {
     }
 
     /**
-     * @param item
+     * Create Lucene Document for given CrawlDataItem.
+     * @param item A CrawlDataItem
      * @param defaultOrigin
-     * @return
+     * @return Lucene Document for the given CrawlDataItem
      */
     private Document createDocument(CrawlDataItem item, String defaultOrigin) {
         Document doc = new Document();

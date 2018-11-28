@@ -1,0 +1,402 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$shellinit = <<SHELLINIT
+	# NOTICE: This script is run as user root
+
+
+	vagrantip=`/sbin/ifconfig eth1 | grep -Eo 'inet addr:([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})'|cut -s -d":" -f 2| tr -d '[:space:]'`
+
+	echo "vagrant-netarchivesuite has ip: $vagrantip"
+
+	echo 'Fixed /etc/hosts which now looks like:'
+	echo '----------'
+	cat /etc/hosts
+	echo '----------'
+
+	# Ensure .bashrc ends with a newline...
+	echo '' >>/home/vagrant/.bashrc
+
+	# ...then add shortcut aliases to .bashrc
+	echo "alias l='ls -G'" >>/home/vagrant/.bashrc
+	echo "alias ll='ls -lG'" >>/home/vagrant/.bashrc
+	echo "alias a='ls -AG'" >>/home/vagrant/.bashrc
+	echo "alias la='ls -lAG'" >>/home/vagrant/.bashrc
+	echo 'c () { cd "$@"; l; }' >>/home/vagrant/.bashrc
+	echo "alias b='cd ..; l'" >>/home/vagrant/.bashrc
+	echo "alias e='vim'" >>/home/vagrant/.bashrc
+	echo "alias p='less -x4 -i'" >>/home/vagrant/.bashrc
+	echo "alias t='cat'" >>/home/vagrant/.bashrc
+	echo "alias gr='grep -E --color=auto'" >>/home/vagrant/.bashrc
+	echo "alias untgz='tar -xzf'" >>/home/vagrant/.bashrc
+	echo "alias m='man'" >>/home/vagrant/.bashrc
+	echo "alias sshte='ssh test@vagrant-netarchivesuite'" >>/home/vagrant/.bashrc
+	echo '' >>/home/vagrant/.bashrc
+
+	# Quick update of apt-get repository
+	apt-get -q -y update
+
+	# Install Vim, answering yes to all questions during installation
+	apt-get -q -y install vim
+
+	# Install unzip
+	apt-get -q -y install unzip
+
+	# Fix timezone
+	cp /usr/share/zoneinfo/Europe/Copenhagen /etc/localtime
+
+	# Install lynx browser
+	apt-get -q -y install lynx-cur
+
+	# Install curl
+	apt-get -q -y install curl
+
+	# Install git
+	apt-get -q -y install git
+
+	# Install Maven
+	echo 'Installing Maven...'
+	apt-get -q -y install maven
+
+	# Install postgres
+	echo 'Installing postgres...'
+	DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get --option Dpkg::Options::=--force-confold -q -y install 'postgresql-8.4'
+SHELLINIT
+
+
+
+$javainstall = <<JAVAINSTALL
+	# Install java 8
+	apt-get install -y python-software-properties
+
+	add-apt-repository -y ppa:webupd8team/java
+
+	apt-get update > /dev/null
+
+	echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+
+	echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
+
+	apt-get install -qq -y oracle-java8-installer oracle-java8-set-default
+
+	echo 'export JAVA_HOME=/usr/lib/jvm/java-8-oracle/' >>/home/vagrant/.bashrc
+JAVAINSTALL
+
+
+$testuserssh = <<TESTUSERSSH
+	# Create an extra user called 'test' and create it's home dir (-m)
+	useradd -m test -s /bin/bash
+
+	# Ensure .bashrc ends with a newline...
+	echo '' >>/home/test/.bashrc
+
+	# ...then add shortcut aliases to .bashrc
+	echo "alias l='ls -G'" >>/home/test/.bashrc
+	echo "alias ll='ls -lG'" >>/home/test/.bashrc
+	echo "alias a='ls -AG'" >>/home/test/.bashrc
+	echo "alias la='ls -lAG'" >>/home/test/.bashrc
+	echo 'c () { cd "$@"; l; }' >>/home/test/.bashrc
+	echo "alias b='cd ..; l'" >>/home/test/.bashrc
+	echo "alias e='vim'" >>/home/test/.bashrc
+	echo "alias p='less -x4 -i'" >>/home/test/.bashrc
+	echo "alias t='cat'" >>/home/test/.bashrc
+	echo "alias gr='grep -E --color=auto'" >>/home/test/.bashrc
+	echo "alias untgz='tar -xzf'" >>/home/test/.bashrc
+	echo "alias m='man'" >>/home/test/.bashrc
+	echo '' >>/home/test/.bashrc
+
+	# Enable ssh-access from user vagrant to user test
+	# Generate ssh-key with empty passphrase for 'vagrant' user
+	ssh-keygen -t rsa -N '' -f '/home/vagrant/.ssh/id_rsa'
+	echo "ssh-keygen exit status: $?"
+	chown -R vagrant:vagrant /home/vagrant/.ssh
+	mkdir /home/test/.ssh
+	cat /home/vagrant/.ssh/id_rsa.pub >>/home/test/.ssh/authorized_keys
+	chown -R test:test /home/test/.ssh
+	chmod 700 /home/test/.ssh
+
+	echo 'Running ssh as user vagrant...'
+
+	# Run command ssh as user vagrant, from vagrant user's home dir, and
+	# without asking for a 'yes' upon login, ssh running the dummy true cmd
+	# (this is to get rid of the yes/no question for later ssh'ings)
+	su - vagrant -c 'ssh -oStrictHostKeyChecking=no test@vagrant-netarchivesuite true ; echo "ssh exit status: $?"'
+	echo "ssh exit status: $?"
+	su - vagrant -c 'ssh -oStrictHostKeyChecking=no test@localhost true ; echo "ssh exit status: $?"'
+	echo "ssh exit status: $?"
+
+
+	mkdir /root/.ssh
+	# Enable ssh-access from user root to user test
+	# Generate ssh-key with empty passphrase for 'root' user
+	echo $'\n' | ssh-keygen -t rsa -N ''
+
+	cat /root/.ssh/id_rsa.pub >>/home/test/.ssh/authorized_keys
+
+	echo 'Running ssh as user root...'
+
+	# Run command ssh as user root, from root user's home dir, and
+	# without asking for a 'yes' upon login, ssh running the dummy true cmd
+	# (this is to get rid of the yes/no question for later ssh'ings)
+	ssh -v -oStrictHostKeyChecking=no test@vagrant-netarchivesuite true
+	echo "ssh exit status: $?"
+	ssh -v -oStrictHostKeyChecking=no test@localhost true
+	echo "ssh exit status: $?"
+TESTUSERSSH
+
+
+$netarchiveinstallopenmq = <<NETARCHIVEINSTALLOPENMQ
+	cd /home/vagrant
+	mkdir netarchive
+	cd netarchive
+
+	# Netarchive: Setup JMS (Java Messaging Service)
+	# Download openmq installation script
+	wget -N https://raw.githubusercontent.com/netarchivesuite/netarchivesuite/master/deploy/deploy-core/scripts/openmq/mq.sh
+
+	chmod +x mq.sh
+
+	# Install the openmq broker (to ~/MessageQueue5.1) and start it
+	./mq.sh install
+	./mq.sh start
+
+	echo 'Running Vagrantfile-include...'
+NETARCHIVEINSTALLOPENMQ
+
+
+$netarchiveinstalltherest = <<NETARCHIVEINSTALLTHEREST
+	echo 'Vagrantfile-include done.'
+
+	cd /home/vagrant/netarchive
+
+	# Netarchive: Download deploy_standalone_vagrant_example and
+	# RunNetarchiveSuite
+	wget -N https://raw.githubusercontent.com/netarchivesuite/netarchivesuite/master/deploy/distribution/src/main/resources/examples/deploy_standalone_vagrant_example.xml
+
+	wget -N https://raw.githubusercontent.com/netarchivesuite/netarchivesuite/master/deploy/deploy-core/scripts/RunNetarchiveSuite.sh
+
+	chmod +x RunNetarchiveSuite.sh
+
+	# The wildcard below is to take whatever version is there
+	cp /home/vagrant/gitting/netarchivesuite/deploy/distribution/target/NetarchiveSuite-*.zip ./NetarchiveSuite.zip
+	cp /home/vagrant/gitting/netarchivesuite/harvester/heritrix3/heritrix3-bundler/target/NetarchiveSuite-heritrix3-bundler-*.zip ./NetarchiveSuite-heritrix3-bundler.zip
+
+
+	# Before deploying Netarchive...
+	mkdir -p /home/vagrant/tmp
+	# Extract sql-init-file for database from NetarchiveSuite zip-file
+	unzip -j /home/vagrant/netarchive/NetarchiveSuite.zip scripts/postgresql/netarchivesuite_init.sql -d /home/vagrant/tmp/
+
+	unzip -j /home/vagrant/netarchive/NetarchiveSuite.zip scripts/postgresql/createArchiveDB.pgsql -d /home/vagrant/tmp/
+
+	# Copy in testdata
+	cp /home/vagrant/gitting/netarchivesuite/quickstart-vagrant-environment/harvestdb.testdata.sql /home/vagrant/tmp/
+NETARCHIVEINSTALLTHEREST
+
+
+$postgressetup = <<POSTGRESSETUP
+	PG_DATA=/var/lib/postgresql/8.4/main
+	sudo mkdir $PG_DATA/tsindex
+	sudo chown postgres:postgres $PG_DATA/tsindex
+
+	echo "Vagrantfile: postgressetup - create roles'n'databases..."
+
+	# As user 'postgres', do..
+	sudo -i -u postgres <<END
+
+		# Create database-user called devel, with proper privileges
+		psql <<CREATEUSEREND
+			CREATE TABLESPACE tsindex
+			LOCATION '/var/lib/postgresql/8.4/main/tsindex';
+
+			GRANT ALL ON TABLESPACE tsindex TO PUBLIC;
+
+			CREATE ROLE "devel" LOGIN PASSWORD 'develpass'
+			NOINHERIT CREATEDB
+			VALID UNTIL 'infinity';
+
+			CREATE DATABASE "harvestdb"
+			WITH
+			TEMPLATE=template0
+			ENCODING='SQL_ASCII'
+			OWNER="devel";
+
+			CREATE DATABASE "admindb"
+			WITH
+			TEMPLATE=template0
+			ENCODING='SQL_ASCII'
+			OWNER="devel";
+
+			CREATE ROLE "netarchivesuite" LOGIN PASSWORD 'netarchivesuitepass'
+			NOINHERIT CREATEDB
+			VALID UNTIL 'infinity';
+CREATEUSEREND
+
+		# Insert "host    harvestdb   devel       0.0.0.0/0             md5"
+		# in file /etc/postgresql/8.4/main/pg_hba.conf below
+		# '# IPv4 local connections:'
+		sed -r "/# IPv4 local connections:/a\\
+host    harvestdb   devel       0.0.0.0/0             md5" \\
+			/etc/postgresql/8.4/main/pg_hba.conf \\
+			>/tmp/vagrantfilepghbaconfmidlertidigTMP.txt
+		mv /tmp/vagrantfilepghbaconfmidlertidigTMP.txt \\
+			/etc/postgresql/8.4/main/pg_hba.conf
+
+		# Restart postgres server
+		service postgresql restart
+
+		# Provide password to psql
+		echo 'localhost:5432:harvestdb:devel:develpass'$'\n' >~/.pgpass
+		echo 'localhost:5432:admindb:devel:develpass'$'\n' >>~/.pgpass
+		chmod 0600 ~/.pgpass
+
+
+		echo "Vagrantfile: postgressetup - init netarchivesuite..."
+
+		# Create, init, populate harvest database
+		psql -h localhost -U devel -d harvestdb \\
+			</home/vagrant/tmp/netarchivesuite_init.sql
+
+		echo "Vagrantfile: postgressetup - do harvestdb.testdata..."
+
+		psql -h localhost -U devel -d harvestdb \\
+			</home/vagrant/tmp/harvestdb.testdata.sql
+
+
+		echo "Vagrantfile: postgressetup - init/populate admin db..."
+
+		# Create, init, populate admin database
+		psql -h localhost -U devel -d admindb \\
+			</home/vagrant/tmp/createArchiveDB.pgsql
+
+		echo "Vagrantfile: postgressetup - done"
+END
+POSTGRESSETUP
+
+
+$netarchivedeploy = <<NETARCHIVEDEPLOY
+	# Netarchive: Deploy
+	cd /home/vagrant/netarchive
+	./RunNetarchiveSuite.sh NetarchiveSuite.zip deploy_standalone_vagrant_example.xml deploy NetarchiveSuite-heritrix3-bundler.zip
+     /sbin/ifconfig
+
+	# For convenience of testing in Firefox, extract and report the IP-addy
+	echo '----------------------------------------------------------------'
+	echo 'You can TEST the NetarchiveSuite installation in a browser with:'
+	echo http://vagrant-netarchivesuite:8074/HarvestDefinition/
+	echo "This may only work once you've done the following:"
+	echo '   On this machine, add the following line:'
+	echo '      192.168.64.128 vagrant-netarchivesuite'
+	echo '   To the file /etc/hosts'
+
+NETARCHIVEDEPLOY
+
+
+$ip = "192.168.64.128"
+$hostname = "vagrant-netarchivesuite"
+
+$networksetup = <<NETWORKSETUP
+	echo '192.168.64.128 vagrant-netarchivesuite' > /etc/hosts
+	echo '127.0.0.1 localhost' >> /etc/hosts
+NETWORKSETUP
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+	# The most common configuration options are documented and commented below.
+	# For a complete reference, please see the online documentation at
+	# https://docs.vagrantup.com.
+
+	# Every Vagrant development environment requires a box. You can search for
+	# boxes at https://atlas.hashicorp.com/search.
+	config.vm.box = "ubuntu/precise64"
+	#config.vm.box_version = "1.1.0"
+
+	# These network things are nessesary to make ubuntu work fast
+	config.vm.network :private_network, :ip => $ip
+    config.vm.hostname = $hostname
+
+	# Create a forwarded port mapping which allows access to a specific port
+	# within the machine from a port on the host machine. In the example below,
+	# accessing "localhost:8080" will access port 80 on the guest machine.
+	# config.vm.network "forwarded_port", guest: 80, host: 8080
+	#
+	config.vm.network "forwarded_port", guest: 8074, host: 8074
+
+	config.vm.network "forwarded_port", guest: 8192, host: 8192
+
+
+	config.vm.provision "shell", inline: $networksetup, name: "networksetup"
+
+
+	# Create a private network, which allows host-only access to the machine
+	# using a specific IP.
+	#config.vm.network "private_network", ip: "192.168.0.64", auto_config: false
+	#config.vm.provision 'shell', inline: "ifconfig eth1 192.168.0.64"
+
+	# Create a public network, which generally matched to bridged network.
+	# Bridged networks make the machine appear as another physical device on
+	# your network.
+	#config.vm.network "public_network"
+
+	# Disable automatic box update checking. If you disable this, then
+	# boxes will only be checked for updates when the user runs
+	# `vagrant box outdated`. This is not recommended.
+	# config.vm.box_check_update = false
+
+	# Share an additional folder to the guest VM. The first argument is
+	# the path on the host to the actual folder. The second argument is
+	# the path on the guest to mount the folder. And the optional third
+	# argument is a set of non-required options.
+	# config.vm.synced_folder "../data", "/vagrant_data"
+
+	# Provider-specific configuration so you can fine-tune various
+	# backing providers for Vagrant. These expose provider-specific options.
+	# Example for VirtualBox:
+	#
+	 config.vm.provider "virtualbox" do |vb|
+	#   # Display the VirtualBox GUI when booting the machine
+	#   vb.gui = true
+	#
+	#   # Customize the amount of memory on the VM:
+		# As of March 2017, a memory setting of atleast 1024 is needed for
+		# NAS, if less than 1024 is used, NetArchive Suite will not even start
+		vb.memory = "4096"
+	 end
+	#
+	# View the documentation for the provider you are using for more
+	# information on available options.
+
+	# Define a Vagrant Push strategy for pushing to Atlas. Other push
+	# strategies such as FTP and Heroku are also available. See the
+	# documentation at https://docs.vagrantup.com/v2/push/atlas.html for more
+	# information.
+	# config.push.define "atlas" do |push|
+	#   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
+	# end
+
+	# Enable provisioning with a shell script. Additional provisioners such as
+	# Puppet, Chef, Ansible, Salt, and Docker are also available. Please see
+	# the documentation for more information about their specific syntax and
+	# use.
+
+
+	config.vm.provision "shell", inline: $shellinit, name: "shellinit"
+
+	config.vm.provision "shell", inline: $javainstall, name: "javainstall"
+
+	config.vm.provision "shell", inline: $testuserssh, name: "testuserssh"
+
+
+	config.vm.provision "shell", inline: $netarchiveinstallopenmq, name: "netarchiveinstallopenmq"
+	config.vm.provision "shell", path: "Vagrantfile-include"
+	config.vm.provision "shell", inline: $netarchiveinstalltherest, name: "netarchiveinstalltherest"
+
+
+	config.vm.provision "shell", inline: $postgressetup, name: "postgressetup"
+
+	config.vm.provision "shell", inline: $netarchivedeploy, name: "netarchivedeploy"
+end
+

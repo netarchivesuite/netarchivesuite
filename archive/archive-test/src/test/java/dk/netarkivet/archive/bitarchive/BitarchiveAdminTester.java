@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -106,8 +106,11 @@ public class BitarchiveAdminTester {
      * Fails in Hudson
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("FIXME - test fails due to error below")
+    // FIXME: test temporarily disabled due to error below
+    /*
+    BitarchiveAdminTester.failingTestGetTemporaryPath:115 File should go in bitarchive dir expected:<...indata/working/badir[2]> but was:<...indata/working/badir[1]>
+    */
     public void failingTestGetTemporaryPath() throws Exception {
         File tempfile = ad.getTemporaryPath(ARC_FILE_NAME, 1L);
         assertEquals("Filename should be as requested", ARC_FILE_NAME, tempfile.getName());
@@ -168,8 +171,11 @@ public class BitarchiveAdminTester {
      * FIXME Fails in Hudson
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("FIXME - test fails due to error below")
+    // FIXME: test temporarily disabled due to error below
+    /*
+       BitarchiveAdminTester.failingTestMoveToStorage:183 File should go in bitarchive dir expected:<...indata/working/badir[2]> but was:<...indata/working/badir[1]>
+     */
     public void failingTestMoveToStorage() throws Exception {
         File tempfile = ad.getTemporaryPath(ARC_FILE_NAME, 1L);
         FileUtils.writeBinaryFile(tempfile, "abc".getBytes());
@@ -188,8 +194,11 @@ public class BitarchiveAdminTester {
      * Fails in Hudson
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("FIXME  - test fails due to error below")
+    // FIXME: test temporarily disabled due to error below
+    /*
+    BitarchiveAdminTester.failingTTestMoveToStorageThrowsException:244 Should throw exception when moving fails (to does not exist)
+    */
     public void failingTTestMoveToStorageThrowsException() throws Exception {
         try {
             ad.moveToStorage(null);

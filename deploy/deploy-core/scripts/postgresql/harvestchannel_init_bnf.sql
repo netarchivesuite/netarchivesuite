@@ -14,6 +14,8 @@
 -- psql -U <user name> -W [DB name] < jobcategories_init_bnf.sql
 
 SET search_path TO netarchivesuite;
-    
-INSERT INTO harvestchannel(name, isdefault, comments) 
-    VALUES ('CIBLEE', true, 'Canal par défaut pour les collectes ciblées');
+
+INSERT INTO harvestchannel(name, isdefault, issnapshot, comments) 
+    VALUES ('CIBLEE', true, false, 'Canal par défaut pour les collectes ciblées');
+INSERT INTO harvestchannel(name, isdefault, issnapshot , comments) 
+    VALUES ('LARGE', true, true, 'Canal par défaut pour les collectes larges');

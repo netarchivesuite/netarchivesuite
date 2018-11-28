@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - wayback
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ import javax.persistence.Id;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
@@ -190,7 +191,7 @@ public class ArchiveFile {
         // This more-flexible approach
         // may be of value when we begin to add warc support.
         FileBatchJob theJob = null;
-        if (filename.contains("metadata")) {
+        if (filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX))) {
             theJob = new DeduplicationCDXExtractionBatchJob();
         } else if (ARCUtils.isARC(filename)) {
             theJob = new WaybackCDXExtractionARCBatchJob();

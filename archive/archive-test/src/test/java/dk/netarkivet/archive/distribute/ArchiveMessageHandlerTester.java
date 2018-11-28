@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -49,10 +49,10 @@ import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -66,13 +66,14 @@ public class ArchiveMessageHandlerTester {
 
     @Before
     public void setUp() throws Exception {
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         // super.setUp();
         rs.setUp();
         rf.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionMockupMQ.clearTestQueues();
         tmh = new TestMessageHandler();
+        ApplicationUtils.dirMustExist(FileUtils.getTempDir());
     }
 
     @After

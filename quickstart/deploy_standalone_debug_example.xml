@@ -6,8 +6,8 @@
 * $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+* Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 *
 * This library is free software; you can redistribute it and/or
@@ -216,9 +216,9 @@ National Library.
           </archive>
         </settings>
       </applicationName>
-      <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
+      <applicationName name="dk.netarkivet.harvester.heritrix3.HarvestControllerApplication">
         <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10045 -Xmx1536m</deployJavaOpt>
-        <deployClassPath>lib/netarchivesuite-heritrix1-controller.jar</deployClassPath>
+        <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
         <settings>
           <common>
             <applicationInstanceId>low</applicationInstanceId>
@@ -245,9 +245,9 @@ National Library.
           </harvester>
         </settings>
       </applicationName>
-      <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
+      <applicationName name="dk.netarkivet.harvester.heritrix3.HarvestControllerApplication">
         <deployJavaOpt>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=10046 -Xmx1536m</deployJavaOpt>
-        <deployClassPath>lib/netarchivesuite-heritrix1-controller.jar</deployClassPath>
+        <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
         <settings>
           <common>
             <applicationInstanceId>high</applicationInstanceId>

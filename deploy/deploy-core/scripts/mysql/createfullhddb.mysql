@@ -1,0 +1,486 @@
+# $Id$
+# $Revision$
+# $Date$
+# $Author$
+
+## MySQL creation scripts
+## pressupposes MySQL 5.0.3+
+## tested on MySQL 5.0.27 (Fedora 3)
+##
+## How to use:
+## mysql < createfullhddb.mysql
+
+create database IF NOT EXISTS fullhddb CHARACTER SET utf8;
+
+connect fullhddb;
+
+
+#------------------------------------------------------------------------------
+# DIFFERENCES TO DERBY SQL
+#------------------------------------------------------------------------------
+# The following MySQL statements were used to create the tables:
+# Note: "generated always as identity" is replaced by AUTO_INCREMENT
+# mediumtext replaces "clob(8m)"
+# longtext replaces "clob(64m)"
+# Note: We are using 'datetime' instead of 'timestamp', because we often want
+# to use null-values for these fields.
+# Type 'datetime' can hold the same information as 'timestamp'
+# Note also that (as for Derby) indexes are  automatically generated when a
+# column is unique.
+#
+# PLEASE REFER TO DERBY SQL FOR TABLE DOCUMENTATION
+
+
+# *****************************************************************************
+# Area: Basics
+# *****************************************************************************
+create table IF NOT EXISTS schemaversions (
+    tablename varchar(100) not null,
+    version int not null
+);
+
+insert into schemaversions ( tablename, version )
+    values ( 'domains', 3);
+insert into schemaversions ( tablename, version )
+    values ( 'configurations', 5);
+insert into schemaversions ( tablename, version )
+    values ( 'seedlists', 1);
+insert into schemaversions ( tablename, version )
+    values ( 'passwords', 1);
+insert into schemaversions ( tablename, version )
+    values ( 'ownerinfo', 1);
+insert into schemaversions ( tablename, version )
+    values ( 'historyinfo', 2);
+insert into schemaversions ( tablename, version )
+    values ( 'config_passwords', 1);
+insert into schemaversions ( tablename, version )
+    values ( 'config_seedlists', 1);
+insert into schemaversions ( tablename, version )
+    values ( 'harvestdefinitions', 3);
+insert into schemaversions ( tablename, version )
+    values ( 'partialharvests', 1);
+insert into schemaversions ( tablename, version )
+    values ( 'fullharvests', 5);
+insert into schemaversions ( tablename, version )
+    values ( 'harvest_configs', 1);
+insert into schemaversions ( tablename, version )
+    values ( 'schedules', 1);
+insert into schemaversions ( tablename, version )
+    values ( 'ordertemplates', 2);
+insert into schemaversions ( tablename, version )
+    values ( 'jobs', 9);
+insert into schemaversions ( tablename, version )
+    values ( 'job_configs', 1);
+insert into schemaversions (tablename, version )
+    values ( 'global_crawler_trap_lists', 1);
+insert into schemaversions (tablename, version )
+    values ( 'global_crawler_trap_expressions', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'runningjobshistory', 2);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'runningjobsmonitor', 2);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'frontierreportmonitor', 1);
+
+# *****************************************************************************
+# Area: Domains
+# *****************************************************************************
+
+# -----------------------------------------------------------------------------
+create table IF NOT EXISTS domains (
+    domain_id bigint not null AUTO_INCREMENT primary key,
+    name varchar(250) not null unique,
+    comments varchar(30000),
+    defaultconfig bigint not null,
+    crawlertraps longtext,
+    edition bigint not null,
+    alias bigint,
+    lastaliasupdate datetime
+);
+
+create index domainnameid on domains(domain_id, name);
+create index aliasindex on domains(alias);
+
+# -----------------------------------------------------------------------------
+create table IF NOT EXISTS configurations (
+    config_id bigint not null AUTO_INCREMENT primary key,
+    name varchar(300) not null,
+    comments varchar(30000),
+    domain_id bigint not null,
+    template_id bigint not null,
+    maxobjects bigint not null default -1,
+    maxrate int,
+    overridelimits int,
+    maxbytes bigint not null default -1
+);
+
+create index configurationname on configurations(name);
+create index configurationmaxbytes on configurations(maxbytes);
+create index configdomain on configurations(domain_id);
+
+# -----------------------------------------------------------------------------
+create table IF NOT EXISTS config_passwords (
+    config_id bigint not null,
+    password_id int not null,
+    primary key (config_id, password_id)
+);
+
+# -----------------------------------------------------------------------------
+create table IF NOT EXISTS config_seedlists (
+    config_id bigint not null,
+    seedlist_id int not null,
+    primary key (config_id, seedlist_id)
+);
+
+# -----------------------------------------------------------------------------
+create table IF NOT EXISTS seedlists (
+    seedlist_id bigint not null AUTO_INCREMENT primary key,
+    name varchar (300) not null,
+    comments varchar(30000),
+    domain_id bigint not null,
+    seeds mediumtext not null
+);
+
+create index seedlistname on seedlists(name);
+create index seedlistdomain on seedlists(domain_id);
+
+# -----------------------------------------------------------------------------
+create table IF NOT EXISTS passwords (
+    password_id bigint not null AUTO_INCREMENT primary key,
+    name varchar (300) not null,
+    comments varchar(30000),
+    domain_id bigint not null,
+    url varchar(300) not null,
+    realm varchar(300) not null,
+    username varchar(20) not null,
+    password varchar(40) not null
+);
+
+create index passwordname on passwords(name);
+create index passworddomain on passwords(domain_id);
+
+# -----------------------------------------------------------------------------
+create table IF NOT EXISTS ownerinfo (
+    ownerinfo_id bigint not null AUTO_INCREMENT primary key,
+    domain_id bigint not null,
+    created datetime not null,
+    info varchar(1000) not null
+);
+
+create index ownerinfodomain on ownerinfo(domain_id);
+
+# -----------------------------------------------------------------------------
+create table IF NOT EXISTS historyinfo (
+    historyinfo_id bigint not null AUTO_INCREMENT primary key,
+    stopreason int not null,
+    objectcount bigint not null,
+    bytecount bigint not null,
+    config_id bigint not null,
+    harvest_id bigint not null,
+    job_id bigint,
+    harvest_time datetime not null
+);
+
+create index historyinfoharvest on historyinfo (harvest_id);
+create index historyinfoconfigharvest on historyinfo (config_id,harvest_id);
+create index historyinfojobharvest on historyinfo (job_id,harvest_id);
+create index historyinfoharvestconfig on historyinfo (harvest_id,config_id);
+create index historyinfoconfig on historyinfo(config_id);
+create index historyinfojob on historyinfo(job_id);
+
+# *****************************************************************************
+# Area: Harvest Definitions
+# *****************************************************************************
+
+# -----------------------------------------------------------------------------
+create table harvestdefinitions (
+     harvest_id bigint not null primary key,
+     name varchar(250) not null unique,
+     comments varchar(30000),
+     numevents int not null,
+     submitted datetime not null,
+     isactive int not null,
+     edition bigint not null,
+     audience varchar(100)
+);
+
+create index harvestdefinitionssubmitdate on harvestdefinitions (submitted);
+
+# -----------------------------------------------------------------------------
+create table fullharvests (
+     harvest_id bigint not null primary key,
+     maxobjects bigint not null,
+     previoushd bigint,
+     maxbytes bigint not null default -1,
+     maxjobrunningtime bigint not null default 0,
+     isindexready int not null default 0
+);
+
+# -----------------------------------------------------------------------------
+create table partialharvests (
+     harvest_id bigint not null primary key,
+     schedule_id bigint not null,
+     nextdate datetime
+);
+
+create index partialharvestsnextdate on partialharvests (nextdate);
+
+# -----------------------------------------------------------------------------
+create table harvest_configs (
+     harvest_id bigint not null,
+     config_id bigint not null,
+     primary key ( harvest_id, config_id )
+);
+
+# *****************************************************************************
+# Area: Schedules
+# *****************************************************************************
+
+# -----------------------------------------------------------------------------
+create table schedules (
+    schedule_id bigint not null AUTO_INCREMENT primary key,
+    name varchar(250) not null unique,
+    comments varchar(30000),
+    startdate datetime,
+    enddate datetime,
+    maxrepeats bigint,
+    timeunit int not null,
+    numtimeunits bigint not null,
+    anytime int not null,
+    onminute int,
+    onhour int,
+    ondayofweek int,
+    ondayofmonth int,
+    edition bigint not null
+);
+
+# *****************************************************************************
+# Area: Templates
+# *****************************************************************************
+
+# -----------------------------------------------------------------------------
+create table ordertemplates (
+    template_id bigint not null AUTO_INCREMENT primary key,
+    name varchar(250) not null UNIQUE,
+    orderxml longtext not null,
+    isActive int not null default 1
+);
+
+create table global_crawler_trap_lists(
+  global_crawler_trap_list_id int not null AUTO_INCREMENT primary key,
+  name varchar(250) not null UNIQUE,     -- A name by which this list is known
+                                         -- e.g. "Statsbibliotekets Master List'
+  description varchar(30000),            -- An optional description of the
+                                         -- list
+  isActive int not null                  -- boolean valued int indicating
+                                         -- whether or not the list is active
+                                         -- 0=inactive, 1=active
+);
+
+create table global_crawler_trap_expressions(
+    id bigint not null AUTO_INCREMENT primary key,
+    crawler_trap_list_id int not null, -- references
+                                                  -- global_crawler_trap_list_id
+    trap_expression varchar(1000)               -- the actual regular
+                                                  -- expression for the crawler
+                                                  -- trap
+);
+
+# *****************************************************************************
+# Area: Jobs
+# *****************************************************************************
+
+# -----------------------------------------------------------------------------
+create table jobs (
+    job_id bigint not null primary key,
+    harvest_id bigint not null,
+    status int not null,
+    priority int not null,
+    forcemaxbytes bigint not null default -1,
+    forcemaxcount bigint,
+    forcemaxrunningtime bigint not null default 0,
+    orderxml varchar(300) not null,
+    orderxmldoc longtext not null,
+    seedlist longtext not null,
+    harvest_num int not null,
+    harvest_errors varchar(300),
+    harvest_error_details varchar(10000),
+    upload_errors varchar(300),
+    upload_error_details varchar(10000),
+    creationdate timestamp,
+    startdate datetime,
+    enddate datetime,
+    submitteddate datetime,
+    resubmitted_as_job bigint,
+    num_configs int not null default 0,
+    edition bigint not null,
+    continuationof bigint,
+    harvestname_prefix varchar(100)
+);
+
+create index jobstatus on jobs(status);
+create index jobharvestid on jobs(harvest_id);
+
+# -----------------------------------------------------------------------------
+create table job_configs (
+    job_id bigint not null,
+    config_id bigint not null,
+    primary key ( job_id, config_id )
+);
+
+create index jobconfigjob on job_configs(job_id);
+
+# *****************************************************************************
+# Area: Running Jobs Progress History
+# *****************************************************************************
+
+# -----------------------------------------------------------------------------
+
+# This table contains the archived progress information reported by the running
+# jobs, controlled by a sample rate
+CREATE TABLE runningJobsHistory (
+     jobId bigint NOT NULL,
+     harvestName varchar(250) NOT NULL,
+     hostUrl varchar(300) NOT NULL,
+     progress numeric NOT NULL,
+     queuedFilesCount bigint NOT NULL,
+     totalQueuesCount bigint NOT NULL,
+     activeQueuesCount bigint NOT NULL,
+     retiredQueuesCount bigint NOT NULL,
+     exhaustedQueuesCount bigint NOT NULL,
+     elapsedSeconds bigint NOT NULL,
+     alertsCount bigint NOT NULL,
+     downloadedFilesCount bigint NOT NULL,
+     currentProcessedKBPerSec int NOT NULL,
+     processedKBPerSec int NOT NULL,
+     currentProcessedDocsPerSec numeric NOT NULL,
+     processedDocsPerSec numeric NOT NULL,
+     activeToeCount integer NOT NULL,
+     status integer NOT NULL,
+     tstamp timestamp NOT NULL,
+     PRIMARY KEY (jobId, harvestName, elapsedSeconds, tstamp)
+);
+
+CREATE INDEX runningJobsHistoryCrawlJobId on runningJobsHistory (jobId);
+CREATE INDEX runningJobsHistoryCrawlTime on runningJobsHistory (elapsedSeconds);
+CREATE INDEX runningJobsHistoryHarvestName on runningJobsHistory (harvestName);
+
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE runningJobsHistory TO netarchivesuite;
+
+# This table contains the latest progress information reported by the job,
+# for evey job
+CREATE TABLE runningJobsMonitor (
+     jobId bigint NOT NULL,
+     harvestName varchar(250) NOT NULL,
+     hostUrl varchar(300) NOT NULL,
+     progress numeric NOT NULL,
+     queuedFilesCount bigint NOT NULL,
+     totalQueuesCount bigint NOT NULL,
+     activeQueuesCount bigint NOT NULL,
+     retiredQueuesCount bigint NOT NULL,
+     exhaustedQueuesCount bigint NOT NULL,
+     elapsedSeconds bigint NOT NULL,
+     alertsCount bigint NOT NULL,
+     downloadedFilesCount bigint NOT NULL,
+     currentProcessedKBPerSec integer NOT NULL,
+     processedKBPerSec integer NOT NULL,
+     currentProcessedDocsPerSec numeric NOT NULL,
+     processedDocsPerSec numeric NOT NULL,
+     activeToeCount integer NOT NULL,
+     status integer NOT NULL,
+     tstamp timestamp NOT NULL,
+     PRIMARY KEY (jobId, harvestName)
+);
+
+CREATE INDEX runningJobsMonitorJobId on runningJobsMonitor (jobId);
+CREATE INDEX runningJobsMonitorHarvestName on runningJobsMonitor (harvestName);
+
+# This table contains frontier report data
+CREATE TABLE frontierReportMonitor (
+     jobId bigint NOT NULL,
+     filterId varchar(200) NOT NULL,
+     tstamp timestamp NOT NULL,
+     domainName varchar(300) NOT NULL,
+     currentSize bigint NOT NULL,
+     totalEnqueues bigint NOT NULL,
+     sessionBalance bigint NOT NULL,
+     lastCost numeric NOT NULL,
+     averageCost numeric NOT NULL,
+     lastDequeueTime varchar(100) NOT NULL,
+     wakeTime varchar(100) NOT NULL,
+     totalSpend bigint NOT NULL,
+     totalBudget bigint NOT NULL,
+     errorCount bigint NOT NULL,
+     lastPeekUri varchar(1000) NOT NULL,
+     lastQueuedUri varchar(1000) NOT NULL,
+     UNIQUE (jobId, filterId(100), domainName(100)) # NB see http://bugs.mysql.com/bug.php?id=6604 about index key length.
+);
+
+
+create table extendedfieldtype (
+    extendedfieldtype_id bigint not null primary key,
+    name VARCHAR(50) not null
+);
+
+create table extendedfield (
+    extendedfield_id bigint not null primary key,
+    extendedfieldtype_id bigint NOT NULL,
+    name VARCHAR(50) not null,
+    format VARCHAR(50),
+    defaultvalue VARCHAR(50),
+    options VARCHAR(1000),
+    datatype int not null,
+    mandatory int NOT NULL,
+    sequencenr int
+);
+
+create table extendedfieldvalue (
+    extendedfieldvalue_id bigint not null primary key,
+    extendedfield_id bigint NOT NULL,
+    instance_id bigint NOT NULL,
+    content VARCHAR(100) not null
+);
+
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldtype', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfield', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'extendedfieldvalue', 1);
+
+INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )
+    VALUES ( 1, 'domains');
+INSERT INTO extendedfieldtype ( extendedfieldtype_id, name )
+    VALUES ( 2, 'harvestdefinitions');
+    
+ALTER TABLE harvestdefinitions ADD COLUMN channel_id BIGINT DEFAULT NULL;
+UPDATE schemaversions SET version = 4 WHERE tablename = 'harvestdefinitions';
+
+ALTER TABLE jobs ADD COLUMN channel VARCHAR(300) DEFAULT NULL;
+ALTER TABLE jobs ADD COLUMN snapshot BOOL;
+UPDATE jobs SET channel = 'snapshot' WHERE priority=0;
+UPDATE jobs SET channel = 'focused' WHERE priority=1;
+UPDATE jobs SET snapshot = true WHERE priority=0;
+UPDATE jobs SET snapshot = false WHERE priority=1;
+ALTER TABLE jobs DROP COLUMN priority;
+UPDATE schemaversions SET version = 10 WHERE tablename = 'jobs';
+
+ALTER TABLE extendedfield ADD COLUMN maxlen INT;
+ALTER TABLE extendedfield MODIFY options TEXT;
+UPDATE schemaversions SET version = 2 WHERE tablename = 'extendedfield';
+
+ALTER TABLE extendedfieldvalue MODIFY content TEXT NOT NULL;
+UPDATE schemaversions SET version = 2 WHERE tablename = 'extendedfieldvalue';
+
+CREATE TABLE harvestchannel (id BIGINT NOT NULL PRIMARY KEY,
+                 name VARCHAR(250) NOT NULL UNIQUE,
+                 issnapshot BOOL NOT NULL,
+                 isdefault BOOL NOT NULL,
+                 comments TEXT);
+INSERT INTO harvestchannel(id, name, issnapshot, isdefault, comments) VALUES(1, 'SNAPSHOT', true, true, 'Channel for snapshot harvests');
+INSERT INTO harvestchannel(id, name, issnapshot, isdefault, comments) VALUES(2, 'FOCUSED', false, true, 'Channel for focused harvests');
+INSERT INTO schemaversions(tablename, version) VALUES ('harvestchannel', 1);
+
+
+    
+    

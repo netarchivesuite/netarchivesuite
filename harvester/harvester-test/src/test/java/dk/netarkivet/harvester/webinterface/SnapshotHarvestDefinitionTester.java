@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -46,21 +46,63 @@ import dk.netarkivet.harvester.datamodel.FullHarvest;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldDAO;
 import dk.netarkivet.testutils.StringAsserts;
 
 /** Unit-test for the SnapshotHarvestDefinition class. */
 public class SnapshotHarvestDefinitionTester {
-    private JobDAO jobDaoMock = mock(JobDAO.class);
-    private Provider<JobDAO> jobDAOProvider = () -> jobDaoMock;
+
     private HarvestDefinitionDAO harvestDefinitionDAOMock = mock(HarvestDefinitionDAO.class);
+    // java 8 required
+    //private Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = () -> harvestDefinitionDAOMock;
+    private Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = new Provider<HarvestDefinitionDAO>() {
+        @Override
+        public HarvestDefinitionDAO get() {
+            return harvestDefinitionDAOMock;
+        }
+    };
+
+    private JobDAO jobDaoMock = mock(JobDAO.class);
+    // java 8 required
+    //private Provider<JobDAO> jobDAOProvider = () -> jobDaoMock;
+    private Provider<JobDAO> jobDAOProvider = new Provider<JobDAO>() {
+		@Override
+		public JobDAO get() { return jobDaoMock;}
+	};
+
     private DomainDAO domainDAOMock = mock(DomainDAO.class);
-    private Provider<DomainDAO> domainDAOProvider = () -> domainDAOMock;
+    // java 8 required
+    //private Provider<DomainDAO> domainDAOProvider = () -> domainDAOMock; JAVA 8 syntax required
+    private Provider<DomainDAO> domainDAOProvider = new Provider<DomainDAO>() {
+        @Override
+        public DomainDAO get() {
+            return domainDAOMock;
+        }
+    };
+
     private ExtendedFieldDAO extendedFieldMock = mock(ExtendedFieldDAO.class);
-    private Provider<ExtendedFieldDAO> extendedFieldDAOProvider = () -> extendedFieldMock;
-    private Provider<HarvestDefinitionDAO> harvestDefinitionDAOProvider = () -> harvestDefinitionDAOMock;
+    // java 8 required
+    //private Provider<ExtendedFieldDAO> extendedFieldDAOProvider = () -> extendedFieldMock; JAVA 8 required
+    private Provider<ExtendedFieldDAO> extendedFieldDAOProvider = new Provider<ExtendedFieldDAO>() {
+        @Override
+        public ExtendedFieldDAO get() {
+            return extendedFieldMock;
+        }
+    };
+
+    private EAV eavDAOMock = mock(EAV.class);
+    // java 8 required
+    //private Provider<EAV> eavDAOProvider = () -> eavDAOMock;
+    private  Provider<EAV> eavDAOProvider = new Provider<EAV>() {
+    	@Override
+    	public EAV get() {
+    		return eavDAOMock;
+    	}
+    };
+
     private SnapshotHarvestDefinition snapshotHarvestDefinition = new SnapshotHarvestDefinition(
-            harvestDefinitionDAOProvider, jobDAOProvider, extendedFieldDAOProvider, domainDAOProvider);
+            harvestDefinitionDAOProvider, jobDAOProvider, extendedFieldDAOProvider, domainDAOProvider, eavDAOProvider);
 
     @Test
     public void testProcessRequest() throws Exception {

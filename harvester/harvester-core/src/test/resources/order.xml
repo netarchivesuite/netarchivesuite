@@ -397,6 +397,7 @@
         <boolean name="skip-identical-digests">false</boolean>
         <boolean name="write-requests">true</boolean>
         <boolean name="write-metadata">true</boolean>
+        <boolean name="write-metadata-outlinks">true</boolean>
         <boolean name="write-revisit-for-identical-digests">true</boolean>
         <boolean name="write-revisit-for-not-modified">true</boolean>
       </newObject>

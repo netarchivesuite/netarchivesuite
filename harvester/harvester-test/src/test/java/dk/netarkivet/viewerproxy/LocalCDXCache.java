@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -179,7 +179,7 @@ public class LocalCDXCache implements JobIndexCache {
     private void retrieveIndex(Set<Long> jobIDs, OutputStream out) {
         List<String> metadataFiles = new ArrayList<String>();
         for (Long jobID : jobIDs) {
-            metadataFiles.add(jobID + Constants.METADATA_FILE_PATTERN_SUFFIX);
+            metadataFiles.add(".*" + jobID + ".*" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
         }
         ARCBatchJob job = new CDXCacheBatchJob();
         job.processOnlyFilesMatching(metadataFiles);

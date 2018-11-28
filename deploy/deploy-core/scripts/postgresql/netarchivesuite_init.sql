@@ -17,7 +17,7 @@
 -- purpose. In order to create a tablespace, the following procedure should be
 -- used (tested on Ubuntu 9.10):
 --
--- identify the data directory (cf. /etc/postgresql/8.4/main//postgresql.conf)
+-- identify the data directory (cf. /etc/postgresql/8.4/main/postgresql.conf)
 -- execute the following commands :
 --      PG_DATA=/var/lib/postgresql/8.4/main
 --      sudo mkdir $PG_DATA/tsindex
@@ -36,6 +36,7 @@
 
 --------------------------------------------------------------------------------
 -- Create user for application and add privileges
+-- replace '' with the wanted passwd below
 --------------------------------------------------------------------------------
 
 --CREATE ROLE netarchivesuite PASSWORD '' LOGIN;
@@ -77,7 +78,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'schedules', 1);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'ordertemplates', 1);
+    VALUES ( 'ordertemplates', 2);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'jobs', 10);
 INSERT INTO schemaversions ( tablename, version )
@@ -102,6 +103,11 @@ INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'extendedfieldhistoryvalue', 1);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'harvestchannel', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'eav_attribute', 1);
+INSERT INTO schemaversions ( tablename, version )
+    VALUES ( 'eav_type_attribute', 1);
+
 
 
 GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE schemaversions TO netarchivesuite;
@@ -340,7 +346,8 @@ GRANT USAGE ON SEQUENCE schedules_id_seq TO netarchivesuite;
 CREATE TABLE ordertemplates (
     template_id bigint NOT NULL PRIMARY KEY,
     name varchar(300) NOT NULL UNIQUE,
-    orderxml text NOT NULL
+    orderxml text NOT NULL,
+    isActive bool NOT NULL DEFAULT TRUE
 );
 
 CREATE SEQUENCE ordertemplates_id_seq OWNED BY ordertemplates.template_id;
@@ -612,3 +619,61 @@ ALTER TABLE extendedfield ALTER COLUMN options TYPE VARCHAR(1000);
 
 ALTER TABLE extendedfieldvalue ALTER COLUMN content TYPE VARCHAR(30000);
 ALTER TABLE extendedfieldvalue ALTER COLUMN content SET NOT NULL;
+
+CREATE TABLE eav_type_attribute (
+	tree_id INTEGER NOT NULL,
+	id INTEGER NOT NULL,
+	name VARCHAR(96) NOT NULL,
+	class_namespace VARCHAR(96) NOT NULL,
+	class_name VARCHAR(96) NOT NULL,
+	datatype INTEGER NOT NULL,
+	viewtype INTEGER NOT NULL,
+	def_int INTEGER NULL,
+	def_datetime TIMESTAMP NULL,
+	def_varchar VARCHAR(8000) NULL,
+	def_text TEXT NULL
+);
+
+ALTER TABLE eav_type_attribute ADD CONSTRAINT eav_type_attribute_pkey PRIMARY KEY (tree_id, id);
+
+CREATE UNIQUE INDEX eav_type_attribute_idx on eav_type_attribute(tree_id, id) TABLESPACE tsindex;
+
+CREATE SEQUENCE eav_attribute_seq;
+
+CREATE TABLE eav_attribute (
+	tree_id INTEGER NOT NULL,
+	id INTEGER NOT NULL DEFAULT NEXTVAL('eav_attribute_seq'),
+	entity_id INTEGER NOT NULL,
+	type_id INTEGER NOT NULL,
+	val_int INTEGER NULL,
+	val_datetime TIMESTAMP NULL,
+	val_varchar VARCHAR(8000) NULL,
+	val_text TEXT NULL
+);
+
+ALTER TABLE eav_attribute ADD CONSTRAINT eav_attribute_pkey PRIMARY KEY (tree_id, id);
+
+CREATE INDEX eav_attribute_idx on eav_attribute(tree_id, entity_id) TABLESPACE tsindex;
+
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE eav_attribute TO netarchivesuite;
+GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE eav_type_attribute TO netarchivesuite;
+GRANT USAGE ON SEQUENCE eav_attribute_seq TO netarchivesuite;
+
+--
+-- INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
+-- VALUES(1, 1, 'MAX_HOPS', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 1, 20, null, null, null);
+--
+-- INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
+-- VALUES(1, 2, 'HONOR_ROBOTS_DOT_TXT', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 6, 0, null, null, null);
+--
+-- INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
+-- VALUES(1, 3, 'EXTRACT_JAVASCRIPT', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 5, 1, null, null, null);
+
+INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
+VALUES(2, 1, 'MAX_HOPS', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 1, 20, null, null, null);
+
+INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
+VALUES(2, 2, 'HONOR_ROBOTS_DOT_TXT', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 6, 0, null, null, null);
+
+INSERT INTO eav_type_attribute(tree_id, id, name, class_namespace, class_name, datatype, viewtype, def_int, def_datetime, def_varchar, def_text)
+VALUES(2, 3, 'EXTRACT_JAVASCRIPT', 'dk.netarkivet.harvester.datamodel.eav', 'ContentAttrType_Generic', 1, 5, 1, null, null, null);

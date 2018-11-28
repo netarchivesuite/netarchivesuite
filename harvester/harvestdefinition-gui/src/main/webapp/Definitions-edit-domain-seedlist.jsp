@@ -5,8 +5,8 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -67,8 +67,8 @@ Parameters:
 
     SeedList sl = null;
     String seedListName =
-            request.getParameter(Constants.URLLIST_NAME_PARAM);
-    if (request.getParameter(Constants.EDIT_URLLIST_PARAM) != null
+            request.getParameter(Constants.SEEDLIST_NAME_PARAM);
+    if (request.getParameter(Constants.EDIT_SEEDLIST_PARAM) != null
             && seedListName != null) {
         if (!domain.hasSeedList(seedListName)) {
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
@@ -117,7 +117,7 @@ Display all the form information for this domain
                         }
                     %>
                 <td><span id="focusElement">
-                    <input size="25" name="<%= Constants.URLLIST_NAME_PARAM %>" <%=listname%>/>
+                    <input size="25" name="<%= Constants.SEEDLIST_NAME_PARAM %>" <%=listname%>/>
                 </span></td></tr>
                 <tr>
                     <td><fmt:message key="prompt;harvestdefinition.seedlist.edit.seeds"/></td>

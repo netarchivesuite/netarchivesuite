@@ -2,7 +2,7 @@
  * #%L
  * NetarchiveSuite System test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -22,26 +22,24 @@
  */
 package dk.netarkivet.systemtest;
 
-import java.io.File;
-import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
 import org.jaccept.TestEventManager;
 import org.jaccept.structure.ExtendedTestCase;
 import org.jaccept.testreport.ReportGenerator;
 import org.openqa.selenium.By;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
-import dk.netarkivet.systemtest.environment.TestGUIController;
 import dk.netarkivet.systemtest.environment.TestEnvironmentController;
+import dk.netarkivet.systemtest.environment.testGUIController;
 import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
@@ -51,7 +49,7 @@ import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 @SuppressWarnings({"unused"})
 public abstract class SeleniumTest extends ExtendedTestCase {
     protected TestEnvironmentController testController;
-    protected static TestGUIController TestGUIController;
+    protected static testGUIController testGUIController;
     private static ReportGenerator reportGenerator;
     protected final TestLogger log = new TestLogger(getClass());
     protected static WebDriver driver;
@@ -63,7 +61,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
 
     @BeforeSuite(alwaysRun = true)
     public void setupTest() {
-        TestGUIController = new TestGUIController(testController);
+        testGUIController = new testGUIController(testController);
         deployTestSystem();
         initialiseSelenium();
         setupFixture();
@@ -82,7 +80,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
             }
         } else {
             if (System.getProperty("systemtest.redeploy.gui", "false").equals("true")) {
-                TestGUIController.redeployGUI();
+                testGUIController.redeployGUI();
             }
         }
     }
@@ -93,15 +91,34 @@ public abstract class SeleniumTest extends ExtendedTestCase {
      * @return The startup script to run.
      */
     protected String getStartupScript() {
-        return "all_test.sh";
+        Instant instant = Instant.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+        String timestamp = formatter.format(instant.atZone(ZoneId.systemDefault()));
+        return "all_test.sh 2>&1 | tee system_test_logs/all_test_out_" + timestamp + ".txt";
     }
 
-    private void initialiseSelenium() {
-        driver = new FirefoxDriver();
+    protected void initialiseSelenium(){
+       /* FirefoxProfile fxProfile = new FirefoxProfile();
+            fxProfile.setPreference("browser.download.folderList",2);
+            fxProfile.setPreference("browser.download.manager.showWhenStarting",false);
+        try {
+            fxProfile.setPreference("browser.download.dir",(File.createTempFile("aaaa","bbbb")).getParentFile().getAbsolutePath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        fxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk","text/csv");
+        fxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk","text/xml");
+        fxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk","binary/octet-stream");
+*/
+
+       
+
+        //driver = new FirefoxDriver(fxProfile);
+        driver = new SeleniumSession<>();
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
+        baseUrl = "http://" + testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        TestGUIController.waitForGUIToStart(60);
+        testGUIController.waitForGUIToStart(60);
         TestEventManager.getInstance().addFixture("Selecting English as language");
         driver.findElement(By.linkText("English")).click();
     }
@@ -135,7 +152,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
      * @param result The result which TestNG will inject
      */
     public void onFailure(ITestResult result) {
-        if (!result.isSuccess()) {
+/*        if (!result.isSuccess()) {
             log.info("Test failure, dumping screenshot as " + "target/failurescreendumps/" + result.getMethod()
                     + ".png");
             File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
@@ -145,7 +162,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
             } catch (IOException e) {
                 log.error("Failed to save screendump on error");
             }
-        }
+        }*/
     }
 
     public TestEnvironmentController getTestController() {

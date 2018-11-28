@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -144,6 +144,7 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
     /**
      * Test that an empty entry is handled correctly.
      */
+    @Test
     public void testGetEmptyEntry() {
         try {
             BitarchiveRecord record = archive.get(ARC_FILE_NAME, 37534);
@@ -159,6 +160,7 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
     /**
      * Test that an entry with 0xff bytes is read correctly.
      */
+    @Test
     public void testGet0xFF() {
         try {
             BitarchiveRecord record = archive.get(ARC_FILE_NAME, 37650);
@@ -177,6 +179,7 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
      * Test that a correct query gives the correct file and that the ArcRecord is closed so that the file can be deleted
      * afterwards.
      */
+    @Test
     public void testArcRecordIsClosedAfterGet() {
         try {
             BitarchiveRecord record = archive.get(ARC_FILE_NAME, 0);

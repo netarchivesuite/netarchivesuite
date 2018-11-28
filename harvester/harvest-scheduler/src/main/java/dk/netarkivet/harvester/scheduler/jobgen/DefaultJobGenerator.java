@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
@@ -37,6 +38,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.NumberUtils;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
 
 /**
  * The legacy job generator implementation. Aims at generating jobs that execute in a predictable time by taking
@@ -46,6 +48,24 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
 
     /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(DefaultJobGenerator.class);
+
+    private static Long CONFIG_COUNT_SNAPSHOT = null;
+
+    public DefaultJobGenerator() {
+        try {
+            CONFIG_COUNT_SNAPSHOT = Settings.getLong(HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
+            if (CONFIG_COUNT_SNAPSHOT <= 0) {
+                log.info("The parameter {} has the value {} and is therefore ignored during job splitting for "
+                        + "snapshot jobs.", HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT, CONFIG_COUNT_SNAPSHOT);
+            } else {
+                log.info("Snapshot jobs will be split at an absolute maximum of {} configurations ({}).",
+                        CONFIG_COUNT_SNAPSHOT, HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
+            }
+        } catch (UnknownID u) {
+            log.info("The parameter {} is not set so there is no absolute limit to the number of configurations per "
+                    + "snapshot job.", HarvesterSettings.JOBGEN_FIXED_CONFIG_COUNT_SNAPSHOT);
+        }
+    }
 
     /**
      * Compare two configurations using the following order: 1) Harvest template 2) Byte limit 3) expected number of
@@ -63,12 +83,18 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         }
 
         public int compare(DomainConfiguration cfg1, DomainConfiguration cfg2) {
+            log.trace("Comparing " + cfg1 + " " + cfg2);
             // Compare order xml names
             int cmp = cfg1.getOrderXmlName().compareTo(cfg2.getOrderXmlName());
             if (cmp != 0) {
                 return cmp;
             }
-
+            log.trace("Comparing EAV attributes now");
+            int result = EAV.compare(cfg1.getAttributesAndTypes(), cfg2.getAttributesAndTypes());
+            log.trace("Comparison of EAV attributes gave result " + result);
+            if (result != 0) {
+                return result;
+            }
             // Compare byte limits
             long bytelimit1 = NumberUtils.minInf(cfg1.getMaxBytes(), byteLimit);
             long bytelimit2 = NumberUtils.minInf(cfg2.getMaxBytes(), byteLimit);
@@ -76,7 +102,6 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             if (cmp != 0) {
                 return cmp;
             }
-
             // Compare expected sizes
             long expectedsize1 = cfg1.getExpectedNumberOfObjects(objectLimit, byteLimit);
             long expectedsize2 = cfg2.getExpectedNumberOfObjects(objectLimit, byteLimit);
@@ -84,7 +109,6 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             if (res != 0L) {
                 return res < 0L ? -1 : 1;
             }
-
             return 0;
         }
     }
@@ -134,15 +158,22 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         Job job = null;
         log.debug("Adding domainconfigs with the same order.xml for harvest #{}", harvest.getOid());
         JobDAO dao = JobDAO.getInstance();
+        DomainConfiguration previousDomainConf = null;
         while (domainConfSubset.hasNext()) {
             DomainConfiguration cfg = domainConfSubset.next();
+            log.trace("Processing " + DomainConfiguration.cfgToString(cfg));
             if (EXCLUDE_ZERO_BUDGET && (0 == cfg.getMaxBytes() || 0 == cfg.getMaxObjects())) {
                 log.info("Config '{}' for '{}'" + " excluded (0{})", cfg.getName(), cfg.getDomainName(),
                         (cfg.getMaxBytes() == 0 ? " bytes" : " objects"));
                 continue;
             }
-            // Do we need to create a new Job or is the current job ok
-            if ((job == null) || (!canAccept(job, cfg))) {
+            // excluding configs with no active seeds
+            if (ignoreConfiguration(cfg)) {
+            	log.info("Ignoring config '{}' for domain '{}' - no active seeds !");
+            	continue;
+            }
+            
+            if ((job == null) || (!canAccept(job, cfg, previousDomainConf))) {
                 if (job != null) {
                     // If we're done with a job, write it out
                     ++jobsMade;
@@ -157,6 +188,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
                 log.trace("Added job configuration {} for domain {} to current job for harvest #{}", cfg.getName(),
                         cfg.getDomainName(), harvest.getOid());
             }
+            previousDomainConf = cfg;
         }
         if (job != null) {
             ++jobsMade;
@@ -175,8 +207,18 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         return jobsMade;
     }
 
+
     @Override
     protected boolean checkSpecificAcceptConditions(Job job, DomainConfiguration cfg) {
+        if (job.isSnapshot()
+                && CONFIG_COUNT_SNAPSHOT != null
+                && CONFIG_COUNT_SNAPSHOT > 0
+                && job.getDomainConfigurationMap().size() >= CONFIG_COUNT_SNAPSHOT
+                ) {
+            log.debug("Job for HD #{} has now reached the CONFIG_COUNT_SNAPSHOT limit {}", job.getOrigHarvestDefinitionID(), CONFIG_COUNT_SNAPSHOT);
+            return false;
+        }
+
         // By default byte limit is used as base criterion for splitting a
         // harvest in config chunks, however the configuration can override
         // this and instead use object limit.
@@ -187,12 +229,16 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             if (NumberUtils.compareInf(cfg.getMaxObjects(), forceMaxObjectsPerDomain) < 0
                     || (job.isConfigurationSetsObjectLimit() && NumberUtils.compareInf(cfg.getMaxObjects(),
                             forceMaxObjectsPerDomain) != 0)) {
+                log.debug("Job for HD #{} OBJECT_LIMIT of config (domain,config={},{}) incompatible with current job", 
+                        job.getOrigHarvestDefinitionID(), cfg.getDomainName(), cfg.getName());
                 return false;
             }
         } else {
             if (NumberUtils.compareInf(cfg.getMaxBytes(), forceMaxBytesPerDomain) < 0
                     || (job.isConfigurationSetsByteLimit() && NumberUtils.compareInf(cfg.getMaxBytes(),
                             forceMaxBytesPerDomain) != 0)) {
+                log.debug("Job for HD #{} BYTE_LIMIT of config (domain,config={},{}) incompatible with current job", 
+                        job.getOrigHarvestDefinitionID(), cfg.getDomainName(), cfg.getName());
                 return false;
             }
         }
@@ -209,6 +255,8 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
         // Check if total count is exceeded
         long totalCountObjects = job.getTotalCountObjects();
         if ((totalCountObjects > 0) && ((expectation + totalCountObjects) > LIM_MAX_TOTAL_SIZE)) {
+            log.debug("Job for HD #{} will exceed LIM_MAX_TOTAL_SIZE({}), if config(domain,config={},{}) with expected object count {} is added", 
+                    job.getOrigHarvestDefinitionID(), LIM_MAX_TOTAL_SIZE, cfg.getDomainName(), cfg.getName(), expectation);
             return false;
         }
 
@@ -244,6 +292,8 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
 
         float relDiff = (float) xmaxCountObjects / (float) yminCountObjects;
         if (relDiff > LIM_MAX_REL_SIZE) {
+            log.debug("Job for HD #{} will be incompatible with LIM_MAX_REL_SIZE({}), if config(domain,config={},{}) with relDiff {} is added", 
+                    job.getOrigHarvestDefinitionID(), LIM_MAX_REL_SIZE, cfg.getDomainName(), cfg.getName(), relDiff);
             return false;
         }
 

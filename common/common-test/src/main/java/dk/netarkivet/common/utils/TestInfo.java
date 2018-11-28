@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -28,6 +28,9 @@ import java.util.Set;
 
 import dk.netarkivet.common.distribute.JMSConnectionSunMQ;
 
+/*
+ * Constants used by various test classes in modules common-test, and deploy-test. 
+ */
 public class TestInfo {
     public static final File BASEDIR = new File("./tests/dk/netarkivet/common/utils");
     public static final File TEMPDIR = new File(BASEDIR, "working");

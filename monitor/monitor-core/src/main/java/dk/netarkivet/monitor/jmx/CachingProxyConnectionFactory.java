@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - monitor
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -26,6 +26,9 @@ package dk.netarkivet.monitor.jmx;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /** Adds caching to another JMXProxyFactoryConnectionFactory. */
@@ -33,6 +36,9 @@ public class CachingProxyConnectionFactory implements JMXProxyConnectionFactory 
     /** The JMXProxyFactoryConnectionFactory, this class acts as a cache for. */
     private final JMXProxyConnectionFactory wrappedFactory;
 
+    /** The log. */
+    public static final Logger log = LoggerFactory.getLogger(CachingProxyConnectionFactory.class);
+    
     /**
      * Encapsulates the unit of information for checking the cache. That is, all information used as arguments for the
      * JMXProxyFactoryConnectionFactory.getConnection method.
@@ -133,15 +139,19 @@ public class CachingProxyConnectionFactory implements JMXProxyConnectionFactory 
         ArgumentNotValid.checkNotNullOrEmpty(server, "server");
         ArgumentNotValid.checkNotNullOrEmpty(userName, "userName");
         ArgumentNotValid.checkNotNullOrEmpty(password, "password");
+        
         CacheKey key = new CacheKey(server, port, rmiPort, userName, password);
         if (cache.containsKey(key)) {
             JMXProxyConnection jmxProxyConnection = cache.get(key);
             if (jmxProxyConnection != null && jmxProxyConnection.isLive()) {
+                log.debug("Retrieving a cached JMXProxyConnection to server {}, port {}, rmiPort {}", server, port, rmiPort);
                 return jmxProxyConnection;
             }
         }
+        
         JMXProxyConnection newConnection = wrappedFactory.getConnection(server, port, rmiPort, userName, password);
         cache.put(key, newConnection);
+        log.info("Caching a new JMXProxyConnection to server {}, port {}, rmiPort {}", server, port, rmiPort);
         return newConnection;
     }
 

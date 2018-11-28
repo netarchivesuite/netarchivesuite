@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -31,16 +31,35 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import dk.netarkivet.common.utils.Settings;
+
 /**
  * Unit tests for methods in class dk.netarkivet.common.Constants.
  */
 public class ConstantsTester {
 
     @Test
+    public void checkMetadataPattern() {
+        Long id = 1L;
+        String pattern = id + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
+        String[] matchingFiles = new String[]{
+                "1-metadata-1.warc", "1-metadata-1.arc", "1-metadata-1.warc.gz", "1-metadata-1.arc.gz"
+        };
+        for (String metadataFile: matchingFiles) {
+            if (!metadataFile.matches(pattern)) {
+                Assert.fail("File '" + metadataFile + "' is not found by pattern '" + pattern + "'"); 
+            }
+        }
+    }
+    
+    @Test
+    /** 
+     * TODO Tests our H1 version used, however only H3 is really used, currently.
+     */
     public void is_getHeritrixVersionString_sameAsConstant() {
         Assert.assertEquals("HeritrixVersionString is wrong", "1.14.4", Constants.getHeritrixVersionString());
     }
-
+    
     /**
      * Try to see if getIsoDateFormatter is thread safe.
      */

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +42,14 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
 import dk.netarkivet.harvester.datamodel.HarvestChannel;
 import dk.netarkivet.harvester.datamodel.HarvestChannelDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Schedule;
+import dk.netarkivet.harvester.datamodel.SeedList;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
 
 /**
  * A base class for {@link JobGenerator} implementations. It is recommended to extend this class to implement a new job
@@ -65,27 +69,41 @@ abstract class AbstractJobGenerator implements JobGenerator {
      */
     private final long DOMAIN_CONFIG_SUBSET_SIZE = Settings.getLong(HarvesterSettings.JOBGEN_DOMAIN_CONFIG_SUBSET_SIZE);
 
-    /** Is deduplication enabled or disabled in the settings* */
+    /** Is deduplication enabled or disabled in the settings? */
     private final boolean DEDUPLICATION_ENABLED = Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);
 
     @Override
     public int generateJobs(HarvestDefinition harvest) {
-        log.info("Generating jobs for harvestdefinition #{}", harvest.getOid());
+        log.info("Generating jobs for harvestdefinition #{} using class '{}'", harvest.getOid(), this.getClass());
         int jobsMade = 0;
         final Iterator<DomainConfiguration> domainConfigurations = harvest.getDomainConfigurations();
-
+        log.info("Now ready to iterate over the domainConfigurations for harvestdefinition #{}", harvest.getOid());
+        harvest.setNumEvents(harvest.getNumEvents() + 1);
+        if (harvest.isSnapShot()) {
+            HarvestDefinitionDAO.getInstance().update(harvest);
+        }
         while (domainConfigurations.hasNext()) {
             List<DomainConfiguration> subset = new ArrayList<DomainConfiguration>();
             while (domainConfigurations.hasNext() && subset.size() < DOMAIN_CONFIG_SUBSET_SIZE) {
                 subset.add(domainConfigurations.next());
             }
 
-            Collections.sort(subset, getDomainConfigurationSubsetComparator(harvest));
+            final Comparator<DomainConfiguration> domainConfigurationSubsetComparator = getDomainConfigurationSubsetComparator(
+                    harvest);
+            log.trace("Sorting domains with instance of " + domainConfigurationSubsetComparator.getClass().getName());
+            Collections.sort(subset, domainConfigurationSubsetComparator);
             log.trace("{} domainconfigs now sorted and ready to processing for harvest #{}", subset.size(),
                     harvest.getOid());
+            if (subset.size() == 0) {
+                log.warn("Processing a domain config subset of zero size for HD #{}.", harvest.getOid());
+            }
             jobsMade += processDomainConfigurationSubset(harvest, subset.iterator());
+            if (jobsMade == 0) {
+                log.warn("Created 0 jobs for HD #{} from domain cfg subset size {}.", harvest.getOid(), subset.size());
+            } else {
+                log.info("Now created {} jobs for HD #{} from domain cfg subset size {}.", jobsMade, harvest.getOid(), subset.size());
+            }
         }
-        harvest.setNumEvents(harvest.getNumEvents() + 1);
 
         if (!harvest.isSnapShot()) {
             PartialHarvest focused = (PartialHarvest) harvest;
@@ -169,17 +187,23 @@ abstract class AbstractJobGenerator implements JobGenerator {
             Iterator<DomainConfiguration> domainConfSubset);
 
     @Override
-    public boolean canAccept(Job job, DomainConfiguration cfg) {
-        if (!checkAddDomainConfInvariant(job, cfg)) {
+    public boolean canAccept(Job job, DomainConfiguration cfg, DomainConfiguration previousCfg) {
+        log.trace("Comparing current cfg {} with previous cfg {} when adding configs to HD #{}", cfg, previousCfg, job.getOrigHarvestDefinitionID());
+        if (!checkAddDomainConfInvariant(job, cfg, previousCfg)) {
+            log.debug("Unable to add incompatible config(domain,configname='{}','{}') to current job for HD #{}", cfg.getDomainName(), cfg.getName(), job.getOrigHarvestDefinitionID());
             return false;
         }
-        return checkSpecificAcceptConditions(job, cfg);
+        boolean specificAcceptConditionsIsOk = checkSpecificAcceptConditions(job, cfg);
+        if (!specificAcceptConditionsIsOk) {
+            log.debug("Unable to add config(domain,configname='{}','{}') to current job for HD #{}. The specific accept conditions fail", cfg.getDomainName(), cfg.getName(), job.getOrigHarvestDefinitionID());
+        }
+        return specificAcceptConditionsIsOk;
     }
-
+    
     /**
-     * Called by {@link #canAccept(Job, DomainConfiguration)}. Tests the implementation-specific conditions to accept
+     * Called by {@link JobGenerator#canAccept(Job, DomainConfiguration, DomainConfiguration)}. Tests the implementation-specific conditions to accept
      * the given {@link DomainConfiguration} in the given {@link Job}. It is assumed that
-     * {@link #checkAddDomainConfInvariant(Job, DomainConfiguration)} has already passed.
+     * {@link #checkAddDomainConfInvariant(Job, DomainConfiguration, DomainConfiguration)} has already passed.
      *
      * @param job the {@link Job} n=being built
      * @param cfg the {@link DomainConfiguration} to test
@@ -198,37 +222,33 @@ abstract class AbstractJobGenerator implements JobGenerator {
      */
     protected void editJobOrderXml(Job job) {
         HeritrixTemplate doc = job.getOrderXMLdoc();
-        if (DEDUPLICATION_ENABLED) {
-            // Check that the Deduplicator element is present in the
-            // OrderXMl and enabled. If missing or disabled log a warning
-        	
-            if (!doc.IsDeduplicationEnabled()) {
-                log.warn("Unable to perform deduplication for this job as the required DeDuplicator element is "
-                        + "disabled or missing from template");
-            }
-        } else {
-            // Remove deduplicator Element from OrderXML if present
-        	doc.removeDeduplicatorIfPresent();
-        	job.setOrderXMLDoc(doc);
-	        log.info("Removed DeDuplicator element because Deduplication is disabled");   
-        }
+        doc.enableOrDisableDeduplication(DEDUPLICATION_ENABLED);
     }
 
     /**
      * Tests that:
      * <ol>
      * <li>The given domain configuration and job are not null.</li>
+     * <li>The EAV attributes are the same for the the given domain configuration and the previous one if any.
      * <li>The job does not already contain the given domain configuration.</li>
-     * <li>The domain configuration has the same order xml name as the first inserted domain config.</li>
+     * <li>The domain configuration has the same orderXmlName as the first inserted domain config.</li>
+     * <li>If the previous configuration is not null, check that all attributes are identical between the two configurations</li>
      * </ol>
      *
      * @param job a given Job
      * @param cfg a given DomainConfiguration
+     * @param previousCfg if not null, the domain configuration added to the job immediately prior to this one
      * @return true, if the given DomainConfiguration can be inserted into the given job
      */
-    private boolean checkAddDomainConfInvariant(Job job, DomainConfiguration cfg) {
+    private boolean checkAddDomainConfInvariant(Job job, DomainConfiguration cfg, DomainConfiguration previousCfg) {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(cfg, "cfg");
+
+        if (previousCfg != null && EAV.compare(cfg.getAttributesAndTypes(), previousCfg.getAttributesAndTypes())!=0 ) {
+            log.debug("Attributes have changed between configurations {} and {}",
+                    DomainConfiguration.cfgToString(previousCfg), DomainConfiguration.cfgToString(cfg));
+            return false;
+        }
 
         // check if domain in DomainConfiguration cfg is not already in this job
         // domainName is used as key in domainConfigurationMap
@@ -253,4 +273,21 @@ abstract class AbstractJobGenerator implements JobGenerator {
         GlobalCrawlerTrapListDAO.getInstance().addGlobalCrawlerTraps(orderXMLdoc);
         return orderXMLdoc;
     }
+    
+    @Override
+    public boolean ignoreConfiguration(DomainConfiguration cfg) {
+        boolean noValidSeeds = true;
+        Iterator<SeedList> lists = cfg.getSeedLists();
+        while (noValidSeeds && lists.hasNext() ) {
+            SeedList sList = lists.next();
+            for (String seed: sList.getSeeds()) {
+                String trimmedSeed = seed.trim(); // trim before testing
+                if (trimmedSeed.length() > 0 && !trimmedSeed.startsWith("#")) { // Found a valid seed 
+                    return false; // At least one valid seed in config. Don't ignore this config
+                }
+            }
+        }
+        return noValidSeeds;
+    }
+
 }

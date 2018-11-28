@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -29,12 +29,15 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.antiaction.raptor.dao.AttributeBase;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Named;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 
 /**
  * This class describes a configuration for harvesting a domain. It combines a number of seedlists, a number of
@@ -74,6 +77,9 @@ public class DomainConfiguration implements Named {
 
     /** The crawlertraps associated with the domain. */
     private List<String> crawlertraps;
+
+    /** This configurations EAV attributes and attribute types. */
+    private List<AttributeAndType> attributesAndTypes;
 
     /**
      * How many objects should be harvested in a harvest to trust that our expected size of objects is less than the
@@ -123,6 +129,23 @@ public class DomainConfiguration implements Named {
         this.maxRequestRate = Constants.DEFAULT_MAX_REQUEST_RATE;
         this.maxObjects = Constants.DEFAULT_MAX_OBJECTS;
         this.maxBytes = Constants.DEFAULT_MAX_BYTES;
+    }
+
+    public static String cfgToString(DomainConfiguration cfg) {
+        if (cfg == null) {
+            return "cfg{null}";
+        }
+        String result = "cfg{" + cfg.getDomainName() + "," + cfg.getName() + ","+cfg.getMaxBytes()+","+cfg.getMaxObjects()+",";
+        if (cfg.getAttributesAndTypes() != null) {
+            for (AttributeAndType aat : cfg.getAttributesAndTypes()) {
+                AttributeBase ab = aat.attribute;
+                if (ab != null) {
+                    result += "(" + ab.id + "," + ab.entity_id + "," + ab.type_id + "," + ab.getInteger() + ")";
+                }
+            }
+        }
+        result += "}";
+        return result;
     }
 
     /**
@@ -328,7 +351,7 @@ public class DomainConfiguration implements Named {
         long prevresultfactor = Settings.getLong(HarvesterSettings.ERRORFACTOR_PERMITTED_PREVRESULT);
         HarvestInfo best = DomainHistory.getBestHarvestInfoExpectation(configName, this.domainhistory);
 
-        log.trace("Using domain info '{}' for configuration '{}'", best, toString());
+        log.trace("Getting expectation, using domain info '{}' for configuration '{}'", best, cfgToString(this));
 
         long expectedObjectSize = getExpectedBytesPerObject(best);
         // The maximum number of objects that the maxBytes or MAX_DOMAIN_SIZE
@@ -342,6 +365,7 @@ public class DomainConfiguration implements Named {
         } else {
             maximum = Settings.getLong(HarvesterSettings.MAX_DOMAIN_SIZE);
         }
+        log.trace("Initial maximum: {}", maximum);
         // get last number of objects harvested
         long minimum;
         if (best != null) {
@@ -349,6 +373,7 @@ public class DomainConfiguration implements Named {
         } else {
             minimum = NumberUtils.minInf(Constants.HERITRIX_MAXOBJECTS_INFINITY, maxObjects);
         }
+        log.trace("Initial minimum: {}", minimum);
         // Calculate the expected number of objects we will harvest.
         long expectation;
         if (best != null) {
@@ -367,16 +392,19 @@ public class DomainConfiguration implements Named {
             // limit
             expectation = NumberUtils.minInf(Settings.getLong(HarvesterSettings.MAX_DOMAIN_SIZE), maxObjects);
         }
+        log.trace("Initial expectation: {}", expectation);
         // Always limit to domain specifics if set to do so. We always expect
         // to actually hit this limit
         if ((maxObjects > Constants.HERITRIX_MAXOBJECTS_INFINITY && maximum > maxObjects)
                 || (maxBytes > Constants.HERITRIX_MAXBYTES_INFINITY && maximum > maxBytes / expectedObjectSize)) {
+            log.trace("Using domain limits for {}", cfgToString(this));
             maximum = minObjectsBytesLimit(maxObjects, maxBytes, expectedObjectSize);
+            log.trace("New maximum: {}", maximum);
         }
         // Never return more than allowed maximum
         expectation = Math.min(expectation, maximum);
 
-        log.trace("Expected number of objects for configuration '{}' is {}", toString(), expectation);
+        log.trace("Expected number of objects for configuration '{}' is {}", cfgToString(this), expectation);
 
         return expectation;
     }
@@ -497,7 +525,7 @@ public class DomainConfiguration implements Named {
      *
      * @return the ID of this configuration
      */
-    public long getID() {
+    public Long getID() {
         return id;
     }
 
@@ -558,6 +586,30 @@ public class DomainConfiguration implements Named {
      */
     public void setDomainhistory(DomainHistory newDomainhistory) {
         this.domainhistory = newDomainhistory;
+    }
+
+    /**
+     * Change the name of configuration to the given configName.
+     * @param configName a new name for this configuration.
+     */
+	public void setName(String configName) {
+		this.configName = configName;
+	}
+
+    /**
+     * Get this configurations EAV attributes and attribute types.
+     * @return this configurations EAV attributes and attribute types
+     */
+    public List<AttributeAndType> getAttributesAndTypes() {
+    	return attributesAndTypes;
+    }
+
+    /**
+     * Set this configurations EAV attributes and attribute types.
+     * @param attributesAndTypes EAV attributes and attribute types
+     */
+    public void setAttributesAndTypes(List<AttributeAndType> attributesAndTypes) {
+    	this.attributesAndTypes = attributesAndTypes;
     }
 
 }

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - deploy - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,10 @@
  */
 package dk.netarkivet.deploy;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -47,4 +50,26 @@ public class CompleteSettingsTester {
     public void testCompleteSettings() {
         BuildCompleteSettings.buildCompleteSettings(WORKING_DIR.getPath() + "/complete_settings.xml");
     }
+    
+    @Test
+    /** This uses the BuildCompleteSettings.defaultCompleteSettingsPath if no arg given to BuildCompleteSettings.main() */ 
+    public void testCompleteSettingsWithNoArg() {
+        String defaultCompleteSettingsPath = BuildCompleteSettings.defaultCompleteSettingsPath;
+        BuildCompleteSettings.buildCompleteSettings(defaultCompleteSettingsPath);
+        FileUtils.remove(new File(defaultCompleteSettingsPath));
+    }
+    
+    @Test
+    public void testNewlyGeneratedWithExistingDefaults() throws IOException {
+        File newCompleteSettingsFile = new File(WORKING_DIR.getPath() + "/complete_settings.xml");
+        BuildCompleteSettings.buildCompleteSettings(newCompleteSettingsFile.getAbsolutePath());
+        File existingCompleteSettingsFile = new File("../deploy-core/src/main/resources/" + Constants.BUILD_COMPLETE_SETTINGS_FILE_PATH);
+        // compare filesizes.
+        if (newCompleteSettingsFile.length() != existingCompleteSettingsFile.length()) {
+            fail("The newly generated completesettings has size (" +  newCompleteSettingsFile.length() 
+                    + ") which is different from the size of the existing one (" +  existingCompleteSettingsFile.length() + "). Update the file '" + existingCompleteSettingsFile.getCanonicalPath() 
+                    + "' by following the procedure in deploy/deploy-core/src/main/java/dk/netarkivet/deploy/BuildCompleteSettings.java");
+        }
+    }
+    
 }

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -55,6 +55,7 @@ import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 import dk.netarkivet.harvester.harvesting.ArchiveFileNaming;
 import dk.netarkivet.harvester.harvesting.ArchiveFileNamingFactory;
 import dk.netarkivet.harvester.harvesting.JobInfo;
@@ -276,12 +277,20 @@ public class Job implements Serializable, JobInfo {
         addConfiguration(cfg);
 
         setMaxJobRunningTime(forceMaxJobRunningTime);
-        
+
         setArchiveFormatInTemplate(Settings.get(HarvesterSettings.HERITRIX_ARCHIVE_FORMAT));
-        
+
+    	setAttributes(cfg.getAttributesAndTypes());
+
+        orderXMLdoc.enableOrDisableDeduplication(Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED));
+
         status = JobStatus.NEW;
     }
-    
+
+	public void setAttributes(List<AttributeAndType> attributesAndTypes) {
+        orderXMLdoc.insertAttributes(attributesAndTypes);
+	}
+
     /**
      * Update the order template according to the chosen archive format (arc/warc).
      */

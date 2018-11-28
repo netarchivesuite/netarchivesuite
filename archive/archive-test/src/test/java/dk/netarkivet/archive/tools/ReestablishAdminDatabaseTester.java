@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -107,8 +107,8 @@ public class ReestablishAdminDatabaseTester {
     }
 
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("FIXME: hangs")
+    // FIXME: test temporarily disabled to hanging behaviour or too slow 
     public void testSuccess() {
         String[] args = new String[] {TestInfo.DATABASE_ADMIN_DATA_2.getPath()};
         try {
@@ -126,8 +126,8 @@ public class ReestablishAdminDatabaseTester {
     }
 
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("FIXME: hangs")
+    // FIXME: test temporarily disabled due to hanging behaviour
     public void testNotEmptyDatabase() {
         String[] args = new String[] {TestInfo.DATABASE_ADMIN_DATA_2.getPath()};
         try {

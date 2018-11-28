@@ -4,8 +4,8 @@
  * Date:        $Date: 2013-05-03 18:38:47 +0200 (Fri, 03 May 2013) $
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2012 The Royal Danish Library, the Danish State and
- * University Library, the National Library of France and the Austrian
+ * Copyright 2004-2018 The Royal Danish Library,
+ * the National Library of France and the Austrian
  * National Library.
  *
  * This library is free software; you can redistribute it and/or
@@ -40,37 +40,32 @@ import dk.netarkivet.common.utils.DomainUtils;
  * nn.nn.nn.nn -> nn.nn.nn.nn
  *  
  */
-public class DomainnameQueueAssignmentPolicy
-        extends HostnameQueueAssignmentPolicy {
-    /** A key used for the cases when we can't figure out the URI.
+public class DomainnameQueueAssignmentPolicy extends HostnameQueueAssignmentPolicy {
+
+	/** A key used for the cases when we can't figure out the URI.
      *  This is taken from parent, where it has private access.  Parent returns
      *  this on things like about:blank.
      */
     static final String DEFAULT_CLASS_KEY = "default...";
 
-    private Log log
-            = LogFactory.getLog(getClass());
+    private Log log = LogFactory.getLog(getClass());
 
-    /** Return a key for queue names based on domain names (last two parts of
+    /**
+     * Return a key for queue names based on domain names (last two parts of
      * host name) or IP address.  They key may include a #<portnr> at the end.
      *
-     * @param controller The controller the crawl is running on.
-     * @param cauri A potential URI.
+     * @param basis A potential URI.
      * @return a class key (really an arbitrary string), one of <domainOrIP>,
      * <domainOrIP>#<port>, or "default...".
-     * @see HostnameQueueAssignmentPolicy#getClassKey(
-     *  org.archive.crawler.framework.CrawlController,
-     *  org.archive.crawler.datamodel.CandidateURI)
+     * @see HostnameQueueAssignmentPolicy#getClassKey(org.archive.modules.CrawlURI)
      */
-    
     @Override
     protected String getCoreKey(UURI basis) {
         String candidate; 
         try {
             candidate = super.getCoreKey(basis);
         } catch (NullPointerException e) {
-            log.debug("Heritrix broke getting class key candidate for "
-                    + basis);
+            log.debug("Heritrix broke getting class key candidate for " + basis);
             candidate = DEFAULT_CLASS_KEY;
         }
         if (candidate == null) { //FIXME the candidate should not be null with dns: schema
@@ -90,8 +85,7 @@ public class DomainnameQueueAssignmentPolicy
         }
         String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
         if (domainName == null) { // Not valid according to our rules
-            log.debug("Illegal class key candidate '" + candidate
-                    + "' for '" + basis + "'");
+            log.debug("Illegal class key candidate '" + candidate + "' for '" + basis + "'");
             return candidate;
         }
         return domainName;

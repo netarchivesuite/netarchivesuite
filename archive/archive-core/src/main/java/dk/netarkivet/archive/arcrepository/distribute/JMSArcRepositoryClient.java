@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -147,6 +147,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
 
     /** Removes this object as a JMS listener. */
     public void close() {
+        log.info("Closing repository client that listens to " + replyQ.toString());
         synchronized (JMSArcRepositoryClient.class) {
             JMSConnectionFactory.getInstance().removeListener(replyQ, this);
             instance = null;
@@ -171,8 +172,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
         GetMessage requestGetMsg = new GetMessage(Channels.getTheRepos(), replyQ, arcfile, index);
         NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(requestGetMsg, getTimeout);
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply received after {} seconds", (timePassed / MILLISECONDS_PER_SECOND));
-        if (replyNetMsg == null) {
+        if (replyNetMsg != null) {
+            log.debug("Reply received after {} seconds", (timePassed / MILLISECONDS_PER_SECOND));
+        } else if (replyNetMsg == null) {
             log.info("Request for record({}:{}) timed out after {} seconds. Returning null BitarchiveRecord", arcfile,
                     index, (getTimeout / MILLISECONDS_PER_SECOND));
             return null;

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -343,6 +343,25 @@ public class PostgreSQLSpecifics extends DBSpecifics {
     protected void migrateExtendedFieldTableValueV1toV2() {
         String[] sqlStatements = {"ALTER TABLE extendedfieldvalue ALTER COLUMN content TYPE VARCHAR(30000), ALTER COLUMN content SET NOT NULL"};
         HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
+    }
+
+    @Override
+    protected void migrateOrderTemplatesTablev1tov2() {
+        final String tablename = HarvesterDatabaseTables.ORDERTEMPLATES.getTablename();
+        String[] sqlStatements = {"ALTER TABLE " + tablename + " ADD COLUMN isActive BOOL NOT NULL DEFAULT TRUE"};
+        HarvestDBConnection.updateTable(tablename, 2, sqlStatements);
+    }
+
+    @Override
+    public void createEavTypeAttributeTable(int toVersion) {
+        String tableName = HarvesterDatabaseTables.EAVTYPEATTRIBUTE.getTablename();
+        HarvestDBConnection.executeSql("postgresql", tableName, 1 );
+    }
+
+    @Override
+    public void createEavAttributeTable(int toVersion) {
+        String tableName = HarvesterDatabaseTables.EAVATTRIBUTE.getTablename();
+        HarvestDBConnection.executeSql("postgresql", tableName, 1 );
     }
 
 }

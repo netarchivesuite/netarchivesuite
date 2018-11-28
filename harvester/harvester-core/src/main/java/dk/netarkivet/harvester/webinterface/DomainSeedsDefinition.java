@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -87,11 +87,11 @@ public class DomainSeedsDefinition {
             return;
         }
 
-        HTMLUtils.forwardOnEmptyParameter(context, Constants.DOMAIN_PARAM, Constants.URLLIST_NAME_PARAM,
+        HTMLUtils.forwardOnEmptyParameter(context, Constants.DOMAIN_PARAM, Constants.SEEDLIST_NAME_PARAM,
                 Constants.SEED_LIST_PARAMETER);
 
         String name = request.getParameter(Constants.DOMAIN_PARAM).trim();
-        String urlListName = request.getParameter(Constants.URLLIST_NAME_PARAM).trim();
+        String urlListName = request.getParameter(Constants.SEEDLIST_NAME_PARAM).trim();
         String seedList = request.getParameter(Constants.SEED_LIST_PARAMETER).trim();
 
         // check the edition number before updating

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -72,6 +72,14 @@ public class ReportingTester {
         // Copy the two files "2-1-20080601120000-00000-dev.arc", "2-metadata-1.arc" to our local
         // archive accessed using a TrivalArcRepositoryClient
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, dir);
+        // Duplicate 2-1-20080601120000-00000-dev.arc as 22-1-20080601120000-00000-dev.arc
+        // and 2-metadata-1.arc as 22-metadata-1.arc
+        File source = new File(dir, "2-1-20080601120000-00000-dev.arc");
+        File dest = new File(dir, "22-1-20080601120000-00000-dev.arc");
+        FileUtils.copyFile(source, dest);
+        source = new File(dir, "2-metadata-1.arc");
+        dest = new File(dir, "22-metadata-1.arc");
+        FileUtils.copyFile(source, dest);
     }
 
     @After

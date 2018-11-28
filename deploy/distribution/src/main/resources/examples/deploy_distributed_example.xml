@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployGlobal>
-    <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-    <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-    <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
-    <deployClassPath>lib/dk.netarkivet.wayback.jar</deployClassPath>
+    <deployClassPath>lib/netarchivesuite-monitor-core.jar</deployClassPath>
     <deployJavaOpt>-Xmx1536m</deployJavaOpt>
     <settings>
         <common>
@@ -132,9 +129,8 @@
                 </common>
             </settings>
             <applicationName name="dk.netarkivet.common.webinterface.GUIApplication">
-                <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
                 <settings>
                     <common>
                         <http>
@@ -148,9 +144,9 @@
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication">
-                <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-wayback-indexer.jar</deployClassPath>
                 <settings>
                     <common>
                         <jmx>
@@ -161,6 +157,9 @@
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
+                <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-wayback-indexer.jar</deployClassPath>
                 <settings>
                     <common>
                         <applicationInstanceId>ABM</applicationInstanceId>
@@ -172,6 +171,9 @@
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
+                <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-wayback-indexer.jar</deployClassPath>
                 <settings>
                     <common>
                         <applicationInstanceId>BBM</applicationInstanceId>
@@ -184,8 +186,8 @@
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.harvester.scheduler.HarvestJobManagerApplication">
-                <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
+
                 <settings>
                     <common>
                         <jmx>
@@ -203,6 +205,9 @@
             <deployJavaOpt>-Xmx1150m</deployJavaOpt>
 
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
+                <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-wayback-indexer.jar</deployClassPath>
                 <settings>
                     <common>
                         <jmx>
@@ -226,6 +231,9 @@
             <deployJavaOpt>-Xmx1150m</deployJavaOpt>
 
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
+                <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-wayback-indexer.jar</deployClassPath>
                 <settings>
                     <common>
                         <applicationInstanceId>BitApp_1</applicationInstanceId>
@@ -244,6 +252,9 @@
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
+                <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-wayback-indexer.jar</deployClassPath>
                 <settings>
                     <common>
                         <applicationInstanceId>BitApp_2</applicationInstanceId>
@@ -262,6 +273,9 @@
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
+                <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-wayback-indexer.jar</deployClassPath>
                 <settings>
                     <common>
                         <applicationInstanceId>BitApp_3</applicationInstanceId>
@@ -283,10 +297,8 @@
         </deployMachine>
 
         <deployMachine name="east-har-001.kb.dk">
-            <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-            <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-            <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
+                <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
                 <settings>
                     <common>
                         <applicationInstanceId>snapshot</applicationInstanceId>
@@ -314,11 +326,8 @@
 
 
         <deployMachine name="east-har-002.kb.dk">
-            <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-            <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-            <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
-
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
+                <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
                 <settings>
                     <common>
                         <applicationInstanceId>snapshot</applicationInstanceId>
@@ -334,8 +343,8 @@
                                 <guiPort>8111</guiPort>
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
                                 <jmxPort>8211</jmxPort>
-                                 <jmxUsername>controlRole</jmxUsername>
-                                 <jmxPassword>R_D</jmxPassword>
+                                <jmxUsername>controlRole</jmxUsername>
+                                <jmxPassword>R_D</jmxPassword>
                             </heritrix>
                             <serverDir>harvester_snapshot</serverDir>
                         </harvesting>
@@ -344,6 +353,7 @@
             </applicationName>
 
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
+                <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
                 <settings>
                     <common>
                         <applicationInstanceId>focused</applicationInstanceId>
@@ -359,8 +369,8 @@
                                 <guiPort>8113</guiPort>
                                 <!-- T: jmxPort to be modified by test (was 8093) -->
                                 <jmxPort>8213</jmxPort>
-                                 <jmxUsername>controlRole</jmxUsername>
-                                 <jmxPassword>R_D</jmxPassword>
+                                <jmxUsername>controlRole</jmxUsername>
+                                <jmxPassword>R_D</jmxPassword>
                             </heritrix>
                             <serverDir>harvester_focused</serverDir>
                         </harvesting>
@@ -377,6 +387,8 @@
             </settings>
 
             <applicationName name="dk.netarkivet.harvester.indexserver.IndexServerApplication">
+                <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
                 <settings>
                     <common>
                         <jmx>
@@ -388,9 +400,8 @@
             </applicationName>
 
             <applicationName name="dk.netarkivet.viewerproxy.ViewerProxyApplication">
-                <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-                <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
                 <settings>
                     <common>
                         <http>
@@ -405,6 +416,7 @@
             </applicationName>
 
             <applicationName name="dk.netarkivet.archive.checksum.ChecksumFileApplication">
+                <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
                 <settings>
                     <archive>
                         <checksum>
@@ -449,11 +461,8 @@
         </settings>
 
         <deployMachine name="west-har-001.statsbiblioteket.dk">
-            <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
-            <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
-            <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
-
             <applicationName name="dk.netarkivet.harvester.harvesting.HarvestControllerApplication">
+                <deployClassPath>lib/netarchivesuite-heritrix3-controller.jar</deployClassPath>
                 <settings>
                     <common>
                         <applicationInstanceId>focused</applicationInstanceId>
@@ -469,13 +478,13 @@
                                 <guiPort>8111</guiPort>
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
                                 <jmxPort>8211</jmxPort>
-                                 <jmxUsername>controlRole</jmxUsername>
-                                 <jmxPassword>R_D</jmxPassword>
+                                <jmxUsername>controlRole</jmxUsername>
+                                <jmxPassword>R_D</jmxPassword>
                             </heritrix>
                             <metadata>
-                            	<heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
-                            	<reportFilePattern>.*-report.txt</reportFilePattern>
-                            	<logFilePattern>.*(\.log|\.out)</logFilePattern>
+                                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
+                                <reportFilePattern>.*-report.txt</reportFilePattern>
+                                <logFilePattern>.*(\.log|\.out)</logFilePattern>
                             </metadata>
                             <serverDir>harvester_focused</serverDir>
                         </harvesting>
@@ -485,6 +494,9 @@
         </deployMachine>
 
         <deployMachine name="west-bar-001.statsbiblioteket.dk">
+            <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
+            <deployClassPath>lib/netarchivesuite-harvester-core.jar</deployClassPath>
+            <deployClassPath>lib/netarchivesuite-wayback-indexer.jar</deployClassPath>
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
                 <settings>
                     <common>
@@ -506,6 +518,8 @@
 
         <deployMachine name="west-acs-001.statsbiblioteket.dk">
             <applicationName name="dk.netarkivet.viewerproxy.ViewerProxyApplication">
+                <deployClassPath>lib/netarchivesuite-harvest-scheduler.jar</deployClassPath>
+                <deployClassPath>lib/netarchivesuite-archive-core.jar</deployClassPath>
                 <settings>
                     <common>
                         <jmx>

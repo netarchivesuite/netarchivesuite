@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -683,15 +683,22 @@ public class DomainDAOTester extends DataModelTestCase {
         DomainDAO dao = DomainDAO.getInstance();
         try {
             dao.readSparse(null);
-            fail("Should throw exception on null");
+            fail("Should throw exception on null.");
         } catch (ArgumentNotValid e) {
             // expected
         }
 
         try {
-            dao.readSparse("Fnord");
-            fail("Should throw exception on unknown");
+            dao.readSparse("Fnord.dk");
+            fail("Should throw exception on unknown.");
         } catch (UnknownID e) {
+            // expected
+        }
+
+        try {
+            dao.readSparse("Fnord");
+            fail("Should throw exception on invalid.");
+        } catch (ArgumentNotValid e) {
             // expected
         }
 
@@ -789,5 +796,5 @@ public class DomainDAOTester extends DataModelTestCase {
             dao.create(domain);
         }
         return dao.read(domainName);
-    }
+    }   
 }

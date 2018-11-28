@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -65,7 +65,6 @@ import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.ChannelsTesterHelper;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -88,6 +87,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -102,7 +102,6 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 @SuppressWarnings({"unused", "deprecation"})
 public class FileBasedActiveBitPreservationTester {
 
-    //private Log log = LogFactory.getLog(getClass().getName());
     private final Logger log = LoggerFactory.getLogger(FileBasedActiveBitPreservationTester.class);
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();
@@ -119,7 +118,7 @@ public class FileBasedActiveBitPreservationTester {
     @Before
     public void setUp() throws Exception {
         rs.setUp();
-        ChannelsTesterHelper.resetChannels();
+        Channels.reset();
         mtf.setUp();
         mj.setUp();
         rf.setUp();
@@ -160,8 +159,10 @@ public class FileBasedActiveBitPreservationTester {
      * @throws IOException
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("FIXME: Fails")
+    // FIXME: FileBasedActiveBitPreservationTester.testFindChangedFiles:197 Wrong state list should be as expected.
+    //Expected [integrity11.ARC, integrity12.ARC] but was [] expected:<[integrity11.ARC, integrity12.ARC]> but was:<[]>
+
     public void testFindChangedFiles() throws IOException {
 
         // We check the following four cases:
@@ -301,8 +302,17 @@ public class FileBasedActiveBitPreservationTester {
     }
 
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
+    @Ignore("Fails in Travis with error shown below ")
+    /**
+     * java.lang.AssertionError: Should get FilePreservationStatus for existing file
+	at org.junit.Assert.fail(Assert.java:88)
+	at org.junit.Assert.assertTrue(Assert.java:41)
+	at org.junit.Assert.assertNotNull(Assert.java:621)
+	at dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservationTester.testGetFilePreservationStatus(FileBasedActiveBitPreservationTester.java:312)
+
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     public void testGetFilePreservationStatus() throws NoSuchFieldException, IllegalAccessException {
 
         FileUtils.copyFile(TestInfo.CORRECT_ADMIN_DATA, TestInfo.ADMIN_DATA);
@@ -392,22 +402,22 @@ public class FileBasedActiveBitPreservationTester {
 
         // Check that wrong counts are caught
         File unsortedFile = new File(TestInfo.WORKING_DIR, "test_file_list_output/filelistOutput/unsorted.txt");
+        // requires Java 8
+        //MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptyList(),
+        //        17, RemoteFileFactory.getMovefileInstance(unsortedFile), new ArrayList<>(0));
         MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptyList(),
-                17, RemoteFileFactory.getMovefileInstance(unsortedFile), new ArrayList<>(0));
+                        17, RemoteFileFactory.getMovefileInstance(unsortedFile), new ArrayList(0));
         runFilelistJob.invoke(abp, replica);
 
         abp.close();
     }
 
     /**
-     * Fails in Ant
-     *
+     * testGetBitarchiveChecksum().
      * @throws Exception
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
-    public void failingTestGetBitarchiveChecksum() throws Exception {
+    public void testGetBitarchiveChecksum() throws Exception {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         AdminData.getUpdateableInstance().addEntry("foobar", null, "md5-1");
         AdminData.getUpdateableInstance().addEntry("barfu", null, "klaf");
@@ -701,7 +711,6 @@ public class FileBasedActiveBitPreservationTester {
         }
 
         public File correct(String replicaId, String checksum, File file, String credentials) {
-            // TODO: something!
             throw new NotImplementedException("TODO: ME!");
 
         }

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -40,7 +40,6 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.qos.logback.classic.Level;
@@ -289,8 +288,6 @@ public class AdminDataTester {
      * Verify that constructing an AdminData does not fail.
      */
     @Test
-    @Ignore("FIXME")
-    // FIXME: test temporarily disabled
     public void testCTOR() {
         // Test invalid settings:
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, "/foo/bar/nonExistingDir");

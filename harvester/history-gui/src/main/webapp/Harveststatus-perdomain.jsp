@@ -5,8 +5,8 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -235,8 +235,8 @@ displayed, if no domains are found a message is shown.
     </td>
     <td><%=HTMLUtils.escapeHtmlValues(hi.getConfigName())%>
     </td>
-    <td><fmt:formatDate type="both" value="<%=hi.getStartDate()%>"/></td>
-    <td><fmt:formatDate type="both" value="<%=hi.getEndDate()%>"/></td>
+    <td><%=HTMLUtils.parseDate(hi.getStartDate())%></td>
+    <td><%=HTMLUtils.parseDate(hi.getEndDate())%></td>
     <td><fmt:formatNumber value="<%=hi.getBytesDownloaded()%>"/></td>
     <td><fmt:formatNumber value="<%=hi.getDocsDownloaded()%>"/></td>
     <td><%

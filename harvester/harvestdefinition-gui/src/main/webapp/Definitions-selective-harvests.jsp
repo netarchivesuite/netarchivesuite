@@ -5,8 +5,8 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -108,6 +108,12 @@ inactive or vice-versa.
 
 <p>
         <% } else { %>
+<!-- Add link to create new selective harvestdefinition both before and after the table of existing definitions -->
+<p>
+<a href="Definitions-edit-selective-harvest.jsp?createnew=1">
+    <fmt:message key="create.new.selective.harvestdefinition"/>
+</a>
+<p>
 <table class="selection_table" cols="6">
     <tr>
         <th><fmt:message key="harvestdefinition.selective.header.harvestdefinition"/></th>
@@ -154,7 +160,7 @@ inactive or vice-versa.
         <td>
             <% // Only output the date, if the HarvestDefinition is active
                 if (sph.isActive()) { %>
-            <fmt:formatDate type="both" value="<%=sph.getNextDate()%>"/>
+                <%=HTMLUtils.parseDate(sph.getNextDate())%>
             <% } else {
                 out.print(Constants.NoNextDate);
             } %>

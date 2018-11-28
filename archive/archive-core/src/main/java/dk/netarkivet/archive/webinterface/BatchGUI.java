@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -228,7 +228,7 @@ public final class BatchGUI {
             }
 
             // get the regular expression.
-            String regex = jobId + "-";
+            String regex = ".*" + jobId + "-" + ".*";
             if (filetype.equals(BatchFileType.Metadata.toString())) {
                 regex += Constants.REGEX_METADATA;
             } else if (filetype.equals(BatchFileType.Content.toString())) {

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - wayback - test
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -70,10 +71,11 @@ public class ArchiveFileTester extends IndexerTestCase {
     @Test
     public void testIndexerMetadata() {
         ArchiveFile file = new ArchiveFile();
-        file.setFilename("duplicate.metadata.arc");
+        file.setFilename("12345-metadata-4.arc");
         (new ArchiveFileDAO()).create(file);
         file.index();
         File outputFile = new File(destDir, file.getOriginalIndexFileName());
-        assertTrue("Should have a resonable numer of lines in output file", FileUtils.countLines(outputFile) == 15);
+
+        assertEquals("Should find all duplicates in original.", 15, FileUtils.countLines(outputFile));
     }
 }

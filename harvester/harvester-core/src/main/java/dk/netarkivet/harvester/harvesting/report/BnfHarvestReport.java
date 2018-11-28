@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ public class BnfHarvestReport extends AbstractHarvestReport{
     /**
      * Constructor for this class.
      *
-     * @param files A HeritrixFiles object.
+     * @param dsr A DomainStatsReport
      * @throws IOFailure If the processing of the files goes wrong
      */
     public BnfHarvestReport(DomainStatsReport dsr) throws IOFailure {

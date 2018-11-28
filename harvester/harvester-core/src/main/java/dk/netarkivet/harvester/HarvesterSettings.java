@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ public class HarvesterSettings {
      * Default name of the seedlist to use when new domains are created.
      */
     public static String DEFAULT_SEEDLIST = "settings.harvester.datamodel.domain.defaultSeedlist";
-
+    
     /**
      * <b>settings.harvester.datamodel.domain.validSeedRegex</b>: <br>
      * Regular expression used to validate a seed within a seedlist.
@@ -90,7 +90,13 @@ public class HarvesterSettings {
      * Default object limit for domain configuration.
      */
     public static String DOMAIN_CONFIG_MAXOBJECTS = "settings.harvester.datamodel.domain.defaultMaxobjects";
-
+    
+    /**
+     * <b>settings.harvester.datamodel.domain.defaultSchedule</b>: <br>
+     * Default schedule for selective harvesting,. No default by default.
+     */
+    public static String DOMAIN_CONFIG_SCHEDULE = "settings.harvester.datamodel.domain.defaultSchedule";
+    
     /**
      * <b>settings.harvester.scheduler.jobGen.config.errorFactorPrevResult</b>: <br>
      * Used when calculating expected size of a harvest of some configuration during job-creation process. This defines
@@ -210,24 +216,28 @@ public class HarvesterSettings {
     public static String OBJECT_LIMIT_SET_BY_QUOTA_ENFORCER = "settings.harvester.scheduler.jobGen.objectLimitIsSetByQuotaEnforcer";
 
     /**
+     * <b>settings.harvester.scheduler.jobGen.useAlternateSnapShotJobgenerationMethod</b>:</br>
+     * If value is true, we use an alternate method for jobgeneration of a snapshotharvest continuing a previous harvest.
+     * Default value is false.
+     */
+    public static String USE_ALTERNATE_SNAPSHOT_JOBGENERATION_METHOD = "settings.harvester.scheduler.jobGen.useAlternateSnapshotJobgenerationMethod";
+    
+    /**
      * <b>settings.harvester.scheduler.jobtimeouttime</b>:<br />
      * Time before a STARTED job times out and change status to FAILED. In seconds.
      */
     public static String JOB_TIMEOUT_TIME = "settings.harvester.scheduler.jobtimeouttime";
 
     /**
-     * <b>settings.harvester.scheduler.jobgenerationperiode</b>: <br>
+     * <b>settings.harvester.scheduler.jobgenerationperiod</b>: <br>
      * The period between checking if new jobs should be generated, in seconds. This is one minute because that's the
      * finest we can define in a harvest definition.
      */
-    public static String GENERATE_JOBS_PERIOD = "settings.harvester.scheduler.jobgenerationperiode";
+    public static String GENERATE_JOBS_PERIOD = "settings.harvester.scheduler.jobgenerationperiod";
 
     /**
      * <b>settings.harvester.harvesting.serverDir</b>: <br>
-     * Each job gets a subdir of this dir. Job data is written and Heritrix writes to that subdir.
-     * TODO verify, if this is OK for Heritrix3 as well as Heritrix1
-     * NOTE THAT the jobsdir in Heritrix3 consists of ???????? 
-     * 
+     * Each job gets a subdir of this dir. Job data is written and Heritrix writes to that subdir. 
      */
     public static String HARVEST_CONTROLLER_SERVERDIR = "settings.harvester.harvesting.serverDir";
 
@@ -290,6 +300,12 @@ public class HarvesterSettings {
      * Maximum number of most recent history records displayed on the running job details page.
      */
     public static String HARVEST_MONITOR_DISPLAYED_HISTORY_SIZE = "settings.harvester.monitor.displayedHistorySize";
+    
+    /**
+     * <b>settings.harvester.monitor.displayedFrontierQueuesSize</b>:<br>
+     * Maximum number of frontier queues displayed on the running job details page.
+     */
+    public static String HARVEST_MONITOR_DISPLAYED_FRONTIER_QUEUE_SIZE = "settings.harvester.monitor.displayedFrontierQueuesSize";
 
     /**
      * <b>settings.harvester.harvesting.heritrix.crawlLoopWaitTime</b>:<br>
@@ -297,7 +313,6 @@ public class HarvesterSettings {
      * 
      * TODO Maybe move this from the heritrix settings (settings.harvester.harvesting.heritrix) to 
      * settings.harvester.harvesting.controller.  
-     * 
      */
     public static String CRAWL_LOOP_WAIT_TIME = "settings.harvester.harvesting.heritrix.crawlLoopWaitTime";
     
@@ -321,6 +336,18 @@ public class HarvesterSettings {
      * message to the harvester. Default value is 1000 millisecond.
      */
     public static String SEND_READY_DELAY = "settings.harvester.harvesting.sendReadyDelay";
+
+    /** 
+     * Support for limiting the number of submitted messages in each harvestchannel using a javax.jms.QueueBrowser.
+     * Default value is: false
+     */
+	public static String SCHEDULER_LIMIT_SUBMITTED_JOBS_IN_QUEUE = "settings.harvester.scheduler.limitSubmittedJobsInQueue";
+	
+	/** 
+     * The limit for submitted messages in each harvestchannel. Not enabled if SCHEDULER_LIMIT_SUBMITTED_JOBS_IN_QUEUE is false 
+     * Default value is: 1
+     */
+	public static String SCHEDULER_SUBMITTED_JOBS_IN_QUEUE_LIMIT = "settings.harvester.scheduler.submittedJobsInQueueLimit";
 
     /**
      * <b>settings.harvester.harvesting.frontier.frontierReportWaitTime</b>:<br>
@@ -487,8 +514,6 @@ public class HarvesterSettings {
      * <b>settings.harvester.harvesting.metadata.archiveFilesReportName</b> If
      * {@link #METADATA_GENERATE_ARCHIVE_FILES_REPORT} is set to true, sets the name of the generated report file.
      * Default value is 'archivefiles-report.txt'.
-     * 
-     * FIXME: not easily portable to H3, as it depends on information in heritrix_out.log no longer available.
      *
      * @see HarvestDocumentation#documentHarvest(dk.netarkivet.harvester.harvesting.IngestableFiles)
      */
@@ -497,11 +522,16 @@ public class HarvesterSettings {
     /**
      * <b>settings.harvester.harvesting.metadata.archiveFilesReportName</b> If
      * {@link #METADATA_GENERATE_ARCHIVE_FILES_REPORT} is set to true, sets the header of the generated report file.
-     * This setting should generally be left to its default value, which is '[ARCHIVEFILE] [Opened] [Closed] [Size]'.
+     * This setting should generally be left to its default value, which is '[ARCHIVEFILE] [Closed] [Size]'.
      *
      * @see HarvestDocumentation#documentHarvest(dk.netarkivet.harvester.harvesting.IngestableFiles)
      */
     public static String METADATA_ARCHIVE_FILES_REPORT_HEADER = "settings.harvester.harvesting.metadata.archiveFilesReport.fileHeader";
+
+    /**
+     * The version number which goes in metadata file names like 12345-metadata-&lt;version number&gt;.warc.gz
+     */
+    public static String METADATA_FILE_VERSION_NUMBER = "settings.harvester.harvesting.metadata.filename.versionnumber";
 
     /**
      * <b>settings.harvester.aliases.timeout</b> The amount of time in seconds before an alias times out, and needs to
@@ -523,6 +553,28 @@ public class HarvesterSettings {
     public static String METADATA_FORMAT = "settings.harvester.harvesting.metadata.metadataFormat";
 
     /**
+     * <b>settings.harvester.harvesting.metadata.metadataFileNameFormat</b> The format of the name of the metadata file :
+     * By default, it will be jobID-metadata.1.extension for example 3161-metadata-1.warc
+     * If the value is "prefix", it will be named like a warc file : Prefix-61-3161-metadata-1.warc
+     * default value : default (alternative: prefix) 
+     */
+    public static String METADATA_FILENAME_FORMAT = "settings.harvester.harvesting.metadata.metadataFileNameFormat";
+
+    /**
+     * <b>settings.harvester.harvesting.metadata.compression</b> Do we compress the
+     * metadata associated with a given harvest job. 
+     * default: false 
+     */
+    public static String METADATA_COMPRESSION = "settings.harvester.harvesting.metadata.compression";
+    
+    /**
+     * <b>settings.harvester.harvesting.heritrix.archiveNaming.collectionName</b>
+     * prefix for archive file
+     * if METADATA_FILENAME_FORMAT is "prefix", then check of a collection name to prefix metadata filename
+     */
+     public static String HERITRIX_PREFIX_COLLECTION_NAME = "settings.harvester.harvesting.heritrix.archiveNaming.collectionName";
+
+    /**
      * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the
      * harvested data. default: warc (alternative: arc)
      */
@@ -534,6 +586,13 @@ public class HarvesterSettings {
      * org.archive.crawler.writer.WARCWriterProcessor.
      */
     public static String HERITRIX_ARCHIVE_NAMING_CLASS = "settings.harvester.harvesting.heritrix.archiveNaming.class";
+
+    /**
+     * <b>settings.harvester.harvesting.heritrix.warc.warcParametersOverride</b> This paramater define NAS behaviour 
+     * regarding warc parameters (write request, write metadata, etc.) : if this parameter is true, the warc parameters
+     * defined in harvester templates are not considered. The default is true.
+     */
+    public static String HERITRIX_WARC_PARAMETERS_OVERRIDE = "settings.harvester.harvesting.heritrix.warc.warcParametersOverride";
 
     /**
      * <b>settings.harvester.harvesting.heritrix.warc.skipIdenticalDigests</b> Represents the 'skip-identical-digests'
@@ -551,6 +610,11 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_WARC_WRITE_METADATA = "settings.harvester.harvesting.heritrix.warc.writeMetadata";
     /**
+     * <b>settings.harvester.harvesting.heritrix.warc.writeMetadataOutlinks</b> Represents the 'write-metadata-outlinks' setting in the Heritrix 
+     * WARCWriterProcessor. The default is false.s
+     */
+    public static String HERITRIX_WARC_WRITE_METADATA_OUTLINKS = "settings.harvester.harvesting.heritrix.warc.writeMetadataOutlinks";
+    /**
      * <b>settings.harvester.harvesting.heritrix.warc.writeRevisitForIdenticalDigests</b> Represents the
      * 'write-revisit-for-identical-digests' setting in the Heritrix WARCWriterProcessor. The default is true.
      */
@@ -566,32 +630,20 @@ public class HarvesterSettings {
      * 'startNewFilesOnCheckpoint' setting in the Heritrix WARCWriterProcessor. Only available with H3. The default is true.
      */
     public static String HERITRIX_WARC_START_NEW_FILES_ON_CHECKPOINT 
-    	= "settings.harvester.harvesting.heritrix.warc.startNewFilesOnCheckpoint";
-    
-    
+        = "settings.harvester.harvesting.heritrix.warc.startNewFilesOnCheckpoint";
     
     /**
+     * Currently UNUSED.
      * <b>settings.harvester.harvesting.heritrix.version</b> Represents the version of Heritrix used by Netarchivesuite 
      * The default is h3. The optional value is h1.
+     * 
      * 
      * If h1 is chosen, we assume that our templates is h1, as well.
      * If h3 is chosen, we assume that our templates is h3, as well.
      * There is no attempt at migration from one to the other. This must be done by an commandline-tool.
      */
     public static String HERITRIX_VERSION = "settings.harvester.harvesting.heritrix.version";
-    /**
-     * <b>settings.harvester.harvesting.heritrix.bundle</b>Points to the Heritrix3 zipfile bundled with 
-     * netarchiveSuite classes. Currently no default value
-     */   	
-        public static String HERITRIX3_BUNDLE = "settings.harvester.harvesting.heritrix.bundle";
-
-    /**
-     * <b>settings.harvester.harvesting.heritrix.certificate</b>Points to the jks keystore to use for connection to the
-     * Heritrix3 rest api. If undefined the keystore provided with the heritrix3 bundler is used.
-     */
-    public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix.certificate";
-
-    public static String HERITRIX3_CERTIFICATE_PASSWORD = "settings.harvester.harvesting.heritrix.certificatePassword";
+    
     
     /**
      * <b>settings.harvester.performer</b>: <br>
@@ -645,10 +697,17 @@ public class HarvesterSettings {
      */
     public static String INDEXSERVER_INDEXING_LISTENING_INTERVAL = "settings.harvester.indexserver.listeningcheckinterval";
     /**
-     * <b>settings.archive.indexserver.satisfactorythresholdpercentage</b>: <br>
+     * <b>settings.harvester.indexserver.satisfactorythresholdpercentage</b>: <br>
      * Setting for the satisfactory threshold of the indexing result as a percentage. The default is 70 percent
      */
     public static String INDEXSERVER_INDEXING_SATISFACTORYTHRESHOLD_PERCENTAGE = "settings.harvester.indexserver.satisfactorythresholdpercentage";
+    
+    /**
+     * <b>settings.harvester.indexserver.tryToMigrateDuplicationRecords</b>: <br>
+     * Setting for trying to migrate deduplicate information from old jobs with duplicationmigration records.
+     * The default is false;
+     */
+    public static String INDEXSERVER_INDEXING_TRY_TO_MIGRATE_DUPLICATION_RECORDS = "settings.harvester.indexserver.tryToMigrateDuplicationRecords";
 
     /**
      * <b>settings.harvester.indexserver.indexrequestserver.class</b>: <br>
@@ -690,8 +749,108 @@ public class HarvesterSettings {
     public static String MAXIMUM_OBJECT_IN_BROWSER = "settings.harvester.viewerproxy.maxSizeInBrowser";
 
     /**
-     * The maximum length (in lines) of crawllog to be displayed in a browser window.
+     * <b>settings.harvester.viewerproxy.allowFileDownloads</b> If set to false, there will be no links to
+     * allow download of warcfiles via the Viewerproxy GUI.
+     */
+    public static String ALLOW_FILE_DOWNLOADS = "settings.harvester.viewerproxy.allowFileDownloads";
+
+    /**
+     * <b>settings.harvester.webinterface.maxCrawlLogInBrowser</b>: The maximum length (in lines) of 
+     * crawllog to be displayed in a browser window.
+     * default value: 1000
      */
     public static String MAX_CRAWLLOG_IN_BROWSER = "settings.harvester.webinterface.maxCrawlLogInBrowser";
+
+    /**
+     * <b>settings.harvester.webinterface.runningjobsFilteringMethod</b>: The filtering method using on the running jobs page.
+     * There are two available methods. Searching in the cached crawllogs (cachedLogs) or in the harvest database (database)  
+     * default: database
+     */
+    public static String RUNNINGJOBS_FILTERING_METHOD = "settings.harvester.webinterface.runningjobsFilteringMethod";
+
+   /**
+     * <b>settings.harvester.harvesting.heritrix</b>: <br>
+     * The path to the Heritrix3 SETTINGS.
+     */
+    public static String HERITRIX3 = "settings.harvester.harvesting.heritrix3";
+
+    /** Heritrix3  ArcWriter settings **/
+    
+    public static String HERITRIX3_ARC_COMPRESSION = "settings.harvester.harvesting.heritrix3.arc.compression";
+
+    public static String HERITRIX3_ARC_SUFFIX = "settings.harvester.harvesting.heritrix3.arc.suffix";
+
+    public static String HERITRIX3_ARC_MAXSIZE = "settings.harvester.harvesting.heritrix3.arc.maxFileSizeBytes";
+
+    public static String HERITRIX3_ARC_POOL_MAXACTIVE = "settings.harvester.harvesting.heritrix3.arc.poolMaxActive";
+
+    public static String HERITRIX3_ARC_SKIP_IDENTICAL_DIGESTS = "settings.harvester.harvesting.heritrix3.arc.skipIdenticalDigests";
+    
+    /**
+     * <b>settings.harvester.harvesting.heritrix3.warc.template</b>: <br>
+     * The template for warcfiles created by Heritrix.
+     * Default value in NAS: ${prefix}-${timestamp17}-${serialno}-${heritrix.hostname}
+     * Default value in H3:  ${prefix}-${timestamp17}-${serialno}-${heritrix.pid}~${heritrix.hostname}~${heritrix.port}
+     */
+    public static String HERITRIX3_WARC_TEMPLATE = "settings.harvester.harvesting.heritrix3.warc.template";
+
+    public static String HERITRIX3_WARC_COMPRESSION = "settings.harvester.harvesting.heritrix3.warc.compression";
+
+    public static String HERITRIX3_WARC_POOL_MAXACTIVE = "settings.harvester.harvesting.heritrix3.warc.poolMaxActive";
+    
+    public static String HERITRIX3_WARC_MAXSIZE = "settings.harvester.harvesting.heritrix3.warc.maxFileSizeBytes";
+    
+    public static String HERITRIX3_WARC_WRITE_REQUESTS = "settings.harvester.harvesting.heritrix3.warc.writeRequests";
+
+    public static String HERITRIX3_WARC_WRITE_METADATA = "settings.harvester.harvesting.heritrix3.warc.writeMetadata";
+
+    public static String HERITRIX3_WARC_WRITE_METADATA_OUTLINKS = "settings.harvester.harvesting.heritrix3.warc.writeMetadataOutlinks";
+
+    public static String HERITRIX3_WARC_SKIP_IDENTICAL_DIGESTS = "settings.harvester.harvesting.heritrix3.warc.skipIdenticalDigests";
+
+    public static String HERITRIX3_WARC_START_NEW_FILES_ON_CHECKPOINT = "settings.harvester.harvesting.heritrix3.warc.startNewFilesOnCheckpoint";
+
+    /**
+     * <b>settings.harvester.harvesting.heritrix.archiveFormat</b> The dataformat used by heritrix to write the
+     * harvested data. default: warc (alternative: arc)
+     */
+    public static String HERITRIX3_ARCHIVE_FORMAT = "settings.harvester.harvesting.heritrix3.archiveFormat";
+    /**
+     * <b>settings.harvester.harvesting.heritrix.archiveNaming.class</b> The class implementing the chosen way of naming
+     * your archive-files default: LegacyNamingConvention. This class decides what to put into the Heritrix "prefix"
+     * property of the org.archive.crawler.writer.ARCWriterProcessor and/or
+     * org.archive.crawler.writer.WARCWriterProcessor.
+     */
+    public static String HERITRIX3_ARCHIVE_NAMING_CLASS = "settings.harvester.harvesting.heritrix3.archiveNaming.class";
+ 
+     /**
+     * <b>settings.harvester.harvesting.heritrix.warc.writeMetadataOutlinks</b> This paramater define NAS behaviour 
+     * regarding warc parameters (write request, write metadata, etc.) : if this parameter is true, the warc parameters
+     * defined in harvester templates are not considered. The default is true.
+     */
+    public static String HERITRIX3_WARC_PARAMETERS_OVERRIDE = "settings.harvester.harvesting.heritrix3.warc.warcParametersOverride";
+   
+    /**
+     * <b>settings.harvester.harvesting.heritrix.bundle</b>Points to the Heritrix3 zipfile bundled with 
+     * netarchiveSuite classes. Currently no default value
+     */     
+    public static String HERITRIX3_BUNDLE = "settings.harvester.harvesting.heritrix3.bundle";
+
+    /**
+     * <b>settings.harvester.harvesting.heritrix.certificate</b>Points to the jks keystore to use for connection to the
+     * Heritrix3 rest api. If undefined the keystore provided with the heritrix3 bundler is used.
+     */
+    public static String HERITRIX3_CERTIFICATE = "settings.harvester.harvesting.heritrix3.certificate";
+    /**
+     * <b>settings.harvester.harvesting.heritrix.certificatePassword</b>Points to the password to use for connection to the
+     * Heritrix3 rest api.
+     */
+    public static String HERITRIX3_CERTIFICATE_PASSWORD = "settings.harvester.harvesting.heritrix3.certificatePassword";
+
+    /**
+     * <b>settings.harvester.harvesting.monitor.tempPath</b>: The directory used to cache the h3 crawllogs.
+     * Default value: cached_crawllogs
+     */
+    public static String HERITRIX3_MONITOR_TEMP_PATH = "settings.harvester.harvesting.monitor.tempPath";
 
 }

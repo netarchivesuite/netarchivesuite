@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -103,10 +103,10 @@ public abstract class HeritrixLauncherAbstract {
         return args;
     }
 
-    public void setupOrderfile(Heritrix3Files files) {
+    public void setupOrderfile(String jobName, Heritrix3Files files) {
     	// Here the last changes of the template is performed
     	log.info("Make the template ready for Heritrix3");
-        makeTemplateReadyForHeritrix3(files);
+        makeTemplateReadyForHeritrix3(jobName, files);
     }
 
     /**
@@ -130,16 +130,31 @@ public abstract class HeritrixLauncherAbstract {
      * @throws IOFailure - When the orderfile could not be saved to disk 
      * @throws IllegalState - When the orderfile is not a H3 template                  
      */
-    public static void makeTemplateReadyForHeritrix3(Heritrix3Files files) throws IOFailure {    	
+    public static void makeTemplateReadyForHeritrix3(String jobName, Heritrix3Files files) throws IOFailure {
     	HeritrixTemplate templ = HeritrixTemplate.read(files.getOrderXmlFile());
     	if (templ instanceof H3HeritrixTemplate) {
     		H3HeritrixTemplate template = (H3HeritrixTemplate) templ;
     		template.setArchiveFilePrefix(files.getArchiveFilePrefix());
 
     		if (template.IsDeduplicationEnabled()) {
-    			template.setDeduplicationIndexLocation(files.getIndexDir().getAbsolutePath());
-    		}
-    		// Remove superfluous placeholders in the template (maybe unnecessary)
+                final String deduplicationIndexLocation = files.getIndexDir().getAbsolutePath();
+                log.debug("Template is dedup-enabled so setting index location to {}.", deduplicationIndexLocation);
+                template.setDeduplicationIndexLocation(deduplicationIndexLocation);
+    		} else {
+                log.debug("Template is not dedup-enabled so not setting index location");
+            }
+            if (Settings.getBoolean(Heritrix3Settings.UMBRA_IS_ENABLED)) {
+    		    log.debug("Inserting Umbra-related parameters for job {}.", jobName);
+                String rabbitMQUrl = Settings.get(Heritrix3Settings.UMBRA_URL);
+                if (rabbitMQUrl == null || "".equals(rabbitMQUrl)) {
+                    final String message = "Umbra is enabled but empty Url is specified.";
+                    log.error(message);
+                    throw new ArgumentNotValid(message);
+                }
+                String umbraFilter = Settings.get(Heritrix3Settings.UMBRA_HOPS_SHOULD_PROCESS);
+                log.debug("Url's will be sent to Umbra if their discovery path matches '{}'.", umbraFilter);
+                template.insertUmbrabean(jobName, rabbitMQUrl, umbraFilter);
+            }
     		template.removePlaceholders();
     		files.writeOrderXml(template);
     	} else {

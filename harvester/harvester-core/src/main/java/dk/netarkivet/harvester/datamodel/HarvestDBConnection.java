@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -24,12 +24,18 @@
 package dk.netarkivet.harvester.datamodel;
 
 import java.beans.PropertyVetoException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.antiaction.raptor.sql.ExecuteSqlFile;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import dk.netarkivet.common.CommonSettings;
@@ -117,7 +123,6 @@ public final class HarvestDBConnection {
      * @throws IOFailure in case of problems in interacting with the database
      */
     protected static void updateTable(final String table, final int newVersion, final String... updates) {
-
         Connection c = get();
         updateTable(c, table, newVersion, updates);
     }
@@ -138,6 +143,27 @@ public final class HarvestDBConnection {
 
         try {
             DBUtils.executeSQL(c, sqlStatements);
+        } finally {
+            release(c);
+        }
+    }
+
+    protected static void updateTableVersion(final String table, final int newVersion, final String... updates) {
+        Connection c = get();
+        updateTableVersion(c, table, newVersion);
+    }
+
+    public static void updateTableVersion(Connection c, final String table, final int newVersion) {
+        log.info("Updating table '{}' to version {}", table, newVersion);
+        String updateSchemaversionSql = null;
+        if (newVersion == 1) {
+            updateSchemaversionSql = "INSERT INTO schemaversions(tablename, version) VALUES ('" + table + "', 1)";
+        } else {
+            updateSchemaversionSql = "UPDATE schemaversions SET version = " + newVersion + " WHERE tablename = '"
+                    + table + "'";
+        }
+        try {
+            DBUtils.executeSQL(c, updateSchemaversionSql);
         } finally {
             release(c);
         }
@@ -245,6 +271,7 @@ public final class HarvestDBConnection {
         dataSource.setMinPoolSize(Settings.getInt(CommonSettings.DB_POOL_MIN_SIZE));
         dataSource.setMaxPoolSize(Settings.getInt(CommonSettings.DB_POOL_MAX_SIZE));
         dataSource.setAcquireIncrement(Settings.getInt(CommonSettings.DB_POOL_ACQ_INC));
+        dataSource.setMaxConnectionAge(Settings.getInt(CommonSettings.DB_POOL_MAX_CONNECTION_AGE));
 
         // Configure idle connection testing
         int testPeriod = Settings.getInt(CommonSettings.DB_POOL_IDLE_CONN_TEST_PERIOD);
@@ -278,4 +305,60 @@ public final class HarvestDBConnection {
                     dataSource.getPreferredTestQuery(), dataSource.isTestConnectionOnCheckin());
         }
     }
+
+    /**
+     * Execute the sql to update a given table to a given version.  
+     * The necessary scripts are bundled into the root of the harvester-core.jar in the directory sql-migration.
+     * The source of these scripts are in one of these directories:
+     * 
+     *  $BASEDIR/deploy/deploy-core/scripts/postgresql/migration/
+     *  $BASEDIR/deploy/deploy-core/scripts/mysql/migration/
+     *  $BASEDIR/deploy/deploy-core/scripts/derby/migration/
+     *   
+     *  To allow the user to update table 'eav_attribute' in postgresql to version 1
+     *  the file $BASEDIR/deploy/deploy-core/scripts/postgresql/migration/eav_attribute.1.sql must exist
+     *  The postgresql files are during the build-phase put into the sql-migration/postgresql directory
+     *  The same holds for mysql and derby.
+     *  
+     * @param dbm the type of DBMS (mysql, postgresql,derby)  
+     * @param tableName The given table to update
+     * @param version The table version to update to
+     */
+    public static void executeSql(String dbm, String tableName, int version) {
+    	Connection conn = HarvestDBConnection.get();
+        executeSql(conn, dbm, tableName, version);
+        HarvestDBConnection.release(conn);
+        conn = null;
+    }
+
+    /**
+     * Look for the file sql-migration/${dbm}/${tableName}.${version}.sql inside in the harvester-core.jar file.
+     * 
+     * @param conn a valid database connection
+     * @param dbm the name of the DBMS used
+     * @param tableName the name of the table being updated
+     * @param version The new version of the table
+     */
+    public static void executeSql(Connection conn, String dbm, String tableName, int version) {
+        String resource = "sql-migration/" + dbm + "/" + tableName + "." + version + ".sql";
+        log.info("Fetching resource {} to update table '{}' to version {} using databasetype {}", resource, tableName, version, dbm);
+    	InputStream in = HarvestDBConnection.class.getClassLoader().getResourceAsStream(resource);
+    	try {
+        	List<Map.Entry<String, String>> statements = ExecuteSqlFile.splitSql(in, "UTF-8", 8192);
+        	in.close();
+        	in = null;
+            ExecuteSqlFile.executeStatements(conn, statements);
+            // Update the schemaversions with the new version for this table
+            HarvestDBConnection.updateTable(conn, tableName, version);
+    	} catch (IOException e) {
+    		throw new IOFailure("Unable to update the table '" + tableName 
+    		        + "' to version '" + version + "' using database '" + dbm + "'", e);
+    	} catch (SQLException e) {
+    	    throw new IOFailure("Unable to update the table '" + tableName 
+            + "' to version '" + version + "' using database '" + dbm + "':\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+    	} finally {
+    	    IOUtils.closeQuietly(in);
+    	}
+    }
+
 }

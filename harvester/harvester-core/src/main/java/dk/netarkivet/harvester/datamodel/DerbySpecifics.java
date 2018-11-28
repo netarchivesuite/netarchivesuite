@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -388,6 +388,25 @@ public abstract class DerbySpecifics extends DBSpecifics {
         String[] sqlStatements = {"ALTER TABLE extendedfieldvalue ALTER content SET DATA TYPE VARCHAR(30000)",
                 "ALTER TABLE extendedfieldvalue ALTER content NOT NULL"};
         HarvestDBConnection.updateTable("extendedfieldvalue", 2, sqlStatements);
+    }
+
+    @Override
+    protected void migrateOrderTemplatesTablev1tov2() {
+        String tableName = HarvesterDatabaseTables.ORDERTEMPLATES.getTablename();
+        String[] sqlStatements = {"ALTER TABLE " + tableName + " ADD COLUMN isActive BOOLEAN NOT NULL DEFAULT TRUE"};
+        HarvestDBConnection.updateTable(tableName, 2, sqlStatements);
+    }
+
+    @Override
+    public void createEavTypeAttributeTable(int toVersion) {
+        String tableName = HarvesterDatabaseTables.EAVTYPEATTRIBUTE.getTablename();
+        HarvestDBConnection.executeSql("derby", tableName, 1 );
+    }
+
+    @Override
+    public void createEavAttributeTable(int toVersion) {
+        String tableName = HarvesterDatabaseTables.EAVATTRIBUTE.getTablename();
+        HarvestDBConnection.executeSql("derby", tableName, 1 );
     }
 
 }

@@ -5,8 +5,8 @@ Author:     $Author$
 Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2012 The Royal Danish Library, the Danish State and
-University Library, the National Library of France and the Austrian
+Copyright 2004-2018 The Royal Danish Library,
+the National Library of France and the Austrian
 National Library.
 
 This library is free software; you can redistribute it and/or
@@ -28,8 +28,6 @@ This is the error page for the GUI and is displayed whenever an uncaught
 exception is thrown. The error message is presented unescaped.
 --%>
 <%@ page import="java.io.PrintWriter,
-                 org.slf4j.LoggerFactory,
-                 org.slf4j.Logger,
                  dk.netarkivet.common.Constants,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils"
@@ -41,12 +39,12 @@ exception is thrown. The error message is presented unescaped.
 /><%!
     private static final I18n I18N = new I18n(
             Constants.TRANSLATIONS_BUNDLE);
-    Logger log = LoggerFactory.getLogger(getClass());
+    //Logger log = LoggerFactory.getLogger(getClass());
 %><%
     String title = I18N.getString(response.getLocale(),
             "pagetitle.error");
     HTMLUtils.generateHeader(title, pageContext);
-    log.warn("JSP page threw exception: " + exception, exception);
+    //log.warn("JSP page threw exception: " + exception, exception);
 %>
 <h3>
     <fmt:message key="pagetitle.error"/>

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - wayback
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -27,10 +27,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.archive.wayback.UrlCanonicalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,12 +48,16 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
     /** Define SimpleDateFormat objects for the representation of timestamps in crawl logs and cdx files respectively. */
     private static final String crawlDateFormatString = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final String cdxDateFormatString = "yyyyMMddHHmmss";
-    private static final SimpleDateFormat crawlDateFormat = new SimpleDateFormat(crawlDateFormatString);
-    private static final SimpleDateFormat cdxDateFormat = new SimpleDateFormat(cdxDateFormatString);
+    private static final FastDateFormat crawlDateFormat = FastDateFormat.getInstance(crawlDateFormatString);
+    private static final FastDateFormat cdxDateFormat = FastDateFormat.getInstance(cdxDateFormatString);
 
     /** Pattern representing the part of a crawl log entry describing a duplicate record. */
-    private static final String duplicateRecordPatternString = "duplicate:\"(.*),(.*)\",(.*)";
+    private static final String duplicateRecordPatternString = "duplicate:\"([^,]*),([^,]*)\",(.*)";	//e.g. duplicate:"arcfile,offset"
+    // The extended format is made to preserve the date of the record pointed to by arcfile,offset argument
+    private static final String extendedDuplicateRecordPatternString = "duplicate:\"([^,]*),([^,]*),([^,]*)\",(.*)"; //e.g. duplicate:"arcfile,offset,timestamp"
+    
     private static final Pattern duplicateRecordPattern = Pattern.compile(duplicateRecordPatternString);
+    private static final Pattern extendedDuplicateRecordPattern = Pattern.compile(extendedDuplicateRecordPatternString);
 
     /** canonicalizer used to canonicalize urls. */
     UrlCanonicalizer canonicalizer;
@@ -99,15 +103,20 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                     String[] parts = duplicateRecord.split(DUPLICATE_MATCHING_STRING);
                     if (parts.length == 2) {
                         String newDuplicateRecord = DUPLICATE_MATCHING_STRING + parts[1];
-                        log.warn("Duplicate-record changed from '{}' to '{}'", duplicateRecord, newDuplicateRecord);
+                        log.debug("Duplicate-record changed from '{}' to '{}'", duplicateRecord, newDuplicateRecord);
                         duplicateRecord = newDuplicateRecord;
                     }
                 }
                 Matcher m = duplicateRecordPattern.matcher(duplicateRecord);
+                Matcher m1 = extendedDuplicateRecordPattern.matcher(duplicateRecord);
                 if (m.matches()) {
                     String arcfile = m.group(1);
                     String offset = m.group(2);
                     result.append(offset).append(' ').append(arcfile);
+                } else if (m1.matches()) {
+                	String arcfile = m1.group(1);
+                	String offset = m1.group(2);
+                	result.append(offset).append(' ').append(arcfile);
                 } else {
                     throw new ArgumentNotValid("crawl record did not match " + "expected pattern for duplicate"
                             + " record: '" + duplicateRecord + "'");

@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +50,11 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.datamodel.eav.EAV;
+import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValue;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDAO;
 import dk.netarkivet.harvester.datamodel.extendedfield.ExtendedFieldValueDBDAO;
@@ -100,6 +104,7 @@ public class DomainDBDAO extends DomainDAO {
     protected void create(Connection connection, Domain d) {
         ArgumentNotValid.checkNotNull(d, "d");
         ArgumentNotValid.checkNotNullOrEmpty(d.getName(), "d.getName()");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(d.getName()),"Not creating domain wth invalid name " + d.getName());
 
         if (exists(connection, d.getName())) {
             String msg = "Cannot create already existing domain " + d;
@@ -733,6 +738,7 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     protected synchronized Domain read(Connection c, String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Invalid domain name " + domainName);
         if (!exists(c, domainName)) {
             throw new UnknownID("No domain by the name '" + domainName + "'");
         }
@@ -742,6 +748,7 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     protected synchronized Domain readKnown(Connection c, String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Invalid domain name " + domainName);
         Domain result;
         PreparedStatement s = null;
         try {
@@ -771,8 +778,16 @@ public class DomainDBDAO extends DomainDAO {
             Domain d = new Domain(domainName);
             d.setComments(comments);
             // don't throw exception if illegal regexps are found.
-            boolean strictMode = false;
-            d.setCrawlerTraps(Arrays.asList(crawlertraps.split("\n")), strictMode);
+            boolean strictMode = false; 
+            String[] traps = crawlertraps.split("\n");
+            List<String> insertList = new ArrayList<String>();
+            for (String trap: traps) {
+                if (!trap.isEmpty()) { // Ignore empty traps (NAS-2480)
+                    insertList.add(trap);
+                }
+            }
+            log.trace("Found {} crawlertraps for domain '{}' in database", insertList.size(), domainName);
+            d.setCrawlerTraps(insertList, strictMode);
             d.setID(domainId);
             d.setEdition(edition);
             if (alias != null) {
@@ -851,6 +866,10 @@ public class DomainDBDAO extends DomainDAO {
             dc.setID(domainconfigId);
             d.addConfiguration(dc);
             s1.close();
+
+            // EAV
+            List<AttributeAndType> attributesAndTypes = EAV.getInstance().getAttributesAndTypes(EAV.DOMAIN_TREE_ID, (int)domainconfigId);
+            dc.setAttributesAndTypes(attributesAndTypes);
         }
         if (!d.getAllConfigurations().hasNext()) {
             String message = "Loaded domain " + d + " with no configurations";
@@ -1016,7 +1035,9 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     public synchronized boolean exists(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
-
+        if (!DomainUtils.isValidDomainName(domainName)) {
+            return false;
+        }
         Connection c = HarvestDBConnection.get();
         try {
             return exists(c, domainName);
@@ -1033,6 +1054,9 @@ public class DomainDBDAO extends DomainDAO {
      * @return true if a domain with the given name exists, otherwise false.
      */
     private synchronized boolean exists(Connection c, String domainName) {
+        if (!DomainUtils.isValidDomainName(domainName)) {
+            return false;
+        }
         return 1 == DBUtils.selectIntValue(c, "SELECT COUNT(*) FROM domains WHERE name = ?", domainName);
     }
 
@@ -1053,7 +1077,9 @@ public class DomainDBDAO extends DomainDAO {
             List<String> domainNames = DBUtils.selectStringList(c, "SELECT name FROM domains ORDER BY name");
             List<Domain> orderedDomains = new LinkedList<Domain>();
             for (String name : domainNames) {
-                orderedDomains.add(read(c, name));
+                if (DomainUtils.isValidDomainName(name)) {
+                    orderedDomains.add(read(c, name));
+                }
             }
             return orderedDomains.iterator();
         } finally {
@@ -1063,23 +1089,77 @@ public class DomainDBDAO extends DomainDAO {
 
     @Override
     public Iterator<Domain> getAllDomainsInSnapshotHarvestOrder() {
+        return getDomainsInSnapshotHarvestOrder(null);
+    }
+    
+    @Override
+    public Iterator<Domain> getDomainsInSnapshotHarvestOrder(Long hid) {
         Connection c = HarvestDBConnection.get();
+        List<String> domainNames = null;
+        List<String> domainNamesWithAttributes = null;
         try {
-            // Note: maxbytes are ordered with largest first for symmetry
-            // with HarvestDefinition.CompareConfigDesc
-            List<String> domainNames = DBUtils.selectStringList(c, "SELECT domains.name"
-                    + " FROM domains, configurations, ordertemplates"
-                    + " WHERE domains.defaultconfig=configurations.config_id" + " AND configurations.template_id"
-                    + "=ordertemplates.template_id" + " ORDER BY" + " ordertemplates.name,"
-                    + " configurations.maxbytes DESC," + " domains.name");
-            return new FilterIterator<String, Domain>(domainNames.iterator()) {
+            if (hid==null) {
+                log.info("Starting a select of all domains used for Snapshot harvesting");
+                // Note: maxbytes are ordered with largest first for symmetry
+                // with HarvestDefinition.CompareConfigDesc
+                domainNames = DBUtils.selectStringList(c, "SELECT domains.name"
+                        + " FROM domains, configurations, ordertemplates"
+                        + " WHERE domains.defaultconfig=configurations.config_id" + " AND configurations.template_id"
+                        + "=ordertemplates.template_id" + " ORDER BY" + " ordertemplates.name,"
+                        + " configurations.maxbytes DESC," + " domains.name");
+                log.info("Retrieved all {} domains used for Snapshot harvesting without searching for attributes for their default configs", domainNames.size());
+                domainNamesWithAttributes = DBUtils.selectStringList(c, // Don't order this - it will be ordered later
+                        "SELECT DISTINCT domains.name"
+                        + " FROM domains, configurations, eav_attribute"
+                        + " WHERE domains.defaultconfig=configurations.config_id"
+                        + " AND configurations.config_id=eav_attribute.entity_id");
+                log.info("Retrieved all {} domains used for Snapshot harvesting that has attributes for their default configs", domainNamesWithAttributes.size());
+                domainNames = domainNames.stream().filter(DomainUtils::isValidDomainName).collect(Collectors.toList());
+                //  Remove the content of domainNamesWithAttributes from domainNames
+                domainNames.removeAll(domainNamesWithAttributes);
+                log.info("Removed all {} domains with attributes from the total list, reducing total-list to {}", domainNamesWithAttributes.size(), domainNames.size());
+                // Add the remainder of domainNames to domainNamesWithAttributes, so the domain configs with attributes will be handled first.
+                domainNamesWithAttributes.addAll(domainNames);
+                log.info("Remainder of total list merged with list of domains w/ attributes is size {}", domainNamesWithAttributes.size()); 
+            } else {
+                log.info("Starting a select of all domains harvested in previous snapshot harvest #{}", hid);
+                domainNames = DBUtils.selectStringList(c, "SELECT DISTINCT domains.name"
+                        + " FROM domains, configurations, ordertemplates, historyinfo"
+                        + " WHERE domains.defaultconfig=configurations.config_id" + " AND configurations.template_id"
+                        + "=ordertemplates.template_id" 
+                        + " AND configurations.config_id=historyinfo.config_id "
+                        + " AND historyinfo.harvest_id=" + hid);
+                        // NOTE: the ordering has now been skipped to prevent duplicates
+                        //  + " ORDER BY" + " ordertemplates.name," 
+                        //  + " configurations.maxbytes DESC");
+                        // "," + " domains.name");
+                log.info("Retrieved all {} domains harvested in previous snapshot harvest #{}", domainNames.size(), hid);
+                domainNamesWithAttributes = DBUtils.selectStringList(c, // Don't order this - it will be ordered later
+                        "SELECT DISTINCT domains.name"
+                        + " FROM domains, configurations, eav_attribute, historyinfo"
+                        + " WHERE domains.defaultconfig=configurations.config_id"
+                        + " AND configurations.config_id=eav_attribute.entity_id"
+                        + " AND historyinfo.config_id=configurations.config_id"
+                        + " AND historyinfo.harvest_id=" + hid
+                        );
+                log.info("Retrieved all {} domains harvested in previous snapshot harvest that has attributes for their default configs", domainNamesWithAttributes.size());
+                domainNames = domainNames.stream().filter(DomainUtils::isValidDomainName).collect(Collectors.toList());
+                //  Remove the content of domainNamesWithAttributes from domainNames
+                domainNames.removeAll(domainNamesWithAttributes);
+                log.info("Removed all {} domains with attributes from the total list, reducing total-list to {}", domainNamesWithAttributes.size(), domainNames.size());
+                // Add the remainder of domainNames to domainNamesWithAttributes, so the domain configs with attributes will be handled first.
+                domainNamesWithAttributes.addAll(domainNames);
+                log.info("Remainder of total list merged with list of domains w/ attributes is size {}", domainNamesWithAttributes.size());   
+            }
+
+            return new FilterIterator<String, Domain>(domainNamesWithAttributes.iterator()) {
                 public Domain filter(String s) {
                     return readKnown(s);
                 }
             };
         } finally {
             HarvestDBConnection.release(c);
-        }
+        }   
     }
 
     @Override
@@ -1087,10 +1167,10 @@ public class DomainDBDAO extends DomainDAO {
         ArgumentNotValid.checkNotNullOrEmpty(glob, "glob");
         // SQL uses % and _ instead of * and ?
         String sqlGlob = DBUtils.makeSQLGlob(glob);
-
         Connection c = HarvestDBConnection.get();
         try {
-            return DBUtils.selectStringList(c, "SELECT name FROM domains WHERE name LIKE ? ORDER BY name", sqlGlob);
+            List<String> names = DBUtils.selectStringList(c, "SELECT name FROM domains WHERE name LIKE ? ORDER BY name", sqlGlob);
+            return names.stream().filter(DomainUtils::isValidDomainName).collect(Collectors.toList());
         } finally {
             HarvestDBConnection.release(c);
         }
@@ -1111,13 +1191,9 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
-    /**
-     * Get the name of the default configuration for the given domain.
-     *
-     * @param domainName a name of a domain
-     * @return the name of the default configuration for the given domain.
-     */
-    private String getDefaultDomainConfigurationName(String domainName) {
+    @Override
+    public String getDefaultDomainConfigurationName(String domainName) {
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         Connection c = HarvestDBConnection.get();
         try {
             return DBUtils.selectStringValue(c, "SELECT configurations.name " + "FROM domains, configurations "
@@ -1130,7 +1206,7 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     public synchronized SparseDomain readSparse(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
-
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         Connection c = HarvestDBConnection.get();
         try {
             List<String> domainConfigurationNames = DBUtils.selectStringList(c, "SELECT configurations.name "
@@ -1148,6 +1224,7 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     public List<AliasInfo> getAliases(String domain) {
         ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domain), "Cannot read invalid domain name " + domain);
         List<AliasInfo> resultSet = new ArrayList<AliasInfo>();
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
@@ -1194,9 +1271,10 @@ public class DomainDBDAO extends DomainDAO {
                 String aliasOf = res.getString(2);
                 Date lastchanged = DBUtils.getDateMaybeNull(res, 3);
                 AliasInfo ai = new AliasInfo(domainName, aliasOf, lastchanged);
-                resultSet.add(ai);
+                if (DomainUtils.isValidDomainName(domainName) && DomainUtils.isValidDomainName(aliasOf)) {
+                    resultSet.add(ai);
+                }
             }
-
             return resultSet;
         } catch (SQLException e) {
             throw new IOFailure("Failure getting alias-information" + "\n", e);
@@ -1225,24 +1303,26 @@ public class DomainDBDAO extends DomainDAO {
             ResultSet res = s.executeQuery();
             while (res.next()) {
                 String domain = res.getString(1);
-                // getting the TLD level of the domain
-                int domainTLDLevel = TLDInfo.getTLDLevel(domain);
+                if (DomainUtils.isValidDomainName(domain)) {
+                    // getting the TLD level of the domain
+                    int domainTLDLevel = TLDInfo.getTLDLevel(domain);
 
-                // restraining to max level
-                if (domainTLDLevel > level) {
-                    domainTLDLevel = level;
-                }
-
-                // looping from level 1 to level max of the domain
-                for (int currentLevel = 1; currentLevel <= domainTLDLevel; currentLevel++) {
-                    // getting the tld of the domain by level
-                    String tld = TLDInfo.getMultiLevelTLD(domain, currentLevel);
-                    TLDInfo i = resultMap.get(tld);
-                    if (i == null) {
-                        i = new TLDInfo(tld);
-                        resultMap.put(tld, i);
+                    // restraining to max level
+                    if (domainTLDLevel > level) {
+                        domainTLDLevel = level;
                     }
-                    i.addSubdomain(domain);
+
+                    // looping from level 1 to level max of the domain
+                    for (int currentLevel = 1; currentLevel <= domainTLDLevel; currentLevel++) {
+                        // getting the tld of the domain by level
+                        String tld = TLDInfo.getMultiLevelTLD(domain, currentLevel);
+                        TLDInfo i = resultMap.get(tld);
+                        if (i == null) {
+                            i = new TLDInfo(tld);
+                            resultMap.put(tld, i);
+                        }
+                        i.addSubdomain(domain);
+                    }
                 }
             }
 
@@ -1262,6 +1342,7 @@ public class DomainDBDAO extends DomainDAO {
     public HarvestInfo getDomainJobInfo(Job j, String domainName, String configName) {
         ArgumentNotValid.checkNotNull(j, "j");
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         ArgumentNotValid.checkNotNullOrEmpty(configName, "configName");
         HarvestInfo resultInfo = null;
 
@@ -1304,6 +1385,7 @@ public class DomainDBDAO extends DomainDAO {
     @Override
     public List<DomainHarvestInfo> listDomainHarvestInfo(String domainName, String orderBy, boolean asc) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         Connection c = HarvestDBConnection.get();
         PreparedStatement s = null;
         final ArrayList<DomainHarvestInfo> domainHarvestInfos = new ArrayList<DomainHarvestInfo>();
@@ -1375,6 +1457,7 @@ public class DomainDBDAO extends DomainDAO {
 
     @Override
     public DomainConfiguration getDomainConfiguration(String domainName, String configName) {
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         DomainHistory history = getDomainHistory(domainName);
         List<String> crawlertraps = getCrawlertraps(domainName);
 
@@ -1383,6 +1466,7 @@ public class DomainDBDAO extends DomainDAO {
         PreparedStatement s = null;
         try {
             // Read the configurations now that passwords and seedlists exist
+        	// TODO Seriously? Use a join.
             s = c.prepareStatement("SELECT config_id, " + "configurations.name, " + "comments, "
                     + "ordertemplates.name, " + "maxobjects, " + "maxrate, " + "maxbytes"
                     + " FROM configurations, ordertemplates " + "WHERE domain_id = (SELECT domain_id FROM domains "
@@ -1444,6 +1528,10 @@ public class DomainDBDAO extends DomainDAO {
                 dc.setID(domainconfigId);
                 foundConfigs.add(dc);
                 s2.close();
+
+                // EAV
+                List<AttributeAndType> attributesAndTypes = EAV.getInstance().getAttributesAndTypes(EAV.DOMAIN_TREE_ID, (int)domainconfigId);
+                dc.setAttributesAndTypes(attributesAndTypes);
             } // While
         } catch (SQLException e) {
             throw new IOFailure("Error while fetching DomainConfigration: ", e);
@@ -1461,6 +1549,7 @@ public class DomainDBDAO extends DomainDAO {
      * @return the crawlertraps for given domain.
      */
     private List<String> getCrawlertraps(String domainName) {
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         Connection c = HarvestDBConnection.get();
         String traps = null;
         PreparedStatement s = null;
@@ -1489,7 +1578,10 @@ public class DomainDBDAO extends DomainDAO {
         ArgumentNotValid.checkNotNull(previousHarvestDefinition, "previousHarvestDefinition");
         // For each domainConfig, get harvest infos if there is any for the
         // previous harvest definition
-        return new FilterIterator<DomainConfiguration, HarvestInfo>(previousHarvestDefinition.getDomainConfigurations()) {
+        log.debug("We start the Iterator<HarvestInfo> process with getting an iterator of DomainConfigs in the previous HD#{}", previousHarvestDefinition.getOid());
+        Iterator<DomainConfiguration> previousDomainConfigs = previousHarvestDefinition.getDomainConfigurations();
+        log.debug("Now finished getting an iterator of DomainConfigs in the previous HD#{}. We can now return the FilterIterator<DomainConfiguration, HarvestInfo>", previousHarvestDefinition.getOid());
+        return new FilterIterator<DomainConfiguration, HarvestInfo>(previousDomainConfigs) {
             /**
              * @see FilterIterator#filter(Object)
              */
@@ -1502,10 +1594,71 @@ public class DomainDBDAO extends DomainDAO {
             }
         }; // Here ends the above return-statement
     }
+    
+    /**
+     * Retrieve HarvestInfo for a given harvestdefinition and domain combination.
+     * @param harvestDefinition a given harvestdefinition
+     * @param domain a given domain
+     * @return null, if no HarvestInfo found for the given harvestdefinition and domain combination, otherwise it returns the first matching HarvestInfo found and gives a warning if more than one match exist.
+     */
+    @Override
+    public HarvestInfo getHarvestInfoForDomainInHarvest(final HarvestDefinition harvestDefinition, final Domain domain) {
+        PreparedStatement s = null;
+        Connection c = HarvestDBConnection.get();
+        try {
+            s = c.prepareStatement("SELECT h.stopreason, h.objectcount, h.bytecount, c.name, h.job_id, h.harvest_time FROM historyinfo as h, configurations as c WHERE "
+                + " c.config_id=h.config_id AND c.domain_id=? AND h.harvest_id=?");
+            s.setLong(1, domain.getID());
+            s.setLong(2, harvestDefinition.getOid());
+            ResultSet res = s.executeQuery();
+            List<HarvestInfo> infoFoundForDomain = new ArrayList<HarvestInfo>();
+            while (res.next()) {
+                int stopreasonNum = res.getInt(1);
+                StopReason stopreason = StopReason.getStopReason(stopreasonNum);
+                long objectCount = res.getLong(2);
+                long byteCount = res.getLong(3);
+                String configName = res.getString(4);
+                Long jobId = res.getLong(5);
+                if (res.wasNull()) {
+                    jobId = null;
+                }
+                long harvestId = harvestDefinition.getOid();
+                Date harvestTime = new Date(res.getTimestamp(6).getTime());
+
+                HarvestInfo hi = new HarvestInfo(harvestId, jobId, domain.getName(), configName, harvestTime, byteCount, objectCount, stopreason);
+                infoFoundForDomain.add(hi);
+            }
+            if (infoFoundForDomain.isEmpty()) {
+                return null;
+            } else if (infoFoundForDomain.size() == 1) {
+                return infoFoundForDomain.get(0);
+            } else {
+                HarvestInfo selected = infoFoundForDomain.get(0);
+                Long latest = selected.getDate().getTime();
+                for (int i=1; i < infoFoundForDomain.size(); i++) {
+                    if (infoFoundForDomain.get(i).getDate().getTime() > latest) {
+                        latest = infoFoundForDomain.get(i).getDate().getTime();
+                        selected = infoFoundForDomain.get(i);
+                    }
+                }
+                log.warn("Found {} harvestInfo entries for domain '{}' and harvestdefinition '{}'. Selecting the latest entry: {}", infoFoundForDomain.size(), domain.getName(), 
+                        harvestDefinition.getName(), selected);
+                return selected;
+            }
+        } catch (SQLException e) {
+            throw new IOFailure("Error while fetching HarvestInfo for domain '" + domain.getName() + "' in harvest '" + harvestDefinition.getName() + "':", e);
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+            HarvestDBConnection.release(c);
+        }
+    }
+    
+    
 
     @Override
     public DomainHistory getDomainHistory(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "String domainName");
+        ArgumentNotValid.checkTrue(DomainUtils.isValidDomainName(domainName), "Cannot read invalid domain name " + domainName);
         Connection c = HarvestDBConnection.get();
         DomainHistory history = new DomainHistory();
         // Read history info
@@ -1557,10 +1710,51 @@ public class DomainDBDAO extends DomainDAO {
         Connection c = HarvestDBConnection.get();
         try {
             return DBUtils.selectStringList(c, "SELECT name FROM domains WHERE " + searchField.toLowerCase()
-                    + " LIKE ?", sqlGlob);
+                    + " LIKE ?", sqlGlob).stream().filter(DomainUtils::isValidDomainName).collect(Collectors.toList());
         } finally {
             HarvestDBConnection.release(c);
         }
     }
 
+	@Override
+	public void renameAndUpdateConfig(Domain domain, DomainConfiguration domainConf,
+			String configOldName) {
+		Connection connection = HarvestDBConnection.get();
+		Long configId = DBUtils.selectLongValue(connection,
+                "SELECT config_id FROM configurations WHERE domain_id = ? and name = ?", domain.getID(), configOldName);
+		
+        try {
+			PreparedStatement s = connection.prepareStatement("UPDATE configurations SET name = ?, comments = ?, "
+			        + "template_id = ( SELECT template_id FROM ordertemplates " + "WHERE name = ? ), " + "maxobjects = ?, "
+			        + "maxrate = ?, " + "maxbytes = ? " + "WHERE config_id = ? AND domain_id = ?");
+					s.setString(1, domainConf.getName());
+	                DBUtils.setComments(s, 2, domainConf, Constants.MAX_COMMENT_SIZE);
+	                s.setString(3, domainConf.getOrderXmlName());
+	                s.setLong(4, domainConf.getMaxObjects());
+	                s.setInt(5, domainConf.getMaxRequestRate());
+	                s.setLong(6, domainConf.getMaxBytes());
+	                s.setLong(7, configId);
+	                s.setLong(8, domain.getID());
+	                s.executeUpdate();
+	                s.clearParameters();
+	            updateConfigPasswordsEntries(connection, domain, domainConf);
+	            updateConfigSeedlistsEntries(connection, domain, domainConf);
+	        s.close();
+		} catch (SQLException e) {
+			throw new IOFailure("Error while renaming configuration '" + configOldName + "' to: " + domainConf.getName(), e);
+		}  finally {
+            HarvestDBConnection.release(connection);
+        }
+	}
+
+    @Override
+    public List<String> getAllDomainNames() {
+        Connection c = HarvestDBConnection.get();
+        try {
+            return DBUtils.selectStringList(c, "SELECT name FROM domains").stream().filter(DomainUtils::isValidDomainName).collect(
+                    Collectors.toList());
+        } finally {
+            HarvestDBConnection.release(c);
+        }   
+    }
 }

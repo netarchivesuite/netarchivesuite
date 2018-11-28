@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2014 The Royal Danish Library, the Danish State and University Library,
+ * Copyright (C) 2005 - 2018 The Royal Danish Library, 
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -23,8 +23,10 @@
 
 package dk.netarkivet.common.utils;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -56,7 +58,7 @@ public class StreamUtils {
     /**
      * Will copy everything from input stream to jsp writer, closing input stream afterwards. Charset UTF-8 is assumed.
      *
-     * @param in Inputstream to copy from
+     * @param in InputStream to copy from
      * @param out JspWriter to copy to
      * @throws ArgumentNotValid if either parameter is null
      * @throws IOFailure if a read or write error happens during copy
@@ -70,7 +72,15 @@ public class StreamUtils {
         try {
             try {
                 while ((read = in.read(buf)) != -1) {
-                    out.write(new String(buf, UTF8_CHARSET), 0, read);
+                    String s = new String(buf, UTF8_CHARSET);
+                    if (s.length() < read) {
+                        log.debug("String length ({}) < bytes read({})", s.length(), read);
+                        out.write(s, 0, s.length());
+                    } else {
+                        out.write(s, 0, read);
+                    }
+                    // Reinitializing the buffer to avoid garbage in buffer
+                    buf = new byte[Constants.IO_BUFFER_SIZE];
                 }
             } finally {
                 in.close();
@@ -170,7 +180,15 @@ public class StreamUtils {
         try {
             try {
                 while ((read = in.read(buf)) != -1) {
-                    res.append(new String(buf, UTF8_CHARSET), 0, read);
+                    String s = new String(buf, UTF8_CHARSET);
+                    if (s.length() < read) {
+                        log.debug("String length ({}) < bytes read({})", s.length(), read);
+                        res.append(s, 0, s.length());
+                    } else {
+                        res.append(s, 0, read);
+                    }
+                    // Reinitializing the buffer to avoid garbage in buffer
+                    buf = new byte[Constants.IO_BUFFER_SIZE];
                 }
             } finally {
                 in.close();
@@ -183,13 +201,41 @@ public class StreamUtils {
 
         return res.toString();
     }
+    
+    /**
+     * Get FileReader as String.
+     * @param fr a given FileReader
+     * @return the FileReader as a String.
+     * @throws ArgumentNotValid If the FileReader is null.
+     * @throws IOFailure If an IOException is caught while reading the FileReader.
+     */
+    public static String getFileReaderAsString(FileReader fr) throws ArgumentNotValid, IOFailure {
+        ArgumentNotValid.checkNotNull(fr, "FileReader fr");
 
+        StringBuilder res = new StringBuilder();
+        String line = null;
+        try {
+            BufferedReader bufferreader = new BufferedReader(fr);
+            line = bufferreader.readLine();
+            while (line != null) {     
+                res.append(line);
+                res.append("\n");              
+                line = bufferreader.readLine();
+            }
+        } catch (IOException ex) {
+            String errMsg = "Trouble reading FileReader '" + fr + "'";
+            log.warn(errMsg, ex);
+            throw new IOFailure(errMsg, ex);
+        }
+        return res.toString();
+    }
+    
     /**
      * Convert inputStream to byte array.
      *
-     * @param data inputstream
-     * @param dataLength length of inputstream (must be larger than 0)
-     * @return byte[] containing data in inputstream
+     * @param data a given InputStream
+     * @param dataLength length of the InputStream (must be larger than 0)
+     * @return byte[] containing the data in the given InputStream
      */
     public static byte[] inputStreamToBytes(InputStream data, int dataLength) {
         ArgumentNotValid.checkNotNull(data, "data");

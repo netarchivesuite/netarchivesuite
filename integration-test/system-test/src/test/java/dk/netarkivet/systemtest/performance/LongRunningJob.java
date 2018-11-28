@@ -2,6 +2,8 @@ package dk.netarkivet.systemtest.performance;
 
 import static org.testng.Assert.fail;
 
+import java.io.IOException;
+
 import org.jaccept.TestEventManager;
 
 import dk.netarkivet.systemtest.TestLogger;
@@ -52,10 +54,10 @@ public abstract class LongRunningJob {
      * Run the job.
      * @return True if the job completed successfully.
      */
-    protected boolean run() {
+    protected boolean run() throws IOException, InterruptedException {
         Long startTime = System.currentTimeMillis();
         startJob();
-        sleepWait();
+        startWait();
         if (!isStarted()) {
             fail("Job " + name + " failed to start.");
             return false;
@@ -84,6 +86,14 @@ public abstract class LongRunningJob {
         return true;
     }
 
+    private void startWait() {
+            try {
+                Thread.sleep(startUpTime);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     private void sleepWait() {
         try {
             Thread.sleep(waitingInterval);
@@ -92,7 +102,7 @@ public abstract class LongRunningJob {
         }
     }
 
-    abstract void startJob();
+    abstract void startJob() throws IOException, InterruptedException;
 
     abstract boolean isStarted();
 
