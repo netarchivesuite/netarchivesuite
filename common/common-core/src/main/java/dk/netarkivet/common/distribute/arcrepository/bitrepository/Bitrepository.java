@@ -148,22 +148,22 @@ public class Bitrepository {
         usepillarListOnly = new ArrayList<String>();
         usepillarListOnly.add(usepillar);
         this.settingsDir = configDir;
-        logger.debug("Reading bitrepository settings from " + configDir);
+        logger.info("Reading bitrepository settings from " + configDir);
         if (bitmagKeyFilename == null){
         	this.privateKeyFile = new File(configDir, "dummy-certificate.pem"); // This file should never exist
         } else {
         	this.privateKeyFile = new File(configDir, bitmagKeyFilename);
         }
-        logger.debug("keyfile: " + this.privateKeyFile.getAbsolutePath());
-        logger.debug("Initialising bitrepository settings.");
+        logger.info("keyfile: " + this.privateKeyFile.getAbsolutePath());
+        logger.info("Initialising bitrepository settings.");
         initBitmagSettings();
-        logger.debug("Initialising bitrepository security manager.");
+        logger.info("Initialising bitrepository security manager.");
         initBitmagSecurityManager(); // Mandatory,even if we point to a nonexisting file dummy-certificate.pem
 
-        logger.debug("Getting bitrepository message bus");
+        logger.info("Getting bitrepository message bus");
         bitMagMessageBus = ProtocolComponentFactory.getInstance().getMessageBus(
                 bitmagSettings, bitMagSecurityManager); // Is bitMagSecurityManager mandatory?
-        logger.debug("Initialising bitrepository clients");
+        logger.info("Initialising bitrepository clients");
         initBitMagClients();
     }
 
