@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+  #%L
+  Bitrepository Integration
+  %%
+  Copyright (C) 2010 - 2012 The State and University Library, The Royal Library and The State Archives, Denmark
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as 
+  published by the Free Software Foundation, either version 2.1 of the 
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public 
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-2.1.html>.
+  #L%
+  -->
+<RepositorySettings xmlns="http://bitrepository.org/settings/RepositorySettings.xsd">
+  <Name>Quickstart-repository</Name>
+  <Collections>
+    <Collection>
+      <ID>netarkivet</ID>
+      <Name>The web collection</Name>
+      <PillarIDs>
+        <PillarID>checksum-pillar</PillarID>
+        <PillarID>file1-pillar</PillarID>
+        <PillarID>file2-pillar</PillarID>
+      </PillarIDs>
+    </Collection>
+  </Collections>
+  <ProtocolSettings>
+    <DefaultChecksumType>MD5</DefaultChecksumType>
+    <!-- 
+      Not in beginning: ' ', '/', '.' 
+      Not in end: any whitespace
+      Not at all: Control characters [\x00-\x1F\x7F]
+      Max 200 chars
+    -->
+    <AllowedFileIDPattern>^[^ \./\p{Cntrl}][^\p{Cntrl}]{0,199}[^\s\p{Cntrl}]$</AllowedFileIDPattern>
+    <RequireMessageAuthentication>false</RequireMessageAuthentication>
+    <RequireOperationAuthorization>false</RequireOperationAuthorization>
+    <RequireChecksumForDestructiveRequests>true</RequireChecksumForDestructiveRequests>
+    <RequireChecksumForNewFileRequests>true</RequireChecksumForNewFileRequests>
+    <CollectionDestination>topic://quick-start</CollectionDestination>
+    <AlarmDestination>topic://quick-start.alarms</AlarmDestination>
+    <MessageBusConfiguration>
+      <Name>Local ActiveMQ</Name>
+      <URL>failover:(tcp://localhost:61616?keepAlive=true)</URL>
+    </MessageBusConfiguration>
+  </ProtocolSettings>
+  <ClientSettings>
+    <IdentificationTimeout>180000</IdentificationTimeout>
+    <OperationTimeout>3600000</OperationTimeout>
+  </ClientSettings>
+  <PillarSettings/>
+  <DeleteFileSettings/>
+  <GetAuditTrailSettings>
+    <NonPillarContributorIDs>integrity-service</NonPillarContributorIDs>
+  </GetAuditTrailSettings>
+  <GetChecksumsSettings/>
+  <GetFileSettings/>
+  <GetFileIDsSettings/>
+  <GetStatusSettings>
+    <NonPillarContributorIDs>alarm-service</NonPillarContributorIDs>
+    <NonPillarContributorIDs>integrity-service</NonPillarContributorIDs>
+    <NonPillarContributorIDs>audittrail-service</NonPillarContributorIDs>
+  </GetStatusSettings>
+  <PutFileSettings/>
+  <ReplaceFileSettings/>
+</RepositorySettings>
