@@ -107,7 +107,8 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     private static final String BITREPOSITORY_COLLECTIONID =  "settings.common.arcrepositoryClient.bitrepository.collectionID";
     
     private static final String BITREPOSITORY_USEPILLAR =  "settings.common.arcrepositoryClient.bitrepository.usepillar";
-	private final String collectionId;
+
+    private String collectionId;
 
 	private File tempdir;
 
@@ -147,19 +148,22 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         replyQ = Channels.getThisReposClient();
         JMSConnectionFactory.getInstance().setListener(replyQ, this);
         log.info("JMSBitmagArcRepositoryClient listens for replies on channel '{}'", replyQ);
-        
-        File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
-    	String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
-    	this.collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
-    	this.tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
-    	this.maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
-    	this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
-    	tempdir.mkdirs();
-    	log.info("Storing tempfiles in folder {}", tempdir);
-    	
-    	// Initialize connection to the bitrepository
-    	this.bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
 
+    }
+
+    private void initialiseBitrepositoryClient() {
+        File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
+        log.info("Getting bitmag config from " + BITREPOSITORY_SETTINGS_DIR + "=" + configDir.getAbsolutePath());
+        String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
+        this.collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
+        this.tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
+        this.maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
+        this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
+        tempdir.mkdirs();
+        log.info("Storing tempfiles in folder {}", tempdir);
+
+        // Initialize connection to the bitrepository
+        this.bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
     }
 
     /**
@@ -256,22 +260,25 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      * @throws ArgumentNotValid if file parameter is null or file is not an existing file.
      */
     public void store(File file) throws IOFailure, ArgumentNotValid {
-    	 ArgumentNotValid.checkExistsNormalFile(file, "File '" + file + "' does not exist");
-         // Check if file already exists
-         if (bitrep.existsInCollection(file.getName(), collectionId)) {
-         	log.warn("The file '{}' is already in collection '{}'", file.getName(), collectionId);
-         	return;
-         } else {
-         	// upload file
-         	boolean uploadSuccessful = bitrep.uploadFile(file, collectionId);
-         	if (!uploadSuccessful) {
-         		String errMsg  = "Upload to collection '" + collectionId + "' of file '" + file.getName()  + "' failed.";
-         		NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR);
+        ArgumentNotValid.checkExistsNormalFile(file, "File '" + file + "' does not exist");
+        if (bitrep == null) {
+            initialiseBitrepositoryClient();
+        }
+        // Check if file already exists
+        if (bitrep.existsInCollection(file.getName(), collectionId)) {
+            log.warn("The file '{}' is already in collection '{}'", file.getName(), collectionId);
+            return;
+        } else {
+            // upload file
+            boolean uploadSuccessful = bitrep.uploadFile(file, collectionId);
+            if (!uploadSuccessful) {
+                String errMsg  = "Upload to collection '" + collectionId + "' of file '" + file.getName()  + "' failed.";
+                NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR);
                 throw new IOFailure(errMsg);
-         	}  else {
-         		log.info("Upload to collection '{}' of file '{}' was successful", collectionId, file.getName());
-         	}
-         }
+            }  else {
+                log.info("Upload to collection '{}' of file '{}' was successful", collectionId, file.getName());
+            }
+        }
     }
 
 
