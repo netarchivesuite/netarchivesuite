@@ -31,6 +31,7 @@ import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -156,6 +157,9 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         log.info("Getting bitmag config from " + BITREPOSITORY_SETTINGS_DIR + "=" + configDir.getAbsolutePath());
         String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
         this.collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
+        if (this.collectionId == null || "".equals(this.collectionId)) {
+            this.collectionId = Settings.get(CommonSettings.ENVIRONMENT_NAME);
+        }
         this.tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
         this.maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
         this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
@@ -337,111 +341,59 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     }
 
     /**
-     * Request update of admin data to specific state.
-     *
-     * @param fileName The file for which admin data should be updated.
-     * @param replicaId The id if the replica that the administrative data for fileName is wrong for.
-     * @param newval The new value in admin data.
-     * @throws ArgumentNotValid If one of the arguments are invalid (null or empty string).
-     * @throws IOFailure If the reply to the request update timed out.
+     * Not implemented. This functionality is delegated to bitrepository software.
      */
+    @Override
     public void updateAdminData(String fileName, String replicaId, ReplicaStoreState newval) throws ArgumentNotValid,
             IOFailure {
     	throw new NotImplementedException("updateAdminData is relegated to the bitrepository software");
     }
 
     /**
-     * Request update of admin data to specific checksum.
-     *
-     * @param filename The file for which admin data should be updated.
-     * @param checksum The new checksum for the file
+     * Not implemented. This functionality is delegated to bitrepository software.
      */
+    @Override
     public void updateAdminChecksum(String filename, String checksum) {
     	throw new NotImplementedException("updateAdminChecksum is relegated to the bitrepository software");
     }
 
     /**
-     * Removes a file from the bitarchives, if given credentials and checksum are correct.
-     *
-     * @param fileName The name of the file to delete
-     * @param bitarchiveId The id of the bitarchive to delete the file in
-     * @param checksum The checksum of the deleted file
-     * @param credentials The credentials used to delete the file
-     * @return The file that was removed
-     * @throws ArgumentNotValid if arguments are null or equal to the empty string
-     * @throws IOFailure if we could not delete the remote file, or there was no response to our RemoveAndGetFileMessage
-     * within the allotted time defined by the setting {@link JMSBitmagArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
+     * Not implemented. This functionality is delegated to bitrepository software.
      */
+    @Override
     public File removeAndGetFile(String fileName, String bitarchiveId, String checksum, String credentials)
             throws IOFailure, ArgumentNotValid {
     	throw new NotImplementedException("removeAndGetFile is relegated to the bitrepository software"); 
     }
 
     /**
-     * Retrieves all the checksum from the replica through a GetAllChecksumMessage.
-     * <p>
-     * This is the checksum archive alternative to running a ChecksumBatchJob.
-     *
-     * @param replicaId The id of the replica from which the checksums should be retrieved.
-     * @return A file containing filename and checksum of all the files in an archive in the same format as a
-     * ChecksumJob.
-     * @throws IOFailure If the reply is not of type GetAllChecksumsMessage or if the file could not properly be
-     * retrieved from the reply message or if the message timed out.
-     * @throws ArgumentNotValid If the replicaId is null or empty.
-     * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage
+     * Not implemented. This functionality is delegated to bitrepository software.
      */
+    @Override
     public File getAllChecksums(String replicaId) throws IOFailure, ArgumentNotValid {
     	throw new NotImplementedException("getAllChecksums is relegated to the bitrepository software"); 
     }
     
     /**
-     * Retrieves the names of all the files in the replica through a GetAllFilenamesMessage.
-     * <p>
-     * This is the checksum archive alternative to running a FilelistBatchJob.
-     *
-     * @param replicaId The id of the replica from which the list of filenames should be retrieved.
-     * @return A file with all the filenames within the archive of the given replica. A null is returned if the message
-     * timeout.
-     * @throws IOFailure If the reply is not of type GetAllFilenamesMessage or if the file could not properly be
-     * retrieved from the reply message
-     * @throws ArgumentNotValid If the replicaId is null or empty.
-     * @see dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage
+     * Not implemented. This functionality is delegated to bitrepository software.
      */
+    @Override
     public File getAllFilenames(String replicaId) throws ArgumentNotValid, IOFailure {
     	throw new NotImplementedException("getAllFilenames is relegated to the bitrepository software");        
    }
 
     /**
-     * Retrieves the checksum of a specific file.
-     * <p>
-     * This is the checksum archive alternative to running a ChecksumJob limited to a specific file.
-     *
-     * @param replicaId The ID of the replica to send the message.
-     * @param filename The name of the file for whom the checksum should be retrieved.
-     * @return The checksum of the file in the replica.
-     * @throws IOFailure If the reply is not of type GetChecksumMessage. Or if the message timed out.
-     * @throws ArgumentNotValid If either the replicaId of the filename is null or empty.
+     * Not implemented. This functionality is delegated to bitrepository software.
      */
+    @Override
     public String getChecksum(String replicaId, String filename) throws ArgumentNotValid, IOFailure {
     	throw new NotImplementedException("GetChecksum is not implemented here");       
     }
 
     /**
-     * Method for correcting an entry in a replica. This is done by sending a correct message to the replica.
-     * <p>
-     * The file which is removed from the replica is put into the tempDir.
-     *
-     * @param replicaId The id of the replica to send the message.
-     * @param checksum The checksum of the corrupt entry in the archive. It is important to validate that the checksum
-     * actually is wrong before correcting the entry.
-     * @param file The file to correct the entry in the archive of the replica.
-     * @param credentials A string with the password for allowing changes inside an archive. If it does not correspond
-     * to the credentials of the archive, the correction will not be allowed.
-     * @return The corrupted file from the archive.
-     * @throws IOFailure If the message is not handled properly.
-     * @throws ArgumentNotValid If the replicaId, the checksum or the credentials are either null or empty, or if file
-     * is null.
+     * Not implemented. This functionality is delegated to bitrepository software.
      */
+    @Override
     public File correct(String replicaId, String checksum, File file, String credentials) throws IOFailure,
             ArgumentNotValid {
     	throw new NotImplementedException("Correct is relegated to the bitrepository software");
