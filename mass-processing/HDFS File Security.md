@@ -29,3 +29,22 @@ Den her er også interessant
 Her er et par artikler og præsentationer der måske er interessante
 * <https://indico.cern.ch/event/214784/contributions/1512447/attachments/340854/475673/storage_donvito_chep_2013.pdf>
 * <https://dl.acm.org/citation.cfm?id=3229269>
+
+
+## HDFS 3
+
+<https://hortonworks.com/blog/hadoop-3-adds-value-hadoop-2/>
+
+### Erasure Coding
+Hadoop 2 has a lot more storage overhead than Hadoop 3. For example, in Hadoop 2, if there are 6 blocks and 3x replication of each block, the result will be 18 blocks of space.
+
+With erasure coding in Hadoop 3, if there are 6 blocks, it will occupy a 9 block space – 6 blocks and 3 for parity – resulting in less storage overhead.  The end result -instead of the 3x hit on storage, the erasure coding storage method will incur an overhead of 1.5x, while maintaining the same level of data recoverability. It halves the storage cost of HDFS while also retaining data durability.  Storage overhead can be reduced from 200% to 50%. In addition, you benefit from the tremendous cost savings.
+
+### Scalability
+
+Hadoop 2 and Hadoop 1 only use a single NameNode to manage all Namespaces. Hadoop 3 has multiple Namenodes for multiple namespaces for NameNode Federation which improves scalability.
+
+In Hadoop 2, there is only one standby NameNode.  Hadoop 3 supports multiple standby NameNodes. If one standby node goes down over the weekend, you have the benefit of other standby NameNodes so the cluster can continue to operate.  This feature gives you a longer servicing window.
+
+Hadoop 2 cannot accommodate intra-node disk balancing. Hadoop 3 has intra-node disk balancing. If you are repurposing or adding new storage to an existing server with older capacity drives, this leads to unevenly disks space in each server. With intra-node disk balancing, the space in each disk is evenly distributed.
+
