@@ -37,6 +37,7 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
         PreservationArcRepositoryClient {
 
     /** Call on shutdown to release external resources. */
+    @Override
     void close();
 
     /**
@@ -48,6 +49,7 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
      * @throws IOFailure If the get operation failed.
      * @throws ArgumentNotValid if the given arcfile is null or empty string, or the given index is negative.
      */
+    @Override
     BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid;
 
     /**
@@ -59,6 +61,7 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
      * @param toFile Filename of a place where the file fetched can be put.
      * @throws IOFailure if there are problems getting a reply or the file could not be found.
      */
+    @Override
     void getFile(String arcfilename, Replica replica, File toFile);
 
     /**
@@ -68,6 +71,7 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
      * @throws IOFailure thrown if store is unsuccessful, or failed to clean up files after the store operation.
      * @throws ArgumentNotValid if file parameter is null or file is not an existing file.
      */
+    @Override
     void store(File file) throws IOFailure, ArgumentNotValid;
 
     /**
@@ -90,6 +94,8 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
      * @param bitarchiveId The id of the replica that the administrative data for fileName is wrong for.
      * @param newval What the administrative data will be updated to.
      */
+    @Override
+    @Deprecated
     void updateAdminData(String fileName, String bitarchiveId, ReplicaStoreState newval);
 
     /**
@@ -99,6 +105,8 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
      * @param filename The name of a file stored in the ArcRepository.
      * @param checksum The new checksum.
      */
+    @Override
+    @Deprecated
     void updateAdminChecksum(String filename, String checksum);
 
     /**
@@ -111,6 +119,8 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
      * @param credentials A string that shows that the user is allowed to perform this operation.
      * @return A local copy of the file removed.
      */
+    @Override
+    @Deprecated
     File removeAndGetFile(String fileName, String bitarchiveId, String checksum, String credentials);
 
 }

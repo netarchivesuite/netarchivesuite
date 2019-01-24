@@ -32,9 +32,10 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * Implements the Facade pattern to shield off the methods in JMSArcRepositoryClient not to be used by the bit
  * preservation system.
  */
-public interface PreservationArcRepositoryClient {
+public interface PreservationArcRepositoryClient extends AutoCloseable {
 
     /** Call on shutdown to release external resources. */
+    @Override
     void close();
 
     /**
@@ -86,6 +87,7 @@ public interface PreservationArcRepositoryClient {
      * @param replicaId The id if the replica that the administrative data for fileName is wrong for.
      * @param newval What the administrative data will be updated to.
      */
+    @Deprecated
     void updateAdminData(String fileName, String replicaId, ReplicaStoreState newval);
 
     /**
@@ -95,6 +97,7 @@ public interface PreservationArcRepositoryClient {
      * @param filename The name of a file stored in the ArcRepository.
      * @param checksum The new checksum.
      */
+    @Deprecated
     void updateAdminChecksum(String filename, String checksum);
 
     /**
@@ -107,6 +110,7 @@ public interface PreservationArcRepositoryClient {
      * @param credentials A string that shows that the user is allowed to perform this operation.
      * @return A local copy of the file removed.
      */
+    @Deprecated
     File removeAndGetFile(String fileName, String replicaId, String checksum, String credentials);
 
     /**
@@ -118,6 +122,7 @@ public interface PreservationArcRepositoryClient {
      * @return A list of ChecksumEntries which is the results of the GetAllChecksumMessage.
      * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage
      */
+    @Deprecated
     File getAllChecksums(String replicaId);
 
     /**
@@ -129,6 +134,7 @@ public interface PreservationArcRepositoryClient {
      * @param filename The name of the file for whom the checksum should be retrieved.
      * @return The checksum of the file in the replica. Or null if an error occurred.
      */
+    @Deprecated
     String getChecksum(String replicaId, String filename);
 
     /**
@@ -140,6 +146,7 @@ public interface PreservationArcRepositoryClient {
      * @return A list of all the filenames within the archive of the given replica.
      * @see dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage
      */
+    @Deprecated
     File getAllFilenames(String replicaId);
 
     /**
@@ -155,6 +162,7 @@ public interface PreservationArcRepositoryClient {
      * @param credentials The password for allowing to remove a file entry in the archive.
      * @return The corrupted file from the archive.
      */
+    @Deprecated
     File correct(String replicaId, String checksum, File file, String credentials);
 
 }
