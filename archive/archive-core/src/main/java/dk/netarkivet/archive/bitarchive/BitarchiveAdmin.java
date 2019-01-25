@@ -25,6 +25,7 @@ package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -123,8 +124,11 @@ public final class BitarchiveAdmin {
             for (String filedirname : filedirnames) {
                 File basedir = new File(filedirname).getCanonicalFile();
                 File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
-                // Ensure that 'filedir' exists. If it doesn't, it is created
-                ApplicationUtils.dirMustExist(filedir);
+                // Ensure that 'filedir' exists or allow it to be a softlink and hope that an external
+                // process creates it when needed.
+                if (!Files.isSymbolicLink(filedir.toPath())) {
+                    ApplicationUtils.dirMustExist(filedir);
+                }
 
                 File tempdir = new File(basedir, Constants.TEMPORARY_DIRECTORY_NAME);
                 // Ensure that 'tempdir' exists. If it doesn't, it is created
@@ -192,6 +196,11 @@ public final class BitarchiveAdmin {
 
         log.debug("Updating the filelist for '{}'.", basedir);
         File filedir = new File(basedir, fileDirectoryName);
+        if (Files.isSymbolicLink(filedir.toPath()) && !Files.isDirectory(filedir.toPath()) ) {
+            log.warn("The 'directory' " + filedir.getAbsolutePath() + " is a symbolic link that appears to be unresolved. "
+                    + "Proceeding cautiously.");
+            return;
+        }
         if (!checkArchiveDir(filedir)) {
             throw new UnknownID("The directory '" + filedir + "' is not an " + " archive directory.");
         }
