@@ -112,7 +112,7 @@ public final class BitarchiveAdmin {
 
         minSpaceRequired = Settings.getLong(ArchiveSettings.BITARCHIVE_MIN_SPACE_REQUIRED);
         // Check, if value of minSpaceRequired is at least zero
-        if (minSpaceLeft < 0L) {
+        if (minSpaceRequired < 0L) {
             log.warn("Wrong setting of minSpaceRequired read from Settings: {}", minSpaceLeft);
             throw new ArgumentNotValid("Wrong setting of minSpaceRequired read from Settings: " + minSpaceLeft);
         }
@@ -175,7 +175,8 @@ public final class BitarchiveAdmin {
      *
      * @param basedir The basedir to update the filelist for.
      * @throws ArgumentNotValid If basedir is null or if it not a proper directory.
-     * @throws UnknownID If the basedir cannot be found both the archivedFiles map or the archiveTime map.
+     * @throws UnknownID If the basedir cannot be found both the archivedFiles map or the archiveTime map, or if the
+     * file-directory under basedir is not either a writable directory or a symbolic link
      * @throws IOFailure If it is not possible to retrieve the canonical file for the basedir.
      */
     public void updateFileList(File basedir) throws ArgumentNotValid, UnknownID, IOFailure {
@@ -200,8 +201,7 @@ public final class BitarchiveAdmin {
             log.warn("The 'directory' " + filedir.getAbsolutePath() + " is a symbolic link that appears to be unresolved. "
                     + "Proceeding cautiously.");
             return;
-        }
-        if (!checkArchiveDir(filedir)) {
+        } else if (!checkArchiveDir(filedir)) {
             throw new UnknownID("The directory '" + filedir + "' is not an " + " archive directory.");
         }
 
