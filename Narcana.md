@@ -1,11 +1,17 @@
+Narcana logbook
+===============
+
+Log of stuff that have happened
+1. Narcana node `narcana-suite01.statsbiblioteket.dk` created
+2. User `dkm_eld` created with command `useradd --uid 3000 dkm_eld`
+
 Narcana "test that the system works" proceduce
 ==============================================
 
 Run 
 ```{bash}
-ssh dkm_eld@narcana-webdanica01.statsbiblioteket.dk yarn jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-examples.jar pi 32 100000
+ssh dkm_eld@narcana-suite01.statsbiblioteket.dk yarn jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-examples.jar pi 32 100000
 ```
-TODO: change this to use the `narcana-suite01.statsbiblioteket.dk` machine when it comes online
 
 This logs into a machine and runs a "calc pi" example to test that the cluster works
 
