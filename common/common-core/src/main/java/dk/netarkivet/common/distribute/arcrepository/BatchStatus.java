@@ -30,8 +30,8 @@ import java.util.List;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
 
 /**
  * Class for transferring batch status information.
@@ -48,7 +48,7 @@ public class BatchStatus {
     private RemoteFile resultFile;
 
     /** A list of exceptions caught during the execution of the batchJob. */
-    private final List<ExceptionOccurrence> exceptions;
+    private final List<BatchJob.ExceptionOccurrence> exceptions;
 
     /**
      * Create a new BatchStatus object for a specific bitarchive.
@@ -123,7 +123,7 @@ public class BatchStatus {
      *
      * @return List of exceptions with information on where they occurred.
      */
-    public List<ExceptionOccurrence> getExceptions() {
+    public List<BatchJob.ExceptionOccurrence> getExceptions() {
         return exceptions;
     }
 

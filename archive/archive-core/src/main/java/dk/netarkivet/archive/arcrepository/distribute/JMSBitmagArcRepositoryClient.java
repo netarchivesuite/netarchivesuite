@@ -55,6 +55,7 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
@@ -396,7 +397,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
      */
-    public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
+    public BatchStatus batch(BatchJob job, String replicaId, String... args) {
         return batch(job, replicaId, "", args);
     }
 
@@ -414,7 +415,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      * @throws ArgumentNotValid If the job is null or the replicaId is either null or the empty string.
      * @throws IOFailure If no result file is returned.
      */
-    public BatchStatus batch(FileBatchJob job, String replicaId, String batchId, String... args) throws IOFailure,
+    public BatchStatus batch(BatchJob job, String replicaId, String batchId, String... args) throws IOFailure,
             ArgumentNotValid {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");

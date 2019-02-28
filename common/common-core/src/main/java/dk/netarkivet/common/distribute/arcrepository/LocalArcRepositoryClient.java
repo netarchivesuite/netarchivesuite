@@ -47,6 +47,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
@@ -199,7 +200,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws IOFailure If a problem occurs during processing the batchjob.
      */
     @Override
-    public BatchStatus batch(final FileBatchJob job, String replicaId, String... args) throws ArgumentNotValid,
+    public BatchStatus batch(final BatchJob job, String replicaId, String... args) throws ArgumentNotValid,
             IOFailure {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");

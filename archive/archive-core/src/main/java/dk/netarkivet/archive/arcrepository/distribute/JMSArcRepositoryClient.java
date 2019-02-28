@@ -57,6 +57,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
@@ -278,6 +279,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
         throw new IOFailure(errMsg);
     }
 
+
     /**
      * Tries to clean up a file on the FTP server after a store operation. Will not throw exception on error, merely log
      * exception.
@@ -313,9 +315,11 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
      */
-    public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
+    public BatchStatus batch(BatchJob job, String replicaId, String... args) {
         return batch(job, replicaId, "", args);
     }
+
+
 
     /**
      * Runs a batch job on each file in the ArcRepository.
@@ -331,7 +335,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
      * @throws ArgumentNotValid If the job is null or the replicaId is either null or the empty string.
      * @throws IOFailure If no result file is returned.
      */
-    public BatchStatus batch(FileBatchJob job, String replicaId, String batchId, String... args) throws IOFailure,
+    public BatchStatus batch(BatchJob job, String replicaId, String batchId, String... args) throws IOFailure,
             ArgumentNotValid {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");

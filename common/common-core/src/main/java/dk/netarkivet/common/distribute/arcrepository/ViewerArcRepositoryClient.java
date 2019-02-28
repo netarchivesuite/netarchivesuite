@@ -26,6 +26,7 @@ import java.io.File;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
@@ -69,6 +70,6 @@ public interface ViewerArcRepositoryClient extends AutoCloseable{
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
      */
-    BatchStatus batch(FileBatchJob job, String replicaId, String... args);
+    BatchStatus batch(BatchJob job, String replicaId, String... args);
 
 }

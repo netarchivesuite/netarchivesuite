@@ -38,7 +38,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
+import dk.netarkivet.common.utils.batch.BatchJob.ExceptionOccurrence;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.viewerproxy.webinterface.CrawlLogLinesMatchingRegexp;
 

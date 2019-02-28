@@ -49,7 +49,7 @@ import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
-import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
+import dk.netarkivet.common.utils.batch.BatchJob.ExceptionOccurrence;
 import junit.framework.TestCase;
 
 /**

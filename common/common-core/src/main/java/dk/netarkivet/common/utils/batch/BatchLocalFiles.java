@@ -74,12 +74,12 @@ public class BatchLocalFiles {
      * @param job - the job to be executed
      * @param os - the OutputStream to which output data is written
      */
-    public void run(FileBatchJob job, OutputStream os) {
+    public void run(BatchJob job, OutputStream os) {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
         // Initialise the job:
-        job.noOfFilesProcessed = 0;
-        job.filesFailed = new HashSet<File>();
+        job.setNoOfFilesProcessed(0);
+        job.setFilesFailed(new HashSet<File>());
         try {
             job.initialize(os);
             // count the files (used for logging).
@@ -149,7 +149,7 @@ public class BatchLocalFiles {
      * @param file The file to process
      * @param os Where to put the output.
      */
-    private void processFile(FileBatchJob job, final File file, OutputStream os) {
+    private void processFile(BatchJob job, final File file, OutputStream os) {
         log.trace("Started processing of file '{}'.", file.getAbsolutePath());
         boolean success = false;
         try {
@@ -160,9 +160,9 @@ public class BatchLocalFiles {
             // job.addException(currentFile, currentOffset, outputOffset, e)
             log.warn("Exception while processing file {} with job {}", file, job, e);
         }
-        job.noOfFilesProcessed++;
+        job.setNoOfFilesProcessed(job.getNoOfFilesProcessed()+1);
         if (!success) {
-            job.filesFailed.add(file);
+            job.getFilesFailed().add(file);
         }
     }
 

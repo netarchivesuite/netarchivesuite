@@ -40,6 +40,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCUtils;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.warc.WARCUtils;
 import dk.netarkivet.wayback.WaybackSettings;
@@ -190,7 +191,7 @@ public class ArchiveFile {
         // List<FileBatchJob> getIndexers(ArchiveFile file)
         // This more-flexible approach
         // may be of value when we begin to add warc support.
-        FileBatchJob theJob = null;
+        BatchJob theJob = null;
         if (filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX))) {
             theJob = new DeduplicationCDXExtractionBatchJob();
         } else if (ARCUtils.isARC(filename)) {

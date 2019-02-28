@@ -46,6 +46,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
@@ -149,7 +150,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
      */
-    public BatchStatus batch(final FileBatchJob job, String replicaId, String... args) {
+    public BatchStatus batch(final BatchJob job, String replicaId, String... args) {
         ArgumentNotValid.checkNotNull(job, "job");
         OutputStream os = null;
         File resultFile;

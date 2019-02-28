@@ -44,6 +44,7 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
@@ -106,7 +107,7 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
     }
 
     @Override
-    public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
+    public BatchStatus batch(BatchJob job, String replicaId, String... args) {
         batchCounter++;
         if (batchMustDie) {
             throw new IOFailure("Committing suicide as ordered, SIR!");

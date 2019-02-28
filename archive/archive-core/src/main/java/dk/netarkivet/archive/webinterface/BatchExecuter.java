@@ -43,7 +43,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
+import dk.netarkivet.common.utils.batch.BatchJob.ExceptionOccurrence;
 import dk.netarkivet.common.utils.batch.LoadableJarBatchJob;
 
 /**

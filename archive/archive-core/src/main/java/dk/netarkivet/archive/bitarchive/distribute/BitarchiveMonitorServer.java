@@ -57,6 +57,7 @@ import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
@@ -94,7 +95,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler implements Ob
      * Map for containing the batch-message-ids and the batchjobs, for the result files to be post-processed before
      * returned back.
      */
-    private Map<String, FileBatchJob> batchjobs = new HashMap<String, FileBatchJob>();
+    private Map<String, BatchJob> batchjobs = new HashMap<String, BatchJob>();
 
     /**
      * The map for managing the CorrectMessages. This involves three stages.
@@ -479,7 +480,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler implements Ob
             File postFile = File.createTempFile("post", "batch", FileUtils.getTempDir());
             try {
                 // retrieve the batchjob
-                FileBatchJob bj = batchjobs.remove(bjs.originalRequestID);
+                BatchJob bj = batchjobs.remove(bjs.originalRequestID);
                 if (bj == null) {
                     throw new UnknownID("Only knows: " + batchjobs.keySet());
                 }

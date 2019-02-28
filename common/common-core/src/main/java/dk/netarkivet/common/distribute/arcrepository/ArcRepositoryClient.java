@@ -27,6 +27,7 @@ import java.io.File;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
@@ -85,7 +86,7 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
      */
-    BatchStatus batch(FileBatchJob job, String replicaId, String... args);
+    BatchStatus batch(BatchJob job, String replicaId, String... args);
 
     /**
      * Updates the administrative data in the ArcRepository for a given file and replica.

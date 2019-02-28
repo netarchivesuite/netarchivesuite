@@ -43,6 +43,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
@@ -184,7 +185,7 @@ public class Bitarchive {
      * @throws ArgumentNotValid if job or file is null.
      * @throws IOFailure if there was problems writing to the RemoteFile
      */
-    public BatchStatus batch(String bitarchiveAppId, final FileBatchJob job) throws ArgumentNotValid, IOFailure {
+    public BatchStatus batch(String bitarchiveAppId, final BatchJob job) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveAppId, "String bitarchiveAppId");
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         log.info("Starting batch job on bitarchive application with id '{}': '{}', on filename-pattern: '{}'",

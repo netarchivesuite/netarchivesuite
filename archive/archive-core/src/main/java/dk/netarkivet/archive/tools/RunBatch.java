@@ -51,7 +51,7 @@ import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
+import dk.netarkivet.common.utils.batch.BatchJob.ExceptionOccurrence;
 import dk.netarkivet.common.utils.batch.LoadableFileBatchJob;
 import dk.netarkivet.common.utils.batch.LoadableJarBatchJob;
 

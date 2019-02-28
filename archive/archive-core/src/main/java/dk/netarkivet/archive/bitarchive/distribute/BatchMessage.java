@@ -31,6 +31,7 @@ import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
@@ -43,7 +44,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 @SuppressWarnings({"serial"})
 public class BatchMessage extends ArchiveMessage {
     /** The batch job, this message is sent to initiate. */
-    private FileBatchJob job;
+    private BatchJob job;
     /** The id of this replica. */
     private String replicaId;
     /** The list of arguments for the batchjob. */
@@ -62,7 +63,7 @@ public class BatchMessage extends ArchiveMessage {
      * @param job The batch job to be executed
      * @param replicaId id of this replica.
      */
-    public BatchMessage(ChannelID to, FileBatchJob job, String replicaId) {
+    public BatchMessage(ChannelID to, BatchJob job, String replicaId) {
         this(to, Channels.getError(), job, replicaId, "", new String[] {});
     }
 
@@ -79,7 +80,7 @@ public class BatchMessage extends ArchiveMessage {
      * @param arguments The arguments for initialising the batchjob.
      * @throws ArgumentNotValid If the job is null, or the replica is either null or the empty string.
      */
-    public BatchMessage(ChannelID to, ChannelID replyTo, FileBatchJob job, String replicaId, String... arguments) {
+    public BatchMessage(ChannelID to, ChannelID replyTo, BatchJob job, String replicaId, String... arguments) {
         this(to, replyTo, job, replicaId, "", arguments);
     }
 
@@ -94,7 +95,7 @@ public class BatchMessage extends ArchiveMessage {
      * @param arguments The arguments for initialising the batchjob. This is allowed to be null.
      * @throws ArgumentNotValid If the job is null, or the replica is either null or the empty string.
      */
-    public BatchMessage(ChannelID to, ChannelID replyTo, FileBatchJob job, String replicaId, String batchId,
+    public BatchMessage(ChannelID to, ChannelID replyTo, BatchJob job, String replicaId, String batchId,
             String... arguments) throws ArgumentNotValid {
         super(to, replyTo);
         ArgumentNotValid.checkNotNull(job, "job");
@@ -114,7 +115,7 @@ public class BatchMessage extends ArchiveMessage {
      *
      * @return Batch job
      */
-    public FileBatchJob getJob() {
+    public BatchJob getJob() {
         return job;
     }
 

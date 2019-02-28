@@ -69,6 +69,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
@@ -468,7 +469,7 @@ public class DatabaseBasedActiveBitPreservationTester {
             FileUtils.copyFile(file, f);
         }
 
-        public BatchStatus batch(FileBatchJob job, String locationName, String... args) {
+        public BatchStatus batch(BatchJob job, String locationName, String... args) {
             if (overrideBatch != null) {
                 return overrideBatch;
             }

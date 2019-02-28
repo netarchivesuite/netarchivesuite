@@ -84,10 +84,11 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
+import dk.netarkivet.common.utils.batch.BatchJob.ExceptionOccurrence;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -343,7 +344,7 @@ public class FileBasedActiveBitPreservationTester {
         final String[] replica = new String[1];
         MockupArcRepositoryClient.instance = new MockupArcRepositoryClient() {
             @Override
-            public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
+            public BatchStatus batch(BatchJob job, String replicaId, String... args) {
                 replica[0] = replicaId;
                 File file = new File(new File(TestInfo.WORKING_DIR, "checksums"), "unsorted.txt");
                 file.getParentFile().mkdirs();
@@ -555,7 +556,7 @@ public class FileBasedActiveBitPreservationTester {
          * @return BatchStatus
          * @throws IOException If trouble creating temporary files and writing to this temporary files.
          */
-        public BatchStatus batch(FileBatchJob job, String locationName, RemoteFile file) throws IOException {
+        public BatchStatus batch(BatchJob job, String locationName, RemoteFile file) throws IOException {
             BatchStatus lbs = null;
             File tmpfile = File.createTempFile("DummyBatch", "");
             OutputStream os = new FileOutputStream(tmpfile);
@@ -635,7 +636,7 @@ public class FileBasedActiveBitPreservationTester {
             FileUtils.copyFile(file, f);
         }
 
-        public BatchStatus batch(FileBatchJob job, String locationName, String... args) {
+        public BatchStatus batch(BatchJob job, String locationName, String... args) {
             if (overrideBatch != null) {
                 return overrideBatch;
             }
