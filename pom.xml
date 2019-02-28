@@ -107,6 +107,7 @@
     <module>monitor</module>
     <module>wayback</module>
     <module>integration-test</module>
+    <module>local_wayback_indexer</module>
   </modules>
 
   <licenses>

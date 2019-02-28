@@ -1,0 +1,189 @@
+<settings>
+  <common>
+    <environmentName>TEST1</environmentName>
+    <applicationInstanceId/>
+    <arcrepositoryClient>
+      <class>dk.netarkivet.archive.arcrepository.distribute.JMSBitmagArcRepositoryClient</class>
+      <bitrepository>
+        <!-- if not set, use of certificates is disabled. If the keyfilename does not exist
+            use of certificates is disabled as well. The name is relative to the settingsDir for bitrepository
+            configuration.
+         -->
+        <keyfilename>client-certkey.pem</keyfilename>
+        <storeMaxPillarFailures>1</storeMaxPillarFailures>
+        <tempdir>arcrepositoryTemp</tempdir>
+        <collectionID/>  <!-- Defaults to environmentName if empty or null -->
+        <usepillar>netarkiv-online1</usepillar>
+        <!-- Set to 5 minutes to make it possible to retrieve large records
+                 using FTP -->
+        <getTimeout>300000</getTimeout>
+        <!--TODO get client config from sb-test-har-001 -->
+        <settingsDir>bitmagclientconfig</settingsDir>   <!--Move this to HaCo settings -->
+      </bitrepository>
+    </arcrepositoryClient>
+    <remoteFile>
+      <class>
+        dk.netarkivet.common.distribute.FTPRemoteFile
+      </class>
+      <serverPort>21</serverPort>
+      <retries>3</retries>
+      <datatimeout>10800</datatimeout>
+      <serverName>foobar-kb-test-har-003.kb.dk</serverName>
+      <userName>devel</userName>
+      <userPassword>devel123</userPassword>
+    </remoteFile>
+    <jms>
+      <class>
+        dk.netarkivet.common.distribute.JMSConnectionSunMQ
+      </class>
+      <broker>localhost</broker>
+      <port>7676</port>
+    </jms>
+    <jmx>
+      <passwordFile>conf/jmxremote.password</passwordFile>
+      <timeout>300</timeout>
+      <port>8171</port><rmiPort>8271</rmiPort></jmx>
+    <indexClient>
+      <indexRequestTimeout>43200000</indexRequestTimeout>
+    </indexClient>
+    <replicas>
+      <!-- The names of all bit archive replicas in the
+       environment, e.g., "nameOfBitachiveOne" and "nameOfBitachiveTwo". -->
+      <replica>
+        <replicaId>SB</replicaId>
+        <replicaName>SBN</replicaName>
+        <replicaType>bitArchive</replicaType>
+      </replica>
+
+      <replica>
+        <replicaId>KB</replicaId>
+        <replicaName>KBN</replicaName>
+        <replicaType>bitArchive</replicaType>
+      </replica>
+      <!--
+      <replica>
+        <replicaId>CS</replicaId>
+        <replicaName>CSN</replicaName>
+        <replicaType>checksum</replicaType>
+      </replica>
+      -->
+    </replicas>
+    <!-- tempDir corrected from ./tests/commontempdir -->
+    <tempDir>tmpdircommon</tempDir>
+    <mail>
+      <server>post.kb.dk</server>
+    </mail><notifications>
+    <class>dk.netarkivet.common.utils.EMailNotifications</class>
+    <!-- T: receiver to be modified by test -->
+    <receiver>csr@kb.dk</receiver>
+    <sender>devel@kb-prod-udv-001.kb.dk</sender>
+  </notifications>
+    <useReplicaId>SB</useReplicaId>
+    <thisPhysicalLocation>S</thisPhysicalLocation>
+    <applicationName>dk.netarkivet.wayback.indexer.WaybackIndexerApplication</applicationName>
+  </common>
+
+  <monitor>
+    <jmxUsername>monitorRole</jmxUsername>
+    <jmxPassword>test</jmxPassword>
+    <jmxProxyTimeout>500</jmxProxyTimeout>
+    <logging>
+      <historySize>100</historySize>
+    </logging>
+    <reregisterDelay>10</reregisterDelay>
+  </monitor>
+
+  <!-- directory for install -->
+  <archive>
+    <bitpreservation>
+      <baseDir>bitpreservation</baseDir>
+      <class>dk.netarkivet.archive.arcrepository.bitpreservation.DatabaseBasedActiveBitPreservation</class>
+    </bitpreservation>
+    <arcrepository>
+      <baseDir>.</baseDir>
+    </arcrepository>
+  </archive>
+  <!-- viewerproxy.baseDir is set below -->
+  <!-- harvester.harvesting.serverDir is set below -->
+  <harvester>
+    <aliases>
+      <timeout>31536000</timeout>
+    </aliases>
+    <harvesting>
+      <deduplication>
+        <enabled>true</enabled>
+      </deduplication>
+      <heritrix>
+        <inactivityTimeout>1800</inactivityTimeout>
+        <noresponseTimeout>1800</noresponseTimeout>
+        <crawlLoopWaitTime>60</crawlLoopWaitTime>
+      </heritrix>
+      <frontier>
+        <!-- 1 minute -->
+        <frontierReportWaitTime>60</frontierReportWaitTime>
+        <filter>
+          <class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
+          <args>200</args>
+        </filter>
+      </frontier>
+      <metadata>
+        <compression>
+          true
+        </compression>
+      </metadata>
+    </harvesting>
+    <scheduler>
+      <jobGen>
+        <class>dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator</class>
+        <domainConfigSubsetSize>10000</domainConfigSubsetSize>
+        <config>
+          <!-- Used by FixedDomainConfigurationCountJobGenerator and as an absolute limit in DefaultJobGenerator -->
+          <fixedDomainCountSnapshot>7500</fixedDomainCountSnapshot>
+        </config>
+      </jobGen>
+    </scheduler>
+  </harvester>
+  <wayback>
+    <hibernate>
+      <c3p0>
+        <acquireIncrement>1</acquireIncrement>
+        <idleTestPeriod>100</idleTestPeriod>
+        <maxSize>100</maxSize>
+        <maxStatements>100</maxStatements>
+        <minSize>10</minSize>
+        <timeout>100</timeout>
+      </c3p0>
+      <!-- TODO embedded server?? -->
+      <connectionUrl>jdbc:derby:memory:wayback_indexertest1_db;create=true</connectionUrl>
+      <dbDriverClass>org.apache.derby.jdbc.ClientDriver</dbDriverClass>
+      <useReflectionOptimizer>false</useReflectionOptimizer>
+      <transactionFactory>org.hibernate.transaction.JDBCTransactionFactory</transactionFactory>
+      <dialect>org.hibernate.dialect.DerbyDialect</dialect>
+      <showSql>false</showSql>
+      <formatSql>true</formatSql>
+      <hbm2ddlAuto>update</hbm2ddlAuto>
+      <user/>
+      <password/>
+    </hibernate>
+    <indexer>
+      <replicaId>SB</replicaId>
+      <finalBatchOutputDir>batchOutputDir</finalBatchOutputDir>
+      <tempBatchOutputDir>tempBatchOutputDir</tempBatchOutputDir>
+      <maxFailedAttempts>3</maxFailedAttempts>
+      <!--
+      There is a double-strategy for fetching filenames to queue for harvesting
+      i) Fetch all newer files on a short delay
+      ii) Fill any gaps by fetching the complete file list occasionally
+      e.g. Fetch all files from the last day once every half-hour and then fetch the complete file-list
+      daily.
+      In test, fetch all files from last 30 minutes every 5 minutes.
+      -->
+      <recentProducerSince>1800000</recentProducerSince>
+      <recentProducerInterval>300000</recentProducerInterval>
+      <producerDelay>0</producerDelay>
+      <producerInterval>86400000</producerInterval>
+      <consumerThreads>1</consumerThreads>
+      <initialFiles/>
+    </indexer>
+  </wayback>
+</settings>
