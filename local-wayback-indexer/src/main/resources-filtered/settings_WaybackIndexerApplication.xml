@@ -11,7 +11,7 @@
          -->
         <keyfilename>client-certkey.pem</keyfilename>
         <storeMaxPillarFailures>1</storeMaxPillarFailures>
-        <tempdir>arcrepositoryTemp</tempdir>
+        <tempdir>${project.build.directory}/arcrepositoryTemp</tempdir>
         <collectionID/>  <!-- Defaults to environmentName if empty or null -->
         <usepillar>netarkiv-online1</usepillar>
         <!-- Set to 5 minutes to make it possible to retrieve large records
@@ -42,7 +42,9 @@
     <jmx>
       <passwordFile>conf/jmxremote.password</passwordFile>
       <timeout>300</timeout>
-      <port>8171</port><rmiPort>8271</rmiPort></jmx>
+      <port>8171</port>
+      <rmiPort>8271</rmiPort>
+    </jmx>
     <indexClient>
       <indexRequestTimeout>43200000</indexRequestTimeout>
     </indexClient>
@@ -72,12 +74,13 @@
     <tempDir>tmpdircommon</tempDir>
     <mail>
       <server>post.kb.dk</server>
-    </mail><notifications>
-    <class>dk.netarkivet.common.utils.EMailNotifications</class>
-    <!-- T: receiver to be modified by test -->
-    <receiver>csr@kb.dk</receiver>
-    <sender>devel@kb-prod-udv-001.kb.dk</sender>
-  </notifications>
+    </mail>
+    <notifications>
+      <class>dk.netarkivet.common.utils.EMailNotifications</class>
+      <!-- T: receiver to be modified by test -->
+      <receiver>${user.name}@kb.dk</receiver>
+      <sender>devel@kb-prod-udv-001.kb.dk</sender>
+    </notifications>
     <useReplicaId>SB</useReplicaId>
     <thisPhysicalLocation>S</thisPhysicalLocation>
     <applicationName>dk.netarkivet.wayback.indexer.WaybackIndexerApplication</applicationName>
@@ -167,8 +170,8 @@
     </hibernate>
     <indexer>
       <replicaId>SB</replicaId>
-      <finalBatchOutputDir>batchOutputDir</finalBatchOutputDir>
-      <tempBatchOutputDir>tempBatchOutputDir</tempBatchOutputDir>
+      <finalBatchOutputDir>${project.build.directory}/batchOutputDir</finalBatchOutputDir>
+      <tempBatchOutputDir>${project.build.directory}tempBatchOutputDir</tempBatchOutputDir>
       <maxFailedAttempts>3</maxFailedAttempts>
       <!--
       There is a double-strategy for fetching filenames to queue for harvesting
