@@ -19,6 +19,23 @@
 
   <dependencies>
 
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-common</artifactId>
+      <version>2.7.3.2.6.5.0-292</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-mapreduce-client-core</artifactId>
+      <version>2.7.3.2.6.5.0-292</version>
+      <scope>provided</scope>
+    </dependency>
+
+
+
+
     <!-- bitrepository dependencies -->
 
     <dependency>
@@ -35,14 +52,6 @@
 
     <!-- bitrepository settings complete -->
 
-
-
-
-    <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-client</artifactId>
-      <scope>provided</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>

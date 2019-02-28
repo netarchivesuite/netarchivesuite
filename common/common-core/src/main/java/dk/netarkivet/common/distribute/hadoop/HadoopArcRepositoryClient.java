@@ -32,6 +32,7 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 public class HadoopArcRepositoryClient implements ArcRepositoryClient {
@@ -50,7 +51,7 @@ public class HadoopArcRepositoryClient implements ArcRepositoryClient {
 
     }
 
-    @Override public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
+    @Override public BatchStatus batch(BatchJob job, String replicaId, String... args) {
         return null;
     }
 

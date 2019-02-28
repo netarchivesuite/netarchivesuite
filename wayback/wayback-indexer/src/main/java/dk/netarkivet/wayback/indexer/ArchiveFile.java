@@ -47,8 +47,7 @@ import dk.netarkivet.wayback.WaybackSettings;
 import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
-import dk.netarkivet.wayback.indexer.hadoop.cdx.CDXJob;
-import dk.netarkivet.wayback.indexer.hadoop.cdx.HadoopJob;
+import dk.netarkivet.wayback.indexer.hadoop.HadoopJob;
 
 /**
  * This class represents a file in the arcrepository which may be indexed by the indexer.
@@ -193,7 +192,7 @@ public class ArchiveFile {
         // List<FileBatchJob> getIndexers(ArchiveFile file)
         // This more-flexible approach
         // may be of value when we begin to add warc support.
-        BatchJob theJob = null;
+        BatchJob theJob = new HadoopJob();
         if (filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX))) {
             theJob = new DeduplicationCDXExtractionBatchJob();
         } else if (ARCUtils.isARC(filename)) {
@@ -205,7 +204,6 @@ public class ArchiveFile {
             return;
         }
 
-        BatchJob theJob = new HadoopJob();
 
         theJob.processOnlyFileNamed(filename);
         PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();

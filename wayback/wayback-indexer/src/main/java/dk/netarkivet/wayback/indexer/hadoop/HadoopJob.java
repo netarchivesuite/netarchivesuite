@@ -1,4 +1,4 @@
-package dk.netarkivet.wayback.indexer.hadoop.cdx;
+package dk.netarkivet.wayback.indexer.hadoop;
 
 import java.io.File;
 import java.io.OutputStream;

@@ -24,15 +24,9 @@ package dk.netarkivet.common.distribute.arcrepository;
 
 import java.io.File;
 
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.PathFilter;
-import org.apache.hadoop.mapreduce.Job;
-
-import dk.netarkivet.common.distribute.hadoop.HadoopBatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.batch.BatchJob;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * Implements the Facade pattern to shield off the methods in JMSArcRepositoryClient not to be used by the bit

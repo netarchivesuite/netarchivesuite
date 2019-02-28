@@ -11,6 +11,10 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.NLineInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
+import dk.netarkivet.common.distribute.hadoop.WholeFileInputFormat;
+import dk.netarkivet.wayback.indexer.hadoop.HadoopJob;
+
+
 public class CDXJob extends HadoopJob {
 
     private Job job;
@@ -29,9 +33,7 @@ public class CDXJob extends HadoopJob {
 
 
 
-        //TODO probably better if we can give it a folder or glob rather than a file of files
-        job.setInputFormatClass(NLineInputFormat.class);
-        NLineInputFormat.setNumLinesPerSplit(job, 1);
+        job.setInputFormatClass(WholeFileInputFormat.class);
 
 
         job.setMapperClass(CDXMap.class);
@@ -49,17 +51,17 @@ public class CDXJob extends HadoopJob {
         job.setOutputValueClass(Text.class);
 
         job.setOutputFormatClass(TextOutputFormat.class);
-        TextOutputFormat.setOutputPath(job, new Path(args[1]));
+//        TextOutputFormat.setOutputPath(job, new Path(args[1]));
 
     }
 
     @Override public boolean processFile(File file, OutputStream os) {
-        NLineInputFormat.addInputPath(job, new Path(args[0]));
+//        NLineInputFormat.addInputPath(job, new Path(args[0]));
 
         try {
             return job.waitForCompletion(true);
         } catch (IOException | InterruptedException | ClassNotFoundException e){
-
+            throw new RuntimeException(e);
         }
     }
 
