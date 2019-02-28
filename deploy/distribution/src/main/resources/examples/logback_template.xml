@@ -47,7 +47,7 @@
         <file>./log/APPID.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>./log/APPID.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <filenamePattern>./log/APPID.%d{yyyy-MM-dd}.%i.log</filenamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- or whenever the file size reaches 10MB -->

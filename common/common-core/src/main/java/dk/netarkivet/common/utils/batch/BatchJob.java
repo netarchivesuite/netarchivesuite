@@ -112,7 +112,7 @@ public interface BatchJob {
      *
      * @param os the OutputStream to which output should be written
      */
-    public void initialize(OutputStream os);
+    public default void initialize(OutputStream os) {};
 
     /**
      * Process one file stored in the bit archive.
@@ -121,7 +121,9 @@ public interface BatchJob {
      * @param os the OutputStream to which output should be written
      * @return true if the file was successfully processed, false otherwise
      */
-    public boolean processFile(File file, OutputStream os);
+    public default boolean processFile(File file, OutputStream os) {
+        return false;
+    };
 
     /**
      * Finish up the job. This is called after the last process() call. If the initialize() call throws an exception,
@@ -130,7 +132,7 @@ public interface BatchJob {
      *
      * @param os the OutputStream to which output should be written
      */
-    public void finish(OutputStream os);
+    public default void finish(OutputStream os) {};
 
     /**
      * Get the list of exceptions that have occurred during processing.

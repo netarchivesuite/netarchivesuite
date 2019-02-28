@@ -47,6 +47,8 @@ import dk.netarkivet.wayback.WaybackSettings;
 import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
+import dk.netarkivet.wayback.indexer.hadoop.cdx.CDXJob;
+import dk.netarkivet.wayback.indexer.hadoop.cdx.HadoopJob;
 
 /**
  * This class represents a file in the arcrepository which may be indexed by the indexer.
@@ -202,6 +204,9 @@ public class ArchiveFile {
             log.warn("Skipping indexing of file with filename '{}'", filename);
             return;
         }
+
+        BatchJob theJob = new HadoopJob();
+
         theJob.processOnlyFileNamed(filename);
         PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
         String replicaId = Settings.get(WaybackSettings.WAYBACK_REPLICA);

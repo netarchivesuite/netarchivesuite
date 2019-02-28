@@ -1,8 +1,8 @@
 <configuration>
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>/home/csr/projects/docker-csr/bitmag/bitrepository-quickstart/logs/commandline.log</file>
+    <file>logs/commandline.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>/home/csr/projects/docker-csr/bitmag/bitrepository-quickstart/logs/nasclient.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <filenamePattern>logs/nasclient.%d{yyyy-MM-dd}.%i.log</filenamePattern>
       <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
         <maxFileSize>5MB</maxFileSize>
       </timeBasedFileNamingAndTriggeringPolicy>
