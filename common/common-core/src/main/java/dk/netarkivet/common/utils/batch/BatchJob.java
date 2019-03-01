@@ -1,16 +1,13 @@
 package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import dk.netarkivet.common.CommonSettings;
@@ -100,9 +97,9 @@ public interface BatchJob {
      *
      * @return the possibly empty list of names of files where processing failed
      */
-    public Collection<File> getFilesFailed();
+    public Collection<URI> getFilesFailed();
 
-    void setFilesFailed(Collection<File> files);
+    void setFilesFailed(Collection<URI> files);
 
 
 
@@ -115,15 +112,15 @@ public interface BatchJob {
     public default void initialize(OutputStream os) {};
 
     /**
-     * Process one file stored in the bit archive.
+     * Process
      *
-     * @param file the file to be processed.
      * @param os the OutputStream to which output should be written
      * @return true if the file was successfully processed, false otherwise
      */
-    public default boolean processFile(File file, OutputStream os) {
+    public default boolean process(OutputStream os) {
         return false;
     };
+
 
     /**
      * Finish up the job. This is called after the last process() call. If the initialize() call throws an exception,

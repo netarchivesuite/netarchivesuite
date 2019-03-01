@@ -25,6 +25,7 @@ package dk.netarkivet.common.distribute.arcrepository;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.SettingsFactory;
+import dk.netarkivet.common.utils.batch.BatchJob;
 
 /**
  * A factory for ArcRepositoryClients.
@@ -50,7 +51,7 @@ public class ArcRepositoryClientFactory extends SettingsFactory<ArcRepositoryCli
      * @return An ArcRepositoryClient that implements the methods defined by ViewerArcRepositoryClient. At end of use,
      * close() should be called on this to release any resources claimed.
      */
-    public static ViewerArcRepositoryClient getViewerInstance() {
+    public static <J extends BatchJob> ViewerArcRepositoryClient<J> getViewerInstance() {
         return SettingsFactory.getInstance(CommonSettings.ARC_REPOSITORY_CLIENT);
     }
 
@@ -60,7 +61,7 @@ public class ArcRepositoryClientFactory extends SettingsFactory<ArcRepositoryCli
      * @return An ArcRepositoryClient that implements the methods defined by PreservationArcRepositoryClient. At end of
      * use, close() should be called on this to release any resources claimed.
      */
-    public static PreservationArcRepositoryClient getPreservationInstance() {
+    public static <J extends BatchJob> PreservationArcRepositoryClient<J> getPreservationInstance() {
         return SettingsFactory.getInstance(CommonSettings.ARC_REPOSITORY_CLIENT);
     }
 

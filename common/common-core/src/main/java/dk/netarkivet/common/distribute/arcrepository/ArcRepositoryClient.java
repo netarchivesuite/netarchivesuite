@@ -34,8 +34,8 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * Generic interface defining all methods that an ArcRepository provides. Typically, an application using this will only
  * see one of the restricted superinterfaces.
  */
-public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, ViewerArcRepositoryClient,
-        PreservationArcRepositoryClient {
+public interface ArcRepositoryClient<J extends BatchJob> extends HarvesterArcRepositoryClient, ViewerArcRepositoryClient<J>,
+        PreservationArcRepositoryClient<J> {
 
     /** Call on shutdown to release external resources. */
     @Override
@@ -86,7 +86,7 @@ public interface ArcRepositoryClient extends HarvesterArcRepositoryClient, Viewe
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
      */
-    BatchStatus batch(BatchJob job, String replicaId, String... args);
+    BatchStatus  batch(J job, String replicaId, String... args);
 
     /**
      * Updates the administrative data in the ArcRepository for a given file and replica.

@@ -32,6 +32,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
@@ -694,7 +695,7 @@ public class ArcRepositoryTesterStore {
 
         // Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File>emptyList(),
+                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<URI>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
@@ -759,7 +760,7 @@ public class ArcRepositoryTesterStore {
 
         // Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<File>emptyList(),
+                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1, Collections.<URI>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_WRONG, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
@@ -824,7 +825,7 @@ public class ArcRepositoryTesterStore {
 
         // Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 0, Collections.<File>emptyList(),
+                Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 0, Collections.<URI>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_EMPTY, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);

@@ -60,7 +60,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * Only the store, get(?), and getFile, and batch will be implemented
  * 
  */
-public class BitmagArcRepositoryClient implements ArcRepositoryClient {
+public class BitmagArcRepositoryClient implements ArcRepositoryClient<FileBatchJob> {
 
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(BitmagArcRepositoryClient.class);
@@ -228,7 +228,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
      * @throws IOFailure If a problem occurs during processing the batchjob.
      */
     @Override
-    public BatchStatus batch(final BatchJob job, String replicaId, String... args) throws ArgumentNotValid,
+    public BatchStatus batch(final FileBatchJob job, String replicaId, String... args) throws ArgumentNotValid,
     IOFailure {
     	ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
 

@@ -23,6 +23,7 @@
 package dk.netarkivet.archive.arcrepository.distribute;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Collections;
 
 import org.slf4j.Logger;
@@ -178,7 +179,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         } catch (Throwable t) {
             log.warn("Failed to handle batch request", t);
             BatchReplyMessage replyMessage = new BatchReplyMessage(msg.getReplyTo(), Channels.getTheRepos(),
-                    msg.getID(), 0, Collections.<File>emptyList(), null);
+                    msg.getID(), 0, Collections.<URI>emptyList(), null);
             replyMessage.setNotOk(t);
             JMSConnectionFactory.getInstance().send(replyMessage);
         }

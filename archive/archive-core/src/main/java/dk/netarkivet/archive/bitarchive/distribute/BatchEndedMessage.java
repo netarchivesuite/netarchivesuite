@@ -23,6 +23,7 @@
 package dk.netarkivet.archive.bitarchive.distribute;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class BatchEndedMessage extends ArchiveMessage {
     /** Number of files processed by the batch-job. */
     private int noOfFilesProcessed;
     /** Collection of files that the batch-job could not process. */
-    private Collection<File> filesFailed;
+    private Collection<URI> filesFailed;
     /** The result of the batchJob. */
     private RemoteFile rf;
     /** List of exceptions that occurred during processing. */
@@ -141,7 +142,7 @@ public class BatchEndedMessage extends ArchiveMessage {
      *
      * @return a Collection of strings with the file names
      */
-    public Collection<File> getFilesFailed() {
+    public Collection<URI> getFilesFailed() {
         return filesFailed;
     }
 
@@ -159,7 +160,7 @@ public class BatchEndedMessage extends ArchiveMessage {
      *
      * @param files The collection of files that failed
      */
-    public void setFilesFailed(Collection<File> files) {
+    public void setFilesFailed(Collection<URI> files) {
         filesFailed = files;
     }
 

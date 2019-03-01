@@ -32,7 +32,7 @@ import dk.netarkivet.common.utils.batch.BatchJob;
  * Implements the Facade pattern to shield off the methods in JMSArcRepositoryClient not to be used by the bit
  * preservation system.
  */
-public interface ViewerArcRepositoryClient extends AutoCloseable{
+public interface ViewerArcRepositoryClient<J extends BatchJob> extends AutoCloseable{
 
     /** Call on shutdown to release external resources. */
     @Override
@@ -69,7 +69,7 @@ public interface ViewerArcRepositoryClient extends AutoCloseable{
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
      */
-    BatchStatus batch(BatchJob job, String replicaId, String... args);
+    BatchStatus batch(J job, String replicaId, String... args);
 
 
 //    public HadoopBatchStatus hadoopBatch(Job job, String replicaId, Path inputDir, Class<PathFilter> fileNamePattern);

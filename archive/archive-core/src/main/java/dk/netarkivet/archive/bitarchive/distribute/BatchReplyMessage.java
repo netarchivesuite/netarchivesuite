@@ -24,6 +24,7 @@
 package dk.netarkivet.archive.bitarchive.distribute;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -41,7 +42,7 @@ public class BatchReplyMessage extends ArchiveMessage {
     /** Number of files processed by the BatchJob. */
     private int noOfFilesProcessed;
     /** Set of files that the BatchJob could not process. */
-    private HashSet<File> filesFailed;
+    private HashSet<URI> filesFailed;
     /** The result of the BatchJob. */
     private RemoteFile resultFile;
 
@@ -60,7 +61,7 @@ public class BatchReplyMessage extends ArchiveMessage {
      * @throws ArgumentNotValid if the input parameters are not meaningful
      */
     public BatchReplyMessage(ChannelID to, ChannelID replyTo, String originatingBatchMsgId, int filesProcessed,
-            Collection<File> failedFiles, RemoteFile resultFile) throws ArgumentNotValid {
+            Collection<URI> failedFiles, RemoteFile resultFile) throws ArgumentNotValid {
         // replyTo must be set here because it is used by AdminData to work
         // out which bitarchive the batch job operated on
         super(to, replyTo);
@@ -70,9 +71,9 @@ public class BatchReplyMessage extends ArchiveMessage {
         this.replyOfId = originatingBatchMsgId;
         this.noOfFilesProcessed = filesProcessed;
         if (failedFiles != null) {
-            this.filesFailed = new HashSet<File>(failedFiles);
+            this.filesFailed = new HashSet<>(failedFiles);
         } else {
-            this.filesFailed = new HashSet<File>();
+            this.filesFailed = new HashSet<>();
         }
         this.resultFile = resultFile;
     }
@@ -91,7 +92,7 @@ public class BatchReplyMessage extends ArchiveMessage {
      *
      * @return The collection of failed files
      */
-    public Collection<File> getFilesFailed() {
+    public Collection<URI> getFilesFailed() {
         return filesFailed;
     }
 

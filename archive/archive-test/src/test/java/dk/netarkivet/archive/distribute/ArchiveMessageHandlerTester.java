@@ -27,6 +27,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 
 import org.junit.After;
@@ -125,7 +126,7 @@ public class ArchiveMessageHandlerTester {
     public final void testVisitBatchReplyMessage() {
         try {
             tmh.visit(new BatchReplyMessage(Channels.getTheRepos(), Channels.getTheBamon(), "x", 0,
-                    new ArrayList<File>(), null));
+                    new ArrayList<URI>(), null));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected

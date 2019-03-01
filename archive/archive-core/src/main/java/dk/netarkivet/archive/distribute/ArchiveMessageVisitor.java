@@ -36,6 +36,7 @@ import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
+import dk.netarkivet.common.utils.batch.BatchJob;
 
 /**
  * Interface for all classes which handles archive-related messages received from a JMS server. This is implemented with
@@ -46,7 +47,7 @@ import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
  * Thus to handle a message, you should subclass ArchiveMessageHandler and override the visit() method for that kind of
  * message. You should not implement this interface in any other way.
  */
-public interface ArchiveMessageVisitor {
+public interface ArchiveMessageVisitor<J extends BatchJob> {
     /**
      * This method should be overridden to handle the receipt of a message.
      *
@@ -59,7 +60,7 @@ public interface ArchiveMessageVisitor {
      *
      * @param msg A received message.
      */
-    void visit(BatchMessage msg);
+    void visit(BatchMessage<J> msg);
 
     /**
      * This method should be overridden to handle the receipt of a message.

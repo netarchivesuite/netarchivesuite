@@ -1,20 +1,27 @@
-package dk.netarkivet.wayback.indexer.hadoop;
+package dk.netarkivet.common.distribute.hadoop;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.util.Tool;
 
+import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.utils.batch.BatchJob;
 
-public class HadoopJob extends Configured implements Tool, BatchJob {
+public abstract class HadoopBatchJob extends Configured implements BatchJob {
 
+    private Job job;
+    private Path outputDir;
 
-    Pattern filenamePattern;
+    protected Pattern filenamePattern;
 
 
     @Override
@@ -31,6 +38,15 @@ public class HadoopJob extends Configured implements Tool, BatchJob {
     }
 
 
+    private List<URI> filesToProcess;
+
+    public List<URI> getFilesToProcess() {
+        return filesToProcess;
+    }
+
+    public void setFilesToProcess(List<URI> filesToProcess) {
+        this.filesToProcess = filesToProcess;
+    }
 
     int noOfFilesProcessed = 0;
 
@@ -45,14 +61,14 @@ public class HadoopJob extends Configured implements Tool, BatchJob {
     }
 
 
-    Collection<File> filesFailed;
+    Collection<URI> filesFailed;
 
     @Override
-    public Collection<File> getFilesFailed() {
+    public Collection<URI> getFilesFailed() {
         return filesFailed;
     }
 
-    public void setFilesFailed(Collection<File> filesFailed) {
+    public void setFilesFailed(Collection<URI> filesFailed) {
         this.filesFailed = filesFailed;
     }
 
@@ -68,20 +84,11 @@ public class HadoopJob extends Configured implements Tool, BatchJob {
     }
 
 
-    @Override
-    public int run(String[] args) throws Exception {
-        return 0;
-    }
-
+    public abstract RemoteFile getOuputFile() throws IOException;
 
     @Override
     public void initialize(OutputStream os) {
 
-    }
-
-    @Override
-    public boolean processFile(File file, OutputStream os) {
-        return false;
     }
 
     @Override

@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -415,7 +416,7 @@ public class DatabaseBasedActiveBitPreservationTester {
         return res;
     }
 
-    public static class MockupArcRepositoryClient implements ArcRepositoryClient {
+    public static class MockupArcRepositoryClient implements ArcRepositoryClient<FileBatchJob> {
         private static MockupArcRepositoryClient instance;
         private BitarchiveRecord overrideGet;
         private File overrideGetFile;
@@ -469,7 +470,7 @@ public class DatabaseBasedActiveBitPreservationTester {
             FileUtils.copyFile(file, f);
         }
 
-        public BatchStatus batch(BatchJob job, String locationName, String... args) {
+        public BatchStatus batch(FileBatchJob job, String locationName, String... args) {
             if (overrideBatch != null) {
                 return overrideBatch;
             }
@@ -482,7 +483,7 @@ public class DatabaseBasedActiveBitPreservationTester {
                 // java 8
                 //return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
                 //        RemoteFileFactory.getMovefileInstance(output), new ArrayList<>(0));
-                return new BatchStatus("BA1", Collections.<File>emptyList(),
+                return new BatchStatus("BA1", Collections.<URI>emptyList(),
                         in_files.length,
                         RemoteFileFactory.getMovefileInstance(output),
                         new ArrayList<FileBatchJob.ExceptionOccurrence>(0));

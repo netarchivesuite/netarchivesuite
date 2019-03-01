@@ -1,26 +1,9 @@
 package dk.netarkivet.common.distribute.hadoop;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.PathFilter;
-import org.apache.hadoop.mapred.TIPStatus;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.MRJobConfig;
-import org.apache.hadoop.mapreduce.TaskReport;
-import org.apache.hadoop.mapreduce.TaskType;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +13,12 @@ import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.batch.BatchJob;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
 
-public class HadoopArcRepositoryClient implements ArcRepositoryClient {
+public class HadoopArcRepositoryClient implements ArcRepositoryClient<HadoopBatchJob>,
+        ViewerArcRepositoryClient<HadoopBatchJob> {
 
     private static final Logger log = LoggerFactory.getLogger(HadoopArcRepositoryClient.class);
 
@@ -49,11 +32,66 @@ public class HadoopArcRepositoryClient implements ArcRepositoryClient {
 
     @Override public void store(File file) throws IOFailure, ArgumentNotValid {
 
-    }
+   }
 
-    @Override public BatchStatus batch(BatchJob job, String replicaId, String... args) {
+    @Override public BatchStatus batch(HadoopBatchJob job, String replicaId, String... args) {
         return null;
     }
+    //
+//    @Override public BatchStatus batch(BatchJob job, String replicaId, String... args) {
+//        ArgumentNotValid.checkNotNull(job, "BatchJob job");
+//        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+//
+//        if (job instanceof HadoopBatchJob) {
+//            HadoopBatchJob hadoopJob = (HadoopBatchJob) job;
+//
+//            OutputStream os = null;
+//            File resultFile;
+//            try {
+//                resultFile = File.createTempFile("batch", replicaId, FileUtils.getTempDir());
+//
+//                os = new FileOutputStream(resultFile);
+//
+//
+//                //TODO calc files in a better way
+//                List<File> files = new ArrayList<File>();
+//
+//                final FilenameFilter filenameFilter = new FilenameFilter() {
+//                    public boolean accept(File dir, String name) {
+//                        Pattern filenamePattern = job.getFilenamePattern();
+//                        return new File(dir, name).isFile()
+//                                && (filenamePattern == null || filenamePattern.matcher(name).matches());
+//                    }
+//                };
+//
+////                for (File dir : storageDirs) {
+////                    File[] filesInDir = dir.listFiles(filenameFilter);
+////                    if (filesInDir != null) {
+////                        files.addAll(Arrays.asList(filesInDir));
+////                    }
+////                }
+//
+//                hadoopBatch(hadoopJob,os, files, args);
+//
+//            } catch (IOException e) {
+//                throw new IOFailure("Cannot perform batch '" + job + "'", e);
+//            } finally {
+//                if (os != null) {
+//                    try {
+//                        os.close();
+//                    } catch (IOException e) {
+//                        log.warn("Error closing batch output stream '{}'", os, e);
+//                    }
+//                }
+//            }
+//            return new BatchStatus(replicaId, job.getFilesFailed(), job.getNoOfFilesProcessed(), new FileRemoteFile(
+//                    resultFile), job.getExceptions());
+//
+//        } else {
+//            throw new ClassCastException();
+//        }
+//
+//    }
 
     @Override public void updateAdminData(String fileName, String bitarchiveId, ReplicaStoreState newval) {
 
@@ -86,19 +124,20 @@ public class HadoopArcRepositoryClient implements ArcRepositoryClient {
     @Override public void close() {
 
     }
-
-    public HadoopBatchStatus hadoopBatch(Job job,
-            String replicaId) {
+/*
+    public HadoopBatchStatus hadoopBatch(HadoopBatchJob job,
+            OutputStream errorLog, List<Path> files, String... args) {
         //We want to do as much work as possible and return results for the successes, along with a list of the files that
         //failed to process.
 
-        job.setOutputFormatClass(TextOutputFormat.class);
-        Path outputDir = new Path("target/temp" + new Date().getTime());
-        TextOutputFormat.setOutputPath(job, outputDir);
 
         boolean success;
         try {
-            success = job.waitForCompletion(true);
+            job.initialize(errorLog, args);
+
+            job.process();
+
+            job.finish(errorLog);
         } catch (IOException | InterruptedException | ClassNotFoundException e) {
             throw new IOFailure("message", e);
         }
@@ -129,7 +168,7 @@ public class HadoopArcRepositoryClient implements ArcRepositoryClient {
                 replicaId,
                 resultFile,
                 null);
-    }
+    }*/
 
     private RemoteFile getResultFile(Path outputDir, FileSystem srcFS) {
         return new HadoopRemoteFile(outputDir, srcFS);

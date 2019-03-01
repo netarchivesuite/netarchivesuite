@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -544,7 +545,7 @@ public class RunBatch extends ToolRunnerBase {
                     + "errors written to " + ((eFile == null) ? "stderr " : "file '" + eFile + "' "));
 
             BatchStatus status = arcrep.batch(job, batchReplica.getId());
-            final Collection<File> failedFiles = status.getFilesFailed();
+            final Collection<URI> failedFiles = status.getFilesFailed();
             Collection<ExceptionOccurrence> exceptions = status.getExceptions();
 
             System.out.println("Processed " + status.getNoOfFilesProcessed() + " files with " + failedFiles.size()
@@ -572,8 +573,8 @@ public class RunBatch extends ToolRunnerBase {
 
             if (!failedFiles.isEmpty()) {
                 errorOutput.println("Failed files:");
-                for (File f : failedFiles) {
-                    errorOutput.println(f.getName());
+                for (URI f : failedFiles) {
+                    errorOutput.println(new File(f).getName());
                 }
             }
 

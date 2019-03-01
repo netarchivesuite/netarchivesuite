@@ -55,12 +55,14 @@ import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.common.utils.batch.BatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * Bitarchive container responsible for processing the different classes of message which can be received by a
  * bitarchive and returning appropriate data.
  */
-public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF {
+public class BitarchiveServer extends ArchiveMessageHandler<FileBatchJob> implements CleanupIF {
 
     /** The bitarchive serviced by this server. */
     private Bitarchive ba;
@@ -357,7 +359,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
      * @throws ArgumentNotValid If the BatchMessage is null.
      */
     @Override
-    public void visit(final BatchMessage msg) throws ArgumentNotValid {
+    public void visit(final BatchMessage<FileBatchJob> msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "BatchMessage msg");
         Thread batchThread = new Thread("Batch-" + msg.getID()) {
             @Override

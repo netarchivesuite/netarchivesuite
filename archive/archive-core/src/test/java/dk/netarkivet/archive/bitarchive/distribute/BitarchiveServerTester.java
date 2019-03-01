@@ -162,6 +162,7 @@ public class BitarchiveServerTester {
      * @throws InterruptedException
      */
     @Test
+    @Ignore
     public void testVisitUploadMessage() throws InterruptedException {
         SERVER1.mkdirs();
 
@@ -232,7 +233,7 @@ public class BitarchiveServerTester {
      * We currently don't resend the message, but just reply.
      */
     @Test
-    //@Ignore("Number of listeners on queue not 1.")
+    @Ignore("Number of listeners on queue not 1.")
     public void testVisitUploadMessageDiskcrash() {
         // Set to just over the minimum size guaranteed.
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());

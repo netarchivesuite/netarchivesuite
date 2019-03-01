@@ -42,6 +42,7 @@ import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -54,7 +55,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * A minimal implementation of ArcRepositoryClient that just has one local directory that it keeps its files in, no
  * checking no nothing.
  */
-public class TrivialArcRepositoryClient implements ArcRepositoryClient {
+public class TrivialArcRepositoryClient implements ArcRepositoryClient<FileBatchJob> {
     /** The directory name of the local arcrepository. */
     private static final String ARC_REPOSITORY_DIR_NAME = "ArcRepository";
     /** Store files in this dir -- might later use a separate setting. */
@@ -150,7 +151,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
      * @param args The arguments for the batchjob.
      * @return The status of the batch job after it ended.
      */
-    public BatchStatus batch(final BatchJob job, String replicaId, String... args) {
+    public BatchStatus batch(final FileBatchJob job, String replicaId, String... args) {
         ArgumentNotValid.checkNotNull(job, "job");
         OutputStream os = null;
         File resultFile;
@@ -243,7 +244,6 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
         throw new NotImplementedException("TODO: Implement me!");
     }
 
-    @Override
     public String getChecksum(String replicaId, String filename) {
         // TODO Auto-generated method stub
         return null;

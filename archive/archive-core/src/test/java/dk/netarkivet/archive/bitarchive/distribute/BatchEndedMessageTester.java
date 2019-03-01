@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 
 import org.junit.After;
@@ -42,7 +43,7 @@ public class BatchEndedMessageTester {
     public void setUp() {
         bem = new BatchEndedMessage(Channels.getTheBamon(), "BAId", "MsgId", null);
         bem.setNoOfFilesProcessed(42);
-        bem.setFilesFailed(Arrays.asList(new File[] {new File("failed")}));
+        bem.setFilesFailed(Arrays.asList(new URI[] {new File("failed").toURI()}));
     }
 
     @After

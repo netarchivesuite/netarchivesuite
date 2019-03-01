@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -72,7 +73,7 @@ public class BatchStatusTester {
 
     @Test
     public void testCopyResults() throws IOException {
-        List<File> emptyList = Collections.emptyList();
+        List<URI> emptyList = Collections.emptyList();
         File tmpFile = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "newFile");
         String fileContents = FileUtils.readFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE);
         TestRemoteFile lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
@@ -119,7 +120,7 @@ public class BatchStatusTester {
 
     @Test
     public void testAppendResults() throws IOException {
-        List<File> emptyList = Collections.emptyList();
+        List<URI> emptyList = Collections.emptyList();
         String fileContents = FileUtils.readFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE);
         TestRemoteFile lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
                 false, false, false);
@@ -172,7 +173,7 @@ public class BatchStatusTester {
 
     @Test
     public void testHasResultFile() throws IOException {
-        List<File> emptyList = Collections.emptyList();
+        List<URI> emptyList = Collections.emptyList();
         TestRemoteFile lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
                 false, false, false);
         BatchStatus bs = new BatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));

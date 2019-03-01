@@ -223,8 +223,11 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
                     files.addAll(Arrays.asList(filesInDir));
                 }
             }
-            BatchLocalFiles batcher = new BatchLocalFiles(files.toArray(new File[files.size()]));
-            batcher.run(job, os);
+            if (job instanceof FileBatchJob) {
+                FileBatchJob fileBatchJob = (FileBatchJob) job;
+                BatchLocalFiles batcher = new BatchLocalFiles(files.toArray(new File[files.size()]));
+                batcher.run(fileBatchJob, os);
+            }
         } catch (IOException e) {
             throw new IOFailure("Cannot perform batch '" + job + "'", e);
         } finally {

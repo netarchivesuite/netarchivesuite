@@ -104,7 +104,7 @@ public class HadoopArcRepositoryClientTest {
         job.setOutputValueClass(Text.class);
 
 
-        HadoopBatchStatus result = client.hadoopBatch(job, null);
+        HadoopBatchStatus result = null; //client.hadoopBatch(job, null);
         System.out.println(result);
     }
 

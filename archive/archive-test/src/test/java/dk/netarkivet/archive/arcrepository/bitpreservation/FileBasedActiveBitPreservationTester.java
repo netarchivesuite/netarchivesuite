@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -219,7 +220,7 @@ public class FileBasedActiveBitPreservationTester {
 
         /* Set it up so fileListJob will return expected results. */
         File listingDir = new File(new File(dir, "filelistOutput"), "unsorted.txt");
-        MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptySet(), 5,
+        MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<URI>emptySet(), 5,
                 RemoteFileFactory.getMovefileInstance(listingDir), new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         Replica replicaOne = Replica.getReplicaFromId("ONE");
 
@@ -344,7 +345,7 @@ public class FileBasedActiveBitPreservationTester {
         final String[] replica = new String[1];
         MockupArcRepositoryClient.instance = new MockupArcRepositoryClient() {
             @Override
-            public BatchStatus batch(BatchJob job, String replicaId, String... args) {
+            public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
                 replica[0] = replicaId;
                 File file = new File(new File(TestInfo.WORKING_DIR, "checksums"), "unsorted.txt");
                 file.getParentFile().mkdirs();
@@ -353,7 +354,7 @@ public class FileBasedActiveBitPreservationTester {
                 } catch (IOException e) {
                     throw new IOFailure("Can't make empty file " + file, e);
                 }
-                return new BatchStatus(replicaId, new HashSet<File>(), 0,
+                return new BatchStatus(replicaId, new HashSet<URI>(), 0,
                         new TestRemoteFile(file, false, false, false), job.getExceptions());
             }
 
@@ -406,7 +407,7 @@ public class FileBasedActiveBitPreservationTester {
         // requires Java 8
         //MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptyList(),
         //        17, RemoteFileFactory.getMovefileInstance(unsortedFile), new ArrayList<>(0));
-        MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptyList(),
+        MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<URI>emptyList(),
                         17, RemoteFileFactory.getMovefileInstance(unsortedFile), new ArrayList(0));
         runFilelistJob.invoke(abp, replica);
 
@@ -429,11 +430,11 @@ public class FileBasedActiveBitPreservationTester {
                 if (job.getClass().equals(ChecksumJob.class)) {
 
                     if (results.containsKey(Replica.getReplicaFromId(replicaId))) {
-                        return new BatchStatus("AP1", Collections.<File>emptyList(), 1, new StringRemoteFile(
+                        return new BatchStatus("AP1", Collections.<URI>emptyList(), 1, new StringRemoteFile(
                                 results.get(Replica.getReplicaFromId(replicaId))),
                                 new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
                     } else {
-                        return new BatchStatus("AP1", Collections.<File>emptyList(), 0, null,
+                        return new BatchStatus("AP1", Collections.<URI>emptyList(), 0, null,
                                 new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
                     }
                 } else {
@@ -537,10 +538,10 @@ public class FileBasedActiveBitPreservationTester {
 
         public void onMessage(Message msg) {
             try {
-                BatchMessage bMsg = (BatchMessage) JMSConnection.unpack(msg);
+                BatchMessage<FileBatchJob> bMsg = (BatchMessage<FileBatchJob>) JMSConnection.unpack(msg);
                 BatchStatus lbs = batch(bMsg.getJob(), bMsg.getReplicaId(), null);
                 conn.reply(new BatchReplyMessage(bMsg.getTo(), bMsg.getReplyTo(), bMsg.getID(), 4,
-                        new ArrayList<File>(), lbs.getResultFile()));
+                        new ArrayList<URI>(), lbs.getResultFile()));
             } catch (IOFailure e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -556,7 +557,7 @@ public class FileBasedActiveBitPreservationTester {
          * @return BatchStatus
          * @throws IOException If trouble creating temporary files and writing to this temporary files.
          */
-        public BatchStatus batch(BatchJob job, String locationName, RemoteFile file) throws IOException {
+        public BatchStatus batch(FileBatchJob job, String locationName, RemoteFile file) throws IOException {
             BatchStatus lbs = null;
             File tmpfile = File.createTempFile("DummyBatch", "");
             OutputStream os = new FileOutputStream(tmpfile);
@@ -570,8 +571,8 @@ public class FileBasedActiveBitPreservationTester {
             RemoteFile resultFile = RemoteFileFactory.getInstance(tmpfile, true, false, true);
             if (false) {
                 File artificialFailure = new File(bitarchive_dir, TestInfo.REFERENCE_FILES[0]);
-                List<File> l = new ArrayList<File>();
-                l.add(artificialFailure);
+                List<URI> l = new ArrayList<>();
+                l.add(artificialFailure.toURI());
                 lbs = new BatchStatus(bitarchive_dir.getName(), l, job.getNoOfFilesProcessed(), null, null);
             } else {
 
@@ -582,7 +583,7 @@ public class FileBasedActiveBitPreservationTester {
         }
     }
 
-    public static class MockupArcRepositoryClient implements ArcRepositoryClient {
+    public static class MockupArcRepositoryClient implements ArcRepositoryClient<FileBatchJob> {
         private static MockupArcRepositoryClient instance;
         private BitarchiveRecord overrideGet;
         private File overrideGetFile;
@@ -636,7 +637,7 @@ public class FileBasedActiveBitPreservationTester {
             FileUtils.copyFile(file, f);
         }
 
-        public BatchStatus batch(BatchJob job, String locationName, String... args) {
+        public BatchStatus batch(FileBatchJob job, String locationName, String... args) {
             if (overrideBatch != null) {
                 return overrideBatch;
             }
@@ -646,7 +647,7 @@ public class FileBasedActiveBitPreservationTester {
                 FileOutputStream os = new FileOutputStream(output);
                 new BatchLocalFiles(in_files).run(job, os);
                 os.close();
-                return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
+                return new BatchStatus("BA1", Collections.<URI>emptyList(), in_files.length,
                         RemoteFileFactory.getMovefileInstance(output), new ArrayList<FileBatchJob.ExceptionOccurrence>(
                         0));
             } catch (IOException e) {

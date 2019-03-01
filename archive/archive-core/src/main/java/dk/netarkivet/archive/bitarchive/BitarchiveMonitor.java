@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -199,7 +200,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * @throws ArgumentNotValid If either ID is null.
      */
     public void bitarchiveReply(String bitarchiveBatchID, String bitarchiveID, int noOfFilesProcessed,
-            Collection<File> filesFailed, RemoteFile remoteFile, String errMsg,
+            Collection<URI> filesFailed, RemoteFile remoteFile, String errMsg,
             List<FileBatchJob.ExceptionOccurrence> exceptions) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID, "String bitarchiveBatchID");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveID, "String bitarchiveID");
@@ -271,7 +272,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         public int noOfFilesProcessed;
 
         /** The accumulated list of files failed in replies received so far. */
-        public final Collection<File> filesFailed;
+        public final Collection<URI> filesFailed;
 
         /** A string with a concatenation of errors. This error message is null, if the job is successful. */
         public String errorMessages;
@@ -313,7 +314,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                 log.warn("Unable to create file for batch output");
                 throw new IOFailure("Unable to create file for batch output", e);
             }
-            this.filesFailed = new ArrayList<File>();
+            this.filesFailed = new ArrayList<>();
             // Null indicates no error
             this.errorMessages = null;
             this.notifyInitiated = false;
@@ -347,7 +348,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
          * @param errMsg An error message with errors from that bit archive.
          */
         private synchronized void updateWithBitarchiveReply(String bitarchiveID, int numberOfFilesProcessed,
-                Collection<File> failedFiles, RemoteFile remoteFile, String errMsg) {
+                Collection<URI> failedFiles, RemoteFile remoteFile, String errMsg) {
             if (notifyInitiated) {
                 log.debug("The reply for batch job: '{}' from bitarchive '{}' arrived after we had started replying. "
                         + "Ignoring this reply.", bitarchiveBatchID, bitarchiveID);

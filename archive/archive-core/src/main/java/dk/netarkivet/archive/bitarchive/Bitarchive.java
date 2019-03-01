@@ -185,7 +185,7 @@ public class Bitarchive {
      * @throws ArgumentNotValid if job or file is null.
      * @throws IOFailure if there was problems writing to the RemoteFile
      */
-    public BatchStatus batch(String bitarchiveAppId, final BatchJob job) throws ArgumentNotValid, IOFailure {
+    public BatchStatus batch(String bitarchiveAppId, final FileBatchJob job) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveAppId, "String bitarchiveAppId");
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         log.info("Starting batch job on bitarchive application with id '{}': '{}', on filename-pattern: '{}'",

@@ -43,6 +43,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
+import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
@@ -80,7 +81,7 @@ public class Reporting {
      */
     public static List<String> getFilesForJob(long jobid, String harvestprefix) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
-        FileBatchJob fileListJob = new FileListJob();
+        BatchJob fileListJob = new FileListJob();
         List<String> acceptedPatterns = new ArrayList<String>();
         acceptedPatterns.add(getMetadataFilePatternForJobId(jobid));
         acceptedPatterns.add(harvestprefix + archivefile_suffix);

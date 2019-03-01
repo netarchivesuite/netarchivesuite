@@ -33,6 +33,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -279,7 +280,7 @@ public class ArcRepositoryTester {
         outstanding.put(id1, arcname1);
         ad.addEntry(arcname1, null, "f00");
         BatchReplyMessage bamsg0 = new BatchReplyMessage(Channels.getTheRepos(), Channels.getTheBamon(), id1, 0,
-                new ArrayList<File>(0),
+                new ArrayList<URI>(0),
                 new StringRemoteFile(arcname1 + ChecksumJob.STRING_FILENAME_SEPARATOR + "f00\n"));
         JMSConnectionMockupMQ.updateMsgID(bamsg0, id1);
         a.onBatchReply(bamsg0);
@@ -291,7 +292,7 @@ public class ArcRepositoryTester {
         outstanding.put(id1, arcname1);
         ad.addEntry(arcname1, null, "f00");
         BatchReplyMessage bamsg2 = new BatchReplyMessage(Channels.getTheRepos(), Channels.getTheBamon(), id1, 0,
-                new ArrayList<File>(0), new NullRemoteFile());
+                new ArrayList<URI>(0), new NullRemoteFile());
         JMSConnectionMockupMQ.updateMsgID(bamsg2, id1);
         bamsg2.setNotOk("Test an error");
         a.onBatchReply(bamsg2);
@@ -304,7 +305,7 @@ public class ArcRepositoryTester {
         admindataentries.remove(arcname1);
         outstanding.put(id1, arcname1);
         BatchReplyMessage bamsg3 = new BatchReplyMessage(Channels.getTheRepos(), Channels.getTheBamon(), id1, 0,
-                new ArrayList<File>(0), new NullRemoteFile());
+                new ArrayList<URI>(0), new NullRemoteFile());
         JMSConnectionMockupMQ.updateMsgID(bamsg3, id1);
         bamsg3.setNotOk("Test another error");
         try {
@@ -318,7 +319,7 @@ public class ArcRepositoryTester {
         assertFalse("Should not have info about non-yet-processed arcfile", ad.hasEntry(arcname1));
         // Try one without matching arcfilename -- should give warning.
         BatchReplyMessage bamsg1 = new BatchReplyMessage(Channels.getTheRepos(), Channels.getTheBamon(), id1, 0,
-                new ArrayList<File>(0), new NullRemoteFile());
+                new ArrayList<URI>(0), new NullRemoteFile());
         a.onBatchReply(bamsg1);
         lr.assertLogContains("Should have warning about unknown id", "unknown originating ID " + id1);
         assertFalse("Should not have info about non-yet-processed arcfile", ad.hasEntry(arcname1));

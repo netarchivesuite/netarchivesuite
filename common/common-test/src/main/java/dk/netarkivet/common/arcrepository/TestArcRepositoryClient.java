@@ -30,6 +30,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,7 +108,7 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
     }
 
     @Override
-    public BatchStatus batch(BatchJob job, String replicaId, String... args) {
+    public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
         batchCounter++;
         if (batchMustDie) {
             throw new IOFailure("Committing suicide as ordered, SIR!");
@@ -125,7 +126,7 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
         try {
             os = new FileOutputStream(f);
         } catch (IOException e) {
-            return new BatchStatus(replicaId, new ArrayList<File>(), 0, null, job.getExceptions());
+            return new BatchStatus(replicaId, new ArrayList<URI>(), 0, null, job.getExceptions());
         }
         File[] files = arcDir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -134,12 +135,12 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
         });
         job.initialize(os);
         int processed = 0;
-        List<File> failures = new ArrayList<File>();
+        List<URI> failures = new ArrayList<>();
         for (File f1 : files) {
             if (job.getFilenamePattern().matcher(f1.getName()).matches()) {
                 processed++;
                 if (!job.processFile(f1, os)) {
-                    failures.add(f1);
+                    failures.add(f1.toURI());
                 }
             }
         }

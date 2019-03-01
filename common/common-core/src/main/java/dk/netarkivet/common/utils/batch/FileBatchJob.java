@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -67,7 +68,7 @@ public abstract class FileBatchJob implements BatchJob, Serializable {
     protected long batchJobTimeout = -1;
 
     /** A Set of files which generated errors. */
-    protected Collection<File> filesFailed = new HashSet<File>();
+    protected Collection<URI> filesFailed = new HashSet<>();
 
     /** A list with information about the exceptions thrown during the execution of the batchjob. */
     protected List<ExceptionOccurrence> exceptions = new ArrayList<ExceptionOccurrence>();
@@ -99,11 +100,11 @@ public abstract class FileBatchJob implements BatchJob, Serializable {
      *
      * @return the possibly empty list of names of files where processing failed
      */
-    public Collection<File> getFilesFailed() {
+    public Collection<URI> getFilesFailed() {
         return filesFailed;
     }
 
-    public void setFilesFailed(Collection<File> filesFailed) {
+    public void setFilesFailed(Collection<URI> filesFailed) {
         this.filesFailed = filesFailed;
     }
 
@@ -209,6 +210,16 @@ public abstract class FileBatchJob implements BatchJob, Serializable {
     public void setBatchJobTimeout(long batchJobTimeout) {
         this.batchJobTimeout = batchJobTimeout;
     }
+
+
+    /**
+     * Process
+     *
+     * @param os the OutputStream to which output should be written
+     * @return true if the file was successfully processed, false otherwise
+     */
+    public abstract boolean processFile(File file, OutputStream os);
+
 
 
 }

@@ -37,9 +37,11 @@ import dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.utils.ChecksumCalculator;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -74,7 +76,7 @@ public class TrivialArcRepositoryClientTester {
 
     @Test
     public void testStore() throws Exception {
-        ArcRepositoryClient arcrep = new TrivialArcRepositoryClient();
+        TrivialArcRepositoryClient arcrep = new TrivialArcRepositoryClient();
 
         BatchStatus status = arcrep.batch(new FileListJob(), "BA");
         assertEquals("Should have no files processed at outset", 0, status.getNoOfFilesProcessed());

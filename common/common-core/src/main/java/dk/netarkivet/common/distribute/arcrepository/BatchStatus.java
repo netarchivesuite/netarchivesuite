@@ -24,6 +24,7 @@ package dk.netarkivet.common.distribute.arcrepository;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class BatchStatus {
     /** The total number of files processed so far. */
     private final int noOfFilesProcessed;
     /** A list of files that the batch job could not process. */
-    private final Collection<File> filesFailed;
+    private final Collection<URI> filesFailed;
     /** The application ID identifying the bitarchive, that run this batch job. */
     private final String bitArchiveAppId;
     /** The file containing the result of the batch job. */
@@ -59,7 +60,7 @@ public class BatchStatus {
      * @param resultFile A file containing the result of the batch job
      * @param exceptions A list of exceptions caught during the execution of the batchJob
      */
-    public BatchStatus(String bitArchiveAppId, Collection<File> filesFailed, int noOfFilesProcessed,
+    public BatchStatus(String bitArchiveAppId, Collection<URI> filesFailed, int noOfFilesProcessed,
             RemoteFile resultFile, List<FileBatchJob.ExceptionOccurrence> exceptions) {
         this.bitArchiveAppId = bitArchiveAppId;
         this.filesFailed = filesFailed;
@@ -76,7 +77,7 @@ public class BatchStatus {
      * @param resultFile A file containing the result of the batch job
      * @param exceptions A list of exceptions caught during the execution of the batchJob
      */
-    public BatchStatus(Collection<File> filesFailed, int noOfFilesProcessed, RemoteFile resultFile,
+    public BatchStatus(Collection<URI> filesFailed, int noOfFilesProcessed, RemoteFile resultFile,
             List<FileBatchJob.ExceptionOccurrence> exceptions) {
         this("ALL_BITARCHIVE_APPS", filesFailed, noOfFilesProcessed, resultFile, exceptions);
     }
@@ -95,7 +96,7 @@ public class BatchStatus {
      *
      * @return A collection containing the files that processFile returned false on.
      */
-    public Collection<File> getFilesFailed() {
+    public Collection<URI> getFilesFailed() {
         return filesFailed;
     }
 

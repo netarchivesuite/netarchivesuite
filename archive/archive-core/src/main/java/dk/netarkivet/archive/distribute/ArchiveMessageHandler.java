@@ -45,6 +45,7 @@ import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.batch.BatchJob;
 
 /**
  * This default message handler shields of all unimplemented methods from the ArchiveMessageVisitor interface.
@@ -53,7 +54,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
  *
  * @see ArchiveMessageVisitor
  */
-public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, MessageListener {
+public abstract class ArchiveMessageHandler<J extends BatchJob> implements ArchiveMessageVisitor<J>, MessageListener {
 
     /** The log. */
     private static final Logger log = LoggerFactory.getLogger(ArchiveMessageHandler.class);
@@ -111,7 +112,7 @@ public abstract class ArchiveMessageHandler implements ArchiveMessageVisitor, Me
      * @param msg a BatchMessage
      * @throws PermissionDenied when invoked
      */
-    public void visit(BatchMessage msg) throws PermissionDenied {
+    public void visit(BatchMessage<J> msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }

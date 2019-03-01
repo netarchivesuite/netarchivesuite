@@ -25,6 +25,7 @@ package dk.netarkivet.archive.webinterface;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -131,7 +132,7 @@ public class BatchExecuter extends Thread {
             fw.write(processInfo + "\n");
 
             BatchStatus status = arcrep.batch(batchJob, rep.getId());
-            final Collection<File> failedFiles = status.getFilesFailed();
+            final Collection<URI> failedFiles = status.getFilesFailed();
             Collection<ExceptionOccurrence> exceptions = status.getExceptions();
 
             // log results.
@@ -156,8 +157,8 @@ public class BatchExecuter extends Thread {
             // print failed files to errorfile
             if (!failedFiles.isEmpty()) {
                 fw.write("File failed: " + failedFiles.size() + "\n");
-                for (File f : failedFiles) {
-                    fw.write(f.getPath() + "\n");
+                for (URI f : failedFiles) {
+                    fw.write(new File(f).getPath() + "\n");
                 }
             }
 

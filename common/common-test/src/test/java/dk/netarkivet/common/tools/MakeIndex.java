@@ -24,6 +24,7 @@
 package dk.netarkivet.common.tools;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class MakeIndex {
             BatchStatus cdxstatus = arcrep.batch(cdxjob, Settings.get(CommonSettings.USE_REPLICA_ID));
             cdxstatus.getResultFile().copyTo(indexfile);
             cdxstatus.getResultFile().cleanup();
-            final List<File> filesFailed = new ArrayList<File>(cdxstatus.getFilesFailed());
+            final List<URI> filesFailed = new ArrayList<>(cdxstatus.getFilesFailed());
             if (filesFailed != null && filesFailed.size() != 0) {
                 System.out.println("Some files failed to be indexed: " + filesFailed);
             } else {

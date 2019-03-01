@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -843,7 +844,7 @@ public class JMSArcRepositoryClientTester {
             try {
                 BatchMessage bMsg = (BatchMessage) JMSConnection.unpack(msg);
                 conn.send(new BatchReplyMessage(bMsg.getReplyTo(), bMsg.getTo(), bMsg.getID(), 42,
-                        new ArrayList<File>(), new NullRemoteFile()));
+                        new ArrayList<URI>(), new NullRemoteFile()));
             } catch (IOFailure e) {
                 // can't clean up
             }

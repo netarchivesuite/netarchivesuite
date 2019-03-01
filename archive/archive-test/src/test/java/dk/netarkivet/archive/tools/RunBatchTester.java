@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -436,7 +437,7 @@ public class RunBatchTester {
                 BatchMessage m = (BatchMessage) nmsg;
 
                 BatchReplyMessage brm = new BatchReplyMessage(m.getReplyTo(), Channels.getTheBamon(), m.getID(), 0,
-                        (Collection<File>) new ArrayList<File>(),
+                        (Collection<URI>) new ArrayList<URI>(),
                         RemoteFileFactory.getCopyfileInstance(TestInfo.BATCH_TEST_JAR_FILE));
 
                 JMSConnectionFactory.getInstance().send(brm);

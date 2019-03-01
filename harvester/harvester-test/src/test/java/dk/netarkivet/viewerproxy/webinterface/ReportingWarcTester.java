@@ -36,9 +36,11 @@ import org.junit.Test;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
+import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -53,7 +55,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 public class ReportingWarcTester {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
     private ReloadSettings rs = new ReloadSettings();
-    private TrivialArcRepositoryClient tarc;
+    private ViewerArcRepositoryClient<FileBatchJob> tarc;
     private File working = new File("tests/dk/netarkivet/viewerproxy/data/working");
     private File tempdir = new File(working, "commontempdir");
     private File dir;
@@ -66,7 +68,7 @@ public class ReportingWarcTester {
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, tempdir.getAbsolutePath());
         Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT, TrivialArcRepositoryClient.class.getName());
         ArcRepositoryClientFactory.getViewerInstance().close();
-        tarc = (TrivialArcRepositoryClient) ArcRepositoryClientFactory.getViewerInstance();
+        tarc =  ArcRepositoryClientFactory.getViewerInstance();
         dir = (File) ReflectUtils.getPrivateField(TrivialArcRepositoryClient.class, "dir").get(tarc);
 
         // Copy the two files "2-2-20120903165904-00000-kb-test-har-002.kb.dk.warc",

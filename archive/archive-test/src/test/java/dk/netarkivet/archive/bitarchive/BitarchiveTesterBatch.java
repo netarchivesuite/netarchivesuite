@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -285,7 +286,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
         }
         BatchStatus lbs = archive.batch(TestInfo.baAppId, job);
         assertEquals("Batch should have processed four files", 4, lbs.getNoOfFilesProcessed());
-        List<File> failedFiles = new ArrayList<File>();
+        List<URI> failedFiles = new ArrayList<>();
         failedFiles.addAll(lbs.getFilesFailed());
         File fileDir = new File(TestInfo.WORKING_DIR, "filedir").getCanonicalFile();
 

@@ -35,7 +35,9 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
+import dk.netarkivet.common.distribute.hadoop.HadoopArcRepositoryClient;
+import dk.netarkivet.common.distribute.hadoop.HadoopBatchJob;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -45,9 +47,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.warc.WARCUtils;
 import dk.netarkivet.wayback.WaybackSettings;
 import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
-import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
-import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
-import dk.netarkivet.wayback.indexer.hadoop.HadoopJob;
+import dk.netarkivet.wayback.indexer.hadoop.cdx.CDXBatchJob;
 
 /**
  * This class represents a file in the arcrepository which may be indexed by the indexer.
@@ -192,24 +192,29 @@ public class ArchiveFile {
         // List<FileBatchJob> getIndexers(ArchiveFile file)
         // This more-flexible approach
         // may be of value when we begin to add warc support.
-        BatchJob theJob = new HadoopJob();
+        BatchJob theJob = null;
+
         if (filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX))) {
             theJob = new DeduplicationCDXExtractionBatchJob();
         } else if (ARCUtils.isARC(filename)) {
-            theJob = new WaybackCDXExtractionARCBatchJob();
+            theJob = new CDXBatchJob();
         } else if (WARCUtils.isWarc(filename)) {
-            theJob = new WaybackCDXExtractionWARCBatchJob();
+            theJob = new CDXBatchJob();
         } else {
             log.warn("Skipping indexing of file with filename '{}'", filename);
             return;
         }
 
-
         theJob.processOnlyFileNamed(filename);
-        PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
+
+        ViewerArcRepositoryClient client = getAppropriateJobRunner(theJob);
+
         String replicaId = Settings.get(WaybackSettings.WAYBACK_REPLICA);
+
         log.info("Submitting {} for {} to {}", theJob.getClass().getName(), getFilename(), replicaId.toString());
-        BatchStatus batchStatus = client.batch(theJob, replicaId);
+
+        BatchStatus batchStatus = client.batch(theJob, replicaId, filename);
+
         log.info("Batch job for {} returned", this.getFilename());
         // Normally expect exactly one file per job.
         if (!batchStatus.getFilesFailed().isEmpty() || batchStatus.getNoOfFilesProcessed() == 0
@@ -228,6 +233,17 @@ public class ArchiveFile {
                 log.error("Failed to retrieve results", e);
             }
         }
+    }
+
+    protected  ViewerArcRepositoryClient<? extends BatchJob> getAppropriateJobRunner(BatchJob theJob) {
+        if (theJob instanceof HadoopBatchJob) {
+            HadoopBatchJob job = (HadoopBatchJob) theJob;
+            return new HadoopArcRepositoryClient();
+        } else if (theJob instanceof FileBatchJob) {
+            FileBatchJob job = (FileBatchJob) theJob;
+            return ArcRepositoryClientFactory.getViewerInstance();
+        }
+        return null;
     }
 
     /**
