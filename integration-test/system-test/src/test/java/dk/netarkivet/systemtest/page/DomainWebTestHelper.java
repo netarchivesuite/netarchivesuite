@@ -30,6 +30,9 @@ import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+
+import dk.netarkivet.systemtest.SeleniumSession;
 
 /**
  * Provides functionality for commonly used test access to domain web content.
@@ -79,6 +82,7 @@ public class DomainWebTestHelper {
     public static List<String> getAllEditDomainLinks() {
         PageHelper.gotoPage(PageHelper.MenuPages.FindDomains);
         WebDriver driver = PageHelper.getWebDriver();
+        ((SeleniumSession) driver).setJavascriptEnabled(false);
         final WebElement domainQueryField = driver.findElement(By.name("DOMAIN_QUERY_STRING"));
         domainQueryField.sendKeys("*");
         domainQueryField.submit();
@@ -90,6 +94,7 @@ public class DomainWebTestHelper {
                 editDomainLinks.add(url);
             }
         }
+        ((SeleniumSession) driver).setJavascriptEnabled(false);
         return editDomainLinks;
     }
 }

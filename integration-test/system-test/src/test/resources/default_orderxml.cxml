@@ -1,610 +1,1137 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-  HERITRIX 3 CRAWL JOB CONFIGURATION FILE - MIGRATE TEMPLATE
-  
-   This is a relatively minimal configuration suitable for many crawls.
-   
-   Commented-out beans and properties are provided as an example; values
-   shown in comments reflect the actual defaults which are in effect
-   without specification. (To change from the default behavior, 
-   uncomment AND alter the shown values.)   
-
-   This is also the first step towards a way of migrating our NetarchiveSuite H1 templates to H3.3.0
-
-   This means adding beans for a QuotaEnforcer, a DeDuplicator, a WARCWriterProcessor with added WarcInfo metadata.
-
- -->
+<!-- HERITRIX 3 CRAWL JOB CONFIGURATION FILE - For use with NetarchiveSuite 5.1.0 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns:context="http://www.springframework.org/schema/context"
-	     xmlns:aop="http://www.springframework.org/schema/aop"
-	     xmlns:tx="http://www.springframework.org/schema/tx"
-	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
- 
- <context:annotation-config/>
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-<!-- 
-  OVERRIDES
-   Values elsewhere in the configuration may be replaced ('overridden') 
-   by a Properties map declared in a PropertiesOverrideConfigurer, 
-   using a dotted-bean-path to address individual bean properties. 
-   This allows us to collect a few of the most-often changed values
-   in an easy-to-edit format here at the beginning of the model
-   configuration.    
- -->
- <!-- overrides from a text property list -->
- <bean id="simpleOverrides" class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
-  <property name="properties">
-<!-- Overrides the default values used by Heritrix -->
-   <value>
-# This Properties map is specified in the Java 'property list' text format
-# http://java.sun.com/javase/6/docs/api/java/util/Properties.html#load%28java.io.Reader%29
+  <context:annotation-config/>
 
-###
-### some of these overrides is actually just the default value, so they can be skipped
-###
-
-## Q: can overrides like 'fetchDns.enabled=false' be used to disable the beans?
-
-metadata.jobName=default_orderxml
-metadata.description=Default Profile
-metadata.operator=Admin
-metadata.userAgentTemplate=Mozilla/5.0 (compatible; heritrix/3.3.0 +@OPERATOR_CONTACT_URL@)
-## Edit the two following lines to match your setup.
-metadata.operatorContactUrl=http://netarkivet.dk/webcrawler/
-metadata.operatorFrom=info@netarkivet.dk
-
-loggerModule.path=logs
-
-crawlLimiter.maxBytesDownload=0
-crawlLimiter.maxDocumentsDownload=0
-## MaxTimeseconds inserted by NetarchiveSuite (Delete line, if behaviour unwanted)
-crawlLimiter.maxTimeSeconds=%{MAX_TIME_SECONDS_PLACEHOLDER}
-
-crawlController.maxToeThreads=50
-crawlController.recorderOutBufferBytes=4096
-crawlController.recorderInBufferBytes=65536
-crawlController.pauseAtStart=false
-crawlController.scratchDir=scratch
-
-## org.archive.bdb.BdbModule overrides
-bdb.dir=state
-bdb.cachePercent=40
-
-## seeds properties
-seeds.sourceTagSeeds=false
-
-scope.rules[2].maxHops=25
-scope.rules[6].maxRepetitions=3
-scope.rules[3].maxTransHops=5
-scope.rules[3].maxSpeculativeHops=1
-
-## Politeness overrides
-disposition.delayFactor=1.0
-disposition.maxDelayMs=1000
-disposition.minDelayMs=300
-disposition.maxPerHostBandwidthUsageKbSec=500
-
-preparer.preferenceEmbedHops=1
-preparer.preferenceDepthHops=-1
-
-frontier.maxRetries=3
-frontier.retryDelaySeconds=300
-frontier.recoveryLogEnabled=false
-frontier.balanceReplenishAmount=3000
-frontier.errorPenaltyAmount=100
-## Can be used instead of the QuotaEnforcer module. In this case the following line should look 
-## like: frontier.queueTotalBudget=%{FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER}
-## instead of: frontier.queueTotalBudget=
-
-frontier.queueTotalBudget=%{FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER}
-frontier.snoozeLongMs=300000
-
-preselector.enabled=true
-preselector.logToFile=false
-preselector.recheckScope=true
-preselector.blockAll=false
-
-preconditions.enabled=true
-preconditions.ipValidityDurationSeconds=21600
-preconditions.robotsValidityDurationSeconds=86400
-preconditions.calculateRobotsOnly=false
-
-fetchDns.enabled=true
-fetchDns.acceptNonDnsResolves=false
-fetchDns.digestContent=true
-fetchDns.digestAlgorithm=sha1
-
-fetchHttp.enabled=true
-fetchHttp.timeoutSeconds=1200
-fetchHttp.soTimeoutMs=20000
-fetchHttp.maxFetchKBSec=0
-fetchHttp.maxLengthBytes=0
-fetchHttp.ignoreCookies=false
-fetchHttp.sslTrustLevel=OPEN
-fetchHttp.defaultEncoding=ISO-8859-1
-fetchHttp.digestContent=true
-fetchHttp.digestAlgorithm=sha1
-fetchHttp.sendIfModifiedSince=true
-fetchHttp.sendIfNoneMatch=true
-fetchHttp.sendConnectionClose=true
-fetchHttp.sendReferer=true
-fetchHttp.sendRange=false
-extractorHttp.enabled=true
-extractorHtml.enabled=true
-extractorHtml.extractJavascript=true
-extractorHtml.treatFramesAsEmbedLinks=false
-extractorHtml.ignoreFormActionUrls=true
-extractorHtml.extractValueAttributes=false
-extractorHtml.ignoreUnexpectedHtml=true
-extractorCss.enabled=true
-extractorJs.enabled=true
-     extractorSwf.enabled=true
-     candidates.seedsRedirectNewSeeds=false
-     statisticsTracker.intervalSeconds=20
-     warcWriter.compress=true
-   </value>
-  </property>
- </bean>
-
- <!-- overrides from declared <prop> elements, more easily allowing
-      multiline values or even declared beans -->
- <bean id="longerOverrides" class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
-  <property name="properties">
-   <props>
-   </props>
-  </property>
- </bean>
-
- <!-- CRAWL METADATA: including identification of crawler/operator -->
- <bean id="metadata" class="org.archive.modules.CrawlMetadata" autowire="byName">
-       <property name="operatorContactUrl" value="[see override above]"/>
-       <property name="jobName" value="[see override above]"/>
-       <property name="description" value="[see override above]"/>
-       <property name="robotsPolicyName" value="ignore"/>
-  <!-- <property name="operator" value=""/> -->
-  <!-- <property name="operatorFrom" value=""/> -->
-  <!-- <property name="organization" value=""/> -->
-  <!-- <property name="audience" value=""/> -->
-  <!-- <property name="userAgentTemplate" 
-         value="Mozilla/5.0 (compatible; heritrix/@VERSION@ +@OPERATOR_CONTACT_URL@)"/> -->
-       
- </bean>
- 
- <!-- SEEDS: crawl starting points -->
- <!-- ConfigFile approach: specifying external seeds.txt file -->
- <bean id="seeds" class="org.archive.modules.seeds.TextSeedModule">
-  <property name="textSource">
-   <bean class="org.archive.spring.ConfigFile">
-    <property name="path" value="seeds.txt" />
-   </bean>
-  </property>
-  <property name="sourceTagSeeds" value="false"/> 
- </bean>
-
- <!-- SCOPE: rules for which discovered URIs to crawl; order is very 
-      important because last decision returned other than 'NONE' wins. -->
- <bean id="scope" class="org.archive.modules.deciderules.DecideRuleSequence">
-  <property name="rules">
-   <list>
-    <!-- Begin by REJECTing all... -->
-    <bean class="org.archive.modules.deciderules.RejectDecideRule">
-    </bean>
-    <!-- ...then ACCEPT those within configured/seed-implied SURT prefixes... -->
-    <bean class="org.archive.modules.deciderules.surt.SurtPrefixedDecideRule">
-     <!-- <property name="seedsAsSurtPrefixes" value="true" /> -->
-     <!-- <property name="alsoCheckVia" value="true" /> -->
-     <!-- <property name="surtsSourceFile" value="" /> -->
-     <!-- <property name="surtsDumpFile" value="surts.dump" /> -->
-    </bean>
-    <!-- ...but REJECT those more than a configured link-hop-count from start... -->
-    <bean class="org.archive.modules.deciderules.TooManyHopsDecideRule">
-     <!-- <property name="maxHops" value="20" /> -->
-    </bean>
-    <!-- ...but ACCEPT those more than a configured link-hop-count from start... -->
-    <bean class="org.archive.modules.deciderules.TransclusionDecideRule">
-     <!-- <property name="maxTransHops" value="2" /> -->
-     <!-- <property name="maxSpeculativeHops" value="1" /> -->
-    </bean>
-    <!-- ...but REJECT those from a configurable (initially empty) set of REJECT SURTs... -->
-    <bean class="org.archive.modules.deciderules.surt.SurtPrefixedDecideRule">
-          <property name="decision" value="REJECT"/>
-          <property name="seedsAsSurtPrefixes" value="false"/>
-          <property name="surtsDumpFile" value="negative-surts.dump" />
-     <!-- <property name="surtsSourceFile" value="" /> -->
-    </bean>
-    <!-- ...and REJECT those from a configurable (initially empty) set of URI regexes... -->
-    <bean class="org.archive.modules.deciderules.MatchesListRegexDecideRule">
-     <property name="listLogicalOr" value="true" />
-     <property name="regexList">
-           <list>	
-<!-- Here we inject our global crawlertraps, domain specific crawlertraps -->
-%{CRAWLERTRAPS_PLACEHOLDER}
-           </list>
-          </property> 
-    </bean>
-
-    <!-- ...and REJECT those with suspicious repeating path-segments... -->
-    <bean class="org.archive.modules.deciderules.PathologicalPathDecideRule">
-     <!-- <property name="maxRepetitions" value="2" /> -->
-    </bean>
-    <!-- ...and REJECT those with more than threshold number of path-segments... -->
-    <bean class="org.archive.modules.deciderules.TooManyPathSegmentsDecideRule">
-     <!-- <property name="maxPathDepth" value="20" /> -->
-    </bean>
-    <!-- ...but always ACCEPT those marked as prerequisites for another URI... -->
-    <bean class="org.archive.modules.deciderules.PrerequisiteAcceptDecideRule">
-    </bean>
-    <!-- ...but always REJECT those with unsupported URI schemes -->
-    <bean class="org.archive.modules.deciderules.SchemeNotInSetDecideRule">
-    </bean>
-   </list>
-  </property>
- </bean>
- 
- <!-- 
-   PROCESSING CHAINS
-    Much of the crawler's work is specified by the sequential 
-    application of swappable Processor modules. These Processors
-    are collected into three 'chains. The CandidateChain is applied 
-    to URIs being considered for inclusion, before a URI is enqueued
-    for collection. The FetchChain is applied to URIs when their 
-    turn for collection comes up. The DispositionChain is applied 
-    after a URI is fetched and analyzed/link-extracted.
+  <!--This file is copied in from the codebase during SystemTest. Its source is at integration-test/system-test/src/test/resources/default_orderxml.cxml
+  in the codebase
   -->
-  
- <!-- CANDIDATE CHAIN --> 
- <!-- processors declared as named beans -->
- <bean id="candidateScoper" class="org.archive.crawler.prefetch.CandidateScoper">
- </bean>
- <bean id="preparer" class="org.archive.crawler.prefetch.FrontierPreparer">
-  <!-- <property name="preferenceDepthHops" value="-1" /> -->
-  <!-- <property name="preferenceEmbedHops" value="1" /> -->
-  <!-- <property name="canonicalizationPolicy"> 
-        <ref bean="canonicalizationPolicy" />
-       </property> -->
-   <property name="queueAssignmentPolicy"> 
-        <ref bean="queueAssignmentPolicy" /> 
-<!-- Bundled with NAS is two queueAssignPolicies (code is in heritrix3-extensions): 
- dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
- dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy 
--->
-       </property>
-  
- <!-- <property name="uriPrecedencePolicy"> 
-        <ref bean="uriPrecedencePolicy" />
-       </property> -->
-  <!-- <property name="costAssignmentPolicy"> 
-        <ref bean="costAssignmentPolicy" />
-       </property> -->
- </bean>
- <!-- assembled into ordered CandidateChain bean -->
- <bean id="candidateProcessors" class="org.archive.modules.CandidateChain">
-  <property name="processors">
-   <list>
-    <!-- apply scoping rules to each individual candidate URI... -->
-    <ref bean="candidateScoper"/>
-    <!-- ...then prepare those ACCEPTed for enqueuing to frontier. -->
-    <ref bean="preparer"/>
-   </list>
-  </property>
- </bean>
-  
- <!-- FETCH CHAIN --> 
- <!-- processors declared as named beans -->
- <bean id="preselector" class="org.archive.crawler.prefetch.Preselector">
-  <!-- <property name="recheckScope" value="false" /> -->
-  <!-- <property name="blockAll" value="false" /> -->
-  <!-- <property name="blockByRegex" value="" /> -->
-  <!-- <property name="allowByRegex" value="" /> -->
- </bean>
- <bean id="preconditions" class="org.archive.crawler.prefetch.PreconditionEnforcer">
 
-  <!-- refer to a list of credentials -->
-  <property name="credentialStore">
-    <ref bean="credentialStore" />
-  </property> 
- </bean>
- <bean id="fetchDns" class="org.archive.modules.fetcher.FetchDNS">
- </bean>
+  <!-- OVERRIDES (START)
+  Values elsewhere in the configuration may be replaced ('overridden')
+  by a Properties map declared in a PropertiesOverrideConfigurer,
+  using a dotted-bean-path to address individual bean properties.
+  This allows us to collect a few of the most-often changed values
+  in an easy-to-edit format here at the beginning of the model configuration.
+  -->
 
- <bean id="fetchHttp" class="org.archive.modules.fetcher.FetchHTTP">
- </bean>
+  <!-- SIMPLE OVERRIDES (START)
+  Overrides from a text property list
+  -->
+  <bean id="simpleOverrides" class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
+    <property name="properties">
+      <!-- Overrides the default values used by Heritrix -->
+      <value>
+        ## This Properties map is specified in the Java 'property list' text format
+        ## http://java.sun.com/javase/6/docs/api/java/util/Properties.html#load%28java.io.Reader%29
 
- <bean id="extractorHttp" class="org.archive.modules.extractor.ExtractorHTTP">
- </bean>
+        ###
+        ### some of these overrides is actually just the default value, so they can be skipped
+        ###
 
- <bean id="extractorHtml" class="org.archive.modules.extractor.ExtractorHTML">
- </bean>
+        ## (W)ARC Writer Metadata
+        warcWriter.writeMetadata=true
+        warcWriter.compress=true
+        %{UMBRA_SIMPLEOVERRIDES_PLACEHOLDER}
 
- <bean id="extractorCss" class="org.archive.modules.extractor.ExtractorCSS">
- </bean> 
+      </value>
+    </property>
+  </bean>
+  <!-- SIMPLE OVERRIDES (END) -->
 
- <bean id="extractorJs" class="org.archive.modules.extractor.ExtractorJS">
- </bean>
+  %{UMBRA_PUBLISH_BEAN_PLACEHOLDER}
+  %{UMBRA_RECEIVE_BEAN_PLACEHOLDER}
 
- <bean id="extractorSwf" class="org.archive.modules.extractor.ExtractorSWF">
- </bean> 
 
- <!-- assembled into ordered FetchChain bean -->
- <bean id="fetchProcessors" class="org.archive.modules.FetchChain">
-  <property name="processors">
-   <list>
-    <!-- recheck scope, if so enabled... -->
-    <ref bean="preselector"/>
-    <!-- ...then verify or trigger prerequisite URIs fetched, allow crawling... -->
-    <ref bean="preconditions"/>
+  <!-- LONGER OVERRIDES (START)
+  Overrides from declared <prop> elements, more easily allowing
+  multiline values or even declared beans
+  -->
+  <bean id="longerOverrides" class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
+    <property name="properties">
+      <props>
+      </props>
+    </property>
+  </bean>
+  <!-- LONGER OVERRIDES (END) -->
+  <!-- OVERRIDES (END) -->
 
-    <!-- check, if quotas is already superseded --> 
-    <ref bean="quotaenforcer"/>  <!-- always required by NAS ? -->
+  <!-- CRAWL METADATA (START)
+  Including identification of crawler/operator
+  using NetarchiveSuites own extended version of the org.archive.modules.CrawlMetadata
+  -->
+  <bean id="metadata" class="dk.netarkivet.harvester.harvesting.NasCrawlMetadata" autowire="byName">
+    <!-- Job name use string value -->
+    <property name="jobName" value="default_orderxml" />
+    <!-- Description use string value -->
+    <property name="description" value="Default Profile xyz" />
+    <!-- User agent template use string value -->
+    <property name="userAgentTemplate" value="Mozilla/5.0 (compatible; heritrix/3.3.0 +@OPERATOR_CONTACT_URL@)" />
+    <!-- Operator name use string value -->
+    <property name="operator" value="Admin" />
+    <!-- Operator from use string value -->
+    <property name="operatorFrom" value="info@netarkivet.dk" />
+    <!-- Operator contact URL use string value -->
+    <property name="operatorContactUrl" value="http://netarkivet.dk/webcrawler/" />
+    <!-- Organization name use string value -->
+    <property name="organization" value="Netarkivet" />
+    <!-- Robot.txt policy use string value (one of: ignore, obey, custom) -->
+    <property name="robotsPolicyName" value="%{HONOR_ROBOTS_DOT_TXT}" />
+    <!-- Audience of the sheet use string value -->
+    <property name="audience" value="" />
+    <!-- This field is not available in the CrawlMetadata class bundled with heritrix, so we extended the class to add this field -->
+    <property name="date" value="20160802" />
+  </bean>
+  <!-- CRAWL METADATA (END) -->
 
-    <!-- ...fetch if DNS URI... -->
-    <ref bean="fetchDns"/>
-    <!-- ...fetch if HTTP URI... -->
-    <ref bean="fetchHttp"/>
-    <!-- ...extract oulinks from HTTP headers... -->
-    <ref bean="extractorHttp"/>
-    <!-- ...extract oulinks from HTML content... -->
-    <ref bean="extractorHtml"/>
-    <!-- ...extract oulinks from CSS content... -->
-    <ref bean="extractorCss"/>
-    <!-- ...extract oulinks from Javascript content... -->
-    <ref bean="extractorJs"/>
-    <!-- ...extract oulinks from Flash content... -->
-    <ref bean="extractorSwf"/>
-   </list>
-  </property>
- </bean>
+  <!-- SEEDS (START)
+  Crawl starting points
+  -->
+  <bean id="seeds" class="org.archive.modules.seeds.TextSeedModule">
+    <property name="textSource">
+      <bean class="org.archive.spring.ConfigFile">
+        <!-- ConfigFile approach: specifying external seeds.txt file -->
+        <property name="path" value="seeds.txt" />
+      </bean>
+    </property>
+    <!-- No source-report.txt if this is false -->
+    <property name="sourceTagSeeds" value="true" />
+  </bean>
+  <!-- SEEDS (END) -->
 
+  <!-- SCOPE (START)
+  Rules for which discovered URIs to crawl; order is very
+  important because last decision returned other than 'NONE' wins.
+  -->
+  <bean id="scope" class="org.archive.modules.deciderules.DecideRuleSequence">
+    <!-- Only set to true for test purposes -->
+    <property name="logToFile" value="true" />
+    <!-- Only set to true for test purposes -->
+    <property name="logExtraInfo" value="true" />
+    <property name="rules">
+      <list>
+        <!-- Begin by REJECTing all... -->
+        <bean class="org.archive.modules.deciderules.RejectDecideRule">
+        </bean>
+        <!-- ...then ACCEPT those within configured/seed-implied SURT prefixes... -->
+        <bean class="dk.netarkivet.harvester.harvesting.NASSurtPrefixedDecideRule">
+          <property name="seedsAsSurtPrefixes" value="true" />
+          <property name="alsoCheckVia" value="false" />
+          <property name="surtsDumpFile" value="surts.dump" />
+          <!-- NASSurtPrefixedDecideRule properties only -->
+          <property name="removeW3xSubDomain" value="true" />
+          <property name="addBeforeRemovingW3xSubDomain" value="true" />
+          <property name="addW3SubDomain" value="true" />
+          <property name="addBeforeAddingW3SubDomain" value="true" />
+          <property name="allowSubDomainsRewrite" value="true" />
+        </bean>
+        <!-- ...but REJECT those more than a configured link-hop-count from start... -->
+        <bean class="org.archive.modules.deciderules.TooManyHopsDecideRule">
+          <!-- Max number of (L) and (R) in discovery path -->
+          <property name="maxHops" value="%{MAX_HOPS}" />
+        </bean>
+        <!-- ...but ACCEPT those more than a configured link-hop-count from start... -->
+        <bean class="org.archive.modules.deciderules.TransclusionDecideRule">
+          <property name="maxTransHops" value="3" />
+          <property name="maxSpeculativeHops" value="0" />
+        </bean>
+        <!-- ...but REJECT those from a configurable (initially empty) set of REJECT SURTs... -->
+        <bean class="org.archive.modules.deciderules.surt.SurtPrefixedDecideRule">
+          <!-- Decision value (ACCEPT, REJECT, NONE) -->
+          <property name="decision" value="REJECT" />
+          <property name="seedsAsSurtPrefixes" value="false" />
+          <property name="surtsDumpFile" value="negative-surts.dump" />
+        </bean>
+        <!-- ...and REJECT those from a configurable (initially empty) set of URI regexes... -->
+        <bean class="org.archive.modules.deciderules.MatchesListRegexDecideRule">
+          <property name="decision" value="REJECT" />
+          <property name="listLogicalOr" value="true" />
+          <property name="regexList">
+            <list>
+              <!-- IA STANDARD GLOBAL CRAWLTRAP FILTERS (START) -->
+              <value>.*core\.UserAdmin.*core\.UserLogin.*</value>
+              <value>.*core\.UserAdmin.*register\.UserSelfRegistration.*</value>
+              <value>.*\/w\/index\.php\?title=Speci[ae]l:Recentchanges.*</value>
+              <value>.*act=calendar&amp;cal_id=.*</value>
+              <value>.*advCalendar_pi.*</value>
+              <value>.*cal\.asp\?date=.*</value>
+              <value>.*cal\.asp\?view=monthly&amp;date=.*</value>
+              <value>.*cal\.asp\?view=weekly&amp;date=.*</value>
+              <value>.*cal\.asp\?view=yearly&amp;date=.*</value>
+              <value>.*cal\.asp\?view=yearly&amp;year=.*</value>
+              <value>.*cal\/cal_day\.php\?op=day&amp;date=.*</value>
+              <value>.*cal\/cal_week\.php\?op=week&amp;date=.*</value>
+              <value>.*cal\/calendar\.php\?op=cal&amp;month=.*</value>
+              <value>.*cal\/yearcal\.php\?op=yearcal&amp;ycyear=.*</value>
+              <value>.*calendar\.asp\?calmonth=.*</value>
+              <value>.*calendar\.asp\?qMonth=.*</value>
+              <value>.*calendar\.php\?sid=.*</value>
+              <value>.*calendar\.php\?start=.*</value>
+              <value>.*calendar\.php\?Y=.*</value>
+              <value>.*calendar\/\?CLmDemo_horizontal=.*</value>
+              <value>.*calendar_menu\/calendar\.php\?.*</value>
+              <value>.*calendar_scheduler\.php\?d=.*</value>
+              <value>.*calendar_year\.asp\?qYear=.*</value>
+              <value>.*calendarix\/calendar\.php\?op=.*</value>
+              <value>.*calendarix\/yearcal\.php\?op=.*</value>
+              <value>.*calender\/default\.asp\?month=.*</value>
+              <value>.*Default\.asp\?month=.*</value>
+              <value>.*events\.asp\?cat=0&amp;mDate=.*</value>
+              <value>.*events\.asp\?cat=1&amp;mDate=.*</value>
+              <value>.*events\.asp\?MONTH=.*</value>
+              <value>.*events\.asp\?month=.*</value>
+              <value>.*index\.php\?iDate=.*</value>
+              <value>.*index\.php\?module=PostCalendar&amp;func=view.*</value>
+              <value>.*index\.php\?option=com_events&amp;task=view.*</value>
+              <value>.*index\.php\?option=com_events&amp;task=view_day&amp;year=.*</value>
+              <value>.*index\.php\?option=com_events&amp;task=view_detail&amp;year=.*</value>
+              <value>.*index\.php\?option=com_events&amp;task=view_month&amp;year=.*</value>
+              <value>.*index\.php\?option=com_events&amp;task=view_week&amp;year=.*</value>
+              <value>.*index\.php\?option=com_events&amp;task=view_year&amp;year=.*</value>
+              <value>.*index\.php\?option=com_extcalendar&amp;Itemid.*</value>
+              <value>.*modules\.php\?name=Calendar&amp;op=modload&amp;file=index.*</value>
+              <value>.*modules\.php\?name=vwar&amp;file=calendar&amp;action=list&amp;month=.*</value>
+              <value>.*modules\.php\?name=vwar&amp;file=calendar.*</value>
+              <value>.*modules\.php\?name=vWar&amp;mod=calendar.*</value>
+              <value>.*modules\/piCal\/index\.php\?caldate=.*</value>
+              <value>.*modules\/piCal\/index\.php\?cid=.*</value>
+              <value>.*option,com_events\/task,view_day\/year.*</value>
+              <value>.*option,com_events\/task,view_month\/year.*</value>
+              <value>.*option,com_extcalendar\/Itemid.*</value>
+              <value>.*task,view_month\/year.*</value>
+              <value>.*shopping_cart\.php.*</value>
+              <value>.*action.add_product.*</value>
+              <value>.*action.remove_product.*</value>
+              <value>.*action.buy_now.*</value>
+              <value>.*checkout_payment\.php.*</value>
+              <value>.*login.*login.*login.*login.*</value>
+              <value>.*homepage_calendar\.asp.*</value>
+              <value>.*MediaWiki.*Movearticle.*</value>
+              <value>.*index\.php.*action=edit.*</value>
+              <value>.*comcast\.net.*othastar.*</value>
+              <value>.*Login.*Login.*Login.*</value>
+              <value>.*redir.*redir.*redir.*</value>
+              <value>.*bookingsystemtime\.asp\?dato=.*</value>
+              <value>.*bookingsystem\.asp\?date=.*</value>
+              <value>.*cart\.asp\?mode=add.*</value>
+              <value>.*\/photo.*\/photo.*\/photo.*</value>
+              <value>.*\/skins.*\/skins.*\/skins.*</value>
+              <value>.*\/scripts.*\/scripts.*\/scripts.*</value>
+              <value>.*\/styles.*\/styles.*\/styles.*</value>
+              <value>.*\/coppermine\/login\.php\?referer=.*</value>
+              <value>.*\/images.*\/images.*\/images.*</value>
+              <value>.*\/stories.*\/stories.*\/stories.*</value>
+              <!-- IA STANDARD GLOBAL CRAWLTRAP FILTERS (END) -->
+              <!-- NETARCHIVESUITE GLOBAL CRAWLTRAP FILTERS (START)
+              Here we inject our global crawlertraps, domain specific crawlertraps -->
+              %{CRAWLERTRAPS_PLACEHOLDER}
+              <!-- NETARCHIVESUITE GLOBAL CRAWLTRAP FILTERS (END) -->
+              <!-- NETARCHIVESUITE GLOBAL CRAWLTRAP FILTERS (START) -->
+              <value>.*\/(Microsoft|Msxml2)\.(XMLHTTP|XMLDOM)$</value>
+              <value>.*\/(text|application)\/[a-zA-Z0-9_-[\.]]+$.*</value>
+              <value>.*\/audio\/(aac|aiff|basic|flv|it|make|make\.my\.funk|m4a|mid|midi|mod|mp3|mp4|mpeg|mpeg3|nspaudio|ogg|s3m|tsp-audio|tsplayer|vnd\.qcelp|voc|voxware|wav|wave|webm|wma|youtube)$.*</value>
+              <value>.*\/audio/x-(adpcm|aiff|au|flv|gsm|jam|liveaudio|xm|mid|midi|mod|mp3|mp4a|mpeg|mpeg-3|mpequrl|ms-wma|nspaudio|pn-realaudio|pn-realaudio-plugin|psid|realaudio|twinvq|twinvq-plugin|vimeo|vnd\.audioexplosion\.mjuicemediafile|voc|wav|webm|youtube)$.*</value>
+              <value>.*\/chemical\/x-pdb$.*</value>
+              <value>.*\/drawing\/x-dwf$.*</value>
+              <value>.*\/image\/(bmp|cmu-raster|fif|florian|g3fax|gif|ief|jpeg|jutvision|naplps|pict|pjpeg|png|tiff|vasa|vnd\.(dwg|fpx|net-fpx|rn-realflash|rn-realpix|wap\.wbmp|xiff)|xbm|xpm)$.*</value>
+              <value>.*\/image\/x-(cmu-raster|dwg|icon|jg|jps|niff|pcx|pict|portable-anymap|portable-bitmap|portable-graymap|portable-greymap|portable-pixmap|quicktime|rgb|tiff|windows-bmp|xbitmap|xbm|xpixmap|xwd|xwindowdump)$.*</value>
+              <value>.*\/i-world\/i-vrml$.*</value>
+              <value>.*\/message\/rfc822$.*</value>
+              <value>.*\/model\/(iges|vnd\.dwf|vrml|x-pov)$.*</value>
+              <value>.*\/multipart\/x-(gzip|ustar|zip)$.*</value>
+              <value>.*\/music\/(crescendo|x-karaoke)$.*</value>
+              <value>.*\/paleovu\/x-pv$.*</value>
+              <value>.*\/video\/x-(amt-demorun|amt-showrun|atomic3d-feature|dl|dv|fli|flv|gl|isvideo|motion-jpeg|mpeg|mpeq2a|ms-asf|ms-asf-plugin|ms-wmv|msvideo|qtc|scm|sgi-movie)$.*</value>
+              <value>.*\/video\/(animaflex|avi|avs-video|divx|dl|fli|gl|mp4|mpeg|msvideo|quicktime|vdo|video|vimeo|vivo|vnd\.rn-realvideo|vnd\.vivo|vosaic|webm|youtube)$.*</value>
+              <value>.*\/windows\/metafile$.*</value>
+              <value>.*\/www\/mime$.*</value>
+              <value>.*\/x-conference\/x-cooltalk$.*</value>
+              <value>.*\/xgl\/(drawing|movie)$.*</value>
+              <value>.*\/x-music\/x-(midi|3dmf|svr|vrml|vrt)$.*</value>
+              <value>.*https?:\/\/www\.visit\w+\.(com|cn|co\.uk|de|dk).*(\/search\/|global-map|im_field_product_category.*im_field_product_category|zoomin=.*zoomin=|all\/.*all\/|modules\/.*modules\/.*modules\/|google_analytics|contrib\/.*contrib\/|global\?keys=).*</value>
+              <value>.*(adpark|antikguide|apppoint|artlinks|asias|auto356|babyudstyr24|barnedåbsgaver|bilisten|billige-møbler|billig-murer|bloggerwave|blomus|boligven|bond|booman|botiva|bowmore|bozoka|brugskunst-outlet|bukom|byggemarked24|cmspoint|crane|cykelshop24|design24|dit-supermarked|dyreartikler24|efab|efactory|efterskolepriser|el-installationen|fartgal|fastfood24|fenomen|find-bager|find-klip|find-murer|find-nummer|find-revisor|find-slagter|firmasjovtur|fliser24|fotorammer-online|frederikkes|frklivsstil|fynskferie|gave-butik|gaveland|gaver-gaveideer|gch|getgames|gods|grill24|guide24|habengut|helseguide|helse-shopping|herremand|herre-smykker|hostingpoint|hushave24|isenkramnet|juke|julegave24|kaliber|klippeklip|knager-online|landtransport|livezilla|livret|luckybastard|maler24|mathildes|mensgear|miamia|modesmykke|moosh|mortil3|mysales|netactive|noos|online-apotek|parfumeguide|parfume-shopping|printertoner24|psykolog24|restaurantoversigten|rowells|shopbot|shoppoint|sitelist|smukkesmykker|smykkegave|smykkegaver|smykker-deluxe|smykkerne|smykker-outlet|sportt|styleguide|super24|supercute|viabella|viacommerce|villadelux|vores-byg|vores-læge|vores-tandlæge|vvsworld)\.dk.*</value>
+              <value>.*add-to-cart=.*</value>
+              <value>.*[\/=\u0026_&amp;\-\?\%Ff][Ll]ogin.*</value>
+              <value>.*\/\d{1,3}\.\d{1,3}(\.\d{1,3})?$</value>
+              <value>.*\/\?\w+=\w+\;\w+\=\w+$</value>
+              <value>.*\/gtm\.(js|start)$</value>
+              <value>.*vimeo\.com.*\/(fallback\?noscript|format\:(detail|thumbnail))$</value>
+              <value>.*\/u00\d(\d|[a-z])(\d|[a-z])+($|\/).*</value>
+              <value>.*\/u00\d[a-z[\.]]+$</value>
+              <value>.*\/[a-z0-9AGNOST_]+\._(set(Account|Allow(Anchor|Hash|Linker)|CustomVar|DomainName|Namespace|SampleRate|SiteSpeedSampleRate|Var)|track(Event|Page(LoadTime|view)|Trans))$.*</value>
+              <value>.*https:\/\/[^d][^k]\.pinterest\.com.*</value>
+              <value>.*(((year|week|day)\.listevents)|(month\.calendar)|(search\.form)).*</value>
+              <value>.*twitter\.com.*(rss|logged|time.*\d\d:\d\d:\d\d).*</value>
+              <value>.*\/kalender\/(20\d\d($|-(\d|W\d))|liste\/20|ical).*</value>
+              <value>.*google\.com\/calendar\/(ical|feeds)\/.*</value>
+              <value>.*visit\w+\.dk.*(\/search\/global\?keys=|all\/.*all\/|addthis.*google_analytics|contrib\/.*contrib\/).*</value>
+              <value>.*forexticket.*</value>
+              <value>.*http:\/\/www\.eznox\.com.*</value>
+              <value>.*\/misc.*\/misc.*\/misc.*</value>
+              <value>.*\/modules.*\/modules.*\/modules.*</value>
+              <value>.*themes\/.*theme\/.*themes\/.*</value>
+              <value>.*min-side.*min-side.*side.*</value>
+              <value>.*\/\/.*\/\/.*\/\/.*</value>
+              <value>.*\/public\/.*\/public\/.*\/public\/.*</value>
+              <value>.*productSearch\?category=.*refinement=Pfunds.*sort=default_ranking.*start=[1-9].*</value>
+              <value>.*http:\/\/.*\.zara\.com\/.*</value>
+              <value>.*tequila.*(test|recipe)\/recipe\/\d\/\d.*</value>
+              <value>.*\/earch\/.*\/earch\/.*</value>
+              <value>.*tlg\.uci\.edu.*</value>
+              <value>.*cart.*add.*</value>
+              <value>.*(forum|wapb|mobil|valg)\.tv2\.no.*</value>
+              <value>.*tv2\.no.*(CacheString=|ref=$).*</value>
+              <value>.*tv2\.dk.*(spoergsmaal-fra-seerne|comments).*page.*page.*page.*</value>
+              <value>.*(people|sina)\.com\.(cn|hk|tw).*</value>
+              <value>.*ajprodukter\.se.*</value>
+              <value>.*linkedin\.com\/(people|directory)\/.*</value>
+              <value>.*thumbshots\.com.*url=[a-zA-Z0-9-]{1,}\.[a-z]{2,3}$.*</value>
+              <value>.*css.*css.*css(\w|\/\w|\.).*</value>
+              <value>.*func=post.*do=reply.*</value>
+              <value>.*replytocom=.*</value>
+              <value>.*messages\.php\?msg_send=.*</value>
+              <value>.*add2wishlist.*</value>
+              <value>.*add2Basket.*</value>
+              <value>.*CartCmd=add.*Product.*</value>
+              <value>.*toughroad\.dk.*(contact-me\/\w|toughroad\.dk|login|da\/kontakt|(1\.6\.2|6\.0\.65|XMLDOM|XMLHTTP|urlencoded|forward\/)$).*</value>
+              <value>.*basket.*method=add.*</value>
+              <value>.*order\/cart\/add\/.*</value>
+              <value>.*ProductComparisonWizard.*</value>
+              <value>.*sendlink.*</value>
+              <value>.*forum.*(newthread|order=(asc|desc)|printthread|newreply|mode=(hybrid|threaded)).*</value>
+              <value>.*blogger\.com.*(login|comment|signup|feeds|Login|post-edit|share-post-menu).*</value>
+              <value>.*UserAdmin.*UserRecoverPassword.*</value>
+              <value>.*sexcounter\.com.*</value>
+              <value>.*tradedoubler\.com\/click\?a.*</value>
+              <value>.*rate_item.*rating=.*</value>
+              <value>.*life\.com.*in-gallery.*</value>
+              <value>.*photobucket\.com.*</value>
+              <value>.*ebay\.com.*</value>
+              <value>.*bigfishgames\.com.*</value>
+              <value>.*webmercs\.com.*Login.*</value>
+              <value>.*(add.*product|AddProduct|AddToOrder|AddToBasket|addtocart|action=add|basket.*tilfoej|cart\.php.*add|command=add.*cart=|add_cart).*</value>
+              <value>.*main\.php\?g2_view=core\.UserAdmin.*User.*</value>
+              <value>.*facebook\.com.*((\.(11|0\.4))|\/J)$.*</value>
+              <value>.*facebook\.com.*(\/\/.*\/\/|feeds\/page).*</value>
+              <value>.*(af-za|ar-ar|az-az|be-by|bg-bg|bn-in|bs-ba|ca-es|cs-cz|cy-gb|de-de|el-gr|en-gb|eo-eo|es-es|es-la|et-ee|eu-es|fa-ir|fb-lt|fi-fi|fr-fr|fy-nl|ga-ie|gl-es|he-il|hi-in|hr-hr|hu-hu|hy-am|id-id|is-is|it-it|ja-jp|ka-ge|ko-kr|ku-tr|la-va|lt-lt|lv-lv|mk-mk|ml-in|ms-my|nb-no|ne-np|nl-nl|nn-no|pa-in|pl-pl|ps-af|pt-br|pt-pt|ro-ro|ru-ru|sk-sk|sl-si|sq-al|sr-rs|sv-se|sw-ke|ta-in|te-in|th-th|tl-ph|tr-tr|uk-ua|vi-vn|zh-cn|zh-hk|zh-tw)\.facebook\.com.*</value>
+              <value>.*expectporn\.com.*</value>
+              <value>.*domain-export\.com.*viewsimilar.*</value>
+              <value>.*doubleclick\.net.*</value>
+              <value>.*adsrv\.ads\.eniro\.com.*</value>
+              <value>.*ecs-dk\.kelkoo\.dk.*(ts=\d{12,}|\/sitesearchGo).*</value>
+              <value>.*forward302.*(google\.com|YahooRelatedLink).*</value>
+              <value>.*youtube\.com.*(algorithm|results\?search_query=|feature=related|feeds.*alt=rss).*</value>
+              <value>.*iloapp.*Mobile\?Mobile.*</value>
+              <value>.*hangman1.*</value>
+              <value>.*mailto.*</value>
+              <value>.*linkven.*</value>
+              <value>.*city-map\.(de|nl|pl|si|at).*</value>
+              <value>.*ratepic.*rate=.*</value>
+              <value>.*jcalpro.*date.*</value>
+              <value>.*tx_cal_controller.*</value>
+              <value>.*tx_calendar_pi1.*</value>
+              <value>.*([Tt](ell|ip)|[sS]end|[Mm]ail|[Ff]riend).*([Ff]riend|[Vv]en|[Pp]age|[Ll]ink|[Ss]end|[Mm]ail|[Ss]ide|[Mm]obil|[Uu][Rr][Ll]).*</value>
+              <value>.*(album=|displayimage).*lang=(albanian|arabic|basque|brazilian_portuguese|bulgarian|catalan|chinese_big5|chinese_gb|czech|dutch|english_gb|estonian|finnish|french|galician|georgian|german|german_sie|greek|hebrew|hindi|hungarian|indonesian|italian|japanese|korean|latvian|lithuanian|macedonian|norwegian|persian|polish|portuguese|romanian|russian|serbian|serbian_cy|slovak|slovenian|spanish|swedish|thai|turkish|ukrainian|vietnamese|welsh|xxx).*</value>
+              <value>.*(c|C|K|k)alend(a|e)r.*(cal_controller|Date=|date=|Date|dato=|heute=|week=|month|maaned=|year|value=|day=|date(F|f)ield|displaymonth|displayweek|(c|C|k|K)alend(a|e)r).*</value>
+              <value>.*(w|t)iki.*(feed=(rss|atom)|from=[0-9]{14,}|(l|L)og_|days=(1|3)|limit=(1|2|4|6|7|8|9)).*</value>
+              <value>.*\/internet\/\?qs=.*</value>
+              <value>.*\/internet\/expand\.aspx\?qs=.*</value>
+              <value>.*\/parking\.php4\?ses=.*</value>
+              <value>.*Recentchanges.*hide.*=.*</value>
+              <value>.*[cC]al[Mm]onth=.*</value>
+              <value>.*[Ii]ndex\.php\?[yY]=.*</value>
+              <value>.*[Aa]ction.*(add_product|buy|=AddToBasket|=DayView|=display.*year=|=edit|=history|=MonthView|=WeekView|=remove_product|order).*</value>
+              <value>.*\/coppermine\/login\.php\?referer=.*</value>
+              <value>.*\/images.*\/images.*</value>
+              <value>.*\/login\.php.*referer=login\.php.*</value>
+              <value>.*\/login\.php\?referer=.*</value>
+              <value>.*\/mustcheck\/\/error_msg\/\/page.*</value>
+              <value>.*\/mustselect\/\/.*</value>
+              <value>.*\/photo.*\/photo.*</value>
+              <value>.*\/scripts.*\/scripts.*</value>
+              <value>.*\/skiftsprog.*\/skiftsprog.*</value>
+              <value>.*\/skins.*\/skins.*</value>
+              <value>.*\/stories.*\/stories.*</value>
+              <value>.*\/styles.*\/styles.*</value>
+              <value>.*\/typo3conf\/.*\/typo3conf\/.*</value>
+              <value>.*\?cmno=.*cyear=.*</value>
+              <value>.*\?q=event.*month.*</value>
+              <value>.*=mini_cal.*d=.*</value>
+              <value>.*addthis\.com\/bookmark.*</value>
+              <value>.*(addbasket|addtobasket|add_to_basket|add_to_cart=|return_from_cart=|addtowishlist).*</value>
+              <value>.*adlog\.com\.com.*</value>
+              <value>.*admin\/login\.html\?id=.*</value>
+              <value>.*adstream_mjx\.ads.*click_nx\.ads.*</value>
+              <value>.*aktivitetskalender.*id=.*</value>
+              <value>.*album=.*pos=.*lang=.*</value>
+              <value>.*album=favpics.*</value>
+              <value>.*album=random.*cat=.*pos=.*</value>
+              <value>.*album=topn.*cat=.*</value>
+              <value>.*album=toprated.*cat=.*</value>
+              <value>.*anbefal.*</value>
+              <value>.*application\/Bricksite.*</value>
+              <value>.*basket.*additem.*</value>
+              <value>.*blogger\.com\/next-blog\?navBar=true.*</value>
+              <value>.*book\/calendarPopup.*</value>
+              <value>.*book\/priceCalendar.*</value>
+              <value>.*book\/stbookingkalender\.php\?X=.*y=.*</value>
+              <value>.*booking.*dato=.*</value>
+              <value>.*bookingboks.*</value>
+              <value>.*bookingsystem\.asp\?date=.*</value>
+              <value>.*bookingsystemtime\.asp\?dato=.*</value>
+              <value>.*Bricksite\/Modules.*</value>
+              <value>.*Bricksite\/Pages\/Welcome\/Bricksite.*</value>
+              <value>.*Bricksite\/Systemfiles.*</value>
+              <value>.*cal.*date=.*</value>
+              <value>.*cal_controller\[getdate].*</value>
+              <value>.*cal_controller\[view].*</value>
+              <value>.*cal_print\.php\?month.*</value>
+              <value>.*cal=.*getdate=.*</value>
+              <value>.*cal=month.*view=.*</value>
+              <value>.*CalDate=.*</value>
+              <value>.*calendar.*cal_id=.*</value>
+              <value>.*calendar.*m=.*</value>
+              <value>.*calendar.*Y=.*</value>
+              <value>.*Calendar\.asp\?Time.*</value>
+              <value>.*calendar\.aspx.*</value>
+              <value>.*calendar\.google\.com.*</value>
+              <value>.*calendar\.php\?.*</value>
+              <value>.*calendar\/embed.*</value>
+              <value>.*calendar_menu\/event.*</value>
+              <value>.*calendarix_extended.*</value>
+              <value>.*calender\.php.*year=.*</value>
+              <value>.*calender\/\?m=.*</value>
+              <value>.*cart\.asp\?mode=add.*</value>
+              <value>.*catalog\/product_compare.*</value>
+              <value>.*checkinCalendar.*</value>
+              <value>.*checkout\/cart.*</value>
+              <value>.*click_nx\.ads.*adstream_mjx\.ads.*</value>
+              <value>.*com_dwod.*</value>
+              <value>.*com_events.*view_month.*</value>
+              <value>.*com_extcalendar.*Itemid=.*</value>
+              <value>.*comcast\.net.*othastar.*</value>
+              <value>.*component.*(((year|week|day)\.listevents)|(month\.calendar)|(search\.form))\/20[0-9]{2,}\/(0[1-9]{1,}|1[0-2]{1,})\/((0[1-9]{1,})|([1-2]{1,}[0-9]{1,})|(3[0-1]{1,}))\/.*</value>
+              <value>.*courseBookingCalendar.*</value>
+              <value>.*curid=.*diff=.*oldid=.*</value>
+              <value>.*CustomDWCart\.asp.*</value>
+              <value>.*Daily.*caldate=.*</value>
+              <value>.*date.*extmode.*</value>
+              <value>.*Date_From.*</value>
+              <value>.*Date_To.*</value>
+              <value>.*DatePicker\/Bricksite.*</value>
+              <value>.*default\.asp\?id=.*date=.*</value>
+              <value>.*default\.aspx\?.*year=.*</value>
+              <value>.*displayimage\.php.*album=.*lang=.*</value>
+              <value>.*displayimage\.php.*slideshow=.*</value>
+              <value>.*dwodp_live.*</value>
+              <value>.*e107_plugins\/calendar_menu\/event\.php\?.*</value>
+              <value>.*easycalendar\/index\.php\?PageSection=.*</value>
+              <value>.*Edit.*Page=.*</value>
+              <value>.*Edit\.aspx.*</value>
+              <value>.*event.*month\/all.*</value>
+              <value>.*EventMonth.*EventCalendar.*</value>
+              <value>.*events-calendar.*</value>
+              <value>.*extmode.*date.*</value>
+              <value>.*fbconnect_postThis.*</value>
+              <value>.*fileadmin.*fileadmin.*</value>
+              <value>.*flickr\.com.*(format=rss_200|format=atom|intl=us|[a-z0-9]{10,}\/|start_index=|=slideshow)$.*</value>
+              <value>.*g2_view=search\.SearchScan.*g2.*</value>
+              <value>.*galleri\/login\.php.*</value>
+              <value>.*gallery2\/main\.php\?g2_view=cart\.ViewCart.*g2_navId=.*</value>
+              <value>.*google\.com\/calendar.*</value>
+              <value>.*google\.com\/calendar\/embed.*</value>
+              <value>.*grafMM1=.*grafYY1=.*</value>
+              <value>.*group\.calendar.*</value>
+              <value>.*hangman\.php\?letters=.*</value>
+              <value>.*home\.php\?date=.*</value>
+              <value>.*homepage_calendar\.asp.*</value>
+              <value>.*HotelSearchResults.*</value>
+              <value>.*id=dag.*tx_calendar_pi1.*</value>
+              <value>.*id=maaned.*tx_calendar_pi1.*</value>
+              <value>.*id=uge.*tx_calendar_pi1.*</value>
+              <value>.*index\.lasso\?d=.*</value>
+              <value>.*Index\.php.*date=.*</value>
+              <value>.*index\.php.*maaned=.*</value>
+              <value>.*index\.php\?Booking.*Y=.*</value>
+              <value>.*index\.php\?date=.*</value>
+              <value>.*index\.php\?id=.*month.*</value>
+              <value>.*index\.php\?Kalender.*Y=.*</value>
+              <value>.*index\.php\?m=.*</value>
+              <value>.*index\.php\?month=.*</value>
+              <value>.*index\.php\?option=com_extcalendar.*Itemid=.*</value>
+              <value>.*index\.php\?option=com_gcalendar.*</value>
+              <value>.*index\.php\?option=com_jcalpro.*Itemid.*</value>
+              <value>.*index_html\?mon=.*</value>
+              <value>.*input_calendar.*days.*</value>
+              <value>.*Javascript\/Bricksite\/Systemfiles.*</value>
+              <value>.*javascripts\/javascripts.*</value>
+              <value>.*jcalpro.*extmode=cal.*</value>
+              <value>.*kalender\.asp.*d=.*</value>
+              <value>.*kalender\.asp\?md=.*</value>
+              <value>.*KALENDER\/DDCevents.*</value>
+              <value>.*kalender\/minical.*</value>
+              <value>.*kalender-dag-visning.*</value>
+              <value>.*kalender-maaneds-visning.*</value>
+              <value>.*kalenderoffentliginclude.*</value>
+              <value>.*lang=.*lang=.*</value>
+              <value>.*left\.asp\?date=.*</value>
+              <value>.*limit=.*date=.*</value>
+              <value>.*linkator\.php\?date=.*</value>
+              <value>.*List.*caldate=.*</value>
+              <value>.*lizearle\.com.*</value>
+              <value>.*Login.*Login.*</value>
+              <value>.*main\.php\?mo=.*</value>
+              <value>.*maned\?month.*</value>
+              <value>.*maxchars\/\/minchars\/\/mustfill.*</value>
+              <value>.*md=.*aar=.*</value>
+              <value>.*mdr=.*aar=.*</value>
+              <value>.*MediaWiki.*Movearticle.*</value>
+              <value>.*mod\.calendar.*</value>
+              <value>.*module=crpCalendar.*func=.*</value>
+              <value>.*module=Kalendern.*func=view.*</value>
+              <value>.*modules\/piCal\/index\.php\?caldate=.*</value>
+              <value>.*month.*cHash=.*</value>
+              <value>.*Mozilla\/Mozilla.*</value>
+              <value>.*Mozilla\/text\/text.*</value>
+              <value>.*maaned=.*aar=.*</value>
+              <value>.*nbjmup.*typo3conf.*</value>
+              <value>.*nbjmup.*fileadmin.*templates.*css.*</value>
+              <value>.*nbjmup.*fileadmin.*user_upload.*</value>
+              <value>.*nbjmup.*nbjmup.*</value>
+              <value>.*nbjmup.*typo3temp.*</value>
+              <value>.*nbjmup\+.*</value>
+              <value>.*news\.php\?y=.*</value>
+              <value>.*next.*nextmonth.*</value>
+              <value>.*Next_Day.*</value>
+              <value>.*Next_Month.*</value>
+              <value>.*Next_Week.*</value>
+              <value>.*opac\/soegeresultat\?query=.*</value>
+              <value>.*opendocument.*monthshown.*</value>
+              <value>.*option=com_gcalendar.*Itemid=.*</value>
+              <value>.*pagelayout\/compiledmenu\/.*</value>
+              <value>.*parking\.php\?ses=.*</value>
+              <value>.*pg=event_handling.*id=.*</value>
+              <value>.*photogallery\/login\.php.*</value>
+              <value>.*portal\.php\?month=.*</value>
+              <value>.*posting.*mode=newtopic.*</value>
+              <value>.*posting.*mode=quote.*</value>
+              <value>.*posting.*mode=reply.*</value>
+              <value>.*PostSchedule.*view=month.*</value>
+              <value>.*Previous_Day.*</value>
+              <value>.*Previous_Month.*</value>
+              <value>.*PreviousSearchId.*</value>
+              <value>.*print_programStadium.*</value>
+              <value>.*print_team[iI]nfo.*</value>
+              <value>.*printable=yes.*</value>
+              <value>.*printLink=true.*</value>
+              <value>.*product_compare.*</value>
+              <value>.*product_reviews_write.*</value>
+              <value>.*product_reviews_write.*</value>
+              <value>.*productalert\/add.*</value>
+              <value>.*productid=.*cartcmd=add.*</value>
+              <value>.*qs=06oENya.*</value>
+              <value>.*recommend.*</value>
+              <value>.*redir.*redir.*redir.*</value>
+              <value>.*refreshCalendar.*</value>
+              <value>.*ReturnUrl=\/password.*ReturnUrl=\/password.*</value>
+              <value>.*search\.SearchScan.*g2_form.*</value>
+              <value>.*Seneste.*ndringer.*hide.*</value>
+              <value>.*shop.*orderby=.*date.*limit=.*</value>
+              <value>.*Special:Recentchanges.*limit=.*</value>
+              <value>.*Special:Userlogin.*</value>
+              <value>.*startdate=.*enddate=.*</value>
+              <value>.*static=tbkalender.*</value>
+              <value>.*Systemfiles\/Bricksite\/Systemfiles.*</value>
+              <value>.*tiki-lastchanges.*</value>
+              <value>.*title=Speciel.*Seneste.*namespace=.*</value>
+              <value>.*title=Speciel:Henvisningsliste.*</value>
+              <value>.*title=Speciel:Hvad_linker_hertil.*</value>
+              <value>.*title=Speciel:Loglister.*page=.*</value>
+              <value>.*title=Speciel:Recentchanges.*</value>
+              <value>.*title=Speciel:Search.*</value>
+              <value>.*title=Speciel:Seneste.*</value>
+              <value>.*true.*calendaraction.*</value>
+              <value>.*type=basket.*shopid=.*</value>
+              <value>.*typo3conf.*typo3conf.*</value>
+              <value>.*typo3temp.*typo3temp.*</value>
+              <value>.*vcal.*(day|week|year|month).*</value>
+              <value>.*view_day.*</value>
+              <value>.*view_month.*</value>
+              <value>.*view_week.*</value>
+              <value>.*view_year.*</value>
+              <value>.*view=comment\.ShowAllComments.*g2_itemId=.*</value>
+              <value>.*view=ecard\.SendEcard.*</value>
+              <value>.*view=rss\.SimpleRender.*</value>
+              <value>.*wishlist.*add.*</value>
+              <value>.*www\.infokatalogas\.lt.*</value>
+              <value>.*www\.www.*Bricksite.*</value>
+              <value>.*www\.www\..*</value>
+              <value>.*aar=.*maaned=.*dag=.*</value>
+              <value>.*acs\.org.*</value>
+              <value>.*acm\.org.*</value>
+              <value>.*ams\.org.*</value>
+              <value>.*ansinet\.org.*</value>
+              <value>.*arjournals\.annualreviews\.org.*</value>
+              <value>.*bepress\.com.*</value>
+              <value>.*bioline\.org\.br.*</value>
+              <value>.*biomedcentral\.com.*</value>
+              <value>.*blackwell-synergy\.com.*</value>
+              <value>.*census\.gov.*</value>
+              <value>.*content\.karger\.com.*</value>
+              <value>.*csa\.com.*</value>
+              <value>.*current-reports\.com.*</value>
+              <value>.*elibrary\.unm\.edu.*</value>
+              <value>.*emeraldinsight\.com.*</value>
+              <value>.*emis\.de.*</value>
+              <value>.*extenza-eps\.com.*</value>
+              <value>.*future-drugs\.com.*</value>
+              <value>.*gateway\.ovid\.com.*</value>
+              <value>.*gateway\.proquest\.com.*</value>
+              <value>.*haworthpress\.com.*</value>
+              <value>.*heinonline\.org.*</value>
+              <value>.*home\.mdconsult\.com.*</value>
+              <value>.*ias\.ac\.in.*</value>
+              <value>.*ieee\.org.*</value>
+              <value>.*ieeexplore\.ieee\.org.*</value>
+              <value>.*ingenta\.com.*</value>
+              <value>.*ingentaconnect\.com.*</value>
+              <value>.*internurse\.com.*</value>
+              <value>.*iop\.org.*</value>
+              <value>.*ispub\.com.*</value>
+              <value>.*journals\.cambridge\.org.*</value>
+              <value>.*journals\.humanapress\.com.*</value>
+              <value>.*journalsonline\.tandf\.co\.uk.*</value>
+              <value>.*journals\.tubitak\.gov\.tr.*</value>
+              <value>.*journals\.uchicago\.edu.*</value>
+              <value>.*jstage\.jst\.go\.jp.*</value>
+              <value>.*jstor\.org.*</value>
+              <value>.*karger\.ch.*</value>
+              <value>.*kluwerlawonline\.com.*</value>
+              <value>.*leaonline\.com.*</value>
+              <value>.*liebertonline\.com.*</value>
+              <value>.*medind\.nic\.in.*</value>
+              <value>.*metapress\.com.*</value>
+              <value>.*mitpressjournals\.org.*</value>
+              <value>.*muse\.jhu\.edu.*</value>
+              <value>.*nature\.com.*</value>
+              <value>.*news\.nnyln\.net.*</value>
+              <value>.*new\.sourceoecd\.org.*</value>
+              <value>.*numdam\.org.*</value>
+              <value>.*ojps\.aip\.org.*</value>
+              <value>.*online\.sagepub\.com.*</value>
+              <value>.*portal\.acm\.org.*</value>
+              <value>.*projecteuclid\.org.*</value>
+              <value>.*pubmedcentral\.gov.*</value>
+              <value>.*pubs\.acs\.org.*</value>
+              <value>.*purl\.access\.gpo\.gov.*</value>
+              <value>.*rsc\.org.*</value>
+              <value>.*saber\.ula\.ve.*</value>
+              <value>.*scielo\.br.*</value>
+              <value>.*scielo\.cl.*</value>
+              <value>.*scielo\.isciii\.es.*</value>
+              <value>.*scielo-mx\.bvs\.br.*</value>
+              <value>.*scielo\.org\.ve.*</value>
+              <value>.*scielo\.sld\.cu.*</value>
+              <value>.*sciencedirect\.com.*</value>
+              <value>.*search\.ebscohost\.com.*</value>
+              <value>.*search\.epnet\.com.*</value>
+              <value>.*siam\.org.*</value>
+              <value>.*springerlink\.com.*</value>
+              <value>.*taylorandfrancis\.metapress\.com.*</value>
+              <value>.*thieme-connect\.com.*</value>
+              <value>.*worldscinet\.com.*</value>
+              <value>.*www3\.interscience\.wiley\.com.*</value>
+              <value>.*www-gdz\.sub\.uni-goettingen\.de.*</value>
+              <value>.*tlg\.uci\.edu.*</value>
+              <value>.*www\.hempel\.\w{2,3}\/product-list\/.*download.*lang=(ru-RU|fi-FI|fr-FR|nb-NO|es-ES|sv-SE).*</value>
+              <value>.*\/u002F.*\/u002F.*</value>
+              <value>.*linkedin\.com.*(login|\/(reg|uas)\/|linkedin\.com|AnonymousFramework).*</value>
+              <value>.*licdn\.com\/scds\/.*</value>
+              <value>.*wayf\.dk.*SSOService.*</value>
+              <value>.*winzip\.com.*</value>
+              <value>.*\/order\/cart\/.*</value>
+              <value>.*basketContent.*</value>
+              <value>.*\/account\/login\/.*</value>
+              <value>.*\/tell-a-friend.*</value>
+              <value>.*product\/.*(span\.basketlink|div\.minibasket).*</value>
+              <!-- 4xstring: Match urls with 4 or more repetetive paths ('/xxx')
+              e.g. http://www.olbutikken.dk/h/txt/xss/trackPageview/css/txt/holder/txt/txt/place/df.js -->
+              <value>^[^?]*(/[^/]{3,}(?=/))[^?]*\1(?=/)[^?]*\1(?=/)[^?]*\1(?=/|$).*</value>
+              <!-- 3xSet: Match urls with 3 or more repetetive sets ('/xxx/yyy')
+              e.g. http://www.olbutikken.dk/txt/css/forall/txt/css/trackPageview/css/txt/holder/txt/txt/css/place/df.js -->
+              <value>^[^\?]*(/[^/]+/[^/]+)[^\?]*\1(?=/)[^\?]*\1(?=/|$).*</value>
+              <!-- Til at finde url’er der ender med domænenavn (evt. inkl. subdomæne), eks:
+              http://rip.rap.mads.dk/indhold/folder/mads.dk
+              http://rip.rap.mads.dk/indhold/folder/rip.rap.mads.dk-->
+              <!-- DO NOT USE REMOVES VALID URLs
+              <value>^https?://((?:[A-Za-z0-9-]+\.)*)([A-Za-z0-9-]+\.[A-Za-z]{2,})(?=/).*/\1?\2.*</value>-->
+              <!-- Til at finde url’er der indeholder /x+.x+//x+.x+/x+.x+
+              http://www.olbutikken.dk/browse/a._setAccount/a._trackPageview/b._setDomainName/1
+              http://www.olbutikken.dk/browse/a._setAccount/b._setDomainName/a._trackPageview/1 -->
+              <value>^https?://[^/]+.*(?:/[^\?\.\/]+\.[^\?\/]+){3,}.*</value>
+              <value>.*(\/mm(?=/).*\/mm(?=/).*\/mm\/|\/dd(?=/).*\/dd(?=/).*\/dd\/|\/yyyy(?=/).*\/yyyy\/).*</value>
+              <value>.*kelkoo\.com.*searchId=.*</value>
+              <value>.*facebook\.com\/sharer\/sharer.*</value>
+              <value>.*(my|user|auth\.|api\.|\_fe)login.*</value>
+              <!-- NETARCHIVESUITE GLOBAL CRAWLTRAP FILTERS (END) -->
+            </list>
+          </property>
+        </bean>
+        <!-- ...and REJECT those with suspicious repeating path-segments... -->
+        <bean class="org.archive.modules.deciderules.PathologicalPathDecideRule">
+          <!-- Max number of identical path repetitions -->
+          <property name="maxRepetitions" value="2" />
+        </bean>
+        <!-- ...and REJECT those with more than threshold number of path-segments... -->
+        <bean class="org.archive.modules.deciderules.TooManyPathSegmentsDecideRule">
+          <!-- Max number of (/) in URL not including the first (//) -->
+          <property name="maxPathDepth" value="20" />
+        </bean>
+        <!-- ...but always ACCEPT those marked as prerequisites for another URI... -->
+        <bean class="org.archive.modules.deciderules.PrerequisiteAcceptDecideRule">
+        </bean>
+        <!-- ...but always REJECT those with unsupported URI schemes. -->
+        <bean class="org.archive.modules.deciderules.SchemeNotInSetDecideRule">
+        </bean>
+      </list>
+    </property>
+  </bean>
+  <!-- SCOPE (END)-->
+
+  <!-- PROCESSING CHAINS (START)
+  Much of the crawler's work is specified by the sequential
+  application of swappable Processor modules. These Processors
+  are collected into three 'chains. The CandidateChain is applied
+  to URIs being considered for inclusion, before a URI is enqueued
+  for collection. The FetchChain is applied to URIs when their
+  turn for collection comes up. The DispositionChain is applied
+  after a URI is fetched and analyzed/link-extracted.
+  -->
+
+  <!-- CANDIDATE CHAIN (START)
+  Processors declared as named beans
+  -->
+  <bean id="candidateScoper" class="org.archive.crawler.prefetch.CandidateScoper">
+  </bean>
+  <bean id="preparer" class="org.archive.crawler.prefetch.FrontierPreparer">
+    <property name="preferenceDepthHops" value="-1" />
+    <property name="preferenceEmbedHops" value="1" />
+    <property name="canonicalizationPolicy">
+      <ref bean="NetarkivetCanonicalizationPolicy" />
+    </property>
+    <property name="queueAssignmentPolicy">
+      <!-- Bundled with NAS is two queueAssignPolicies (code is in heritrix3-extensions):
+      dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
+      dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy
+      -->
+      <ref bean="NASQueueAssignmentPolicy" />
+    </property>
+  </bean>
+  <!-- Assembled into ordered CandidateChain bean -->
+  <bean id="candidateProcessors" class="org.archive.modules.CandidateChain">
+    <property name="processors">
+      <list>
+        <!-- Apply scoping rules to each individual candidate URI... -->
+        <ref bean="candidateScoper" />
+        <!-- ...then prepare those ACCEPTed for enqueuing to frontier. -->
+        <ref bean="preparer" />
+      </list>
+    </property>
+  </bean>
+  <!-- CANDIDATE CHAIN (END) -->
+
+  <!-- FETCH CHAIN (START)
+  Processors declared as named beans
+  -->
+  <bean id="preselector" class="org.archive.crawler.prefetch.Preselector">
+    <property name="enabled" value="true" />
+    <property name="logToFile" value="true" />
+    <property name="recheckScope" value="true" />
+    <property name="blockAll" value="false" />
+  </bean>
+  <bean id="preconditions" class="org.archive.crawler.prefetch.PreconditionEnforcer">
+    <property name="enabled" value="true" />
+    <property name="ipValidityDurationSeconds" value="21600" />
+    <property name="robotsValidityDurationSeconds" value="86400" />
+    <property name="calculateRobotsOnly" value="false" />
+  </bean>
+  <bean id="fetchDns" class="org.archive.modules.fetcher.FetchDNS">
+    <property name="enabled" value="true" />
+    <property name="acceptNonDnsResolves" value="false" />
+    <property name="digestContent" value="true" />
+    <property name="digestAlgorithm" value="sha1" />
+  </bean>
+  <bean id="fetchHttp" class="org.archive.modules.fetcher.FetchHTTP">
+    <property name="enabled" value="true" />
+    <property name="timeoutSeconds" value="1200" />
+    <property name="soTimeoutMs" value="20000" />
+    <property name="maxFetchKBSec" value="0" />
+    <property name="maxLengthBytes" value="0" />
+    <property name="ignoreCookies" value="false" />
+    <property name="sslTrustLevel" value="OPEN" />
+    <property name="defaultEncoding" value="UTF-8" />
+    <property name="digestContent" value="true" />
+    <property name="digestAlgorithm" value="sha1" />
+    <property name="sendIfModifiedSince" value="true" />
+    <property name="sendIfNoneMatch" value="true" />
+    <property name="sendConnectionClose" value="true" />
+    <property name="sendReferer" value="true" />
+    <property name="sendRange" value="false" />
+    <!-- Accept headers for HTTP fetching -->
+    <property name="acceptHeaders">
+      <list>
+        <value>Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</value>
+      </list>
+    </property>
+  </bean>
+  <bean id="fetchFtp" class="org.archive.modules.fetcher.FetchFTP">
+    <!-- DUMMY username and password set for the FTP fetcher.
+    Should probably be configured using overlays to allow different
+    username/passwords for different sites.
+    -->
+    <property name="username" value="USERNAME" />
+    <property name="password" value="PASSWORD" />
+    <property name="extractFromDirs" value="true" />
+    <property name="extractParent" value="true" />
+    <property name="maxLengthBytes" value="0" />
+    <property name="maxFetchKBSec" value="0" />
+    <property name="timeoutSeconds" value="1200" />
+  </bean>
+  <bean id="extractorHttp" class="org.archive.modules.extractor.ExtractorHTTP">
+    <property name="enabled" value="true" />
+  </bean>
+  <bean id="extractorHtml" class="org.archive.modules.extractor.ExtractorHTML">
+    <property name="enabled" value="true" />
+    <property name="extractJavascript" value="%{EXTRACT_JAVASCRIPT}" />
+    <property name="treatFramesAsEmbedLinks" value="true" />
+    <property name="ignoreFormActionUrls" value="true" />
+    <property name="extractValueAttributes" value="false" />
+    <property name="ignoreUnexpectedHtml" value="true" />
+  </bean>
+  <bean id="extractorCss" class="org.archive.modules.extractor.ExtractorCSS">
+    <property name="enabled" value="true" />
+  </bean>
+  <bean id="icelandicExtractorJs" class="dk.netarkivet.harvester.harvesting.extractor.IcelandicExtractorJS">
+    <property name="enabled" value="%{EXTRACT_JAVASCRIPT}" />
+    <property name="rejectRelativeMatchingRegexList">
+      <list>
+        <value>^text/javascript$</value>
+        <value>^text/css$</value>
+        <value>^a\.[^/]+$</value>
+        <value>^div\.[^/]+$</value>
+        <value>^[a-zA-Z-]+\.dk$</value>
+        <!-- E.g. 3.5.0. Very common in some JS libraries for strings of this nature but very unlikely to be a relative URL -->
+        <value>^[0-9]\.([0-9]\.)[0-9]$</value>
+        <value>^Microsoft\.XMLHTTP$</value>
+      </list>
+    </property>
+  </bean>
+  <bean id="extractorSwf" class="org.archive.modules.extractor.ExtractorSWF">
+    <property name="enabled" value="true" />
+  </bean>
+  <bean id="extractorOAI" class="dk.netarkivet.harvester.harvesting.extractor.ExtractorOAI">
+    <property name="enabled" value="false" />
+  </bean>
+  <bean id="extractorXML" class="org.archive.modules.extractor.ExtractorXML">
+    <property name="enabled" value="false" />
+  </bean>
+  <!-- Assembled into ordered FetchChain bean -->
+  <bean id="fetchProcessors" class="org.archive.modules.FetchChain">
+    <property name="processors">
+      <list>
+        <!-- Recheck scope, if so enabled... -->
+        <ref bean="preselector" />
+        <!-- ...then verify or trigger prerequisite URIs fetched, allow crawling... -->
+        <ref bean="preconditions" />
+        <!-- ...then check, if quotas is already superseded... -->
+        <ref bean="quotaenforcer" />
+        <!-- ...then fetch if DNS URI... -->
+        <ref bean="fetchDns" />
+        <!-- ...then fetch if HTTP URI... -->
+        <ref bean="fetchHttp" />
+        <!-- ...then fetch if FTP URI... -->
+        <ref bean="fetchFtp" />
+        <!-- ...then extract oulinks from HTTP headers... -->
+        <ref bean="extractorHttp" />
+        <!-- ...then extract oulinks from HTML content... -->
+        <ref bean="extractorHtml" />
+        <!-- ...then extract oulinks from CSS content... -->
+        <ref bean="extractorCss" />
+        <!-- ...then extract oulinks from Javascript content... -->
+        <ref bean="icelandicExtractorJs" />
+        <!-- ...then extract oulinks from Flash content. -->
+        <ref bean="extractorSwf" />
+        %{UMBRA_BEAN_REF_PLACEHOLDER}
+
+      </list>
+    </property>
+  </bean>
+  <!-- FETCH CHAIN (END)-->
+
+  <!-- (W)ARC WRITER (START)
+  NETARCHIVESUITE: Here the (w)arc writer is inserted
+  -->
+  %{ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER}
+  <!-- (W)ARC WRITER (END) -->
+
+  <!-- DISPOSITION CHAIN (START) -->
+  <!-- Processors declared as named beans -->
   <bean id="DeDuplicator" class="is.hi.bok.deduplicator.DeDuplicator">
     <!-- DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER is replaced by path on harvest-server -->
-    <property name="indexLocation" value="%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}"/>
-    <property name="matchingMethod" value="URL"/>
-    <property name="tryEquivalent" value="TRUE"/>
-    <property name="changeContentSize" value="false"/>
-    <property name="mimeFilter" value="^text/.*"/>
-    <property name="filterMode" value="BLACKLIST"/>
-    <!--  <property name="analysisMode" value="TIMESTAMP"/> TODO does not work. but isn't a problem, as the default is always USED -->
-    <property name="origin" value=""/>
-    <property name="originHandling" value="INDEX"/>
-    <property name="statsPerHost" value="true"/>
+    <property name="indexLocation" value="%{DEDUPLICATION_INDEX_LOCATION_PLACEHOLDER}" />
     <property name="enabled" value="%{DEDUPLICATION_ENABLED_PLACEHOLDER}" />
+    <property name="matchingMethod" value="URL" />
+    <property name="tryEquivalent" value="TRUE" />
+    <property name="changeContentSize" value="false" />
+    <property name="mimeFilter" value="^text/.*" />
+    <property name="filterMode" value="BLACKLIST" />
+    <property name="origin" value="" />
+    <property name="originHandling" value="INDEX" />
+    <property name="statsPerHost" value="true" />
   </bean>
+  <bean id="candidates" class="org.archive.crawler.postprocessor.CandidatesProcessor">
+    <!-- Allow redirected seeds to be accepted as seeds
+    In H1, this property belonged to the LinkScoper object, in H3, it is part of the CandidatesProcessor object
+    -->
+    <property name="seedsRedirectNewSeeds" value="false" />
+  </bean>
+  <bean id="disposition" class="org.archive.crawler.postprocessor.DispositionProcessor">
+    <!-- Politeness -->
+    <property name="delayFactor" value="1.0" />
+    <property name="maxDelayMs" value="1000" />
+    <property name="minDelayMs" value="300" />
+    <property name="respectCrawlDelayUpToSeconds" value="0" />
+    <property name="maxPerHostBandwidthUsageKbSec" value="0" />
+  </bean>
+  <!-- Assembled into ordered DispositionChain bean -->
+  <bean id="dispositionProcessors" class="org.archive.modules.DispositionChain">
+    <property name="processors">
+      <list>
+        <!-- Write to aggregate archival files... -->
 
-  <!-- DISPOSITION CHAIN -->
- <!-- processors declared as named beans -->
+        <!-- NETARCHIVESUITE: Remove the reference below, and the DeDuplicator bean itself to disable Deduplication -->
+        <ref bean="DeDuplicator"/>
 
-<!-- Here the (W)arc writer is inserted -->
+        <!-- NETARCHIVESUITE: Here the reference to the (w)arcWriter bean is inserted during job-generation -->
+        %{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}
 
-%{ARCHIVER_PROCESSOR_BEAN_PLACEHOLDER}
+        <!-- NETARCHIVESUITE: This bean is required to report back the number of bytes harvested for each domain  -->
+        <bean id="ContentSizeAnnotationPostProcessor"  class="dk.netarkivet.harvester.harvesting.ContentSizeAnnotationPostProcessor"/>
 
+        <!-- ...send each outlink candidate URI to CandidatesChain,
+        and enqueue those ACCEPTed to the frontier... -->
+        <ref bean="candidates"/>
+        <!-- ...then update stats, shared-structures, frontier decisions. -->
+        <ref bean="disposition"/>
+      </list>
+    </property>
+  </bean>
+  <!-- DISPOSITION CHAIN (END) -->
 
- <bean id="candidates" class="org.archive.crawler.postprocessor.CandidatesProcessor">
-  <!-- <property name="seedsRedirectNewSeeds" value="true" /> -->
- </bean>
- <bean id="disposition" class="org.archive.crawler.postprocessor.DispositionProcessor">
- </bean>
-
- <!-- assembled into ordered DispositionChain bean -->
- <bean id="dispositionProcessors" class="org.archive.modules.DispositionChain">
-  <property name="processors">
-   <list>
-     <!-- remove the reference below, and the DeDuplicator bean itself to disable Deduplication -->
-     <ref bean="DeDuplicator"/>
-    <!-- write to aggregate archival files... -->
-    <!-- Here the reference to the (w)arcWriter bean is inserted -->	
-
-    %{ARCHIVER_BEAN_REFERENCE_PLACEHOLDER}
- 
-    <!-- ...send each outlink candidate URI to CandidatesChain, 
-         and enqueue those ACCEPTed to the frontier... -->
-    <ref bean="candidates"/>
-    <!-- ...then update stats, shared-structures, frontier decisions -->
-    <ref bean="disposition"/>
-   </list>
-  </property>
- </bean>
- 
- <!-- CRAWLCONTROLLER: Control interface, unifying context -->
- <bean id="crawlController" 
-   class="org.archive.crawler.framework.CrawlController">
- </bean>
- 
- <!-- FRONTIER: Record of all URIs discovered and queued-for-collection -->
- <bean id="frontier" 
-   class="org.archive.crawler.frontier.BdbFrontier">
- </bean>
- 
- <!-- URI UNIQ FILTER: Used by frontier to remember already-included URIs --> 
- <bean id="uriUniqFilter" 
-   class="org.archive.crawler.util.BdbUriUniqFilter">
- </bean>
-
- <!-- 
-   OPTIONAL BUT RECOMMENDED BEANS
+  <!-- CRAWLCONTROLLER (START)
+  Control interface, unifying context
   -->
-  
- <!-- ACTIONDIRECTORY: disk directory for mid-crawl operations
-      Running job will watch directory for new files with URIs, 
-      scripts, and other data to be processed during a crawl. -->
- <bean id="actionDirectory" class="org.archive.crawler.framework.ActionDirectory">
- </bean> 
- 
- <!--  CRAWLLIMITENFORCER: stops crawl when it reaches configured limits -->
- <bean id="crawlLimiter" class="org.archive.crawler.framework.CrawlLimitEnforcer">
+  <bean id="crawlController" class="org.archive.crawler.framework.CrawlController">
+    <property name="maxToeThreads" value="50" />
+    <property name="recorderOutBufferBytes" value="4096" />
+    <property name="recorderInBufferBytes" value="65536" />
+    <property name="pauseAtStart" value="false" />
+    <property name="runWhileEmpty" value="false" />
+    <property name="scratchDir" value="scratch" />
   </bean>
+  <!-- CRAWLCONTROLLER (START) -->
 
- <!-- CHECKPOINTSERVICE: checkpointing assistance -->
- <bean id="checkpointService" 
-   class="org.archive.crawler.framework.CheckpointService">
-  </bean>
- 
- <!-- 
-   OPTIONAL BEANS
-    Uncomment and expand as needed, or if non-default alternate 
-    implementations are preferred.
+  <!-- FRONTIER (START)
+  Record of all URIs discovered and queued-for-collection
   -->
-  
- <!-- QUEUE ASSIGNMENT POLICY -->
- 
-<!-- NAS queue assignement policy. 
-default H3 policy is org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy
--->
+  <bean id="frontier" class="org.archive.crawler.frontier.BdbFrontier">
+    <property name="maxRetries" value="3" />
+    <property name="retryDelaySeconds" value="300" />
+    <property name="recoveryLogEnabled" value="false" />
+    <property name="balanceReplenishAmount" value="3000" />
+    <property name="errorPenaltyAmount" value="100" />
+    <!-- NETARCHIVESUITE: Placeholder %{FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER} -->
+    <property name="queueTotalBudget" value="%{FRONTIER_QUEUE_TOTAL_BUDGET_PLACEHOLDER}" />
+    <property name="snoozeLongMs" value="300000" />
+    <property name="extract404s" value="false" />
+    <property name="extractIndependently" value="false" />
+  </bean>
+  <!-- FRONTIER (END) -->
 
- <bean id="queueAssignmentPolicy"
-  class="dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy"> 
-  <property name="forceQueueAssignment" value="" /> <!-- TODO evaluate this default -->
-  <property name="deferToPrevious" value="true" />  <!-- TODO evaluate this default -->
-  <property name="parallelQueues" value="1" />      <!-- TODO evaluate this default -->
- </bean>
+  <!-- URI UNIQ FILTER (START)
+  Used by frontier to remember already-included URIs
+  -->
+  <bean id="uriUniqFilter" class="org.archive.crawler.util.BdbUriUniqFilter">
+  </bean>
+  <!-- URI UNIQ FILTER (END) -->
 
- <!-- URI PRECEDENCE POLICY -->
- <!--
- <bean id="uriPrecedencePolicy" 
-   class="org.archive.crawler.frontier.precedence.CostUriPrecedencePolicy">
- </bean>
- -->
- 
- <!-- COST ASSIGNMENT POLICY -->
- 
- <bean id="costAssignmentPolicy" 
-   class="org.archive.crawler.frontier.UnitCostAssignmentPolicy">
- </bean>
+  <!-- OPTIONAL BUT RECOMMENDED BEANS (START) -->
 
- 
-<!-- CREDENTIAL STORE: HTTP authentication or FORM POST credentials -->
+  <!-- ACTIONDIRECTORY (START)
+  Disk directory for mid-crawl operations
+  Running job will watch directory for new files with URIs,
+  scripts, and other data to be processed during a crawl.
+  -->
+  <bean id="actionDirectory" class="org.archive.crawler.framework.ActionDirectory">
+  </bean>
+  <!-- ACTIONDIRECTORY (END) -->
 
-<!-- sample use of credentialStore http://stackoverflow.com/questions/17756520/use-of-heritrixs-htmlformcredential-and-credentialstore  -->
+  <!--  CRAWLLIMITENFORCER (START)
+  Stops crawl when it reaches configured limits
+  -->
+  <bean id="crawlLimiter" class="org.archive.crawler.framework.CrawlLimitEnforcer">
+    <property name="maxBytesDownload" value="0" />
+    <property name="maxDocumentsDownload" value="0" />
+    <!-- NETARCHIVESUITE: Placeholder %{MAX_TIME_SECONDS_PLACEHOLDER} -->
+    <property name="maxTimeSeconds" value="%{MAX_TIME_SECONDS_PLACEHOLDER}" />
+  </bean>
+  <!--  CRAWLLIMITENFORCER (END) -->
 
- <bean id="credentialStore" 
-   class="org.archive.modules.credential.CredentialStore">
- <property name="credentials">
- <map>
-    <entry key="licitationen" value-ref="licitationen_login_1"/>
-    <entry key="mymusic" value-ref="mymusic_login_1"/>
-    <entry key="arto" value-ref="arto_login_1"/>
-    <entry key="heerfordt" value-ref="heerfordt_login_1"/>
- </map>
-</property>
-</bean>
+  <!-- CHECKPOINTSERVICE (START)
+  Checkpointing assistance
+  -->
+  <bean id="checkpointService" class="org.archive.crawler.framework.CheckpointService">
+  </bean>
+  <!-- CHECKPOINTSERVICE (END) -->
+  <!-- OPTIONAL BUT RECOMMENDED BEANS (END) -->
 
-<bean id="licitationen_login_1" class="org.archive.modules.credential.HttpAuthenticationCredential"> <!-- renamed from Rfc2617Credential -->
-  <property name="domain" value="www.licitationen.dk" />
-  <property name="realm" value="Dagbladet Licitationen"/>
-  <property name="login" value="*****"/>
-  <property name="password" value="*****"/>
-</bean>
-
-<bean id="mymusic_login_1" class="org.archive.modules.credential.HtmlFormCredential">
-  <property name="domain" value="www.mymusic.dk"/>
-  <property name="loginUri" value="http://www.mymusic.dk/konto/login2.asp"/>
-  <!-- <property name="httpMethod" value="Method.POST"/> -->
-  <property name="formItems">
-    <map>
-	<entry key="username" value="*****"/>
-	<entry key="password" value="*****"/>
-	<entry key="autologin" value="y"/>
-    </map>
-  </property>
-</bean>
-
-<bean id="arto_login_1" class="org.archive.modules.credential.HtmlFormCredential">
-  <property name="domain" value="www.arto.dk"/>
-  <property name="loginUri" value="http://www.arto.dk/r2/frames/navigation.asp"/>
-  <!-- <property name="httpMethod" value="Method.POST"/> -->
-  <property name="formItems">
-    <map>
-        <entry key="action" value="submit"/>
-	<entry key="brugernavn" value="****"/>
-	<entry key="kodeord" value="*****"/>
-	<entry key="AutoLogin" value="ja"/>
-	<entry key="loginKnap" value="Log ind"/>
-    </map>
-  </property>
-</bean>
-
-<bean id="heerfordt_login_1" class="org.archive.modules.credential.HtmlFormCredential">
-  <property name="domain" value="heerfordt.dk"/>
-  <property name="loginUri" value="http://heerfordt.dk/"/>
-<!--  <property name="http-method" value="POST"/> -->
-  <property name="formItems">
-    <map>
-	<entry key="Brugernavn" value="*****"/>
-	<entry key="Pw" value="*****"/>
-	<entry key="Login" value="Login"/>
-    </map>
-  </property>
-</bean>
-
-<!-- sample credentials ended -->
-
-<!-- QUOTA ENFORCER BEAN -->
-
-<bean id="quotaenforcer" 
-  class="org.archive.crawler.prefetch.QuotaEnforcer">
-  <property name="forceRetire" value="false"></property>
-
-  <property name="serverMaxFetchSuccesses" value="-1"></property>
-  <property name="serverMaxSuccessKb" value="-1"></property>
-  <property name="serverMaxFetchResponses" value="-1"></property>
-  <property name="serverMaxAllKb" value="-1"></property>
-
-  <property name="hostMaxFetchSuccesses" value="-1"></property>
-  <property name="hostMaxSuccessKb" value="-1"></property>
-  <property name="hostMaxFetchResponses" value="-1"></property>
-  <property name="hostMaxAllKb" value="-1"></property>
-
-  <property name="groupMaxFetchSuccesses" value="%{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER}">
-  </property>
-  <property name="groupMaxSuccessKb" value="-1"></property>
-  <property name="groupMaxFetchResponses" value="-1"></property>
-  <property name="groupMaxAllKb" value="%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}"></property> 
- </bean>
-
- <!-- 
-   REQUIRED STANDARD BEANS
-    It will be very rare to replace or reconfigure the following beans.
+  <!-- OPTIONAL BEANS (START)
+  Uncomment and expand as needed, or if non-default alternate implementations are preferred.
   -->
 
- <!-- STATISTICSTRACKER: standard stats/reporting collector -->
- <bean id="statisticsTracker" 
-   class="org.archive.crawler.reporting.StatisticsTracker" autowire="byName">
- </bean>
- 
- <!-- CRAWLERLOGGERMODULE: shared logging facility -->
- <bean id="loggerModule" 
-   class="org.archive.crawler.reporting.CrawlerLoggerModule">
- </bean>
- 
- <!-- SHEETOVERLAYMANAGER: manager of sheets of contextual overlays
-      Autowired to include any SheetForSurtPrefix or 
-      SheetForDecideRuled beans -->
- <bean id="sheetOverlaysManager" autowire="byType"
-   class="org.archive.crawler.spring.SheetOverlaysManager">
- </bean>
+  <!-- RULES CANONICALIZATION POLICY (START) -->
+  <bean id="NetarkivetCanonicalizationPolicy" class="org.archive.modules.canonicalize.RulesCanonicalizationPolicy">
+    <property name="rules">
+      <list>
+        <bean class="org.archive.modules.canonicalize.LowercaseRule" />
+        <bean class="org.archive.modules.canonicalize.StripUserinfoRule" />
+        <!-- disabled by default in PROD templates
+        <bean class="org.archive.modules.canonicalize.StripWWWNRule" />
+        -->
+        <bean class="org.archive.modules.canonicalize.StripWWWRule" />
+        <bean class="org.archive.modules.canonicalize.StripSessionIDs" />
+        <bean class="org.archive.modules.canonicalize.StripSessionCFIDs" />
+        <!-- new in H3 should it be disabled or enabled? -->
+        <bean class="org.archive.modules.canonicalize.FixupQueryString" />
+      </list>
+    </property>
+  </bean>
+  <!-- RULES CANONICALIZATION POLICY (END) -->
 
- <!-- BDBMODULE: shared BDB-JE disk persistence manager -->
- <bean id="bdb" 
-  class="org.archive.bdb.BdbModule">
- </bean>
- 
- <!-- BDBCOOKIESTORAGE: disk-based cookie storage for FetchHTTP -->
- <bean id="cookieStorage" 
-   class="org.archive.modules.fetcher.BdbCookieStore">
- </bean>
- 
- <!-- SERVERCACHE: shared cache of server/host info -->
- <bean id="serverCache" 
-   class="org.archive.modules.net.BdbServerCache">
- </bean>
+  <!-- QUEUE ASSIGNMENT POLICY (START) -->
+  <bean id="NASQueueAssignmentPolicy" class="dk.netarkivet.harvester.harvesting.SeedUriDomainnameQueueAssignmentPolicy">
+    <!-- default forceQueueAssignment is "" -->
+    <property name="forceQueueAssignment" value="" />
+    <!-- default deferToPrevious is true -->
+    <property name="deferToPrevious" value="true" />
+    <!-- dafault parallelQueues is 1 -->
+    <property name="parallelQueues" value="1" />
+  </bean>
+  <!-- QUEUE ASSIGNMENT POLICY (END) -->
 
- <!-- CONFIG PATH CONFIGURER: required helper making crawl paths relative
-      to crawler-beans.cxml file, and tracking crawl files for web UI -->
- <bean id="configPathConfigurer" 
-   class="org.archive.spring.ConfigPathConfigurer">
- </bean>
+  <!-- COST ASSIGNMENT POLICY (START) -->
+  <bean id="costAssignmentPolicy" class="org.archive.crawler.frontier.UnitCostAssignmentPolicy">
+  </bean>
+  <!-- COST ASSIGNMENT POLICY (END) -->
+
+  <!-- QUOTA ENFORCER (START) -->
+  <bean id="quotaenforcer" class="dk.netarkivet.harvester.harvesting.PrerequisiteIgnoringQuotaEnforcer">
+    <property name="forceRetire" value="false" />
+    <!-- Server properties -->
+    <property name="serverMaxFetchSuccesses" value="-1" />
+    <property name="serverMaxSuccessKb" value="-1" />
+    <property name="serverMaxFetchResponses" value="-1" />
+    <property name="serverMaxAllKb" value="-1" />
+    <!-- Host properties -->
+    <property name="hostMaxFetchSuccesses" value="-1" />
+    <property name="hostMaxSuccessKb" value="-1" />
+    <property name="hostMaxFetchResponses" value="-1" />
+    <property name="hostMaxAllKb" value="-1" />
+    <!-- Group properties -->
+    <!-- NETARCHIVESUITE: Placeholder %{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER} -->
+    <property name="groupMaxFetchSuccesses" value="%{QUOTA_ENFORCER_GROUP_MAX_FETCH_SUCCES_PLACEHOLDER}" />
+    <property name="groupMaxSuccessKb" value="-1" />
+    <property name="groupMaxFetchResponses" value="-1" />
+    <!-- NETARCHIVESUITE: Placeholder %{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER} -->
+    <property name="groupMaxAllKb" value="%{QUOTA_ENFORCER_MAX_BYTES_PLACEHOLDER}" />
+  </bean>
+  <!-- QUOTA ENFORCER (END) -->
+  <!-- OPTIONAL BEANS (END) -->
+
+  <!-- REQUIRED STANDARD BEANS (START)
+  It will be very rare to replace or reconfigure the following beans.
+  -->
+
+  <!-- STATISTICSTRACKER (START)
+  Standard stats/reporting collector
+  -->
+  <bean id="statisticsTracker" class="org.archive.crawler.reporting.StatisticsTracker" autowire="byName">
+    <property name="intervalSeconds" value="20" />
+  </bean>
+  <!-- STATISTICSTRACKER (END) -->
+
+  <!-- CRAWLERLOGGERMODULE: shared logging facility -->
+  <bean id="loggerModule" class="org.archive.crawler.reporting.CrawlerLoggerModule">
+    <property name="path" value="logs" />
+  </bean>
+
+  <!-- SHEETOVERLAYMANAGER (START)
+  Manager of sheets of contextual overlays
+  Autowired to include any SheetForSurtPrefix or SheetForDecideRuled beans
+  -->
+  <bean id="sheetOverlaysManager" autowire="byType" class="org.archive.crawler.spring.SheetOverlaysManager">
+  </bean>
+  <!-- SHEETOVERLAYMANAGER (END) -->
+
+  <!-- BDBMODULE (START)
+  Shared BDB-JE disk persistence manager
+  -->
+  <bean id="bdb" class="org.archive.bdb.BdbModule">
+    <property name="dir" value="state" />
+    <property name="cachePercent" value="40" />
+  </bean>
+  <!-- BDBMODULE (END) -->
+
+  <!-- BDBCOOKIESTORAGE (START)
+  Disk-based cookie storage for FetchHTTP
+  -->
+  <bean id="cookieStorage" class="org.archive.modules.fetcher.BdbCookieStore">
+  </bean>
+  <!-- BDBCOOKIESTORAGE (END) -->
+
+  <!-- SERVERCACHE (START)
+  Shared cache of server/host info
+  -->
+  <bean id="serverCache" class="org.archive.modules.net.BdbServerCache">
+  </bean>
+  <!-- SERVERCACHE (END) -->
+
+  <!-- CONFIG PATH CONFIGURER (START)
+  Required helper making crawl paths relative
+  to crawler-beans.cxml file, and tracking crawl files for web UI
+  -->
+  <bean id="configPathConfigurer" class="org.archive.spring.ConfigPathConfigurer">
+  </bean>
+  <!-- CONFIG PATH CONFIGURER (END) -->
+  <!-- REQUIRED STANDARD BEANS (END) -->
+
+  <!-- A processor to enforce runtime limits on crawls if wanted
+  The operations available is Pause, Terminate, Block_Uris
+  -->
+
+  <!-- TODO CHECK, if this bean can coexist with the crawlLimitenforcer
+  <bean id="runtimeLimitEnforcer" class="org.archive.crawler.prefetch.RuntimeLimitEnforcer">
+  <property name="runtimeSeconds" value="82800"/>
+  <property name="operation" value="Terminate"/>
+  </bean> -->
 
 </beans>

@@ -53,10 +53,18 @@ void logEvent(String e) {
 void deleteFromFrontier(String regex) {
     //job.crawlController.requestCrawlPause()
     if (job.crawlController.isPaused()) {
-	    count = job.crawlController.frontier.deleteURIs(".*", regex)
-	    //rawOut.println "REMINDER: This job is now in a Paused state."
+    	count=getCountOfMatchedUrlsInFrontier(regex)
+    	job.crawlController.frontier.deleteURIs(".*", regex)
+    	//count=job.crawlController.frontier.deleteURIs(".*", regex)
+	    def retry=1
+		while ( getCountOfMatchedUrlsInFrontier(regex) != 0 && retry<5){
+			sleep(1000*retry)
+			retry++
+		}
+	    //count = job.crawlController.frontier.deleteURIs(".*", regex)
+		//rawOut.println "REMINDER: This job is now in a Paused state."
 	    logEvent("Deleted " + count + " URIs from frontier matching regex '" + regex + "'")
-	    rawOut.println count + " URIs were deleted from the frontier."
+	    rawOut.println(count + " URIs were deleted from the frontier.")
 	    rawOut.println("This action has been logged in " + logfilePrefix + ".log")
     }
     else {
@@ -72,7 +80,13 @@ void getNumberOfUrlsInFrontier() {
 }
 
 void getNumberOfMatchedUrlsInFrontier(String regex) {
-    matchingCount = 0
+    //matchingCount = 0
+    matchingCount = getCountOfMatchedUrlsInFrontier(regex)
+    rawOut.println matchingCount +" URIs"
+}
+
+long getCountOfMatchedUrlsInFrontier (String regex){
+	long countOfMatched = 0
     pattern = ~regex
     //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
@@ -89,13 +103,13 @@ void getNumberOfMatchedUrlsInFrontier(String regex) {
             }
             curi = pendingUris.crawlUriBinding.entryToObject(value)
             if (pattern.matcher(curi.toString()).matches()) {
-                ++matchingCount
+                ++countOfMatched
             }
         }
     } finally {
         cursor.close()
     }
-    rawOut.println matchingCount
+    return countOfMatched
 }
 
 /**

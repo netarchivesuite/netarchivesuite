@@ -371,7 +371,7 @@
 			<skipIdenticalDigests>false</skipIdenticalDigests>
 			<startNewFilesOnCheckpoint>true</startNewFilesOnCheckpoint>
                 </warc>
-            </heritrix3>	
+            </heritrix3>
             <frontier>
                 <!-- 10 minutes -->
                 <frontierReportWaitTime>600</frontierReportWaitTime>
