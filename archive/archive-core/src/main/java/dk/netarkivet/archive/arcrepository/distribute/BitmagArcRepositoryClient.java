@@ -21,7 +21,7 @@
  * #L%
  */
 
-package dk.netarkivet.common.distribute.arcrepository.bitrepository;
+package dk.netarkivet.archive.arcrepository.distribute;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,13 +42,13 @@ import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
+import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
@@ -60,7 +60,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * Only the store, get(?), and getFile, and batch will be implemented
  * 
  */
-public class BitmagArcRepositoryClient implements ArcRepositoryClient<FileBatchJob> {
+public class BitmagArcRepositoryClient implements ArcRepositoryClient<FileBatchJob, BitmagUploadRepository, JMSReaderRepository> {
 
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(BitmagArcRepositoryClient.class);

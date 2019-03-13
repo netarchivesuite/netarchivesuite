@@ -40,8 +40,10 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.ReaderRepository;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
+import dk.netarkivet.common.distribute.arcrepository.UploadRepository;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -55,7 +57,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * A minimal implementation of ArcRepositoryClient that just has one local directory that it keeps its files in, no
  * checking no nothing.
  */
-public class TrivialArcRepositoryClient implements ArcRepositoryClient<FileBatchJob> {
+public class TrivialArcRepositoryClient implements ArcRepositoryClient<FileBatchJob, UploadRepository, ReaderRepository> {
     /** The directory name of the local arcrepository. */
     private static final String ARC_REPOSITORY_DIR_NAME = "ArcRepository";
     /** Store files in this dir -- might later use a separate setting. */

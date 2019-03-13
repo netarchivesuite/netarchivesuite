@@ -1,4 +1,4 @@
-package dk.netarkivet.common.distribute.arcrepository.bitrepository;
+package dk.netarkivet.archive.arcrepository.distribute;
 
 import java.io.File;
 import java.util.List;

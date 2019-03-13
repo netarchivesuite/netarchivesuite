@@ -30,7 +30,7 @@ National Library.
 	class.
 
 	For documentation of the individual settings, please refer to the javadoc for
-	dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.java 
+	dk.netarkivet.archive.arcrepository.distribute.BitmagArcRepositoryClient.java
 -->
 <settings>
     <common>

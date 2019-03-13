@@ -32,11 +32,13 @@ import javax.persistence.Id;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.archive.arcrepository.distribute.HadoopProcessorRepository;
+import dk.netarkivet.archive.arcrepository.distribute.JMSProcessorRepository;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.ProcessorRepository;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
-import dk.netarkivet.common.distribute.hadoop.HadoopArcRepositoryClient;
 import dk.netarkivet.common.distribute.hadoop.HadoopBatchJob;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
@@ -207,7 +209,7 @@ public class ArchiveFile {
 
         theJob.processOnlyFileNamed(filename);
 
-        ViewerArcRepositoryClient client = getAppropriateJobRunner(theJob);
+        ProcessorRepository client = getAppropriateJobRunner(theJob);
 
         String replicaId = Settings.get(WaybackSettings.WAYBACK_REPLICA);
 
@@ -235,13 +237,11 @@ public class ArchiveFile {
         }
     }
 
-    protected  ViewerArcRepositoryClient<? extends BatchJob> getAppropriateJobRunner(BatchJob theJob) {
+    protected ProcessorRepository<? extends BatchJob> getAppropriateJobRunner(BatchJob theJob) {
         if (theJob instanceof HadoopBatchJob) {
-            HadoopBatchJob job = (HadoopBatchJob) theJob;
-            return new HadoopArcRepositoryClient();
+            return new HadoopProcessorRepository();
         } else if (theJob instanceof FileBatchJob) {
-            FileBatchJob job = (FileBatchJob) theJob;
-            return ArcRepositoryClientFactory.getViewerInstance();
+           return new JMSProcessorRepository();
         }
         return null;
     }

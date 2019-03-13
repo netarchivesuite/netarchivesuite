@@ -15,6 +15,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.junit.Test;
 
+import dk.netarkivet.common.distribute.arcrepository.HadoopArcRepositoryClient;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 

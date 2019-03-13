@@ -34,8 +34,10 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * Generic interface defining all methods that an ArcRepository provides. Typically, an application using this will only
  * see one of the restricted superinterfaces.
  */
-public interface ArcRepositoryClient<J extends BatchJob> extends HarvesterArcRepositoryClient, ViewerArcRepositoryClient<J>,
-        PreservationArcRepositoryClient<J> {
+public interface ArcRepositoryClient<J extends BatchJob, U extends UploadRepository, R extends ReaderRepository>
+        extends HarvesterArcRepositoryClient,
+        ViewerArcRepositoryClient<J>,
+        PreservationArcRepositoryClient<J, U, R> {
 
     /** Call on shutdown to release external resources. */
     @Override

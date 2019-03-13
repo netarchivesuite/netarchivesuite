@@ -61,7 +61,7 @@ public class ArcRepositoryClientFactory extends SettingsFactory<ArcRepositoryCli
      * @return An ArcRepositoryClient that implements the methods defined by PreservationArcRepositoryClient. At end of
      * use, close() should be called on this to release any resources claimed.
      */
-    public static <J extends BatchJob> PreservationArcRepositoryClient<J> getPreservationInstance() {
+    public static <J extends BatchJob, U extends UploadRepository, R extends ReaderRepository> PreservationArcRepositoryClient<J, U, R> getPreservationInstance() {
         return SettingsFactory.getInstance(CommonSettings.ARC_REPOSITORY_CLIENT);
     }
 

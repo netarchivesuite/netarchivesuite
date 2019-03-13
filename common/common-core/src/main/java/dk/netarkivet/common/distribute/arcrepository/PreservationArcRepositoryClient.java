@@ -30,56 +30,15 @@ import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
- * Implements the Facade pattern to shield off the methods in JMSArcRepositoryClient not to be used by the bit
- * preservation system.
+ * This is the most complete repository client as it requires storage, reading, and processing
+ * methods as well as additonal methods appropriate to preservation actions.
  */
-public interface PreservationArcRepositoryClient<J extends BatchJob> extends AutoCloseable {
-
-    /** Call on shutdown to release external resources. */
-    @Override
-    void close();
-
-    /**
-     * Gets a single ARC record out of the ArcRepository.
-     *
-     * @param arcfile The name of a file containing the desired record.
-     * @param index The offset of the desired record in the file
-     * @return a BitarchiveRecord-object, or null if request times out or object is not found.
-     * @throws ArgumentNotValid If the get operation failed.
-     */
-    BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid;
-
-    /**
-     * Retrieves a file from an ArcRepository and places it in a local file.
-     *
-     * @param arcfilename Name of the arcfile to retrieve.
-     * @param replica The bitarchive to retrieve the data from.
-     * @param toFile Filename of a place where the file fetched can be put.
-     * @throws IOFailure if there are problems getting a reply or the file could not be found.
-     */
-    void getFile(String arcfilename, Replica replica, File toFile);
-
-    /**
-     * Store the given file in the ArcRepository. After storing, the file is deleted.
-     *
-     * @param file A file to be stored. Must exist.
-     * @throws IOFailure thrown if store is unsuccessful, or failed to clean up files after the store operation.
-     * @throws ArgumentNotValid if file parameter is null or file is not an existing file.
-     */
-    void store(File file) throws IOFailure, ArgumentNotValid;
-
-    /**
-     * Runs a batch batch job on each file in the ArcRepository.
-     *
-     * @param job An object that implements the FileBatchJob interface. The initialize() method will be called before
-     * processing and the finish() method will be called afterwards. The process() method will be called with each File
-     * entry. An optional function postProcess() allows handling the combined results of the batchjob, e.g. summing the
-     * results, sorting, etc.
-     * @param replicaId The archive to execute the job on.
-     * @param args The arguments for the batchjob.
-     * @return The status of the batch job after it ended.
-     */
-    BatchStatus batch(J job, String replicaId, String... args);
+public interface PreservationArcRepositoryClient<J extends BatchJob, U extends UploadRepository, R extends ReaderRepository>
+        extends AutoCloseable,
+        ProcessorRepository<J>,
+        ExceptionlessAutoCloseable,
+        UploadRepository,
+        ReaderRepository {
 
     /**
      * Updates the administrative data in the ArcRepository for a given file and bitarchive replica.
@@ -121,7 +80,7 @@ public interface PreservationArcRepositoryClient<J extends BatchJob> extends Aut
      *
      * @param replicaId The id of the replica from which the checksums should be retrieved.
      * @return A list of ChecksumEntries which is the results of the GetAllChecksumMessage.
-     * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage
+     * @see .GetAllChecksumsMessage
      */
     @Deprecated
     File getAllChecksums(String replicaId);
@@ -145,7 +104,7 @@ public interface PreservationArcRepositoryClient<J extends BatchJob> extends Aut
      *
      * @param replicaId The id of the replica from which the list of filenames should be retrieved.
      * @return A list of all the filenames within the archive of the given replica.
-     * @see dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage
+     * see GetAllFilenamesMessage
      */
     @Deprecated
     File getAllFilenames(String replicaId);
