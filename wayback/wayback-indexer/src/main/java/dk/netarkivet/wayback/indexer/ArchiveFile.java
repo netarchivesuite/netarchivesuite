@@ -37,7 +37,10 @@ import dk.netarkivet.archive.arcrepository.distribute.JMSProcessorRepository;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ProcessorRepository;
+import dk.netarkivet.common.distribute.arcrepository.ReaderRepository;
+import dk.netarkivet.common.distribute.arcrepository.UploadRepository;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.distribute.hadoop.HadoopBatchJob;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -196,20 +199,29 @@ public class ArchiveFile {
         // may be of value when we begin to add warc support.
         BatchJob theJob = null;
 
-        if (filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX))) {
-            theJob = new DeduplicationCDXExtractionBatchJob();
-        } else if (ARCUtils.isARC(filename)) {
-            theJob = new CDXBatchJob();
-        } else if (WARCUtils.isWarc(filename)) {
+        //TODO does type erasure mean that I cannot know the run-time generic type parameters of the client? So how can I
+        //know which type of batch job it wants?
+        ProcessorRepository <BatchJob> client = ArcRepositoryClientFactory.getPreservationInstance();
+        if (client.getClass().isInstance(new HadoopProcessorRepository())) {
             theJob = new CDXBatchJob();
         } else {
-            log.warn("Skipping indexing of file with filename '{}'", filename);
-            return;
+            if (filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX))) {
+                theJob = new DeduplicationCDXExtractionBatchJob();
+            } else if (ARCUtils.isARC(filename)) {
+                theJob = new CDXBatchJob();
+            } else if (WARCUtils.isWarc(filename)) {
+                theJob = new CDXBatchJob();
+            } else {
+                log.warn("Skipping indexing of file with filename '{}'", filename);
+                return;
+            }
         }
-
         theJob.processOnlyFileNamed(filename);
 
-        ProcessorRepository client = getAppropriateJobRunner(theJob);
+
+        //TODO Isn't this back to front. We define the repository type in the settings file and then the class must use
+        //the appropriate batch job to do its work.
+        //ProcessorRepository client = getAppropriateJobRunner(theJob);
 
         String replicaId = Settings.get(WaybackSettings.WAYBACK_REPLICA);
 

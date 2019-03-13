@@ -7,14 +7,14 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * Created by csr on 3/13/19.
+ *
  */
 public class BitmagUploadRepository implements UploadRepository {
     @Override public void store(File file) throws IOFailure, ArgumentNotValid {
-        throw new RuntimeException("not implemented");
+        JMSBitmagArcRepositoryClient.getInstance().store(file);
     }
 
     @Override public void close() {
-        throw new RuntimeException("not implemented");
+        JMSBitmagArcRepositoryClient.getInstance().close();
     }
 }

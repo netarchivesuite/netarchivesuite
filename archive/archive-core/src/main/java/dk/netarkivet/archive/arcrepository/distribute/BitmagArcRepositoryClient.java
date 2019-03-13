@@ -52,6 +52,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
+//TODO This class appears to be redundant. The actual class we have been using is JMSBitmagArcRepositoryClient.
+
 /**
  * A implementation of ArcRepositoryClient that gets its data from a bitrepository system.
  * The batchjobs are executed locally, after fetching the data from the bitrepository.
