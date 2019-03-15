@@ -37,6 +37,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 public interface ArcRepositoryClient<J extends BatchJob, U extends UploadRepository, R extends ReaderRepository>
         extends HarvesterArcRepositoryClient,
         ViewerArcRepositoryClient<J>,
-        PreservationArcRepositoryClient<J, U, R> {
+        PreservationArcRepositoryClient<J, U, R>,
+        ExceptionlessAutoCloseable {
 
 }

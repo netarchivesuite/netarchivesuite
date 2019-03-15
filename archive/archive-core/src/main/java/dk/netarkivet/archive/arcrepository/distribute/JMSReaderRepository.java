@@ -12,15 +12,17 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class JMSReaderRepository implements ReaderRepository {
 
+    private final JMSArcRepositoryClient client = JMSArcRepositoryClient.getInstance();
+
     @Override public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
-        return JMSArcRepositoryClient.getInstance().get(arcfile, index);
+        return client.get(arcfile, index);
     }
 
     @Override public void getFile(String arcfilename, Replica replica, File toFile) {
-        JMSArcRepositoryClient.getInstance().getFile(arcfilename, replica, toFile);
+        client.getFile(arcfilename, replica, toFile);
     }
 
     @Override public void close() {
-        JMSArcRepositoryClient.getInstance().close();
+        client.close();
     }
 }
