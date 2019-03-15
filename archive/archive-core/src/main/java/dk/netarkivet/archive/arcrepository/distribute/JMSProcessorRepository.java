@@ -9,11 +9,17 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  */
 public class JMSProcessorRepository implements ProcessorRepository<FileBatchJob> {
 
+    private final JMSArcRepositoryClient client;
+
+    public JMSProcessorRepository() {
+        client = JMSArcRepositoryClient.getInstance();
+    }
+
     @Override public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
-        return JMSArcRepositoryClient.getInstance().batch(job, replicaId, args);
+        return client.batch(job, replicaId, args);
     }
 
     @Override public void close() {
-        JMSArcRepositoryClient.getInstance().close();
+        client.close();
     }
 }

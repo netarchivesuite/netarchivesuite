@@ -185,7 +185,7 @@ public class ArchiveFile {
      *
      * @throws IllegalState If the indexing has already been done.
      */
-    public void index() throws IllegalState {
+    public <J extends BatchJob> void index() throws IllegalState {
         log.info("Indexing {}", this.getFilename());
         if (isIndexed) {
             throw new IllegalState("Attempted to index file '" + filename + "' which is already indexed");
@@ -197,25 +197,27 @@ public class ArchiveFile {
         // List<FileBatchJob> getIndexers(ArchiveFile file)
         // This more-flexible approach
         // may be of value when we begin to add warc support.
-        BatchJob theJob = null;
 
         //TODO does type erasure mean that I cannot know the run-time generic type parameters of the client? So how can I
         //know which type of batch job it wants?
-        ProcessorRepository <BatchJob> client = ArcRepositoryClientFactory.getPreservationInstance();
-        if (client.getClass().isInstance(new HadoopProcessorRepository())) {
-            theJob = new CDXBatchJob();
+        ProcessorRepository<J> client = ArcRepositoryClientFactory.getPreservationInstance();
+        J theJob;
+
+        if (client instanceof HadoopProcessorRepository) {
+            theJob = (J) new CDXBatchJob();
         } else {
             if (filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX))) {
-                theJob = new DeduplicationCDXExtractionBatchJob();
+                theJob = (J) new DeduplicationCDXExtractionBatchJob();
             } else if (ARCUtils.isARC(filename)) {
-                theJob = new CDXBatchJob();
+                theJob = (J) new CDXBatchJob();
             } else if (WARCUtils.isWarc(filename)) {
-                theJob = new CDXBatchJob();
+                theJob = (J) new CDXBatchJob();
             } else {
                 log.warn("Skipping indexing of file with filename '{}'", filename);
                 return;
             }
         }
+        //NOTE: You will get a classcastexception if you create a job of the wrong type for the ProcessorRepository
         theJob.processOnlyFileNamed(filename);
 
 

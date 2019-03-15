@@ -23,13 +23,13 @@ public class ComposedArcRepositoryClient<J extends BatchJob, U extends UploadRep
         implements ArcRepositoryClient<J, U, R> {
 
     ProcessorRepository<J> processorRepository;
-    UploadRepository uploadRepository;
-    ReaderRepository readerRepository;
+    U uploadRepository;
+    R readerRepository;
 
     public ComposedArcRepositoryClient(
             ProcessorRepository<J> processorRepository,
-            UploadRepository uploadRepository,
-            ReaderRepository readerRepository) {
+            U uploadRepository,
+            R readerRepository) {
         this.processorRepository = processorRepository;
         this.uploadRepository = uploadRepository;
         this.readerRepository = readerRepository;
