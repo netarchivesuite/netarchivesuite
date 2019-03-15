@@ -40,7 +40,6 @@ public class ComposedArcRepositoryClient<J extends BatchJob, U extends UploadRep
     }
 
 
-
     @Override public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
         return readerRepository.get(arcfile, index);
     }
@@ -60,32 +59,31 @@ public class ComposedArcRepositoryClient<J extends BatchJob, U extends UploadRep
     }
 
 
-    @Override public void updateAdminData(String fileName, String bitarchiveId, ReplicaStoreState newval) {
-        throw new RuntimeException("not implemented");
+    @Override public void updateAdminData(String fileName, String replicaId, ReplicaStoreState newval) {
+
     }
 
     @Override public void updateAdminChecksum(String filename, String checksum) {
-        throw new RuntimeException("not implemented");
+
     }
 
-    @Override public File removeAndGetFile(String fileName, String bitarchiveId, String checksum, String credentials) {
-        throw new RuntimeException("not implemented");
+    @Override public File removeAndGetFile(String fileName, String replicaId, String checksum, String credentials) {
+        return null;
     }
 
     @Override public File getAllChecksums(String replicaId) {
-        throw new RuntimeException("not implemented");
+        return null;
     }
 
     @Override public String getChecksum(String replicaId, String filename) {
-        throw new RuntimeException("not implemented");
+        return null;
     }
 
     @Override public File getAllFilenames(String replicaId) {
-        throw new RuntimeException("not implemented");
+        return null;
     }
 
     @Override public File correct(String replicaId, String checksum, File file, String credentials) {
-        throw new RuntimeException("not implemented");
+        return null;
     }
-
 }

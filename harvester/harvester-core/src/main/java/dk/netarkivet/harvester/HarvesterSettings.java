@@ -643,8 +643,11 @@ public class HarvesterSettings {
      * There is no attempt at migration from one to the other. This must be done by an commandline-tool.
      */
     public static String HERITRIX_VERSION = "settings.harvester.harvesting.heritrix.version";
-    
-    
+
+    public static String HERITRIX_BEFORE_LAUNCH_HOOK = "settings.harvester.harvesting.heritrix.beforeLaunchHook";
+    public static String HERITRIX_AFTER_SHUTDOWN_HOOK = "settings.harvester.harvesting.heritrix.afterShutdownHook";
+
+
     /**
      * <b>settings.harvester.performer</b>: <br>
      * The agent performing these harvests. The default is: ""

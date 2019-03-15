@@ -10,6 +10,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  *
  */
 public class BitmagUploadRepository implements UploadRepository {
+
     @Override public void store(File file) throws IOFailure, ArgumentNotValid {
         JMSBitmagArcRepositoryClient.getInstance().store(file);
     }

@@ -22,6 +22,10 @@
  */
 package dk.netarkivet.harvester.heritrix3.controller;
 
+import java.io.IOException;
+
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +97,11 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
      * </ol>
      */
     public void doCrawl() throws IOFailure {
+        String startUpHook = Settings.get(HarvesterSettings.HERITRIX_BEFORE_LAUNCH_HOOK);
+        if (startUpHook != null && !startUpHook.trim().isEmpty()) {
+            log.info("Executing {} prior to Heritrix start.", startUpHook);
+            executeScript(startUpHook);
+        }
         setupOrderfile(jobName, getHeritrixFiles());
         heritrixController = new HeritrixController(getHeritrixFiles(), jobName);
         
@@ -130,6 +139,21 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
             }
         }
         log.debug("Heritrix3 has finished crawling...");
+        String shutDownHook = Settings.get(HarvesterSettings.HERITRIX_AFTER_SHUTDOWN_HOOK);
+        if (shutDownHook != null && !shutDownHook.trim().isEmpty()) {
+            log.info("Executing {} after Heritrix shutdown.", shutDownHook);
+            executeScript(shutDownHook);
+        }
+    }
+
+    protected void executeScript(String startUpHook) {
+        CommandLine commandLine = new CommandLine(startUpHook);
+        DefaultExecutor defaultExecutor = new DefaultExecutor();
+        try {
+            defaultExecutor.execute(commandLine);
+        } catch (IOException e) {
+            log.warn("Problem executing {}.", commandLine, e);
+        }
     }
 
     /**

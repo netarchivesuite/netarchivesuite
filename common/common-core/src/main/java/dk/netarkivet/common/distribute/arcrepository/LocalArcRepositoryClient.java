@@ -56,7 +56,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * A simple implementation of ArcRepositoryClient that just has a number of local directories where it stores its files.
  * This class doesn't implement credentials checking or checksum storing!
  */
-public class LocalArcRepositoryClient implements ArcRepositoryClient {
+public class LocalArcRepositoryClient implements ArcRepositoryClient<FileBatchJob, UploadRepository, ReaderRepository> {
 
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(LocalArcRepositoryClient.class);
@@ -119,6 +119,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         }
         throw new IOFailure("Not enough room for '" + file + "' in any of the dirs " + storageDirs);
     }
+
 
     /**
      * Gets a single ARC record out of the ArcRepository.
@@ -200,8 +201,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws IOFailure If a problem occurs during processing the batchjob.
      */
     @Override
-    public BatchStatus batch(final BatchJob job, String replicaId, String... args) throws ArgumentNotValid,
-            IOFailure {
+    public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         OutputStream os = null;
@@ -223,11 +223,8 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
                     files.addAll(Arrays.asList(filesInDir));
                 }
             }
-            if (job instanceof FileBatchJob) {
-                FileBatchJob fileBatchJob = (FileBatchJob) job;
-                BatchLocalFiles batcher = new BatchLocalFiles(files.toArray(new File[files.size()]));
-                batcher.run(fileBatchJob, os);
-            }
+            BatchLocalFiles batcher = new BatchLocalFiles(files.toArray(new File[files.size()]));
+            batcher.run(job, os);
         } catch (IOException e) {
             throw new IOFailure("Cannot perform batch '" + job + "'", e);
         } finally {
