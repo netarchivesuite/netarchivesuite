@@ -38,12 +38,12 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.ClassicBatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
@@ -216,7 +216,7 @@ public class Bitarchive {
                 }
             }
             // write output from batch job back to remote file
-            returnStatus = new BatchStatus(bitarchiveAppId, job.getFilesFailed(), job.getNoOfFilesProcessed(),
+            returnStatus = new ClassicBatchStatus(bitarchiveAppId, job.getFilesFailed(), job.getNoOfFilesProcessed(),
                     RemoteFileFactory.getMovefileInstance(tmpFile), job.getExceptions());
         } catch (IOException e) {
             log.error("Failed to create temporary file for batch {}", job, e);

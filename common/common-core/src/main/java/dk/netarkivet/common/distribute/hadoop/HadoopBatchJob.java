@@ -24,10 +24,6 @@ public abstract class HadoopBatchJob extends Configured implements BatchJob {
     protected Pattern filenamePattern;
 
 
-    @Override
-    public void setFilesToProcess(Pattern compile) {
-        setFilenamePattern(compile);
-    }
 
     public Pattern getFilenamePattern() {
         return filenamePattern;
@@ -46,6 +42,15 @@ public abstract class HadoopBatchJob extends Configured implements BatchJob {
 
     public void setFilesToProcess(List<URI> filesToProcess) {
         this.filesToProcess = filesToProcess;
+    }
+
+    @Override
+    public void setFilesToProcess(Pattern compile) {
+        setFilenamePattern(compile);
+    }
+
+    public Job getHadoopJob() {
+        return job;
     }
 
     int noOfFilesProcessed = 0;

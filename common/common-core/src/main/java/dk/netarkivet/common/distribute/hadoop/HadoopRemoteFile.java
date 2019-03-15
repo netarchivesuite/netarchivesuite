@@ -31,33 +31,6 @@ public class HadoopRemoteFile implements RemoteFile, Closeable {
         this.srcFS = srcFS;
     }
 
-    @Override public void copyTo(File destFile) {
-        try (InputStream inputStream = getInputStream()) {
-            try (FileOutputStream outputStream = new FileOutputStream(destFile)) {
-                org.apache.commons.io.IOUtils.copyLarge(inputStream, outputStream);
-            }
-        } catch (IOException e) {
-            throw new IOFailure("message", e);
-        }
-
-    }
-
-    @Override public void appendTo(OutputStream out) {
-        try {
-            RemoteIterator<LocatedFileStatus> files = srcFS
-                    .listFiles(outputDir, true);
-            while (files.hasNext()) {
-                LocatedFileStatus next = files.next();
-                if (next.isFile()) {
-                    try (InputStream inpustream = srcFS.open(next.getPath())) {
-                        IOUtils.copyBytes(inpustream, out, 4096, false);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new IOFailure("message", e);
-        }
-    }
 
     @Override public InputStream getInputStream() {
 
@@ -92,7 +65,9 @@ public class HadoopRemoteFile implements RemoteFile, Closeable {
         return outputDir.getName();
     }
 
-    @Override public String getChecksum() {
+    @Override public String getChecksum()
+    {
+        //TODO
         return null;
     }
 
@@ -108,9 +83,18 @@ public class HadoopRemoteFile implements RemoteFile, Closeable {
         srcFS.delete(outputDir, true);
     }
 
+    @Override public boolean exists() {
+        try {
+            return srcFS.exists(outputDir);
+        } catch (IOException e) {
+            throw new IOFailure("message", e);
+        }
+    }
+
+
     @Override public long getSize() {
         try {
-            if (!srcFS.exists(outputDir)){
+            if (!exists()) {
                 return 0;
             }
             return Arrays.stream(srcFS.listStatus(outputDir)).mapToLong(FileStatus::getLen).sum();

@@ -41,11 +41,11 @@ import org.archive.io.ArchiveRecord;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.ClassicBatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
@@ -126,7 +126,7 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
         try {
             os = new FileOutputStream(f);
         } catch (IOException e) {
-            return new BatchStatus(replicaId, new ArrayList<URI>(), 0, null, job.getExceptions());
+            return new ClassicBatchStatus(replicaId, new ArrayList<URI>(), 0, null, job.getExceptions());
         }
         File[] files = arcDir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -152,7 +152,7 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
             throw new IOFailure("Error in close", e);
         }
 
-        return new BatchStatus(replicaId, failures, processed, new TestRemoteFile(f, batchMustDie, batchMustDie,
+        return new ClassicBatchStatus(replicaId, failures, processed, new TestRemoteFile(f, batchMustDie, batchMustDie,
                 batchMustDie), job.getExceptions());
     }
 }

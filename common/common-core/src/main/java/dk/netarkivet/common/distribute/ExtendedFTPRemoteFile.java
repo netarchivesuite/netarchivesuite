@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.io.CopyStreamException;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCRecord;
@@ -364,5 +365,30 @@ public class ExtendedFTPRemoteFile implements RemoteFile {
      */
     public String toString() {
         return record.getHeader().getRecordIdentifier() + "_" + record.getHeader().getOffset() + "_" + "(" + name + ")";
+    }
+
+    @Override public boolean exists() {
+        log.debug("Checking existence of file '{}' from ftp server", ftpFileName);
+        try {
+            connectionManager.logOn();
+            FTPFile ftpFile = connectionManager.getFTPClient().mlistFile(ftpFileName);
+            if (ftpFile == null){
+                return false;
+            } else {
+                return ftpFile.isFile();
+            }
+        } catch (Exception e) {
+            log.warn("Error while testing existence of ftp file '{}' for file '{}'", ftpFileName, name, e);
+        } finally {
+            // try to disconnect before returning from method
+            try {
+                connectionManager.logOut();
+            } catch (Exception e) {
+                log.warn("Unexpected error while logging out ", e);
+            }
+        }
+        log.debug("File '{}' checked onftp server.", ftpFileName);
+        return false;
+
     }
 }

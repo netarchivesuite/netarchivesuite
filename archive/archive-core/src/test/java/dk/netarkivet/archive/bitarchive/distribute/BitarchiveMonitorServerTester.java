@@ -1015,6 +1015,10 @@ Caused by: dk.netarkivet.common.exceptions.ArgumentNotValid: File '/home/svc/dev
         public String getChecksum() {
             return null;
         }
+
+        @Override public boolean exists() {
+            return true;
+        }
     }
 
     /**

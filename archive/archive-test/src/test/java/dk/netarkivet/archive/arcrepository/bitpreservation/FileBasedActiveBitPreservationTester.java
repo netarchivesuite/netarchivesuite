@@ -76,8 +76,11 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.ClassicBatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.ReaderRepository;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
+import dk.netarkivet.common.distribute.arcrepository.UploadRepository;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -85,11 +88,9 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.common.utils.batch.BatchJob.ExceptionOccurrence;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.testutils.LogbackRecorder;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -220,7 +221,7 @@ public class FileBasedActiveBitPreservationTester {
 
         /* Set it up so fileListJob will return expected results. */
         File listingDir = new File(new File(dir, "filelistOutput"), "unsorted.txt");
-        MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<URI>emptySet(), 5,
+        MockupArcRepositoryClient.getInstance().overrideBatch = new ClassicBatchStatus("AP1", Collections.<URI>emptySet(), 5,
                 RemoteFileFactory.getMovefileInstance(listingDir), new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         Replica replicaOne = Replica.getReplicaFromId("ONE");
 
@@ -354,7 +355,7 @@ public class FileBasedActiveBitPreservationTester {
                 } catch (IOException e) {
                     throw new IOFailure("Can't make empty file " + file, e);
                 }
-                return new BatchStatus(replicaId, new HashSet<URI>(), 0,
+                return new ClassicBatchStatus(replicaId, new HashSet<URI>(), 0,
                         new TestRemoteFile(file, false, false, false), job.getExceptions());
             }
 
@@ -407,7 +408,7 @@ public class FileBasedActiveBitPreservationTester {
         // requires Java 8
         //MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<File>emptyList(),
         //        17, RemoteFileFactory.getMovefileInstance(unsortedFile), new ArrayList<>(0));
-        MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus("AP1", Collections.<URI>emptyList(),
+        MockupArcRepositoryClient.getInstance().overrideBatch = new ClassicBatchStatus("AP1", Collections.<URI>emptyList(),
                         17, RemoteFileFactory.getMovefileInstance(unsortedFile), new ArrayList(0));
         runFilelistJob.invoke(abp, replica);
 
@@ -430,11 +431,11 @@ public class FileBasedActiveBitPreservationTester {
                 if (job.getClass().equals(ChecksumJob.class)) {
 
                     if (results.containsKey(Replica.getReplicaFromId(replicaId))) {
-                        return new BatchStatus("AP1", Collections.<URI>emptyList(), 1, new StringRemoteFile(
+                        return new ClassicBatchStatus("AP1", Collections.<URI>emptyList(), 1, new StringRemoteFile(
                                 results.get(Replica.getReplicaFromId(replicaId))),
                                 new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
                     } else {
-                        return new BatchStatus("AP1", Collections.<URI>emptyList(), 0, null,
+                        return new ClassicBatchStatus("AP1", Collections.<URI>emptyList(), 0, null,
                                 new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
                     }
                 } else {
@@ -573,17 +574,17 @@ public class FileBasedActiveBitPreservationTester {
                 File artificialFailure = new File(bitarchive_dir, TestInfo.REFERENCE_FILES[0]);
                 List<URI> l = new ArrayList<>();
                 l.add(artificialFailure.toURI());
-                lbs = new BatchStatus(bitarchive_dir.getName(), l, job.getNoOfFilesProcessed(), null, null);
+                lbs = new ClassicBatchStatus(bitarchive_dir.getName(), l, job.getNoOfFilesProcessed(), null, null);
             } else {
 
-                lbs = new BatchStatus(bitarchive_dir.getName(), job.getFilesFailed(), job.getNoOfFilesProcessed(),
+                lbs = new ClassicBatchStatus(bitarchive_dir.getName(), job.getFilesFailed(), job.getNoOfFilesProcessed(),
                         resultFile, null);
             }
             return lbs;
         }
     }
 
-    public static class MockupArcRepositoryClient implements ArcRepositoryClient<FileBatchJob> {
+    public static class MockupArcRepositoryClient implements ArcRepositoryClient<FileBatchJob, UploadRepository, ReaderRepository> {
         private static MockupArcRepositoryClient instance;
         private BitarchiveRecord overrideGet;
         private File overrideGetFile;
@@ -647,7 +648,7 @@ public class FileBasedActiveBitPreservationTester {
                 FileOutputStream os = new FileOutputStream(output);
                 new BatchLocalFiles(in_files).run(job, os);
                 os.close();
-                return new BatchStatus("BA1", Collections.<URI>emptyList(), in_files.length,
+                return new ClassicBatchStatus("BA1", Collections.<URI>emptyList(), in_files.length,
                         RemoteFileFactory.getMovefileInstance(output), new ArrayList<FileBatchJob.ExceptionOccurrence>(
                         0));
             } catch (IOException e) {

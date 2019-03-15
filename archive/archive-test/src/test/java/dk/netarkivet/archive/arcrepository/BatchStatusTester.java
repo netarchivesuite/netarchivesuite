@@ -42,6 +42,7 @@ import org.junit.Test;
 
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.ClassicBatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
@@ -78,7 +79,7 @@ public class BatchStatusTester {
         String fileContents = FileUtils.readFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE);
         TestRemoteFile lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
                 false, false, false);
-        BatchStatus bs = new BatchStatus("ONE", emptyList, 1, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        BatchStatus bs = new ClassicBatchStatus("ONE", emptyList, 1, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         bs.copyResults(tmpFile);
         FileAsserts.assertFileContains("Should have copied result contents", fileContents, tmpFile);
         assertTrue("Source (remote) file should be deleted", lrf.isDeleted());
@@ -95,12 +96,12 @@ public class BatchStatusTester {
 
         lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_EMPTY_FILE, false, false,
                 false);
-        bs = new BatchStatus("KB", emptyList, 1, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        bs = new ClassicBatchStatus("KB", emptyList, 1, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         bs.copyResults(tmpFile);
         assertEquals("Should have zero-length file", 0, tmpFile.length());
         assertTrue("Source (remote) file should be deleted", lrf.isDeleted());
 
-        bs = new BatchStatus("KB", emptyList, 0, null, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        bs = new ClassicBatchStatus("KB", emptyList, 0, null, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         try {
             bs.copyResults(noSuchFile);
             fail("Should have thrown exception on missing file");
@@ -124,7 +125,7 @@ public class BatchStatusTester {
         String fileContents = FileUtils.readFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE);
         TestRemoteFile lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
                 false, false, false);
-        BatchStatus bs = new BatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        BatchStatus bs = new ClassicBatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         bs.appendResults(out);
         assertEquals("Should have same contents in outputstream", fileContents, out.toString());
@@ -143,14 +144,14 @@ public class BatchStatusTester {
 
         lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_EMPTY_FILE, false, false,
                 false);
-        bs = new BatchStatus("KB", emptyList, 1, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        bs = new ClassicBatchStatus("KB", emptyList, 1, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         bs.appendResults(new OutputStream() {
             public void write(int b) throws IOException {
                 fail("Should not write anything to outputstream");
             }
         });
 
-        bs = new BatchStatus("KB", emptyList, 0, null, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        bs = new ClassicBatchStatus("KB", emptyList, 0, null, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         try {
             bs.appendResults(new OutputStream() {
                 public void write(int b) throws IOException {
@@ -176,7 +177,7 @@ public class BatchStatusTester {
         List<URI> emptyList = Collections.emptyList();
         TestRemoteFile lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE,
                 false, false, false);
-        BatchStatus bs = new BatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        BatchStatus bs = new ClassicBatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         File tmpFile = new File(TestInfo.DISTRIBUTE_ARCREPOSITORY_WORKING_DIR, "newFile");
         assertTrue("Should have result file when given", bs.hasResultFile());
         bs.copyResults(tmpFile);
@@ -185,13 +186,13 @@ public class BatchStatusTester {
 
         lrf = new TestRemoteFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE, false, false,
                 false);
-        bs = new BatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        bs = new ClassicBatchStatus("KB", emptyList, 0, lrf, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         assertTrue("Should have result file when given", bs.hasResultFile());
         bs.appendResults(out);
         assertFalse("Should not have result file after appending", bs.hasResultFile());
 
-        bs = new BatchStatus("KB", emptyList, 0, null, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
+        bs = new ClassicBatchStatus("KB", emptyList, 0, null, new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         assertFalse("Should not have result file with no-result BS", bs.hasResultFile());
     }
 }

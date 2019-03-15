@@ -115,4 +115,8 @@ public class StringRemoteFile implements RemoteFile {
     public long getSize() {
         return contents.length();
     }
+
+    @Override public boolean exists() {
+        return contents != null;
+    }
 }

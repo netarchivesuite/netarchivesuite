@@ -63,14 +63,16 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.ClassicBatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.ReaderRepository;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
+import dk.netarkivet.common.distribute.arcrepository.UploadRepository;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.batch.BatchJob;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
@@ -416,7 +418,7 @@ public class DatabaseBasedActiveBitPreservationTester {
         return res;
     }
 
-    public static class MockupArcRepositoryClient implements ArcRepositoryClient<FileBatchJob> {
+    public static class MockupArcRepositoryClient implements ArcRepositoryClient<FileBatchJob, UploadRepository, ReaderRepository> {
         private static MockupArcRepositoryClient instance;
         private BitarchiveRecord overrideGet;
         private File overrideGetFile;
@@ -483,7 +485,7 @@ public class DatabaseBasedActiveBitPreservationTester {
                 // java 8
                 //return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
                 //        RemoteFileFactory.getMovefileInstance(output), new ArrayList<>(0));
-                return new BatchStatus("BA1", Collections.<URI>emptyList(),
+                return new ClassicBatchStatus("BA1", Collections.<URI>emptyList(),
                         in_files.length,
                         RemoteFileFactory.getMovefileInstance(output),
                         new ArrayList<FileBatchJob.ExceptionOccurrence>(0));

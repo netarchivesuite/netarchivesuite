@@ -108,4 +108,7 @@ public class FileRemoteFile implements RemoteFile {
         return dataFile.length();
     }
 
+    @Override public boolean exists() {
+        return dataFile.exists();
+    }
 }

@@ -40,6 +40,7 @@ import dk.netarkivet.common.distribute.FileRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.ClassicBatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
@@ -276,7 +277,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient<FileBatchJ
     				}
     			}
     		}
-    		return new BatchStatus(replicaId, job.getFilesFailed(), job.getNoOfFilesProcessed(), new FileRemoteFile(
+    		return new ClassicBatchStatus(replicaId, job.getFilesFailed(), job.getNoOfFilesProcessed(), new FileRemoteFile(
     				resultFile), job.getExceptions());
     	}
     }

@@ -32,8 +32,12 @@ import org.junit.Before;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.ReaderRepository;
+import dk.netarkivet.common.distribute.arcrepository.UploadRepository;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.wayback.TestInfo;
@@ -58,7 +62,9 @@ public class IndexerTestCase {
                 "dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient");
         System.setProperty("settings.common.arcrepositoryClient.fileDir", TestInfo.FILE_DIR.getAbsolutePath());
         System.setProperty(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.TestRemoteFile");
-        assertTrue(ArcRepositoryClientFactory.getPreservationInstance() instanceof LocalArcRepositoryClient);
+        PreservationArcRepositoryClient<FileBatchJob, UploadRepository, ReaderRepository> preservationInstance = ArcRepositoryClientFactory
+                .getPreservationInstance();
+        assertTrue(preservationInstance instanceof LocalArcRepositoryClient);
     }
 
     @After

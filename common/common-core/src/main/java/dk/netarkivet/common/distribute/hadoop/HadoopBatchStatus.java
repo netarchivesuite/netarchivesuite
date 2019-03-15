@@ -1,12 +1,23 @@
 package dk.netarkivet.common.distribute.hadoop;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 
-import dk.netarkivet.common.distribute.RemoteFile;
+import org.apache.commons.io.IOUtils;
 
-public class HadoopBatchStatus {
+import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.batch.BatchJob;
+
+public class HadoopBatchStatus implements BatchStatus {
 
     private boolean success;
 
@@ -21,11 +32,11 @@ public class HadoopBatchStatus {
     private RemoteFile resultFile;
 
     /** A list of exceptions caught during the execution of the batchJob. */
-    private final List<Exception> exceptions;
+    private final List<BatchJob.ExceptionOccurrence> exceptions;
 
     public HadoopBatchStatus(boolean success, int noOfFilesProcessed, Collection<URI> filesFailed,
             String bitArchiveAppId,
-            RemoteFile resultFile, List<Exception> exceptions) {
+            RemoteFile resultFile, List<BatchJob.ExceptionOccurrence> exceptions) {
         this.success = success;
         this.noOfFilesProcessed = noOfFilesProcessed;
         this.filesFailed = filesFailed;
@@ -65,7 +76,31 @@ public class HadoopBatchStatus {
         return resultFile;
     }
 
-    public List<Exception> getExceptions() {
+    public List<BatchJob.ExceptionOccurrence> getExceptions() {
         return exceptions;
+    }
+
+
+
+
+    @Override public synchronized void copyResults(File targetFile) throws IllegalState {
+        if (!hasResultFile()){
+            throw new IllegalState("Resultfile not found");
+        }
+        getResultFile().copyTo(targetFile);
+        getResultFile().cleanup();
+
+    }
+
+    @Override public synchronized void appendResults(OutputStream outputStream) throws IllegalState {
+        if (!hasResultFile()){
+            throw new IllegalState("Resultfile not found");
+        }
+        getResultFile().appendTo(outputStream);
+        getResultFile().cleanup();
+    }
+
+    @Override public boolean hasResultFile() {
+        return getResultFile().exists();
     }
 }

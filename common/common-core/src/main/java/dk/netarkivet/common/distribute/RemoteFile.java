@@ -23,6 +23,7 @@
 package dk.netarkivet.common.distribute;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -44,16 +45,32 @@ public interface RemoteFile extends Serializable {
      * @throws IOFailure on communication trouble.
      * @throws ArgumentNotValid on null parameter or non-writable file
      */
-    void copyTo(File destFile);
+    default void copyTo(File destFile){
+        try (InputStream inputStream = getInputStream()) {
+            try (FileOutputStream outputStream = new FileOutputStream(destFile)) {
+                org.apache.commons.io.IOUtils.copyLarge(inputStream, outputStream);
+            }
+        } catch (IOException e) {
+            throw new IOFailure("message", e);
+        }
+        cleanup();
+    }
 
     /**
      * Write the contents of this remote file to an output stream.
      *
-     * @param out OutputStream that the data will be written to. This stream will not be closed by this operation.
+     * @param outputStream OutputStream that the data will be written to. This stream will not be closed by this operation.
      * @throws IOFailure If append operation fails
      * @throws ArgumentNotValid on null parameter
      */
-    void appendTo(OutputStream out);
+    default void appendTo(OutputStream outputStream) {
+        try (InputStream inputStream = getInputStream()) {
+            org.apache.commons.io.IOUtils.copyLarge(inputStream, outputStream);
+        } catch (IOException e) {
+            throw new IOFailure("message", e);
+        }
+        cleanup();
+    }
 
     /**
      * Get an inputstream that contains the data transferred in this RemoteFile.
@@ -80,8 +97,16 @@ public interface RemoteFile extends Serializable {
 
     /**
      * Cleanup this remote file. The file is invalid after this.
+     * @see #exists()
      */
     void cleanup();
+
+    /**
+     * Checks if the file still exists and can be read
+     * @return true if the file is ready for reading
+     * @see #cleanup()
+     */
+    boolean exists();
 
     /**
      * Returns the total size of the remote file.

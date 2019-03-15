@@ -45,6 +45,7 @@ import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.ClassicBatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
@@ -56,7 +57,6 @@ import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.BatchJob;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * Client side usage of an arc repository. All requests are forwarded to the ArcRepositoryServer over the network. get
@@ -432,7 +432,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
                 throw new IOFailure(msg);
             }
         }
-        return new BatchStatus(brMsg.getFilesFailed(), brMsg.getNoOfFilesProcessed(), brMsg.getResultFile(),
+        return new ClassicBatchStatus(brMsg.getFilesFailed(), brMsg.getNoOfFilesProcessed(), brMsg.getResultFile(),
                 job.getExceptions());
     }
 

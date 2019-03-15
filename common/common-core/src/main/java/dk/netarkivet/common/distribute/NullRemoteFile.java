@@ -92,4 +92,7 @@ public class NullRemoteFile implements RemoteFile {
         throw new NotImplementedException("Not implemented!");
     }
 
+    @Override public boolean exists() {
+        return false;
+    }
 }

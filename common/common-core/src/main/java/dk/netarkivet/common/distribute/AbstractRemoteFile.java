@@ -216,4 +216,8 @@ public abstract class AbstractRemoteFile implements RemoteFile {
     	return sb.toString();
     }
 
+
+    @Override public boolean exists() {
+        return file.exists();
+    }
 }
