@@ -12,7 +12,53 @@
 
   <name>NetarchiveSuite - archive - core</name>
 
+
   <dependencies>
+
+
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+      <version>2.7.3.2.6.5.0-292</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>slf4j-log4j12</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- FOR TESTING -->
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-minicluster</artifactId>
+      <version>2.7.3.2.6.5.0-292</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>slf4j-log4j12</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.netarchivesuite</groupId>
+      <artifactId>test-hadoop-job</artifactId>
+      <version>5.6-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>common-core</artifactId>
@@ -53,24 +99,30 @@
     <dependency>
       <groupId>org.netpreserve.commons</groupId>
       <artifactId>webarchive-commons</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>jaxen</groupId>
-      <artifactId>jaxen</artifactId>
       <exclusions>
         <exclusion>
-          <artifactId>xercesImpl</artifactId>
-          <groupId>xerces</groupId>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
         </exclusion>
       </exclusions>
     </dependency>
 
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>2.12.0</version>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>jaxen</groupId>-->
+      <!--<artifactId>jaxen</artifactId>-->
+      <!--<exclusions>-->
+        <!--<exclusion>-->
+          <!--<artifactId>xercesImpl</artifactId>-->
+          <!--<groupId>xerces</groupId>-->
+        <!--</exclusion>-->
+      <!--</exclusions>-->
+    <!--</dependency>-->
+
+    <!--<dependency>-->
+      <!--<groupId>xerces</groupId>-->
+      <!--<artifactId>xercesImpl</artifactId>-->
+      <!--<version>2.12.0</version>-->
+    <!--</dependency>-->
 
     <dependency>
       <groupId>com.sun.messaging.mq</groupId>
@@ -157,20 +209,10 @@
       <artifactId>common-test</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-common</artifactId>
-      <version>2.7.3.2.6.5.0-292</version>
-      <scope>provided</scope>
+     <type>jar</type>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-mapreduce-client-core</artifactId>
-      <version>2.7.3.2.6.5.0-292</version>
-      <scope>provided</scope>
-    </dependency>
+
   </dependencies>
 
   <build>
@@ -188,24 +230,33 @@
           </archive>
         </configuration>
       </plugin>
-     <plugin>
-    <groupId>org.jacoco</groupId>
-    <artifactId>jacoco-maven-plugin</artifactId>
-    <version>${jacoco.version}</version>
-    <configuration>
-        <destFile>${sonar.jacoco.reportPath}</destFile>
-        <append>true</append>
-    </configuration>
-    <executions>
-        <execution>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <configuration>
+          <destFile>${sonar.jacoco.reportPath}</destFile>
+          <append>true</append>
+        </configuration>
+        <executions>
+          <execution>
             <id>agent</id>
             <goals>
-                <goal>prepare-agent</goal>
+              <goal>prepare-agent</goal>
             </goals>
-        </execution>
-    </executions>
-</plugin>
+          </execution>
+        </executions>
+      </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.0</version>
+        <configuration>
+          <forkCount>0</forkCount>
+          <forkMode>never</forkMode>
+        </configuration>
+      </plugin>
     </plugins>
     <pluginManagement>
     	<plugins>
