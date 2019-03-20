@@ -17,6 +17,7 @@
     <module>archive-core</module>
     <module>archive-test</module> 
     <module>bitpreservation-gui</module>
+    <module>test-hadoop-job</module>
   </modules>
 
 </project>

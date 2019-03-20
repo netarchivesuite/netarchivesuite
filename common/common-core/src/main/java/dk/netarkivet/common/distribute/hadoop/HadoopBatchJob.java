@@ -6,24 +6,49 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.util.Tool;
 
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.utils.batch.BatchJob;
 
 public abstract class HadoopBatchJob extends Configured implements BatchJob {
 
-    private Job job;
-    private Path outputDir;
+    protected Job job;
+    protected Path outputDir;
 
     protected Pattern filenamePattern;
 
+    public static void addJarToClasspath(Job hadoopJob, File jarfile) throws IOException {
+        //The job jar locally
+        String localJobJar = jarfile.getAbsoluteFile().toURI().toString();
 
+        String[] oldClasspath = hadoopJob.getConfiguration().getStrings("tmpjars");
+        if (!ArrayUtils.contains(oldClasspath, localJobJar)) {
+            String[] newClassPath = ArrayUtils.add(oldClasspath, localJobJar);
+            hadoopJob.getConfiguration().setStrings("tmpjars", newClassPath);
+        }
+    }
+
+    public static FileSystem getFileSystem(Job hadoopJob) throws IOException {
+        FileSystem hdfs;
+        hdfs = FileSystem.newInstance(hadoopJob.getConfiguration());
+
+        return hdfs;
+    }
+
+    public static Path getRunFolder(Job hadoopJob, FileSystem hdfs) throws IOException {
+        Path runFolder = new Path(UUID.randomUUID().toString());
+        hdfs.mkdirs(runFolder);
+
+        return runFolder;
+    }
 
     public Pattern getFilenamePattern() {
         return filenamePattern;
@@ -32,7 +57,6 @@ public abstract class HadoopBatchJob extends Configured implements BatchJob {
     public void setFilenamePattern(Pattern filenamePattern) {
         this.filenamePattern = filenamePattern;
     }
-
 
     private List<URI> filesToProcess;
 
@@ -65,7 +89,6 @@ public abstract class HadoopBatchJob extends Configured implements BatchJob {
         this.noOfFilesProcessed = noOfFilesProcessed;
     }
 
-
     Collection<URI> filesFailed;
 
     @Override
@@ -77,7 +100,6 @@ public abstract class HadoopBatchJob extends Configured implements BatchJob {
         this.filesFailed = filesFailed;
     }
 
-
     long batchJobTimeout;
 
     @Override public long getBatchJobTimeout() {
@@ -88,12 +110,24 @@ public abstract class HadoopBatchJob extends Configured implements BatchJob {
         this.batchJobTimeout = batchJobTimeout;
     }
 
+    public RemoteFile getOuputFile() throws IOException{
+        return new HadoopRemoteFile(outputDir, FileSystem.get(job.getConfiguration()));
+    }
 
-    public abstract RemoteFile getOuputFile() throws IOException;
-
+    /**
+     * Use this method to load the remaining libraries with code like
+     *
+     * HadoopBatchJob.addJarToClasspath(getHadoopJob(), new File(ClassUtil.findContainingJar(HadoopBatchJob.class)));
+     *
+     * @param os the OutputStream to which output should be written
+     */
     @Override
     public void initialize(OutputStream os) {
 
+    }
+
+    @Override public boolean process(OutputStream os) {
+        return false;
     }
 
     @Override
@@ -111,5 +145,7 @@ public abstract class HadoopBatchJob extends Configured implements BatchJob {
     public List<ExceptionOccurrence> getExceptions() {
         return exceptions;
     }
+
+
 
 }

@@ -41,6 +41,7 @@ public class WholeFileInputFormat extends FileInputFormat<Text, BytesWritable> {
         private int length;
 
         private Configuration conf;
+        private TaskAttemptContext context;
 
         private boolean processed = false;
         private BytesWritable value = new BytesWritable();
@@ -50,6 +51,7 @@ public class WholeFileInputFormat extends FileInputFormat<Text, BytesWritable> {
         @Override public void initialize(InputSplit split, TaskAttemptContext context)
                 throws IOException, InterruptedException {
             this.conf = context.getConfiguration();
+            this.context = context;
             if (split instanceof FileSplit) {
                 FileSplit fileSplit = (FileSplit) split;
                 path = fileSplit.getPath();
@@ -62,12 +64,14 @@ public class WholeFileInputFormat extends FileInputFormat<Text, BytesWritable> {
             } else {
                 throw new IOException("Not a file split");
             }
+
         }
 
         @Override
         public boolean nextKeyValue() throws IOException, InterruptedException {
             if (!processed) {
                 key = new Text(path.toString());
+                context.setStatus(key.toString());
 
                 try(FileSystem fs = path.getFileSystem(conf);
                         FSDataInputStream in = fs.open(path);) {
@@ -77,8 +81,7 @@ public class WholeFileInputFormat extends FileInputFormat<Text, BytesWritable> {
                 processed = true;
                 return true;
             } else {
-                key = null;
-                value = null;
+                close();
                 return false;
             }
         }
@@ -97,7 +100,8 @@ public class WholeFileInputFormat extends FileInputFormat<Text, BytesWritable> {
         }
 
         @Override public void close() throws IOException {
-
+            key = null;
+            value = null;
         }
     }
 }

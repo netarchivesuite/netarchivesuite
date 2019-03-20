@@ -1,16 +1,10 @@
 package dk.netarkivet.common.distribute.hadoop;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
 
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -31,17 +25,21 @@ public class HadoopBatchStatus implements BatchStatus {
     /** The file containing the result of the batch job. */
     private RemoteFile resultFile;
 
+    private RemoteFile logFile;
+
     /** A list of exceptions caught during the execution of the batchJob. */
     private final List<BatchJob.ExceptionOccurrence> exceptions;
 
     public HadoopBatchStatus(boolean success, int noOfFilesProcessed, Collection<URI> filesFailed,
             String bitArchiveAppId,
-            RemoteFile resultFile, List<BatchJob.ExceptionOccurrence> exceptions) {
+            RemoteFile resultFile, RemoteFile logFile,
+            List<BatchJob.ExceptionOccurrence> exceptions) {
         this.success = success;
         this.noOfFilesProcessed = noOfFilesProcessed;
         this.filesFailed = filesFailed;
         this.bitArchiveAppId = bitArchiveAppId;
         this.resultFile = resultFile;
+        this.logFile = logFile;
         this.exceptions = exceptions;
     }
 
@@ -103,4 +101,6 @@ public class HadoopBatchStatus implements BatchStatus {
     @Override public boolean hasResultFile() {
         return getResultFile().exists();
     }
+
+
 }
