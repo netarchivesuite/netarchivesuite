@@ -337,7 +337,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
                 bitrep.getChecksums(fileId, collectionId);
 
         //for each pillar in this collection
-        for (String collectionPillar: bitrep.getCollectionPillars(collectionId) ){
+        for (String collectionPillar: BitrepositoryUtils.getCollectionPillars(collectionId) ){
 
             boolean foundInThisPillar = false;
 

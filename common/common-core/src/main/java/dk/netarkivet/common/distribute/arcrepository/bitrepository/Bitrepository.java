@@ -29,10 +29,13 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jms.JMSException;
+
 
 import org.bitrepository.access.AccessComponentFactory;
 import org.bitrepository.access.getchecksums.BlockingGetChecksumsClient;
@@ -45,6 +48,7 @@ import org.bitrepository.bitrepositoryelements.ChecksumSpecTYPE;
 import org.bitrepository.bitrepositoryelements.FilePart;
 import org.bitrepository.client.eventhandler.BlockingEventHandler;
 import org.bitrepository.client.eventhandler.ContributorEvent;
+import org.bitrepository.client.eventhandler.ContributorFailedEvent;
 import org.bitrepository.client.eventhandler.OperationEvent;
 import org.bitrepository.client.eventhandler.OperationEvent.OperationEventType;
 import org.bitrepository.client.exceptions.NegativeResponseException;
@@ -75,7 +79,6 @@ import org.bitrepository.protocol.security.MessageSigner;
 import org.bitrepository.protocol.security.OperationAuthorizor;
 import org.bitrepository.protocol.security.PermissionStore;
 import org.bitrepository.protocol.security.SecurityManager;
-import org.bitrepository.settings.repositorysettings.ClientSettings;
 import org.bitrepository.settings.repositorysettings.Collection;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -86,57 +89,55 @@ import dk.netarkivet.common.exceptions.IOFailure;
 /**
  * The class for interacting with the BitRepository, e.g. put files, get files, etc.
  */
-public class Bitrepository {
+public class Bitrepository implements AutoCloseable {
 
     /** Logging mechanism. */
-    private static final Logger logger = LoggerFactory.getLogger(Bitrepository.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(Bitrepository.class);
 
     /** The archive settings directory needed to upload to
      * a bitmag style repository */
     private File settingsDir = null;
 
     /** National bitrepository settings. */
-    private Settings bitmagSettings = null;
+    private final Settings bitmagSettings;
 
     /** The bitrepository component id. */
     private final String componentId;
 
     /** The bitmag security manager.*/
-    private SecurityManager bitMagSecurityManager;
+    private final SecurityManager bitMagSecurityManager;
 
     /** The client for performing the PutFile operation.*/
-    private PutFileClient bitMagPutClient;
+    private final PutFileClient bitMagPutClient;
 
     /** The client for performing the GetFile operation.*/
-    private GetFileClient bitMagGetClient;
+    private final GetFileClient bitMagGetClient;
 
     /** The client for performing the GetFileID operation.*/
-    private GetFileIDsClient bitMagGetFileIDsClient;
+    private final GetFileIDsClient bitMagGetFileIDsClient;
 
     /** The client for performing the GetChecksums operation.*/
-    private GetChecksumsClient bitMagGetChecksumsClient;
+    private final GetChecksumsClient bitMagGetChecksumsClient;
 
     /** The authentication key used by the putfileClient. */
-    private File privateKeyFile;
+    private final File privateKeyFile;
 
     /** The message bus used by the putfileClient. */
-    private MessageBus bitMagMessageBus;
+    private final MessageBus bitMagMessageBus;
 
     /** The maximum number of failing pillars. Default is 0. */
     private final int maxNumberOfFailingPillars;
 
     /** Which pillar to get from. */
-    private String usepillar;
-    
-    private List<String> usepillarListOnly;
-    
+    private final String usepillar;
+
     /**
      * Constructor for the BitRepository class.
      * @param configDir A Bitrepository settingsdirectory
      * @param maxStoreFailures Max number of acceptable store failures
-     * @param usepillar The pillar to use 
+     * @param usepillar The pillar to use when retrieving files
      * @param bitmagKeyFilename Optional certificate filename relative to configDir
-     * @throws ArgumentNotValid if configFile is null
+     * @throws ArgumentNotValid if configDir is null
      */
     public Bitrepository(File configDir, String bitmagKeyFilename, int maxStoreFailures, String usepillar) {
         logger.debug("Initialising bitrepository");
@@ -145,32 +146,44 @@ public class Bitrepository {
         logger.info("componentId: " + componentId);
         maxNumberOfFailingPillars = maxStoreFailures;
         this.usepillar = usepillar;
-        usepillarListOnly = new ArrayList<String>();
-        usepillarListOnly.add(usepillar);
         this.settingsDir = configDir;
-        logger.info("Reading bitrepository settings from " + configDir);
+        logger.info("Reading bitrepository settings from {}",configDir);
         if (bitmagKeyFilename == null){
         	this.privateKeyFile = new File(configDir, "dummy-certificate.pem"); // This file should never exist
         } else {
         	this.privateKeyFile = new File(configDir, bitmagKeyFilename);
         }
-        logger.info("keyfile: " + this.privateKeyFile.getAbsolutePath());
+        logger.info("keyfile: {}", this.privateKeyFile.getAbsolutePath());
+
+
         logger.info("Initialising bitrepository settings.");
-        initBitmagSettings();
+        SettingsProvider settingsLoader =
+                new SettingsProvider(
+                        new XMLFileSettingsLoader(
+                                settingsDir.getAbsolutePath()),
+                        componentId);
+        bitmagSettings = settingsLoader.getSettings();
+        SettingsUtils.initialize(bitmagSettings);
+
+
         logger.info("Initialising bitrepository security manager.");
-        initBitmagSecurityManager(); // Mandatory,even if we point to a nonexisting file dummy-certificate.pem
+        // Mandatory,even if we point to a nonexisting file dummy-certificate.pem
+        PermissionStore permissionStore = new PermissionStore();
+        MessageAuthenticator authenticator = new BasicMessageAuthenticator(permissionStore);
+        MessageSigner signer = new BasicMessageSigner();
+        OperationAuthorizor authorizer = new BasicOperationAuthorizor(permissionStore);
+        bitMagSecurityManager = new BasicSecurityManager(bitmagSettings.getRepositorySettings(),
+                this.privateKeyFile.getAbsolutePath(),
+                authenticator, signer, authorizer, permissionStore,
+                bitmagSettings.getComponentID());
+
 
         logger.info("Getting bitrepository message bus");
         bitMagMessageBus = ProtocolComponentFactory.getInstance().getMessageBus(
                 bitmagSettings, bitMagSecurityManager); // Is bitMagSecurityManager mandatory?
-        logger.info("Initialising bitrepository clients");
-        initBitMagClients();
-    }
 
-    /**
-     * Initialization of the various bitrepository client.
-     */
-    private void initBitMagClients() {
+
+        logger.info("Initialising bitrepository clients");
         bitMagPutClient = ModifyComponentFactory.getInstance().retrievePutClient(
                 bitmagSettings, bitMagSecurityManager, componentId);
         AccessComponentFactory acf = AccessComponentFactory.getInstance();
@@ -190,8 +203,8 @@ public class Bitrepository {
     public boolean uploadFile(final File file, final String collectionId) {
         ArgumentNotValid.checkExistsNormalFile(file, "File file");
         // Does collection exists? If not return false
-        if (getCollectionPillars(collectionId).isEmpty()) {
-            logger.warn("The given collection Id does not exist");
+        if (BitrepositoryUtils.getCollectionPillars(collectionId).isEmpty()) {
+            logger.warn("The given collection Id {} does not exist", collectionId);
             return false;
         }
         boolean success = false;
@@ -199,7 +212,7 @@ public class Bitrepository {
             OperationEventType finalEvent = putTheFile(bitMagPutClient, file, collectionId);
             if(finalEvent == OperationEventType.COMPLETE) {
                 success = true;
-                logger.info("File '" + file.getAbsolutePath() + "' uploaded successfully. ");
+                logger.info("File '{}' uploaded successfully. ",file.getAbsolutePath());
             } else {
                 logger.warn("Upload of file '{}' failed with event-type '{}'.", file.getAbsolutePath(), finalEvent);
             }
@@ -233,14 +246,14 @@ public class Bitrepository {
         String putFileMessage = "Putting the file '" + packageFile + "' with the file id '"
                 + fileId + "' from Netarchivesuite";
 
-        NetarchivesuiteBlockingEventHandler putFileEventHandler = new NetarchivesuiteBlockingEventHandler(collectionID, 
+        NetarchivesuiteBlockingEventHandler putFileEventHandler = new NetarchivesuiteBlockingEventHandler(collectionID,
                 maxNumberOfFailingPillars);
         try {
             bpfc.putFile(collectionID, url, fileId, packageFile.length(), validationChecksum, requestChecksum,
                     putFileEventHandler, putFileMessage);
         } catch (OperationFailedException e) {
-            logger.warn("The putFile Operation was not a complete success (" + putFileMessage + ")."
-                    + " Checksum whether we accept anyway.", e);
+            logger.warn("The putFile Operation was not a complete success ({})."
+                    + " Checksum whether we accept anyway.", putFileMessage, e);
             if(putFileEventHandler.hasFailed()) {
                 return OperationEventType.FAILED;
             } else {
@@ -250,7 +263,7 @@ public class Bitrepository {
             // delete the uploaded file from server
             fileexchange.deleteFromServer(url);
         }
-        logger.info("The putFile Operation succeeded (" + putFileMessage + ")");
+        logger.info("The putFile Operation succeeded ({})", putFileMessage);
         return OperationEventType.COMPLETE;
     }
 
@@ -267,7 +280,7 @@ public class Bitrepository {
         ArgumentNotValid.checkNotNullOrEmpty(fileId, "String fileId");
         ArgumentNotValid.checkNotNullOrEmpty(collectionId, "String collectionId");
         // Does collection exists? If not throw exception
-        if (getCollectionPillars(collectionId).isEmpty()) {
+        if (BitrepositoryUtils.getCollectionPillars(collectionId).isEmpty()) {
             throw new IOFailure("The given collection Id does not exist");
         }
         OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
@@ -299,13 +312,22 @@ public class Bitrepository {
     }
 
     /**
-     * Downloads the file from the URL defined in the conversation.
+     * Downloads the file from the URL defined in the conversation and deletes it from the fileExchange server.
      * @throws IOException
      */
     private File downloadFile(URL fileUrl) throws IOException {
         File outputFile = File.createTempFile("Extracted", null);
-        FileExchange fileexchange = getFileExchange(bitmagSettings);
-        fileexchange.downloadFromServer(outputFile, fileUrl.toExternalForm());
+        FileExchange fileexchange = BitrepositoryUtils.getFileExchange(bitmagSettings);
+        String fileAddress = fileUrl.toExternalForm();
+        try {
+            fileexchange.downloadFromServer(outputFile, fileAddress);
+        } finally {
+            try {
+                fileexchange.deleteFromServer(fileUrl);
+            } catch (URISyntaxException e) {
+                throw new IOException("Failed to delete file '"+fileUrl.toExternalForm()+"'after download",e);
+            }
+        }
         return outputFile;
     }
 
@@ -316,7 +338,7 @@ public class Bitrepository {
      */
     private URL getDeliveryUrl(String fileId) {
         try {
-            return getFileExchange(bitmagSettings).getURL(fileId);
+            return BitrepositoryUtils.getFileExchange(bitmagSettings).getURL(fileId);
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Could not make an URL for the file '"
                     + fileId + "'.", e);
@@ -333,7 +355,8 @@ public class Bitrepository {
     	ArgumentNotValid.checkNotNullOrEmpty(packageId, "String packageId");
     	ArgumentNotValid.checkNotNullOrEmpty(collectionID, "String collectionId");
         // Does collection exists? If not return false
-        if (getCollectionPillars(collectionID).isEmpty()) {
+        List<String> collectionPillars = BitrepositoryUtils.getCollectionPillars(collectionID);
+        if (collectionPillars.isEmpty()) {
             logger.warn("The given collection Id does not exist");
             return false;
         }
@@ -342,13 +365,12 @@ public class Bitrepository {
 
         //GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
         GetFileIDsOutputFormatter outputFormatter = new GetFileIDsNoFormatter(output);
-        long timeout = getClientTimeout(bitmagSettings);
+        long timeout = BitrepositoryUtils.getClientTimeout(bitmagSettings);
 
         PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
         
-        Boolean success = pagingClient.getFileIDs(collectionID, packageId,
-                getCollectionPillars(collectionID));
+        boolean success = pagingClient.getFileIDs(collectionID, packageId, collectionPillars);
         return success;
     }
 
@@ -357,7 +379,7 @@ public class Bitrepository {
      * @param packageID A given package ID (if null, checksums for the whole collection is requested)
      * @param collectionID A given collection ID
      * @return a map with the results from the pillars
-     * @throws YggdrasilException If it fails to retrieve the checksums.
+     * @throws IOFailure If it fails to retrieve checksums.
      */
     public Map<String, ChecksumsCompletePillarEvent> getChecksums(String packageID, String collectionID) 
             throws IOFailure {
@@ -371,7 +393,7 @@ public class Bitrepository {
         }
         BlockingGetChecksumsClient client = new BlockingGetChecksumsClient(bitMagGetChecksumsClient);
         ChecksumSpecTYPE checksumSpec = ChecksumUtils.getDefault(bitmagSettings);
-        BlockingEventHandler eventhandler = new BlockingEventHandler();
+        BlockingEventHandler eventhandler = new NetarchivesuiteBlockingEventHandler(collectionID, maxNumberOfFailingPillars);
 
         try {
             client.getChecksums(collectionID, null, packageID, checksumSpec, null, eventhandler, null);
@@ -379,14 +401,20 @@ public class Bitrepository {
             throw new IOFailure("Got bad feedback from the bitrepository " + e);
         }
 
-        int failures = eventhandler.getFailures().size();
         int results = eventhandler.getResults().size();
-
-        if (failures > 0) {
-            logger.warn("Got back {} failures",  eventhandler.getFailures().size());
-        }
         if (results > 0) {
             logger.info("Got back {} successful responses", eventhandler.getResults().size());
+        }
+
+        int failures = eventhandler.getFailures().size();
+        if (failures > 0) {
+            logger.warn("Got back {} failures",  eventhandler.getFailures().size());
+            for (ContributorFailedEvent failure : eventhandler.getFailures()) {
+                logger.error("Failure on GetChecksums: {}, ",failure.toString());
+            }
+        }
+        if (eventhandler.hasFailed()) {
+            throw new IOFailure("Failed to retrieve checksums");
         }
 
         Map<String, ChecksumsCompletePillarEvent> resultsMap = new HashMap<String,
@@ -397,40 +425,6 @@ public class Bitrepository {
             resultsMap.put(event.getContributorID(), event);
         }
         return resultsMap;
-    }
-
-    /**
-     * Initialize the BITMAG security manager.
-     */
-    private void initBitmagSecurityManager() {
-    	PermissionStore permissionStore = new PermissionStore();
-    	MessageAuthenticator authenticator = new BasicMessageAuthenticator(permissionStore);
-    	MessageSigner signer = new BasicMessageSigner();
-    	OperationAuthorizor authorizer = new BasicOperationAuthorizor(permissionStore);
-
-    	bitMagSecurityManager = new BasicSecurityManager(bitmagSettings.getRepositorySettings(),
-    			getPrivateKeyFile().getAbsolutePath(),
-    			authenticator, signer, authorizer, permissionStore,
-    			bitmagSettings.getComponentID());
-    }
-
-    private File getPrivateKeyFile() {
-        return this.privateKeyFile;
-    }
-
-    /**
-     * Load BitMag settings, if not already done.
-     */
-    private void initBitmagSettings() {
-        if (bitmagSettings == null) {
-            SettingsProvider settingsLoader =
-                    new SettingsProvider(
-                            new XMLFileSettingsLoader(
-                                    settingsDir.getAbsolutePath()),
-                                    componentId);
-            bitmagSettings = settingsLoader.getSettings();
-            SettingsUtils.initialize(bitmagSettings);
-        }
     }
 
     /**
@@ -447,62 +441,31 @@ public class Bitrepository {
     }
 
     /**
-     * Helper method for reading the list of pillars preserving the given collection.
-     * @param collectionID The ID of a specific collection.
-     * @return the list of pillars preserving the collection with the given ID.
-     */
-    public List<String> getCollectionPillars(String collectionID) {
-        return SettingsUtils.getPillarIDsForCollection(collectionID);
-    }
-
-    /**
-     * Helper method for computing the clientTimeout. The clientTimeout is the identificationTimeout
-     * plus the OperationTimeout.
-     * @param bitmagSettings The bitmagsetting
-     * @return the clientTimeout
-     */
-    private long getClientTimeout(Settings bitmagSettings) {
-        ClientSettings clSettings = bitmagSettings.getRepositorySettings().getClientSettings();
-        return clSettings.getIdentificationTimeout().longValue()
-                + clSettings.getOperationTimeout().longValue();
-    }
-
-    private FileExchange getFileExchange(Settings bitmagSettings) {
-        return ProtocolComponentFactory.getInstance().getFileExchange(
-                bitmagSettings);
-    }
-
-    /**
      * @return a set of known CollectionIDs
      */
     public List<String> getKnownCollections() {
         List<Collection> knownCollections = bitmagSettings.getRepositorySettings()
                 .getCollections().getCollection();
-        List<String> collectionIDs = new ArrayList<String>();
+        Set<String> collectionIDs = new HashSet<>();
         for (Collection c: knownCollections) {
             collectionIDs.add(c.getID());
         }
-        return collectionIDs;
+        return new ArrayList<>(collectionIDs);
     }
-    
-    /**
-     * @return The default checksum spec from the settings.
-     */
-    public ChecksumSpecTYPE getDefaultChecksum() {
-        return ChecksumUtils.getDefault(bitmagSettings);
-    }
-    
+
     public List<String> getFileIds(String collectionID) {
     	
     	OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
         GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
 
-        long timeout = getClientTimeout(bitmagSettings);
+        long timeout = BitrepositoryUtils.getClientTimeout(bitmagSettings);
         List<String> usepillarListOnly = new ArrayList<String>();
         usepillarListOnly.add(usepillar);
+
         PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
-        Boolean success = pagingClient.getFileIDs(collectionID, null,
+
+        boolean success = pagingClient.getFileIDs(collectionID, null,
                 usepillarListOnly);
         if (success) {
         	return outputFormatter.getFoundIds();
@@ -510,5 +473,8 @@ public class Bitrepository {
         	return null;
         }
     }
-    
+
+    @Override public void close() throws Exception {
+        this.shutdown();
+    }
 }
