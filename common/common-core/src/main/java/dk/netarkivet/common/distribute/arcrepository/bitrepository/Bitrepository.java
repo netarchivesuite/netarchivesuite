@@ -119,9 +119,6 @@ public class Bitrepository implements AutoCloseable {
     /** The client for performing the GetChecksums operation.*/
     private final GetChecksumsClient bitMagGetChecksumsClient;
 
-    /** The authentication key used by the putfileClient. */
-    private final File privateKeyFile;
-
     /** The message bus used by the putfileClient. */
     private final MessageBus bitMagMessageBus;
 
@@ -148,12 +145,15 @@ public class Bitrepository implements AutoCloseable {
         this.usepillar = usepillar;
         this.settingsDir = configDir;
         logger.info("Reading bitrepository settings from {}",configDir);
+
+        /* The authentication key used by the putfileClient. */
+        File privateKeyFile;
         if (bitmagKeyFilename == null){
-        	this.privateKeyFile = new File(configDir, "dummy-certificate.pem"); // This file should never exist
+        	privateKeyFile = new File(configDir, "dummy-certificate.pem"); // This file should never exist
         } else {
-        	this.privateKeyFile = new File(configDir, bitmagKeyFilename);
+        	privateKeyFile = new File(configDir, bitmagKeyFilename);
         }
-        logger.info("keyfile: {}", this.privateKeyFile.getAbsolutePath());
+        logger.info("keyfile: {}", privateKeyFile.getAbsolutePath());
 
 
         logger.info("Initialising bitrepository settings.");
@@ -173,7 +173,7 @@ public class Bitrepository implements AutoCloseable {
         MessageSigner signer = new BasicMessageSigner();
         OperationAuthorizor authorizer = new BasicOperationAuthorizor(permissionStore);
         bitMagSecurityManager = new BasicSecurityManager(bitmagSettings.getRepositorySettings(),
-                this.privateKeyFile.getAbsolutePath(),
+                privateKeyFile.getAbsolutePath(),
                 authenticator, signer, authorizer, permissionStore,
                 bitmagSettings.getComponentID());
 
@@ -200,7 +200,7 @@ public class Bitrepository implements AutoCloseable {
      * @param collectionId The Id of the collection to upload to
      * @return true if the upload succeeded, false otherwise.
      */
-    public boolean uploadFile(final File file, final String collectionId) {
+    public boolean uploadFile(final File file, final String fileId, final String collectionId) {
         ArgumentNotValid.checkExistsNormalFile(file, "File file");
         // Does collection exists? If not return false
         if (BitrepositoryUtils.getCollectionPillars(collectionId).isEmpty()) {
@@ -209,7 +209,7 @@ public class Bitrepository implements AutoCloseable {
         }
         boolean success = false;
         try {
-            OperationEventType finalEvent = putTheFile(bitMagPutClient, file, collectionId);
+            OperationEventType finalEvent = putTheFile(bitMagPutClient, file, fileId, collectionId);
             if(finalEvent == OperationEventType.COMPLETE) {
                 success = true;
                 logger.info("File '{}' uploaded successfully. ",file.getAbsolutePath());
@@ -232,24 +232,23 @@ public class Bitrepository implements AutoCloseable {
      * @return OperationEventType.FAILED if operation failed; otherwise returns OperationEventType.COMPLETE
      * @throws IOException If unable to upload the packageFile to the uploadserver
      */
-    private OperationEventType putTheFile(PutFileClient client, File packageFile, String collectionID)
+    private OperationEventType putTheFile(PutFileClient client, File packageFile, String fileID, String collectionID)
             throws IOException, URISyntaxException {
         FileExchange fileexchange = ProtocolComponentFactory.getInstance().getFileExchange(this.bitmagSettings);
         BlockingPutFileClient bpfc = new BlockingPutFileClient(client);
         URL url = fileexchange.uploadToServer(packageFile);
-        String fileId = packageFile.getName();
         ChecksumSpecTYPE csSpec = ChecksumUtils.getDefault(this.bitmagSettings);
         ChecksumDataForFileTYPE validationChecksum = BitrepositoryUtils.getValidationChecksum(
                 packageFile,csSpec);
 
         ChecksumSpecTYPE requestChecksum = null;
         String putFileMessage = "Putting the file '" + packageFile + "' with the file id '"
-                + fileId + "' from Netarchivesuite";
+                + fileID + "' from Netarchivesuite";
 
         NetarchivesuiteBlockingEventHandler putFileEventHandler = new NetarchivesuiteBlockingEventHandler(collectionID,
                 maxNumberOfFailingPillars);
         try {
-            bpfc.putFile(collectionID, url, fileId, packageFile.length(), validationChecksum, requestChecksum,
+            bpfc.putFile(collectionID, url, fileID, packageFile.length(), validationChecksum, requestChecksum,
                     putFileEventHandler, putFileMessage);
         } catch (OperationFailedException e) {
             logger.warn("The putFile Operation was not a complete success ({})."
@@ -398,7 +397,7 @@ public class Bitrepository implements AutoCloseable {
         try {
             client.getChecksums(collectionID, null, packageID, checksumSpec, null, eventhandler, null);
         } catch (NegativeResponseException e) {
-            throw new IOFailure("Got bad feedback from the bitrepository " + e);
+            throw new IOFailure("Got bad feedback from the bitrepository ", e);
         }
 
         int results = eventhandler.getResults().size();
@@ -435,7 +434,7 @@ public class Bitrepository implements AutoCloseable {
             try {
                 bitMagMessageBus.close();
             } catch (JMSException e) {
-                logger.warn("JMSException caught during shutdown of messagebus " + e);
+                logger.warn("JMSException caught during shutdown of messagebus ", e);
             }
         }
     }

@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HostNameUtils {
 	/** Logging mechanism. */
-	private static Logger logger = LoggerFactory.getLogger(HostNameUtils.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(HostNameUtils.class);
 
 	/**
 	 * disallow construction by making this private.
@@ -55,10 +55,10 @@ public class HostNameUtils {
 			final String canonicalHostName = iAddress.getCanonicalHostName();
 
 			if (StringUtils.isNotEmpty(canonicalHostName)) {
-				logger.info("Local hostname (provided  by getCanonicalHostName): " + canonicalHostName);
+				logger.info("Local hostname (provided  by getCanonicalHostName): {}", canonicalHostName);
 				return canonicalHostName;
 			} else if (StringUtils.isNotEmpty(hostName)) {
-				logger.info("Local hostname (provided  by iAddress): " + hostName);
+				logger.info("Local hostname (provided  by iAddress): {}", hostName);
 				return hostName;
 			}
 
