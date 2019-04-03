@@ -142,13 +142,13 @@ public class Bitrepository {
         logger.debug("Initialising bitrepository");
         ArgumentNotValid.checkExistsDirectory(configDir, "File configDir");
         componentId = BitrepositoryUtils.generateComponentID();
-        logger.info("componentId: " + componentId);
+        logger.info("componentId: {}", componentId);
         maxNumberOfFailingPillars = maxStoreFailures;
         this.usepillar = usepillar;
         usepillarListOnly = new ArrayList<String>();
         usepillarListOnly.add(usepillar);
         this.settingsDir = configDir;
-        logger.info("Reading bitrepository settings from " + configDir);
+        logger.info("Reading bitrepository settings from {}", configDir.getAbsolutePath());
         if (bitmagKeyFilename == null){
         	this.privateKeyFile = new File(configDir, "dummy-certificate.pem"); // This file should never exist
         } else {
@@ -357,7 +357,7 @@ public class Bitrepository {
      * @param packageID A given package ID (if null, checksums for the whole collection is requested)
      * @param collectionID A given collection ID
      * @return a map with the results from the pillars
-     * @throws YggdrasilException If it fails to retrieve the checksums.
+     * @throws IOFailure If it fails to retrieve the checksums.
      */
     public Map<String, ChecksumsCompletePillarEvent> getChecksums(String packageID, String collectionID) 
             throws IOFailure {
