@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -23,14 +23,20 @@
 package dk.netarkivet.common.distribute.arcrepository.bitrepository;
 
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
 import org.bitrepository.bitrepositoryelements.ChecksumDataForFileTYPE;
 import org.bitrepository.bitrepositoryelements.ChecksumSpecTYPE;
 import org.bitrepository.bitrepositoryelements.ChecksumType;
+import org.bitrepository.common.settings.Settings;
 import org.bitrepository.common.utils.Base16Utils;
 import org.bitrepository.common.utils.CalendarUtils;
 import org.bitrepository.common.utils.ChecksumUtils;
+import org.bitrepository.common.utils.SettingsUtils;
+import org.bitrepository.protocol.FileExchange;
+import org.bitrepository.protocol.ProtocolComponentFactory;
+import org.bitrepository.settings.repositorysettings.ClientSettings;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -73,7 +79,33 @@ public class BitrepositoryUtils {
      * @return The Bitrepository component id for this NetarchiveSuite application.
      */
     public static String generateComponentID() {
-        String hn = HostName.getHostName();
+        String hn = HostNameUtils.getHostName();
         return "NetarchivesuiteClient-" + hn + "-" + UUID.randomUUID();
+    }
+
+    static FileExchange getFileExchange(Settings bitmagSettings) {
+        return ProtocolComponentFactory.getInstance().getFileExchange(
+                bitmagSettings);
+    }
+
+    /**
+     * Helper method for reading the list of pillars preserving the given collection.
+     * @param collectionID The ID of a specific collection.
+     * @return the list of pillars preserving the collection with the given ID.
+     */
+    public static List<String> getCollectionPillars(String collectionID) {
+        return SettingsUtils.getPillarIDsForCollection(collectionID);
+    }
+
+    /**
+     * Helper method for computing the clientTimeout. The clientTimeout is the identificationTimeout
+     * plus the OperationTimeout.
+     * @param bitmagSettings The bitmagsetting
+     * @return the clientTimeout
+     */
+    static long getClientTimeout(Settings bitmagSettings) {
+        ClientSettings clSettings = bitmagSettings.getRepositorySettings().getClientSettings();
+        return clSettings.getIdentificationTimeout().longValue()
+                + clSettings.getOperationTimeout().longValue();
     }
 }
