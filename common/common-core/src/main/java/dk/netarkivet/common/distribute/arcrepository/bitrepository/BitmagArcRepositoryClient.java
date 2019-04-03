@@ -127,7 +127,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
             return;
         } else {
             // upload file
-            boolean uploadSuccessful = bitrep.uploadFile(file, collectionId);
+            boolean uploadSuccessful = bitrep.uploadFile(file, file.getName(), collectionId);
             if (!uploadSuccessful) {
                 throw new IOFailure(
                         "Upload to collection '" + collectionId + "' of file '" + file.getName() + "' failed.");
