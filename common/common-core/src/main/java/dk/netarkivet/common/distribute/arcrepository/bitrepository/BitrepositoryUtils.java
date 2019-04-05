@@ -60,9 +60,9 @@ public class BitrepositoryUtils {
     }
 
     /**
-     *  Specify a checksum.
-     *  @param checksumtype a given type of checksum
-     *  @param salt A string to salt the checksum with (if null, no salting)
+     * Specify a checksum.
+     * @param checksumtype a given type of checksum
+     * @param salt A string to salt the checksum with (if null, no salting)
      * @return The requested checksum spec
      */
     public static ChecksumSpecTYPE getRequestChecksumSpec(ChecksumType checksumtype, String salt) {
@@ -83,6 +83,11 @@ public class BitrepositoryUtils {
         return "NetarchivesuiteClient-" + hn + "-" + UUID.randomUUID();
     }
 
+    /**
+     * Retrieves the FileExchange for this bitmag setup.
+     * @param bitmagSettings The settings.
+     * @return The FileExchange.
+     */
     static FileExchange getFileExchange(Settings bitmagSettings) {
         return ProtocolComponentFactory.getInstance().getFileExchange(
                 bitmagSettings);

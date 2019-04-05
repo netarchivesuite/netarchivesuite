@@ -33,9 +33,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.jms.JMSException;
-
 
 import org.bitrepository.access.AccessComponentFactory;
 import org.bitrepository.access.getchecksums.BlockingGetChecksumsClient;
@@ -80,8 +80,8 @@ import org.bitrepository.protocol.security.OperationAuthorizor;
 import org.bitrepository.protocol.security.PermissionStore;
 import org.bitrepository.protocol.security.SecurityManager;
 import org.bitrepository.settings.repositorysettings.Collection;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -149,12 +149,11 @@ public class Bitrepository implements AutoCloseable {
         /** The authentication key used by the putfileClient. */
         File privateKeyFile;
         if (bitmagKeyFilename == null){
-        	privateKeyFile = new File(configDir, "dummy-certificate.pem"); // This file should never exist
+        	privateKeyFile = new File(configDir, UUID.randomUUID().toString()); // This file should never exist
         } else {
         	privateKeyFile = new File(configDir, bitmagKeyFilename);
         }
         logger.info("keyfile: {}", privateKeyFile.getAbsolutePath());
-
 
         logger.info("Initialising bitrepository settings.");
         SettingsProvider settingsLoader =
@@ -166,7 +165,7 @@ public class Bitrepository implements AutoCloseable {
         SettingsUtils.initialize(bitmagSettings);
 
         logger.info("Initialising bitrepository security manager.");
-        // Mandatory,even if we point to a nonexisting file dummy-certificate.pem
+        // Mandatory,even if we point to a nonexisting keyfile
         PermissionStore permissionStore = new PermissionStore();
         MessageAuthenticator authenticator = new BasicMessageAuthenticator(permissionStore);
         MessageSigner signer = new BasicMessageSigner();
@@ -176,11 +175,9 @@ public class Bitrepository implements AutoCloseable {
                 authenticator, signer, authorizer, permissionStore,
                 bitmagSettings.getComponentID());
 
-
         logger.info("Getting bitrepository message bus");
         bitMagMessageBus = ProtocolComponentFactory.getInstance().getMessageBus(
-                bitmagSettings, bitMagSecurityManager); // Is bitMagSecurityManager mandatory?
-
+                bitmagSettings, bitMagSecurityManager);
 
         logger.info("Initialising bitrepository clients");
         bitMagPutClient = ModifyComponentFactory.getInstance().retrievePutClient(
@@ -286,12 +283,12 @@ public class Bitrepository implements AutoCloseable {
         // Note that this eventHandler is blocking
         CompleteEventAwaiter eventHandler = new GetFileEventHandler(this.bitmagSettings, output);
         output.debug("Initiating the GetFile conversation.");
-        String auditTrailInformation = "Retrieving package '" + fileId + "' from collection '" + collectionId + "' using pillar '" + usepillar + "'";
+        String auditTrailInformation = "Retrieving package '" + fileId + "' from collection '" + collectionId
+                + "' using pillar '" + usepillar + "'";
         logger.info(auditTrailInformation);
-        //bitMagGetClient.getFileFromFastestPillar(collectionId, fileId, filePart, fileUrl, eventHandler,
-        //        auditTrailInformation);
-        
-        bitMagGetClient.getFileFromSpecificPillar(collectionId, fileId, filePart, fileUrl, usepillar, eventHandler, auditTrailInformation);
+
+        bitMagGetClient.getFileFromSpecificPillar(collectionId, fileId, filePart, fileUrl, usepillar, eventHandler,
+                auditTrailInformation);
         
         OperationEvent finalEvent = eventHandler.getFinish();
         if(finalEvent.getEventType() == OperationEventType.COMPLETE) {
@@ -311,7 +308,8 @@ public class Bitrepository implements AutoCloseable {
 
     /**
      * Downloads the file from the URL defined in the conversation and deletes it from the fileExchange server.
-     * @throws IOException
+     * @param fileUrl The URL for the file to download.
+     * @throws IOException If an connection issue occur.
      */
     private File downloadFile(URL fileUrl) throws IOException {
         File outputFile = File.createTempFile("Extracted", null);
@@ -361,7 +359,6 @@ public class Bitrepository implements AutoCloseable {
 
         OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
 
-        //GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
         GetFileIDsOutputFormatter outputFormatter = new GetFileIDsNoFormatter(output);
         long timeout = BitrepositoryUtils.getClientTimeout(bitmagSettings);
 
@@ -377,11 +374,7 @@ public class Bitrepository implements AutoCloseable {
      * @param packageID A given package ID (if null, checksums for the whole collection is requested)
      * @param collectionID A given collection ID
      * @return a map with the results from the pillars
-<<<<<<< HEAD
      * @throws IOFailure If it fails to retrieve the checksums.
-=======
-     * @throws IOFailure If it fails to retrieve checksums.
->>>>>>> 4cc7008f4620754fa82ca22dd2ae81bbe88625f1
      */
     public Map<String, ChecksumsCompletePillarEvent> getChecksums(String packageID, String collectionID) 
             throws IOFailure {
@@ -395,7 +388,8 @@ public class Bitrepository implements AutoCloseable {
         }
         BlockingGetChecksumsClient client = new BlockingGetChecksumsClient(bitMagGetChecksumsClient);
         ChecksumSpecTYPE checksumSpec = ChecksumUtils.getDefault(bitmagSettings);
-        BlockingEventHandler eventhandler = new NetarchivesuiteBlockingEventHandler(collectionID, maxNumberOfFailingPillars);
+        BlockingEventHandler eventhandler = new NetarchivesuiteBlockingEventHandler(collectionID,
+                maxNumberOfFailingPillars);
 
         try {
             client.getChecksums(collectionID, null, packageID, checksumSpec, null, eventhandler, null);
@@ -443,18 +437,23 @@ public class Bitrepository implements AutoCloseable {
     }
 
     /**
-     * @return a set of known CollectionIDs
+     * @return The list of known CollectionIDs (and duplicates has been removed).
      */
     public List<String> getKnownCollections() {
         List<Collection> knownCollections = bitmagSettings.getRepositorySettings()
                 .getCollections().getCollection();
         Set<String> collectionIDs = new HashSet<>();
-        for (Collection c: knownCollections) {
+        for (Collection c : knownCollections) {
             collectionIDs.add(c.getID());
         }
         return new ArrayList<>(collectionIDs);
     }
 
+    /**
+     * Retrieves the list of file ids in the given collection from the default pillar.
+     * @param collectionID The collection to retrieve the list of file ids from.
+     * @return The list of file ids.
+     */
     public List<String> getFileIds(String collectionID) {
     	
     	OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
@@ -476,7 +475,8 @@ public class Bitrepository implements AutoCloseable {
         }
     }
 
-    @Override public void close() throws Exception {
+    @Override
+    public void close() throws Exception {
         this.shutdown();
     }
 }
