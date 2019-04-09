@@ -33,9 +33,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.archive.io.ArchiveReader;
-import org.archive.io.ArchiveReaderFactory;
-import org.archive.io.ArchiveRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,30 +134,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
             log.warn("File '{}' does not exist. Null BitarchiveRecord returned", arcfile);
             return null;
         }
-        ArchiveReader reader = null;
-        ArchiveRecord record = null;
-        try {
-            reader = ArchiveReaderFactory.get(f, index);
-            record = reader.get();
-            return new BitarchiveRecord(record, arcfile);
-        } catch (IOException e) {
-            throw new IOFailure("Error reading record from '" + arcfile + "' offset " + index, e);
-        } finally {
-            if (record != null) {
-                try {
-                    record.close();
-                } catch (IOException e) {
-                    log.warn("Error closing ARC record '{}'", record, e);
-                }
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    log.warn("Error closing ARC reader '{}'", reader, e);
-                }
-            }
-        }
+        return BitarchiveRecord.getBitarchiveRecord(arcfile, f, index);
     }
 
     /**

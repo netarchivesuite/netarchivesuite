@@ -31,6 +31,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
+import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCRecord;
@@ -216,6 +218,15 @@ public class BitarchiveRecord implements Serializable {
             } catch (IOException e) {
                 throw new IOFailure("Unable to write data from " + "objectBuffer to the outputstream", e);
             }
+        }
+    }
+
+
+    public static BitarchiveRecord getBitarchiveRecord(String filename, File f, long index) {
+        try (ArchiveReader reader = ArchiveReaderFactory.get(f, index); ArchiveRecord record = reader.get();){
+            return new BitarchiveRecord(record, filename);
+        } catch (IOException e) {
+            throw new IOFailure("Error reading record from '" + filename + "' in file '"+f.getAbsolutePath()+"' offset " + index, e);
         }
     }
 

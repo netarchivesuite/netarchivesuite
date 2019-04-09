@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -22,11 +22,13 @@
  */
 package dk.netarkivet.common.distribute.arcrepository.bitrepository;
 
+
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.bitrepository.client.eventhandler.BlockingEventHandler;
 import org.bitrepository.common.utils.SettingsUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Eventhandler for Netarchivesuite
@@ -34,7 +36,7 @@ import org.bitrepository.common.utils.SettingsUtils;
  */
 public class NetarchivesuiteBlockingEventHandler extends BlockingEventHandler {
     /** Logging mechanism. */
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final Logger logger = LoggerFactory.getLogger(NetarchivesuiteBlockingEventHandler.class);
 
     /** The list of pillars.*/
     private final List<String> pillars;
@@ -57,23 +59,21 @@ public class NetarchivesuiteBlockingEventHandler extends BlockingEventHandler {
         if(super.hasFailed()) {
             // Fail, if no final events from all pillars.
             if(pillars.size() > (getFailures().size() + getResults().size())) {
-                logger.warning("Some pillar(s) have neither given a failure or a complete. Expected: " 
-                        + pillars.size() + ", but got: " + (getFailures().size() + getResults().size()));
+                logger.warn("Some pillar(s) have neither given a failure or a complete. Expected: {}, but got: {}",
+                        pillars.size(), getFailures().size() + getResults().size());
                 return true;
             }
             // Fail, if more failures than allowed.
             if(maxFailures < getFailures().size()) {
-                logger.warning("More failing pillars than allowed. Max failures allowed: " + maxFailures 
-                        + ", but " + getFailures().size() + " pillars failed.");
+                logger.error("More failing pillars than allowed. Max failures allowed: {}, but {} pillars failed.", maxFailures, getFailures().size());
                 return true;
             }
             // Accept, when less failures than allowed, and the rest of the pillars have success.
             if((pillars.size() - maxFailures) <= getResults().size()) {
-                logger.info("Only " + getFailures().size() + " pillar(s) failed, and we accept " 
-                        + maxFailures + ", so the operation is a success.");
+                logger.info("Only {} pillar(s) failed, and we accept {}, so the operation is a success.", getFailures().size(), maxFailures);
                 return false;
             } else {
-                logger.severe("Less failures than allowed, and less successes than required, but not failures and "
+                logger.error("Less failures than allowed, and less successes than required, but not failures and "
                         + "successes combined are at least the number of pillars. This should never happen!");
                 return true;
             }

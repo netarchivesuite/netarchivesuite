@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -30,9 +30,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.archive.io.ArchiveReader;
-import org.archive.io.ArchiveReaderFactory;
-import org.archive.io.ArchiveRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,67 +52,63 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * A implementation of ArcRepositoryClient that gets its data from a bitrepository system.
  * The batchjobs are executed locally, after fetching the data from the bitrepository.
  * This is only meant for internal NAS-usage
- * 
+ *
  * Only the store, get(?), and getFile, and batch will be implemented
- * 
+ *
  */
 public class BitmagArcRepositoryClient implements ArcRepositoryClient {
 
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(BitmagArcRepositoryClient.class);
 
-    /** The default place in classpath where the settings file can be found. */
-    private static String defaultSettingsClasspath = "dk/netarkivet/common/distribute/arcrepository/bitrepository/"
-            + "BitmagArcRepositoryClientSettings.xml";
-
     /*
      * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
      * this class, by loading them from a settings.xml file in classpath.
      */
     static {
-        Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
+        Settings.addDefaultClasspathSettings(
+                "dk/netarkivet/common/distribute/arcrepository/bitrepository/BitmagArcRepositoryClientSettings.xml");
     }
 
-    private static final String BITREPOSITORY_TEMPDIR = "settings.common.arcrepositoryClient.bitrepository.tempdir";    
+    public static final String BITREPOSITORY_TEMPDIR = "settings.common.arcrepositoryClient.bitrepository.tempdir";
 
-    private static final String BITREPOSITORY_SETTINGS_DIR = "settings.common.arcrepositoryClient.bitrepository.settingsDir";
-     
+    public static final String BITREPOSITORY_SETTINGS_DIR = "settings.common.arcrepositoryClient.bitrepository.settingsDir";
+
     // optional so we don't force the user to use credentials.
-    private static final String BITREPOSITORY_KEYFILENAME = "settings.common.arcrepositoryClient.bitrepository.keyfilename"; 
+    public static final String BITREPOSITORY_KEYFILENAME = "settings.common.arcrepositoryClient.bitrepository.keyfilename";
 
-    private static final String BITREPOSITORY_STORE_MAX_PILLAR_FAILURES = "settings.common.arcrepositoryClient.bitrepository.storeMaxPillarFailures";
-    
-    private static final String BITREPOSITORY_COLLECTIONID =  "settings.common.arcrepositoryClient.bitrepository.collectionID";
-    
-    private static final String BITREPOSITORY_USEPILLAR =  "settings.common.arcrepositoryClient.bitrepository.usepillar";
-	private final String collectionId;
+    public static final String BITREPOSITORY_STORE_MAX_PILLAR_FAILURES = "settings.common.arcrepositoryClient.bitrepository.storeMaxPillarFailures";
 
-	private File tempdir;
+    public static final String BITREPOSITORY_COLLECTIONID = "settings.common.arcrepositoryClient.bitrepository.collectionID";
 
-	private int maxStoreFailures;
+    public static final String BITREPOSITORY_USEPILLAR = "settings.common.arcrepositoryClient.bitrepository.usepillar";
 
-	private Bitrepository bitrep;
 
-	private String usepillar; 
+    private final String collectionId;
 
+    private final File tempdir;
+
+    private final Bitrepository bitrep;
 
     /** Create a new BitmagArcRepositoryClient based on current settings. */
     public BitmagArcRepositoryClient() {
-    	File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
-    	String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
-    	this.collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
-    	this.tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
-    	this.maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
-    	this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
-    	tempdir.mkdirs();
-    	log.info("Storing tempfiles in folder {}", tempdir);
-    	
-    	// Initialize connection to the bitrepository
-    	this.bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
+        this.collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
+        this.tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
+        tempdir.mkdirs();
+        log.info("Storing tempfiles in folder {}", tempdir);
+
+        File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
+        String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
+        int maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
+        String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
+
+        // Initialize connection to the bitrepository
+        this.bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
     }
 
     @Override
     public void close() {
+        this.bitrep.shutdown();
     }
 
     /**
@@ -127,19 +120,20 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
      */
     @Override
     public void store(File file) throws IOFailure, ArgumentNotValid {
-        ArgumentNotValid.checkExistsNormalFile(file, "File '" + file + "' does not exist");
+        ArgumentNotValid.checkExistsNormalFile(file, "File '" + file.getAbsolutePath() + "' does not exist");
         // Check if file already exists
         if (bitrep.existsInCollection(file.getName(), collectionId)) {
-        	log.warn("The file '{}' is already in collection '{}'", file.getName(), collectionId);
-        	return;
+            log.warn("The file '{}' is already in collection '{}'", file.getName(), collectionId);
+            return;
         } else {
-        	// upload file
-        	boolean uploadSuccessful = bitrep.uploadFile(file, collectionId);
-        	if (!uploadSuccessful) {
-        		throw new IOFailure("Upload to collection '" + collectionId + "' of file '" + file.getName()  + "' failed.");
-        	}  else {
-        		log.info("Upload to collection '{}' of file '{}' was successful", collectionId, file.getName());
-        	}
+            // upload file
+            boolean uploadSuccessful = bitrep.uploadFile(file, file.getName(), collectionId);
+            if (!uploadSuccessful) {
+                throw new IOFailure(
+                        "Upload to collection '" + collectionId + "' of file '" + file.getName() + "' failed.");
+            } else {
+                log.info("Upload to collection '{}' of file '{}' was successful", collectionId, file.getName());
+            }
         }
     }
 
@@ -156,36 +150,13 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "String arcfile");
         ArgumentNotValid.checkNotNegative(index, "long index");
-        
+
         if (!bitrep.existsInCollection(arcfile, collectionId)) {
-        	log.warn("The file '{}' is not in collection '{}'. Returning null BitarchiveRecord", arcfile, collectionId);
-        	return null;
+            log.warn("The file '{}' is not in collection '{}'. Returning null BitarchiveRecord", arcfile, collectionId);
+            return null;
         } else {
-        	File f = bitrep.getFile(arcfile, collectionId , null);
-        	ArchiveReader reader = null;
-            ArchiveRecord record = null;
-            try {
-                reader = ArchiveReaderFactory.get(f, index);
-                record = reader.get();
-                return new BitarchiveRecord(record, arcfile);
-            } catch (IOException e) {
-                throw new IOFailure("Error reading record from '" + arcfile + "' offset " + index, e);
-            } finally {
-                if (record != null) {
-                    try {
-                        record.close();
-                    } catch (IOException e) {
-                        log.warn("Error closing ARC record '{}'", record, e);
-                    }
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        log.warn("Error closing ARC reader '{}'", reader, e);
-                    }
-                }
-            }
+            File f = bitrep.getFile(arcfile, collectionId, null);
+            return BitarchiveRecord.getBitarchiveRecord(arcfile, f, index);
         }
     }
 
@@ -203,16 +174,16 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     public void getFile(String arcfilename, Replica replica, File toFile) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "String arcfilename");
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
-	
+
         if (!bitrep.existsInCollection(arcfilename, collectionId)) {
-        	log.warn("The file '{}' is not in collection '{}'.", arcfilename, collectionId);
-        	return;
+            log.warn("The file '{}' is not in collection '{}'.", arcfilename, collectionId);
+            throw new IOFailure("File '" + arcfilename + "' does not exist");
         } else {
-        	File f = bitrep.getFile(arcfilename, collectionId , null);
-        	FileUtils.copyFile(f, toFile);
+            File f = bitrep.getFile(arcfilename, collectionId, null);
+            FileUtils.copyFile(f, toFile);
         }
     }
-       
+
     /**
      * Runs a batch job on each file in the ArcRepository.
      *
@@ -227,58 +198,60 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
      * @throws IOFailure If a problem occurs during processing the batchjob.
      */
     @Override
-    public BatchStatus batch(final FileBatchJob job, String replicaId, String... args) throws ArgumentNotValid,
-    IOFailure {
-    	ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
+    public BatchStatus batch(final FileBatchJob job, String replicaId, String... args)
+            throws ArgumentNotValid, IOFailure {
+        ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
 
-    	// Deduce the remote file to run the batchjob on from the job.getFilenamePattern()
-    	// e.g. "22-metadata-[0-9]+.(w)?arc" => 22-metadata-1.warc 
-    	log.info("Trying to deducing requested file to run batch on from pattern {}", job.getFilenamePattern().pattern());
-    	
-    	String patternAsString = job.getFilenamePattern().pattern();
-    	if (!patternAsString.contains("metadata-")) {
-    		log.warn("deducing requested file to run batch on from pattern {} failed. Is not a metadata file", job.getFilenamePattern().pattern());
-    		return null;
-    	} else {
-    		// With 22-metadata-[0-9]+.(w)?arc 
-    		// nameparts will be ["22", "metadata", "[0", "9]+.(w)?arc"]
-    		String nameParts[] = patternAsString.split("-");
-    		String nameToFetch = nameParts[0] + "-metadata-1.warc";
-            List<File> files = new ArrayList<File>();    
-		if (!bitrep.existsInCollection(nameToFetch, collectionId)) {
-        		log.warn("The file '{}' is not in collection '{}'.", nameToFetch, collectionId);
-		} else {
-    		File tmpFile = bitrep.getFile(nameToFetch, this.collectionId, null);
-    		File workFile = new File(tempdir, nameToFetch);
-    		FileUtils.moveFile(tmpFile, workFile);
-    	    files.add(workFile);
-		}
+        // Deduce the remote file to run the batchjob on from the job.getFilenamePattern()
+        // e.g. "22-metadata-[0-9]+.(w)?arc" => 22-metadata-1.warc
+        log.info("Trying to deducing requested file to run batch on from pattern {}",
+                job.getFilenamePattern().pattern());
 
-    		OutputStream os = null;
-    		File resultFile;
-    		try {
-    			resultFile = File.createTempFile("batch", replicaId, FileUtils.getTempDir());
-    			os = new FileOutputStream(resultFile);
-    			
-    			BatchLocalFiles batcher = new BatchLocalFiles(files.toArray(new File[files.size()]));
-    			batcher.run(job, os);
-    		} catch (IOException e) {
-    			throw new IOFailure("Cannot perform batch '" + job + "'", e);
-    		} finally {
-    			if (os != null) {
-    				try {
-    					os.close();
-    				} catch (IOException e) {
-    					log.warn("Error closing batch output stream '{}'", os, e);
-    				}
-    			}
-    		}
-    		return new BatchStatus(replicaId, job.getFilesFailed(), job.getNoOfFilesProcessed(), new FileRemoteFile(
-    				resultFile), job.getExceptions());
-    	}
+        String patternAsString = job.getFilenamePattern().pattern();
+        if (!patternAsString.contains("metadata-")) {
+            log.warn("deducing requested file to run batch on from pattern {} failed. Is not a metadata file",
+                    job.getFilenamePattern().pattern());
+            return null;
+        } else {
+            // With 22-metadata-[0-9]+.(w)?arc
+            // nameparts will be ["22", "metadata", "[0", "9]+.(w)?arc"]
+            String nameParts[] = patternAsString.split("-");
+            String nameToFetch = nameParts[0] + "-metadata-1.warc";
+            List<File> files = new ArrayList<File>();
+            if (!bitrep.existsInCollection(nameToFetch, collectionId)) {
+                log.warn("The file '{}' is not in collection '{}'.", nameToFetch, collectionId);
+            } else {
+                File tmpFile = bitrep.getFile(nameToFetch, this.collectionId, null);
+                File workFile = new File(tempdir, nameToFetch);
+                FileUtils.moveFile(tmpFile, workFile);
+                files.add(workFile);
+            }
+
+            OutputStream os = null;
+            File resultFile;
+            try {
+                resultFile = File.createTempFile("batch", replicaId, FileUtils.getTempDir());
+                os = new FileOutputStream(resultFile);
+
+                BatchLocalFiles batcher = new BatchLocalFiles(files.toArray(new File[files.size()]));
+                batcher.run(job, os);
+            } catch (IOException e) {
+                throw new IOFailure("Cannot perform batch '" + job + "'", e);
+            } finally {
+                if (os != null) {
+                    try {
+                        os.close();
+                    } catch (IOException e) {
+                        log.warn("Error closing batch output stream '{}'", os, e);
+                    }
+                }
+            }
+            return new BatchStatus(replicaId, job.getFilesFailed(), job.getNoOfFilesProcessed(), new FileRemoteFile(
+                    resultFile), job.getExceptions());
+        }
     }
 
-/////////////////// The rest of the API is not implemented for the bitrepository system ///////////////////////////
+    /////////////////// The rest of the API is not implemented for the bitrepository system ///////////////////////////
 
     /**
      * Updates the administrative data in the ArcRepository for a given file and replica. This implementation does
@@ -290,7 +263,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
      */
     @Override
     public void updateAdminData(String fileName, String bitarchiveId, ReplicaStoreState newval) {
-	throw new NotImplementedException("UpdateAdminData is not implemented here");
+        throw new NotImplementedException("UpdateAdminData is not implemented here");
     }
 
     /**
@@ -303,7 +276,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
      */
     @Override
     public void updateAdminChecksum(String filename, String checksum) {
-	throw new NotImplementedException("UpdateAdminChecksum is not implemented here");
+        throw new NotImplementedException("UpdateAdminChecksum is not implemented here");
     }
 
     /**
@@ -365,7 +338,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
     @Override
     public File correct(String replicaId, String checksum, File file, String credentials) throws ArgumentNotValid,
             PermissionDenied {
-       throw new NotImplementedException("correct is not implemented here");
+        throw new NotImplementedException("correct is not implemented here");
     }
 
     /**
@@ -378,12 +351,6 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
      */
     @Override
     public String getChecksum(String replicaId, String filename) throws ArgumentNotValid {
-       throw new NotImplementedException("getChecksum is not implemented here");
+        throw new NotImplementedException("getChecksum is not implemented here");
     }
-    
-    public Bitrepository getBitrepository() {
-    	return this.bitrep;
-    }
-    
-
 }

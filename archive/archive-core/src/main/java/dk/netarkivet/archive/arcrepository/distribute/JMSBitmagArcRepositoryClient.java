@@ -22,16 +22,6 @@
  */
 package dk.netarkivet.archive.arcrepository.distribute;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.Map;
-
-import org.bitrepository.access.getchecksums.conversation.ChecksumsCompletePillarEvent;
-import org.bitrepository.bitrepositoryelements.ChecksumDataForChecksumSpecTYPE;
-import org.bitrepository.bitrepositoryelements.ChecksumDataForFileTYPE;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
@@ -56,20 +46,29 @@ import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import org.apache.commons.io.FileUtils;
+import org.bitrepository.access.getchecksums.conversation.ChecksumsCompletePillarEvent;
+import org.bitrepository.bitrepositoryelements.ChecksumDataForChecksumSpecTYPE;
+import org.bitrepository.bitrepositoryelements.ChecksumDataForFileTYPE;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
 
 /**
- * Client side usage of an arc repository. All requests are forwarded to the ArcRepositoryServer over the network. get
- * and store messages are retried a number of time before giving up, and will timeout after a specified time.
+ * Client side usage of an arc repository. All non-writing requests are forwarded to the ArcRepositoryServer over the network.
+ * Store requests are sent directly to the bitrepository messagebus.
+ *
+ * Get and store messages are retried a number of time before giving up, and will timeout after a specified time.
+ *
  * POC client, where the store is done to a Bitmagrepository, and the rest is done using the distributed netarchivesuite archive.
  */
 public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRepositoryClient, AutoCloseable {
 
-    /** The default place in classpath where the settings file can be found. */
-
-    /* private static String defaultSettingsClasspath = "dk/netarkivet/archive/arcrepository/distribute/JMSArcRepositoryClientSettings.xml";
-     */
-
-    /** the one and only JMSBitmagArcRepositoryClient instance. */
+        /** the one and only JMSBitmagArcRepositoryClient instance. */
     private static JMSBitmagArcRepositoryClient instance;
 
     /** Logging output place. */
@@ -97,27 +96,51 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
     }
 
+    /**
+     * <b>settings.common.arcrepositoryClient.bitrepository.tempdir</b>: <br/>
+     * The setting for where the bitrepository has its temporary directory.
+     */
     private static final String BITREPOSITORY_TEMPDIR = "settings.common.arcrepositoryClient.bitrepository.tempdir";
-
-    private static final String BITREPOSITORY_SETTINGS_DIR = "settings.common.arcrepositoryClient.bitrepository.settingsDir";
-
-    // optional so we don't force the user to use credentials.
-    private static final String BITREPOSITORY_KEYFILENAME = "settings.common.arcrepositoryClient.bitrepository.keyfilename";
-
-    private static final String BITREPOSITORY_STORE_MAX_PILLAR_FAILURES = "settings.common.arcrepositoryClient.bitrepository.storeMaxPillarFailures";
-
-    private static final String BITREPOSITORY_COLLECTIONID =  "settings.common.arcrepositoryClient.bitrepository.collectionID";
-
-    private static final String BITREPOSITORY_USEPILLAR =  "settings.common.arcrepositoryClient.bitrepository.usepillar";
-
+    /**
+     * <b>settings.common.arcrepositoryClient.bitrepository.settingsDir</b>: <br/>
+     * The setting for where the bitrepository settings directory can be found.
+     */
+    private static final String BITREPOSITORY_SETTINGS_DIR =
+            "settings.common.arcrepositoryClient.bitrepository.settingsDir";
+    /**
+     * <b>settings.common.arcrepositoryClient.bitrepository.keyfilename</b>: <br/>
+     * The setting for the name of the keyfile for the bitrepository certificate.
+     * This setting is optional.
+     */
+    private static final String BITREPOSITORY_KEYFILENAME =
+            "settings.common.arcrepositoryClient.bitrepository.keyfilename";
+    /**
+     * <b>settings.common.arcrepositoryClient.bitrepository.storeMaxPillarFailures</b>: <br/>
+     * The setting for how many pillars are allowed to fail during a store/putfile operation.
+     */
+    private static final String BITREPOSITORY_STORE_MAX_PILLAR_FAILURES =
+            "settings.common.arcrepositoryClient.bitrepository.storeMaxPillarFailures";
+    /**
+     * <b>settings.common.arcrepositoryClient.bitrepository.collectionID</b>: <br/>
+     * The setting for which collection ID to use.
+     */
+    private static final String BITREPOSITORY_COLLECTIONID =
+            "settings.common.arcrepositoryClient.bitrepository.collectionID";
+    /**
+     * <b>settings.common.arcrepositoryClient.bitrepository.usepillar</b>: <br/>
+     * The setting for which pillar to use... This is currently not used. Probably intended for the retrieval of files.
+     */
+    private static final String BITREPOSITORY_USEPILLAR =
+            "settings.common.arcrepositoryClient.bitrepository.usepillar";
+    /** The bitrepository collection id for the */
     private String collectionId;
-
+    /** The temporary directory for the bitrepository client.*/
     private File tempdir;
-
+    /** The maximum number of failures for a storage to be accepted.*/
     private int maxStoreFailures;
-
+    /** The bitrepository interface.*/
     private Bitrepository bitrep;
-
+    /** The pillar to use.*/
     private String usepillar;
 
     /**
@@ -126,27 +149,20 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      */
     public static final String ARCREPOSITORY_GET_TIMEOUT = "settings.common.arcrepositoryClient.bitrepository.getTimeout"; // Optional
 
-
     /**
-     * <b>settings.common.arcrepositoryClient.storeRetries</b>: <br>
-     * The setting for the number of times to try sending a store message before failing, including the first attempt.
+     * Initialise the bitrepository client.
+     *
+     * @throws ArgumentNotValid if the bitrepository does not recognize the specified collectionID
+     * @throws IOFailure if the tempdir does not exist and cannot be created
+     * @see #BITREPOSITORY_COLLECTIONID
+     * @see #BITREPOSITORY_TEMPDIR
+     *
      */
-    //public static final String ARCREPOSITORY_STORE_RETRIES = "settings.common.arcrepositoryClient.storeRetries";
-
-    /**
-     * <b>settings.common.arcrepositoryClient.storeTimeout</b>: <br>
-     * the setting for the timeout in milliseconds before retrying when calling {@link ArcRepositoryClient#store(File)}.
-     */
-    //public static final String ARCREPOSITORY_STORE_TIMEOUT = "settings.common.arcrepositoryClient.storeTimeout";
-
-    /** Adds this Synchronizer as listener on a jms connection. */
-    protected JMSBitmagArcRepositoryClient() {
+    private JMSBitmagArcRepositoryClient() {
         //TODO this should only ever be called from the getInstance method. Verify that SettingsFactory actually does
         // and not uses the constructor. If the constructor is used, then the "instance" variable will not have been initialised
         // If the constructor is not used, set it to private to prevent users from using it
 
-        //storeRetries = Settings.getLong(ARCREPOSITORY_STORE_RETRIES);
-        //storeTimeout = Settings.getLong(ARCREPOSITORY_STORE_TIMEOUT);
         timeoutGetOpsMillis = Settings.getLong(ARCREPOSITORY_GET_TIMEOUT);
 
         log.info(
@@ -156,39 +172,39 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         JMSConnectionFactory.getInstance().setListener(replyQ, this);
         log.info("JMSBitmagArcRepositoryClient listens for replies on channel '{}'", replyQ);
 
-    }
+        File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
+        log.info("Getting bitmag config from " + BITREPOSITORY_SETTINGS_DIR + "=" + configDir.getAbsolutePath());
 
-    /**
-     * Initialise the bitrepository client if not already initialised
-     */
-    protected synchronized void initialiseBitrepositoryClient() {
-        if (bitrep == null) {
-            File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
-            log.info("Getting bitmag config from " + BITREPOSITORY_SETTINGS_DIR + "=" + configDir.getAbsolutePath());
-            String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
-            this.collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
-            if (this.collectionId == null || this.collectionId.trim().isEmpty()) {
-                this.collectionId = Settings.get(CommonSettings.ENVIRONMENT_NAME);
-                log.info("No collectionId set so using default value {}", this.collectionId);
-            }
-            this.tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
-            this.maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
-            this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
+        String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
 
-            //TODO check if tempdirs exists afterwards, as this is not a failure
-            tempdir.mkdirs();
+        String collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
+        if (collectionId == null || collectionId.trim().isEmpty()) {
+            collectionId = Settings.get(CommonSettings.ENVIRONMENT_NAME);
+            log.info("No collectionId set so using default value {}", collectionId);
+        }
+        this.collectionId = collectionId;
+
+        int maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
+        String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
+
+        File tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
+        try {
+            FileUtils.forceMkdir(tempdir);
             log.info("Storing tempfiles in folder {}", tempdir);
+        } catch (IOException e) {
+            throw new IOFailure("Failed to create tempdir '" + tempdir + "'", e);
+        }
 
-            // Initialize connection to the bitrepository
-            this.bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
-            if (!bitrep.getKnownCollections().contains(this.collectionId)) {
-                throw new ArgumentNotValid("The bitrepository doesn't know about the collection " + this.collectionId);
-            }
+        // Initialize connection to the bitrepository
+        this.bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
+        if (!bitrep.getKnownCollections().contains(this.collectionId)) {
+            close();
+            throw new ArgumentNotValid("The bitrepository doesn't know about the collection " + this.collectionId);
         }
     }
 
     /**
-     * Get an JMSArcRepositoryClient instance. This is guaranteed to be a singleton.
+     * Get an instance of this class. This is guaranteed to be a singleton.
      *
      * @return an JMSArcRepositoryClient instance.
      */
@@ -201,15 +217,12 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
 
     /** Removes this object as a JMS listener. */
     @Override
-    public void close() {
-        synchronized (JMSBitmagArcRepositoryClient.class) {
-            JMSConnectionFactory.getInstance().removeListener(replyQ, this);
-            if (bitrep != null) {
-                bitrep.shutdown();
-                bitrep = null;
-            }
-            instance = null;
+    public synchronized void close() {
+        JMSConnectionFactory.getInstance().removeListener(replyQ, this);
+        if (bitrep != null) {
+            bitrep.shutdown();
         }
+        instance = null;
     }
 
     /**
@@ -284,8 +297,8 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
 
 
     /**
-     * Sends a StoreMessage via the synchronized JMS connection method sendAndWaitForOneReply(). After a successful
-     * storage operation, both the local copy of the file and the copy on the ftp server are deleted.
+     * Store the file in the bitrepository.
+     * After a successful storage operation, both the local copy of the file and the copy on the ftp server are deleted.
      *
      * @param file A file to be stored. Must exist.
      * @throws IOFailure thrown if store is unsuccessful, or failed to clean up files locally or on the ftp server after
@@ -296,28 +309,15 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         //TODO revisit this method if we want to be able to accept uploads to only a subset of pillars, and have the bitrepo heal itself later
         ArgumentNotValid.checkExistsNormalFile(file, "File '" + file + "' does not exist");
 
-        initialiseBitrepositoryClient();
-
         final String fileId = file.getName();
 
-/*        // Check if fileID already exists in the collection
-        if (bitrep.existsInCollection(fileId, collectionId)) {
-
-            //This method throws IOFailures if the file is not ok
-            checkFileConsistency(file, fileId, bitrep);
-
-            //If we got here without throwing an IOFailure, it means that the file was correctly stored in bitrep
-            log.info("The file '{}' is already in collection '{}'", fileId, collectionId);
-            return;
-
-        } else {  */  //Note we ignore the potential race condition if the file has been uploaded since the above check
         // upload file
 
         //Attempt to upload the file.
         // If not there, this will work
         // If already there, with same checksum, this will work.
         // If already there, with different checksum, this will fail
-        boolean uploadSuccessful = bitrep.uploadFile(file, collectionId);
+        boolean uploadSuccessful = bitrep.uploadFile(file, fileId, collectionId);
         if (!uploadSuccessful) {
             String errMsg =
                     "Upload to collection '" + collectionId + "' of file '" + fileId + "' failed.";
@@ -325,27 +325,29 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         } else {
             //TODO check if this check is actually ever nessesary
             log.info("Upload to collection '{}' of file '{}' reported success, so let's check", collectionId, fileId);
-            checkFileConsistency(file, fileId, bitrep);
+            checkFileConsistency(file, fileId);
             log.info("Upload to collection '{}' of file '{}' was successful", collectionId, fileId);
         }
-        //}
     }
 
-    protected void checkFileConsistency(File file, String fileId, Bitrepository bitrep) {
+    /**
+     * Checks whether the consistency of a file across all pillars after its upload.
+     * @param file The file to have been uploaded.
+     * @param fileId The id of the file.
+     */
+    protected void  checkFileConsistency(File file, String fileId) {
         //get the known checksums for the file in bitrep
         Map<String, ChecksumsCompletePillarEvent> checksumResults =
                 bitrep.getChecksums(fileId, collectionId);
 
         //for each pillar in this collection
-        for (String collectionPillar: bitrep.getCollectionPillars(collectionId) ){
-
+        for (String collectionPillar: BitrepositoryUtils.getCollectionPillars(collectionId) ){
             boolean foundInThisPillar = false;
 
             //Get the checksum result for this pillar for this file
             ChecksumsCompletePillarEvent checksumResult = checksumResults.get(collectionPillar);
 
-            for (ChecksumDataForChecksumSpecTYPE checksum : checksumResult.getChecksums()
-                    .getChecksumDataItems()) {
+            for (ChecksumDataForChecksumSpecTYPE checksum : checksumResult.getChecksums().getChecksumDataItems()) {
 
                 //for each checksum result for this file (there should be none others but...)
                 if (fileId.equals(checksum.getFileID())) {
@@ -374,9 +376,12 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
                 return;
             }
         }
-
     }
 
+    /**
+     * Handle an error situation. Sends a notification, and throws an error.
+     * @param errMsg The message for the error.
+     */
     protected void error(String errMsg) {
         NotificationsFactory.getInstance().notify(errMsg, NotificationType.ERROR);
         throw new IOFailure(errMsg);
