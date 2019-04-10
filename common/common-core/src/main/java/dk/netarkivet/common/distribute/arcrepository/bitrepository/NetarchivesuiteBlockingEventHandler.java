@@ -73,7 +73,7 @@ public class NetarchivesuiteBlockingEventHandler extends BlockingEventHandler {
                 logger.info("Only {} pillar(s) failed, and we accept {}, so the operation is a success.", getFailures().size(), maxFailures);
                 return false;
             } else {
-                logger.error("Less failures than allowed, and less successes than required, but not failures and "
+                logger.error("Fewer failures than allowed, and fewer successes than required, but not failures and "
                         + "successes combined are at least the number of pillars. This should never happen!");
                 return true;
             }
