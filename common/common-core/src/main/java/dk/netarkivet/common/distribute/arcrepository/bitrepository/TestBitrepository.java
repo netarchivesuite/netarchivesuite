@@ -18,14 +18,20 @@ import dk.netarkivet.common.utils.Settings;
 public class TestBitrepository {
 
 	public static void main(String[] args) {
-		//runnerOne();
-		runnerTwo();
+		File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
+		String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
+		int maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
+		String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
+
+		// Initialize connection to the bitrepository
+		Bitrepository bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
+
+
+		testGetFileIDs(bitrep);
+		testGetFile(bitrep);
 	}
-	public static void runnerTwo(){
-		File configDir = new File("/home/svc/devel/bitrepository-quickstart-netarchivesuite/commandline/conf");
-		String bitmagKeyfilename = "dummy-certificate.pem";
-		//Bitrepository bitrep = new Bitrepository(configDir, null, 1, "sbdisk1");
-		Bitrepository bitrep = new Bitrepository(configDir, bitmagKeyfilename, 1, "file1-pillar");
+
+	public static void testGetFile(Bitrepository bitrep){
 		int i=0;
 		for (String col: bitrep.getKnownCollections()) {
 			i++;
@@ -44,14 +50,6 @@ public class TestBitrepository {
 		} else {
 			System.out.println("70-metadata-1.warc NOT found in collection books");
 		}
-		 /*
-		 System.out.println("books-ids:");
-		 for (String id: bitrep.getFileIds("books")) {
-			 System.out.println(id);
-		 }
-		 */
-
-
 
 		bitrep.shutdown();
 	}
@@ -62,10 +60,7 @@ public class TestBitrepository {
 	 checksum2
 	 sbdisk1
 	 */
-	public static void runnerOne(){
-		File configDir = new File("/home/svc/bitmag-releasetest-conf");
-		String bitmagKeyfilename = "client-certificate.pem";
-		Bitrepository bitrep = new Bitrepository(configDir, bitmagKeyfilename, 1, "sbdisk1");
+	public static void testGetFileIDs(Bitrepository bitrep){
 		for (String col: bitrep.getKnownCollections()) {
 			System.out.println(col);
 		}
@@ -84,88 +79,7 @@ public class TestBitrepository {
 			System.out.println(id);
 		}
 
-
-		//bitrep.shutdown();
-		 
-	/*
-		 File configDir = new File("/home/svc/bitrepository-quickstart/commandline/conf");
-		 //File bitmagKeyfile = new File(configDir, "client-certificate.pem");
-		 Bitrepository bitrep = new Bitrepository(configDir, null, 1, "kbpillar-test-linux");
-		 bitrep.shutdown();
-	*/
-		//BitmagArcRepositoryClient client = new BitmagArcRepositoryClient();
-
-
 		bitrep.shutdown();
 
 	}
-
-	public static void runnerThree() {
-		File configDir = new File("/home/svc/bitmag-releasetest-conf");
-		String bitmagKeyfilename = "client-certificate.pem";
-		Bitrepository bitrep = new Bitrepository(configDir, bitmagKeyfilename, 1, "kbpillar-test-linux");
-		bitrep.shutdown();
-	}
-	public static void runnerFour() {
-
-		//File configDir = new File("/home/svc/bitmag-releasetest-conf");
-		//File bitmagKeyfile = new File(configDir, "client-certificate.pem");
-		//Bitrepository bitrep = new Bitrepository(configDir, bitmagKeyfile);
-		//bitrep.shutdown();
-
-		//File configDir = new File("/home/svc/bitrepository-quickstart/commandline/conf");
-		//File bitmagKeyfile = new File(configDir, "client-certificate.pem");
-		//Bitrepository bitrep = new Bitrepository(configDir, null, 1);
-		//bitrep.shutdown();
-
-		File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
-		String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
-		int maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
-		String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
-
-		// Initialize connection to the bitrepository
-		Bitrepository bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
-
-		boolean succes = bitrep.existsInCollection("packageId", "dvds");
-		System.out.println(succes);
-		List<String> pillarList  = BitrepositoryUtils.getCollectionPillars("dvds");
-		for (String id: pillarList) {
-			System.out.println(id);
-		}
-
-		List<String> fileList = bitrep.getFileIds("dvds");
-
-		if (fileList  != null) {
-			System.out.println("Found '" + fileList.size() + "'  ids");
-			for (String id: fileList) {
-				System.out.println(id);
-			}
-		} else {
-			System.out.println("No fileList returned");
-		}
-		bitrep.shutdown();
-
-	}
-
-	public static void runnerFive() {
-
-		//File configDir = new File("/home/svc/bitmag-releasetest-conf");
-		//File bitmagKeyfile = new File(configDir, "client-certificate.pem");
-		//Bitrepository bitrep = new Bitrepository(configDir, bitmagKeyfile);
-		//bitrep.shutdown();
-
-		File configDir = new File("/home/svc/bitrepository-quickstart/commandline/conf");
-		//File bitmagKeyfile = new File(configDir, "client-certificate.pem");
-		Bitrepository bitrep = new Bitrepository(configDir, null, 1, "kbpillar-test-linux");
-		bitrep.shutdown();
-
-
-
-		BitmagArcRepositoryClient client = new BitmagArcRepositoryClient();
-
-
-	}
-
 }
-
-
