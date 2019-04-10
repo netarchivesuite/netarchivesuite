@@ -159,9 +159,13 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      *
      */
     private JMSBitmagArcRepositoryClient() {
-        //TODO this should only ever be called from the getInstance method. Verify that SettingsFactory actually does
-        // and not uses the constructor. If the constructor is used, then the "instance" variable will not have been initialised
-        // If the constructor is not used, set it to private to prevent users from using it
+        synchronized (JMSBitmagArcRepositoryClient.class){
+            if (instance != null){
+                throw new RuntimeException("Attempting to start an additional "+JMSBitmagArcRepositoryClient.class+" instance");
+            } else {
+                instance = this;
+            }
+        }
 
         timeoutGetOpsMillis = Settings.getLong(ARCREPOSITORY_GET_TIMEOUT);
 
@@ -446,7 +450,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     @Override
     public void updateAdminData(String fileName, String replicaId, ReplicaStoreState newval) throws ArgumentNotValid,
             IOFailure {
-        throw new NotImplementedException("updateAdminData is relegated to the bitrepository software");
+        throw new NotImplementedException("updateAdminData is delegated to the bitrepository software");
     }
 
     /**
@@ -454,7 +458,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      */
     @Override
     public void updateAdminChecksum(String filename, String checksum) {
-        throw new NotImplementedException("updateAdminChecksum is relegated to the bitrepository software");
+        throw new NotImplementedException("updateAdminChecksum is delegated to the bitrepository software");
     }
 
     /**
@@ -464,7 +468,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     @Deprecated
     public File removeAndGetFile(String fileName, String bitarchiveId, String checksum, String credentials)
             throws IOFailure, ArgumentNotValid {
-        throw new NotImplementedException("removeAndGetFile is relegated to the bitrepository software");
+        throw new NotImplementedException("removeAndGetFile is delegated to the bitrepository software");
     }
 
     /**
@@ -473,7 +477,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     @Override
     @Deprecated
     public File getAllChecksums(String replicaId) throws IOFailure, ArgumentNotValid {
-        throw new NotImplementedException("getAllChecksums is relegated to the bitrepository software");
+        throw new NotImplementedException("getAllChecksums is delegated to the bitrepository software");
     }
 
     /**
@@ -482,7 +486,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     @Override
     @Deprecated
     public File getAllFilenames(String replicaId) throws ArgumentNotValid, IOFailure {
-        throw new NotImplementedException("getAllFilenames is relegated to the bitrepository software");
+        throw new NotImplementedException("getAllFilenames is delegated to the bitrepository software");
     }
 
     /**
@@ -501,7 +505,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     @Deprecated
     public File correct(String replicaId, String checksum, File file, String credentials) throws IOFailure,
             ArgumentNotValid {
-        throw new NotImplementedException("Correct is relegated to the bitrepository software");
+        throw new NotImplementedException("Correct is delegated to the bitrepository software");
 
     }
 

@@ -94,18 +94,8 @@ public class Bitrepository implements AutoCloseable {
     /** Logging mechanism. */
     private static final Logger logger = LoggerFactory.getLogger(Bitrepository.class);
 
-    /** The archive settings directory needed to upload to
-     * a bitmag style repository */
-    private File settingsDir = null;
-
     /** National bitrepository settings. */
     private final Settings bitmagSettings;
-
-    /** The bitrepository component id. */
-    private final String componentId;
-
-    /** The bitmag security manager.*/
-    private final SecurityManager bitMagSecurityManager;
 
     /** The client for performing the PutFile operation.*/
     private final PutFileClient bitMagPutClient;
@@ -139,14 +129,13 @@ public class Bitrepository implements AutoCloseable {
     public Bitrepository(File configDir, String bitmagKeyFilename, int maxStoreFailures, String usepillar) {
         logger.debug("Initialising bitrepository");
         ArgumentNotValid.checkExistsDirectory(configDir, "File configDir");
-        componentId = BitrepositoryUtils.generateComponentID();
-        logger.info("componentId: {}", componentId);
+
         maxNumberOfFailingPillars = maxStoreFailures;
         this.usepillar = usepillar;
-        this.settingsDir = configDir;
+        /* The archive settings directory needed to upload to a bitmag style repository */
         logger.info("Reading bitrepository settings from {}", configDir.getAbsolutePath());
 
-        /** The authentication key used by the putfileClient. */
+        /* The authentication key used by the putfileClient. */
         File privateKeyFile;
         if (bitmagKeyFilename == null){
         	privateKeyFile = new File(configDir, UUID.randomUUID().toString()); // This file should never exist
@@ -156,10 +145,16 @@ public class Bitrepository implements AutoCloseable {
         logger.info("keyfile: {}", privateKeyFile.getAbsolutePath());
 
         logger.info("Initialising bitrepository settings.");
+
+
+        /* The bitrepository component id. */
+        String componentId = BitrepositoryUtils.generateComponentID();
+        logger.info("componentId: {}", componentId);
+
         SettingsProvider settingsLoader =
                 new SettingsProvider(
                         new XMLFileSettingsLoader(
-                                settingsDir.getAbsolutePath()),
+                                configDir.getAbsolutePath()),
                         componentId);
         bitmagSettings = settingsLoader.getSettings();
         SettingsUtils.initialize(bitmagSettings);
@@ -170,7 +165,8 @@ public class Bitrepository implements AutoCloseable {
         MessageAuthenticator authenticator = new BasicMessageAuthenticator(permissionStore);
         MessageSigner signer = new BasicMessageSigner();
         OperationAuthorizor authorizer = new BasicOperationAuthorizor(permissionStore);
-        bitMagSecurityManager = new BasicSecurityManager(bitmagSettings.getRepositorySettings(),
+        /* The bitmag security manager.*/
+        SecurityManager bitMagSecurityManager = new BasicSecurityManager(bitmagSettings.getRepositorySettings(),
                 privateKeyFile.getAbsolutePath(),
                 authenticator, signer, authorizer, permissionStore,
                 bitmagSettings.getComponentID());
@@ -185,7 +181,6 @@ public class Bitrepository implements AutoCloseable {
         AccessComponentFactory acf = AccessComponentFactory.getInstance();
         bitMagGetClient = acf.createGetFileClient(bitmagSettings, bitMagSecurityManager, componentId);
         bitMagGetFileIDsClient = acf.createGetFileIDsClient(bitmagSettings, bitMagSecurityManager, componentId);
-
         bitMagGetChecksumsClient = acf.createGetChecksumsClient(bitmagSettings, bitMagSecurityManager, componentId);
     }
 
