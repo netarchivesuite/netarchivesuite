@@ -64,7 +64,8 @@ import java.util.Map;
  *
  * Get and store messages are retried a number of time before giving up, and will timeout after a specified time.
  *
- * POC client, where the store is done to a Bitmagrepository, and the rest is done using the distributed netarchivesuite archive.
+ * So called mixed-mode client, where the store is done to a Bitmagrepository, and the rest (access and batch-processing)
+ * is done using the distributed netarchivesuite archive.
  */
 public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRepositoryClient, AutoCloseable {
 
@@ -110,7 +111,8 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     /**
      * <b>settings.common.arcrepositoryClient.bitrepository.keyfilename</b>: <br/>
      * The setting for the name of the keyfile for the bitrepository certificate.
-     * This setting is optional.
+     * This setting is optional. If specified as a relative path, it is evaluated relative to the
+     * bitrepository settinbgs directory.
      */
     private static final String BITREPOSITORY_KEYFILENAME =
             "settings.common.arcrepositoryClient.bitrepository.keyfilename";
@@ -122,7 +124,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             "settings.common.arcrepositoryClient.bitrepository.storeMaxPillarFailures";
     /**
      * <b>settings.common.arcrepositoryClient.bitrepository.collectionID</b>: <br/>
-     * The setting for which collection ID to use.
+     * The setting for which collection ID to use. If unspecified, this falls back to the NetarchiveSuite environment name.
      */
     private static final String BITREPOSITORY_COLLECTIONID =
             "settings.common.arcrepositoryClient.bitrepository.collectionID";
@@ -331,7 +333,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     }
 
     /**
-     * Checks whether the consistency of a file across all pillars after its upload.
+     * Checks the consistency of a file across all pillars after its upload.
      * @param file The file to have been uploaded.
      * @param fileId The id of the file.
      */
