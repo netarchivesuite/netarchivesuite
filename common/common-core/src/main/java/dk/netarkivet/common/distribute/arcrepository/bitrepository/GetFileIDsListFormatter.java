@@ -36,22 +36,22 @@ import org.bitrepository.commandline.resultmodel.FileIDsResult;
  */
 public class GetFileIDsListFormatter implements GetFileIDsOutputFormatter {
 
-	List<String> result = new ArrayList<String>();
+    List<String> result = new ArrayList<String>();
 
-	public GetFileIDsListFormatter(OutputHandler outputHandler) {
-	}
+    public GetFileIDsListFormatter(OutputHandler outputHandler) {
+    }
 
-	@Override
-	public void formatHeader() {
-	}
+    @Override
+    public void formatHeader() {
+    }
 
-	@Override
-	public void formatResult(Collection<FileIDsResult> results) {
-		results.stream()
-				.map(FileIDsResult::getID)
-				.forEachOrdered(result_id -> result.add(result_id));
-	}
-	public List<String> getFoundIds() {
-		return Collections.unmodifiableList(result);
-	}
+    @Override
+    public void formatResult(Collection<FileIDsResult> results) {
+        results.stream()
+                .map(FileIDsResult::getID)
+                .forEachOrdered(result_id -> result.add(result_id));
+    }
+    public List<String> getFoundIds() {
+        return Collections.unmodifiableList(result);
+    }
 }

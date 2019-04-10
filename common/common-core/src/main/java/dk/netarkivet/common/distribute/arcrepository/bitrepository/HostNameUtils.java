@@ -33,38 +33,38 @@ import org.slf4j.LoggerFactory;
  * Provide the hostname of the machine on which the program is running.
  */
 public class HostNameUtils {
-	/** Logging mechanism. */
-	private static Logger logger = LoggerFactory.getLogger(HostNameUtils.class);
+    /** Logging mechanism. */
+    private static Logger logger = LoggerFactory.getLogger(HostNameUtils.class);
 
-	/**
-	 * disallow construction by making this private.
-	 */
-	private HostNameUtils() {
-	}
+    /**
+     * disallow construction by making this private.
+     */
+    private HostNameUtils() {
+    }
 
-	/**
-	 * @return the hostname of the machine as a {@link String}
-	 */
-	public static String getHostName() {
-		try {
-			//Trying to get hostname through InetAddress
-			final InetAddress iAddress = InetAddress.getLocalHost();
-			String hostName = iAddress.getHostName();
+    /**
+     * @return the hostname of the machine as a {@link String}
+     */
+    public static String getHostName() {
+        try {
+            //Trying to get hostname through InetAddress
+            final InetAddress iAddress = InetAddress.getLocalHost();
+            String hostName = iAddress.getHostName();
 
-			//Trying to do better and get Canonical hostname
-			final String canonicalHostName = iAddress.getCanonicalHostName();
+            //Trying to do better and get Canonical hostname
+            final String canonicalHostName = iAddress.getCanonicalHostName();
 
-			if (StringUtils.isNotEmpty(canonicalHostName)) {
-				logger.info("Local hostname (provided  by getCanonicalHostName): {}", canonicalHostName);
-				return canonicalHostName;
-			} else if (StringUtils.isNotEmpty(hostName)) {
-				logger.info("Local hostname (provided  by iAddress): {}", hostName);
-				return hostName;
-			}
+            if (StringUtils.isNotEmpty(canonicalHostName)) {
+                logger.info("Local hostname (provided  by getCanonicalHostName): {}", canonicalHostName);
+                return canonicalHostName;
+            } else if (StringUtils.isNotEmpty(hostName)) {
+                logger.info("Local hostname (provided  by iAddress): {}", hostName);
+                return hostName;
+            }
 
-		} catch (UnknownHostException  e) {
-			logger.info("Failed finding hostname the standard Java way, returning: localhost", e);
-		}
-		return "localhost";
-	}
+        } catch (UnknownHostException  e) {
+            logger.info("Failed finding hostname the standard Java way, returning: localhost", e);
+        }
+        return "localhost";
+    }
 }

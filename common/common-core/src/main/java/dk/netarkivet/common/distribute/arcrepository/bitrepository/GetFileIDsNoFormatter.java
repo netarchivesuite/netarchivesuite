@@ -32,14 +32,14 @@ import org.bitrepository.commandline.resultmodel.FileIDsResult;
  */
 public class GetFileIDsNoFormatter implements GetFileIDsOutputFormatter {
 
-	public GetFileIDsNoFormatter(OutputHandler outputHandler) {
-	}
+    public GetFileIDsNoFormatter(OutputHandler outputHandler) {
+    }
 
-	@Override
-	public void formatHeader() {
-	}
+    @Override
+    public void formatHeader() {
+    }
 
-	@Override
-	public void formatResult(Collection<FileIDsResult> results) {
-	}
+    @Override
+    public void formatResult(Collection<FileIDsResult> results) {
+    }
 }
