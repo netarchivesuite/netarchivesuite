@@ -460,6 +460,8 @@ public final class Constants {
     public static final String ARG_JAR_FOLDER = "J";
     /** Optional definition of a default Heritrix3 bundler zip file. */
     public static final String ARG_DEFAULT_BUNDLER_ZIP = "B";
+    /** Optional definition of a bitmagasin source directory. */
+    public static final String ARG_BITMAG_SOURCE_DIR = "I";
     /** Optional definition of a default Heritrix3 bundler zip file. */
     public static final String ARG_DEFAULT_HERITRIX3_CERTIFICATE = "H";
     /** Encoding to use for source files. */
@@ -531,6 +533,8 @@ public final class Constants {
     public static final String MSG_ERROR_NO_BUNDLER_ZIP_FILE = "Reference to non-existing bundler zip file.";
     public static final String MSG_ERROR_NO_HERITRIX3_CERTIFICATE_FILE = "Reference to non-existing heritrix3 "
             + "certificate file.";
+    /** The error message for missing bitmagasin source directory. */
+    public static final String MSG_ERROR_NO_BITMAG_FOLDER = "Reference to non-existing bitmagasin source directory.";
     /** The error message for wrong deploy-config file extension. */
     public static final String MSG_ERROR_CONFIG_EXTENSION = "Config file must be '.xml'!.\n";
     /** The error message for wrong NetarchiveSuite file extension. */

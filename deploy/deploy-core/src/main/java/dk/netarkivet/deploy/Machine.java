@@ -83,6 +83,8 @@ public abstract class Machine {
     protected File logoFile;
     /** user specific menulogo png file */
     protected File menulogoFile;
+    /** The folder containing bitmagasin configuration. */
+    protected File bitmagasinFolder;
 
     /**
      * A machine is referring to an actual computer at a physical location, which can have independent applications from
@@ -97,12 +99,13 @@ public abstract class Machine {
      * @param archiveDbFileName The name of the archive database file.
      * @param resetDir Whether the temporary directory should be reset.
      * @param externalJarFolder The folder containing the external jar library files.
+     * @param bitmagDir The folder containing the bitmagasin configuration.
      * @throws ArgumentNotValid If one of the following arguments are null: subTreeRoot, parentSettings, param,
      * netarchiveSuiteSource, logProp, securityPolicy.
      */
     public Machine(Element subTreeRoot, XmlStructure parentSettings, Parameters param, String netarchiveSuiteSource,
             File slf4JConfig, File securityPolicy, File dbFileName, File archiveDbFileName,
-            boolean resetDir, File externalJarFolder, File aLogoFile, File aMenulogoFile) throws ArgumentNotValid {
+            boolean resetDir, File externalJarFolder, File aLogoFile, File aMenulogoFile, File bitmagDir) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element subTreeRoot");
         ArgumentNotValid.checkNotNull(parentSettings, "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
@@ -122,6 +125,7 @@ public abstract class Machine {
         jarFolder = externalJarFolder;
         logoFile = aLogoFile;
         menulogoFile = aMenulogoFile;
+        bitmagasinFolder = bitmagDir;
 
         // Retrieve machine encoding
         targetEncoding = machineRoot.attributeValue(Constants.MACHINE_ENCODING_ATTRIBUTE);

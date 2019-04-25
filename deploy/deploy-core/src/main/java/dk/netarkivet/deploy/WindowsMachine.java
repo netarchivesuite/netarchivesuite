@@ -51,12 +51,13 @@ public class WindowsMachine extends Machine {
      * @param arcdbFile The archive database.
      * @param resetDir Whether the temporary directory should be reset.
      * @param externalJarFolder The folder containing the external jar library files.
+     * @param bitmagDir The folder containing the bitmagasin configuration.
      */
     public WindowsMachine(Element root, XmlStructure parentSettings, Parameters param, String netarchiveSuiteSource,
             File slf4JConfig, File securityPolicy, File dbFile, File arcdbFile, boolean resetDir,
-            File externalJarFolder, File logoFile, File menulogoFile) {
+            File externalJarFolder, File logoFile, File menulogoFile, File bitmagDir) {
         super(root, parentSettings, param, netarchiveSuiteSource, slf4JConfig, securityPolicy, dbFile,
-                arcdbFile, resetDir, externalJarFolder, logoFile, menulogoFile);
+                arcdbFile, resetDir, externalJarFolder, logoFile, menulogoFile, bitmagDir);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_WINDOWS;

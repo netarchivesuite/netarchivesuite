@@ -73,7 +73,9 @@ public final class DeployApplication {
     private static File arcDbFile;
     /** The folder with the external libraries to be deployed. */
     private static File externalJarFolder;
-    
+    /** The bitmagasin source directory. */
+    private static File bitmagasinSourceDirectory;
+
     //private static Optional<File> defaultBundlerZip;
     private static File defaultBundlerZip;
     
@@ -151,6 +153,8 @@ public final class DeployApplication {
             String arcDbFileName = ap.getCommandLine().getOptionValue(Constants.ARG_ARC_DB);
             // Retrieves the jar-folder name.
             String jarFolderName = ap.getCommandLine().getOptionValue(Constants.ARG_JAR_FOLDER);
+            // Retrieves the bitmagasin source directory name.
+            String bitmagSourceDir = ap.getCommandLine().getOptionValue(Constants.ARG_BITMAG_SOURCE_DIR);
             // Retrieves the logo filename.
             String logoFilename = ap.getCommandLine().getOptionValue(Constants.ARG_LOGO);
             // Retrieves the menulogo filename.
@@ -195,6 +199,9 @@ public final class DeployApplication {
             // check the external jar-files library folder.
             initJarFolder(jarFolderName);
 
+            // check the bitmagasin source directory.
+            initBitmagSourceDir(bitmagSourceDir);
+
             //initBundlerZip(Optional.ofNullable(
             //        ap.getCommandLine().getOptionValue(Constants.ARG_DEFAULT_BUNDLER_ZIP)));
             initBundlerZip(ap.getCommandLine().getOptionValue(Constants.ARG_DEFAULT_BUNDLER_ZIP));
@@ -205,7 +212,7 @@ public final class DeployApplication {
             // Make the configuration based on the input data
             deployConfig = new DeployConfiguration(deployConfigFile, netarchiveSuiteFile, secPolicyFile,
                     slf4jConfigFile, outputDir, dbFile, arcDbFile, resetDirectory, externalJarFolder, sourceEncoding,
-                    defaultBundlerZip, logoFile, menulogoFile);
+                    defaultBundlerZip, logoFile, menulogoFile, bitmagasinSourceDirectory);
 
             // Write the scripts, directories and everything
             deployConfig.write();
@@ -458,6 +465,25 @@ public final class DeployApplication {
     }
 
     /**
+     * Checks the argument for the bitmagasin source directory.
+     *
+     * @param folderName The path to the folder. Global path.
+     */
+    public static void initBitmagSourceDir(String folderName) {
+        bitmagasinSourceDirectory = null;
+        if (folderName != null && !folderName.isEmpty()) {
+            bitmagasinSourceDirectory = new File(folderName);
+
+            if (!bitmagasinSourceDirectory.isDirectory()) {
+                System.err.print(Constants.MSG_ERROR_NO_BITMAG_FOLDER);
+                System.out.println();
+                System.out.println("Couldn't find directory: " + bitmagasinSourceDirectory.getAbsolutePath());
+                System.exit(1);
+            }
+        }
+    }
+
+    /**
      * Checks if the default bundler zip file exists if defined.
      *
      * @param defaultBundlerZipName The path to the default bundler zip file to use.
@@ -581,6 +607,8 @@ public final class DeployApplication {
             options.addOption(Constants.ARG_ARC_DB, HAS_ARG, "[OPTIONAL] The archive database file");
             options.addOption(Constants.ARG_JAR_FOLDER, HAS_ARG, "[OPTIONAL] Installing the external jar library "
                     + "files within the given folder.");
+            options.addOption(Constants.ARG_BITMAG_SOURCE_DIR, HAS_ARG, "[OPTIONAL] Manage distribution of the "
+                    + "Bitmagasin configuration directory to the harvester machines");
             options.addOption(Constants.ARG_SOURCE_ENCODING, HAS_ARG, "[OPTIONAL] Encoding to use for source files.");
             options.addOption(Constants.ARG_DEFAULT_BUNDLER_ZIP, HAS_ARG, "[OPTIONAL] The bundled harvester to use. "
                     + "If not provided here the bundler needs to be provided in the settings for each (H3) harvester");

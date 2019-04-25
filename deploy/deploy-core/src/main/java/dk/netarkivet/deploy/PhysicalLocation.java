@@ -68,11 +68,13 @@ public class PhysicalLocation {
     private boolean resetDirectory;
     /** The folder for the external jar libraries. */
     private File jarFolder;
+    /** The folder for the bitmagasin configuration. */
+    private File bitmagFolder;
     /** user specific logo png file */
     protected File logoFile;
     /** user specific menulogo png file */
     protected File menulogoFile;
-    
+
     private final DeployConfiguration deployConfiguration;
 
     /**
@@ -164,11 +166,12 @@ public class PhysicalLocation {
             // equals (not case-sensitive) 'windows'. Else linux machine
             if (os != null && os.equalsIgnoreCase(Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE)) {
                 machines.add(new WindowsMachine(e, settings, machineParameters, netarchiveSuiteFileName,
-                        slf4JConfigFile, securityPolicyFile, databaseFile, arcDatabaseFile, resetDirectory, jarFolder, logoFile, menulogoFile));
+                        slf4JConfigFile, securityPolicyFile, databaseFile, arcDatabaseFile, resetDirectory, jarFolder,
+                        logoFile, menulogoFile, bitmagFolder));
             } else {
                 machines.add(new LinuxMachine(e, settings, machineParameters, netarchiveSuiteFileName,
                         slf4JConfigFile, securityPolicyFile, databaseFile, arcDatabaseFile, resetDirectory, jarFolder, logoFile, menulogoFile,
-                        deployConfiguration));
+                        deployConfiguration, bitmagFolder));
             }
         }
     }

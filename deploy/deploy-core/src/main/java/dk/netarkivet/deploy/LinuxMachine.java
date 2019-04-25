@@ -62,13 +62,14 @@ public class LinuxMachine extends Machine {
      * @param logoFile user specific logo png file.
      * @param menulogoFile user specific menulogo png file.
      * @param deployConfiguration The general deployment configuration.
+     * @param bitmagDir The folder containing the bitmagasin confiuration.
      */
     public LinuxMachine(Element subTreeRoot, XmlStructure parentSettings, Parameters param,
             String netarchiveSuiteSource, File slf4JConfig, File securityPolicy, File dbFile,
             File arcdbFile, boolean resetDir, File externalJarFolder, File logoFile, File menulogoFile,
-            DeployConfiguration deployConfiguration) {
+            DeployConfiguration deployConfiguration, File bitmagDir) {
         super(subTreeRoot, parentSettings, param, netarchiveSuiteSource, slf4JConfig, securityPolicy, dbFile,
-                arcdbFile, resetDir, externalJarFolder, logoFile, menulogoFile);
+                arcdbFile, resetDir, externalJarFolder, logoFile, menulogoFile, bitmagDir);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_LINUX;

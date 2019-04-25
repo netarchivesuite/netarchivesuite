@@ -71,6 +71,8 @@ public class DeployConfiguration {
     private File logoFile;
     /** The optional choice for a menulogo png file */
     private File menulogoFile;
+    /** The folder containing the bitmagasin configuration files. */
+    private File bitmagDir;
 
     /**
      * Constructor. Initialise everything.
@@ -101,7 +103,8 @@ public class DeployConfiguration {
             //Optional<File defaultBundlerZip
             File defaultBundlerZip,
             File logoFile,
-            File menulogoFile)
+            File menulogoFile,
+            File bitmagasingSourceDir)
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(deployConfigFileName, "No config file");
         ArgumentNotValid.checkNotNull(netarchiveSuiteFileName, "No installation file");
@@ -116,6 +119,7 @@ public class DeployConfiguration {
         arcDatabaseFileName = arcdbFileName;
         resetDirectory = resetDir;
         jarFolder = externalJarFolder;
+        bitmagDir = bitmagasingSourceDir;
         this.defaultBundlerZip = defaultBundlerZip;
         this.logoFile = logoFile;
         this.menulogoFile = menulogoFile;
@@ -159,8 +163,8 @@ public class DeployConfiguration {
         // get all physical locations into the list
         for (Element elem : physList) {
             physLocs.add(new PhysicalLocation(elem, settings, machineParam, netarchiveSuiteFile.getName(),
-                    slf4jConfigFile, secPolicyFile, databaseFileName, arcDatabaseFileName, resetDirectory, jarFolder, logoFile, menulogoFile,
-                    this));
+                    slf4jConfigFile, secPolicyFile, databaseFileName, arcDatabaseFileName, resetDirectory, jarFolder,
+                    logoFile, menulogoFile,this));
         }
     }
 
