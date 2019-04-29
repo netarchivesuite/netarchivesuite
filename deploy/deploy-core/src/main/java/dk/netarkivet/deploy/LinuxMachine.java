@@ -34,6 +34,7 @@ import java.util.Map.Entry;
 import org.dom4j.Element;
 
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
 
 /**
  * A LinuxMachine is the instance of the abstract machine class, which runs the operating system Linux or another Unix
@@ -1712,5 +1713,21 @@ public class LinuxMachine extends Machine {
         
         return res.toString();
 	}
+
+    protected void copyBitmagClientConfig() {
+        if (bitmagasinFolder == null) {
+            throw new IOFailure("Attempt to copy bitmag client config although specified folder is null");
+        }
+        File targetFolder = new File(machineDirectory, Constants.BITMAG_CLIENT_CONFIG_DIR);
+        FileUtils.createDir(targetFolder);
+        File targetPemFile = new File(targetFolder, Constants.BITMAG_CERTKEY_FILE);
+        for (File sourceFile: bitmagasinFolder.listFiles()) {
+            if (sourceFile.getName().endsWith(".pem")) {
+                FileUtils.copyFile(sourceFile, targetPemFile);
+            } else {
+                FileUtils.copyFile(sourceFile, new File(targetFolder, sourceFile.getName()));
+            }
+        }
+    }
 
 }

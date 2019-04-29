@@ -480,6 +480,7 @@ public final class DeployApplication {
                 System.out.println("Couldn't find directory: " + bitmagasinSourceDirectory.getAbsolutePath());
                 System.exit(1);
             }
+            //TODO sanity check that the directory contains RepositorySettings.xml, ReferenceSettings.xml + exactly one .pem file
         }
     }
 

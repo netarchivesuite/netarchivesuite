@@ -322,6 +322,18 @@ public final class Constants {
      */
     static final String ARCHIVE_DATABASE_BASE_FILE = "archivedb.jar";
 
+    /**
+     * The directory which will contain the bitmag (bitrepository.org) client configuration if the -I setting was
+     * specified on the command line. All files are copied from the directory specified.
+     */
+    static final String BITMAG_CLIENT_CONFIG_DIR = "bitmag_client_config";
+
+    /**
+     * The name of the certkey file to be used for authorisation by the bitmagasin client. There must be a single .pem file
+     * in the source directory which will be copied to this file.
+     */
+    static final String BITMAG_CERTKEY_FILE = "client-certkey.pem";
+
     public static final String ARCHIVE_DATABASE_BASE_DIR = "archivedatabasedir";
     
 

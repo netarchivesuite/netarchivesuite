@@ -218,6 +218,8 @@ public abstract class Machine {
         createJmxRemoteAccessFile(machineDirectory);
         // create the installCreateDir script
         createInstallDirScript(parentDirectory);
+        // copy the bitmag client config
+        copyBitmagClientConfig();
 
         // write the settings for all application at this machine
         for (Application app : applications) {
@@ -665,6 +667,8 @@ public abstract class Machine {
     	
     	return aRes;
     }
+
+    protected abstract void copyBitmagClientConfig();
 
     /**
      * The string for accessing this machine through SSH.
