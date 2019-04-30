@@ -36,7 +36,7 @@ public class TestWindowsMachine extends WindowsMachine {
             String netarchiveSuiteSource, File logProp, File slf4JConfig, File securityPolicy, File dbFile,
             File arcdbFile, boolean resetDir, File externalJarFolder) {
         super(root, parentSettings, param, netarchiveSuiteSource, slf4JConfig, securityPolicy, dbFile,
-                arcdbFile, resetDir, externalJarFolder, null, null);
+                arcdbFile, resetDir, externalJarFolder, null, null, null);
     }
 
     /**

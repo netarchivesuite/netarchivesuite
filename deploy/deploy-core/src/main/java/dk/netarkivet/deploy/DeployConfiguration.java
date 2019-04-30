@@ -164,7 +164,7 @@ public class DeployConfiguration {
         for (Element elem : physList) {
             physLocs.add(new PhysicalLocation(elem, settings, machineParam, netarchiveSuiteFile.getName(),
                     slf4jConfigFile, secPolicyFile, databaseFileName, arcDatabaseFileName, resetDirectory, jarFolder,
-                    logoFile, menulogoFile,this));
+                    logoFile, menulogoFile, bitmagDir, this));
         }
     }
 

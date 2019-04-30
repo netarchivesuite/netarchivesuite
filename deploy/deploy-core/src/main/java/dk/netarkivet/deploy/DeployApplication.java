@@ -23,6 +23,7 @@
 package dk.netarkivet.deploy;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
@@ -33,6 +34,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.commons.io.filefilter.FileFileFilter;
 
 import dk.netarkivet.common.utils.Settings;
 
@@ -465,9 +467,13 @@ public final class DeployApplication {
     }
 
     /**
-     * Checks the argument for the bitmagasin source directory.
+     * Checks the argument for the bitmagasin source directory. Specifically, if specified, the folder must
+     *  - be a directory
+     *  - contain RepositorySettings.xml and ReferenceSettings.xml files
+     *  - contain exactly one .pem file, assumed to be the client certkey
+     *  No other validation is carried out (e.g. of the file formats)
      *
-     * @param folderName The path to the folder. Global path.
+     * @param folderName The path to the folder.
      */
     public static void initBitmagSourceDir(String folderName) {
         bitmagasinSourceDirectory = null;
@@ -480,7 +486,21 @@ public final class DeployApplication {
                 System.out.println("Couldn't find directory: " + bitmagasinSourceDirectory.getAbsolutePath());
                 System.exit(1);
             }
-            //TODO sanity check that the directory contains RepositorySettings.xml, ReferenceSettings.xml + exactly one .pem file
+            if (!(new File(bitmagasinSourceDirectory, "RepositorySettings.xml")).exists()) {
+                System.err.println("Bitmag client directory " + bitmagasinSourceDirectory.getAbsolutePath() + ""
+                        + " does not contain a RepositorySettings.xml file.");
+                System.exit(1);
+            }
+            if (!(new File(bitmagasinSourceDirectory, "ReferenceSettings.xml")).exists()) {
+                System.err.println("Bitmag client directory " + bitmagasinSourceDirectory.getAbsolutePath() + ""
+                        + " does not contain a RepositorySettings.xml file.");
+                System.exit(1);
+            }
+            int pemFiles = bitmagasinSourceDirectory.list((dir, name) -> name.endsWith(".pem")).length;
+            if (!(pemFiles == 1)) {
+                System.err.println("No unique client certkey (.pem file) found in " + bitmagasinSourceDirectory.getAbsolutePath());
+                System.exit(1);
+            }
         }
     }
 

@@ -68,7 +68,7 @@ public class PhysicalLocation {
     private boolean resetDirectory;
     /** The folder for the external jar libraries. */
     private File jarFolder;
-    /** The folder for the bitmagasin configuration. */
+    /** The folder for the source of the bitmagasin configuration. */
     private File bitmagFolder;
     /** user specific logo png file */
     protected File logoFile;
@@ -95,7 +95,7 @@ public class PhysicalLocation {
      */
     public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, Parameters param,
             String netarchiveSuiteSource, File slf4JConfig, File securityPolicy, File dbFile,
-            File arcdbFile, boolean resetDir, File externalJarFolder, File aLogoFile, File aMenulogoFile, DeployConfiguration deployConfiguration) throws ArgumentNotValid {
+            File arcdbFile, boolean resetDir, File externalJarFolder, File aLogoFile, File aMenulogoFile, File bitmagFolder, DeployConfiguration deployConfiguration) throws ArgumentNotValid {
         // test if valid arguments
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element elem (physLocRoot)");
         ArgumentNotValid.checkNotNull(parentSettings, "XmlStructure parentSettings");
@@ -117,7 +117,9 @@ public class PhysicalLocation {
         jarFolder = externalJarFolder;
         logoFile = aLogoFile;
         menulogoFile = aMenulogoFile;
+        this.bitmagFolder = bitmagFolder;
         this.deployConfiguration = deployConfiguration;
+
 
         // retrieve the specific settings for this instance
         Element tmpSet = physLocRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
