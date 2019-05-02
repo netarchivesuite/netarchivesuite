@@ -390,19 +390,19 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
         }
     }
 
-    /**
-     * Updates the order.xml to include a MatchesListRegExpDecideRule for each crawlertrap associated with for the given
-     * DomainConfiguration.
-     * <p>
-     * The added nodes have the form
-     * <p>
-     * <newObject name="domain.dk" class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule"> <string
-     * name="decision">REJECT</string> <string name="list-logic">OR</string> <stringList name="regexp-list">
-     * <string>theFirstRegexp</string> <string>theSecondRegexp</string> </stringList> </newObject>
-     *
-     * @param cfg The DomainConfiguration for which to generate crawler trap deciderules
-     * @throws IllegalState If unable to update order.xml due to wrong order.xml format
-     */
+//    /**
+//     * Updates the order.xml to include a MatchesListRegExpDecideRule for each crawlertrap associated with for the given
+//     * DomainConfiguration.
+//     * <p>
+//     * The added nodes have the form
+//     * <p>
+//     * <newObject name="domain.dk" class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule"> <string
+//     * name="decision">REJECT</string> <string name="list-logic">OR</string> <stringList name="regexp-list">
+//     * <string>theFirstRegexp</string> <string>theSecondRegexp</string> </stringList> </newObject>
+//     *
+//     * @param cfg The DomainConfiguration for which to generate crawler trap deciderules
+//     * @throws IllegalState If unable to update order.xml due to wrong order.xml format
+//     */
     // FIXME REMOVE IF NOT USED
     /*
     public static void editOrderXMLAddPerDomainCrawlerTraps(Document orderXmlDoc, DomainConfiguration cfg) {
@@ -919,4 +919,10 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
 		
 	}
 
+    @Override
+    public void insertUmbrabean(String jobName, String rabbitMQUrl, String limitSearchRegEx)
+    {
+        //NOP
+        log.debug("In H1 templates we don't do umbra search.");
+    }
 }

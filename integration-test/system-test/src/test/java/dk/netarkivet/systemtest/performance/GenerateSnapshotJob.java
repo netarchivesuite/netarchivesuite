@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import dk.netarkivet.systemtest.SeleniumSession;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import org.apache.commons.lang.RandomStringUtils;
@@ -68,7 +69,9 @@ class GenerateSnapshotJob extends GenericWebJob {
                 activationForm = form;
             }
         }
+        ((SeleniumSession) driver).setJavascriptEnabled(true);
         activationForm.findElement(By.linkText("Activate")).click();
+        ((SeleniumSession) driver).setJavascriptEnabled(false);
     }
 
     /**

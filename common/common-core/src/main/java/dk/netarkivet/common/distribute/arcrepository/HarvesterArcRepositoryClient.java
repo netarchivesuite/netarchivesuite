@@ -31,7 +31,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Implements the Facade pattern to shield off the methods in JMSArcRepositoryClient not to be used by the harvest
  * system.
  */
-public interface HarvesterArcRepositoryClient {
+public interface HarvesterArcRepositoryClient extends AutoCloseable{
 
     /**
      * Call on shutdown to release external resources.

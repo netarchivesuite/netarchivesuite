@@ -46,6 +46,7 @@ import org.testng.annotations.Test;
 import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.HarvestUtils;
 import dk.netarkivet.systemtest.NASAssert;
+import dk.netarkivet.systemtest.SeleniumSession;
 import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
@@ -206,8 +207,14 @@ public class SelectiveHarvestTest extends AbstractSystemTest {
         driver.findElement(By.name("harvestname")).sendKeys(harvestName);
         driver.findElement(By.name("snapshot_byte_limit")).clear();
         driver.findElement(By.name("snapshot_byte_limit")).sendKeys("1000000");
-        driver.findElement(By.name("snapshot_byte_limit")).submit();
-        driver.findElement(By.cssSelector("input[value=\""+harvestName+"\"]")).submit();
+        //driver.findElement(By.name("snapshot_byte_limit")).submit();
+        driver.findElement(By.name("snapshot_byte_limit")).click();
+        //The following click activates the harvest.
+        ((SeleniumSession) driver).setJavascriptEnabled(true);
+        //driver.findElement(By.cssSelector("input[value=\""+harvestName+"\"] + a")).click();
+        driver.findElement(By.cssSelector("input[type=\"submit\"]")).submit();
+        driver.findElement(By.cssSelector("input[value=\""+harvestName+"\"] + a")).click();
+        ((SeleniumSession) driver).setJavascriptEnabled(false);
         //HarvestUtils.waitForJobGeneration(harvestName);
         HarvestUtils.waitForJobGeneration(harvestName, this.getTestController());
         PageHelper.gotoPage(PageHelper.MenuPages.AllJobs);

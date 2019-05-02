@@ -168,6 +168,8 @@ crawlLimiter.maxTimeSeconds=%{MAX_TIME_SECONDS_PLACEHOLDER}
 
 %{ARCHIVE_FILE_PREFIX_PLACEHOLDER}
 
+%{UMBRA_SIMPLEOVERRIDES_PLACEHOLDER}
+
    </value>
   </property>
  </bean>
@@ -389,6 +391,10 @@ crawlLimiter.maxTimeSeconds=%{MAX_TIME_SECONDS_PLACEHOLDER}
  <bean id="extractorSwf" class="org.archive.modules.extractor.ExtractorSWF">
  </bean> 
 
+  %{UMBRA_PUBLISH_BEAN_PLACEHOLDER}
+
+  %{UMBRA_RECEIVE_BEAN_PLACEHOLDER}
+
 
  <!-- assembled into ordered FetchChain bean  -->
 
@@ -417,6 +423,9 @@ crawlLimiter.maxTimeSeconds=%{MAX_TIME_SECONDS_PLACEHOLDER}
     <ref bean="extractorJs"/>
     <!-- ...extract oulinks from Flash content... -->
     <ref bean="extractorSwf"/>
+
+     %{UMBRA_BEAN_REF_PLACEHOLDER}
+
    </list>
   </property>
  </bean>

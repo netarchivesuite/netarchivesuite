@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.frontier.HostnameQueueAssignmentPolicy;
 import org.archive.modules.CrawlURI;
 import org.archive.net.UURIFactory;
+import org.archive.url.UsableURI;
 
 import dk.netarkivet.common.utils.DomainUtils;
 
@@ -75,10 +76,12 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
      * If that fails, or if the uri is a dns entry, we use the "old" logic which is
      * to take the key from the superclass (in the form host#port or just host) and extract
      * a domain-name from that. If all that fails, we fall back to a default value,
-     *
      * In practice this means that dns-lookups for non-seed uris each get their own
      * queue, which is then never used again. This seems like a good idea because the
-     * frontier needs to be able to prioritise dns lookups.
+     * frontier needs to be able to prioritise dns lookups.  However it turns out _not_ to
+     * be a good idea after all as heritrix doesn't like the dns url's being on a separate
+     * queue. So we have a setting "treatDnsLikeHttp" which results in dns queries being queued
+     * according to their seed, just like every other uri.
      *
      * @param cauri The crawl URI from which to find the key.
      * @return the key value
@@ -92,11 +95,12 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
         if (key == null) {
             key = getKeyFromUriHostname(cauri);
         }
-        if (key != null) {
-            return key;
-        } else {
-            return DEFAULT_CLASS_KEY;
+        if (key == null) {
+            key = DEFAULT_CLASS_KEY;
         }
+        //TODO: The following line should, ideally, be added back in based on a setting.
+        //cauri.getAnnotations().add("Queue:" + key);
+        return key;
     }
 
     private boolean isDns(CrawlURI cauri) {
@@ -135,10 +139,14 @@ public class SeedUriDomainnameQueueAssignmentPolicy extends HostnameQueueAssignm
      */
     private String getKeyFromSeed(CrawlURI cauri) {
         String key = null;
+        String seed = cauri.getSourceTag();
+        if (!UsableURI.hasScheme(seed)) {
+            seed = "http://" + seed;
+        }
         try {
-            key = DomainUtils.domainNameFromHostname(UURIFactory.getInstance(cauri.getSourceTag()).getHost());
+            key = DomainUtils.domainNameFromHostname(UURIFactory.getInstance(seed).getHost());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.debug("Could not extract a domain key from seed '" + seed + "'");
         }
         return key;
     }

@@ -39,6 +39,7 @@ import org.archive.wayback.core.Resource;
 import org.archive.wayback.exception.ResourceNotAvailableException;
 import org.archive.wayback.resourcestore.resourcefile.ArcResource;
 
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
@@ -90,8 +91,17 @@ public class NetarchiveResourceStore implements ResourceStore {
         logger.info("Received request for resource from file '" + filename + "' at offset '" + offset + "'");
         BitarchiveRecord bitarchiveRecord = client.get(filename, offset);
         if (bitarchiveRecord == null) {
-            throw new ResourceNotAvailableException("NetarchiveResourceStore: "
-                    + "Bitarchive didn't return the requested record.");
+            logger.warn(client.getClass() + " instance returned null. Connection may have been closed. Trying to refresh instance.");
+            client.close();
+            client = ArcRepositoryClientFactory.getViewerInstance();
+            bitarchiveRecord = client.get(filename, offset);
+            if (bitarchiveRecord != null) {
+                logger.info("Success! Reconnecting " + client.getClass() + " worked.");
+            }
+            if (bitarchiveRecord == null) {
+                throw new ResourceNotAvailableException("NetarchiveResourceStore: "
+                        + "Bitarchive didn't return the requested record.");
+            }
         }
         logger.info("Retrieved resource from file '" + filename + "' at offset '" + offset + "'");
 
@@ -151,6 +161,7 @@ public class NetarchiveResourceStore implements ResourceStore {
      */
     public void shutdown() throws IOException {
         // Close JMS connection.
+        logger.info("Closing JMSConnection for " + this.getClass());
         client.close();
     }
 }

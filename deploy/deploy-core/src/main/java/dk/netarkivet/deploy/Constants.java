@@ -249,7 +249,8 @@ public final class Constants {
     /** The maximum integer value in a character. */
     public static final int TEST_OFFSET_INTEGER_MAXIMUM_VALUE = 9;
     /** Directories to install under baseFileDir. */
-    public static final String[] BASEFILEDIR_SUBDIRECTORIES = {dk.netarkivet.archive.Constants.FILE_DIRECTORY_NAME,
+    public static final String[] BASEFILEDIR_SUBDIRECTORIES = {
+    	    dk.netarkivet.archive.Constants.FILE_DIRECTORY_NAME,// This works only for the default setup
             dk.netarkivet.archive.Constants.TEMPORARY_DIRECTORY_NAME,
             dk.netarkivet.archive.Constants.ATTIC_DIRECTORY_NAME};
     /**

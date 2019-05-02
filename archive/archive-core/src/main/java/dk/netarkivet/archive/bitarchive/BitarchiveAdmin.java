@@ -2,7 +2,7 @@
  * #%L
  * Netarchivesuite - archive
  * %%
- * Copyright (C) 2005 - 2018 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library,
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -79,6 +80,13 @@ public final class BitarchiveAdmin {
     /** Are readOnly Directories allowed. */
     private final boolean readOnlyAllowed;
 
+    /** The name of the directory containing the files (replacement for the Constants.FILE_DIRECTORY_NAME) */
+    private final String fileDirectoryName;
+
+    /** readonly mode */
+    private final boolean readOnlyMode;
+
+
     /**
      * Creates a new BitarchiveAdmin object for an existing bit archive. Reads the directories to use from settings.
      *
@@ -94,6 +102,8 @@ public final class BitarchiveAdmin {
 
         log.info("readOnlyAllowed is: {}", readOnlyAllowed);
 
+        fileDirectoryName = Settings.get(ArchiveSettings.FILE_DIRECTORY_NAME);
+        readOnlyMode = Settings.getBoolean(ArchiveSettings.READONLY_ARCHIVE_MODE);
         // Check, if value of minSpaceLeft is greater than zero
         if (minSpaceLeft <= 0L) {
             log.warn("Wrong setting of minSpaceLeft read from Settings: {}", minSpaceLeft);
@@ -102,7 +112,7 @@ public final class BitarchiveAdmin {
 
         minSpaceRequired = Settings.getLong(ArchiveSettings.BITARCHIVE_MIN_SPACE_REQUIRED);
         // Check, if value of minSpaceRequired is at least zero
-        if (minSpaceLeft < 0L) {
+        if (minSpaceRequired < 0L) {
             log.warn("Wrong setting of minSpaceRequired read from Settings: {}", minSpaceLeft);
             throw new ArgumentNotValid("Wrong setting of minSpaceRequired read from Settings: " + minSpaceLeft);
         }
@@ -114,8 +124,11 @@ public final class BitarchiveAdmin {
             for (String filedirname : filedirnames) {
                 File basedir = new File(filedirname).getCanonicalFile();
                 File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
-                // Ensure that 'filedir' exists. If it doesn't, it is created
-                ApplicationUtils.dirMustExist(filedir);
+                // Ensure that 'filedir' exists or allow it to be a softlink and hope that an external
+                // process creates it when needed.
+                if (!Files.isSymbolicLink(filedir.toPath())) {
+                    ApplicationUtils.dirMustExist(filedir);
+                }
 
                 File tempdir = new File(basedir, Constants.TEMPORARY_DIRECTORY_NAME);
                 // Ensure that 'tempdir' exists. If it doesn't, it is created
@@ -133,7 +146,7 @@ public final class BitarchiveAdmin {
                 final Long bytesUsedInDir = calculateBytesUsed(basedir);
                 log.info(
                         "Using bit archive directorys {'{}', '{}', '{}'} under base directory: '{}' with {} bytes of content and {} bytes free. Current number of files archived: {}",
-                        Constants.FILE_DIRECTORY_NAME, Constants.TEMPORARY_DIRECTORY_NAME,
+                        fileDirectoryName, Constants.TEMPORARY_DIRECTORY_NAME,
                         Constants.ATTIC_DIRECTORY_NAME, basedir, bytesUsedInDir, FileUtils.getBytesFree(basedir),
                         archivedFiles.get(basedir).size());
             }
@@ -148,7 +161,7 @@ public final class BitarchiveAdmin {
      */
     public synchronized void verifyFilelistUpToDate() {
         for (File basedir : archivedFiles.keySet()) {
-            File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
+            File filedir = new File(basedir, fileDirectoryName);
             long lastModified = filedir.lastModified();
             if (archiveTime.get(basedir) < lastModified) {
                 // Update the list and the time.
@@ -162,7 +175,8 @@ public final class BitarchiveAdmin {
      *
      * @param basedir The basedir to update the filelist for.
      * @throws ArgumentNotValid If basedir is null or if it not a proper directory.
-     * @throws UnknownID If the basedir cannot be found both the archivedFiles map or the archiveTime map.
+     * @throws UnknownID If the basedir cannot be found both the archivedFiles map or the archiveTime map, or if the
+     * file-directory under basedir is not either a writable directory or a symbolic link
      * @throws IOFailure If it is not possible to retrieve the canonical file for the basedir.
      */
     public void updateFileList(File basedir) throws ArgumentNotValid, UnknownID, IOFailure {
@@ -182,8 +196,12 @@ public final class BitarchiveAdmin {
         }
 
         log.debug("Updating the filelist for '{}'.", basedir);
-        File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
-        if (!checkArchiveDir(filedir)) {
+        File filedir = new File(basedir, fileDirectoryName);
+        if (Files.isSymbolicLink(filedir.toPath()) && !Files.isDirectory(filedir.toPath()) ) {
+            log.warn("The 'directory' " + filedir.getAbsolutePath() + " is a symbolic link that appears to be unresolved. "
+                    + "Proceeding cautiously.");
+            return;
+        } else if (!checkArchiveDir(filedir)) {
             throw new UnknownID("The directory '" + filedir + "' is not an " + " archive directory.");
         }
 
@@ -331,7 +349,7 @@ public final class BitarchiveAdmin {
     }
 
     /**
-     * Check that the given file is a directory appropriate for use. A File is appropiate to use as archivedir, if the
+     * Check that the given file is a directory appropriate for use. A File is appropriate to use as archivedir, if the
      * file is an existing directory, and is writable by this java process.
      *
      * @param file A file
@@ -371,7 +389,7 @@ public final class BitarchiveAdmin {
         verifyFilelistUpToDate();
         List<File> files = new ArrayList<File>();
         for (File archivePath : archivedFiles.keySet()) {
-            File archiveDir = new File(archivePath, Constants.FILE_DIRECTORY_NAME);
+            File archiveDir = new File(archivePath, fileDirectoryName);
             if (checkArchiveDir(archiveDir)) {
                 List<String> filesHere = archivedFiles.get(archivePath);
                 for (String filename : filesHere) {
@@ -396,7 +414,7 @@ public final class BitarchiveAdmin {
         verifyFilelistUpToDate();
         List<File> files = new ArrayList<File>();
         for (File archivePath : archivedFiles.keySet()) {
-            File archiveDir = new File(archivePath, Constants.FILE_DIRECTORY_NAME);
+            File archiveDir = new File(archivePath, fileDirectoryName);
             if (checkArchiveDir(archiveDir)) {
                 for (String filename : archivedFiles.get(archivePath)) {
                     if (regexp.matcher(filename).matches()) {
@@ -418,7 +436,7 @@ public final class BitarchiveAdmin {
         ArgumentNotValid.checkNotNullOrEmpty(arcFileName, "arcFileName");
         verifyFilelistUpToDate();
         for (File archivePath : archivedFiles.keySet()) {
-            File archiveDir = new File(archivePath, Constants.FILE_DIRECTORY_NAME);
+            File archiveDir = new File(archivePath, fileDirectoryName);
             if (checkArchiveDir(archiveDir)) {
                 File archiveFile = new File(archiveDir, arcFileName);
                 if (archiveFile.exists()) {
@@ -439,7 +457,7 @@ public final class BitarchiveAdmin {
      */
     private long calculateBytesUsed(File filedir) {
         long used = 0;
-        File[] files = new File(filedir, Constants.FILE_DIRECTORY_NAME).listFiles();
+        File[] files = new File(filedir, fileDirectoryName).listFiles();
         // Check, that listFiles method returns valid information
         if (files != null) {
             for (File datafiles : files) {
@@ -451,7 +469,7 @@ public final class BitarchiveAdmin {
                 }
             }
         } else {
-            log.warn("filedir does not contain a directory named: {}", Constants.FILE_DIRECTORY_NAME);
+            log.warn("filedir does not contain a directory named: {}", fileDirectoryName);
         }
         File[] tempfiles = new File(filedir, Constants.TEMPORARY_DIRECTORY_NAME).listFiles();
         // Check, that listFiles() method returns valid information
@@ -529,6 +547,10 @@ public final class BitarchiveAdmin {
         File atticdir = new File(parentDir, Constants.ATTIC_DIRECTORY_NAME);
         ApplicationUtils.dirMustExist(atticdir);
         return new File(atticdir, arcFileName);
+    }
+
+    public boolean isReadonlyMode(){
+    	return readOnlyMode;
     }
 
 }

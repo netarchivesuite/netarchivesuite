@@ -26,14 +26,13 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import dk.netarkivet.systemtest.NASAssert;
-import dk.netarkivet.systemtest.environment.TestGUIController;
+import dk.netarkivet.systemtest.SeleniumTest;
+import dk.netarkivet.systemtest.environment.testGUIController;
 import dk.netarkivet.systemtest.environment.TestEnvironment;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
@@ -62,12 +61,14 @@ public class DatabaseMigrationSanityTest extends AbstractStressTest {
      */
     @Test(groups = {"performancetest"})
     public void dbMigrationSanityTest() throws Exception {
-        WebDriver driver = new FirefoxDriver();
-        TestGUIController TestGUIController = new TestGUIController(testController);
+        //WebDriver driver = new FirefoxDriver();
+        testGUIController testGUIController = new testGUIController(testController);
+        SeleniumTest.testGUIController = testGUIController;
+        initialiseSelenium();
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        String baseUrl = testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
+        String baseUrl = "http://" + testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        TestGUIController.waitForGUIToStart(60);
+        testGUIController.waitForGUIToStart(60);
         addFixture("Opening NAS front page.");
         PageHelper.gotoPage(PageHelper.MenuPages.AliasSummary.Frontpage);
         addStep("Ingest some domains", "The domains should be created.");

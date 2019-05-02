@@ -348,7 +348,7 @@ public class HarvesterSettings {
      * Default value is: 1
      */
 	public static String SCHEDULER_SUBMITTED_JOBS_IN_QUEUE_LIMIT = "settings.harvester.scheduler.submittedJobsInQueueLimit";
-	
+
     /**
      * <b>settings.harvester.harvesting.frontier.frontierReportWaitTime</b>:<br>
      * Time interval in seconds to wait between two requests to generate a full frontier report. Default value is 600

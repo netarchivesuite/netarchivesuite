@@ -113,7 +113,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
 
     /**
      * The server creates an instance of the bitarchive it provides access to and starts to listen to JMS messages on
-     * the incomming jms queue
+     * the incoming jms queue
      * <p>
      * Also, heartbeats are sent out at regular intervals to the Bitarchive Monitor, to tell that this bitarchive is
      * alive.
@@ -144,11 +144,15 @@ public class BitarchiveServer extends ArchiveMessageHandler implements CleanupIF
         con = JMSConnectionFactory.getInstance();
         con.setListener(allBa, this);
         baa = BitarchiveAdmin.getInstance();
-        if (baa.hasEnoughSpace()) {
+        if (baa.hasEnoughSpace() && !baa.isReadonlyMode()) {
             con.setListener(anyBa, this);
             listening = true;
         } else {
-            log.warn("Not enough space to guarantee store -- not listening to {}", anyBa.getName());
+        	if (baa.isReadonlyMode()) {
+        		log.info("Bitarchiveserver set to readonly mode -- not listening to {}", anyBa.getName());
+        	} else {
+        		log.warn("Not enough space to guarantee store -- not listening to {}", anyBa.getName());
+        	}
         }
 
         // create map for batchjobs

@@ -32,9 +32,10 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * Implements the Facade pattern to shield off the methods in JMSArcRepositoryClient not to be used by the bit
  * preservation system.
  */
-public interface ViewerArcRepositoryClient {
+public interface ViewerArcRepositoryClient extends AutoCloseable{
 
     /** Call on shutdown to release external resources. */
+    @Override
     void close();
 
     /**

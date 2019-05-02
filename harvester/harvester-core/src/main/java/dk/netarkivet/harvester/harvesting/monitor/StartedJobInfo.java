@@ -414,6 +414,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         case CRAWLER_ACTIVE:
         case CRAWLER_PAUSING:
         case CRAWLER_PAUSED:
+        case CRAWLER_EMPTY:
             // Update statistics for the crawl
             double discoveredCount = jobInfo.getDiscoveredFilesCount();
             double downloadedCount = jobInfo.getDownloadedFilesCount();
