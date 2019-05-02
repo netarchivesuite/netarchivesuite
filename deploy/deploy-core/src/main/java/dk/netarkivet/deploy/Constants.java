@@ -332,7 +332,7 @@ public final class Constants {
      * The name of the certkey file to be used for authorisation by the bitmagasin client. There must be a single .pem file
      * in the source directory which will be copied to this file.
      */
-    static final String BITMAG_CERTKEY_FILE = "client-certkey.pem";
+    static final String BITMAG_CERTKEY_FILE = "client.pem";
 
     public static final String ARCHIVE_DATABASE_BASE_DIR = "archivedatabasedir";
     
@@ -594,7 +594,10 @@ public final class Constants {
      * The warning when the NetarchiveSuite file will be overridden, since another file with same name exists.
      */
     public static final String MSG_WARN_ZIPFILE_ALREADY_EXISTS = "Warning: A NetarchiveSuite file already exists. It will be overridden. ";
-    
+    public static final String REPOSITORY_SETTINGS_XML = "RepositorySettings.xml";
+    public static final String PEM = ".pem";
+    public static final String HARVEST_CONTROLLER_APPLICATION = "HarvestControllerApplication";
+
     /**
      * Private constructor to avoid instantiation.
      */

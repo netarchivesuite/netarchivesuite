@@ -63,8 +63,9 @@ public class WindowsMachine extends Machine {
         scriptExtension = Constants.SCRIPT_EXTENSION_WINDOWS;
     }
 
-    @Override protected void copyBitmagClientConfig() {
-        //null implementation. We do not upload from Windows machines.
+    @Override
+    protected void copyBitmagClientConfig() {
+        //null implementation. We do not upload from Windows machines so do not need a bitmag client config.
     }
 
     /**

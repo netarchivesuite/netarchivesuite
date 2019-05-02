@@ -120,7 +120,6 @@ public class PhysicalLocation {
         this.bitmagFolder = bitmagFolder;
         this.deployConfiguration = deployConfiguration;
 
-
         // retrieve the specific settings for this instance
         Element tmpSet = physLocRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
         // Generate the specific settings by combining the general settings

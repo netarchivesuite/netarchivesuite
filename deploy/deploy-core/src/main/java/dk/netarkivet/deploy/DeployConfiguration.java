@@ -104,7 +104,7 @@ public class DeployConfiguration {
             File defaultBundlerZip,
             File logoFile,
             File menulogoFile,
-            File bitmagasingSourceDir)
+            File bitmagSourceDir)
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(deployConfigFileName, "No config file");
         ArgumentNotValid.checkNotNull(netarchiveSuiteFileName, "No installation file");
@@ -119,7 +119,7 @@ public class DeployConfiguration {
         arcDatabaseFileName = arcdbFileName;
         resetDirectory = resetDir;
         jarFolder = externalJarFolder;
-        bitmagDir = bitmagasingSourceDir;
+        bitmagDir = bitmagSourceDir;
         this.defaultBundlerZip = defaultBundlerZip;
         this.logoFile = logoFile;
         this.menulogoFile = menulogoFile;

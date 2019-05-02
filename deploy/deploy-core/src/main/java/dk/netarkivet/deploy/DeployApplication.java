@@ -486,17 +486,17 @@ public final class DeployApplication {
                 System.out.println("Couldn't find directory: " + bitmagasinSourceDirectory.getAbsolutePath());
                 System.exit(1);
             }
-            if (!(new File(bitmagasinSourceDirectory, "RepositorySettings.xml")).exists()) {
-                System.err.println("Bitmag client directory " + bitmagasinSourceDirectory.getAbsolutePath() + ""
+            if (!(new File(bitmagasinSourceDirectory, Constants.REPOSITORY_SETTINGS_XML)).exists()) {
+                System.err.println("Bitmag client directory " + bitmagasinSourceDirectory.getAbsolutePath()
                         + " does not contain a RepositorySettings.xml file.");
                 System.exit(1);
             }
             if (!(new File(bitmagasinSourceDirectory, "ReferenceSettings.xml")).exists()) {
-                System.err.println("Bitmag client directory " + bitmagasinSourceDirectory.getAbsolutePath() + ""
+                System.err.println("Bitmag client directory " + bitmagasinSourceDirectory.getAbsolutePath()
                         + " does not contain a RepositorySettings.xml file.");
                 System.exit(1);
             }
-            int pemFiles = bitmagasinSourceDirectory.list((dir, name) -> name.endsWith(".pem")).length;
+            int pemFiles = bitmagasinSourceDirectory.list((dir, name) -> name.endsWith(Constants.PEM)).length;
             if (!(pemFiles == 1)) {
                 System.err.println("No unique client certkey (.pem file) found in " + bitmagasinSourceDirectory.getAbsolutePath());
                 System.exit(1);

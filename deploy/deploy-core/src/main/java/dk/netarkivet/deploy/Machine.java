@@ -99,7 +99,8 @@ public abstract class Machine {
      * @param archiveDbFileName The name of the archive database file.
      * @param resetDir Whether the temporary directory should be reset.
      * @param externalJarFolder The folder containing the external jar library files.
-     * @param bitmagDir The folder containing the bitmagasin configuration.
+     * @param bitmagDir The folder containing the bitmagasin configuration. May be null if not installation does not
+     * involve use of bitmag.
      * @throws ArgumentNotValid If one of the following arguments are null: subTreeRoot, parentSettings, param,
      * netarchiveSuiteSource, logProp, securityPolicy.
      */
@@ -668,6 +669,11 @@ public abstract class Machine {
     	return aRes;
     }
 
+    /**
+     * Copies the directory containing the client configuration for connecting to bitmag into the "conf" directory
+     * for the installation on this machine. This only needs to be done for machine with HarvestControllerApplications
+     * and hence only needs a non-trivial implementation for Linux machines.
+     */
     protected abstract void copyBitmagClientConfig();
 
     /**

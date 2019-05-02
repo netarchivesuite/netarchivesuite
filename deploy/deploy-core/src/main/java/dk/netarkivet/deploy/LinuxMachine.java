@@ -44,7 +44,7 @@ public class LinuxMachine extends Machine {
 
 	public static final String HERITRIX_1_CLASSNAME = "org.archive.crawler.Heritrix";
 
-	protected LinkedHashMap<String, String> bundles = new LinkedHashMap<>();
+    protected LinkedHashMap<String, String> bundles = new LinkedHashMap<>();
 	protected LinkedHashMap<String, String> certificates = new LinkedHashMap<String, String>();
 
 	/**
@@ -63,7 +63,7 @@ public class LinuxMachine extends Machine {
      * @param logoFile user specific logo png file.
      * @param menulogoFile user specific menulogo png file.
      * @param deployConfiguration The general deployment configuration.
-     * @param bitmagDir The folder containing the bitmagasin confiuration.
+     * @param bitmagDir The folder containing the bitmagasin configuration.
      */
     public LinuxMachine(Element subTreeRoot, XmlStructure parentSettings, Parameters param,
             String netarchiveSuiteSource, File slf4JConfig, File securityPolicy, File dbFile,
@@ -588,13 +588,14 @@ public class LinuxMachine extends Machine {
                                 + getConfDirPath() + Constants.SECURITY_POLICY_FILE_NAME;
                     }
                     String bitmagOptions = "";
-                    if (app.getTotalName().contains("HarvestControllerApplication") &&  bitmagasinFolder != null) {
+                    if (app.getTotalName().contains(Constants.HARVEST_CONTROLLER_APPLICATION) &&  bitmagasinFolder != null) {
                         bitmagOptions = Constants.SPACE
                                 + Constants.DASH
                                 + ScriptConstants.OPTION_BITMAG_SETTINGS_DIR
                                 + getConfDirPath()
                                 + Constants.BITMAG_CLIENT_CONFIG_DIR
                                 + Constants.SPACE
+                                + Constants.DASH
                                 + ScriptConstants.OPTION_BITMAG_CERTKEY_FILENAME
                                 + Constants.BITMAG_CERTKEY_FILE
                                 + Constants.SPACE;
@@ -1727,6 +1728,7 @@ public class LinuxMachine extends Machine {
         return res.toString();
 	}
 
+	@Override
     protected void copyBitmagClientConfig() {
         if (bitmagasinFolder == null) {
             return;
