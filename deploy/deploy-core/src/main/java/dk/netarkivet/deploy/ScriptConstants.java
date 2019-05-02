@@ -65,10 +65,10 @@ public final class ScriptConstants {
     /** Djava.security.policy=\"\". */
     static final String OPTION_SECURITY_POLICY_WIN = OPTION_SECURITY_POLICY + "\"\"";
     /** Setting for directory with bitrepository client configuration */
-    static final String OPTION_BITMAG_SETTINGS_DIR = "Ddk.netarkivet.settings.common.arcrepositoryClient.bitrepository.settingsDir=";
+    static final String OPTION_BITMAG_SETTINGS_DIR = "Dsettings.common.arcrepositoryClient.bitrepository.settingsDir=";
     /** Setting with the name of the certkey .pem file to use to authenticate with the bitmagasin. The file must be in the
      * client settingsDir */
-    static final String OPTION_BITMAG_CERTKEY_FILENAME = "Ddk.netarkivet.settings.common.arcrepositoryClient.bitrepository.keyfilename=";
+    static final String OPTION_BITMAG_CERTKEY_FILENAME = "Dsettings.common.arcrepositoryClient.bitrepository.keyfilename=";
 
     /**
      * Array of classpaths for libraries used to access the database. Currently: lib/db/derbynet.jar and
