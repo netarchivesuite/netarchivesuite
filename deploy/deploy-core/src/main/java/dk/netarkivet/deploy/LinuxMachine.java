@@ -555,7 +555,6 @@ public class LinuxMachine extends Machine {
             }
             File appStartScript = new File(directory, Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification()
                     + scriptExtension);
-
             try {
                 // make print writer for writing to file
                 PrintWriter appPrint = new PrintWriter(appStartScript, getTargetEncoding());
@@ -588,7 +587,7 @@ public class LinuxMachine extends Machine {
                                 + getConfDirPath() + Constants.SECURITY_POLICY_FILE_NAME;
                     }
                     String bitmagOptions = "";
-                    if (app.getTotalName().contains(Constants.HARVEST_CONTROLLER_APPLICATION) &&  bitmagasinFolder != null) {
+                    //if (app.getTotalName().contains(Constants.HARVEST_CONTROLLER_APPLICATION) &&  bitmagasinFolder != null) {
                         bitmagOptions = Constants.SPACE
                                 + Constants.DASH
                                 + ScriptConstants.OPTION_BITMAG_SETTINGS_DIR
@@ -599,7 +598,7 @@ public class LinuxMachine extends Machine {
                                 + ScriptConstants.OPTION_BITMAG_CERTKEY_FILENAME
                                 + Constants.BITMAG_CERTKEY_FILE
                                 + Constants.SPACE;
-                    }
+                    //}
                     appPrint.println(ScriptConstants.MULTI_SPACE_4
                             + ScriptConstants.JAVA
                             + Constants.SPACE
