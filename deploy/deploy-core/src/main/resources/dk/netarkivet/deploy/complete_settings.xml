@@ -19,6 +19,9 @@
             <!-- The maximum time for handling a GetChecksumMessage. -->
             <singleChecksumTimeout>600000</singleChecksumTimeout>
             <thisCredentials>examplecredentials</thisCredentials>
+            <fileDirectoryName>filedir</fileDirectoryName>
+            <readonlyArchiveMode>false</readonlyArchiveMode>
+
             <readOnlyAllowed>false</readOnlyAllowed>
         </bitarchive>
         <checksum>
