@@ -101,6 +101,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 // FIXME:  Rework raw threads in tests into something controllable by an executor.
 
 @SuppressWarnings({"rawtypes", "unused", "serial"})
+@Ignore
 public class JMSArcRepositoryClientTester {
 
     private static final File BASEDIR = new File("tests/dk/netarkivet/archive/arcrepository/distribute/data");
