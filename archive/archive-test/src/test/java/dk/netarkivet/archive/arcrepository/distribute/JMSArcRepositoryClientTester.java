@@ -168,7 +168,7 @@ public class JMSArcRepositoryClientTester {
      * Tests the correct object is returned when getPreservationInstance is called.
      */
     @Test
-    @Ignore
+//    @Ignore
     public void testGetPreservationInstance() {
         PreservationArcRepositoryClient arcrep = ArcRepositoryClientFactory.getPreservationInstance();
         assertTrue("Must return an instance of PreservationArcRepositoryClient," + " not " + arcrep.getClass(),
@@ -177,7 +177,7 @@ public class JMSArcRepositoryClientTester {
 
     /** Tests the correct object is returned when getViewerInstance is called. */
     @Test
-    @Ignore
+//    @Ignore
     public void testGetViewerInstance() {
         arcrepos = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getViewerInstance();
         assertTrue("Must return an instance of ViewerArcRepositoryClient",
@@ -313,7 +313,7 @@ public class JMSArcRepositoryClientTester {
      * @throws IOException if we cant create new file
      */
     @Test
-    @Ignore
+//    @Ignore
     public void testStoreMessageNotOK() throws IOException {
         DummyStoreMessageReplyServer replyServer = new DummyStoreMessageReplyServer();
         PreservationArcRepositoryClient arc = ArcRepositoryClientFactory.getPreservationInstance();
@@ -339,7 +339,7 @@ public class JMSArcRepositoryClientTester {
      * @throws InterruptedException if ...
      */
     @Test
-    @Ignore
+//    @Ignore
     public void testStoreDelete() throws InterruptedException {
         // Set a listener on PRES
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, "tests/commontempdir");
@@ -623,7 +623,7 @@ public class JMSArcRepositoryClientTester {
      * Check whether it handles a get all checksums call correctly.
      */
     @Test
-    @Ignore
+//    @Ignore
     public void testAllChecksums() throws InterruptedException, IOException, NoSuchFieldException,
             IllegalArgumentException, IllegalAccessException {
         final File result = new File(WORKING, "all.checksum");
@@ -679,7 +679,7 @@ public class JMSArcRepositoryClientTester {
      * Check whether it handles a get all filenames call correctly.
      */
     @Test
-    @Ignore
+//    @Ignore
     public void testAllFilenames() throws InterruptedException, IOException, NoSuchFieldException,
             IllegalArgumentException, IllegalAccessException {
         final File result = new File(WORKING, "all.filename");
@@ -778,7 +778,7 @@ public class JMSArcRepositoryClientTester {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void testCorrect() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException,
             IllegalAccessException {
         final File result = new File(WORKING, "correct.file");
