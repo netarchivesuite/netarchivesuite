@@ -101,7 +101,6 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 // FIXME:  Rework raw threads in tests into something controllable by an executor.
 
 @SuppressWarnings({"rawtypes", "unused", "serial"})
-@Ignore
 public class JMSArcRepositoryClientTester {
 
     private static final File BASEDIR = new File("tests/dk/netarkivet/archive/arcrepository/distribute/data");
@@ -169,6 +168,7 @@ public class JMSArcRepositoryClientTester {
      * Tests the correct object is returned when getPreservationInstance is called.
      */
     @Test
+    @Ignore
     public void testGetPreservationInstance() {
         PreservationArcRepositoryClient arcrep = ArcRepositoryClientFactory.getPreservationInstance();
         assertTrue("Must return an instance of PreservationArcRepositoryClient," + " not " + arcrep.getClass(),
@@ -177,6 +177,7 @@ public class JMSArcRepositoryClientTester {
 
     /** Tests the correct object is returned when getViewerInstance is called. */
     @Test
+    @Ignore
     public void testGetViewerInstance() {
         arcrepos = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getViewerInstance();
         assertTrue("Must return an instance of ViewerArcRepositoryClient",
@@ -312,6 +313,7 @@ public class JMSArcRepositoryClientTester {
      * @throws IOException if we cant create new file
      */
     @Test
+    @Ignore
     public void testStoreMessageNotOK() throws IOException {
         DummyStoreMessageReplyServer replyServer = new DummyStoreMessageReplyServer();
         PreservationArcRepositoryClient arc = ArcRepositoryClientFactory.getPreservationInstance();
@@ -337,6 +339,7 @@ public class JMSArcRepositoryClientTester {
      * @throws InterruptedException if ...
      */
     @Test
+    @Ignore
     public void testStoreDelete() throws InterruptedException {
         // Set a listener on PRES
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, "tests/commontempdir");
@@ -515,6 +518,7 @@ public class JMSArcRepositoryClientTester {
      * @throws IllegalAccessException if access denied
      */
     @Test
+    @Ignore
     public void testStoreException() throws NoSuchFieldException, IllegalAccessException {
         // Smashing the replyQ makes the inside of the store loop throw
         // an exception that should be caught.
@@ -619,6 +623,7 @@ public class JMSArcRepositoryClientTester {
      * Check whether it handles a get all checksums call correctly.
      */
     @Test
+    @Ignore
     public void testAllChecksums() throws InterruptedException, IOException, NoSuchFieldException,
             IllegalArgumentException, IllegalAccessException {
         final File result = new File(WORKING, "all.checksum");
@@ -674,6 +679,7 @@ public class JMSArcRepositoryClientTester {
      * Check whether it handles a get all filenames call correctly.
      */
     @Test
+    @Ignore
     public void testAllFilenames() throws InterruptedException, IOException, NoSuchFieldException,
             IllegalArgumentException, IllegalAccessException {
         final File result = new File(WORKING, "all.filename");
@@ -772,6 +778,7 @@ public class JMSArcRepositoryClientTester {
     }
 
     @Test
+    @Ignore
     public void testCorrect() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException,
             IllegalAccessException {
         final File result = new File(WORKING, "correct.file");
