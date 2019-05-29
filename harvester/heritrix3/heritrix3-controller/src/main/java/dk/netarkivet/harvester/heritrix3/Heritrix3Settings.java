@@ -50,7 +50,10 @@ public class Heritrix3Settings {
      */
     public static String UMBRA_HOPS_SHOULD_PROCESS = "settings.harvester.harvesting.umbra.hopsShouldProcess";
 
-
+    /**
+     * Path to a script to be executed before heritrix is started for every umbra enabled job.
+     */
+    public static String UMBRA_PRESTART_SCRIPT = "settings.harvester.harvesting.umbra.startupHook";
 
     /*
      * The static initialiser is called when the class is loaded. It will add default values for all settings defined in

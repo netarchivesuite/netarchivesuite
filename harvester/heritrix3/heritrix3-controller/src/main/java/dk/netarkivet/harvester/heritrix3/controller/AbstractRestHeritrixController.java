@@ -2,19 +2,19 @@
  * #%L
  * Netarchivesuite - harvester
  * %%
- * Copyright (C) 2005 - 2018 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library,
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -23,6 +23,7 @@
 package dk.netarkivet.harvester.heritrix3.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.concurrent.Semaphore;
 
@@ -39,6 +40,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.harvester.heritrix3.BlockingCommandLauncher;
 import dk.netarkivet.harvester.heritrix3.Heritrix3Files;
 import dk.netarkivet.harvester.heritrix3.Heritrix3Settings;
 
@@ -57,16 +59,16 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
     protected CommandLauncher h3launcher;
     protected LaunchResultHandlerAbstract h3handler;
     protected PrintWriter outputPrinter;
-    protected PrintWriter errorPrinter; 
+    protected PrintWriter errorPrinter;
     protected File heritrixBaseDir;
-    
+
     /** The host name for this machine that matches what Heritrix uses in its MBean names. */
     private final String hostName;
 
     /** The port to use for Heritrix GUI, as set in settings.xml. */
     private final int guiPort = Settings.getInt(Heritrix3Settings.HERITRIX_GUI_PORT);
 
-   /**
+    /**
      * Create a AbstractRestHeritrixController  object.
      *
      * @param files Files that are used to set up Heritrix.
@@ -75,7 +77,11 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
         ArgumentNotValid.checkNotNull(files, "Heritrix3Files files");
         this.files = files;
         SystemUtils.checkPortNotUsed(guiPort);
-        
+
+        if (Settings.getBoolean(Heritrix3Settings.UMBRA_IS_ENABLED)) {
+            executeUmbraStartHook();
+        }
+
         hostName = SystemUtils.getLocalHostName();
         try {
             log.info("Starting Heritrix for {} in crawldir {}", this, files.getCrawlDir());
@@ -83,10 +89,10 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
 
             heritrixBaseDir = files.getHeritrixBaseDir();
             if (!heritrixBaseDir.isDirectory()) {
-            	heritrixBaseDir.mkdirs();
+                heritrixBaseDir.mkdirs();
             }
             if (!heritrixBaseDir.isDirectory()) {
-            	throw new IOFailure("Unable to create heritrixbasedir: " + heritrixBaseDir.getAbsolutePath() );
+                throw new IOFailure("Unable to create heritrixbasedir: " + heritrixBaseDir.getAbsolutePath() );
             }
 
             log.debug("Unzipping heritrix into the crawldir");
@@ -98,9 +104,9 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             }
 
             /** The bin/heritrix script should read the following environment-variables:
-             * 
+             *
              * JAVA_HOME Point at a JDK install to use  
-             * 
+             *
              * HERITRIX_HOME    Pointer to your heritrix install.  If not present, we 
              *                  make an educated guess based of position relative to this
              *                  script.
@@ -124,8 +130,8 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
                     "-s",
                     "h3server.jks,h3server,h3server"
             };
-            log.info("Starting Heritrix3 with the following arguments:{} ", 
-            		StringUtils.conjoin(" ", cmd));
+            log.info("Starting Heritrix3 with the following arguments:{} ",
+                    StringUtils.conjoin(" ", cmd));
             h3launcher = CommandLauncher.getInstance();
             h3launcher.init(heritrixBaseDir, cmd);
             h3launcher.env.put("FOREGROUND", "true");
@@ -133,7 +139,7 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             String javaOpts = "";
             String jvmOptsStr = Settings.get(Heritrix3Settings.HERITRIX_JVM_OPTS);
             if ((jvmOptsStr != null) && (!jvmOptsStr.isEmpty())) {
-            	javaOpts = " " + jvmOptsStr;
+                javaOpts = " " + jvmOptsStr;
             }
             String javaOptsValue = "-Xmx" + Settings.get(Heritrix3Settings.HERITRIX_HEAP_SIZE) + " " + javaOpts + " " +  getSettingsProperty();
             h3launcher.env.put("JAVA_OPTS", javaOptsValue);
@@ -141,7 +147,7 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             String heritrixOutValue = files.getHeritrixOutput().getAbsolutePath();
             h3launcher.env.put("HERITRIX_OUT", heritrixOutValue);
             log.info(".. and setting HERITRIX_OUT to '{}'", heritrixOutValue);
-            
+
             outputPrinter = new PrintWriter(files.getHeritrixStdoutLog(), "UTF-8");
             errorPrinter = new PrintWriter(files.getHeritrixStderrLog(), "UTF-8");
             log.info(".. and setting output from heritrix3 to '{}', and errors to '{}'", files.getHeritrixStdoutLog(),files.getHeritrixStderrLog() );
@@ -150,80 +156,116 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             Runtime.getRuntime().addShutdownHook(new HeritrixKiller());
             log.info("Heritrix3 engine launched successfully");
         } catch( Throwable e) {
-        	String errMsg = "Unexpected error while launching H3: ";
-        	log.debug(errMsg, e);
-        	throw new IOFailure(errMsg, e);
+            String errMsg = "Unexpected error while launching H3: ";
+            log.debug(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
-    
+
+    private void executeUmbraStartHook() {
+        String umbraScript = Settings.get(Heritrix3Settings.UMBRA_PRESTART_SCRIPT);
+        log.info("Executing umbra hook script {}", umbraScript);
+        BlockingCommandLauncher scriptLauncher = new BlockingCommandLauncher(new File(System.getProperty("user.dir")), umbraScript.trim().split("\\s+"));
+        try {
+            scriptLauncher.start(new LaunchResultHandlerAbstract() {
+                @Override public void exitValue(int exitValue) {
+                    if (exitValue == 0) {
+                        log.info("Umbra hook {} ended with exit value {}", umbraScript, exitValue);
+                    } else {
+                        log.error("Umbra hook {} ended with exit value {}", umbraScript, exitValue);
+                    }
+                }
+
+                @Override public void output(String line) {
+                     log.info("Output from {}: {}", umbraScript, line);
+                }
+
+                @Override public void closeOutput() {
+                     log.info("Finished reading standard out from umbra hook {}", umbraScript);
+                }
+
+                @Override public void error(String line) {
+                    log.warn("Error output from {}: {}", umbraScript, line);
+                }
+
+                @Override public void closeError() {
+                    log.info("Finished reading standard err from umbra hook {}", umbraScript);
+                }
+            });
+        } catch (IOException e) {
+            log.error("Exception executing umbra hook script {}.", umbraScript, e);
+        }
+
+    }
+
     /**
      * Implementation of a LaunchResultHandler for Heritrix3. 
      *
      */
     public static class LaunchResultHandler implements LaunchResultHandlerAbstract {
-    	protected Semaphore semaphore = new Semaphore(-2);
+        protected Semaphore semaphore = new Semaphore(-2);
         protected PrintWriter outputPrinter;
         protected PrintWriter errorPrinter;
-    	public LaunchResultHandler(PrintWriter outputPrinter, PrintWriter errorPrinter) {
-    		this.outputPrinter = outputPrinter;
-    		this.errorPrinter = errorPrinter;
-    	}
-    	@Override
-    	public void exitValue(int exitValue) {
-    		semaphore.release();
-        	if (exitValue != 0) {
-        	    log.error("Heritrix3 engine shutdown failed. ExitValue =  {}", exitValue);
-        	} else {
-        	    log.info("Heritrix3 engine shutdown was successful. ExitValue =  {}", exitValue);
-        	}
-   	    }
-    	@Override
-    	public void output(String line) {
-    		outputPrinter.println(line);
-    	}
-    	@Override
-    	public void closeOutput() {
-    		outputPrinter.close();
-    		semaphore.release();
-    	}
-    	@Override
-    	public void error(String line) {
-    		errorPrinter.println(line);
-    	}
-    	@Override
-    	public void closeError() {
-    		errorPrinter.close();
-    		semaphore.release();
-    	}
+        public LaunchResultHandler(PrintWriter outputPrinter, PrintWriter errorPrinter) {
+            this.outputPrinter = outputPrinter;
+            this.errorPrinter = errorPrinter;
+        }
+        @Override
+        public void exitValue(int exitValue) {
+            semaphore.release();
+            if (exitValue != 0) {
+                log.error("Heritrix3 engine shutdown failed. ExitValue =  {}", exitValue);
+            } else {
+                log.info("Heritrix3 engine shutdown was successful. ExitValue =  {}", exitValue);
+            }
+        }
+        @Override
+        public void output(String line) {
+            outputPrinter.println(line);
+        }
+        @Override
+        public void closeOutput() {
+            outputPrinter.close();
+            semaphore.release();
+        }
+        @Override
+        public void error(String line) {
+            errorPrinter.println(line);
+        }
+        @Override
+        public void closeError() {
+            errorPrinter.close();
+            semaphore.release();
+        }
     }
 
     /**
      * @return the Settingsproperty for heritrix3
      */
     private static String getSettingsProperty() {
-    	StringBuilder settingProperty = new StringBuilder();
-    	for (File file : Settings.getSettingsFiles()) {
-    		settingProperty.append(File.pathSeparator);
-    		String absolutePath = file.getAbsolutePath();
-    		// check that the settings files not only exist but
-    		// are readable
-    		boolean readable = new File(absolutePath).canRead();
-    		if (!readable) {
-    			final String errMsg = "The file '" + absolutePath
-    					+ "' is missing. ";
-    			log.warn(errMsg);
-    			throw new IOFailure("Failed to read file '" + absolutePath
-    					+ "'");
-    		}
-    		settingProperty.append(absolutePath);
-    	}
-    	if (settingProperty.length() > 0) {
-    		// delete last path-separator
-    		settingProperty.deleteCharAt(0);
-    	}
-    	return "-Ddk.netarkivet.settings.file=" + settingProperty;
+        StringBuilder settingProperty = new StringBuilder();
+        for (File file : Settings.getSettingsFiles()) {
+            settingProperty.append(File.pathSeparator);
+            String absolutePath = file.getAbsolutePath();
+            // check that the settings files not only exist but
+            // are readable
+            boolean readable = new File(absolutePath).canRead();
+            if (!readable) {
+                final String errMsg = "The file '" + absolutePath
+                        + "' is missing. ";
+                log.warn(errMsg);
+                throw new IOFailure("Failed to read file '" + absolutePath
+                        + "'");
+            }
+            settingProperty.append(absolutePath);
+        }
+        if (settingProperty.length() > 0) {
+            // delete last path-separator
+            settingProperty.deleteCharAt(0);
+        }
+        return "-Ddk.netarkivet.settings.file=" + settingProperty;
     }
-    
+
     /**
      * @return the HTTP port used by the Heritrix3 GUI.
      */
@@ -270,8 +312,8 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
      */
     @Override
     public String toString() {
-            return "job " + files.getJobID() + " of harvest " + files.getHarvestID() 
-            		+ " in " + files.getCrawlDir();
+        return "job " + files.getJobID() + " of harvest " + files.getHarvestID()
+                + " in " + files.getCrawlDir();
     }
 
     /**
