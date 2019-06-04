@@ -174,7 +174,10 @@ public class BitarchiveServerTester {
         ChannelID arcReposQ = Channels.getTheRepos();
         ChannelID anyBa = Channels.getAnyBa();
         JMSConnectionMockupMQ conn = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
-
+        //TODO make this a removeAllListeners(...) method in JMSConnectionMockupMQ
+        for (MessageListener listener: conn.getListeners(arcReposQ)) {
+            conn.removeListener(arcReposQ, listener);
+        }
         GenericMessageListener listener = new GenericMessageListener();
         conn.setListener(arcReposQ, listener);
 

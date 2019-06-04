@@ -19,4 +19,12 @@
     <module>common-test</module>
   </modules>
 
+  <dependencies>
+  <dependency>
+    <groupId>org.netpreserve</groupId>
+    <artifactId>logtrix</artifactId>
+    <version>0.1.0</version>
+  </dependency>
+  </dependencies>
+
 </project>
