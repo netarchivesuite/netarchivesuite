@@ -74,4 +74,11 @@ public interface TestEnvironment {
      */
     public String getH3Zip();
 
+    /**
+     * The path to the directory containing the bitmag client configuration
+     * @return
+     */
+    public String getBitmagConf();
+
+
 }

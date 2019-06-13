@@ -51,4 +51,5 @@ public class DefaultTestEnvironment implements TestEnvironment {
         return System.getProperty("systemtest.h3zip");
     }
 
+    @Override public String getBitmagConf() {return System.getProperty("systemtest.bitmagconf");}
 }

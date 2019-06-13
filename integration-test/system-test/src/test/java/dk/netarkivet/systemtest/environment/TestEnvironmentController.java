@@ -227,6 +227,7 @@ public class TestEnvironmentController {
             String setDeployConfCommand = "true";
             String setTimestampCommand = "true";
             String setH3zipCommand = "true";
+            String bitmagconfCommand = "true";
             if (ENV.getTimestamp() != null) {
                 setTimestampCommand = "export VERSION=" + ENV.getTimestamp();
             }
@@ -236,6 +237,9 @@ public class TestEnvironmentController {
             if (ENV.getH3Zip() != null) {
                 setH3zipCommand = "export H3ZIP=" + ENV.getH3Zip();
             }
+            if (ENV.getBitmagConf() != null) {
+                bitmagconfCommand = "export BITMAGCONF=" + ENV.getBitmagConf();
+            }
             String setPortCommand = "export PORT=" + ENV.getGuiPort();
             String setMailReceiversCommand = "export MAILRECEIVERS=" + ENV.getMailreceivers();
             String setTestCommand = "export TESTX=" + ENV.getTESTX();
@@ -243,6 +247,7 @@ public class TestEnvironmentController {
 
             environmentSetup = setPathCommand + ";" + setTimestampCommand + ";" + setPortCommand + ";"
                     + setMailReceiversCommand + ";" + setTestCommand + ";" + setDeployConfCommand + ";"
+                    + bitmagconfCommand + ";"
                     + setH3zipCommand + ";";
             this.command = command;
             this.quotes = quotes;
