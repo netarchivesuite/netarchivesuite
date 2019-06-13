@@ -50,7 +50,11 @@ public class SystemOverviewTest extends AbstractSystemTest {
     public void generalTest() throws Exception {
         addDescription("Test specification: http://netarchive.dk/suite/It23JMXMailCheck");
         Set<Application> expectedApplicationSet = new HashSet<Application>(Arrays.asList(NASSystemUtil
-                .getApplications()));
+                .getStdApplications()));
+        if (getTestController().ENV.getBitmagConf() != null ) {
+            expectedApplicationSet = new HashSet<Application>(Arrays.asList(NASSystemUtil
+                            .getBitmagApplications()));
+        }
         int numberOfApps = expectedApplicationSet.size();
         int MAX_SECONDS_TO_WAIT = 120;
         int WAIT_INTERVAL = 10;

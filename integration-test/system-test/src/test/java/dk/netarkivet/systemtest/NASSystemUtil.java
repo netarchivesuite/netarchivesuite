@@ -27,9 +27,9 @@ public class NASSystemUtil {
     }
 
     /**
-     * Defines the standard application setup in the DK test system.
+     * Defines the standard application setup in the DK test system using the standard JMS ArcRepository
      */
-    public static Application[] getApplications() {
+    public static Application[] getStdApplications() {
         return new Application[] {
                 new Application("KB-test-bar-01", "BitarchiveApplication", null, null, "KBN"),
                 new Application("KB-TEST-BAR-016", "BitarchiveApplication", "BitApp_1", null, "KBN"),
@@ -54,4 +54,33 @@ public class NASSystemUtil {
                 new Application("kb-test-har-005", "HarvestControllerApplication", "kbumbra_2", "UMBRA", "KBN")
         };
     }
+
+    /**
+     * Defines the application setup in the DK test system when using JMSBitmagArcRepositoryClient .
+     */
+    public static Application[] getBitmagApplications() {
+        return new Application[] {
+                new Application("KB-test-bar-01", "BitarchiveApplication", null, null, "KBN"),
+                new Application("KB-TEST-BAR-016", "BitarchiveApplication", "BitApp_1", null, "KBN"),
+                new Application("KB-TEST-BAR-016", "BitarchiveApplication", "BitApp_2", null, "KBN"),
+                new Application("KB-TEST-BAR-016", "BitarchiveApplication", "BitApp_3", null, "KBN"),
+                new Application("kb-test-acs-001", "IndexServerApplication", null, null, "KBN"),
+                new Application("kb-test-acs-001", "ViewerProxyApplication", null, null, "KBN"),
+                new Application("kb-test-adm-001", "ArcRepositoryApplication", null, null, "KBN"),
+                new Application("kb-test-adm-001", "BitarchiveMonitorApplication", "KBBM", null, "KBN"),
+                new Application("kb-test-adm-001", "BitarchiveMonitorApplication", "SBBM", null, "SBN"),
+                new Application("kb-test-adm-001", "HarvestJobManagerApplication", null, null, "KBN"),
+                new Application("kb-test-adm-001", "GUIApplication", null, null, "KBN"),
+                new Application("kb-test-har-003", "HarvestControllerApplication", "kblow001_h3", "LOWPRIORITY", "KBN"),
+                new Application("kb-test-har-004", "HarvestControllerApplication", "kbhigh_h3", "HIGHPRIORITY", "KBN"),
+                new Application("kb-test-har-004", "HarvestControllerApplication", "kblow002_h3", "LOWPRIORITY", "KBN"),
+                new Application("sb-test-har-001", "HarvestControllerApplication", "sbhigh_h3", "HIGHPRIORITY", "SBN"),
+                new Application("sb-test-bar-001", "BitarchiveApplication", null, null, "SBN"),
+                new Application("kb-test-way-001", "WaybackIndexerApplication", null, null, "KBN"),
+                new Application("kb-test-way-001", "AggregatorApplication", null, null, "KBN"),
+                new Application("kb-test-har-005", "HarvestControllerApplication", "kbumbra_1", "UMBRA", "KBN"),
+                new Application("kb-test-har-005", "HarvestControllerApplication", "kbumbra_2", "UMBRA", "KBN")
+        };
+    }
+
 }
