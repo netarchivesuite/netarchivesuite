@@ -109,7 +109,7 @@ no parameters.
 </script>
 <h3 class="page_heading"><fmt:message key="pagetitle;edit.harvest.templates"/></h3>
 <% if (!hideInactive) { %>
-<button id="hide" onclick="hideInactive();"><fmt:message key="harvestdefinition.templates.hide.inactive"/></button><button id="show" onclick="showInactive();"><fmt:message key="harvestdefinition.templates.show.inactive"/></button> </br>
+<a id="hide" onclick="hideInactive();"><fmt:message key="harvestdefinition.templates.hide.inactive"/></a><a id="show" onclick="showInactive();"><fmt:message key="harvestdefinition.templates.show.inactive"/></a> </br>
 <%}%>
 <table id="templates">
     <%

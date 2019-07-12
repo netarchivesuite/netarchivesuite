@@ -75,7 +75,8 @@ public class HTMLUtils {
             + "<meta content=\"text/html; charset=UTF-8\" " + "http-equiv= \"content-type\" />"
             + "<meta http-equiv=\"Expires\" content=\"0\"/>\n"
             + "<meta http-equiv=\"Cache-Control\" content=\"no-cache\"/>\n"
-            + "<meta http-equiv=\"Pragma\" content=\"no-cache\"/> \n";
+            + "<meta http-equiv=\"Pragma\" content=\"no-cache\"/> \n"
+            + "<link rel=\"shortcut icon\" type=\"image/png\" href=\"/transparent_menu_logo.png\"/>";
 
     private static String WEBPAGE_HEADER_AUTOREFRESH = "<meta http-equiv=\"refresh\" content=\"" + TITLE_PLACEHOLDER
             + "\"/> \n";

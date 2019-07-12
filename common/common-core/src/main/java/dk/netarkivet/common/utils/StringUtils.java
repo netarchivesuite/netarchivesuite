@@ -23,11 +23,13 @@
 package dk.netarkivet.common.utils;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -231,9 +233,10 @@ public final class StringUtils {
     private static final long HOUR = 60 * 60;
     /** A minute in seconds. */
     private static final long MINUTE = 60;
-
+    /** Decimal pattern. */
+    private static String DECIMAL_PATTERN = "###,###.##";
     /** Formats a decimal number. */
-    private static final DecimalFormat DECIMAL = new DecimalFormat("###.##");
+    private static final DecimalFormat DECIMAL = new DecimalFormat(DECIMAL_PATTERN);
 
     /** Default date format : yyyy/MM/dd HH:mm:ss */
     private static final SimpleDateFormat DEFAULT_DATE = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -286,7 +289,7 @@ public final class StringUtils {
      * @return a formatted percentage string.
      */
     public static String formatPercentage(double percentage) {
-        return formatNumber(percentage) + "%";
+        return formatNumber(percentage, null) + "%";
     }
 
     /**
@@ -296,27 +299,62 @@ public final class StringUtils {
      * @return a formatted percentage string.
      */
     public static String formatPercentage(long percentage) {
-        return formatNumber(percentage) + "%";
+        return formatNumber(percentage, null) + "%";
+    }
+
+    /**
+     * Formats a numeric percentage, as a decimal number with at most 2 digits.
+     *
+     * @param percentage the numeric percentage to format.
+     * @param locale
+     * @return a formatted percentage string.
+     */
+    public static String formatPercentage(double percentage, Locale locale) {
+        return formatNumber(percentage, locale) + "%";
+    }
+
+    /**
+     * Formats a numeric percentage, as a decimal number with at most 2 digits.
+     *
+     * @param percentage the numeric percentage to format.
+     * @param locale
+     * @return a formatted percentage string.
+     */
+    public static String formatPercentage(long percentage, Locale locale) {
+        return formatNumber(percentage, locale) + "%";
     }
 
     /**
      * Formats a number, as a decimal number with at most 2 digits.
      *
      * @param number the number to format.
+     * @param locale
      * @return a formatted number string.
      */
-    public static String formatNumber(double number) {
-        return DECIMAL.format(number);
+    public static String formatNumber(double number, Locale locale) {
+        if  (locale == null)
+            return DECIMAL.format(number);
+        else {
+            DecimalFormat decimalLocalized = new DecimalFormat(DECIMAL_PATTERN, new DecimalFormatSymbols(locale));
+            return decimalLocalized.format(number);
+        }
+
     }
 
     /**
      * Formats a number, as a decimal number with at most 2 digits.
      *
      * @param number the number to format.
+     * @param locale
      * @return a formatted number string.
      */
-    public static String formatNumber(long number) {
-        return DECIMAL.format(number);
+    public static String formatNumber(long number, Locale locale) {
+        if (locale == null)
+            return DECIMAL.format(number);
+        else {
+            DecimalFormat decimalLocalized = new DecimalFormat(DECIMAL_PATTERN, new DecimalFormatSymbols(locale));
+            return decimalLocalized.format(number);
+        }
     }
 
     /**
