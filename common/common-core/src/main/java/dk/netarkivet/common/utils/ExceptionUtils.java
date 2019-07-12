@@ -91,4 +91,8 @@ public class ExceptionUtils {
         return message;
     }
 
+    public static Throwable getRootCause(Throwable crawlException) {
+        return org.apache.commons.lang.exception.ExceptionUtils.getRootCause(crawlException);
+    }
+
 }
