@@ -305,7 +305,7 @@ function submitNextDate() {
     + "<%=Constants.NEXTDATE_SUBMIT%>=true"
     + "&<%=Constants.NEXTDATE_PARAM%>=" + nextDate
     + "&<%=Constants.HARVEST_ID%>=<%=hdd.getOid()%>"
-    + "&<%=Constants.HARVEST_PARAM%>=<%=harvestName%>";
+    + "&<%=Constants.HARVEST_PARAM%>=<%=HTMLUtils.escapeHtmlValues(harvestName)%>";
 }
 </script>
 <button type="button"
