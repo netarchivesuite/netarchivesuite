@@ -87,7 +87,7 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
 
 	for (String domainname : domainList) {
     	List<String> seeds = hddao.getListOfSeedsOfDomainOfHarvestDefinition(
-        	harvestName, domainname);
+        	harvestName, domainname, false);
     	seedsMap.put(domainname, seeds);    
     	seedCount += seeds.size();
 	}

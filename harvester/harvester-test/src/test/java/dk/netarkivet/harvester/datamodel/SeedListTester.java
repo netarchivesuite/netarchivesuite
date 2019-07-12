@@ -117,14 +117,14 @@ public class SeedListTester extends DataModelTestCase {
 
         // kurier.at
         assertEquals(domainList.get(0), domains[KURIER]);
-        seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(0));
+        seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(0), true);
         assertEquals(seedList.get(0), seeds[KURIER][1]);
         assertEquals(seedList.get(1), seeds[KURIER][2]);
         assertEquals(seedList.get(2), seeds[KURIER][0]);
 
         // orf.at
         assertEquals(domainList.get(1), domains[ORF]);
-        seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(1));
+        seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(1), true);
         assertEquals(seedList.get(0), seeds[ORF][2]);
         assertEquals(seedList.get(1), seeds[ORF][0]);
         assertEquals(seedList.get(2), seeds[ORF][1]);
@@ -132,15 +132,21 @@ public class SeedListTester extends DataModelTestCase {
 
         // test.at
         assertEquals(domainList.get(2), domains[TEST]);
-        seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(2));
+        seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(2), true);
         assertEquals(seedList.get(0), seeds[TEST][1]); // duplicate entries should be removed!
         assertEquals(seedList.get(1), seeds[TEST][0]);
 
         // wikipedia.org
         assertEquals(domainList.get(3), domains[WIKI]);
-        seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(3));
+        seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(3), true);
         assertEquals(seedList.get(0), seeds[WIKI][2]);
         assertEquals(seedList.get(1), seeds[WIKI][0]);
         assertEquals(seedList.get(2), seeds[WIKI][1]);
+        
+        seedList = hddao.getListOfSeedsOfDomainOfHarvestDefinition(HARVESTNAME, domainList.get(3), false);
+        assertEquals(seedList.get(0), seeds[WIKI][0]);
+        assertEquals(seedList.get(1), seeds[WIKI][1]);
+        assertEquals(seedList.get(2), seeds[WIKI][2]);
+        
     }
 }
