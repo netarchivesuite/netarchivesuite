@@ -29,6 +29,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -360,7 +361,10 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     public void addGlobalCrawlerTraps(HeritrixTemplate orderXmlDoc) {
     
         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDAO.getInstance();
-        orderXmlDoc.insertCrawlerTraps(Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
-        		               dao.getAllActiveTrapExpressions());
+        dao.getAllActive().stream().forEach(globalCrawlerTrapList -> {
+            orderXmlDoc.insertCrawlerTraps(globalCrawlerTrapList.getName(),
+                    new ArrayList<>(globalCrawlerTrapList.getTraps()));
+        });
+
     } 
 }
