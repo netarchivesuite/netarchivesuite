@@ -132,6 +132,23 @@ public class HarvestStatusRunningTablesSort {
         }
         tbs.setOrder(order);
     }
+    
+    /**
+     * effect of a click on a column.
+     *
+     * @param harvestName the harvest name
+     * @param column ColumnId of the clicked column
+     */
+    public final void sort(final String harvestName, final ColumnId column, final TableSort.SortOrder order) {
+        TableSort tbs = getTableSort(harvestName);
+        // another column
+        if (tbs.getColumnIdent() != column.hashCode()) {
+            tbs.setColumnIdent(column.hashCode());
+        }
+
+        // set order
+        tbs.setOrder(order);
+    }
 
     /**
      * effect of a click on a column.
@@ -144,6 +161,19 @@ public class HarvestStatusRunningTablesSort {
         ColumnId columnId = HarvestStatusRunningTablesSort.ColumnId.NONE;
         columnId = getColumnIdByHash(column);
         sort(harvestName, columnId);
+    }
+
+    /**
+     * effect of a click on a column.
+     *
+     * @param harvestName the harvest name
+     * @param column hashcode of the ColumnId of the clicked column
+     */
+    public final void sortByHarvestName(final String harvestName, final int column, final TableSort.SortOrder order) {
+
+        ColumnId columnId = HarvestStatusRunningTablesSort.ColumnId.NONE;
+        columnId = getColumnIdByHash(column);
+        sort(harvestName, columnId, order);
     }
 
     /**

@@ -238,15 +238,15 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
     public abstract List<String> getListOfDomainsOfHarvestDefinition(String harvestName);
 
     /**
-     * Get a sorted list of all seeds of a Domain in a HarvestDefinition.
+     * Get a list of all seeds of a Domain in a HarvestDefinition.
      *
-     * @param harvestName of HarvestDefintion
+     * @param harvestName of HarvestDefinition
      * @param domainName of Domain
+     * @param needSort boolean if sort results
      * @return List of all seeds of the Domain in the HarvestDefinition.
-     * @throws ArgumentNotValid on null argument
-     * @throws IOFailure on any other error talking to the database
      */
-    public abstract List<String> getListOfSeedsOfDomainOfHarvestDefinition(String harvestName, String domainName);
+    public abstract List<String> getListOfSeedsOfDomainOfHarvestDefinition(String harvestName, String domainName,
+            boolean needSort);
 
     /**
      * Get a collection of jobIds for snapshot deduplication index.

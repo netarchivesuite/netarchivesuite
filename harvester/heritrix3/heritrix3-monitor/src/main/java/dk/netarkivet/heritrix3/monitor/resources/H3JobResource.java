@@ -599,6 +599,8 @@ public class H3JobResource implements ResourceAbstract {
 
         masterTplBuilder.insertContent("Details and Actions on Running Job " + jobId, menuSb.toString(), httpLocale.generateLanguageLinks(),
         		"Details and Actions on Running Job " + jobId, sb.toString(),
+                "<link rel=\"shortcut icon\" type=\"image/png\" href=\"/transparent_menu_logo.png\"/>"
+                        +
         		"<meta http-equiv=\"refresh\" content=\""+Settings.get(HarvesterSettings.HARVEST_MONITOR_REFRESH_INTERVAL)+"\"/>\n").write(out);
 
         out.flush();

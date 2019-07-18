@@ -251,8 +251,8 @@ public class StringUtilsTester {
         double aDouble = 2.14;
         // double asecondDouble = 2.145;
 
-        assertEquals("10", StringUtils.formatNumber(aLong));
-        assertEquals("2.14", StringUtils.formatNumber(aDouble));
+        assertEquals("10", StringUtils.formatNumber(aLong, null));
+        assertEquals("2.14", StringUtils.formatNumber(aDouble, null));
         // FIXME: Rounding changed between Java 6 and 7.
         // Rounding occurs (/tra: upwards - RoundingMode.HALF_EVEN)
         // assertEquals("2.15", StringUtils.formatNumber(asecondDouble));

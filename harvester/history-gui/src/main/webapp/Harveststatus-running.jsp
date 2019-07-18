@@ -34,6 +34,7 @@ This page displays a list of running jobs.
                 java.util.List,
                 java.util.Map,
                 java.util.Collections,
+                java.util.Locale,
                 dk.netarkivet.common.utils.I18n,
                 dk.netarkivet.common.webinterface.HTMLUtils,
                 dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo,
@@ -64,9 +65,16 @@ This page displays a list of running jobs.
 
     String sortedColumn = request.getParameter(Constants.COLUMN_PARAM);
     String sortedHarvest = request.getParameter(Constants.HARVEST_PARAM);
+    String sortedOrder = request.getParameter(Constants.SORT_ORDER_PARAM);
 
     if (sortedColumn != null && sortedHarvest != null) {
-        tbs.sortByHarvestName(sortedHarvest, Integer.parseInt(sortedColumn));
+        if ( sortedOrder != null && sortedOrder.equals(TableSort.SortOrder.INCR.toString())){
+            tbs.sortByHarvestName(sortedHarvest, Integer.parseInt(sortedColumn), TableSort.SortOrder.INCR);
+		 } else if ( sortedOrder != null && sortedOrder.equals(TableSort.SortOrder.DESC.toString())) {
+		     tbs.sortByHarvestName(sortedHarvest, Integer.parseInt(sortedColumn), TableSort.SortOrder.DESC);
+		 } else {
+		     tbs.sortByHarvestName(sortedHarvest, Integer.parseInt(sortedColumn));
+		 }
     }
 
     // Get list of information to be shown, i.e. most recent record for every job, partitioned by harvest def. name
@@ -137,44 +145,54 @@ This page displays a list of running jobs.
 
 <table class="selection_table">
     <%
+    	Locale locale = request.getLocale();
         for (String harvestName : infos.keySet()) {
+            String encodingHarvestName = HTMLUtils.encode(harvestName);
             String harvestDetailsLink = "Harveststatus-perhd.jsp?"
                     + Constants.HARVEST_PARAM + "="
-                    + HTMLUtils.encode(harvestName);
+                    + encodingHarvestName;
 
             //Handling of which arrow to show
             String incSortPic = "&uarr;"; // html entity for UPWARDS ARROW
             String descSortPic = "&darr;"; // html entity for DOWNWARDS ARROW
             String noSortPic = ""; // NO ARROW
             String tabArrow[] = new String[10];
+            Integer tabOrder[] = new Integer[10];
             for (int i = 0; i < 10; i++) {
                 tabArrow[i] = noSortPic;
+                tabOrder[i] = 0;
             }
             String arrow = noSortPic;
+            String orderValue = TableSort.SortOrder.NONE.toString();
             HarvestStatusRunningTablesSort.ColumnId cid = tbs.getSortedColumnIdentByHarvestName(harvestName);
             if (cid != HarvestStatusRunningTablesSort.ColumnId.NONE) {
                 TableSort.SortOrder order = tbs.getSortOrderByHarvestName(harvestName);
                 if (order == TableSort.SortOrder.INCR) {
                     arrow = incSortPic;
+                    orderValue = TableSort.SortOrder.DESC.toString();
                 }
                 if (order == TableSort.SortOrder.DESC) {
                     arrow = descSortPic;
+                    orderValue = TableSort.SortOrder.INCR.toString();
                 }
                 tabArrow[cid.ordinal()] = arrow;
+                tabOrder[cid.ordinal()] = 1;
             }
 
             String sortBaseLink = "Harveststatus-running.jsp?"
                     + Constants.HARVEST_PARAM + "="
-                    + HTMLUtils.encode(harvestName)
+                    + encodingHarvestName
                     + "&"
                     + Constants.COLUMN_PARAM + "=" ;
             String sortLink;
+            String sortOrderLink = "&" +Constants.SORT_ORDER_PARAM + "=" + orderValue;
+            String defaultSortOrderLink = "&" +Constants.SORT_ORDER_PARAM + "=INCR";
     %>
 
     <tr class="spacerRowBig"><td colspan="13">&nbsp;</td></tr>
 
     <%-- Headline for each harvest definition --%>
-    <tr>
+    <tr id="<%=encodingHarvestName%>">
         <th colspan="13">
             <fmt:message key="table.running.jobs.harvestName"/>
             &nbsp;
@@ -187,7 +205,8 @@ This page displays a list of running jobs.
     <%-- Topmost row of headers for each column of the table --%>
     <tr>
         <th class="harvestHeader" rowspan="2">
-            <% sortLink=sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.ID.hashCode(); %>
+            <% sortLink=sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.ID.hashCode()+
+            (tabOrder[HarvestStatusRunningTablesSort.ColumnId.ID.ordinal()] == 1 ? sortOrderLink : defaultSortOrderLink) + "#"+encodingHarvestName; %>
             <a href="<%=sortLink %>">
                 <fmt:message key="table.running.jobs.jobId"/>
                 <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ID.ordinal()]%>
@@ -195,14 +214,16 @@ This page displays a list of running jobs.
         </th>
         <th class="harvestHeader" rowspan="2">
             <% sortLink=sortBaseLink
-                    + HarvestStatusRunningTablesSort.ColumnId.HOST.hashCode(); %>
+                    + HarvestStatusRunningTablesSort.ColumnId.HOST.hashCode()+
+                    (tabOrder[HarvestStatusRunningTablesSort.ColumnId.HOST.ordinal()] == 1 ? sortOrderLink : defaultSortOrderLink) + "#"+encodingHarvestName; %>
             <a href="<%=sortLink %>">
                 <fmt:message key="table.running.jobs.host"/>
                 <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.HOST.ordinal()]%>
             </a>
         </th>
         <th class="harvestHeader" rowspan="2">
-            <% sortLink=sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.PROGRESS.hashCode(); %>
+            <% sortLink=sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.PROGRESS.hashCode()+
+                    (tabOrder[HarvestStatusRunningTablesSort.ColumnId.PROGRESS.ordinal()] == 1 ? sortOrderLink : defaultSortOrderLink)  + "#"+encodingHarvestName; %>
             <a href="<%=sortLink %>">
                 <fmt:message key="table.running.jobs.progress"/>
                 <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.PROGRESS.ordinal()]%>
@@ -210,7 +231,8 @@ This page displays a list of running jobs.
         </th>
 
         <th class="harvestHeader" rowspan="2">
-            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.ELAPSED.hashCode(); %>
+            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.ELAPSED.hashCode()+
+                    (tabOrder[HarvestStatusRunningTablesSort.ColumnId.ELAPSED.ordinal()] == 1 ? sortOrderLink : defaultSortOrderLink)  + "#"+encodingHarvestName; %>
             <a href="<%=sortLink %>">
                 <fmt:message key="table.running.jobs.elapsedTime"/>
                 <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ELAPSED.ordinal()]%>
@@ -224,35 +246,40 @@ This page displays a list of running jobs.
     <%-- Sub-headers for the top-headers that span multiple columns --%>
     <tr>
         <th class="harvestHeader" >
-            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.QFILES.hashCode(); %>
+            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.QFILES.hashCode()+
+                    (tabOrder[HarvestStatusRunningTablesSort.ColumnId.QFILES.ordinal()] == 1 ? sortOrderLink : defaultSortOrderLink)  + "#"+encodingHarvestName; %>
             <a href="<%=sortLink %>">
                 <fmt:message key="table.running.jobs.queuedFiles"/>
                 <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.QFILES.ordinal()]%>
             </a>
         </th>
         <th class="harvestHeader" >
-            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.TOTALQ.hashCode(); %>
+            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.TOTALQ.hashCode()+
+                    (tabOrder[HarvestStatusRunningTablesSort.ColumnId.TOTALQ.ordinal()] == 1 ? sortOrderLink : defaultSortOrderLink)  + "#"+encodingHarvestName; %>
             <a href="<%=sortLink %>">
                 <fmt:message key="table.running.jobs.totalQueues"/>
                 <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.TOTALQ.ordinal()]%>
             </a>
         </th>
         <th class="harvestHeader" >
-            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.hashCode(); %>
+            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.hashCode()+
+                    (tabOrder[HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.ordinal()] == 1 ? sortOrderLink : defaultSortOrderLink)  + "#"+encodingHarvestName; %>
             <a href="<%=sortLink %>">
                 <fmt:message key="table.running.jobs.activeQueues"/>
                 <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ.ordinal()]%>
             </a>
         </th>
         <th class="harvestHeader">
-            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.RETIREDQ.hashCode(); %>
+            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.RETIREDQ.hashCode()+
+                    (tabOrder[HarvestStatusRunningTablesSort.ColumnId.RETIREDQ.ordinal()] == 1 ? sortOrderLink : defaultSortOrderLink)  + "#"+encodingHarvestName; %>
             <a href="<%=sortLink %>">
                 <fmt:message key="table.running.jobs.retiredQueues"/>
                 <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.RETIREDQ.ordinal()]%>
             </a>
         </th>
         <th class="harvestHeader" >
-            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.hashCode(); %>
+            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.hashCode()+
+                    (tabOrder[HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.ordinal()] == 1 ? sortOrderLink : defaultSortOrderLink)  + "#"+encodingHarvestName; %>
             <a href="<%=sortLink %>">
                 <fmt:message key="table.running.jobs.exhaustedQueues"/>
                 <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ.ordinal()]%>
@@ -367,29 +394,29 @@ This page displays a list of running jobs.
                     break;
                 }
             %>
-            <img src="<%=bullet%>" alt="<%=I18N.getString(request.getLocale(), altStatus)%>"/>
+            <img src="<%=bullet%>" alt="<%=I18N.getString(locale, altStatus)%>"/>
             &nbsp;
             <a href="<%=info.getHostUrl()%>" target="_blank"><%=info.getHostName()%></a>
         </td>
         <td align="right"><%=StringUtils.formatPercentage(info.getProgress())%></td>
         <td align="right"><%=info.getElapsedTime()%></td>
-        <td align="right"><%=info.getQueuedFilesCount()%></td>
-        <td align="right"><%=info.getTotalQueuesCount()%></td>
-        <td align="right"><%=info.getActiveQueuesCount()%></td>
-        <td align="right"><%=info.getInactiveQueuesCount()%></td>
-        <td align="right"><%=info.getExhaustedQueuesCount()%></td>
+        <td align="right"><fmt:formatNumber type="number" value="<%=info.getQueuedFilesCount()%>"/></td>
+        <td align="right"><fmt:formatNumber type="number" value="<%=info.getTotalQueuesCount()%>"/></td>
+        <td align="right"><fmt:formatNumber type="number" value="<%=info.getActiveQueuesCount()%>"/></td>
+        <td align="right"><fmt:formatNumber type="number" value="<%=info.getInactiveQueuesCount()%>"/></td>
+        <td align="right"><fmt:formatNumber type="number" value="<%=info.getExhaustedQueuesCount()%>"/></td>
         <td align="right">
-            <%= StringUtils.formatNumber(info.getCurrentProcessedDocsPerSec())
-                    + " (" + StringUtils.formatNumber(info.getProcessedDocsPerSec())
+            <%= StringUtils.formatNumber(info.getCurrentProcessedDocsPerSec(), locale)
+                    + " (" + StringUtils.formatNumber(info.getProcessedDocsPerSec(), locale)
                     + ")" %>
         </td>
         <td align="right">
-            <%= StringUtils.formatNumber(info.getCurrentProcessedKBPerSec())
-                    + " (" + StringUtils.formatNumber(info.getProcessedKBPerSec())
+            <%= StringUtils.formatNumber(info.getCurrentProcessedKBPerSec(), locale)
+                    + " (" + StringUtils.formatNumber(info.getProcessedKBPerSec(), locale)
                     + ")" %>
         </td>
-        <td align="right"><%=info.getActiveToeCount()%></td>
-        <td align="right"><%=info.getAlertsCount()%></td>
+        <td align="right"><fmt:formatNumber type="number" value="<%=info.getActiveToeCount()%>"/></td>
+        <td align="right"><fmt:formatNumber type="number" value="<%=info.getAlertsCount()%>"/></td>
     </tr>
     <%
             }

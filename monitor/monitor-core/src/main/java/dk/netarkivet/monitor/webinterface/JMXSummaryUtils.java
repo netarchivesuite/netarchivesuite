@@ -471,6 +471,8 @@ public class JMXSummaryUtils {
                     return CHARACTER_NOT_COLUMN;
                 } else if (JMXHttpportProperty.equals(paramName)) {
                     return CHARACTER_NOT_COLUMN;
+                } else if (JMXRemoveApplication.equals(paramName)) {
+                    return CHARACTER_NOT_COLUMN;
                 } else {
                     return CHARACTER_SHOW_ALL;
                 }
