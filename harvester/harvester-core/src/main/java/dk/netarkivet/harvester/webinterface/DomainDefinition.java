@@ -263,6 +263,19 @@ public class DomainDefinition {
         List<Domain> domainsToCreate = new ArrayList<Domain>();
         for (String domain : domains) {
             if (DomainUtils.isValidDomainName(domain) && !ddao.exists(domain)) {
+            	// check if there is an identical domainname in the list
+            	boolean skip = false;
+            	for (int i=0; i < domainsToCreate.size(); i++) {
+            		if (domain.equals(domainsToCreate.get(i).getName())) {
+            			skip = true;
+            			break;
+            		}
+            	}
+            	
+            	if (skip) {
+            		continue;
+            	}
+            	
                 domainsToCreate.add(Domain.getDefaultDomain(domain));
             } else {
                 if (domain.trim().length() > 0) {
