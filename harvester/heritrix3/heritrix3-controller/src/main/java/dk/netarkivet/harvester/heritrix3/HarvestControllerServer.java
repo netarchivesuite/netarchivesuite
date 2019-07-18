@@ -23,8 +23,10 @@
 package dk.netarkivet.harvester.heritrix3;
 
 import java.io.File;
+import java.net.BindException;
 import java.util.List;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -468,6 +470,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
          * @throws IOFailure if there are problems preparing or running the crawl.
          */
         public void run() {
+            Throwable crawlException = null;
             try {
                 // We must remove the listener inside a thread,
                 // as JMS doesn't allow us to remove it within the
@@ -478,7 +481,6 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
                 harvestJob.init(job, origHarvestInfo, metadataEntries);
                 Heritrix3Files files = harvestJob.getHeritrix3Files();
 
-                Throwable crawlException = null;
                 try {
                     harvestJob.runHarvest();
                 } catch (Throwable e) {
@@ -498,8 +500,18 @@ public class HarvestControllerServer extends HarvesterMessageHandler implements 
                 // process serverdir for files not yet uploaded.
                 postProcessing.processOldJobs();
                 instance.shutdownNowOrContinue();
-                startAcceptingJobs();
-                beginListeningIfSpaceAvailable();
+
+                Throwable rootCause = ExceptionUtils.getRootCause(crawlException);
+                if (rootCause == null || !(rootCause instanceof BindException)) {
+                    startAcceptingJobs();
+                    beginListeningIfSpaceAvailable();
+                } else {
+                    // rootCause instanceof BindException
+                    // java.net.BindException: Address already in use
+                    log.info("No more job accepted rootCause is : {}", rootCause.getClass());
+                    instance.shutdownNowOrContinue();
+                    stopAcceptingJobs();
+                }
             }
         }
     }
