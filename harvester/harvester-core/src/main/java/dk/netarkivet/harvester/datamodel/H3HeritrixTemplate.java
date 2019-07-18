@@ -628,6 +628,7 @@ public class H3HeritrixTemplate extends HeritrixTemplate implements Serializable
     	} else {
     		log.info("Inserting {} crawlertraps into the template", crawlertraps.size());
     		StringBuilder sb = new StringBuilder();
+    		sb.append("<!-- crawlertraps from " + elementName + " -->\n");
     		for (String trap: crawlertraps) {
     			sb.append("<value>" + trap + "</value>\n");
     		}
