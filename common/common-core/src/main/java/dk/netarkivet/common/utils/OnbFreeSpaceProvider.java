@@ -83,8 +83,8 @@ public class OnbFreeSpaceProvider implements FreeSpaceProvider {
      **/
     private static final Double FREESPACEPROVIDER_MINFREESPACEPERCENTAGE = Double.parseDouble(Settings.get(FREESPACEPROVIDER_MINFREESPACEPERCENTAGE_SETTING));
     /**
-     * The minimum free space 
-     * e.g. 1000000 kb
+     * The minimum free space in bytes
+     * e.g. 1000000 
      **/
     private static final long FREESPACEPROVIDER_MINFREESPACE = Long.parseLong(Settings.get(FREESPACEPROVIDER_MINFREESPACE_SETTING));
 
@@ -119,6 +119,7 @@ public class OnbFreeSpaceProvider implements FreeSpaceProvider {
             usable = f.getUsableSpace();
 
             double freeSpaceInPercent =  100.0 / totalspace * usable;
+            log.debug("minfreespacepercentage is '{}'", FREESPACEPROVIDER_MINFREESPACEPERCENTAGE);
             log.debug("Free space in percent is '{}'", freeSpaceInPercent);
         	
             if (freeSpaceInPercent <= FREESPACEPROVIDER_MINFREESPACEPERCENTAGE) {
@@ -131,6 +132,7 @@ public class OnbFreeSpaceProvider implements FreeSpaceProvider {
         }
 
         if (FREESPACEPROVIDER_FREESPACEMODE_BYTE.equals(FREESPACEPROVIDER_FREESPACEMODE)) {
+            log.debug("minfreespace is '{}'", FREESPACEPROVIDER_MINFREESPACE);           
             log.debug("Free space in byte is '{}'", f.getUsableSpace());
             
             if (f.getUsableSpace() < FREESPACEPROVIDER_MINFREESPACE) {
