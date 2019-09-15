@@ -132,11 +132,11 @@ public class OnbFreeSpaceProvider implements FreeSpaceProvider {
 
         if (FREESPACEPROVIDER_FREESPACEMODE_BYTE.equals(FREESPACEPROVIDER_FREESPACEMODE)) {
             log.debug("Free space in byte is '{}'", f.getUsableSpace());
-
-        	if (f.getUsableSpace() < FREESPACEPROVIDER_MINFREESPACE) {
+            
+            if (f.getUsableSpace() < FREESPACEPROVIDER_MINFREESPACE) {
                 log.warn("Free space on '{}' is lower than '{}' bytes. The value 0 returned.", f.getAbsolutePath(), FREESPACEPROVIDER_MINFREESPACE);
                 return 0;
-        	}
+            }
         	else {
         		return f.getUsableSpace(); 
         	}
