@@ -19,7 +19,8 @@
     <logback.version>${logback-core.version}</logback.version>
     <webarchive-commons.version>1.1.5</webarchive-commons.version>
     <!-- Icelandic special brew of H3. -->
-    <heritrix3.version>3.3.0-BDB-5.0.x-NAS-5.6</heritrix3.version>
+    <heritrix3.version>3.4.0-SNAPSHOT-BDB-5.0.x-NAS-6.0.x</heritrix3.version> 
+<!--     <heritrix3.version>3.3.0-BDB-5.0.x-NAS-5.6</heritrix3.version> -->
     <heritrix3-wrapper.version>1.0.4-SNAPSHOT</heritrix3-wrapper.version>
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
