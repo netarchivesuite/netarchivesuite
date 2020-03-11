@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
 import dk.netarkivet.archive.arcrepository.distribute.ArcRepositoryServer;
+import dk.netarkivet.archive.arcrepository.distribute.NonFunctionalArcRepositoryServer;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.Admin;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminFactory;
@@ -85,7 +86,8 @@ public class ArcRepository implements CleanupIF {
     private Admin ad;
 
     /** The class which listens to messages sent to this instance of Arcrepository or its subclasses. */
-    private ArcRepositoryServer arcReposhandler;
+    //private ArcRepositoryServer arcReposhandler;
+    private CleanupIF arcReposhandler;
 
     /** A Map of a Replica and their corresponding ReplicaClient. From this Map the relevant channels can be found. */
     private final Map<Replica, ReplicaClient> connectedReplicas = new HashMap<Replica, ReplicaClient>();
@@ -117,8 +119,8 @@ public class ArcRepository implements CleanupIF {
     protected ArcRepository() throws IOFailure, IllegalState {
         // UpdateableAdminData Throws IOFailure
         this.ad = AdminFactory.getInstance();
-        this.arcReposhandler = new ArcRepositoryServer(this);
-
+        //this.arcReposhandler = new ArcRepositoryServer(this);
+        this.arcReposhandler = new NonFunctionalArcRepositoryServer(this);
         initialiseReplicaClients();
 
         log.info("Starting the ArcRepository");
@@ -934,8 +936,8 @@ public class ArcRepository implements CleanupIF {
      * closed along with all their connections.
      */
     public void cleanup() {
-        if (arcReposhandler != null) {
-            arcReposhandler.close();
+        if (arcReposhandler != null && arcReposhandler instanceof ArcRepositoryServer) {
+            ((ArcRepositoryServer) arcReposhandler).close();
             arcReposhandler = null;
         }
         if (connectedReplicas != null) {
