@@ -545,5 +545,25 @@ public class CommonSettings {
      * the value of this setting with .* will find all metadata files.
      */
     public static String METADATAFILE_REGEX_SUFFIX = "settings.common.metadata.fileregexsuffix";
-    
+
+    /**
+     * Specifies the name of the default file system for Hadoop to use (URI consisting of scheme and authority).
+     * If not set, Hadoop defaults to 'file:///'.
+     */
+    public static String HADOOP_HDFS = "settings.common.hadoop.hdfs";
+
+    /**
+     * Specifies the address on where to locate the ResourceManager (e.g. YARN).
+     */
+    public static String HADOOP_RESOURCEMANAGER_ADDRESS = "settings.common.hadoop.resourcemanager.address";
+
+    /**
+     * Specifies which framework is used for running mapreduce (e.g. YARN).
+     */
+    public static String HADOOP_MAPRED_FRAMEWORK = "settings.common.hadoop.mapred.framework";
+
+    /**
+     * Specifies what strategy/framework to use to resolve mass processing jobs.
+     */
+    public static String MASS_PROCESSOR = "settings.common.massprocessor";
 }
