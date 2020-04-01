@@ -201,5 +201,15 @@ National Library.
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <applicationName>NA</applicationName>
         <applicationInstanceId></applicationInstanceId>
+        <hadoop>
+            <defaultFS>hdfs://node1</defaultFS>
+            <resourcemanager>
+                <address>node1:8032</address>
+            </resourcemanager>
+            <mapred>
+                <framework>yarn</framework>
+            </mapred>
+        </hadoop>
+        <useHadoopAsMassProcessor>true</useHadoopAsMassProcessor>
     </common>
 </settings>

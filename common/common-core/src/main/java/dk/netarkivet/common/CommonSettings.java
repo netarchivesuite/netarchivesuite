@@ -550,7 +550,7 @@ public class CommonSettings {
      * Specifies the name of the default file system for Hadoop to use (URI consisting of scheme and authority).
      * If not set, Hadoop defaults to 'file:///'.
      */
-    public static String HADOOP_HDFS = "settings.common.hadoop.hdfs";
+    public static String HADOOP_DEFAULT_FS = "settings.common.hadoop.defaultFS";
 
     /**
      * Specifies the address on where to locate the ResourceManager (e.g. YARN).
@@ -563,7 +563,7 @@ public class CommonSettings {
     public static String HADOOP_MAPRED_FRAMEWORK = "settings.common.hadoop.mapred.framework";
 
     /**
-     * Specifies what strategy/framework to use to resolve mass processing jobs.
+     * Specifies if hadoop is used for mass processing jobs.
      */
-    public static String MASS_PROCESSOR = "settings.common.massprocessor";
+    public static String USING_HADOOP = "settings.common.useHadoopAsMassProcessor";
 }
