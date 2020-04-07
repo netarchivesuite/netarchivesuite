@@ -6,7 +6,6 @@ import static dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitmag
 import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_USEPILLAR;
 
 import java.io.File;
-import java.util.List;
 
 import dk.netarkivet.common.utils.Settings;
 

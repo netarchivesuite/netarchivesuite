@@ -1,0 +1,258 @@
+<settings>
+    <common>
+        <environmentName>{{NAS_ENV | default('nasdocker')}}</environmentName>
+        <applicationInstanceId/>
+        <arcrepositoryClient>
+            <class>dk.netarkivet.archive.arcrepository.distribute.JMSBitmagArcRepositoryClient</class>
+            <bitrepository>
+                <!-- if not set, use of certificates is disabled. If the keyfilename does not exist
+                    use of certificates is disabled as well.
+                 -->
+                <keyfilename></keyfilename>
+                <storeMaxPillarFailures>1</storeMaxPillarFailures>
+                <tempdir>arcrepositoryTemp</tempdir>
+                <collectionID>netarkivet</collectionID>
+                <usepillar></usepillar>
+                <!-- Set to 5 minutes to make it possible to retrieve large records
+                         using FTP -->
+                <getTimeout>300000</getTimeout>
+                <settingsDir></settingsDir>
+            </bitrepository>
+        </arcrepositoryClient>
+        <remoteFile>
+            <class>
+                dk.netarkivet.common.distribute.FTPRemoteFile
+            </class>
+            <serverPort>21</serverPort>
+            <retries>3</retries>
+            <datatimeout>10800</datatimeout>
+            <serverName>ftp</serverName>
+            <userName>jms</userName>
+            <userPassword>jms*ftp</userPassword>
+        </remoteFile>
+        <jms>
+            <class>
+                dk.netarkivet.common.distribute.JMSConnectionSunMQ
+            </class>
+            <broker>mq</broker>
+            <port>7676</port>
+        </jms>
+        <jmx>
+            <passwordFile>/nas/jmxremote.password</passwordFile>
+            <timeout>300</timeout>
+            <port>8170</port><rmiPort>8270</rmiPort></jmx>
+        <indexClient>
+            <indexRequestTimeout>43200000</indexRequestTimeout>
+        </indexClient>
+        <replicas>
+            <!-- The names of all bit archive replicas in the
+             environment, e.g., "nameOfBitachiveOne" and "nameOfBitachiveTwo". -->
+            <replica>
+                <replicaId>SB</replicaId>
+                <replicaName>SBN</replicaName>
+                <replicaType>bitArchive</replicaType>
+            </replica>
+            <replica>
+                <replicaId>KB</replicaId>
+                <replicaName>KBN</replicaName>
+                <replicaType>bitArchive</replicaType>
+            </replica>
+            <replica>
+                <replicaId>CS</replicaId>
+                <replicaName>CSN</replicaName>
+                <replicaType>checksum</replicaType>
+            </replica>
+        </replicas>
+        <!-- tempDir corrected from ./tests/commontempdir -->
+        <tempDir>tmpdircommon</tempDir>
+        <mail>
+            <server>post.kb.dk</server>
+        </mail>
+        <notifications>
+            <class>dk.netarkivet.common.utils.EMailNotifications</class>
+            <!-- T: receiver to be modified by test -->
+            <receiver>csr@kb.dk</receiver>
+            <sender>devel@kb-prod-udv-001.kb.dk</sender>
+        </notifications>
+        <useReplicaId>{{REPLICA | default('KB')}}</useReplicaId>
+        <thisPhysicalLocation>{{LOCATION  | default('K')}}</thisPhysicalLocation>
+        <database>
+            <class>dk.netarkivet.harvester.datamodel.PostgreSQLSpecifics</class>
+            <baseUrl>jdbc:postgresql</baseUrl>
+            <machine>database</machine>
+            <port>5432</port>
+            <dir>harvestdb</dir>
+            <username>netarchivesuite</username>
+            <password>netarchivesuitepass</password>
+        </database>
+        <http>
+            <port>8078</port>
+        </http>
+        <applicationName>{{APP_CLASS}}</applicationName>
+        <hadoop>
+            <defaultFS>hdfs://node1</defaultFS>
+            <resourcemanager>
+                <address>node1:8032</address>
+            </resourcemanager>
+            <mapred>
+                <framework>yarn</framework>
+            </mapred>
+        </hadoop>
+        <useHadoopAsMassProcessor>true</useHadoopAsMassProcessor>
+
+    </common>
+
+    <monitor>
+        <jmxUsername>monitorRole</jmxUsername>
+        <jmxPassword>test</jmxPassword>
+        <jmxProxyTimeout>500</jmxProxyTimeout>
+        <logging>
+            <historySize>100</historySize>
+        </logging>
+        <reregisterDelay>10</reregisterDelay>
+    </monitor>
+
+    <!-- directory for install -->
+    <archive>
+        <bitpreservation>
+            <baseDir>bitpreservation</baseDir>
+            <class>dk.netarkivet.archive.arcrepository.bitpreservation.DatabaseBasedActiveBitPreservation</class>
+        </bitpreservation>
+        <arcrepository>
+            <baseDir>.</baseDir>
+        </arcrepository>
+        <bitarchive>
+            <baseFileDir>/nas/bitarchive</baseFileDir>
+        </bitarchive>
+        <admin>
+            <class>dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin</class>
+            <database>
+                <class>dk.netarkivet.archive.arcrepositoryadmin.PostgreSQLSpecifics</class>
+                <baseUrl>jdbc:postgresql</baseUrl>
+                <machine>database</machine>
+                <port>5432</port>
+                <dir>admindb</dir>
+                <username>netarchivesuite</username>
+                <password>netarchivesuitepass</password>
+                <pool>
+                    <idleConnTestQuery>SELECT COUNT(*) FROM replica</idleConnTestQuery>
+                    <idleConnTestOnCheckin>false</idleConnTestOnCheckin>
+                </pool>
+            </database>
+        </admin>
+        <checksum>
+            <baseDir>CS</baseDir>
+        </checksum>
+    </archive>
+    <!-- viewerproxy.baseDir is set below -->
+    <!-- harvester.harvesting.serverDir is set below -->
+    <harvester>
+        <aliases>
+            <timeout>31536000</timeout>
+        </aliases>
+        <harvesting>
+            <deduplication>
+                <enabled>false</enabled>
+            </deduplication>
+            <heritrix>
+                <inactivityTimeout>1800</inactivityTimeout>
+                <noresponseTimeout>1800</noresponseTimeout>
+                <crawlLoopWaitTime>60</crawlLoopWaitTime>
+                <archiveNaming>
+                    <collectionName>dkcollection</collectionName>
+                </archiveNaming>
+            </heritrix>
+            <frontier>
+                <!-- 1 minute -->
+                <frontierReportWaitTime>60</frontierReportWaitTime>
+                <filter>
+                    <class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
+                    <args>200</args>
+                </filter>
+            </frontier>
+            <metadata>
+                <compression>
+                    true
+                </compression>
+                <heritrixFilePattern>.*(\.journal|\.xml|\.txt|\.log|\.out|\.cxml)</heritrixFilePattern>
+                <reportFilePattern>.*-report.txt</reportFilePattern>
+                <logFilePattern>.*(\.log|\.out|\.gz)</logFilePattern>
+                <metadataFileNameFormat>prefix</metadataFileNameFormat>
+            </metadata>
+            <channel>{{H3_CHANNEL|default("LOWPRIORITY")}}</channel>
+            <heritrix3>
+                <bundle>/h3bundler.zip</bundle>
+                <certificate>/h3server.jks</certificate>
+                <warc>
+                    <writeRequests>true</writeRequests>
+                </warc>
+            </heritrix3>
+            <serverDir>harvester_low</serverDir>
+            <harvestReport>
+                <class>dk.netarkivet.harvester.harvesting.report.BnfHarvestReport</class>
+                <disregardSeedURLInfo>false</disregardSeedURLInfo>
+            </harvestReport>
+        </harvesting>
+        <scheduler>
+            <jobGen>
+                <class>dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator</class>
+                <domainConfigSubsetSize>10000</domainConfigSubsetSize>
+                <config>
+                    <!-- Used by FixedDomainConfigurationCountJobGenerator and as an absolute limit in DefaultJobGenerator -->
+                    <fixedDomainCountSnapshot>7500</fixedDomainCountSnapshot>
+                </config>
+                <objectLimitIsSetByQuotaEnforcer>false</objectLimitIsSetByQuotaEnforcer> <!--default true -->
+            </jobGen>
+        </scheduler>
+        <datamodel>
+            <domain>
+                <defaultSchedule>Once_a_week</defaultSchedule>
+            </domain>
+        </datamodel>
+        <viewerproxy>
+            <baseDir>viewerproxy</baseDir>
+        </viewerproxy>
+    </harvester>
+    <wayback>
+        <hibernate>
+            <c3p0>
+                <acquireIncrement>1</acquireIncrement>
+                <idleTestPeriod>100</idleTestPeriod>
+                <maxSize>100</maxSize>
+                <maxStatements>100</maxStatements>
+                <minSize>10</minSize>
+                <timeout>100</timeout>
+            </c3p0>
+            <connectionUrl>jdbc:postgresql://database/wayback_indexer_db</connectionUrl>
+            <dbDriverClass>org.postgresql.Driver</dbDriverClass>
+            <useReflectionOptimizer>false</useReflectionOptimizer>
+            <transactionFactory>org.hibernate.transaction.JDBCTransactionFactory</transactionFactory>
+            <dialect>org.hibernate.dialect.PostgreSQLDialect</dialect>
+            <showSql>false</showSql>
+            <formatSql>true</formatSql>
+            <hbm2ddlAuto>create</hbm2ddlAuto>
+            <user>netarchivesuite</user>
+            <password>netarchivesuitepass</password>
+        </hibernate>
+        <indexer>
+            <replicaId>KB</replicaId>
+            <finalBatchOutputDir>batchOutputDir</finalBatchOutputDir>
+            <tempBatchOutputDir>tempBatchOutputDir</tempBatchOutputDir>
+            <maxFailedAttempts>3</maxFailedAttempts>
+            <!--
+            There is a double-strategy for fetching filenames to queue for harvesting
+            i) Fetch all newer files on a short delay
+            ii) Fill any gaps by fetching the complete file list occasionally
+            e.g. Fetch all files from the last day once every half-hour and then fetch the complete file-list
+            daily.
+            In test, fetch all files from last 30 minutes every 5 minutes.
+            -->
+            <recentProducerSince>1800000</recentProducerSince>
+            <recentProducerInterval>300000</recentProducerInterval>
+            <producerDelay>0</producerDelay>
+            <producerInterval>86400000</producerInterval>
+            <consumerThreads>5</consumerThreads>
+            <initialFiles></initialFiles>
+        </indexer>
+    </wayback>
+</settings>

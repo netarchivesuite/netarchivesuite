@@ -22,7 +22,13 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_KEYFILENAME;
+import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_SETTINGS_DIR;
+import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_STORE_MAX_PILLAR_FAILURES;
+import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_USEPILLAR;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,6 +45,7 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.DatedFileListJob;
@@ -58,6 +65,15 @@ public class FileNameHarvester {
     public static synchronized void harvestAllFilenames() {
         if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
             BitmagArcRepositoryClient client;
+            File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
+            String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
+            int maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
+            String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
+
+            // Initialize connection to the bitrepository
+            Bitrepository bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
+            // Måske lav alt det her i ny klasse
+            // Find ud af, hvorfor logging or bitrep laves i TestBitrep, men ikke i din egen klasse
         } else {
             ArchiveFileDAO dao = new ArchiveFileDAO();
             PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
