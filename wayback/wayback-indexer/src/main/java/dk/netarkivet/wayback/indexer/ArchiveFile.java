@@ -172,9 +172,7 @@ public class ArchiveFile {
     }
 
     /**
-     * Run a batch job to index this file, storing the result locally. If this method runs successfully, the isIndexed
-     * flag will be set to true and the originalIndexFileName field will be set to the (arbitrary) name of the file
-     * containing the results. The values are persisted to the datastore.
+     * TODO: Add description
      *
      * @throws IllegalState If the indexing has already been done.
      */
@@ -183,6 +181,21 @@ public class ArchiveFile {
         if (isIndexed) {
             throw new IllegalState("Attempted to index file '" + filename + "' which is already indexed");
         }
+
+        boolean usingHadoop = Settings.getBoolean(CommonSettings.USING_HADOOP);
+        if (usingHadoop) {
+            // Start a hadoop indexing job.
+        } else {
+            batchIndex();
+        }
+    }
+
+    /**
+     * Run a batch job to index this file, storing the result locally. If this method runs successfully, the isIndexed
+     * flag will be set to true and the originalIndexFileName field will be set to the (arbitrary) name of the file
+     * containing the results. The values are persisted to the datastore.
+     */
+    private void batchIndex() {
         // TODO the following if-block could be replaced by some fancier more
         // general class with methods for associating particular types of
         // archived files with particular types of batch processor. e.g.

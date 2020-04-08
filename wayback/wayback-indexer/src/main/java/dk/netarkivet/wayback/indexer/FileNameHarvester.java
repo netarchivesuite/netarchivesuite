@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -40,11 +41,9 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
@@ -63,8 +62,9 @@ public class FileNameHarvester {
      * ArchiveFile object store.
      */
     public static synchronized void harvestAllFilenames() {
+        ArchiveFileDAO dao = new ArchiveFileDAO();
+
         if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
-            BitmagArcRepositoryClient client;
             File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
             String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
             int maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
@@ -74,8 +74,11 @@ public class FileNameHarvester {
             Bitrepository bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
             // Måske lav alt det her i ny klasse
             // Find ud af, hvorfor logging or bitrep laves i TestBitrep, men ikke i din egen klasse
+            List<String> fileNames = bitrep.getFileIds("netarkivet"); // Seems that the IDs are the names
+            for (String fileName : fileNames) {
+                createArchiveFileInDB(fileName, dao);
+            }
         } else {
-            ArchiveFileDAO dao = new ArchiveFileDAO();
             PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
             BatchStatus status = client.batch(new FileListJob(), Settings.get(WaybackSettings.WAYBACK_REPLICA));
             RemoteFile results = status.getResultFile();
@@ -85,11 +88,7 @@ public class FileNameHarvester {
             try {
                 while ((line = reader.readLine()) != null) {
                     if (!dao.exists(line.trim())) {
-                        ArchiveFile file = new ArchiveFile();
-                        file.setFilename(line.trim());
-                        file.setIndexed(false);
-                        log.info("Creating object store entry for '{}'", file.getFilename());
-                        dao.create(file);
+                        createArchiveFileInDB(line, dao);
                     } // If the file is already known in the persistent store, no
                     // action needs to be taken.
                 }
@@ -117,11 +116,7 @@ public class FileNameHarvester {
         try {
             while ((line = reader.readLine()) != null) {
                 if (!dao.exists(line.trim())) {
-                    ArchiveFile file = new ArchiveFile();
-                    file.setFilename(line.trim());
-                    file.setIndexed(false);
-                    log.info("Creating object store entry for '{}'", file.getFilename());
-                    dao.create(file);
+                    createArchiveFileInDB(line, dao);
                 } // If the file is already known in the persistent store, no
                   // action needs to be taken.
             }
@@ -130,5 +125,18 @@ public class FileNameHarvester {
         } finally {
             IOUtils.closeQuietly(reader);
         }
+    }
+
+    /**
+     * Helper method to create an ArchiveFile from a given filename and put it in the database.
+     * @param fileName The filename to create.
+     * @param dao The DAO through which the database is accessed.
+     */
+    private static void createArchiveFileInDB(String fileName, ArchiveFileDAO dao) {
+        ArchiveFile file = new ArchiveFile();
+        file.setFilename(fileName.trim());
+        file.setIndexed(false);
+        log.info("Creating object store entry for '{}'", file.getFilename());
+        dao.create(file);
     }
 }
