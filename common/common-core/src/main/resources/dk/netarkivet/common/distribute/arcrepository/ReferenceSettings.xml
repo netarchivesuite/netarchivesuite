@@ -16,7 +16,7 @@
   </ClientSettings>
   <FileExchangeSettings>
     <ProtocolType>HTTP</ProtocolType>
-    <ServerName>dav</ServerName>
+    <ServerName>localhost</ServerName>
     <Port>80</Port>
     <Path>/dav</Path>
   </FileExchangeSettings>

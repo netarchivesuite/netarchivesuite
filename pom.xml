@@ -818,7 +818,7 @@
 
       <dependency>
         <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-common</artifactId>
+        <artifactId>hadoop-client</artifactId>
         <version>${hadoop.version}</version>
         <exclusions>
           <exclusion> <!-- Excluded because it conflicts with tomcat's ServletRequest -->
@@ -826,6 +826,12 @@
             <artifactId>servlet-api</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+
+      <dependency> <!-- Added this since it apparently helps Hadoop play nice with Xerces -->
+        <groupId>xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>1.4.01</version>
       </dependency>
 
     </dependencies>

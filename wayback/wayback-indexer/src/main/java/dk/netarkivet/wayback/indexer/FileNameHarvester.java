@@ -46,6 +46,7 @@ import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.HadoopUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.DatedFileListJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
@@ -65,38 +66,16 @@ public class FileNameHarvester {
         ArchiveFileDAO dao = new ArchiveFileDAO();
 
         if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
-            File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
-            String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
-            int maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
-            String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
-
             // Initialize connection to the bitrepository
-            Bitrepository bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
-            // Måske lav alt det her i ny klasse
-            // Find ud af, hvorfor logging or bitrep laves i TestBitrep, men ikke i din egen klasse
-            List<String> fileNames = bitrep.getFileIds("netarkivet"); // Seems that the IDs are the names
+            Bitrepository bitrep = HadoopUtils.initBitrep();
+            List<String> fileNames = bitrep.getFileIds("netarkivet");
             for (String fileName : fileNames) {
                 createArchiveFileInDB(fileName, dao);
             }
         } else {
             PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
             BatchStatus status = client.batch(new FileListJob(), Settings.get(WaybackSettings.WAYBACK_REPLICA));
-            RemoteFile results = status.getResultFile();
-            InputStream is = results.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            String line;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    if (!dao.exists(line.trim())) {
-                        createArchiveFileInDB(line, dao);
-                    } // If the file is already known in the persistent store, no
-                    // action needs to be taken.
-                }
-            } catch (IOException e) {
-                throw new IOFailure("Error reading remote file", e);
-            } finally {
-                IOUtils.closeQuietly(reader);
-            }
+            getResultFileAndCreateInDB(status, dao);
         }
     }
 
@@ -105,10 +84,25 @@ public class FileNameHarvester {
      */
     public static synchronized void harvestRecentFilenames() {
         ArchiveFileDAO dao = new ArchiveFileDAO();
-        PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
-        long timeAgo = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_SINCE);
-        Date since = new Date(System.currentTimeMillis() - timeAgo);
-        BatchStatus status = client.batch(new DatedFileListJob(since), Settings.get(WaybackSettings.WAYBACK_REPLICA));
+
+        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
+            // TODO
+        } else {
+            PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
+            long timeAgo = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_SINCE);
+            Date since = new Date(System.currentTimeMillis() - timeAgo);
+            BatchStatus status = client
+                    .batch(new DatedFileListJob(since), Settings.get(WaybackSettings.WAYBACK_REPLICA));
+            getResultFileAndCreateInDB(status, dao);
+        }
+    }
+
+    /**
+     * Helper method for handling results from BatchStatus and putting it in the database.
+     * @param status The BatchStatus with results from batch()
+     * @param dao The DAO through which the database is accessed.
+     */
+    private static void getResultFileAndCreateInDB(BatchStatus status, ArchiveFileDAO dao) {
         RemoteFile results = status.getResultFile();
         InputStream is = results.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -118,7 +112,7 @@ public class FileNameHarvester {
                 if (!dao.exists(line.trim())) {
                     createArchiveFileInDB(line, dao);
                 } // If the file is already known in the persistent store, no
-                  // action needs to be taken.
+                // action needs to be taken.
             }
         } catch (IOException e) {
             throw new IOFailure("Error reading remote file", e);

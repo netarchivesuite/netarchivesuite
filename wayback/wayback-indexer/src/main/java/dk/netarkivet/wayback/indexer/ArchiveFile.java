@@ -23,12 +23,18 @@
 package dk.netarkivet.wayback.indexer;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +42,10 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.HadoopUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
@@ -46,6 +54,7 @@ import dk.netarkivet.wayback.WaybackSettings;
 import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
+import dk.netarkivet.wayback.hadoop.CDXJob;
 
 /**
  * This class represents a file in the arcrepository which may be indexed by the indexer.
@@ -172,7 +181,7 @@ public class ArchiveFile {
     }
 
     /**
-     * TODO: Add description
+     * Indexes this file by either running a hadoop job or a batch job, depending on settings.
      *
      * @throws IllegalState If the indexing has already been done.
      */
@@ -182,12 +191,109 @@ public class ArchiveFile {
             throw new IllegalState("Attempted to index file '" + filename + "' which is already indexed");
         }
 
-        boolean usingHadoop = Settings.getBoolean(CommonSettings.USING_HADOOP);
-        if (usingHadoop) {
+        // TODO shouldn't have check on filename here, but for now let it be
+        if (Settings.getBoolean(CommonSettings.USING_HADOOP) && WARCUtils.isWarc(filename)) {
             // Start a hadoop indexing job.
+            // But this shouldn't be done on the files individually?? This is done on a list of filenames..
+            hadoopIndex();
         } else {
             batchIndex();
         }
+    }
+
+    /**
+     * Runs a map-only (no reduce) job to index this file.
+     */
+    private void hadoopIndex() {
+        // For now only handles WARC files
+        Path hadoopInputNameFile = new Path("/user/vagrant/input.txt");
+        Configuration conf = HadoopUtils.getConfFromSettings();
+        Bitrepository bitrep = HadoopUtils.initBitrep();
+
+        // Get file and put it in hdfs
+        File inputFile = bitrep.getFile(filename, "netarkivet", null);
+        Path inputFilePath = new Path(inputFile.getAbsolutePath());
+        FileSystem fs = null;
+        try {
+            fs = FileSystem.get(conf);
+            try {
+                fs.copyFromLocalFile(true, inputFilePath, new Path(HadoopUtils.HADOOP_INPUT_FOLDER_PATH));
+            } catch (IOException e) {
+                log.warn("Failed to upload '{}' to hdfs", inputFilePath.toString());
+                return;
+            }
+
+            // Write the filename/path of the WARC-file to the input file input.txt for Hadoop to process
+            // Files are overwritten by default, so for now just create a file each time
+            try {
+                fs.create(hadoopInputNameFile);
+                FSDataOutputStream fsdos = fs.append(hadoopInputNameFile);
+                fsdos.writeBytes(HadoopUtils.HADOOP_FULL_INPUT_FOLDER_PATH + filename);
+            } catch (IOException e) {
+                log.warn("Could not write input line to {}", hadoopInputNameFile);
+                return;
+            }
+
+            // Start job on file
+            log.info("Starting CDXJob on file '{}'", filename);
+            try {
+                // TODO Guess conditioning on which file it is should be handled here by designating different mapper classes
+                int exitCode = ToolRunner.run(new CDXJob(conf),
+                        new String[] {hadoopInputNameFile.getName(), HadoopUtils.HADOOP_OUTPUT_FOLDER_PATH});
+
+                if (exitCode != 0) {
+                    log.warn("Hadoop job failed with exit code '{}'", exitCode);
+                    try {
+                        fs.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    collectHadoopResults(fs);
+                }
+            } catch (Exception e) {
+                log.warn("Running hadoop job threw exception", e);
+            }
+        } catch (IOException e) {
+            log.warn("Couldn't get FileSystem from configuration");
+        } finally {
+            try {
+                fs.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Collects the results from the Hadoop job in a file in a tempdir and afterwards moves
+     * the results to WAYBACK_BATCH_OUTPUTDIR. The status of this object is then updated to reflect that the
+     * object has been indexed.
+     * @param fs The Hadoop FileSystem that is used
+     */
+    private void collectHadoopResults(FileSystem fs) {
+        Path jobResultFilePath = new Path(HadoopUtils.HADOOP_OUTPUT_FOLDER_PATH + "part-m-00000"); //TODO: Make non-hardcoded - should eventually run through all files named 'part-m-XXXXX'
+
+        File outputFile = getNewFileInWaybackTempDir();
+        log.info("Collecting index for '{}' to '{}'", this.getFilename(), outputFile.getAbsolutePath());
+        try {
+            if (fs.exists(jobResultFilePath)) {
+                fs.copyToLocalFile(jobResultFilePath, new Path(outputFile.getAbsolutePath()));
+                log.info("Finished collecting index for '{}' to '{}'", this.getFilename(), outputFile.getAbsolutePath());
+            } else {
+                throw new IllegalState(
+                        "No results to copy from hdfs '" + jobResultFilePath + "' to '" + outputFile + "'");
+            }
+        } catch (IOException e) {
+            log.warn("Could not collect index results from {}", jobResultFilePath.toString());
+        }
+        File finalFile = moveFileToWaybackOutputDir(outputFile);
+
+        // Update the file status in the object store
+        originalIndexFileName = outputFile.getName();
+        isIndexed = true;
+        log.info("Indexed '{}' to '{}'", this.filename, finalFile.getAbsolutePath());
+        (new ArchiveFileDAO()).update(this);
     }
 
     /**
@@ -247,36 +353,55 @@ public class ArchiveFile {
      * @param status the status of a batch job.
      */
     private void collectResults(BatchStatus status) {
-        // Use an arbitrary filename for the output
-        String outputFilename = UUID.randomUUID().toString();
-
-        // Read the name of the temporary output directory and create it if
-        // necessary
-        String tempBatchOutputDir = Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR);
-        final File outDir = new File(tempBatchOutputDir);
-        FileUtils.createDir(outDir);
-
-        // Copy the batch output to the temporary directory.
-        File batchOutputFile = new File(outDir, outputFilename);
+        File batchOutputFile = getNewFileInWaybackTempDir();
         log.info("Collecting index for '{}' to '{}'", this.getFilename(), batchOutputFile.getAbsolutePath());
         status.copyResults(batchOutputFile);
         log.info("Finished collecting index for '{}' to '{}'", this.getFilename(), batchOutputFile.getAbsolutePath());
-        // Read the name of the final batch output directory and create it if
-        // necessary
+        File finalFile = moveFileToWaybackOutputDir(batchOutputFile);
+
+        // Update the file status in the object store
+        originalIndexFileName = batchOutputFile.getName();
+        isIndexed = true;
+        log.info("Indexed '{}' to '{}'", this.filename, finalFile.getAbsolutePath());
+        (new ArchiveFileDAO()).update(this);
+    }
+
+    /**
+     * Helper method.
+     * Makes a new file in the wayback temp dir and returns it.
+     * If the directory does not exist, it is also created.
+     * @return
+     */
+    private File getNewFileInWaybackTempDir() {
+        // Use an arbitrary filename for the output
+        String outputFilename = UUID.randomUUID().toString();
+
+        // Read the name of the temporary output directory and create it if necessary
+        String tempOutputDir = Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR);
+        final File outDir = new File(tempOutputDir);
+        FileUtils.createDir(outDir);
+
+        // Copy the output to the temporary directory.
+        return new File(outDir, outputFilename);
+    }
+
+    /**
+     * Helper method.
+     * Moves (renames) the output file from the batch process to the wayback output dir.
+     * If the directory does not exist, it is also created.
+     * @param outputFile The file to move
+     * @return The file now in the output dir
+     */
+    private File moveFileToWaybackOutputDir(File outputFile) {
+        // Read the name of the final batch output directory and create it if necessary
         String finalBatchOutputDir = Settings.get(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
         final File finalDirectory = new File(finalBatchOutputDir);
         FileUtils.createDir(finalDirectory);
 
-        // Move the output file from the temporary directory to the final
-        // directory
-        File finalFile = new File(finalDirectory, outputFilename);
-        batchOutputFile.renameTo(finalFile);
-
-        // Update the file status in the object store
-        originalIndexFileName = outputFilename;
-        isIndexed = true;
-        log.info("Indexed '{}' to '{}'", this.filename, finalFile.getAbsolutePath());
-        (new ArchiveFileDAO()).update(this);
+        // Move the output file from the temporary directory to the final directory
+        File finalFile = new File(finalDirectory, outputFile.getName());
+        outputFile.renameTo(finalFile);
+        return finalFile;
     }
 
     /**

@@ -44,7 +44,7 @@ National Library.
                 <storeMaxPillarFailures>1</storeMaxPillarFailures>
                 <tempdir>arcrepositoryTemp</tempdir>
                 <collectionID>dvds</collectionID>
-                <usepillar></usepillar>
+                <usepillar>file2-pillar</usepillar>
             </bitrepository>
         </arcrepositoryClient>
     </common>
