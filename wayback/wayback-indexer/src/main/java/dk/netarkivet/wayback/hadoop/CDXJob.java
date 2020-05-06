@@ -30,7 +30,6 @@ public class CDXJob extends Configured implements Tool {
      */
     @Override
     public int run(String[] args) throws InterruptedException, IOException, ClassNotFoundException {
-        //TODO (jolf/abr) probably better if we can give it a folder or glob rather than a file of files
         Path inputPath = new Path(args[0]);
         Path outputPath = new Path(args[1]);
         Configuration conf = getConf();
@@ -43,6 +42,7 @@ public class CDXJob extends Configured implements Tool {
         TextOutputFormat.setOutputPath(job, outputPath);
         job.setMapperClass(CDXMap.class);
         job.setNumReduceTasks(0); // Ensure job is map-only
+
         // How many files should each node process at a time (how many lines are read from the input file)
         NLineInputFormat.setNumLinesPerSplit(job, 5);
 

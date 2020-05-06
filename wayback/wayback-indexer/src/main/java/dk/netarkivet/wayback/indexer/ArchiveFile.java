@@ -32,6 +32,7 @@ import javax.persistence.Id;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.ToolRunner;
@@ -44,6 +45,7 @@ import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.BitmagUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.HadoopUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -206,9 +208,13 @@ public class ArchiveFile {
      */
     private void hadoopIndex() {
         // For now only handles WARC files
-        Path hadoopInputNameFile = new Path("/user/vagrant/input.txt");
+        String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_DIR);
+        // As each file for now has its own job, the inputfile for each job
+        // is just made unique from the archivefile's name
+        Path hadoopInputNameFile = new Path(
+                filename.substring(0, filename.lastIndexOf('.')) + "_map_input.txt");
         Configuration conf = HadoopUtils.getConfFromSettings();
-        Bitrepository bitrep = HadoopUtils.initBitrep();
+        Bitrepository bitrep = BitmagUtils.initBitrep();
 
         // Get file and put it in hdfs
         File inputFile = bitrep.getFile(filename, "netarkivet", null);
@@ -217,18 +223,18 @@ public class ArchiveFile {
         try {
             fs = FileSystem.get(conf);
             try {
-                fs.copyFromLocalFile(true, inputFilePath, new Path(HadoopUtils.HADOOP_INPUT_FOLDER_PATH));
+                fs.copyFromLocalFile(true, inputFilePath, new Path(hadoopInputDir));
             } catch (IOException e) {
                 log.warn("Failed to upload '{}' to hdfs", inputFilePath.toString());
                 return;
             }
+            fs.deleteOnExit(hadoopInputNameFile);
 
-            // Write the filename/path of the WARC-file to the input file input.txt for Hadoop to process
-            // Files are overwritten by default, so for now just create a file each time
+            // Write the filename/path of the WARC-file to the input file for Hadoop to process.
+            // NB files of same name are overwritten by default
             try {
-                fs.create(hadoopInputNameFile);
-                FSDataOutputStream fsdos = fs.append(hadoopInputNameFile);
-                fsdos.writeBytes(HadoopUtils.HADOOP_FULL_INPUT_FOLDER_PATH + filename);
+                FSDataOutputStream fsdos = fs.create(hadoopInputNameFile);
+                fsdos.writeBytes(hadoopInputDir + "/" + filename);
             } catch (IOException e) {
                 log.warn("Could not write input line to {}", hadoopInputNameFile);
                 return;
@@ -239,7 +245,8 @@ public class ArchiveFile {
             try {
                 // TODO Guess conditioning on which file it is should be handled here by designating different mapper classes
                 int exitCode = ToolRunner.run(new CDXJob(conf),
-                        new String[] {hadoopInputNameFile.getName(), HadoopUtils.HADOOP_OUTPUT_FOLDER_PATH});
+                        new String[] {
+                                hadoopInputNameFile.getName(), Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR)});
 
                 if (exitCode != 0) {
                     log.warn("Hadoop job failed with exit code '{}'", exitCode);
@@ -266,15 +273,16 @@ public class ArchiveFile {
     }
 
     /**
-     * Collects the results from the Hadoop job in a file in a tempdir and afterwards moves
+     * Collects the results from the Hadoop job in a file in a local tempdir and afterwards moves
      * the results to WAYBACK_BATCH_OUTPUTDIR. The status of this object is then updated to reflect that the
      * object has been indexed.
      * @param fs The Hadoop FileSystem that is used
      */
     private void collectHadoopResults(FileSystem fs) {
-        Path jobResultFilePath = new Path(HadoopUtils.HADOOP_OUTPUT_FOLDER_PATH + "part-m-00000"); //TODO: Make non-hardcoded - should eventually run through all files named 'part-m-XXXXX'
+        Path jobResultFilePath = new Path(
+                Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR) + "/part-m-00000"); //TODO: Make non-hardcoded - should eventually run through all files named 'part-m-XXXXX'
 
-        File outputFile = getNewFileInWaybackTempDir();
+        File outputFile = makeNewFileInWaybackTempDir();
         log.info("Collecting index for '{}' to '{}'", this.getFilename(), outputFile.getAbsolutePath());
         try {
             if (fs.exists(jobResultFilePath)) {
@@ -353,7 +361,7 @@ public class ArchiveFile {
      * @param status the status of a batch job.
      */
     private void collectResults(BatchStatus status) {
-        File batchOutputFile = getNewFileInWaybackTempDir();
+        File batchOutputFile = makeNewFileInWaybackTempDir();
         log.info("Collecting index for '{}' to '{}'", this.getFilename(), batchOutputFile.getAbsolutePath());
         status.copyResults(batchOutputFile);
         log.info("Finished collecting index for '{}' to '{}'", this.getFilename(), batchOutputFile.getAbsolutePath());
@@ -372,7 +380,7 @@ public class ArchiveFile {
      * If the directory does not exist, it is also created.
      * @return
      */
-    private File getNewFileInWaybackTempDir() {
+    private File makeNewFileInWaybackTempDir() {
         // Use an arbitrary filename for the output
         String outputFilename = UUID.randomUUID().toString();
 

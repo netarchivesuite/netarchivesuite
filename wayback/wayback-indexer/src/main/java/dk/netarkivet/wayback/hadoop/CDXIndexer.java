@@ -53,9 +53,7 @@ public class CDXIndexer {
      * @throws IOException If it fails to read the WARC file.
      */
     public List<String> indexFile(File warcFile) throws IOException {
-        ArchiveReader archiveReader = ArchiveReaderFactory.get(warcFile.getName(), new FileInputStream(warcFile),
-                false);
-        return extractCdxLines(archiveReader);
+        return index(new FileInputStream(warcFile), warcFile.getName());
     }
 
 

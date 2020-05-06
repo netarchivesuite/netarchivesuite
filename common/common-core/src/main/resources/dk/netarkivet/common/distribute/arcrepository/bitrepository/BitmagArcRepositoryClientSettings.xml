@@ -40,11 +40,11 @@ National Library.
                         use of certificates is disabled as well.
                  -->
                 <keyfilename></keyfilename>
-                <settingsDir>./common/common-core/src/main/resources/dk/netarkivet/common/distribute/arcrepository</settingsDir>
+                <settingsDir></settingsDir>
                 <storeMaxPillarFailures>1</storeMaxPillarFailures>
                 <tempdir>arcrepositoryTemp</tempdir>
                 <collectionID>dvds</collectionID>
-                <usepillar>file2-pillar</usepillar>
+                <usepillar></usepillar>
             </bitrepository>
         </arcrepositoryClient>
     </common>

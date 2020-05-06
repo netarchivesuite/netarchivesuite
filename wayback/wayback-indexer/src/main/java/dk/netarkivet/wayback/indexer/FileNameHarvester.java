@@ -22,13 +22,7 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_KEYFILENAME;
-import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_SETTINGS_DIR;
-import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_STORE_MAX_PILLAR_FAILURES;
-import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_USEPILLAR;
-
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,7 +40,7 @@ import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.HadoopUtils;
+import dk.netarkivet.common.utils.BitmagUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.DatedFileListJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
@@ -67,7 +61,7 @@ public class FileNameHarvester {
 
         if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
             // Initialize connection to the bitrepository
-            Bitrepository bitrep = HadoopUtils.initBitrep();
+            Bitrepository bitrep = BitmagUtils.initBitrep();
             List<String> fileNames = bitrep.getFileIds("netarkivet");
             for (String fileName : fileNames) {
                 createArchiveFileInDB(fileName, dao);
