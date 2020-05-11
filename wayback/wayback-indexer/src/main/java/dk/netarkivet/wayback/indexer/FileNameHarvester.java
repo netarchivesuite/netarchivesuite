@@ -23,6 +23,7 @@
 package dk.netarkivet.wayback.indexer;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,6 +39,7 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.BitmagUtils;
@@ -62,9 +64,14 @@ public class FileNameHarvester {
         if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
             // Initialize connection to the bitrepository
             Bitrepository bitrep = BitmagUtils.initBitrep();
-            List<String> fileNames = bitrep.getFileIds("netarkivet");
-            for (String fileName : fileNames) {
-                createArchiveFileInDB(fileName, dao);
+            String collection = Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_COLLECTIONID);
+            List<String> fileNames = bitrep.getFileIds(collection);
+            if (fileNames != null) {
+                for (String fileName : fileNames) {
+                    createArchiveFileInDB(fileName, dao);
+                }
+            } else {
+                log.info("No files found in collection '{}'", collection);
             }
         } else {
             PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
@@ -78,13 +85,25 @@ public class FileNameHarvester {
      */
     public static synchronized void harvestRecentFilenames() {
         ArchiveFileDAO dao = new ArchiveFileDAO();
+        long timeAgo = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_SINCE);
+        Date since = new Date(System.currentTimeMillis() - timeAgo);
 
         if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
-            // TODO
+            Bitrepository bitrep = BitmagUtils.initBitrep();
+            String collection = Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_COLLECTIONID);
+            List<String> fileNames = bitrep.getFileIds(collection);
+            if (fileNames != null) {
+                for (String fileName : fileNames) {
+                    File file = bitrep.getFile(fileName, collection, null);
+                    if (file.lastModified() > since.getTime()) {
+                        createArchiveFileInDB(fileName, dao);
+                    }
+                }
+            } else {
+                log.info("No files found in collection '{}'", collection);
+            }
         } else {
             PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
-            long timeAgo = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_SINCE);
-            Date since = new Date(System.currentTimeMillis() - timeAgo);
             BatchStatus status = client
                     .batch(new DatedFileListJob(since), Settings.get(WaybackSettings.WAYBACK_REPLICA));
             getResultFileAndCreateInDB(status, dao);
