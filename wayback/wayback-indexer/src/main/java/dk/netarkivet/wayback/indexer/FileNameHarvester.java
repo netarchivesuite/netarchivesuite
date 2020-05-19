@@ -60,7 +60,8 @@ public class FileNameHarvester {
      */
     public static synchronized void harvestAllFilenames() {
         ArchiveFileDAO dao = new ArchiveFileDAO();
-
+        //TODO I believe that by default this only fetches max 10000 files. Look at the query interface
+        //in bitmag
         if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
             // Initialize connection to the bitrepository
             Bitrepository bitrep = BitmagUtils.initBitrep();
@@ -68,6 +69,7 @@ public class FileNameHarvester {
             List<String> fileNames = bitrep.getFileIds(collection);
             if (fileNames != null) {
                 for (String fileName : fileNames) {
+                    //TODO only create if it doesn't already exist!
                     createArchiveFileInDB(fileName, dao);
                 }
             } else {
@@ -89,7 +91,10 @@ public class FileNameHarvester {
         Date since = new Date(System.currentTimeMillis() - timeAgo);
 
         if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
-            Bitrepository bitrep = BitmagUtils.initBitrep();
+            log.info("Harvesting of recent files not yet implemented with bitmag.");
+            //TODO can this be implemented using queries in bitmag
+
+/*            Bitrepository bitrep = BitmagUtils.initBitrep();
             String collection = Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_COLLECTIONID);
             List<String> fileNames = bitrep.getFileIds(collection);
             if (fileNames != null) {
@@ -101,7 +106,7 @@ public class FileNameHarvester {
                 }
             } else {
                 log.info("No files found in collection '{}'", collection);
-            }
+            }*/
         } else {
             PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
             BatchStatus status = client

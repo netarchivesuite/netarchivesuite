@@ -23,7 +23,7 @@ public class TestBitrepository {
         String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
 
         // Initialize connection to the bitrepository
-        Bitrepository bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
+        Bitrepository bitrep = Bitrepository.getInstance(configDir, keyfilename, maxStoreFailures, usepillar);
 
 
         testGetFileIDs(bitrep);
