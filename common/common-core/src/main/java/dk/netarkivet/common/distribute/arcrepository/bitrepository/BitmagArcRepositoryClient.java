@@ -103,7 +103,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
         String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
 
         // Initialize connection to the bitrepository
-        this.bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
+        this.bitrep = Bitrepository.getInstance(configDir, keyfilename, maxStoreFailures, usepillar);
     }
 
     @Override

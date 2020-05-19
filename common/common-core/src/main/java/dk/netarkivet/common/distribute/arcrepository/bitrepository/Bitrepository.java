@@ -118,6 +118,8 @@ public class Bitrepository implements AutoCloseable {
     /** Which pillar to get from. */
     private final String usepillar;
 
+    private static volatile Bitrepository instance;
+
     /**
      * Constructor for the BitRepository class.
      * @param configDir A Bitrepository settingsdirectory
@@ -126,7 +128,7 @@ public class Bitrepository implements AutoCloseable {
      * @param bitmagKeyFilename Optional certificate filename relative to configDir
      * @throws ArgumentNotValid if configDir is null
      */
-    public Bitrepository(File configDir, String bitmagKeyFilename, int maxStoreFailures, String usepillar) {
+    private Bitrepository(File configDir, String bitmagKeyFilename, int maxStoreFailures, String usepillar) {
         logger.debug("Initialising bitrepository");
         ArgumentNotValid.checkExistsDirectory(configDir, "File configDir");
 
@@ -182,6 +184,19 @@ public class Bitrepository implements AutoCloseable {
         bitMagGetClient = acf.createGetFileClient(bitmagSettings, bitMagSecurityManager, componentId);
         bitMagGetFileIDsClient = acf.createGetFileIDsClient(bitmagSettings, bitMagSecurityManager, componentId);
         bitMagGetChecksumsClient = acf.createGetChecksumsClient(bitmagSettings, bitMagSecurityManager, componentId);
+    }
+
+    public static Bitrepository getInstance(File configDir, String bitmagKeyFilename, int maxStoreFailures,
+            String usepillar) {
+        if (instance == null) {
+            //Double-checked locking. See https://www.baeldung.com/java-singleton-double-checked-locking
+            synchronized (Bitrepository.class) {
+                if (instance == null) {
+                    instance = new Bitrepository(configDir, bitmagKeyFilename, maxStoreFailures, usepillar);
+                }
+            }
+        }
+        return instance;
     }
 
     /**

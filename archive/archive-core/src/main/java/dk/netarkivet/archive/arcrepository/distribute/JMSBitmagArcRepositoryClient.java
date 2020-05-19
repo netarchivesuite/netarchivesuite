@@ -202,7 +202,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         }
 
         // Initialize connection to the bitrepository
-        this.bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
+        this.bitrep = Bitrepository.getInstance(configDir, keyfilename, maxStoreFailures, usepillar);
         if (!bitrep.getKnownCollections().contains(this.collectionId)) {
             close();
             throw new ArgumentNotValid("The bitrepository doesn't know about the collection " + this.collectionId);
