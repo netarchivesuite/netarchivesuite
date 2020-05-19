@@ -223,6 +223,7 @@ public class ArchiveFile {
         try {
             fs = FileSystem.get(conf);
             try {
+                log.info("Copying {} to hdfs", inputFilePath.toString());
                 fs.copyFromLocalFile(true, inputFilePath, new Path(hadoopInputDir));
             } catch (IOException e) {
                 log.warn("Failed to upload '{}' to hdfs", inputFilePath.toString());
@@ -253,7 +254,7 @@ public class ArchiveFile {
                     try {
                         fs.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.warn("Problem closing FileSystem: ", e);
                     }
                 } else {
                     collectHadoopResults(fs);
@@ -267,7 +268,7 @@ public class ArchiveFile {
             try {
                 fs.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.warn("Problem closing FileSystem: ", e);
             }
         }
     }
