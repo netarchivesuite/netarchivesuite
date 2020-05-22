@@ -43,6 +43,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.BitmagUtils;
@@ -217,14 +218,15 @@ public class ArchiveFile {
         Bitrepository bitrep = BitmagUtils.initBitrep();
 
         // Get file and put it in hdfs
-        File inputFile = bitrep.getFile(filename, "netarkivet", null);
+        log.info("Getting file '{}' from bitmag for indexing", filename);
+        File inputFile = bitrep.getFile(filename, "netarkivet", null, Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_STORE_MAX_PILLAR_FAILURES)); // TODO: Maybe put setting in BitmagUtils?
         Path inputFilePath = new Path(inputFile.getAbsolutePath());
         FileSystem fs = null;
         try {
             fs = FileSystem.get(conf);
             try {
                 log.info("Copying {} to hdfs", inputFilePath.toString());
-                fs.copyFromLocalFile(true, inputFilePath, new Path(hadoopInputDir));
+                fs.copyFromLocalFile(false, inputFilePath, new Path(hadoopInputDir)); // TODO Need hadoopInputDir to exist prior to this!
             } catch (IOException e) {
                 log.warn("Failed to upload '{}' to hdfs", inputFilePath.toString());
                 return;

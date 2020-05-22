@@ -26,6 +26,6 @@ public class BitmagUtils {
         int maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
         String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
 
-        return Bitrepository.getInstance(configDir, keyfilename, maxStoreFailures, usepillar);
+        return Bitrepository.getInstance(configDir, keyfilename);
     }
 }

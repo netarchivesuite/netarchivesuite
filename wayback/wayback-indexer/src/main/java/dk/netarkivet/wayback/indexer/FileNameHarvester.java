@@ -66,11 +66,12 @@ public class FileNameHarvester {
             // Initialize connection to the bitrepository
             Bitrepository bitrep = BitmagUtils.initBitrep();
             String collection = Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_COLLECTIONID);
-            List<String> fileNames = bitrep.getFileIds(collection);
+            List<String> fileNames = bitrep.getFileIds(collection, Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_USEPILLAR));
             if (fileNames != null) {
                 for (String fileName : fileNames) {
-                    //TODO only create if it doesn't already exist!
-                    createArchiveFileInDB(fileName, dao);
+                    if (!dao.exists(fileName)) {
+                        createArchiveFileInDB(fileName, dao);
+                    }
                 }
             } else {
                 log.info("No files found in collection '{}'", collection);

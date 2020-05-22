@@ -189,9 +189,8 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             log.info("No collectionId set so using default value {}", collectionId);
         }
         this.collectionId = collectionId;
-
-        int maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
-        String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
+        this.maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
+        this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
 
         File tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
         try {
@@ -202,7 +201,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         }
 
         // Initialize connection to the bitrepository
-        this.bitrep = Bitrepository.getInstance(configDir, keyfilename, maxStoreFailures, usepillar);
+        this.bitrep = Bitrepository.getInstance(configDir, keyfilename);
         if (!bitrep.getKnownCollections().contains(this.collectionId)) {
             close();
             throw new ArgumentNotValid("The bitrepository doesn't know about the collection " + this.collectionId);
@@ -323,7 +322,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         // If not there, this will work
         // If already there, with same checksum, this will work.
         // If already there, with different checksum, this will fail
-        boolean uploadSuccessful = bitrep.uploadFile(file, fileId, collectionId);
+        boolean uploadSuccessful = bitrep.uploadFile(file, fileId, collectionId, maxStoreFailures);
         if (!uploadSuccessful) {
             String errMsg =
                     "Upload to collection '" + collectionId + "' of file '" + fileId + "' failed.";
@@ -341,10 +340,10 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      * @param file The file to have been uploaded.
      * @param fileId The id of the file.
      */
-    protected void  checkFileConsistency(File file, String fileId) {
+    protected void checkFileConsistency(File file, String fileId) {
         //get the known checksums for the file in bitrep
         Map<String, ChecksumsCompletePillarEvent> checksumResults =
-                bitrep.getChecksums(fileId, collectionId);
+                bitrep.getChecksums(fileId, collectionId, maxStoreFailures);
 
         //for each pillar in this collection
         for (String collectionPillar: BitrepositoryUtils.getCollectionPillars(collectionId) ){
