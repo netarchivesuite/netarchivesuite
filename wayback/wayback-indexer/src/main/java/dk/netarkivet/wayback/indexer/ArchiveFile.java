@@ -219,16 +219,16 @@ public class ArchiveFile {
 
         // Get file and put it in hdfs
         log.info("Getting file '{}' from bitmag for indexing", filename);
-        File inputFile = bitrep.getFile(filename, "netarkivet", null, Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_STORE_MAX_PILLAR_FAILURES)); // TODO: Maybe put setting in BitmagUtils?
+        File inputFile = bitrep.getFile(filename, "netarkivet", null, Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_USEPILLAR)); // TODO: Maybe put setting in BitmagUtils?
         Path inputFilePath = new Path(inputFile.getAbsolutePath());
         FileSystem fs = null;
         try {
             fs = FileSystem.get(conf);
             try {
-                log.info("Copying {} to hdfs", inputFilePath.toString());
+                log.info("Copying '{}' to hdfs", inputFilePath.toString());
                 fs.copyFromLocalFile(false, inputFilePath, new Path(hadoopInputDir)); // TODO Need hadoopInputDir to exist prior to this!
             } catch (IOException e) {
-                log.warn("Failed to upload '{}' to hdfs", inputFilePath.toString());
+                log.warn("Failed to upload '{}' to hdfs", inputFilePath.toString(), e);
                 return;
             }
             fs.deleteOnExit(hadoopInputNameFile);
@@ -236,10 +236,12 @@ public class ArchiveFile {
             // Write the filename/path of the WARC-file to the input file for Hadoop to process.
             // NB files of same name are overwritten by default
             try {
+                log.info("Creating input file '{}' on hdfs", hadoopInputNameFile);
                 FSDataOutputStream fsdos = fs.create(hadoopInputNameFile);
+                log.info("Writing input line '{}' to input file", hadoopInputDir + "/" + filename);
                 fsdos.writeBytes(hadoopInputDir + "/" + filename);
             } catch (IOException e) {
-                log.warn("Could not write input line to {}", hadoopInputNameFile);
+                log.warn("Could not write input line to {}", hadoopInputNameFile, e);
                 return;
             }
 
@@ -264,11 +266,13 @@ public class ArchiveFile {
             } catch (Exception e) {
                 log.warn("Running hadoop job threw exception", e);
             }
-        } catch (IOException e) {
-            log.warn("Couldn't get FileSystem from configuration");
+        } catch (Exception e) {
+            log.warn("Couldn't get FileSystem from configuration", e);
         } finally {
             try {
-                fs.close();
+                if (fs != null) {
+                    fs.close();
+                }
             } catch (IOException e) {
                 log.warn("Problem closing FileSystem: ", e);
             }
