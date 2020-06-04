@@ -17,6 +17,14 @@
 
   <dependencies>
     <dependency>
+      <!--Fixes a warning from hbase during build about jdk.tools not being found-->
+      <groupId>jdk.tools</groupId>
+      <artifactId>jdk.tools</artifactId>
+      <scope>system</scope>
+      <systemPath>${java.home}/../lib/tools.jar</systemPath>
+      <version>1.8</version>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>common-core</artifactId>
       <version>${project.version}</version>
