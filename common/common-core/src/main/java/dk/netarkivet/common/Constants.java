@@ -66,7 +66,7 @@ public final class Constants {
      * TODO: See https://stackoverflow.com/questions/2712970/get-maven-artifact-version-at-runtime/43383222 for the correct way
      * to do this at runtime
      * */
-    private static final String HERITRIX3_VERSION = "3.3.0-BDB-5.0.x-NAS-5.6";
+    private static final String HERITRIX3_VERSION = "3.4.0-20200518-NAS-6.0";
 
     /**
      * Read this much data when copying data from a file channel. Note that due to a bug in java, this should never be
