@@ -7,8 +7,10 @@ import java.io.InputStream;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -28,10 +30,12 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import static java.lang.String.valueOf;
 
 public class WarcRecordClient {
-
+    public static final String BITREPOSITORY_COLLECTIONID = "settings.common.arcrepositoryClient.bitrepository.collectionID";
     /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(WarcRecordClient.class);
     /** The amount of milliseconds in a second. 1000. */
@@ -45,6 +49,8 @@ public class WarcRecordClient {
     // private int readTimeout = 10000;
     private final static long offset = 3442;
     final static String SAMPLE_HOST = "http://localhost:8883/cgi-bin2/py1.cgi/10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz";
+    private  String collectionId;
+    private  Bitrepository bitrep;
 
     public static void main(String args[]) throws Exception {
         // Header header = new BasicHeader( name,value);
@@ -52,6 +58,8 @@ public class WarcRecordClient {
         // curl:
         // test_curl: -r "3442-" "http://localhost:8883/cgi-bin2/py1.cgi/10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz?foo=bar&x=y"
         // httpGet.addHeader("Range", "bytes=3442-");  // or httpGet.addHeader("Range", "bytes=3442-3442"); or open range converted to closed range to make it work
+
+
 
         // Creating a HttpClient object
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -162,68 +170,47 @@ public BitarchiveRecord getWarc(CloseableHttpClient httpClient, String uri) thro
     }
 
 
-    public BitarchiveRecord get(String arcfileName, long index) throws ArgumentNotValid, IOFailure, IOException {
+    public BitarchiveRecord get(String arcfileName, long index) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfile");
         ArgumentNotValid.checkNotNegative(index, "index");
         log.debug("Requesting get of record '{}:{}'", arcfileName, index);
         long start = System.currentTimeMillis();
 
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        String uri = getUriFrom(arcfileName, index);
-        // sendGet()
-        BitarchiveRecord replyNetMsg = getWarc(httpClient, uri);  // check result
-
-        long timePassed = System.currentTimeMillis() - start;
-        //  Rewrite for Apache httpclient:
-        //     GetMessage requestGetMsg = new GetMessage(Channels.getTheRepos(), replyQ, arcfile, index);
-        if (replyNetMsg != null) {
-            log.debug("Reply received after {} seconds", (timePassed / MILLISECONDS_PER_SECOND));
-        } else if (replyNetMsg == null) {
-            log.info("Request for record({}:{}) timed out after {} seconds. Returning null BitarchiveRecord", arcfileName,
-                    index, (getTimeout / MILLISECONDS_PER_SECOND));
+        if (!bitrep.existsInCollection(arcfileName, collectionId)) {
+            log.warn("The file '{}' is not in collection '{}'. Returning null BitarchiveRecord", arcfileName, collectionId);
             return null;
+        } else {
+            File f = bitrep.getFile(arcfileName, collectionId, null);
+            long timePassed = System.currentTimeMillis() - start;
+            log.debug("Reply received after {} seconds", (timePassed / MILLISECONDS_PER_SECOND));
+
+            return BitarchiveRecord.getBitarchiveRecord(arcfileName, f, index);
         }
 
-        return replyNetMsg;
-    }
-
-
-    private String getUriFrom(String arcfileName, long index) {
-       // ToDo: Get Uri from request with arcfileName, index and more...
-        String uri = null;
-        return uri;
     }
 
 
     /**
-     * Synchronously retrieves a file from a bitarchive and places it in a local file. This is the interface for sending
-     * GetFileMessage on the "TheArcrepos" queue. This is a blocking call.
+     * Retrieves a file from a repository and places it in a local file.
      *
      * @param arcfilename Name of the arcfile to retrieve.
-     * @param replica The bitarchive to retrieve the data from.
      * @param toFile Filename of a place where the file fetched can be put.
-     * @throws ArgumentNotValid If the arcfilename are null or empty, or if either replica or toFile is null.
-     * @throws IOFailure if there are problems getting a reply or the file could not be found.
+     * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile is null
+     * @throws IOFailure if there are problems reading or writing file, or the file with the given arcfilename could not
+     * be found.
      */
-    public void getFile(String arcfilename, Replica replica, File toFile) throws ArgumentNotValid, IOFailure {
-        ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
-        ArgumentNotValid.checkNotNull(replica, "replica");
-        ArgumentNotValid.checkNotNull(toFile, "toFile");
 
-        log.debug("Requesting get of file '{}' from '{}'", arcfilename, replica);
-        // ArgumentNotValid.checkNotNull(replyQ, "replyQ must not be null");
-        /* ToDo: rewrite to take bitmag API call
-     //   GetFileMessage gfMsg = new GetFileMessage(Channels.getTheRepos(), replyQ, arcfilename, replica.getId());
-     //   GetFileMessage getFileMessage = (GetFileMessage) sendAndWaitForOneReply(gfMsg, 0);
-        if (getFileMessage == null) {
-            throw new IOFailure("GetFileMessage timed out before returning." + "File not found?");
-        } else if (!getFileMessage.isOk()) {
-            throw new IOFailure("GetFileMessage failed: " + getFileMessage.getErrMsg());
+    public void getFile(String arcfilename,  File toFile) {
+        ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "String arcfilename");
+        ArgumentNotValid.checkNotNull(toFile, "File toFile");
+
+        if (!bitrep.existsInCollection(arcfilename, collectionId)) {
+            log.warn("The file '{}' is not in collection '{}'.", arcfilename, collectionId);
+            throw new IOFailure("File '" + arcfilename + "' does not exist");
         } else {
-            getFileMessage.getData(toFile);
+            File f = bitrep.getFile(arcfilename, collectionId, null);
+            FileUtils.copyFile(f, toFile);
         }
-
-         */
     }
 
 }
