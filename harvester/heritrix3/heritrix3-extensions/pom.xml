@@ -36,7 +36,7 @@
         <exclusion>
           <groupId>org.archive</groupId>
           <artifactId>heritrix</artifactId>
-        </exclusion> 
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -54,8 +54,8 @@
     </dependency>
 
     <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
     </dependency>
 
     <dependency>
@@ -69,8 +69,8 @@
     </dependency>
 
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
     </dependency>
 
     <!-- not in Maven Central -->
@@ -90,7 +90,7 @@
       <artifactId>heritrix-contrib</artifactId>
     </dependency>
 
-    <dependency>    
+    <dependency>
       <groupId>com.sleepycat</groupId>
       <artifactId>je</artifactId>
       <version>5.0.73</version>
@@ -104,11 +104,6 @@
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-analyzers-common</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.twitter4j</groupId>
-      <artifactId>twitter4j-core</artifactId>
     </dependency>
 
     <dependency>
@@ -126,19 +121,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-
-    <!-- Somehow maven removes this from the webarchive-commons artifact?! -->
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-
 
   </dependencies>
 
@@ -160,12 +142,12 @@
     </plugins>
   </build>
   <dependencyManagement>
-  	<dependencies>
-  		<dependency>
-  			<groupId>berkeleydb</groupId>
-  			<artifactId>je</artifactId>
-  			<version>${je.version}</version>
-  		</dependency>
-  	</dependencies>
+    <dependencies>
+      <dependency>
+        <groupId>berkeleydb</groupId>
+        <artifactId>je</artifactId>
+        <version>${je.version}</version>
+      </dependency>
+    </dependencies>
   </dependencyManagement>
 </project>

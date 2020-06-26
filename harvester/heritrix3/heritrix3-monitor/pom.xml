@@ -100,14 +100,8 @@
     </dependency>
 
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
+      <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -185,7 +179,6 @@
             </goals>
             <configuration>
               <appendAssemblyId>false</appendAssemblyId>
-              <classifier>prod</classifier>
               <finalName>NetarchiveSuite-${project.artifactId}-${project.version}</finalName>
               <descriptors>
                 <descriptor>src/main/assembly/assembly.xml</descriptor>

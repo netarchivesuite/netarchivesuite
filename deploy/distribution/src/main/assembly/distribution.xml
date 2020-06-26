@@ -1,108 +1,107 @@
 <?xml version="1.0"?>
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-    <id>dist</id>
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
+  <id>dist</id>
 
-    <formats>
-        <format>zip</format>
-    </formats>
+  <formats>
+    <format>zip</format>
+  </formats>
 
-    <includeBaseDirectory>false</includeBaseDirectory >
+  <includeBaseDirectory>false</includeBaseDirectory >
 
-    <fileSets>
-        <fileSet>
-            <directory>${project.basedir}/src/main/resources/</directory>
-            <includes>
-                <include>archivedatabasedir/**</include>
-                <include>harvestdefinitionbasedir/**</include>
-                <include>order_templates_dist/**</include>
-                <include>examples/**</include>
-                <include>README.txt</include>
-                <include>derby.properties</include>
-            </includes>
-            <outputDirectory>/</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../deploy-core/</directory>
-            <includes>
-                <include>scripts/**</include>
-            </includes>
-            <outputDirectory>/</outputDirectory>
-        </fileSet>
+  <fileSets>
+    <fileSet>
+      <directory>${project.basedir}/src/main/resources/</directory>
+      <includes>
+        <include>archivedatabasedir/**</include>
+        <include>harvestdefinitionbasedir/**</include>
+        <include>order_templates_dist/**</include>
+        <include>examples/**</include>
+        <include>README.txt</include>
+        <include>derby.properties</include>
+      </includes>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../deploy-core/</directory>
+      <includes>
+        <include>scripts/**</include>
+      </includes>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
 
-        <fileSet>
-            <directory>./</directory>
-            <outputDirectory>/conf</outputDirectory>
-            <excludes>
-                <exclude>*/**</exclude>
-            </excludes>
-        </fileSet>
+    <fileSet>
+      <directory>./</directory>
+      <outputDirectory>/conf</outputDirectory>
+      <excludes>
+        <exclude>*/**</exclude>
+      </excludes>
+    </fileSet>
 
-        <fileSet>
-            <directory>./</directory>
-            <outputDirectory>/log</outputDirectory>
-            <excludes>
-                <exclude>*/**</exclude>
-            </excludes>
-        </fileSet>
-    </fileSets>
+    <fileSet>
+      <directory>./</directory>
+      <outputDirectory>/log</outputDirectory>
+      <excludes>
+        <exclude>*/**</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
 
-    <dependencySets>
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>org.netarchivesuite:*:jar</include>
-            </includes>
-            <outputFileNameMapping>netarchivesuite-${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
-            <outputDirectory>/lib/</outputDirectory>
-        </dependencySet>
+  <dependencySets>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>org.netarchivesuite:*:jar</include>
+      </includes>
+      <outputFileNameMapping>netarchivesuite-${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+      <outputDirectory>/lib/</outputDirectory>
+    </dependencySet>
 
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>org.apache.derby:*:jar</include>
-            </includes>
-            <outputDirectory>/lib/db/</outputDirectory>
-        </dependencySet>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>org.apache.derby:*:jar</include>
+      </includes>
+      <outputDirectory>/lib/db/</outputDirectory>
+    </dependencySet>
 
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>org.apache.derby:*:jar</include>
-            </includes>
-            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
-            <outputDirectory>/lib/db/</outputDirectory>
-        </dependencySet>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>org.apache.derby:*:jar</include>
+      </includes>
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+      <outputDirectory>/lib/db/</outputDirectory>
+    </dependencySet>
 
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>*:jar</include>
-            </includes>
-            <!--
-            It is insanely annoying that we currently have duplicate versions of all our jarfiles in the
-            main distro zip. The reason is that the MANIFEST.MF files in the individual jars refer to the original
-            artifact names (with version number) but the various scripts generated by the DeployApplication use
-            generic names, defined in the deploy.xml files, with the "netarchivesuite" prefix and without version numbers. The correct solution
-            would be to use the versioned names everywhere. The even-more-correct solution would be to use a standard
-            deployment framework like ansible. See https://sbforge.org/display/NAS/DevOps+With+Ansible .
-            -->
-            <!--excludes>
-                <exclude>org.netarchivesuite:*:jar</exclude>
-                <exclude>org.apache.derby:*:jar</exclude>
-            </excludes-->
-            <outputDirectory>/lib/</outputDirectory>
-        </dependencySet>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>*:jar</include>
+      </includes>
+      <!--
+      It is insanely annoying that we currently have duplicate versions of all our jarfiles in the
+      main distro zip. The reason is that the MANIFEST.MF files in the individual jars refer to the original
+      artifact names (with version number) but the various scripts generated by the DeployApplication use
+      generic names, defined in the deploy.xml files, with the "netarchivesuite" prefix and without version numbers. The correct solution
+      would be to use the versioned names everywhere. The even-more-correct solution would be to use a standard
+      deployment framework like ansible. See https://sbforge.org/display/NAS/DevOps+With+Ansible .
+      -->
+      <!--excludes>
+          <exclude>org.netarchivesuite:*:jar</exclude>
+          <exclude>org.apache.derby:*:jar</exclude>
+      </excludes-->
+      <outputDirectory>/lib/</outputDirectory>
+    </dependencySet>
 
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>*:war</include>
-            </includes>
-            <outputFileNameMapping>${artifact.build.finalName}.${artifact.extension}</outputFileNameMapping>
-            <!--outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping-->
-            <outputDirectory>/webpages/</outputDirectory>
-        </dependencySet>
-    </dependencySets>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>*:war</include>
+      </includes>
+      <outputFileNameMapping>${artifact.build.finalName}.${artifact.extension}</outputFileNameMapping>
+      <!--outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping-->
+      <outputDirectory>/webpages/</outputDirectory>
+    </dependencySet>
+  </dependencySets>
 </assembly>
