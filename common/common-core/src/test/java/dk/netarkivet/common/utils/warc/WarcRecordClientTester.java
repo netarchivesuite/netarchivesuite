@@ -17,6 +17,11 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 
 public class WarcRecordClientTester {
 
+    // Her følger to kode-eksempler af hvordan man kan parse en InputStream til en BitarchiveRecord
+    // Det er vigtigt at skrive koden som at den kan håndtere både Arc og Warc records. Før den begynder
+    // at parse dats så kan den se om det er arc eller warc kun med at kigge på id'er dvs. filnavnet hvorfra
+    // dataene blev hentet.
+    
     @Test
     public void testBuildingBitarchiveRecord() throws IOException {
         String filename = "thisisa.warc";
