@@ -54,23 +54,23 @@
     </testResources>
     <plugins>
       <plugin>
-     <!-- enabling correct coverage statistics -->
-    <groupId>org.jacoco</groupId>
-    <artifactId>jacoco-maven-plugin</artifactId>
-    <version>${jacoco.version}</version>
-    <configuration>
-        <destFile>${sonar.jacoco.reportPath}</destFile>
-        <append>true</append>
-    </configuration>
-    <executions>
-        <execution>
+        <!-- enabling correct coverage statistics -->
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <configuration>
+          <destFile>${sonar.jacoco.reportPath}</destFile>
+          <append>true</append>
+        </configuration>
+        <executions>
+          <execution>
             <id>agent</id>
             <goals>
-                <goal>prepare-agent</goal>
+              <goal>prepare-agent</goal>
             </goals>
-        </execution>
-    </executions>
-</plugin>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>

@@ -33,13 +33,13 @@
     </dependency>
 
     <!-- not in Maven Central -->
-<!--
-    <dependency>
-      <groupId>org.archive</groupId>
-      <artifactId>heritrix</artifactId>
-      <version>1.14.4</version>
-    </dependency>
--->
+    <!--
+        <dependency>
+          <groupId>org.archive</groupId>
+          <artifactId>heritrix</artifactId>
+          <version>1.14.4</version>
+        </dependency>
+    -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -183,7 +183,7 @@
               <classpathPrefix />
             </manifest>
             <manifestEntries>
-	      <class-path>heritrix3-monitor-${project.version}.jar</class-path>
+              <class-path>heritrix3-monitor-${project.version}.jar</class-path>
             </manifestEntries>
           </archive>
         </configuration>
