@@ -30,8 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.exception.NestableRuntimeException;
+import org.apache.commons.text.StringEscapeUtils;
 import org.archive.io.ReplayCharSequence;
 import org.archive.modules.CrawlURI;
 import org.archive.modules.extractor.Extractor;
@@ -189,8 +188,8 @@ public class IcelandicExtractorJS extends org.archive.modules.extractor.Extracto
                 String string = uri.group();
                 boolean falsePositive = false;
                 try {
-                    string = StringEscapeUtils.unescapeJavaScript(string);
-                } catch (NestableRuntimeException e) {
+                    string = StringEscapeUtils.unescapeEcmaScript(string);
+                } catch (RuntimeException e) {
                     LOGGER.log(Level.WARNING, "problem unescaping some javascript", e);
                 }
                 string = UriUtils.speculativeFixup(string, curi.getUURI());

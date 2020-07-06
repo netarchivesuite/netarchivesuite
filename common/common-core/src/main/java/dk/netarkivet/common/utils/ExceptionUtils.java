@@ -92,7 +92,7 @@ public class ExceptionUtils {
     }
 
     public static Throwable getRootCause(Throwable crawlException) {
-        return org.apache.commons.lang.exception.ExceptionUtils.getRootCause(crawlException);
+        return org.apache.commons.lang3.exception.ExceptionUtils.getRootCause(crawlException);
     }
 
 }

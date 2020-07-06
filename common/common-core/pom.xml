@@ -110,7 +110,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
-      <version>4.4.1</version>
+      <version>4.4.13</version>
     </dependency>
 
     <dependency>
@@ -176,10 +176,6 @@
     </dependency>
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jsp-2.1-glassfish</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
       <artifactId>jsp-2.1-jetty</artifactId>
       <exclusions>
         <exclusion>  <!-- Excluded because it conflicts with dependency on later version of ecj -->
@@ -187,10 +183,6 @@
           <artifactId>core</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jsp-api-2.1-glassfish</artifactId>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
@@ -225,8 +217,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
     </dependency>
 
     <!-- JMS api - consider using javaee6 api instead -->

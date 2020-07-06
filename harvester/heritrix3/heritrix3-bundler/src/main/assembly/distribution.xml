@@ -59,11 +59,11 @@
         <exclude>org.slf4j:*:jar</exclude>
         <exclude>ch.qos.logback:*:jar</exclude>
         <exclude>commons-fileupload:commons-fileupload:jar</exclude>
-        <exclude>org.apache.httpcomponents:httpclient:jar</exclude>
+        <exclude>commons-httpclient:commons-httpclient:jar</exclude>
         <exclude>commons-cli:commons-cli:jar</exclude>
         <exclude>commons-codec:commons-codec:jar</exclude>
         <exclude>commons-io:commons-io:jar</exclude>
-        <exclude>commons-lang:commons-lang:jar</exclude>
+        <exclude>org.apache.commons:commons-lang3:jar</exclude>
         <exclude>commons-logging:commons-logging:jar</exclude>
         <exclude>commons-net:commons-net:jar</exclude>
         <exclude>fastutil:fastutil:jar</exclude>

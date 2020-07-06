@@ -32,19 +32,18 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.netarchivesuite.heritrix3wrapper.ScriptResult;
 
 import com.antiaction.common.filter.Caching;
 import com.antiaction.common.templateengine.TemplateBuilderFactory;
 
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
-import dk.netarkivet.heritrix3.monitor.Pagination;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
-import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 
 public class H3FrontierDeleteResource implements ResourceAbstract {
 
@@ -150,19 +149,19 @@ public class H3FrontierDeleteResource implements ResourceAbstract {
                     	if (scriptResult.script.stackTrace != null) {
                         	sb.append("<h5>Script failed with the following stacktrace:</h5>\n");
                             sb.append("<pre>\n");
-                            sb.append(StringEscapeUtils.escapeHtml(scriptResult.script.stackTrace));
+                            sb.append(StringEscapeUtils.escapeHtml4(scriptResult.script.stackTrace));
                             sb.append("</pre>\n");
                     	} else if (scriptResult.script.exception != null) {
                         	sb.append("<h5>Script failed with the following message:</h5>\n");
                             sb.append("<pre>\n");
-                            sb.append(StringEscapeUtils.escapeHtml(scriptResult.script.exception));
+                            sb.append(StringEscapeUtils.escapeHtml4(scriptResult.script.exception));
                             sb.append("</pre>\n");
                     	} else {
                             sb.append("<b>Unknown script failure!</b></br>\n");
                     	}
                     	sb.append("<h5>Raw script result Xml:</h5>\n");
                         sb.append("<pre>");
-                        sb.append(StringEscapeUtils.escapeHtml(new String(scriptResult.response, "UTF-8")));
+                        sb.append(StringEscapeUtils.escapeHtml4(new String(scriptResult.response, "UTF-8")));
                         sb.append("</pre>");
                     } else {
                         sb.append("<div style=\"float:left;margin: 20px 0px;\">\n");

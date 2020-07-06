@@ -37,7 +37,6 @@
     <commons-lang.version>3.10</commons-lang.version>
     <servlet-api.version>2.3</servlet-api.version>
     <jetty.version>6.1.26</jetty.version>
-    <jsp-2.1-glassfish.version>2.1.v20091210</jsp-2.1-glassfish.version>
     <ecj.version>4.4.2</ecj.version>
     <dom4j.version>1.6.1</dom4j.version>
     <jetty-servlet-api.version>2.5-20081211</jetty-servlet-api.version>
@@ -64,7 +63,7 @@
     <guava.version>29.0-jre</guava.version>
     <javax.inject.version>1</javax.inject.version>
     <commons-logging.version>1.2</commons-logging.version>
-    <httpcomponents-client>4.5.12</httpcomponents-client>
+    <commons-httpclient.version>3.1</commons-httpclient.version>
     <libidn.version>0.6.5</libidn.version>
     <hibernate.version>3.3.0.SP1</hibernate.version>
     <hibernate-annotations.version>3.3.0.ga</hibernate-annotations.version>
@@ -403,8 +402,8 @@
             <artifactId>juniversalchardet</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.hadoop</groupId>
@@ -607,6 +606,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-text</artifactId>
+        <version>1.8</version>
+      </dependency>
+
+      <dependency>
         <groupId>commons-pool</groupId>
         <artifactId>commons-pool</artifactId>
         <version>${commons-pool.version}</version>
@@ -646,11 +651,6 @@
       </dependency>
       <dependency>
         <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jsp-2.1-glassfish</artifactId>
-        <version>${jsp-2.1-glassfish.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
         <artifactId>jsp-2.1-jetty</artifactId>
         <version>${jetty.version}</version>
         <exclusions>
@@ -659,11 +659,6 @@
             <artifactId>core</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jsp-api-2.1-glassfish</artifactId>
-        <version>${jsp-2.1-glassfish.version}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jdt.core.compiler</groupId>
@@ -754,9 +749,9 @@
       </dependency>
 
       <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>${httpcomponents-client}</version>
+        <groupId>commons-httpclient</groupId> <!-- TODO: Consider migrating to org.apache.httpcomponents - commons library has reached EOL -->
+        <artifactId>commons-httpclient</artifactId>
+        <version>${commons-httpclient.version}</version>
       </dependency>
 
       <dependency>

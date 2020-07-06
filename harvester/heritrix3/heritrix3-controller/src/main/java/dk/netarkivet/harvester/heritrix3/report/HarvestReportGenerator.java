@@ -66,7 +66,7 @@ public class HarvestReportGenerator {
     /**
      * Strings found in the progress-statistics.log, used to devise the default stop reason for domains.
      */
-    public static enum ProgressStatisticsConstants {
+    public enum ProgressStatisticsConstants {
 
         /**
          * String in crawl.log, that Heritrix writes as the last entry in the progress-statistics.log.

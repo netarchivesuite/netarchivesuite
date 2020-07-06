@@ -27,7 +27,7 @@ import org.apache.commons.httpclient.URIException;
 import org.archive.url.UsableURI;
 
 /**
- * Fixed UURI which extends UURI to fix an NPE bug in getReferencedHost.
+ * Fixed UURI which extends UsableURI to fix an NPE bug in getReferencedHost.
  * <p>
  * Pending fix of bug in Heritrix. The bug has been reported, and has number 616:
  * http://webteam.archive.org/jira/browse/HER-616
@@ -56,7 +56,7 @@ public class FixedUURI extends UsableURI {
      *
      * @return hostname for this URI, or null if this cannot be calculated.
      * @throws URIException on serious parse errors.
-     * @see UURI#getReferencedHost()
+     * @see UsableURI#getReferencedHost()
      */
     public String getReferencedHost() throws URIException {
         if (getHost() == null && getScheme() == null) {
