@@ -74,52 +74,5 @@ public class CDXJobTest {
         conf.set("mapreduce.job.jar", jarFile.getAbsolutePath());
         ToolRunner.run(new CDXJob(conf), new String[]{hadoopInputPath.toString(), outputDir.toString()});
     }
-
-    @Test
-    public void run() throws Exception {
-        System.setProperty("HADOOP_USER_NAME", "vagrant");
-        conf = new Configuration();
-        conf.set(DEFAULT_FILESYSTEM, "hdfs://node1:8020");
-        conf.set(MAPREDUCE_FRAMEWORK, "yarn");
-        conf.set(YARN_RESOURCEMANAGER_ADDRESS, "node1:8032");
-        conf.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
-        conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
-
-        //Local path to the input data
-        java.nio.file.Path localInputDataDir = Paths.get("", "src", "test", "testdata");
-
-        //Unique names for the input and output directories on the hdfs system
-        String hdfsInputDir = UUID.randomUUID().toString();
-        String hdfsOutputDir = UUID.randomUUID().toString();
-
-        hdfs = FileSystem.get(conf);
-        final Path inputPath = new Path("/" + hdfsInputDir);
-        hdfs.mkdirs(inputPath);
-        File [] localDataFiles = localInputDataDir.toFile().listFiles(new FilenameFilter() {    //the files to be processed
-            @Override public boolean accept(File dir, String name) {
-                return name.endsWith(".arc.gz") || name.endsWith(".warc.gz");
-            }
-        });
-        List<Path> hdfsPaths = new ArrayList<>();  //the list of input paths for the hadoop job
-        for (File localDataFile: localDataFiles) {
-            Path hdfsDataFilePath = new Path (inputPath, localDataFile.getName()); //the remote file to copy to
-            hdfsPaths.add(hdfsDataFilePath);
-            hdfs.copyFromLocalFile(false, new Path(localDataFile.getAbsolutePath()), hdfsDataFilePath);
-        }
-        Path hadoopInputFile = new Path(inputPath, "inputfile");  //the input file for the hadoop job
-        java.nio.file.Path tempFile = Files.createTempFile(null, null);
-        //FSDataOutputStream outputStream = hdfs.create(hadoopInputFile);  //create the hadoop input file
-        for (Path hdfsPath: hdfsPaths) {
-            Files.write(tempFile, ("hdfs://" + hdfsPath.toString() + "\n").getBytes());
-            //outputStream.writeUTF("hdfs://" + hdfsPath.toString());
-            //outputStream.writeUTF("\n");
-        }
-        //outputStream.close();
-        hdfs.copyFromLocalFile(false, new Path(tempFile.toAbsolutePath().toString()), hadoopInputFile);
-        File jarFile = new File("/home/csr/projects/netarchivesuite/wayback/wayback-indexer/target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
-        conf.set("mapreduce.job.jar", jarFile.getAbsolutePath());
-        ToolRunner.run(new CDXJob(conf), new String[]{hadoopInputFile.toString(), "/" + hdfsOutputDir});
-        hdfs.copyToLocalFile(new Path("hdfs:///"+hdfsOutputDir), new Path("newdir"));
-        //hdfs.delete(inputPath, true);
-    }
+    
 }
