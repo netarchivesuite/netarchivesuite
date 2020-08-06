@@ -9,21 +9,30 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.UUID;
 
 import org.apache.avro.generic.GenericData;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IOUtils;
+import org.apache.hadoop.fs.PathFilter;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.tools.ant.Location;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.optional.ssh.Scp;
 import org.hibernate.id.GUIDGenerator;
 import org.junit.Before;
 import org.junit.Test;
+
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.tools.ToolRunnerBase;
@@ -34,18 +43,45 @@ public class CDXJobTest {
     private Configuration conf;
 
     //The location on the hadoop server where all the warc-files are to be found
-    private String bitmagDir = "/kbhpillar/collection-netarkivet/";
+    private String bitmagDir = "/home/vagrant";
 
-    //The warc-files to be indexed
-    private String[] files = new String[]{"10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz"};
+    //Local directory containing warc-files to be indexed
+    private String datadir = "src/test/testdata";
+    private List<String> filenames = new ArrayList<>();
 
     //hdfs directory for the output
     private Path outputDir = new Path("/output");
 
     private FileSystem hdfs;
 
+    /**
+     * Initialises hdfs and copies data-file to (non-hdfs) filesystem on vagrant machine
+     * @throws IOException
+     */
     @Before
     public void setUp() throws IOException {
+        initHdfs();
+        deployTestdata();
+    }
+
+    private void deployTestdata() {
+        for (File file: new File(datadir).listFiles()) {
+            if (file.getName().endsWith("arc.gz") || file.getName().endsWith("arc")) {
+                filenames.add(file.getName());
+                Scp scp = new Scp();
+                scp.setHost("node1");
+                scp.setUsername("vagrant");
+                scp.setPassword("vagrant");
+                scp.setRemoteTodir("vagrant:vagrant@node1:");
+                scp.setProject(new Project());
+                scp.setTrust(true);
+                scp.setLocalFile(file.getAbsolutePath());
+                scp.execute();
+              }
+        }
+    }
+
+    private void initHdfs() throws IOException {
         System.setProperty("HADOOP_USER_NAME", "vagrant");
         conf = new Configuration();
         conf.set(DEFAULT_FILESYSTEM, "hdfs://node1:8020");
@@ -65,14 +101,34 @@ public class CDXJobTest {
     public void runNonhdfs() throws Exception {
         Path hadoopInputPath = new Path("/inputfile");
         hdfs.delete(hadoopInputPath);
-        java.nio.file.Path localInputTempfile = Files.createTempFile(null, null);
-        for (String filename: files) {
-            Files.write(localInputTempfile, ("file://" + bitmagDir + "/" + filename + "\n").getBytes());
-        }
+        java.nio.file.Path localInputTempfile = buildInputFile();
         hdfs.copyFromLocalFile(false, new Path(localInputTempfile.toAbsolutePath().toString()), hadoopInputPath);
         File jarFile = new File("/home/csr/projects/netarchivesuite/wayback/wayback-indexer/target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
         conf.set("mapreduce.job.jar", jarFile.getAbsolutePath());
         ToolRunner.run(new CDXJob(conf), new String[]{hadoopInputPath.toString(), outputDir.toString()});
+        getAndPrintOutput();
     }
-    
+
+    private void getAndPrintOutput() throws IOException {
+        java.nio.file.Path tempOutputDir = Files.createTempDirectory(null);
+        hdfs.copyToLocalFile(outputDir, new Path(tempOutputDir.toAbsolutePath().toString()));
+        Files.walk(tempOutputDir).filter(f -> f.getFileName().toString().startsWith("part-")).forEach(f -> {
+            try {
+                System.out.println(FileUtils.readFileToString(f.toFile()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private java.nio.file.Path buildInputFile() throws IOException {
+        java.nio.file.Path localInputTempfile = Files.createTempFile(null, null);
+        String fileData = "";
+        for (String filename: filenames) {
+            fileData += "file://" + bitmagDir + "/" + filename + "\n";
+        }
+        Files.write(localInputTempfile, fileData.getBytes());
+        return localInputTempfile;
+    }
+
 }
