@@ -66,7 +66,9 @@ public class CDXJobTest {
 
     private void deployTestdata() {
         for (File file: new File(datadir).listFiles()) {
-            if (file.getName().endsWith("arc.gz") || file.getName().endsWith("arc")) {
+            //if (file.getName().endsWith("arc.gz") || file.getName().endsWith("arc")) {
+                if (file.getName().endsWith("arc.gz")) {
+
                 filenames.add(file.getName());
                 Scp scp = new Scp();
                 scp.setHost("node1");
@@ -89,6 +91,7 @@ public class CDXJobTest {
         conf.set(YARN_RESOURCEMANAGER_ADDRESS, "node1:8032");
         conf.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
         conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
+        conf.set("dfs.client.use.datanode.hostname", "true");
         hdfs = FileSystem.get(conf);
         hdfs.delete(outputDir);
     }
