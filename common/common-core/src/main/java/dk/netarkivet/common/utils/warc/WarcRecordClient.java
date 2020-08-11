@@ -91,9 +91,7 @@ public class WarcRecordClient {
                 try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
                 }
             }
-            if (warcInstance == null) {
-                warcInstance = new WarcRecordClient(uri);
-            }
+  
             // warcInstance =  WarcRecordClient.getInstance(uri); // several instances
             warcInstance.getWarc(uri);
         }
