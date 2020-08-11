@@ -8,6 +8,7 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
 import org.archive.io.ArchiveReader;
@@ -27,10 +28,10 @@ public class WarcRecordClientTester {
      */
     @Test
     public void testGet() throws Exception {
-        String baseUri = "http://localhost:8883/cgi-bin2/py1.cgi";
+        URI baseUri = new URI("http://localhost:8883/cgi-bin2/py1.cgi");
         //TODO the Constructor for the client should probably take the baseUri as an argument. The baseUri should also be settable as
         //setting to NetarchiveSuite.
-        WarcRecordClient warcRecordClient = new WarcRecordClient();
+        WarcRecordClient warcRecordClient = new WarcRecordClient(baseUri);
         BitarchiveRecord bitarchiveRecord = warcRecordClient.get("10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz", 3442L);
         assertNotNull("Should have non null BitarchiveRecord", bitarchiveRecord);
         assertTrue("Expect a non-zero length bitarchiveRecord",IOUtils.toByteArray(bitarchiveRecord.getData()).length > 100);
