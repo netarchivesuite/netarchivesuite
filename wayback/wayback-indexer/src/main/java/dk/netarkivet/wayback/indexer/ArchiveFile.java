@@ -24,6 +24,7 @@ package dk.netarkivet.wayback.indexer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.UUID;
 
@@ -32,7 +33,6 @@ import javax.persistence.Id;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.ToolRunner;
@@ -208,6 +208,72 @@ public class ArchiveFile {
      * Runs a map-only (no reduce) job to index this file.
      */
     private void hadoopIndex() {
+        // For now only handles WARC files
+        String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_DIR);
+        Path hadoopInputNameFile = new Path(hadoopInputDir,
+                filename.substring(0, filename.indexOf('.')) + "__map_input.txt");
+        Configuration conf = HadoopUtils.getConfFromSettings();
+        conf.set("mapreduce.job.jar", "/nas/lib/wayback-indexer.jar");
+        java.nio.file.Path localInputTempFile = null;
+
+        try {
+            // Make temp input file containing path for this file
+            localInputTempFile = Files.createTempFile(null, null);
+            // TODO use file resolver here to figure out the file path
+            Files.write(localInputTempFile, ("file:///kbhpillar/collection-netarkivet/" + filename).getBytes());
+        } catch (IOException e) {
+            log.warn("Couldn't write input paths file");
+            return;
+        }
+
+        FileSystem fs = null;
+        try {
+            fs = FileSystem.get(conf);
+            // Delete the old output folder if it exists TODO maybe check for existance
+            fs.delete(new Path(Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR)), true);
+            // Write the input file to hdfs
+            log.info("Copying file with input paths to hdfs");
+            try {
+                fs.copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
+                        hadoopInputNameFile);
+            } catch (IOException e) {
+                log.warn("Failed to upload '{}' to hdfs", localInputTempFile.toString(), e);
+                return;
+            }
+
+            log.info("Starting CDXJob on file '{}'", filename);
+            try {
+                // TODO Guess conditioning on which file it is should be handled here by designating different mapper classes
+                int exitCode = ToolRunner.run(new CDXJob(conf),
+                        new String[] {
+                                hadoopInputNameFile.toString(), Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR)});
+
+                if (exitCode == 0) {
+                    collectHadoopResults(fs);
+                } else {
+                    log.warn("Hadoop job failed with exit code '{}'", exitCode);
+                }
+            } catch (Exception e) {
+                log.warn("Running hadoop job threw exception", e);
+            }
+        } catch (IOException e) {
+            log.warn("Couldn't get FileSystem from configuration", e);
+        } finally {
+            try {
+                if (fs != null) {
+                    fs.close();
+                }
+            } catch (IOException e) {
+                log.warn("Problem closing FileSystem: ", e);
+            }
+        }
+    }
+
+    /**
+     * Runs a map-only (no reduce) job to index this file.
+     * Uses the costly approach of copying the file to hdfs first
+     */
+    private void hadoopHDFSIndex() {
         // For now only handles WARC files
         String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_DIR);
         // As each file for now has its own job, the inputfile for each job
