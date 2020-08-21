@@ -64,8 +64,9 @@ public class WarcRecordClient {
     private URI uri;
 
     // private  static WarcRecordClient warcInstance;
-    private WarcRecordClient warcInstance;
-    private static PoolingHttpClientConnectionManager cm;
+    private WarcRecordClient warcInstance = null;
+    // private static PoolingHttpClientConnectionManager cm = null;
+    private PoolingHttpClientConnectionManager cm;  // New
     private  CloseableHttpClient httpClient = null;
     private long offset;
     boolean atFirst = true;
@@ -78,47 +79,51 @@ public class WarcRecordClient {
         this.offset = offset;
     }
 
-    public CloseableHttpClient getHttpClient() {
-        return httpClient;
+    private static class Singleton {
+
+        // Only one: constructor is called once
+        private static Singleton instance;
+        private static CloseableHttpClient closeableHttpClient;
+
+        private Singleton() {
+/*            PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+            cm.setMaxTotal(200);           // Increase max total connections to 200
+            cm.setDefaultMaxPerRoute(20);  // Increase  default max connections per route to 20
+
+            closeableHttpClient  = HttpClients.custom()
+                    .setConnectionManager(cm)
+                    .build();git ssudo git sudo
+ */
+        }
+        public static CloseableHttpClient getCloseableHttpClient() {
+            PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+            cm.setMaxTotal(200);           // Increase max total connections to 200
+            cm.setDefaultMaxPerRoute(20);  // Increase  default max connections per route to 20
+
+            closeableHttpClient  = HttpClients.custom()
+                    .setConnectionManager(cm)
+                    .build();
+            return closeableHttpClient;
+        }
+
+        public static Singleton getInstance() {
+            return instance;
+        }
     }
 
-    public WarcRecordClient(URI uri) throws IOException, URISyntaxException {
-        getPoolingHttpClientConnectionManager();  // one static instance
 
-        setOffset(3442l);  // default
-        try {
-            if (httpClient == null) {
-                try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-                }
-            }
-  
-            // warcInstance =  WarcRecordClient.getInstance(uri); // several instances
-            warcInstance.getWarc(uri);
-        }
-        finally {
-            if (httpClient != null)
-               httpClient.close();
-        }
+    public WarcRecordClient(URI uri) throws IOException, URISyntaxException {
+      //  PoolingHttpClientConnectionManager  cm = getPoolingHttpClientConnectionManager();  // one static instance
+        this(uri,3442l);
     }
 
     protected WarcRecordClient(URI uri, long offset) throws IOException, URISyntaxException {
-        getPoolingHttpClientConnectionManager();  // one static instance
+    //     getPoolingHttpClientConnectionManager();  // one static instance
 
-        setOffset(offset);
-        try {
-            if (httpClient == null) {
-                try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-                }
-            }
-            if (warcInstance == null) {
-                warcInstance = new WarcRecordClient(uri);
-            }
-            // warcInstance =  WarcRecordClient.getInstance(uri); // several instances
-            warcInstance.getWarc(uri);
-        }
-        finally {
-            httpClient.close();
-        }
+        this.setOffset(offset);
+        Singleton.getInstance();
+
+        this.getWarc(uri);
     }
 
     public static void main(String args[]) throws Exception {
@@ -157,20 +162,14 @@ public class WarcRecordClient {
                     .addHeader("User-Agent",USER_AGENT)
                     .setHeader(HttpHeaders.CONTENT_TYPE, "application/warc")   // STREAM_ALL = -1;
                     .setHeader("Range", "bytes=" + getOffset() + "-")   // offset + 1?? might require <= -1 check and > 1 check
-                    // .addParameter("foo", "bar")  // first query parameter
-                    // .addParameter("x", "y")      // second query parameter
                     .build();
 
-            // HttpClient closableHttpClient = createClosableHttpClient();
-            HttpClient closableHttpClient = getHttpClient();
-   /*         if (httpClient == null) { httpClient = HttpClientBuilder.create().build() ;   }    */
-            // client.execute(request);
             System.out.println("Executing request " + request.getRequestLine());
 
             // Create custom response handler
             ResponseHandler<String> responseHandler = WarcRecordClient::handleResponse;
 
-            //(HttpHeaders.CONTENT_TYPE, "application/warc")
+            CloseableHttpClient closableHttpClient = WarcRecordClient.Singleton.getCloseableHttpClient();
             HttpResponse httpResponse = closableHttpClient.execute(request, (HttpContext) responseHandler);
            // httpResponse.getEntity().getContent();
 
@@ -254,10 +253,11 @@ public class WarcRecordClient {
             return httpClient;
     }
 
-
+/*
     private static PoolingHttpClientConnectionManager getPoolingHttpClientConnectionManager() {
+
         if (cm == null) {
-            PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+             cm = new PoolingHttpClientConnectionManager();
 
             // Increase max total connection to 200
             cm.setMaxTotal(200);
@@ -266,11 +266,11 @@ public class WarcRecordClient {
 
             // Increase max connections for localhost:80 to 50
             HttpHost localhost = new HttpHost("localhost", 80);
-            cm.setMaxPerRoute(new HttpRoute(localhost), 50);
+ //           cm.setMaxPerRoute(new HttpRoute(localhost), 50);
         }
         return cm;
     }
-
+*/
 
     public BitarchiveRecord get(String arcfileName, long index) throws ArgumentNotValid, IOFailure {
         // index must be the same as the offset that ends up in the range header
