@@ -1,11 +1,15 @@
 package dk.netarkivet.wayback.hadoop;
 
+import org.apache.hadoop.yarn.webapp.hamlet.HamletSpec;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
+import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCRecord;
+import org.archive.wayback.UrlCanonicalizer;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
+import org.archive.wayback.resourcestore.indexer.ARCRecordToSearchResultAdapter;
 import org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter;
 import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
 
@@ -17,20 +21,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.netarkivet.common.utils.batch.WARCBatchFilter;
+import dk.netarkivet.wayback.batch.UrlCanonicalizerFactory;
 
 /**
  * Class for creating CDX indexed from WARC files.
  */
-public class CDXIndexer {
+public class CDXIndexer implements Indexer {
     /** The warc record searcher.*/
-    protected final WARCRecordToSearchResultAdapter warcSearcher;
+    protected final WARCRecordToSearchResultAdapter warcAdapter;
+    protected final ARCRecordToSearchResultAdapter arcAdapter;
     /** The CDX line creator, which creates the cdx lines from the warc records.*/
     protected final SearchResultToCDXLineAdapter cdxLineCreater;
+    protected final UrlCanonicalizer urlCanonicalizer;
 
     /** Constructor.*/
     public CDXIndexer() {
-        warcSearcher = new WARCRecordToSearchResultAdapter();
+        warcAdapter = new WARCRecordToSearchResultAdapter();
+        arcAdapter = new ARCRecordToSearchResultAdapter();
         cdxLineCreater = new SearchResultToCDXLineAdapter();
+        urlCanonicalizer = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
     }
 
     /**
@@ -78,19 +87,27 @@ public class CDXIndexer {
             // TODO: look at logging something here instead of the below stuff
             //recordNum++;
             //System.out.println("Processing record #" + recordNum);
-            WARCRecord warcRecord = (WARCRecord) archiveRecord;
-            if (!getFilter().accept(warcRecord)) {
-                //System.out.println("Skipping non response record #" + recordNum);
-                continue;
-            }
-            warcSearcher.setCanonicalizer(new IdentityUrlCanonicalizer());
-            //TODO this returns null and prints stack trace on OutOfMemoryError. Bad code. //jolf & abr
-            CaptureSearchResult captureSearchResult = warcSearcher.adapt(warcRecord);
-            if (captureSearchResult != null) {
-                //actualLinesWritten++;
-                //System.out.println("Actual cdx lines written: " + actualLinesWritten);
-                res.add(cdxLineCreater.adapt(captureSearchResult));
-            }
+           if (archiveRecord instanceof WARCRecord) {
+               WARCRecord warcRecord = (WARCRecord) archiveRecord;
+               if (!getFilter().accept(warcRecord)) {
+                   //System.out.println("Skipping non response record #" + recordNum);
+                   continue;
+               }
+               warcAdapter.setCanonicalizer(new IdentityUrlCanonicalizer());
+               //TODO this returns null and prints stack trace on OutOfMemoryError. Bad code. //jolf & abr
+               CaptureSearchResult captureSearchResult = warcAdapter.adapt(warcRecord);
+               if (captureSearchResult != null) {
+                   //actualLinesWritten++;
+                   //System.out.println("Actual cdx lines written: " + actualLinesWritten);
+                   res.add(cdxLineCreater.adapt(captureSearchResult));
+               }
+           } else {
+               ARCRecord arcRecord = (ARCRecord) archiveRecord;
+               final CaptureSearchResult captureSearchResult = arcAdapter.adapt(arcRecord);
+               if (captureSearchResult != null) {
+                   res.add(cdxLineCreater.adapt(captureSearchResult));
+               }
+           }
         }
         return res;
     }

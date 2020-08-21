@@ -5,7 +5,9 @@ import static dk.netarkivet.common.utils.HadoopUtils.MAPREDUCE_FRAMEWORK;
 import static dk.netarkivet.common.utils.HadoopUtils.YARN_RESOURCEMANAGER_ADDRESS;
 import static dk.netarkivet.common.utils.HadoopUtils.getConfFromSettings;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -106,6 +108,14 @@ public class CDXJobTest {
         hdfs.delete(hadoopInputPath);
         java.nio.file.Path localInputTempfile = buildInputFile();
         hdfs.copyFromLocalFile(false, new Path(localInputTempfile.toAbsolutePath().toString()), hadoopInputPath);
+        BufferedReader bf = new BufferedReader(new FileReader(localInputTempfile.toFile()));
+        String line;
+        final Path f = new Path("/temptemp");
+        hdfs.delete(f)                                          ;
+        hdfs.mkdirs(f);
+        while ((line = bf.readLine()) != null) {
+            hdfs.copyFromLocalFile(new Path(line), f);
+        }
         File jarFile = new File("/home/csr/projects/netarchivesuite/wayback/wayback-indexer/target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
         conf.set("mapreduce.job.jar", jarFile.getAbsolutePath());
         ToolRunner.run(new CDXJob(conf), new String[]{hadoopInputPath.toString(), outputDir.toString()});

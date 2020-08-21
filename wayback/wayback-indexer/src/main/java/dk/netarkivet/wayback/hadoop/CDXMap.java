@@ -1,15 +1,21 @@
 package dk.netarkivet.wayback.hadoop;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+
+import dk.netarkivet.common.distribute.indexserver.Index;
 
 /**
  * Hadoop Mapper for creating the CDX indexes.
@@ -20,7 +26,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
 
     /** The CDX indexer.*/
-    private CDXIndexer indexer = new CDXIndexer();
+    private CDXIndexer cdxIndexer = new CDXIndexer();
+    private DedupIndexer dedupIndexer = new DedupIndexer();
 
     /**
      * Mapping method.
@@ -39,11 +46,27 @@ public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
         }
 
         Path path = new Path(warcPath.toString());
-        try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
-            List<String> cdxIndexes = indexer.index(in, warcPath.toString());
-            for (String cdxIndex : cdxIndexes) {
-                context.write(NullWritable.get(), new Text(cdxIndex));
+        List<String> cdxIndexes;
+        Indexer indexer;
+        if (path.getName().contains("metadata")) {
+            indexer = new DedupIndexer();
+            final FileSystem fileSystem = path.getFileSystem(context.getConfiguration());
+            if (!(fileSystem instanceof LocalFileSystem)) {
+                final String status = "Metadata indexing only implemented for LocalFileSystem. Cannot index " + path;
+                context.setStatus(status);
+                System.err.println(status);
+                cdxIndexes = new ArrayList<>();
+            } else {
+                LocalFileSystem localFileSystem = ((LocalFileSystem) fileSystem);
+                cdxIndexes = indexer.indexFile(localFileSystem.pathToFile(path));
             }
+        } else {
+            try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
+                cdxIndexes = cdxIndexer.index(in, warcPath.toString());
+            }
+        }
+        for (String cdxIndex : cdxIndexes) {
+            context.write(NullWritable.get(), new Text(cdxIndex));
         }
     }
 }
