@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
+import com.sun.jndi.toolkit.url.Uri;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
@@ -286,7 +287,10 @@ public class WarcRecordClient {
         long start = System.currentTimeMillis();
         // call WarcRecordService to get the Warc record in the file on the given index
         // and to parse it to a BitArchiveRecord
-        BitarchiveRecord warcInstance = this.getWarc(this.getBaseUri(), this.getOffset());
+        //BitarchiveRecord warcInstance = this.getWarc(this.getBaseUri(), this.getOffset());
+        String strUri = this.getBaseUri().toString() + arcfileName;
+        URI uri = new URI(strUri);
+        BitarchiveRecord warcInstance = this.getWarc(uri, this.getOffset());
 
         if (!bitrep.existsInCollection(arcfileName, collectionId)) {
             log.warn("The file '{}' is not in collection '{}'. Returning null BitarchiveRecord", arcfileName, collectionId);
