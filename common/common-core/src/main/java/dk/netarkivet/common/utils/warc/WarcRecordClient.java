@@ -49,6 +49,13 @@ public class WarcRecordClient {
     private static final Logger log = LoggerFactory.getLogger(WarcRecordClient.class);
     /** The amount of milliseconds in a second. 1000. */
     private static final int MILLISECONDS_PER_SECOND = 1000;
+
+    public URI getBaseUri() {
+        return baseUri;
+    }
+
+    private URI baseUri;
+
     /** The length of time to wait for a get reply before giving up. */
     private long getTimeout;
     private final static int STREAM_ALL = -1;
@@ -86,15 +93,8 @@ public class WarcRecordClient {
         private static CloseableHttpClient closeableHttpClient;
 
         private Singleton() {
-/*            PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-            cm.setMaxTotal(200);           // Increase max total connections to 200
-            cm.setDefaultMaxPerRoute(20);  // Increase  default max connections per route to 20
-
-            closeableHttpClient  = HttpClients.custom()
-                    .setConnectionManager(cm)
-                    .build();git ssudo git sudo
- */
         }
+
         public static CloseableHttpClient getCloseableHttpClient() {
             PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
             cm.setMaxTotal(200);           // Increase max total connections to 200
@@ -112,20 +112,25 @@ public class WarcRecordClient {
     }
 
 
+    public WarcRecordClient(URI baseUri) throws URISyntaxException {
+        this.baseUri = baseUri;
+    }
+/*
     public WarcRecordClient(URI uri) throws IOException, URISyntaxException {
       //  PoolingHttpClientConnectionManager  cm = getPoolingHttpClientConnectionManager();  // one static instance
         this(uri,3442l);
     }
-
+ */
+/*
     protected WarcRecordClient(URI uri, long offset) throws IOException, URISyntaxException {
     //     getPoolingHttpClientConnectionManager();  // one static instance
 
         this.setOffset(offset);
         Singleton.getInstance();
 
-        this.getWarc(uri);
+ //       this.getWarc(uri);
     }
-
+*/
     public static void main(String args[]) throws Exception {
         // To be moved to JUnit tests
         // Header header = new BasicHeader( name,value);
@@ -143,12 +148,12 @@ public class WarcRecordClient {
         // CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
           WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
-          BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST);
+          BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, warcRecordClient.getOffset());
           System.out.println("warcRecord: " + warcRecord.toString());
     }
 
 
-    public BitarchiveRecord getWarc( URI uri) throws IOException, URISyntaxException {                     // should return warcRecord??
+    public BitarchiveRecord getWarc( URI uri, long offset) throws IOException, URISyntaxException {                     // should return warcRecord??
             RequestConfig.Builder requestBuilder = RequestConfig.custom();
             requestBuilder.setConnectTimeout(timeout);
             requestBuilder.setConnectionRequestTimeout(timeout);
@@ -161,7 +166,7 @@ public class WarcRecordClient {
                     .setUri(uri)
                     .addHeader("User-Agent",USER_AGENT)
                     .setHeader(HttpHeaders.CONTENT_TYPE, "application/warc")   // STREAM_ALL = -1;
-                    .setHeader("Range", "bytes=" + getOffset() + "-")   // offset + 1?? might require <= -1 check and > 1 check
+                    .setHeader("Range", "bytes=" + offset + "-")   // offset + 1?? might require <= -1 check and > 1 check
                     .build();
 
             System.out.println("Executing request " + request.getRequestLine());
@@ -170,7 +175,8 @@ public class WarcRecordClient {
             ResponseHandler<String> responseHandler = WarcRecordClient::handleResponse;
 
             CloseableHttpClient closableHttpClient = WarcRecordClient.Singleton.getCloseableHttpClient();
-            HttpResponse httpResponse = closableHttpClient.execute(request, (HttpContext) responseHandler);
+           // HttpResponse httpResponse = closableHttpClient.execute(request, (HttpContext) responseHandler);
+        HttpResponse httpResponse = closableHttpClient.execute(request);
            // httpResponse.getEntity().getContent();
 
            // return responseHandler.toString();
@@ -272,12 +278,15 @@ public class WarcRecordClient {
     }
 */
 
-    public BitarchiveRecord get(String arcfileName, long index) throws ArgumentNotValid, IOFailure {
+    public BitarchiveRecord get(String arcfileName, long index) throws ArgumentNotValid, IOFailure, IOException, URISyntaxException {
         // index must be the same as the offset that ends up in the range header
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfile");
         ArgumentNotValid.checkNotNegative(index, "index");
         log.debug("Requesting get of record '{}:{}'", arcfileName, index);
         long start = System.currentTimeMillis();
+        // call WarcRecordService to get the Warc record in the file on the given index
+        // and to parse it to a BitArchiveRecord
+        BitarchiveRecord warcInstance = this.getWarc(this.getBaseUri(), this.getOffset());
 
         if (!bitrep.existsInCollection(arcfileName, collectionId)) {
             log.warn("The file '{}' is not in collection '{}'. Returning null BitarchiveRecord", arcfileName, collectionId);
