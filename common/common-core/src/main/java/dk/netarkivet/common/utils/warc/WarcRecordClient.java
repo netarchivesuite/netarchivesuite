@@ -165,8 +165,8 @@ public class WarcRecordClient {
             HttpUriRequest request = RequestBuilder.get()
                     .setUri(uri)
                     .addHeader("User-Agent",USER_AGENT)
-                    .setHeader(HttpHeaders.CONTENT_TYPE, "application/warc")   // STREAM_ALL = -1;
-                    .setHeader("Range", "bytes=" + offset + "-")   // offset + 1?? might require <= -1 check and > 1 check
+                    //.setHeader(HttpHeaders.CONTENT_TYPE, "application/warc")   // STREAM_ALL = -1;
+                    .addHeader("Range", "bytes=" + offset + "-")   // offset + 1?? might require <= -1 check and > 1 check
                     .build();
 
             System.out.println("Executing request " + request.getRequestLine());
@@ -290,7 +290,7 @@ public class WarcRecordClient {
         //BitarchiveRecord warcInstance = this.getWarc(this.getBaseUri(), this.getOffset());
         String strUri = this.getBaseUri().toString() + "/" + arcfileName;
         URI uri = new URI(strUri);
-        BitarchiveRecord warcInstance = this.getWarc(uri, this.getOffset());
+        BitarchiveRecord warcInstance = this.getWarc(uri, index);
         return warcInstance;
     }
 
