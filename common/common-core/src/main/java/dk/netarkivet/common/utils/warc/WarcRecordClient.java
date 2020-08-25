@@ -100,7 +100,6 @@ public class WarcRecordClient {
             PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
             cm.setMaxTotal(200);           // Increase max total connections to 200
             cm.setDefaultMaxPerRoute(20);  // Increase  default max connections per route to 20
-
             closeableHttpClient  = HttpClients.custom()
                     .setConnectionManager(cm)
                     .build();
@@ -159,9 +158,8 @@ public class WarcRecordClient {
             requestBuilder.setConnectTimeout(timeout);
             requestBuilder.setConnectionRequestTimeout(timeout);
             // URI uriStr = Uri.parse(stringUri);
-        // String fileName = Paths.get(new URI(uri).getPath()).getFileName().toString();
+         //String fileName = Paths.get(new URI(uri).getPath()).getFileName().toString();
         String fileName = Paths.get(uri.getPath()).getFileName().toString();
-        fileName = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz";  // Hardcoded for testing only
             System.out.println("fileName: " + fileName);
 
             HttpUriRequest request = RequestBuilder.get()
