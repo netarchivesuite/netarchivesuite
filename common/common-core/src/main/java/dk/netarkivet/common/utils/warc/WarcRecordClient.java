@@ -186,7 +186,7 @@ public class WarcRecordClient {
                if (entity != null) {
                    try {
                         InputStream iStr = entity.getContent();
-                        ArchiveReader archiveReader = WARCReaderFactory.get(fileName, iStr, atFirst);
+                        ArchiveReader archiveReader = WARCReaderFactory.get("fake.warc", iStr, atFirst);
                       //  ArchiveReader archiveReader = WARCReaderFactory.get(fileName, fileInputStream, true);
 
                        ArchiveRecord archiveRecord = archiveReader.get();
@@ -206,7 +206,8 @@ public class WarcRecordClient {
             throw new IOFailure("Received invalid argument reply: '" + reply + "'", e);
            }
            finally {
-             httpClient.close();
+               //TODO What is this?
+             //httpClient.close();
            }
         return reply;
     }
@@ -287,20 +288,10 @@ public class WarcRecordClient {
         // call WarcRecordService to get the Warc record in the file on the given index
         // and to parse it to a BitArchiveRecord
         //BitarchiveRecord warcInstance = this.getWarc(this.getBaseUri(), this.getOffset());
-        String strUri = this.getBaseUri().toString() + arcfileName;
+        String strUri = this.getBaseUri().toString() + "/" + arcfileName;
         URI uri = new URI(strUri);
         BitarchiveRecord warcInstance = this.getWarc(uri, this.getOffset());
-
-        if (!bitrep.existsInCollection(arcfileName, collectionId)) {
-            log.warn("The file '{}' is not in collection '{}'. Returning null BitarchiveRecord", arcfileName, collectionId);
-            return null;
-        } else {
-            File f = bitrep.getFile(arcfileName, collectionId, null);
-            long timePassed = System.currentTimeMillis() - start;
-            log.debug("Reply received after {} seconds", (timePassed / MILLISECONDS_PER_SECOND));
-
-            return BitarchiveRecord.getBitarchiveRecord(arcfileName, f, index);
-        }
+        return warcInstance;
     }
 
 
