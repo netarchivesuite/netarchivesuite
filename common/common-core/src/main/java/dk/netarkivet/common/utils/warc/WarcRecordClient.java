@@ -161,6 +161,7 @@ public class WarcRecordClient {
             // URI uriStr = Uri.parse(stringUri);
         // String fileName = Paths.get(new URI(uri).getPath()).getFileName().toString();
         String fileName = Paths.get(uri.getPath()).getFileName().toString();
+        fileName = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz";  // Hardcoded for testing only
             System.out.println("fileName: " + fileName);
 
             HttpUriRequest request = RequestBuilder.get()
