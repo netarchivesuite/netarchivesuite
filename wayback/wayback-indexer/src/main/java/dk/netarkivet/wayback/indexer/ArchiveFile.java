@@ -378,7 +378,7 @@ public class ArchiveFile {
      * @param fs The Hadoop FileSystem that is used
      */
     private void collectHadoopResults(FileSystem fs, Path jobOutputDir) {
-        Path jobResultFilePath = new Path(jobOutputDir, "/part-m-00000"); //TODO: Make non-hardcoded - should eventually run through all files named 'part-m-XXXXX'
+        Path jobResultFilePath = new Path(jobOutputDir, "part-m-00000"); //TODO: Make non-hardcoded - should eventually run through all files named 'part-m-XXXXX'
         File outputFile = makeNewFileInWaybackTempDir();
         log.info("Collecting index for '{}' from {} to '{}'", this.getFilename(), jobResultFilePath, outputFile.getAbsolutePath());
         try {
@@ -397,7 +397,7 @@ public class ArchiveFile {
         // Update the file status in the object store
         originalIndexFileName = outputFile.getName();
         isIndexed = true;
-        log.info("Indexed '{}' to '{}'", this.filename, finalFile.getAbsolutePath());
+        log.info("Indexed '{}' to '{}'. Marking as indexed in DB.", this.filename, finalFile.getAbsolutePath());
         (new ArchiveFileDAO()).update(this);
     }
 
