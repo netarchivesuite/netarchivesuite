@@ -111,61 +111,31 @@ public class WarcRecordClient {
         }
     }
 
-
     public WarcRecordClient(URI baseUri) throws URISyntaxException {
         this.baseUri = baseUri;
     }
-/*
-    public WarcRecordClient(URI uri) throws IOException, URISyntaxException {
-      //  PoolingHttpClientConnectionManager  cm = getPoolingHttpClientConnectionManager();  // one static instance
-        this(uri,3442l);
-    }
- */
-/*
-    protected WarcRecordClient(URI uri, long offset) throws IOException, URISyntaxException {
-    //     getPoolingHttpClientConnectionManager();  // one static instance
 
-        this.setOffset(offset);
-        Singleton.getInstance();
-
- //       this.getWarc(uri);
-    }
-*/
     public static void main(String args[]) throws Exception {
-        // To be moved to JUnit tests
-        // Header header = new BasicHeader( name,value);
-        // Use URI from OpenWayback example
-        // curl:
-        // test_curl: -r "3442-" "http://localhost:8883/cgi-bin2/py1.cgi/10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz?foo=bar&x=y"
-        // httpGet.addHeader("Range", "bytes=3442-");  // or httpGet.addHeader("Range", "bytes=3442-3442"); or open range converted to closed range to make it work
-        // final long offset = 3442;
-        // String test_uri = new URI(SAMPLE_HOST).toString();
-        // URI test_uri =  new URI(SAMPLE_HOST);
+
         URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz");
         URI test_uri =  SAMPLE_HOST;
-
-        // Creating a HttpClient object
-        // CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
           WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
           BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, warcRecordClient.getOffset());
           System.out.println("warcRecord: " + warcRecord.toString());
     }
 
-
-    public BitarchiveRecord getWarc( URI uri, long offset) throws IOException, URISyntaxException {                     // should return warcRecord??
+    public BitarchiveRecord getWarc( URI uri, long offset) throws IOException {
             RequestConfig.Builder requestBuilder = RequestConfig.custom();
             requestBuilder.setConnectTimeout(timeout);
             requestBuilder.setConnectionRequestTimeout(timeout);
-            // URI uriStr = Uri.parse(stringUri);
-         //String fileName = Paths.get(new URI(uri).getPath()).getFileName().toString();
-        String fileName = Paths.get(uri.getPath()).getFileName().toString();
+
+            String fileName = Paths.get(uri.getPath()).getFileName().toString();
             System.out.println("fileName: " + fileName);
 
             HttpUriRequest request = RequestBuilder.get()
                     .setUri(uri)
                     .addHeader("User-Agent",USER_AGENT)
-                    //.setHeader(HttpHeaders.CONTENT_TYPE, "application/warc")   // STREAM_ALL = -1;
                     .addHeader("Range", "bytes=" + offset + "-")   // offset + 1?? might require <= -1 check and > 1 check
                     .build();
 
@@ -173,10 +143,12 @@ public class WarcRecordClient {
 
             // Create custom response handler
             ResponseHandler<String> responseHandler = WarcRecordClient::handleResponse;
+            // See: https://pageperso.lis-lab.fr/andreea.dragut/enseignementWebMining/r/man/HttpClient.html
 
             CloseableHttpClient closableHttpClient = WarcRecordClient.Singleton.getCloseableHttpClient();
            // HttpResponse httpResponse = closableHttpClient.execute(request, (HttpContext) responseHandler);
-        HttpResponse httpResponse = closableHttpClient.execute(request);
+           HttpResponse httpResponse = closableHttpClient.execute(request);
+        System.out.println("httpResponse status: " + httpResponse.getStatusLine().toString());
            // httpResponse.getEntity().getContent();
 
            // return responseHandler.toString();
@@ -193,7 +165,7 @@ public class WarcRecordClient {
                        // BitarchiveRecord bitarchiveRecord = new BitarchiveRecord(archiveRecord, fileName);
                        // bitarchiveRecord.getData(System.out);
                         reply = new BitarchiveRecord(archiveRecord, fileName);
-
+                       System.out.println("reply: " + reply.toString());
                        return reply;
                    } catch (IOException e) {
                        e.printStackTrace();
@@ -206,36 +178,10 @@ public class WarcRecordClient {
             throw new IOFailure("Received invalid argument reply: '" + reply + "'", e);
            }
            finally {
-               //TODO What is this?
-             //httpClient.close();
+               //
            }
         return reply;
     }
-/*
-        // If using PoolingHttpClient
-        PoolingHttpClientConnectionManager cm = getPoolingHttpClientConnectionManager();
-
-        // CloseableHttpClient httpclient = HttpClients.createDefault();
-        HttpClient httpclient = createClosableHttpClient(cm);
-
-        //Creating a HttpGet object
-        HttpGet httpget1 = getHttpfrom(SAMPLE_URI1);
-
-        //Printing the method used
-        System.out.println("Request Type: " + httpget1.getMethod());
-
-        //Executing the Get request
-        HttpResponse httpresponse = httpclient.execute(httpget1);
-
-        Scanner sc = new Scanner(httpresponse.getEntity().getContent());
-
-        //Printing the status line
-        System.out.println(httpresponse.getStatusLine());
-        while(sc.hasNext()) {
-            System.out.println(sc.nextLine());
-        }
-*/
-
 
     private static synchronized String handleResponse(HttpResponse response) throws IOException {
         int status = response.getStatusLine().getStatusCode();
@@ -259,25 +205,6 @@ public class WarcRecordClient {
                     .build();
             return httpClient;
     }
-
-/*
-    private static PoolingHttpClientConnectionManager getPoolingHttpClientConnectionManager() {
-
-        if (cm == null) {
-             cm = new PoolingHttpClientConnectionManager();
-
-            // Increase max total connection to 200
-            cm.setMaxTotal(200);
-            // Increase default max connection per route to 20
-            cm.setDefaultMaxPerRoute(20);
-
-            // Increase max connections for localhost:80 to 50
-            HttpHost localhost = new HttpHost("localhost", 80);
- //           cm.setMaxPerRoute(new HttpRoute(localhost), 50);
-        }
-        return cm;
-    }
-*/
 
     public BitarchiveRecord get(String arcfileName, long index) throws ArgumentNotValid, IOFailure, IOException, URISyntaxException {
         // index must be the same as the offset that ends up in the range header
