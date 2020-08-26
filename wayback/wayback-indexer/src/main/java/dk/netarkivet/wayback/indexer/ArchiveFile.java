@@ -24,7 +24,9 @@ package dk.netarkivet.wayback.indexer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Entity;
@@ -32,10 +34,10 @@ import javax.persistence.Id;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.ToolRunner;
+import org.hibernate.id.GUIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,7 +200,7 @@ public class ArchiveFile {
         if (Settings.getBoolean(CommonSettings.USING_HADOOP) && WARCUtils.isWarc(filename)) {
             // Start a hadoop indexing job.
             // But this shouldn't be done on the files individually?? This is done on a list of filenames..
-            hadoopIndex();
+                hadoopIndex();
         } else {
             batchIndex();
         }
@@ -208,6 +210,96 @@ public class ArchiveFile {
      * Runs a map-only (no reduce) job to index this file.
      */
     private void hadoopIndex() {
+        System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
+        Configuration conf = HadoopUtils.getConfFromSettings();
+        final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_WAYBACK_UBER_JAR);
+        if (jarPath == null || !(new File(jarPath)).exists()) {
+            log.warn("Specified jar file {} does not exist.", jarPath);
+        }
+        conf.set("mapreduce.job.jar", jarPath);
+        UUID uuid = UUID.randomUUID();
+        log.info("File {} indexed with job uuid for i/o {}.", this.filename, uuid);
+        try (FileSystem fileSystem = FileSystem.get(conf)) {
+            String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_DIR);
+            if (hadoopInputDir == null) {
+                log.error("Parent output dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_INPUT_DIR);
+                return;
+            }
+            initInputDir(fileSystem, hadoopInputDir);
+            Path hadoopInputNameFile = new Path(hadoopInputDir, uuid.toString());
+            log.info("Hadoop input file will be {}", hadoopInputNameFile);
+
+            String parentOutputDir = Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR);
+            if (parentOutputDir == null) {
+                log.error("Parent output dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_OUTPUT_DIR);
+                return;
+            }
+            initOutputDir(fileSystem, parentOutputDir);
+            Path jobOutputDir = new Path(new Path(parentOutputDir), uuid.toString());
+            log.info("Output directory for job is {}", jobOutputDir);
+            java.nio.file.Path localInputTempFile = null;
+            localInputTempFile = Files.createTempFile(null, null);
+            // TODO use file resolver here to figure out the file path
+            final String s = "file:///kbhpillar/collection-netarkivet/" + filename;
+            log.info("Inserting {} in {}.", s, localInputTempFile);
+            Files.write(localInputTempFile, s.getBytes());
+            // Write the input file to hdfs
+            log.info("Copying file with input paths {} to hdfs {}.", localInputTempFile, hadoopInputNameFile);
+            fileSystem .copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
+                    hadoopInputNameFile);
+            log.info("Starting CDXJob on file '{}'", filename);
+            int exitCode = 0;
+            try {
+                log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
+                exitCode = ToolRunner.run(new CDXJob(conf),
+                        new String[] {
+                                hadoopInputNameFile.toString(), jobOutputDir.toString()});
+                if (exitCode == 0) {
+                    collectHadoopResults(fileSystem, jobOutputDir);
+                } else {
+                    log.warn("Hadoop job failed with exit code '{}'", exitCode);
+                }
+            } catch (Exception exception) {
+               log.error("Hadoop indexing job failed to run normally.", exception);
+            }
+        } catch (IOException e) {
+           log.error("Error on hadoop filesystem.", e);
+        }
+
+    }
+
+    private void initOutputDir(FileSystem fileSystem, String parentOutputDir) throws IOException {
+        Path parentOutputDirPath = new Path(parentOutputDir);
+        if (fileSystem.exists(parentOutputDirPath)) {
+            if (!fileSystem.isDirectory(parentOutputDirPath)) {
+                log.warn("{} exists and is not a directory.", parentOutputDirPath);
+                fileSystem.delete(parentOutputDirPath);
+                fileSystem.mkdirs(parentOutputDirPath);
+            }
+        } else {
+            log.info("Creating parent output dir {}.", parentOutputDirPath);
+            fileSystem.mkdirs(parentOutputDirPath);
+        }
+    }
+
+    private void initInputDir(FileSystem fileSystem, String hadoopInputDir) throws IOException {
+        log.info("Hadoop input files will be placed under {}.", hadoopInputDir);
+        Path hadoopInputDirPath = new Path(hadoopInputDir);
+        if (fileSystem.exists(hadoopInputDirPath) && !fileSystem.isDirectory(hadoopInputDirPath)) {
+            log.warn("{} already exists and is a file. Deleting and creating directory.", hadoopInputDirPath);
+            fileSystem.delete(hadoopInputDirPath);
+            fileSystem.mkdirs(hadoopInputDirPath);
+        }
+        else if (!fileSystem.exists(hadoopInputDirPath)) {
+            fileSystem.mkdirs(hadoopInputDirPath);
+        }
+    }
+
+    /**
+     * Runs a map-only (no reduce) job to index this file.
+     * Uses the costly approach of copying the file to hdfs first
+     */
+    private void hadoopHDFSIndex() {
         // For now only handles WARC files
         String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_DIR);
         // As each file for now has its own job, the inputfile for each job
@@ -261,7 +353,7 @@ public class ArchiveFile {
                         log.warn("Problem closing FileSystem: ", e);
                     }
                 } else {
-                    collectHadoopResults(fs);
+                    collectHadoopResults(fs, new Path(Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR)));
                 }
             } catch (Exception e) {
                 log.warn("Running hadoop job threw exception", e);
@@ -285,12 +377,10 @@ public class ArchiveFile {
      * object has been indexed.
      * @param fs The Hadoop FileSystem that is used
      */
-    private void collectHadoopResults(FileSystem fs) {
-        Path jobResultFilePath = new Path(
-                Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR) + "/part-m-00000"); //TODO: Make non-hardcoded - should eventually run through all files named 'part-m-XXXXX'
-
+    private void collectHadoopResults(FileSystem fs, Path jobOutputDir) {
+        Path jobResultFilePath = new Path(jobOutputDir, "part-m-00000"); //TODO: Make non-hardcoded - should eventually run through all files named 'part-m-XXXXX'
         File outputFile = makeNewFileInWaybackTempDir();
-        log.info("Collecting index for '{}' to '{}'", this.getFilename(), outputFile.getAbsolutePath());
+        log.info("Collecting index for '{}' from {} to '{}'", this.getFilename(), jobResultFilePath, outputFile.getAbsolutePath());
         try {
             if (fs.exists(jobResultFilePath)) {
                 fs.copyToLocalFile(jobResultFilePath, new Path(outputFile.getAbsolutePath()));
@@ -307,7 +397,7 @@ public class ArchiveFile {
         // Update the file status in the object store
         originalIndexFileName = outputFile.getName();
         isIndexed = true;
-        log.info("Indexed '{}' to '{}'", this.filename, finalFile.getAbsolutePath());
+        log.info("Indexed '{}' to '{}'. Marking as indexed in DB.", this.filename, finalFile.getAbsolutePath());
         (new ArchiveFileDAO()).update(this);
     }
 

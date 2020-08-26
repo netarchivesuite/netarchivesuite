@@ -35,7 +35,7 @@ public class CDXJob extends Configured implements Tool {
         Configuration conf = getConf();
         Job job = Job.getInstance(conf, this.getClass().getName());
 
-        job.setJarByClass(this.getClass());
+        //job.setJarByClass(this.getClass());
         job.setInputFormatClass(NLineInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         NLineInputFormat.addInputPath(job, inputPath);
