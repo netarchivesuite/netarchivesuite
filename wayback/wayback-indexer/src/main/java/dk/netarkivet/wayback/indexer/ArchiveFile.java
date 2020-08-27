@@ -25,6 +25,7 @@ package dk.netarkivet.wayback.indexer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -239,8 +240,12 @@ public class ArchiveFile {
             log.info("Output directory for job is {}", jobOutputDir);
             java.nio.file.Path localInputTempFile = null;
             localInputTempFile = Files.createTempFile(null, null);
-            // TODO use file resolver here to figure out the file path
-            final String s = "file:///kbhpillar/collection-netarkivet/" + filename;
+            //TODO make this a setting
+            final String parentDir = "file:///kbhpillar/collection-netarkivet/" ;
+            //TODO replace this with call to a factory method so we can configure different file resolvers
+            FileResolver fileResolver = new SimpleFileResolver(Paths.get(parentDir));
+            java.nio.file.Path filepath = fileResolver.getPath(filename);
+            String s = filepath.toString();
             log.info("Inserting {} in {}.", s, localInputTempFile);
             Files.write(localInputTempFile, s.getBytes());
             // Write the input file to hdfs
