@@ -57,7 +57,8 @@ import dk.netarkivet.wayback.WaybackSettings;
 import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
-import dk.netarkivet.wayback.hadoop.CDXJob;
+import dk.netarkivet.wayback.hadoop.CDXMap;
+import dk.netarkivet.common.utils.hadoop.HadoopJob;
 
 /**
  * This class represents a file in the arcrepository which may be indexed by the indexer.
@@ -244,7 +245,7 @@ public class ArchiveFile {
             log.info("Starting CDXJob on file '{}'", filename);
             try {
                 // TODO Guess conditioning on which file it is should be handled here by designating different mapper classes
-                int exitCode = ToolRunner.run(new CDXJob(conf),
+                int exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMap()),
                         new String[] {
                                 hadoopInputNameFile.toString(), Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR)});
 
@@ -315,7 +316,7 @@ public class ArchiveFile {
             log.info("Starting CDXJob on file '{}'", filename);
             try {
                 // TODO Guess conditioning on which file it is should be handled here by designating different mapper classes
-                int exitCode = ToolRunner.run(new CDXJob(conf),
+                int exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMap()),
                         new String[] {
                                 hadoopInputNameFile.getName(), Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR)});
 

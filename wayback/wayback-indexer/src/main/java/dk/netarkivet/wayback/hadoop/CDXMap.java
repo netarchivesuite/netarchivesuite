@@ -27,7 +27,7 @@ public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
      *
      * @param linenumber  The linenumber. Is ignored.
      * @param warcPath The path to the WARC file.
-     * @param context Context used for writing output
+     * @param context Context used for writing output.
      * @throws IOException If it fails to generate the CDX indexes.
      */
     @Override
