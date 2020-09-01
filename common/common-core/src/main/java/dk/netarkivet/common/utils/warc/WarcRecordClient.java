@@ -123,6 +123,9 @@ public class WarcRecordClient {
             HttpResponse httpResponse = closableHttpClient.execute(request);
            // System.out.println("httpResponse status: " + httpResponse.getStatusLine().toString());
             log.debug("httpResponse status: " + httpResponse.getStatusLine().toString());
+            if (httpResponse.getStatusLine().getStatusCode() != 200) {
+                return null;
+            }
 
            BitarchiveRecord reply = null;
            try {
