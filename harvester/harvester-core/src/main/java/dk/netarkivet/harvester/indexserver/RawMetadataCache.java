@@ -111,8 +111,11 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         log.info("Metadata cache for '{}' is fetching metadata with urls matching '{}' and mimetype matching '{}'. Migration of duplicate records is " 
                 + (tryToMigrateDuplicationRecords? "enabled":"disabled"), 
                 prefix, urlMatcher1.toString(), mimeMatcher1);
-        job = new GetMetadataArchiveBatchJob(urlMatcher1, mimeMatcher1);
-        
+//        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
+//            // WHAT DO
+//        } else {
+            job = new GetMetadataArchiveBatchJob(urlMatcher1, mimeMatcher1);
+//        }
     }
 
     /**

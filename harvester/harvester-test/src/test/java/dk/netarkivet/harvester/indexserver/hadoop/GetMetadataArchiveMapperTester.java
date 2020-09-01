@@ -1,17 +1,12 @@
 package dk.netarkivet.harvester.indexserver.hadoop;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.ZipUtils;
+import dk.netarkivet.common.utils.hadoop.GetMetadataArchiveMapper;
+import dk.netarkivet.common.utils.hadoop.HadoopJob;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
+import dk.netarkivet.harvester.indexserver.TestInfo;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.LocatedFileStatus;
@@ -30,15 +25,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.ZipUtils;
-import dk.netarkivet.common.utils.hadoop.GetMetadataArchiveMapper;
-import dk.netarkivet.common.utils.hadoop.HadoopJob;
-import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
-import dk.netarkivet.harvester.indexserver.TestInfo;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
-public class GetMetaDataArchiveHadoopJobTester {
+public class GetMetadataArchiveMapperTester {
     private MoveTestFiles mtf;
     private File metadataDir;
     private MiniDFSCluster hdfsCluster;
@@ -78,8 +76,13 @@ public class GetMetaDataArchiveHadoopJobTester {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
 
+
+    /**
+     * Test that a Hadoop job with a GetMetadataArchiveMapper produces the correct metadata lines when given
+     * a crawl log url pattern and 'text/plain' mime pattern.
+     */
     @Test
-    public void testHadoopJob() throws Exception {
+    public void testMetadataCrawlLogJob() throws Exception {
         String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
         File[] files = getTestFiles();
         java.nio.file.Path jobInputFile = Files.createTempFile("", UUID.randomUUID().toString());
@@ -89,29 +92,49 @@ public class GetMetaDataArchiveHadoopJobTester {
         conf.set("url.pattern", MetadataFile.CRAWL_LOG_PATTERN);
         conf.set("mime.pattern", "text/plain");
 
-        /*Pattern cdxUrlpattern = Pattern.compile(MetadataFile.CDX_PATTERN);
-        Pattern xCDXMimepattern = Pattern.compile("application/x-cdx");*/
+        try {
+            Tool job = new HadoopJob(conf, new GetMetadataArchiveMapper());
+            int exitCode = ToolRunner.run(conf, job,
+                    new String[] {"file://" + jobInputFile.toString(), outputURI});
+            Assert.assertEquals(0, exitCode); // job success
+
+            List<String> metadataLines = collectHadoopResults(fileSystem, new Path(outputURI));
+            Assert.assertEquals(624, metadataLines.size());
+            //metadataLines.forEach(System.out::println);
+        } finally {
+            fileSystem.delete(new Path(outputURI), true);
+        }
+    }
+
+    /**
+     * Test that a Hadoop job with a GetMetadataArchiveMapper produces the correct metadata lines when given
+     * a cdx entry url pattern and 'application/x-cdx' mime pattern.
+     */
+    @Test
+    public void testMetadataCDXJob() throws Exception {
+        String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
+        File[] files = getTestFiles();
+        java.nio.file.Path jobInputFile = Files.createTempFile("", UUID.randomUUID().toString());
+        Files.write(jobInputFile, Arrays.asList("file://" + files[0].getAbsolutePath(), "file://" + files[1].getAbsolutePath()));
+        jobInputFile.toFile().deleteOnExit();
+
+        conf.set("url.pattern", MetadataFile.CDX_PATTERN);
+        conf.set("mime.pattern", "application/x-cdx");
 
         try {
             Tool job = new HadoopJob(conf, new GetMetadataArchiveMapper());
             int exitCode = ToolRunner.run(conf, job,
                     new String[] {"file://" + jobInputFile.toString(), outputURI});
+            Assert.assertEquals(0, exitCode); // job success
 
-            if (exitCode == 0) {
-                List<String> metadataLines = collectHadoopResults(fileSystem, new Path(outputURI));
-                System.out.println(metadataLines.size());
-                //System.out.println("Job success?");
-                for (String line : metadataLines) {
-                    System.out.println(line);
-                }
-            } else {
-                //System.out.println("Hadoop job failed with exit code '" + exitCode + "'");
-            }
+            List<String> metadataLines = collectHadoopResults(fileSystem, new Path(outputURI));
+            Assert.assertEquals(612, metadataLines.size());
+            //metadataLines.forEach(System.out::println);
         } finally {
-            //System.out.println("outputURI exists: " + fileSystem.exists(new Path(outputURI)));
             fileSystem.delete(new Path(outputURI), true);
         }
     }
+
 
     public List<String> collectHadoopResults(DistributedFileSystem fileSystem, Path outputFolderPath) throws IOException {
         List<String> metadataLines = new ArrayList<>();
@@ -133,8 +156,6 @@ public class GetMetaDataArchiveHadoopJobTester {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-
-                //cdxLines = cdxLines.stream().sorted().collect(Collectors.toList());
             }
         }
         Assert.assertTrue(foundResult);

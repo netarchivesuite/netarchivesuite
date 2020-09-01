@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -24,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
-/** Hadoop Mapper for extracting metadata lines from archive files. */
+/** Hadoop Mapper for extracting metadata entries from metadata files. */
 public class GetMetadataArchiveMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(GetMetadataArchiveMapper.class);
@@ -55,15 +56,12 @@ public class GetMetadataArchiveMapper extends Mapper<LongWritable, Text, NullWri
     /**
      * Mapping method.
      *
-     * @param linenumber The current linenumber of the input file (is ignored).
+     * @param lineNumber The current line number of the input file (is ignored).
      * @param filePath The path to the input file.
      * @param context Context used for writing output.
-     * @throws IOException Thrown by a bunch of stuff TODO do try-catch and logging
-     * @throws InterruptedException Thrown if job is interrupted while writing output
      */
     @Override
-    protected void map(LongWritable linenumber, Text filePath, Context context) throws IOException,
-            InterruptedException {
+    protected void map(LongWritable lineNumber, Text filePath, Context context) {
 
         // reject empty or null file paths.
         if(filePath == null || filePath.toString().trim().isEmpty()) {
@@ -71,28 +69,45 @@ public class GetMetadataArchiveMapper extends Mapper<LongWritable, Text, NullWri
         }
 
         Path path = new Path(filePath.toString());
-        try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
-            List<String> res = new ArrayList<>();
-            ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true);
-            for (ArchiveRecord archiveRecord : archiveReader) {
-                ArchiveRecordBase record = ArchiveRecordBase.wrapArchiveRecord(archiveRecord);
-                ArchiveHeaderBase header = record.getHeader();
+        try {
+            FileSystem fs = path.getFileSystem(context.getConfiguration());
+            try (InputStream in = new BufferedInputStream(fs.open(path))) {
+                List<String> metadataLines = new ArrayList<>();
+                try (ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true)) {
+                    for (ArchiveRecord archiveRecord : archiveReader) {
+                        ArchiveRecordBase record = ArchiveRecordBase.wrapArchiveRecord(archiveRecord);
+                        ArchiveHeaderBase header = record.getHeader();
 
-                if (header.getUrl() == null) {
-                    continue;
+                        if (header.getUrl() == null) {
+                            continue;
+                        }
+                        log.info(header.getUrl() + " - " + header.getMimetype());
+                        boolean recordHeaderMatchesPatterns = urlMatcher.matcher(header.getUrl()).matches()
+                                && mimeMatcher.matcher(header.getMimetype()).matches();
+                        if (recordHeaderMatchesPatterns) {
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(record.getInputStream()));
+                            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                                metadataLines.add(line);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    log.warn("Failed creating archiveReader from archive file located at '{}'", filePath.toString());
                 }
-                log.info(header.getUrl() + " - " + header.getMimetype());
-                if (urlMatcher.matcher(header.getUrl()).matches() && mimeMatcher.matcher(header.getMimetype()).matches()) {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(record.getInputStream()));
-                    for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                        res.add(line);
+
+                for (int i = 0; i < metadataLines.size(); i++) {
+                    String line = metadataLines.get(i);
+                    try {
+                        context.write(NullWritable.get(), new Text(line));
+                    } catch (Exception e) {
+                        log.warn("Failed writing metadata line #{} for input file '{}'.", i, path.toString());
                     }
                 }
-                // TODO - maybe also refactor to separate class
+            } catch (IOException e) {
+                log.warn("Could not read input file at '{}'.", path.toString());
             }
-            for (String line : res) {
-                context.write(NullWritable.get(), new Text(line));
-            }
+        } catch (IOException e) {
+            log.warn("Could not get FileSystem from configuration", e);
         }
     }
 }

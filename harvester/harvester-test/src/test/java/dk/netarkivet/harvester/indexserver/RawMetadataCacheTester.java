@@ -104,10 +104,10 @@ public class RawMetadataCacheTester extends CacheTestCase {
         assertNotNull("Should have the file asked for", cacheFile1.exists());
         String newFileName = "2-1-20161205100306320-00000-4320~kb-test-har-004.kb.dk~8173.arc.gz";
         for(String line: org.apache.commons.io.FileUtils.readLines(cacheFile1) ){
-              if (line.contains("http://www.kaarefc.dk/avatar.png")) {
-                  String newDuplicate = "duplicate:\"" + newFileName + ",4434,20161205100310384\"";
-                  assertTrue(line + " should contain new duplicate record " + newDuplicate ,line.contains(newDuplicate));
-              }
+            if (line.contains("http://www.kaarefc.dk/avatar.png")) {
+                String newDuplicate = "duplicate:\"" + newFileName + ",4434,20161205100310384\"";
+                assertTrue(line + " should contain new duplicate record " + newDuplicate ,line.contains(newDuplicate));
+            }
             if (line.contains("http://jigsaw.w3.org/css-validator/images/vcss-blue.gif")) {
                 String newDuplicate = "duplicate:\"" + newFileName + ",142487,20161205100318947\"";
                 assertTrue(line + " should contain new duplicate record " + newDuplicate ,line.contains(newDuplicate));
