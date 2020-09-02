@@ -107,7 +107,6 @@ public class WarcRecordClient {
             requestBuilder.setConnectionRequestTimeout(timeout);
 
             String fileName = Paths.get(uri.getPath()).getFileName().toString();
-            // System.out.println("fileName: " + fileName);
             log.debug("fileName: " + fileName);
 
             HttpUriRequest request = RequestBuilder.get()
@@ -115,15 +114,13 @@ public class WarcRecordClient {
                     .addHeader("User-Agent",USER_AGENT)
                     .addHeader("Range", "bytes=" + offset + "-")   // offset + 1?? might require <= -1 check and > 1 check
                     .build();
-
-            // System.out.println("Executing request " + request.getRequestLine());
             log.debug("Executing request " + request.getRequestLine());
 
             CloseableHttpClient closableHttpClient = WarcRecordClient.Singleton.getCloseableHttpClient();
             HttpResponse httpResponse = closableHttpClient.execute(request);
-           // System.out.println("httpResponse status: " + httpResponse.getStatusLine().toString());
             log.debug("httpResponse status: " + httpResponse.getStatusLine().toString());
             if (httpResponse.getStatusLine().getStatusCode() != 200) {
+                log.error("Http request error " + httpResponse.getStatusLine().getStatusCode());
                 return null;
             }
 
@@ -140,10 +137,8 @@ public class WarcRecordClient {
 
                         return reply;
                    } catch (IOException e) {
-                       // e.printStackTrace();
                        log.error("IOException: ", e );
                    } catch (UnsupportedOperationException e) {
-                       // e.printStackTrace();
                        log.error("UnsupportedOperationException: ", e);
                    }
                }
