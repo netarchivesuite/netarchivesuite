@@ -25,6 +25,7 @@ package dk.netarkivet.wayback.indexer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.UUID;
 
@@ -243,8 +244,12 @@ public class ArchiveFile {
             log.info("Output directory for job is {}", jobOutputDir);
             java.nio.file.Path localInputTempFile = null;
             localInputTempFile = Files.createTempFile(null, null);
-            // TODO use file resolver here to figure out the file path
-            final String s = "file:///kbhpillar/collection-netarkivet/" + filename;
+            //TODO make this a setting
+            final String parentDir = "file:///kbhpillar/collection-netarkivet/" ;
+            //TODO replace this with call to a factory method so we can configure different file resolvers
+            FileResolver fileResolver = new SimpleFileResolver(Paths.get(parentDir));
+            java.nio.file.Path filepath = fileResolver.getPath(filename);
+            String s = filepath.toString();
             log.info("Inserting {} in {}.", s, localInputTempFile);
             Files.write(localInputTempFile, s.getBytes());
             // Write the input file to hdfs
@@ -355,7 +360,7 @@ public class ArchiveFile {
      * @param fs The Hadoop FileSystem that is used
      */
     private void collectHadoopResults(FileSystem fs, Path jobOutputDir) {
-        Path jobResultFilePath = new Path(jobOutputDir, "/part-m-00000"); //TODO: Make non-hardcoded - should eventually run through all files named 'part-m-XXXXX'
+        Path jobResultFilePath = new Path(jobOutputDir, "part-m-00000"); //TODO: Make non-hardcoded - should eventually run through all files named 'part-m-XXXXX'
         File outputFile = makeNewFileInWaybackTempDir();
         log.info("Collecting index for '{}' from {} to '{}'", this.getFilename(), jobResultFilePath, outputFile.getAbsolutePath());
         try {
@@ -374,7 +379,7 @@ public class ArchiveFile {
         // Update the file status in the object store
         originalIndexFileName = outputFile.getName();
         isIndexed = true;
-        log.info("Indexed '{}' to '{}'", this.filename, finalFile.getAbsolutePath());
+        log.info("Indexed '{}' to '{}'. Marking as indexed in DB.", this.filename, finalFile.getAbsolutePath());
         (new ArchiveFileDAO()).update(this);
     }
 
