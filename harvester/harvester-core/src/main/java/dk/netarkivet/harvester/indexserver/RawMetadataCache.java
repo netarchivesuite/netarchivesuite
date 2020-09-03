@@ -24,13 +24,19 @@ package dk.netarkivet.harvester.indexserver;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.util.Pair;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,9 +49,12 @@ import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.HadoopUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.common.utils.archive.GetMetadataArchiveBatchJob;
+import dk.netarkivet.common.utils.hadoop.GetMetadataArchiveMapper;
+import dk.netarkivet.common.utils.hadoop.HadoopJob;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 
@@ -66,9 +75,6 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
      * The arc repository interface. This does not need to be closed, it is a singleton.
      */
     private ViewerArcRepositoryClient arcrep = ArcRepositoryClientFactory.getViewerInstance();
-
-    /** The job that we use to dig through metadata files. */
-    private final ArchiveBatchJob job;
 
     /** The actual pattern to be used for matching the url in the metadata record */
     private Pattern urlPattern;
@@ -111,11 +117,6 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         log.info("Metadata cache for '{}' is fetching metadata with urls matching '{}' and mimetype matching '{}'. Migration of duplicate records is " 
                 + (tryToMigrateDuplicationRecords? "enabled":"disabled"), 
                 prefix, urlMatcher1.toString(), mimeMatcher1);
-//        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
-//            // WHAT DO
-//        } else {
-            job = new GetMetadataArchiveBatchJob(urlMatcher1, mimeMatcher1);
-//        }
     }
 
     /**
@@ -140,13 +141,92 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
      * @see FileBasedCache#cacheData(Object)
      */
     protected Long cacheData(Long id) {
+        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
+            return cacheDataHadoop(id);
+        } else {
+            return cacheDataBatch(id);
+        }
+    }
+
+    /**
+     * Cache data for the given ID using Hadoop.
+     *
+     * @param id A job ID to cache data for.
+     * @return A File containing the data. This file will be the same as getCacheFile(ID);
+     * @see FileBasedCache#cacheData(Object)
+     */
+    private Long cacheDataHadoop(Long id) { // Return what hmm..
+        System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
+        Configuration conf = HadoopUtils.getConfFromSettings();
+        UUID uuid = UUID.randomUUID();
+        try (FileSystem fileSystem = FileSystem.get(conf)) {
+            String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CACHE_INPUT_DIR);
+            if (hadoopInputDir == null) {
+                log.error("Parent input dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CACHE_INPUT_DIR);
+                return null; // Not sure
+            }
+            try {
+                HadoopUtils.initDir(fileSystem, hadoopInputDir);
+            } catch (IOException e) {
+                log.error("Failed to init input dir {}", hadoopInputDir, e);
+                return null;
+            }
+            Path hadoopInputNameFile = new Path(hadoopInputDir, uuid.toString());
+            log.info("Hadoop input file will be {}", hadoopInputNameFile);
+
+            String parentOutputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CACHE_OUTPUT_DIR);
+            if (parentOutputDir == null) {
+                log.error("Parent output dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CACHE_OUTPUT_DIR);
+                return null;
+            }
+            try {
+                HadoopUtils.initDir(fileSystem, parentOutputDir);
+            } catch (IOException e) {
+                log.error("Failed to init output dir {}", parentOutputDir, e);
+                return null;
+            }
+            Path jobOutputDir = new Path(parentOutputDir, uuid.toString());
+            log.info("Output directory for job is {}", jobOutputDir);
+
+            java.nio.file.Path localInputTempFile = Files.createTempFile(null, null);
+            // TODO use file resolver here to figure out the file path
+            // Write string matching pattern to localInputTempFile?
+            log.info("Copying file with input paths {} to hdfs {}.", localInputTempFile, hadoopInputNameFile);
+            fileSystem.copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
+                    hadoopInputNameFile);
+            //log.info("Starting CDX job on file '{}'", filename);
+            /*int exitCode = 0;
+            try {
+                ToolRunner.run(new HadoopJob(conf, new GetMetadataArchiveMapper()),
+                        new String[] {hadoopInputNameFile.toString(), jobOutputDir.toString()});
+            } catch (Exception e) {
+                log.error("Hadoop indexing job failed to run normally.", e);
+            }*/
+            // Something to collect results - again feel this can be generalized from ArchiveFile into a method in HadoopUtils
+        } catch (IOException e) {
+            log.error("Error on hadoop filesystem.", e);
+        }
+
+        return id;
+    }
+
+    /**
+     * Actually cache data for the given ID.
+     *
+     * @param id A job ID to cache data for.
+     * @return A File containing the data. This file will be the same as getCacheFile(ID);
+     * @see FileBasedCache#cacheData(Object)
+     */
+    private Long cacheDataBatch(Long id) {
         final String replicaUsed = Settings.get(CommonSettings.USE_REPLICA_ID);
         final String metadataFilePatternSuffix = Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
         // Same pattern here as defined in class dk.netarkivet.viewerproxy.webinterface.Reporting
         final String specifiedPattern = "(.*-)?" + id + "(-.*)?" + metadataFilePatternSuffix;
-        
+
+        final ArchiveBatchJob job = new GetMetadataArchiveBatchJob(urlPattern, mimePattern);
         log.debug("Extract using a batchjob of type '{}' cachedata from files matching '{}' on replica '{}'. Url pattern is '{}' and mimepattern is '{}'", job
                 .getClass().getName(), specifiedPattern, replicaUsed, urlPattern, mimePattern);
+
         job.processOnlyFilesMatching(specifiedPattern);
         BatchStatus b = arcrep.batch(job, replicaUsed);
         // This check ensures that we got data from at least one file.

@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Date;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Entity;
@@ -37,7 +36,6 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.ToolRunner;
-import org.hibernate.id.GUIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,30 +211,35 @@ public class ArchiveFile {
     private void hadoopIndex() {
         System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
         Configuration conf = HadoopUtils.getConfFromSettings();
-        final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_WAYBACK_UBER_JAR);
-        if (jarPath == null || !(new File(jarPath)).exists()) {
-            log.warn("Specified jar file {} does not exist.", jarPath);
-        }
-        conf.set("mapreduce.job.jar", jarPath);
         UUID uuid = UUID.randomUUID();
         log.info("File {} indexed with job uuid for i/o {}.", this.filename, uuid);
         try (FileSystem fileSystem = FileSystem.get(conf)) {
-            String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_DIR);
+            String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDX_INPUT_DIR);
             if (hadoopInputDir == null) {
-                log.error("Parent output dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_INPUT_DIR);
+                log.error("Parent input dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CDX_INPUT_DIR);
                 return;
             }
-            initInputDir(fileSystem, hadoopInputDir);
+            try {
+                HadoopUtils.initDir(fileSystem, hadoopInputDir);
+            } catch (IOException e) {
+                log.error("Failed to init input dir {}", hadoopInputDir, e);
+                return;
+            }
             Path hadoopInputNameFile = new Path(hadoopInputDir, uuid.toString());
             log.info("Hadoop input file will be {}", hadoopInputNameFile);
 
-            String parentOutputDir = Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR);
+            String parentOutputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDX_OUTPUT_DIR);
             if (parentOutputDir == null) {
-                log.error("Parent output dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_OUTPUT_DIR);
+                log.error("Parent output dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CDX_OUTPUT_DIR);
                 return;
             }
-            initOutputDir(fileSystem, parentOutputDir);
-            Path jobOutputDir = new Path(new Path(parentOutputDir), uuid.toString());
+            try {
+                HadoopUtils.initDir(fileSystem, parentOutputDir);
+            } catch (IOException e) {
+                log.error("Failed to init output dir {}", parentOutputDir, e);
+                return;
+            }
+            Path jobOutputDir = new Path(parentOutputDir, uuid.toString());
             log.info("Output directory for job is {}", jobOutputDir);
             java.nio.file.Path localInputTempFile = null;
             localInputTempFile = Files.createTempFile(null, null);
@@ -246,7 +249,7 @@ public class ArchiveFile {
             Files.write(localInputTempFile, s.getBytes());
             // Write the input file to hdfs
             log.info("Copying file with input paths {} to hdfs {}.", localInputTempFile, hadoopInputNameFile);
-            fileSystem .copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
+            fileSystem.copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
                     hadoopInputNameFile);
             log.info("Starting CDX job on file '{}'", filename);
             int exitCode = 0;
@@ -269,40 +272,13 @@ public class ArchiveFile {
 
     }
 
-    private void initOutputDir(FileSystem fileSystem, String parentOutputDir) throws IOException {
-        Path parentOutputDirPath = new Path(parentOutputDir);
-        if (fileSystem.exists(parentOutputDirPath)) {
-            if (!fileSystem.isDirectory(parentOutputDirPath)) {
-                log.warn("{} exists and is not a directory.", parentOutputDirPath);
-                fileSystem.delete(parentOutputDirPath, true);
-                fileSystem.mkdirs(parentOutputDirPath);
-            }
-        } else {
-            log.info("Creating parent output dir {}.", parentOutputDirPath);
-            fileSystem.mkdirs(parentOutputDirPath);
-        }
-    }
-
-    private void initInputDir(FileSystem fileSystem, String hadoopInputDir) throws IOException {
-        log.info("Hadoop input files will be placed under {}.", hadoopInputDir);
-        Path hadoopInputDirPath = new Path(hadoopInputDir);
-        if (fileSystem.exists(hadoopInputDirPath) && !fileSystem.isDirectory(hadoopInputDirPath)) {
-            log.warn("{} already exists and is a file. Deleting and creating directory.", hadoopInputDirPath);
-            fileSystem.delete(hadoopInputDirPath, true);
-            fileSystem.mkdirs(hadoopInputDirPath);
-        }
-        else if (!fileSystem.exists(hadoopInputDirPath)) {
-            fileSystem.mkdirs(hadoopInputDirPath);
-        }
-    }
-
     /**
      * Runs a map-only (no reduce) job to index this file.
      * Uses the costly approach of copying the file to hdfs first
      */
     private void hadoopHDFSIndex() {
         // For now only handles WARC files
-        String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_DIR);
+        String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDX_INPUT_DIR);
         // As each file for now has its own job, the inputfile for each job
         // is just made unique from the archivefile's name
         Path hadoopInputNameFile = new Path(
@@ -344,7 +320,7 @@ public class ArchiveFile {
                 // TODO Guess conditioning on which file it is should be handled here by designating different mapper classes
                 int exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMap()),
                         new String[] {
-                                hadoopInputNameFile.getName(), Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR)});
+                                hadoopInputNameFile.getName(), Settings.get(CommonSettings.HADOOP_MAPRED_CDX_OUTPUT_DIR)});
 
                 if (exitCode != 0) {
                     log.warn("Hadoop job failed with exit code '{}'", exitCode);
@@ -354,7 +330,7 @@ public class ArchiveFile {
                         log.warn("Problem closing FileSystem: ", e);
                     }
                 } else {
-                    collectHadoopResults(fs, new Path(Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR)));
+                    collectHadoopResults(fs, new Path(Settings.get(CommonSettings.HADOOP_MAPRED_CDX_OUTPUT_DIR)));
                 }
             } catch (Exception e) {
                 log.warn("Running hadoop job threw exception", e);
@@ -476,7 +452,7 @@ public class ArchiveFile {
      * Helper method.
      * Makes a new file in the wayback temp dir and returns it.
      * If the directory does not exist, it is also created.
-     * @return
+     * @return A new file in the wayback temp dir.
      */
     private File makeNewFileInWaybackTempDir() {
         // Use an arbitrary filename for the output

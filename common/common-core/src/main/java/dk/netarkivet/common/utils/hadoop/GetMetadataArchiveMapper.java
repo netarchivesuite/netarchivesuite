@@ -104,10 +104,10 @@ public class GetMetadataArchiveMapper extends Mapper<LongWritable, Text, NullWri
                     }
                 }
             } catch (IOException e) {
-                log.warn("Could not read input file at '{}'.", path.toString());
+                log.error("Could not read input file at '{}'.", path.toString());
             }
         } catch (IOException e) {
-            log.warn("Could not get FileSystem from configuration", e);
+            log.error("Could not get FileSystem from configuration", e);
         }
     }
 }
