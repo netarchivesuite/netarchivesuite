@@ -60,7 +60,8 @@ import dk.netarkivet.wayback.WaybackSettings;
 import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
-import dk.netarkivet.wayback.hadoop.CDXJob;
+import dk.netarkivet.wayback.hadoop.CDXMap;
+import dk.netarkivet.common.utils.hadoop.HadoopJob;
 
 /**
  * This class represents a file in the arcrepository which may be indexed by the indexer.
@@ -201,7 +202,7 @@ public class ArchiveFile {
         if (Settings.getBoolean(CommonSettings.USING_HADOOP) && WARCUtils.isWarc(filename)) {
             // Start a hadoop indexing job.
             // But this shouldn't be done on the files individually?? This is done on a list of filenames..
-                hadoopIndex();
+            hadoopIndex();
         } else {
             batchIndex();
         }
@@ -252,11 +253,11 @@ public class ArchiveFile {
             log.info("Copying file with input paths {} to hdfs {}.", localInputTempFile, hadoopInputNameFile);
             fileSystem .copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
                     hadoopInputNameFile);
-            log.info("Starting CDXJob on file '{}'", filename);
+            log.info("Starting CDX job on file '{}'", filename);
             int exitCode = 0;
             try {
                 log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
-                exitCode = ToolRunner.run(new CDXJob(conf),
+                exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMap()),
                         new String[] {
                                 hadoopInputNameFile.toString(), jobOutputDir.toString()});
                 if (exitCode == 0) {
@@ -278,7 +279,7 @@ public class ArchiveFile {
         if (fileSystem.exists(parentOutputDirPath)) {
             if (!fileSystem.isDirectory(parentOutputDirPath)) {
                 log.warn("{} exists and is not a directory.", parentOutputDirPath);
-                fileSystem.delete(parentOutputDirPath);
+                fileSystem.delete(parentOutputDirPath, true);
                 fileSystem.mkdirs(parentOutputDirPath);
             }
         } else {
@@ -292,7 +293,7 @@ public class ArchiveFile {
         Path hadoopInputDirPath = new Path(hadoopInputDir);
         if (fileSystem.exists(hadoopInputDirPath) && !fileSystem.isDirectory(hadoopInputDirPath)) {
             log.warn("{} already exists and is a file. Deleting and creating directory.", hadoopInputDirPath);
-            fileSystem.delete(hadoopInputDirPath);
+            fileSystem.delete(hadoopInputDirPath, true);
             fileSystem.mkdirs(hadoopInputDirPath);
         }
         else if (!fileSystem.exists(hadoopInputDirPath)) {
@@ -346,7 +347,7 @@ public class ArchiveFile {
             log.info("Starting CDXJob on file '{}'", filename);
             try {
                 // TODO Guess conditioning on which file it is should be handled here by designating different mapper classes
-                int exitCode = ToolRunner.run(new CDXJob(conf),
+                int exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMap()),
                         new String[] {
                                 hadoopInputNameFile.getName(), Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR)});
 

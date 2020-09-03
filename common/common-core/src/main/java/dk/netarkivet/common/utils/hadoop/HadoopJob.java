@@ -1,25 +1,29 @@
-package dk.netarkivet.wayback.hadoop;
+package dk.netarkivet.common.utils.hadoop;
 
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.NLineInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 
 /**
- * A simple Hadoop map-only job that when given an input file containing new-line separated file paths
- * creates cdx-indexes and outputs these to new files in the given output path
+ * A simple generic Hadoop map-only job that runs a given mapper on the passed input file
+ * containing new-line separated file paths and outputs the job's resulting files in the passed output path
  */
-public class CDXJob extends Configured implements Tool {
+public class HadoopJob extends Configured implements Tool {
+    private Mapper<LongWritable, Text, NullWritable, Text> mapper;
 
-    public CDXJob(Configuration conf) {
+    public HadoopJob(Configuration conf, Mapper<LongWritable, Text, NullWritable, Text> mapper) {
         super(conf);
+        this.mapper = mapper;
     }
 
     /**
@@ -40,7 +44,7 @@ public class CDXJob extends Configured implements Tool {
         job.setOutputFormatClass(TextOutputFormat.class);
         NLineInputFormat.addInputPath(job, inputPath);
         TextOutputFormat.setOutputPath(job, outputPath);
-        job.setMapperClass(CDXMap.class);
+        job.setMapperClass(mapper.getClass());
         job.setNumReduceTasks(0); // Ensure job is map-only
 
         // How many files should each node process at a time (how many lines are read from the input file)

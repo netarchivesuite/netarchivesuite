@@ -162,7 +162,6 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             // Look for data in other bitarchive replicas, if this option is enabled
             if (!Settings.getBoolean(HarvesterSettings.INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS)) {
                 log.info("No data found for job '{}' for '{}' in local bitarchive '{}'. ", id, prefix, replicaUsed);
-                return null;
             } else {
                 log.info("No data found for job '{}' for '{}' in local bitarchive '{}'. Trying other replicas.", id,
                         prefix, replicaUsed);
@@ -188,8 +187,8 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                     }
                 }
                 log.info("No data found for job '{}' for '{}' in all bitarchive replicas", id, prefix);
-                return null;
             }
+            return null;
         }
     }
 

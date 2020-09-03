@@ -3,7 +3,6 @@ package dk.netarkivet.wayback.hadoop;
 import static dk.netarkivet.common.utils.HadoopUtils.DEFAULT_FILESYSTEM;
 import static dk.netarkivet.common.utils.HadoopUtils.MAPREDUCE_FRAMEWORK;
 import static dk.netarkivet.common.utils.HadoopUtils.YARN_RESOURCEMANAGER_ADDRESS;
-import static dk.netarkivet.common.utils.HadoopUtils.getConfFromSettings;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,34 +10,20 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.UUID;
 
-import org.apache.avro.generic.GenericData;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.PathFilter;
 import org.apache.hadoop.util.ToolRunner;
-import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.optional.ssh.Scp;
-import org.hibernate.id.GUIDGenerator;
 import org.junit.Before;
 import org.junit.Test;
 
-
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.tools.ToolRunnerBase;
-import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.hadoop.HadoopJob;
 
 public class CDXJobTest {
 
@@ -69,7 +54,7 @@ public class CDXJobTest {
     private void deployTestdata() {
         for (File file: new File(datadir).listFiles()) {
             //if (file.getName().endsWith("arc.gz") || file.getName().endsWith("arc")) {
-                if (file.getName().endsWith("arc.gz")) {
+            if (file.getName().endsWith("arc.gz")) {
 
                 filenames.add(file.getName());
                 Scp scp = new Scp();
@@ -81,7 +66,7 @@ public class CDXJobTest {
                 scp.setTrust(true);
                 scp.setLocalFile(file.getAbsolutePath());
                 scp.execute();
-              }
+            }
         }
     }
 
@@ -118,7 +103,7 @@ public class CDXJobTest {
         }
         File jarFile = new File("/home/csr/projects/netarchivesuite/wayback/wayback-indexer/target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
         conf.set("mapreduce.job.jar", jarFile.getAbsolutePath());
-        ToolRunner.run(new CDXJob(conf), new String[]{hadoopInputPath.toString(), outputDir.toString()});
+        ToolRunner.run(new HadoopJob(conf, new CDXMap()), new String[]{hadoopInputPath.toString(), outputDir.toString()});
         getAndPrintOutput();
     }
 
