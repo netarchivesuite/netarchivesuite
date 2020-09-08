@@ -93,15 +93,11 @@ public class CDXJobTest {
         hdfs.delete(hadoopInputPath);
         java.nio.file.Path localInputTempfile = buildInputFile();
         hdfs.copyFromLocalFile(false, new Path(localInputTempfile.toAbsolutePath().toString()), hadoopInputPath);
-        BufferedReader bf = new BufferedReader(new FileReader(localInputTempfile.toFile()));
-        String line;
+        //BufferedReader bf = new BufferedReader(new FileReader(localInputTempfile.toFile()));
         final Path f = new Path("/temptemp");
-        hdfs.delete(f)                                          ;
+        hdfs.delete(f);
         hdfs.mkdirs(f);
-        while ((line = bf.readLine()) != null) {
-            hdfs.copyFromLocalFile(new Path(line), f);
-        }
-        File jarFile = new File("/home/csr/projects/netarchivesuite/wayback/wayback-indexer/target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
+        File jarFile = new File("target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
         conf.set("mapreduce.job.jar", jarFile.getAbsolutePath());
         ToolRunner.run(new HadoopJob(conf, new CDXMap()), new String[]{hadoopInputPath.toString(), outputDir.toString()});
         getAndPrintOutput();
