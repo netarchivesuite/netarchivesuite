@@ -73,7 +73,19 @@ public class WarcRecordClientTester {
 
     @Test
     public void testBuildingBitarchiveRecord3() throws IOException {
-        String filename = "netarkivet-20081105135926-00001.warc.gz";
+        String filename = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc";
+        File inputFile = new File("src/test/java/data.txt");
+        System.out.println(inputFile.getAbsolutePath());
+        FileInputStream fileInputStream = new FileInputStream(inputFile);
+        ArchiveReader archiveReader = WARCReaderFactory.get(filename, fileInputStream, true);
+        ArchiveRecord archiveRecord = archiveReader.get();
+        BitarchiveRecord bitarchiveRecord = new BitarchiveRecord(archiveRecord, filename);
+        bitarchiveRecord.getData(System.out);
+    }
+
+    @Test
+    public void testBuildingBitarchiveRecord4() throws IOException {
+        String filename = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc";
         File inputFile = new File("src/test/java/data.txt");
         System.out.println(inputFile.getAbsolutePath());
         FileInputStream fileInputStream = new FileInputStream(inputFile);
@@ -83,8 +95,8 @@ public class WarcRecordClientTester {
     }
 
     @Test
-    public void testBuildingBitarchiveRecord4() throws IOException {
-        String filename = "netarkivet-20081105135926-00001.warc.gz";
+    public void testBuildingBitarchiveRecord5() throws IOException {
+        String filename = "netarkivet-20081105135926-00001.warc";
         File inputFile = new File("src/test/java/data.txt");
         System.out.println(inputFile.getAbsolutePath());
         FileInputStream fileInputStream = new FileInputStream(inputFile);
@@ -96,7 +108,7 @@ public class WarcRecordClientTester {
     // test read existing arc record from first record   -Server Service Not Yet Implemented
     @Test
     public void testBuildingBitarchiveRecord6() throws IOException {
-        String filename = "91-7-20100212214140-00000-sb-test-har-001.statsbiblioteket.dk.arc.gz";
+        String filename = "91-7-20100212214140-00000-sb-test-har-001.statsbiblioteket.dk.arc";
         File inputFile = new File("src/test/java/data.txt");
         System.out.println(inputFile.getAbsolutePath());
         FileInputStream fileInputStream = new FileInputStream(inputFile);
@@ -122,7 +134,7 @@ public class WarcRecordClientTester {
 
     @Test
     public void testFailtestFailInBuildingBitarchiveRecord1() throws IOException {
-        String filename = "91-7-20100212214140-00000-sb-test-har-001.statsbiblioteket.dk.arc.gz";
+        String filename = "91-7-20100212214140-00000-sb-test-har-001.statsbiblioteket.dk.arc";
         File inputFile = new File("src/test/java/data.txt");
         System.out.println(inputFile.getAbsolutePath());
         FileInputStream fileInputStream = new FileInputStream(inputFile);
@@ -141,7 +153,7 @@ public class WarcRecordClientTester {
 
     @Test
     public void testFailtestFailInBuildingBitarchiveRecord2() throws IOException {
-        String filename = "91-7-20100212214140-00000-sb-test-har-001.statsbiblioteket.dk.arc.gz";
+        String filename = "91-7-20100212214140-00000-sb-test-har-001.statsbiblioteket.dk.arc";
         File inputFile = new File("src/test/java/data.txt");
         System.out.println(inputFile.getAbsolutePath());
         FileInputStream fileInputStream = new FileInputStream(inputFile);
@@ -156,7 +168,7 @@ public class WarcRecordClientTester {
         }
         assertFalse("IOException: ", fail);
     }
-/*
+
     @Test(expected=IOException.class)
     public void testFailInBuildingBitarchiveRecord2() throws IOException {
         String filename = "thisisa.warc";
@@ -167,7 +179,7 @@ public class WarcRecordClientTester {
         BitarchiveRecord bitarchiveRecord = new BitarchiveRecord(archiveRecord, filename);
         bitarchiveRecord.getData(System.out);
     }
-*/
+
 
 
 
