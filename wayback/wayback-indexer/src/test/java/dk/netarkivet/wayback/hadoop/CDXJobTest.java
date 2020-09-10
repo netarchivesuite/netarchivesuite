@@ -99,6 +99,7 @@ public class CDXJobTest {
         hdfs.mkdirs(f);
         File jarFile = new File("target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
         conf.set("mapreduce.job.jar", jarFile.getAbsolutePath());
+        conf.setBoolean(CDXMap.METADATA_DO_DEDUP, false);
         ToolRunner.run(new HadoopJob(conf, new CDXMap()), new String[]{hadoopInputPath.toString(), outputDir.toString()});
         getAndPrintOutput();
     }

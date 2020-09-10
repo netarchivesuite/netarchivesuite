@@ -29,6 +29,8 @@ public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
     private CDXIndexer cdxIndexer = new CDXIndexer();
     private DedupIndexer dedupIndexer = new DedupIndexer();
 
+    public static final String METADATA_DO_DEDUP = "dodedup";
+
     /**
      * Mapping method.
      *
@@ -48,7 +50,8 @@ public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
         Path path = new Path(warcPath.toString());
         List<String> cdxIndexes;
         Indexer indexer;
-        if (path.getName().contains("metadata")) {
+        boolean dodedup = context.getConfiguration().getBoolean(METADATA_DO_DEDUP, false);
+        if (dodedup && path.getName().contains("metadata")) {
             indexer = new DedupIndexer();
             final FileSystem fileSystem = path.getFileSystem(context.getConfiguration());
             if (!(fileSystem instanceof LocalFileSystem)) {
