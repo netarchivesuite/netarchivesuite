@@ -56,7 +56,7 @@ public class GetMetadataArchiveMapperTester {
         hdfsCluster = builder.build();
 
         fileSystem = hdfsCluster.getFileSystem();
-        System.out.println("HDFS started");
+        // System.out.println("HDFS started");
 
         conf.setInt(YarnConfiguration.RM_SCHEDULER_MINIMUM_ALLOCATION_MB, 64);
         conf.setClass(YarnConfiguration.RM_SCHEDULER,
@@ -64,7 +64,7 @@ public class GetMetadataArchiveMapperTester {
         miniCluster = new MiniYARNCluster("name", 1, 1, 1);
         miniCluster.init(conf);
         miniCluster.start();
-        System.out.println("YARN started");
+        // System.out.println("YARN started");
     }
 
     @After
@@ -146,12 +146,11 @@ public class GetMetadataArchiveMapperTester {
 
             if (nextPath.getName().startsWith("part-m")){
                 foundResult = true;
-                try {
-                    try (BufferedReader in = new BufferedReader(new InputStreamReader(new BufferedInputStream(fileSystem.open(nextPath))))) {
-                        String line;
-                        while ((line = in.readLine()) != null) {
-                            metadataLines.add(line);
-                        }
+
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(new BufferedInputStream(fileSystem.open(nextPath))))) {
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        metadataLines.add(line);
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);

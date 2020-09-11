@@ -61,7 +61,7 @@ public class CDXJobTest {
                 scp.setHost("node1");
                 scp.setUsername("vagrant");
                 scp.setPassword("vagrant");
-                scp.setRemoteTodir("vagrant:vagrant@node1:");
+                scp.setRemoteTodir("vagrant:vagrant@node1:"); // Files are moved to /home/vagrant/
                 scp.setProject(new Project());
                 scp.setTrust(true);
                 scp.setLocalFile(file.getAbsolutePath());
@@ -83,6 +83,8 @@ public class CDXJobTest {
         hdfs.delete(outputDir);
     }
 
+
+
     /**
      * In this test, we run an indexing job on files which lie in hadoop cluster, but not in the hdfs filesystem.
      * The job input file, a list of files to process, does lie in hdfs.
@@ -93,15 +95,7 @@ public class CDXJobTest {
         hdfs.delete(hadoopInputPath);
         java.nio.file.Path localInputTempfile = buildInputFile();
         hdfs.copyFromLocalFile(false, new Path(localInputTempfile.toAbsolutePath().toString()), hadoopInputPath);
-        BufferedReader bf = new BufferedReader(new FileReader(localInputTempfile.toFile()));
-        String line;
-        final Path f = new Path("/temptemp");
-        hdfs.delete(f)                                          ;
-        hdfs.mkdirs(f);
-        while ((line = bf.readLine()) != null) {
-            hdfs.copyFromLocalFile(new Path(line), f);
-        }
-        File jarFile = new File("/home/csr/projects/netarchivesuite/wayback/wayback-indexer/target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
+        File jarFile = new File("target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
         conf.set("mapreduce.job.jar", jarFile.getAbsolutePath());
         ToolRunner.run(new HadoopJob(conf, new CDXMap()), new String[]{hadoopInputPath.toString(), outputDir.toString()});
         getAndPrintOutput();
@@ -128,5 +122,4 @@ public class CDXJobTest {
         Files.write(localInputTempfile, fileData.getBytes());
         return localInputTempfile;
     }
-
 }

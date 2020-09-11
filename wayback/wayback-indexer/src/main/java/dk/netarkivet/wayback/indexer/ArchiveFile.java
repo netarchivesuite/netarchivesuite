@@ -24,6 +24,8 @@ package dk.netarkivet.wayback.indexer;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -48,9 +50,11 @@ import dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepo
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.BitmagUtils;
+import dk.netarkivet.common.utils.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.HadoopUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SimpleFileResolver;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.warc.WARCUtils;
@@ -197,9 +201,9 @@ public class ArchiveFile {
         }
 
         // TODO shouldn't have check on filename here, but for now let it be
-        if (Settings.getBoolean(CommonSettings.USING_HADOOP) && WARCUtils.isWarc(filename)) {
-            // Start a hadoop indexing job.
-            // But this shouldn't be done on the files individually?? This is done on a list of filenames..
+        boolean isMetadataFile = filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
+        boolean isArchiveFile = ARCUtils.isARC(filename) || WARCUtils.isWarc(filename) || isMetadataFile;
+        if (Settings.getBoolean(CommonSettings.USING_HADOOP) && isArchiveFile) {
             hadoopIndex();
         } else {
             batchIndex();
@@ -244,14 +248,13 @@ public class ArchiveFile {
             log.info("Output directory for job is {}", jobOutputDir);
             java.nio.file.Path localInputTempFile = null;
             localInputTempFile = Files.createTempFile(null, null);
-            //TODO make this a setting
-            final String parentDir = "file:///kbhpillar/collection-netarkivet/" ;
+            final String parentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
             //TODO replace this with call to a factory method so we can configure different file resolvers
             FileResolver fileResolver = new SimpleFileResolver(Paths.get(parentDir));
-            java.nio.file.Path filepath = fileResolver.getPath(filename);
-            String s = filepath.toString();
-            log.info("Inserting {} in {}.", s, localInputTempFile);
-            Files.write(localInputTempFile, s.getBytes());
+            java.nio.file.Path filePath = fileResolver.getPath(filename);
+            String inputLine = "file://" + filePath.toString();
+            log.info("Inserting {} in {}.", inputLine, localInputTempFile);
+            Files.write(localInputTempFile, inputLine.getBytes());
             // Write the input file to hdfs
             log.info("Copying file with input paths {} to hdfs {}.", localInputTempFile, hadoopInputNameFile);
             fileSystem.copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
@@ -261,9 +264,9 @@ public class ArchiveFile {
             try {
                 log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
                 exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMap()),
-                        new String[] {
-                                hadoopInputNameFile.toString(), jobOutputDir.toString()});
+                        new String[] {hadoopInputNameFile.toString(), jobOutputDir.toString()});
                 if (exitCode == 0) {
+                    log.info("CDX job for file {} was a success!", filename);
                     collectHadoopResults(fileSystem, jobOutputDir);
                 } else {
                     log.warn("Hadoop job failed with exit code '{}'", exitCode);

@@ -569,6 +569,12 @@ public class CommonSettings {
     public static String HADOOP_MAPRED_FRAMEWORK = "settings.common.hadoop.mapred.framework";
 
     /**
+     * TODO: Probably rename this
+     * Specifies where locally (?) to find the individual input files for a job
+     */
+    public static String HADOOP_MAPRED_INPUT_FILES_PARENT_DIR = "settings.common.hadoop.mapred.inputFilesParentDir";
+
+    /**
      * The setting for the input path to use in cdx-indexing map-/reduce jobs.
      */
     public static String HADOOP_MAPRED_CDX_INPUT_DIR = "settings.common.hadoop.mapred.cdx.inputDir";
@@ -592,7 +598,7 @@ public class CommonSettings {
      * Path on the client machine (wayback indexer machine) where the uber-jar file containing the
      * indexing map-reduce job and dependencies is to be found
      */
-    public static String HADOOP_MAPRED_WAYBACK_UBER_JAR = "settings.common.hadoop.mapred.wayback_uber_jar";
+    public static String HADOOP_MAPRED_WAYBACK_UBER_JAR = "settings.common.hadoop.mapred.waybackUberJar";
 
     public static String HADOOP_USER_NAME = "settings.common.hadoop.username";
 

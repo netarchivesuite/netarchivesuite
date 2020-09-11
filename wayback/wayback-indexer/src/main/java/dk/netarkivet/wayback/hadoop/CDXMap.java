@@ -14,6 +14,8 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.distribute.indexserver.Index;
 
@@ -24,6 +26,8 @@ import dk.netarkivet.common.distribute.indexserver.Index;
  * The output is an exit code (not used), and the generated CDX lines.
  */
 public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
+
+    private static final Logger log = LoggerFactory.getLogger(CDXMap.class);
 
     /** The CDX indexer.*/
     private CDXIndexer cdxIndexer = new CDXIndexer();
@@ -42,6 +46,7 @@ public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
             InterruptedException {
         // reject empty or null warc paths.
         if(warcPath == null || warcPath.toString().trim().isEmpty()) {
+            log.warn("Encountered empty path in job {}", context.getJobID().toString());
             return;
         }
 
@@ -49,6 +54,7 @@ public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
         List<String> cdxIndexes;
         Indexer indexer;
         if (path.getName().contains("metadata")) {
+            log.info("Indexing metadata file '{}'", path);
             indexer = new DedupIndexer();
             final FileSystem fileSystem = path.getFileSystem(context.getConfiguration());
             if (!(fileSystem instanceof LocalFileSystem)) {
@@ -61,6 +67,7 @@ public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
                 cdxIndexes = indexer.indexFile(localFileSystem.pathToFile(path));
             }
         } else {
+            log.info("Indexing archive file '{}'", path);
             try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
                 cdxIndexes = cdxIndexer.index(in, warcPath.toString());
             }
