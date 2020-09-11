@@ -582,7 +582,7 @@ public class CommonSettings {
      * Path on the client machine (wayback indexer machine) where the uber-jar file containing the
      * indexing map-reduce job and dependencies is to be found
      */
-    public static String HADOOP_MAPRED_WAYBACK_UBER_JAR = "settings.common.hadoop.mapred.wayback_uber_jar";
+    public static String HADOOP_MAPRED_WAYBACK_UBER_JAR = "settings.common.hadoop.mapred.waybackUberJar";
 
     public static String HADOOP_USER_NAME = "settings.common.hadoop.username";
 
