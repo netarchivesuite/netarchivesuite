@@ -24,8 +24,6 @@ package dk.netarkivet.wayback.indexer;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -52,7 +50,8 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.BitmagUtils;
 import dk.netarkivet.common.utils.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.HadoopUtils;
+import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SimpleFileResolver;
 import dk.netarkivet.common.utils.arc.ARCUtils;
@@ -215,7 +214,7 @@ public class ArchiveFile {
      */
     private void hadoopIndex() {
         System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
-        Configuration conf = HadoopUtils.getConfFromSettings();
+        Configuration conf = HadoopJobUtils.getConfFromSettings();
         UUID uuid = UUID.randomUUID();
         log.info("File {} indexed with job uuid for i/o {}.", this.filename, uuid);
         try (FileSystem fileSystem = FileSystem.get(conf)) {
@@ -225,7 +224,7 @@ public class ArchiveFile {
                 return;
             }
             try {
-                HadoopUtils.initDir(fileSystem, hadoopInputDir);
+                HadoopFileUtils.initDir(fileSystem, hadoopInputDir);
             } catch (IOException e) {
                 log.error("Failed to init input dir {}", hadoopInputDir, e);
                 return;
@@ -239,7 +238,7 @@ public class ArchiveFile {
                 return;
             }
             try {
-                HadoopUtils.initDir(fileSystem, parentOutputDir);
+                HadoopFileUtils.initDir(fileSystem, parentOutputDir);
             } catch (IOException e) {
                 log.error("Failed to init output dir {}", parentOutputDir, e);
                 return;
@@ -291,7 +290,7 @@ public class ArchiveFile {
         // is just made unique from the archivefile's name
         Path hadoopInputNameFile = new Path(
                 filename.substring(0, filename.lastIndexOf('.')) + "_map_input.txt");
-        Configuration conf = HadoopUtils.getConfFromSettings();
+        Configuration conf = HadoopJobUtils.getConfFromSettings();
         Bitrepository bitrep = BitmagUtils.initBitrep();
 
         // Get file and put it in hdfs

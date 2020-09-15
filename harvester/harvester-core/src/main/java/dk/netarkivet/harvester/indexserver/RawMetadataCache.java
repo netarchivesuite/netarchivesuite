@@ -54,7 +54,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.HadoopUtils;
+import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SimpleFileResolver;
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
@@ -166,15 +167,15 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         final String specifiedPattern = "(.*-)?" + id + "(-.*)?" + metadataFilePatternSuffix;
         PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("regex:" + specifiedPattern);
         System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
-        Configuration conf = HadoopUtils.getConfFromSettings();
+        Configuration conf = HadoopJobUtils.getConfFromSettings();
         conf.set("url.pattern", urlPattern.toString());
         conf.set("mime.pattern", mimePattern.toString());
         UUID uuid = UUID.randomUUID();
         try (FileSystem fileSystem = FileSystem.get(conf)) {
-            Path hadoopInputNameFile = HadoopUtils.initExtractionJobInput(fileSystem, uuid);
+            Path hadoopInputNameFile = HadoopFileUtils.initExtractionJobInput(fileSystem, uuid);
             log.info("Hadoop input file will be {}", hadoopInputNameFile);
 
-            Path jobOutputDir = HadoopUtils.initExtractionJobOutput(fileSystem, uuid);
+            Path jobOutputDir = HadoopFileUtils.initExtractionJobOutput(fileSystem, uuid);
             log.info("Output directory for job is {}", jobOutputDir);
 
             if (hadoopInputNameFile == null || jobOutputDir == null) {
@@ -187,7 +188,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
             FileResolver fileResolver = new SimpleFileResolver(Paths.get(pillarParentDir));
             List<java.nio.file.Path> filePaths = fileResolver.getPaths(pathMatcher);
-            HadoopUtils.writeHadoopInputFileLinesToPath(filePaths, localInputTempFile);
+            HadoopJobUtils.writeHadoopInputFileLinesToInputFile(filePaths, localInputTempFile);
             log.info("Copying file with input paths {} to hdfs {}.", localInputTempFile, hadoopInputNameFile);
             fileSystem.copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
                     hadoopInputNameFile);
@@ -198,8 +199,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 exitCode = ToolRunner.run(new HadoopJob(conf, new GetMetadataArchiveMapper()),
                         new String[] {hadoopInputNameFile.toString(), jobOutputDir.toString()});
                 if (exitCode == 0) {
-                    Path hadoopOutputDir = new Path(Settings.get(CommonSettings.HADOOP_MAPRED_CACHE_OUTPUT_DIR));
-                    List<String> metadataLines = HadoopUtils.collectOutputLines(fileSystem, hadoopOutputDir);
+                    List<String> metadataLines = HadoopJobUtils.collectOutputLines(fileSystem, jobOutputDir);
 
                     if (metadataLines.size() > 0) {
                         File cacheFileName = getCacheFile(id);
@@ -235,10 +235,10 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         log.debug("Looking for a duplicationmigration record for id {}", id);
         if (urlPattern.pattern().equals(MetadataFile.CRAWL_LOG_PATTERN)) {
             UUID uuid = UUID.randomUUID();
-            Path hadoopInputNameFile = HadoopUtils.initExtractionJobInput(fileSystem, uuid);
+            Path hadoopInputNameFile = HadoopFileUtils.initExtractionJobInput(fileSystem, uuid);
             log.info("Hadoop input file will be {}", hadoopInputNameFile);
 
-            Path jobOutputDir = HadoopUtils.initExtractionJobOutput(fileSystem, uuid);
+            Path jobOutputDir = HadoopFileUtils.initExtractionJobOutput(fileSystem, uuid);
             log.info("Output directory for job is {}", jobOutputDir);
 
             if (hadoopInputNameFile == null || jobOutputDir == null) {
@@ -250,7 +250,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
                 FileResolver fileResolver = new SimpleFileResolver(Paths.get(pillarParentDir));
                 List<java.nio.file.Path> filePaths = fileResolver.getPaths(pathMatcher);
-                HadoopUtils.writeHadoopInputFileLinesToPath(filePaths, localInputTempFile);
+                HadoopJobUtils.writeHadoopInputFileLinesToInputFile(filePaths, localInputTempFile);
                 log.info("Copying file with input paths {} to hdfs {}.", localInputTempFile, hadoopInputNameFile);
                 fileSystem.copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
                         hadoopInputNameFile);
@@ -262,8 +262,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                     exitCode = ToolRunner.run(new HadoopJob(conf, new GetMetadataArchiveMapper()),
                             new String[] {hadoopInputNameFile.toString(), jobOutputDir.toString()});
                     if (exitCode == 0) {
-                        Path hadoopOutputDir = new Path(Settings.get(CommonSettings.HADOOP_MAPRED_CACHE_OUTPUT_DIR));
-                        metadataLines.addAll(HadoopUtils.collectOutputLines(fileSystem, hadoopOutputDir));
+                        metadataLines.addAll(HadoopJobUtils.collectOutputLines(fileSystem, jobOutputDir));
                     } else {
                         log.warn("Hadoop job failed with exit code '{}'", exitCode);
                         return;
