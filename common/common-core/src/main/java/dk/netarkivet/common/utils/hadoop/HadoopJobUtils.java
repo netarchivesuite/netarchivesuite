@@ -79,6 +79,7 @@ public class HadoopJobUtils {
 
     /**
      * Collects lines from a jobs output files at a specified path.
+     * Also deletes the folder once the output has been collected.
      * @param fileSystem The filesystem that the result is collected from.
      * @param outputFolder The output folder to find the job result files in.
      * @return A list of lines collected from all the output files.
@@ -99,6 +100,8 @@ public class HadoopJobUtils {
                 }
             }
         }
+        // Clean up once output has been collected
+        fileSystem.delete(outputFolder, true);
         return resultLines;
     }
 }

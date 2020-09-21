@@ -99,4 +99,14 @@ public class HadoopFileUtils {
         }
         fileSystem.mkdirs(hadoopDirPath);
     }
+
+    public static java.nio.file.Path makeLocalInputTempFile() {
+        java.nio.file.Path localInputTempFile = null;
+        try {
+            localInputTempFile = Files.createTempFile(null, null);
+        } catch (IOException e) {
+            log.error("Failed writing to/creating file.", e);
+        }
+        return localInputTempFile;
+    }
 }

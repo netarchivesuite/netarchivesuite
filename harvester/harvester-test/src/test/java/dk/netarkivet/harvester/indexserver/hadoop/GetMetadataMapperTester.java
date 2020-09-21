@@ -2,7 +2,7 @@ package dk.netarkivet.harvester.indexserver.hadoop;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ZipUtils;
-import dk.netarkivet.common.utils.hadoop.GetMetadataArchiveMapper;
+import dk.netarkivet.common.utils.hadoop.GetMetadataMapper;
 import dk.netarkivet.common.utils.hadoop.HadoopJob;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.harvester.indexserver.TestInfo;
@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class GetMetadataArchiveMapperTester {
+public class GetMetadataMapperTester {
     private MoveTestFiles mtf;
     private File metadataDir;
     private MiniDFSCluster hdfsCluster;
@@ -78,7 +78,7 @@ public class GetMetadataArchiveMapperTester {
 
 
     /**
-     * Test that a Hadoop job with a GetMetadataArchiveMapper produces the correct metadata lines when given
+     * Test that a Hadoop job with a GetMetadataMapper produces the correct metadata lines when given
      * a crawl log url pattern and 'text/plain' mime pattern.
      */
     @Test
@@ -93,7 +93,7 @@ public class GetMetadataArchiveMapperTester {
         conf.set("mime.pattern", "text/plain");
 
         try {
-            Tool job = new HadoopJob(conf, new GetMetadataArchiveMapper());
+            Tool job = new HadoopJob(conf, new GetMetadataMapper());
             int exitCode = ToolRunner.run(conf, job,
                     new String[] {"file://" + jobInputFile.toString(), outputURI});
             Assert.assertEquals(0, exitCode); // job success
@@ -107,7 +107,7 @@ public class GetMetadataArchiveMapperTester {
     }
 
     /**
-     * Test that a Hadoop job with a GetMetadataArchiveMapper produces the correct metadata lines when given
+     * Test that a Hadoop job with a GetMetadataMapper produces the correct metadata lines when given
      * a cdx entry url pattern and 'application/x-cdx' mime pattern.
      */
     @Test
@@ -122,7 +122,7 @@ public class GetMetadataArchiveMapperTester {
         conf.set("mime.pattern", "application/x-cdx");
 
         try {
-            Tool job = new HadoopJob(conf, new GetMetadataArchiveMapper());
+            Tool job = new HadoopJob(conf, new GetMetadataMapper());
             int exitCode = ToolRunner.run(conf, job,
                     new String[] {"file://" + jobInputFile.toString(), outputURI});
             Assert.assertEquals(0, exitCode); // job success

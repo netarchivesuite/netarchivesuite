@@ -26,9 +26,9 @@ import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
 /** Hadoop Mapper for extracting metadata entries from metadata files. */
-public class GetMetadataArchiveMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
+public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
     /** The logger for this class. */
-    private static final Logger log = LoggerFactory.getLogger(GetMetadataArchiveMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(GetMetadataMapper.class);
 
     /** A regular expression object that matches everything. */
     private final Pattern MATCH_ALL_PATTERN = Pattern.compile(".*");

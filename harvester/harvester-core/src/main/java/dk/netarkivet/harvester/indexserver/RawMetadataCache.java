@@ -28,7 +28,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
@@ -60,7 +59,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SimpleFileResolver;
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.common.utils.archive.GetMetadataArchiveBatchJob;
-import dk.netarkivet.common.utils.hadoop.GetMetadataArchiveMapper;
+import dk.netarkivet.common.utils.hadoop.GetMetadataMapper;
 import dk.netarkivet.common.utils.hadoop.HadoopJob;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
@@ -173,41 +172,52 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         UUID uuid = UUID.randomUUID();
         try (FileSystem fileSystem = FileSystem.get(conf)) {
             Path hadoopInputNameFile = HadoopFileUtils.initExtractionJobInput(fileSystem, uuid);
-            log.info("Hadoop input file will be {}", hadoopInputNameFile);
+            log.info("Hadoop input file will be '{}'", hadoopInputNameFile);
 
             Path jobOutputDir = HadoopFileUtils.initExtractionJobOutput(fileSystem, uuid);
-            log.info("Output directory for job is {}", jobOutputDir);
+            log.info("Output directory for job is '{}'", jobOutputDir);
 
             if (hadoopInputNameFile == null || jobOutputDir == null) {
-                log.error("Failed initializing input/output for job {} with uuid {}", id, uuid);
+                log.error("Failed initializing input/output for job '{}' with uuid '{}'", id, uuid);
                 return null;
             }
-
-            java.nio.file.Path localInputTempFile = Files.createTempFile(null, null);
+            java.nio.file.Path localInputTempFile = HadoopFileUtils.makeLocalInputTempFile();
 
             String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
             FileResolver fileResolver = new SimpleFileResolver(Paths.get(pillarParentDir));
             List<java.nio.file.Path> filePaths = fileResolver.getPaths(pathMatcher);
-            HadoopJobUtils.writeHadoopInputFileLinesToInputFile(filePaths, localInputTempFile);
-            log.info("Copying file with input paths {} to hdfs {}.", localInputTempFile, hadoopInputNameFile);
-            fileSystem.copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
-                    hadoopInputNameFile);
+            try {
+                HadoopJobUtils.writeHadoopInputFileLinesToInputFile(filePaths, localInputTempFile);
+            } catch (IOException e) {
+                log.error("Failed writing filepaths to '{}' for job '{}'", localInputTempFile, id);
+                return null;
+            }
+            log.info("Copying file with input paths '{}' to hdfs '{}'.", localInputTempFile, hadoopInputNameFile);
+            try {
+                fileSystem.copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
+                        hadoopInputNameFile);
+            } catch (IOException e) {
+                log.error("Failed copying local input '{}' to '{}' for job '{}'",
+                        localInputTempFile.toAbsolutePath(), hadoopInputNameFile, id);
+                return null;
+            }
+
             log.info("Starting metadata extraction job on {} file(s) matching pattern '{}'",
                     filePaths.size(), specifiedPattern);
             int exitCode = 0;
             try {
-                exitCode = ToolRunner.run(new HadoopJob(conf, new GetMetadataArchiveMapper()),
+                log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
+                exitCode = ToolRunner.run(new HadoopJob(conf, new GetMetadataMapper()),
                         new String[] {hadoopInputNameFile.toString(), jobOutputDir.toString()});
+
                 if (exitCode == 0) {
                     List<String> metadataLines = HadoopJobUtils.collectOutputLines(fileSystem, jobOutputDir);
-
                     if (metadataLines.size() > 0) {
                         File cacheFileName = getCacheFile(id);
                         if (tryToMigrateDuplicationRecords) {
                             migrateDuplicatesHadoop(id, fileSystem, specifiedPattern, metadataLines, cacheFileName);
                         } else {
-                            // TODO try-catch?
-                            Files.write(Paths.get(cacheFileName.getAbsolutePath()), metadataLines);
+                            copyResults(id, metadataLines, cacheFileName);
                         }
                         log.debug("Cached data for job '{}' for '{}'", id, prefix);
                         return id;
@@ -227,66 +237,86 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         return null;
     }
 
+    /**
+     * If this cache represents a crawllog cache then this method will attempt to migrate any duplicate annotations in
+     * the crawl log using data in the duplicationmigration metadata record. This migrates filename/offset
+     * pairs from uncompressed to compressed (w)arc files. This method has the side effect of copying the index
+     * cache (whether migrated or not) into the cache file whose name is generated from the id.
+     * @param id the id of the cache
+     * @param fileSystem the filesystem on which the operations are carried out
+     * @param specifiedPattern the pattern specifying the files to be found
+     * @param originalJobResults the original hadoop job results which is a list containing the unmigrated data.
+     * @param cacheFileName the cache file for the job which the index cache is copied to.
+     */
     private void migrateDuplicatesHadoop(Long id, FileSystem fileSystem, String specifiedPattern, List<String> originalJobResults, File cacheFileName) {
-        PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("regex:" + specifiedPattern);
-        Configuration conf = fileSystem.getConf();
-        conf.set("url.pattern", ".*duplicationmigration.*");
-        conf.set("mime.pattern", "text/plain");
         log.debug("Looking for a duplicationmigration record for id {}", id);
         if (urlPattern.pattern().equals(MetadataFile.CRAWL_LOG_PATTERN)) {
+            PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("regex:" + specifiedPattern);
+            Configuration conf = fileSystem.getConf();
+            conf.set("url.pattern", ".*duplicationmigration.*");
+            conf.set("mime.pattern", "text/plain");
             UUID uuid = UUID.randomUUID();
             Path hadoopInputNameFile = HadoopFileUtils.initExtractionJobInput(fileSystem, uuid);
-            log.info("Hadoop input file will be {}", hadoopInputNameFile);
+            log.info("Hadoop input file will be '{}'", hadoopInputNameFile);
 
             Path jobOutputDir = HadoopFileUtils.initExtractionJobOutput(fileSystem, uuid);
-            log.info("Output directory for job is {}", jobOutputDir);
+            log.info("Output directory for job is '{}'", jobOutputDir);
 
             if (hadoopInputNameFile == null || jobOutputDir == null) {
-                log.error("Failed initializing input/output for job {} with uuid {}", id, uuid);
+                log.error("Failed initializing input/output for job '{}' with uuid '{}'", id, uuid);
                 return;
             }
+            java.nio.file.Path localInputTempFile = HadoopFileUtils.makeLocalInputTempFile();
+
+            String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
+            FileResolver fileResolver = new SimpleFileResolver(Paths.get(pillarParentDir));
+            List<java.nio.file.Path> filePaths = fileResolver.getPaths(pathMatcher);
             try {
-                java.nio.file.Path localInputTempFile = Files.createTempFile(null, null);
-                String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
-                FileResolver fileResolver = new SimpleFileResolver(Paths.get(pillarParentDir));
-                List<java.nio.file.Path> filePaths = fileResolver.getPaths(pathMatcher);
                 HadoopJobUtils.writeHadoopInputFileLinesToInputFile(filePaths, localInputTempFile);
-                log.info("Copying file with input paths {} to hdfs {}.", localInputTempFile, hadoopInputNameFile);
+            } catch (IOException e) {
+                log.error("Failed writing filepaths to '{}' for job '{}'", localInputTempFile, id);
+                return;
+            }
+            log.info("Copying file with input paths '{}' to hdfs '{}'.", localInputTempFile, hadoopInputNameFile);
+            try {
                 fileSystem.copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
                         hadoopInputNameFile);
-                log.info("Starting metadata extraction job on {} file(s) matching pattern '{}'",
-                        filePaths.size(), specifiedPattern);
-                List<String> metadataLines = new ArrayList<>();
-                int exitCode = 0;
-                try {
-                    exitCode = ToolRunner.run(new HadoopJob(conf, new GetMetadataArchiveMapper()),
-                            new String[] {hadoopInputNameFile.toString(), jobOutputDir.toString()});
-                    if (exitCode == 0) {
-                        metadataLines.addAll(HadoopJobUtils.collectOutputLines(fileSystem, jobOutputDir));
-                    } else {
-                        log.warn("Hadoop job failed with exit code '{}'", exitCode);
-                        return;
-                    }
-                } catch (Exception e) {
-                    log.error("Hadoop indexing job failed to run normally.", e);
-                }
-                try {
-                    handleMigrationHadoop(id, metadataLines, originalJobResults, cacheFileName);
-                } catch (IOFailure e) {
-                    log.error("Failed migrating duplicates for job {}.", id, e);
-                }
             } catch (IOException e) {
-                log.error("Failed writing to/creating file.", e);
+                log.error("Failed copying local input '{}' to '{}' for job '{}'",
+                        localInputTempFile.toAbsolutePath(), hadoopInputNameFile, id);
+                return;
+            }
+
+            log.info("Starting metadata extraction job on {} file(s) matching pattern '{}'",
+                    filePaths.size(), specifiedPattern);
+            int exitCode = 0;
+            try {
+                log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
+                exitCode = ToolRunner.run(new HadoopJob(conf, new GetMetadataMapper()),
+                        new String[] {hadoopInputNameFile.toString(), jobOutputDir.toString()});
+
+                if (exitCode == 0) {
+                    List<String> metadataLines = HadoopJobUtils.collectOutputLines(fileSystem, jobOutputDir);
+                    handleMigrationHadoop(id, metadataLines, originalJobResults, cacheFileName);
+                } else {
+                    log.warn("Hadoop job failed with exit code '{}'", exitCode);
+                }
+            } catch (Exception e) {
+                log.error("Hadoop indexing job failed to run normally.", e);
             }
         } else {
-            try {
-                Files.write(Paths.get(cacheFileName.getAbsolutePath()), originalJobResults);
-            } catch (IOException e) {
-                log.error("Failed to write job results for job {} to {}", id, cacheFileName.getAbsolutePath());
-            }
+            copyResults(id, originalJobResults, cacheFileName);
         }
     }
 
+    /**
+     * Helper method for {@link #migrateDuplicatesHadoop}.
+     * Does the actual handling of migration after the job has finished successfully.
+     * @param id The id of the cache.
+     * @param metadataLines The resulting lines from the duplication-migration job.
+     * @param originalJobResults The original hadoop job results which is a list containing the unmigrated data.
+     * @param cacheFileName The cache file for the job which the index cache is copied to.
+     */
     private void handleMigrationHadoop(Long id, List<String> metadataLines, List<String> originalJobResults,
             File cacheFileName) {
         File migration = null;
@@ -296,34 +326,47 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             throw new IOFailure("Could not create temporary output file.");
         }
         if (metadataLines.size() > 0) {
-            try {
-                Files.write(Paths.get(migration.getAbsolutePath()), metadataLines);
-            } catch (IOException e) {
-                throw new IOFailure("Failed writing to file " + migration.getAbsolutePath());
-            }
+            copyResults(id, metadataLines, migration);
         }
         boolean doMigration = migration.exists() && migration.length() > 0;
         if (doMigration) {
+            log.info("Found a nonempty duplicationmigration record. Now we do the migration for job {}", id);
             Hashtable<Pair<String, Long>, Long> lookup = createLookupTableFromMigrationLines(id, migration);
 
-            File crawllog = null;
-            try {
-                crawllog = File.createTempFile("dedup", "txt");
-            } catch (IOException e) {
-                throw new IOFailure("Could not create temporary output file.");
-            }
-            try {
-                Files.write(Paths.get(crawllog.getAbsolutePath()), originalJobResults);
-            } catch (IOException e) {
-                throw new IOFailure("Failed writing to file " + crawllog.getAbsolutePath());
-            }
+            File crawllog = createTempOutputFile();
+            copyResults(id, originalJobResults, crawllog);
             migrateFilenameOffsetPairs(id, cacheFileName, crawllog, lookup);
         } else {
-            try {
-                Files.write(Paths.get(cacheFileName.getAbsolutePath()), originalJobResults);
-            } catch (IOException e) {
-                throw new IOFailure("Failed writing to file " + cacheFileName.getAbsolutePath());
-            }
+            copyResults(id, originalJobResults, cacheFileName);
+        }
+    }
+
+    /**
+     * Helper method for creating a temp file to copy job results to.
+     * @return A new temp file to copy output to.
+     */
+    private File createTempOutputFile() {
+        File crawllog = null;
+        try {
+            crawllog = File.createTempFile("dedup", "txt");
+        } catch (IOException e) {
+            throw new IOFailure("Could not create temporary output file.");
+        }
+        return crawllog;
+    }
+
+    /**
+     * Helper method for Hadoop methods.
+     * Copies the results of a job to a file.
+     * @param id The ID of the current job.
+     * @param jobResults The resulting lines output from a job.
+     * @param file The file to copy the results to.
+     */
+    private void copyResults(Long id, List<String> jobResults, File file) {
+        try {
+            Files.write(Paths.get(file.getAbsolutePath()), jobResults);
+        } catch (IOException e) {
+            throw new IOFailure("Failed writing results of job with ID '" + id + "' to file " + file.getAbsolutePath());
         }
     }
 
@@ -419,14 +462,10 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             }
             boolean doMigration = migration.exists() && migration.length() > 0;
             if (doMigration) {
+                log.info("Found a nonempty duplicationmigration record. Now we do the migration for job {}", id);
                 Hashtable<Pair<String, Long>, Long> lookup = createLookupTableFromMigrationLines(id, migration);
 
-                File crawllog = null;
-                try {
-                    crawllog = File.createTempFile("dedup", "txt");
-                } catch (IOException e) {
-                    throw new IOFailure("Could not create temporary output file.");
-                }
+                File crawllog = createTempOutputFile();
                 originalBatchJob.copyResults(crawllog);
                 migrateFilenameOffsetPairs(id, cacheFileName, crawllog, lookup);
             } else {
@@ -437,6 +476,16 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         }
     }
 
+    /**
+     * Helper method.
+     * Does the actual migration of filename/offset pairs from uncompressed to compressed (w)arc files.
+     * This method has the side effect of copying the index cache (whether migrated or not) into the cache file
+     * whose name is generated from the ID
+     * @param id The ID of the current job.
+     * @param cacheFileName The cache file for the job which the index cache is copied to.
+     * @param crawllog A temp file containing the resulting lines of the Hadoop job.
+     * @param lookup A lookup table to get the filename/offset pairs from.
+     */
     private void migrateFilenameOffsetPairs(Long id, File cacheFileName, File crawllog, Hashtable<Pair<String, Long>, Long> lookup) {
         Pattern duplicatePattern = Pattern.compile(".*duplicate:\"([^,]+),([0-9]+).*");
         try {
@@ -468,12 +517,18 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         }
     }
 
-    private Hashtable<Pair<String, Long>, Long> createLookupTableFromMigrationLines(Long id, File migration) {
+    /**
+     * Helper method.
+     * Generates a lookup table of filename/offset pairs from a file containing extracted metadata lines.
+     * @param id The ID for the current job.
+     * @param migrationFile The file containing the extracted metadata lines.
+     * @return A lookup table of filename/offset pairs.
+     */
+    private Hashtable<Pair<String, Long>, Long> createLookupTableFromMigrationLines(Long id, File migrationFile) {
         Hashtable<Pair<String, Long>, Long> lookup = new Hashtable<>();
-        log.info("Found a nonempty duplicationmigration record. Now we do the migration for job {}", id);
         try {
-            final List<String> migrationLines = org.apache.commons.io.FileUtils.readLines(migration);
-            log.info("{} migration records found for job {}", migrationLines.size(), id);
+            final List<String> migrationLines = org.apache.commons.io.FileUtils.readLines(migrationFile);
+            log.info("{} migrationFile records found for job {}", migrationLines.size(), id);
             for (String line : migrationLines) {
                 // duplicationmigration lines look like this: "FILENAME 496812 393343 1282069269000"
                 // But only the first 3 entries are used.
@@ -486,9 +541,9 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 }
             }
         } catch (IOException e) {
-            throw new IOFailure("Could not read " + migration.getAbsolutePath());
+            throw new IOFailure("Could not read " + migrationFile.getAbsolutePath());
         } finally {
-            migration.delete();
+            migrationFile.delete();
         }
         return lookup;
     }

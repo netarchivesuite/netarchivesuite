@@ -1,7 +1,6 @@
 package dk.netarkivet.wayback.hadoop;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -17,17 +16,15 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.netarkivet.common.distribute.indexserver.Index;
-
 /**
  * Hadoop Mapper for creating the CDX indexes.
  *
  * The input is a key (not used) and a Text line, which we assume is the path to an WARC file.
  * The output is an exit code (not used), and the generated CDX lines.
  */
-public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
+public class CDXMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
 
-    private static final Logger log = LoggerFactory.getLogger(CDXMap.class);
+    private static final Logger log = LoggerFactory.getLogger(CDXMapper.class);
 
     /** The CDX indexer.*/
     private CDXIndexer cdxIndexer = new CDXIndexer();

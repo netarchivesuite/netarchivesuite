@@ -94,7 +94,7 @@ public class CDXJobTest {
         hdfs.copyFromLocalFile(false, new Path(localInputTempfile.toAbsolutePath().toString()), hadoopInputPath);
         File jarFile = new File("target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
         conf.set("mapreduce.job.jar", jarFile.getAbsolutePath());
-        ToolRunner.run(new HadoopJob(conf, new CDXMap()), new String[]{hadoopInputPath.toString(), outputDir.toString()});
+        ToolRunner.run(new HadoopJob(conf, new CDXMapper()), new String[]{hadoopInputPath.toString(), outputDir.toString()});
         getAndPrintOutput();
     }
 
