@@ -91,7 +91,7 @@ public class WarcRecordClient {
         this.baseUri = baseUri;
     }
 
-    public BitarchiveRecord getWarc( URI uri, long offset) throws IOException {
+    public BitarchiveRecord getWarc( URI uri, long offset) throws Exception {
         /**
          * Uses WarcRecordClient to call ApacheHttpClient
          *
@@ -142,6 +142,10 @@ public class WarcRecordClient {
                        log.error("UnsupportedOperationException: ", e);
                    }
                }
+               else {
+                   log.error("Enity is null: '" );
+                   throw new Exception("Enity is null:");
+               }
            }
            catch (ClassCastException e) {
                log.error("Received invalid argument reply: '" + reply + "'", e);
@@ -155,7 +159,7 @@ public class WarcRecordClient {
         return new HttpGet(uri);
     }
 
-    public BitarchiveRecord get(String arcfileName, long index) throws ArgumentNotValid, IOFailure, IOException, URISyntaxException {
+    public BitarchiveRecord get(String arcfileName, long index) throws IOFailure, IOException, URISyntaxException {
         /**
          * Retrieves a file from a repository and places it in a local file.
          *
@@ -168,8 +172,11 @@ public class WarcRecordClient {
          * @throws IOException if reading file fails
          * @throws URISyntaxException if URI i not composed of baseUri + "/" + long name of file
          */
+        BitarchiveRecord warcInstance = null;
+
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfile");
-        ArgumentNotValid.checkNotNegative(index, "index");
+            ArgumentNotValid.checkNotNegative(index, "index");
+
         log.debug("Requesting get of record '{}:{}'", arcfileName, index);
         long start = System.currentTimeMillis();
 
@@ -177,7 +184,12 @@ public class WarcRecordClient {
         // and to parse it to a BitArchiveRecord
         String strUri = this.getBaseUri().toString() + "/" + arcfileName;
         URI uri = new URI(strUri);
-        BitarchiveRecord warcInstance = this.getWarc(uri, index);
+        try {
+              warcInstance = this.getWarc(uri, index);
+        } catch (Exception e) {
+            log.error("Failed to retrieve record at offset {} from file {}.", index, arcfileName, e);
+            throw new IllegalArgumentException("Argument not valid");
+        }
 
         return warcInstance;
     }
