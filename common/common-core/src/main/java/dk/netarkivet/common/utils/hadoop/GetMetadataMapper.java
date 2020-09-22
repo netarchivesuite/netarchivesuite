@@ -30,6 +30,8 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
     /** The logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(GetMetadataMapper.class);
 
+    public static final String URL_PATTERN = "url.pattern";
+    public static final String MIME_PATTERN = "mime.pattern";
     /** A regular expression object that matches everything. */
     private final Pattern MATCH_ALL_PATTERN = Pattern.compile(".*");
     /** The pattern for matching the urls. */
@@ -49,8 +51,8 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
     protected void setup(Context context) throws IOException, InterruptedException {
         super.setup(context);
         Configuration conf = context.getConfiguration();
-        urlMatcher = conf.getPattern("url.pattern", MATCH_ALL_PATTERN);
-        mimeMatcher = conf.getPattern("mime.pattern", MATCH_ALL_PATTERN);
+        urlMatcher = conf.getPattern(URL_PATTERN, MATCH_ALL_PATTERN);
+        mimeMatcher = conf.getPattern(MIME_PATTERN, MATCH_ALL_PATTERN);
     }
 
     /**

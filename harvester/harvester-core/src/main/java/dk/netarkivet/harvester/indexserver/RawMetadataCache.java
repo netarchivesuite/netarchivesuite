@@ -167,8 +167,8 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("regex:" + specifiedPattern);
         System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
         Configuration conf = HadoopJobUtils.getConfFromSettings();
-        conf.set("url.pattern", urlPattern.toString());
-        conf.set("mime.pattern", mimePattern.toString());
+        conf.setPattern(GetMetadataMapper.URL_PATTERN, urlPattern);
+        conf.setPattern(GetMetadataMapper.MIME_PATTERN, mimePattern);
         UUID uuid = UUID.randomUUID();
         try (FileSystem fileSystem = FileSystem.get(conf)) {
             Path hadoopInputNameFile = HadoopFileUtils.initExtractionJobInput(fileSystem, uuid);
@@ -253,8 +253,8 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         if (urlPattern.pattern().equals(MetadataFile.CRAWL_LOG_PATTERN)) {
             PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("regex:" + specifiedPattern);
             Configuration conf = fileSystem.getConf();
-            conf.set("url.pattern", ".*duplicationmigration.*");
-            conf.set("mime.pattern", "text/plain");
+            conf.setPattern(GetMetadataMapper.URL_PATTERN, Pattern.compile(".*duplicationmigration.*"));
+            conf.setPattern(GetMetadataMapper.MIME_PATTERN, Pattern.compile("text/plain"));
             UUID uuid = UUID.randomUUID();
             Path hadoopInputNameFile = HadoopFileUtils.initExtractionJobInput(fileSystem, uuid);
             log.info("Hadoop input file will be '{}'", hadoopInputNameFile);

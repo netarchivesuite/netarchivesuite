@@ -52,10 +52,10 @@ public class CDXMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
         Path path = new Path(warcPath.toString());
         List<String> cdxIndexes;
         Indexer indexer;
-        if (path.getName().contains("metadata")) {
+
+        boolean doDedup = context.getConfiguration().getBoolean(METADATA_DO_DEDUP, false);
+        if (doDedup && path.getName().contains("metadata")) {
             log.info("Indexing metadata file '{}'", path);
-        boolean dodedup = context.getConfiguration().getBoolean(METADATA_DO_DEDUP, false);
-        if (dodedup && path.getName().contains("metadata")) {
             indexer = new DedupIndexer();
             final FileSystem fileSystem = path.getFileSystem(context.getConfiguration());
             if (!(fileSystem instanceof LocalFileSystem)) {
