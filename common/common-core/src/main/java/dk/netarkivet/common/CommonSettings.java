@@ -569,14 +569,30 @@ public class CommonSettings {
     public static String HADOOP_MAPRED_FRAMEWORK = "settings.common.hadoop.mapred.framework";
 
     /**
-     * The setting for the input path to use in map-/reduce jobs.
+     * TODO: Probably rename this
+     * Specifies where locally (?) to find the individual input files for a job
      */
-    public static String HADOOP_MAPRED_INPUT_DIR = "settings.common.hadoop.mapred.inputDir";
+    public static String HADOOP_MAPRED_INPUT_FILES_PARENT_DIR = "settings.common.hadoop.mapred.inputFilesParentDir";
 
     /**
-     * The setting for the output path to use in map-/reduce jobs.
+     * The setting for the input path to use in cdx-indexing map-/reduce jobs.
      */
-    public static String HADOOP_MAPRED_OUTPUT_DIR = "settings.common.hadoop.mapred.outputDir";
+    public static String HADOOP_MAPRED_CDX_INPUT_DIR = "settings.common.hadoop.mapred.cdx.inputDir";
+
+    /**
+     * The setting for the output path to use in cdx-indexing map-/reduce jobs.
+     */
+    public static String HADOOP_MAPRED_CDX_OUTPUT_DIR = "settings.common.hadoop.mapred.cdx.outputDir";
+
+    /**
+     * The setting for the input path to use in cache map-/reduce jobs.
+     */
+    public static String HADOOP_MAPRED_CACHE_INPUT_DIR = "settings.common.hadoop.mapred.cache.inputDir";
+
+    /**
+     * The setting for the output path to use in cache map-/reduce jobs.
+     */
+    public static String HADOOP_MAPRED_CACHE_OUTPUT_DIR = "settings.common.hadoop.mapred.cache.outputDir";
 
     /**
      * Path on the client machine (wayback indexer machine) where the uber-jar file containing the

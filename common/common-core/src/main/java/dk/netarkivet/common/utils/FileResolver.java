@@ -1,4 +1,4 @@
-package dk.netarkivet.wayback.indexer;
+package dk.netarkivet.common.utils;
 
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
@@ -12,13 +12,13 @@ public interface FileResolver {
      * @param filepattern
      * @return
      */
-    public List<Path> getPaths(PathMatcher filepattern);
+    List<Path> getPaths(PathMatcher filepattern);
 
     /**
      * Return a single path to a given file, or null if the file is not found.
      * @param filename
      * @return
      */
-    public Path getPath(String filename);
+    Path getPath(String filename);
 
 }

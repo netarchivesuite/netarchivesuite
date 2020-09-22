@@ -87,8 +87,9 @@ public class GetMetadataArchiveBatchJobTester {
         File[] files = new File[] {f1, f};
         BatchLocalFiles blf = new BatchLocalFiles(files);
         OutputStream os = new FileOutputStream("tmp");
-        blf.run(job, System.out);
-        System.out.println(job.getNoOfFilesProcessed());
+        blf.run(job, os);
+
+        //System.out.println(job.getNoOfFilesProcessed());
 
         assertEquals("Expected no files to fail, but " + job.getFilesFailed().size() + " failed", 0, job
                 .getFilesFailed().size());

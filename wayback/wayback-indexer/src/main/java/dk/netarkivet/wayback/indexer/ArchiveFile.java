@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Entity;
@@ -38,7 +37,6 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.ToolRunner;
-import org.hibernate.id.GUIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +48,12 @@ import dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepo
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.BitmagUtils;
+import dk.netarkivet.common.utils.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.HadoopUtils;
+import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SimpleFileResolver;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.warc.WARCUtils;
@@ -60,7 +61,7 @@ import dk.netarkivet.wayback.WaybackSettings;
 import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
-import dk.netarkivet.wayback.hadoop.CDXMap;
+import dk.netarkivet.wayback.hadoop.CDXMapper;
 import dk.netarkivet.common.utils.hadoop.HadoopJob;
 
 /**
@@ -199,9 +200,9 @@ public class ArchiveFile {
         }
 
         // TODO shouldn't have check on filename here, but for now let it be
-        if (Settings.getBoolean(CommonSettings.USING_HADOOP) && WARCUtils.isWarc(filename)) {
-            // Start a hadoop indexing job.
-            // But this shouldn't be done on the files individually?? This is done on a list of filenames..
+        boolean isMetadataFile = filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
+        boolean isArchiveFile = ARCUtils.isARC(filename) || WARCUtils.isWarc(filename) || isMetadataFile;
+        if (Settings.getBoolean(CommonSettings.USING_HADOOP) && isArchiveFile) {
             hadoopIndex();
         } else {
             batchIndex();
@@ -213,54 +214,58 @@ public class ArchiveFile {
      */
     private void hadoopIndex() {
         System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
-        Configuration conf = HadoopUtils.getConfFromSettings();
-        final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_WAYBACK_UBER_JAR);
-        if (jarPath == null || !(new File(jarPath)).exists()) {
-            log.warn("Specified jar file {} does not exist.", jarPath);
-        }
-        conf.set("mapreduce.job.jar", jarPath);
+        Configuration conf = HadoopJobUtils.getConfFromSettings();
         UUID uuid = UUID.randomUUID();
         log.info("File {} indexed with job uuid for i/o {}.", this.filename, uuid);
         try (FileSystem fileSystem = FileSystem.get(conf)) {
-            String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_DIR);
+            String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDX_INPUT_DIR);
             if (hadoopInputDir == null) {
-                log.error("Parent output dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_INPUT_DIR);
+                log.error("Parent input dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CDX_INPUT_DIR);
                 return;
             }
-            initInputDir(fileSystem, hadoopInputDir);
+            try {
+                HadoopFileUtils.initDir(fileSystem, hadoopInputDir);
+            } catch (IOException e) {
+                log.error("Failed to init input dir {}", hadoopInputDir, e);
+                return;
+            }
             Path hadoopInputNameFile = new Path(hadoopInputDir, uuid.toString());
             log.info("Hadoop input file will be {}", hadoopInputNameFile);
 
-            String parentOutputDir = Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR);
+            String parentOutputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDX_OUTPUT_DIR);
             if (parentOutputDir == null) {
-                log.error("Parent output dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_OUTPUT_DIR);
+                log.error("Parent output dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CDX_OUTPUT_DIR);
                 return;
             }
-            initOutputDir(fileSystem, parentOutputDir);
-            Path jobOutputDir = new Path(new Path(parentOutputDir), uuid.toString());
+            try {
+                HadoopFileUtils.initDir(fileSystem, parentOutputDir);
+            } catch (IOException e) {
+                log.error("Failed to init output dir {}", parentOutputDir, e);
+                return;
+            }
+            Path jobOutputDir = new Path(parentOutputDir, uuid.toString());
             log.info("Output directory for job is {}", jobOutputDir);
             java.nio.file.Path localInputTempFile = null;
             localInputTempFile = Files.createTempFile(null, null);
-            //TODO make this a setting
-            final String parentDir = "file:///kbhpillar/collection-netarkivet/" ;
+            final String parentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
             //TODO replace this with call to a factory method so we can configure different file resolvers
             FileResolver fileResolver = new SimpleFileResolver(Paths.get(parentDir));
-            java.nio.file.Path filepath = fileResolver.getPath(filename);
-            String s = filepath.toString();
-            log.info("Inserting {} in {}.", s, localInputTempFile);
-            Files.write(localInputTempFile, s.getBytes());
+            java.nio.file.Path filePath = fileResolver.getPath(filename);
+            String inputLine = "file://" + filePath.toString();
+            log.info("Inserting {} in {}.", inputLine, localInputTempFile);
+            Files.write(localInputTempFile, inputLine.getBytes());
             // Write the input file to hdfs
             log.info("Copying file with input paths {} to hdfs {}.", localInputTempFile, hadoopInputNameFile);
-            fileSystem .copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
+            fileSystem.copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
                     hadoopInputNameFile);
             log.info("Starting CDX job on file '{}'", filename);
             int exitCode = 0;
             try {
                 log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
-                exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMap()),
-                        new String[] {
-                                hadoopInputNameFile.toString(), jobOutputDir.toString()});
+                exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMapper()),
+                        new String[] {hadoopInputNameFile.toString(), jobOutputDir.toString()});
                 if (exitCode == 0) {
+                    log.info("CDX job for file {} was a success!", filename);
                     collectHadoopResults(fileSystem, jobOutputDir);
                 } else {
                     log.warn("Hadoop job failed with exit code '{}'", exitCode);
@@ -274,45 +279,18 @@ public class ArchiveFile {
 
     }
 
-    private void initOutputDir(FileSystem fileSystem, String parentOutputDir) throws IOException {
-        Path parentOutputDirPath = new Path(parentOutputDir);
-        if (fileSystem.exists(parentOutputDirPath)) {
-            if (!fileSystem.isDirectory(parentOutputDirPath)) {
-                log.warn("{} exists and is not a directory.", parentOutputDirPath);
-                fileSystem.delete(parentOutputDirPath, true);
-                fileSystem.mkdirs(parentOutputDirPath);
-            }
-        } else {
-            log.info("Creating parent output dir {}.", parentOutputDirPath);
-            fileSystem.mkdirs(parentOutputDirPath);
-        }
-    }
-
-    private void initInputDir(FileSystem fileSystem, String hadoopInputDir) throws IOException {
-        log.info("Hadoop input files will be placed under {}.", hadoopInputDir);
-        Path hadoopInputDirPath = new Path(hadoopInputDir);
-        if (fileSystem.exists(hadoopInputDirPath) && !fileSystem.isDirectory(hadoopInputDirPath)) {
-            log.warn("{} already exists and is a file. Deleting and creating directory.", hadoopInputDirPath);
-            fileSystem.delete(hadoopInputDirPath, true);
-            fileSystem.mkdirs(hadoopInputDirPath);
-        }
-        else if (!fileSystem.exists(hadoopInputDirPath)) {
-            fileSystem.mkdirs(hadoopInputDirPath);
-        }
-    }
-
     /**
      * Runs a map-only (no reduce) job to index this file.
      * Uses the costly approach of copying the file to hdfs first
      */
     private void hadoopHDFSIndex() {
         // For now only handles WARC files
-        String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_DIR);
+        String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDX_INPUT_DIR);
         // As each file for now has its own job, the inputfile for each job
         // is just made unique from the archivefile's name
         Path hadoopInputNameFile = new Path(
                 filename.substring(0, filename.lastIndexOf('.')) + "_map_input.txt");
-        Configuration conf = HadoopUtils.getConfFromSettings();
+        Configuration conf = HadoopJobUtils.getConfFromSettings();
         Bitrepository bitrep = BitmagUtils.initBitrep();
 
         // Get file and put it in hdfs
@@ -347,9 +325,9 @@ public class ArchiveFile {
             log.info("Starting CDXJob on file '{}'", filename);
             try {
                 // TODO Guess conditioning on which file it is should be handled here by designating different mapper classes
-                int exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMap()),
+                int exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMapper()),
                         new String[] {
-                                hadoopInputNameFile.getName(), Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR)});
+                                hadoopInputNameFile.getName(), Settings.get(CommonSettings.HADOOP_MAPRED_CDX_OUTPUT_DIR)});
 
                 if (exitCode != 0) {
                     log.warn("Hadoop job failed with exit code '{}'", exitCode);
@@ -359,7 +337,7 @@ public class ArchiveFile {
                         log.warn("Problem closing FileSystem: ", e);
                     }
                 } else {
-                    collectHadoopResults(fs, new Path(Settings.get(CommonSettings.HADOOP_MAPRED_OUTPUT_DIR)));
+                    collectHadoopResults(fs, new Path(Settings.get(CommonSettings.HADOOP_MAPRED_CDX_OUTPUT_DIR)));
                 }
             } catch (Exception e) {
                 log.warn("Running hadoop job threw exception", e);
@@ -481,7 +459,7 @@ public class ArchiveFile {
      * Helper method.
      * Makes a new file in the wayback temp dir and returns it.
      * If the directory does not exist, it is also created.
-     * @return
+     * @return A new file in the wayback temp dir.
      */
     private File makeNewFileInWaybackTempDir() {
         // Use an arbitrary filename for the output

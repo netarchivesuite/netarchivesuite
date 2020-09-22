@@ -1,8 +1,8 @@
 package dk.netarkivet.wayback.hadoop;
 
-import static dk.netarkivet.common.utils.HadoopUtils.DEFAULT_FILESYSTEM;
-import static dk.netarkivet.common.utils.HadoopUtils.MAPREDUCE_FRAMEWORK;
-import static dk.netarkivet.common.utils.HadoopUtils.YARN_RESOURCEMANAGER_ADDRESS;
+import static dk.netarkivet.common.utils.hadoop.HadoopJobUtils.DEFAULT_FILESYSTEM;
+import static dk.netarkivet.common.utils.hadoop.HadoopJobUtils.MAPREDUCE_FRAMEWORK;
+import static dk.netarkivet.common.utils.hadoop.HadoopJobUtils.YARN_RESOURCEMANAGER_ADDRESS;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -61,7 +61,7 @@ public class CDXJobTest {
                 scp.setHost("node1");
                 scp.setUsername("vagrant");
                 scp.setPassword("vagrant");
-                scp.setRemoteTodir("vagrant:vagrant@node1:");
+                scp.setRemoteTodir("vagrant:vagrant@node1:"); // Files are moved to /home/vagrant/
                 scp.setProject(new Project());
                 scp.setTrust(true);
                 scp.setLocalFile(file.getAbsolutePath());
@@ -93,14 +93,10 @@ public class CDXJobTest {
         hdfs.delete(hadoopInputPath);
         java.nio.file.Path localInputTempfile = buildInputFile();
         hdfs.copyFromLocalFile(false, new Path(localInputTempfile.toAbsolutePath().toString()), hadoopInputPath);
-        //BufferedReader bf = new BufferedReader(new FileReader(localInputTempfile.toFile()));
-        final Path f = new Path("/temptemp");
-        hdfs.delete(f);
-        hdfs.mkdirs(f);
         File jarFile = new File("target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
         conf.set("mapreduce.job.jar", jarFile.getAbsolutePath());
-        conf.setBoolean(CDXMap.METADATA_DO_DEDUP, false);
-        ToolRunner.run(new HadoopJob(conf, new CDXMap()), new String[]{hadoopInputPath.toString(), outputDir.toString()});
+        ToolRunner.run(new HadoopJob(conf, new CDXMapper()), new String[]{hadoopInputPath.toString(), outputDir.toString()});
+        conf.setBoolean(CDXMapper.METADATA_DO_DEDUP, false);
         getAndPrintOutput();
     }
 

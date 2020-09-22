@@ -73,7 +73,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
     /**
      * A pattern identifying the crawl log metadata entry.
      *
-     * @see dk.netarkivet.harvester.indexserver.CrawlLogDataCache #CrawlLogDataCache()
+     * @see dk.netarkivet.harvester.indexserver.CrawlLogDataCache#CrawlLogDataCache()
      */
     public static final String CRAWL_LOG_PATTERN = "metadata://[^/]*/crawl/logs/crawl\\.log.*";
 

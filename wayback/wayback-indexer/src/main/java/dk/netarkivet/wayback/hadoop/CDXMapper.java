@@ -1,7 +1,6 @@
 package dk.netarkivet.wayback.hadoop;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -14,8 +13,8 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-
-import dk.netarkivet.common.distribute.indexserver.Index;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Hadoop Mapper for creating the CDX indexes.
@@ -23,13 +22,15 @@ import dk.netarkivet.common.distribute.indexserver.Index;
  * The input is a key (not used) and a Text line, which we assume is the path to an WARC file.
  * The output is an exit code (not used), and the generated CDX lines.
  */
-public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
+public class CDXMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
+
+    private static final Logger log = LoggerFactory.getLogger(CDXMapper.class);
 
     /** The CDX indexer.*/
     private CDXIndexer cdxIndexer = new CDXIndexer();
     private DedupIndexer dedupIndexer = new DedupIndexer();
 
-    public static final String METADATA_DO_DEDUP = "dodedup";
+    public static final String METADATA_DO_DEDUP = "do_dedup";
 
     /**
      * Mapping method.
@@ -44,12 +45,15 @@ public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
             InterruptedException {
         // reject empty or null warc paths.
         if(warcPath == null || warcPath.toString().trim().isEmpty()) {
+            log.warn("Encountered empty path in job {}", context.getJobID().toString());
             return;
         }
 
         Path path = new Path(warcPath.toString());
         List<String> cdxIndexes;
         Indexer indexer;
+        if (path.getName().contains("metadata")) {
+            log.info("Indexing metadata file '{}'", path);
         boolean dodedup = context.getConfiguration().getBoolean(METADATA_DO_DEDUP, false);
         if (dodedup && path.getName().contains("metadata")) {
             indexer = new DedupIndexer();
@@ -64,6 +68,7 @@ public class CDXMap extends Mapper<LongWritable, Text, NullWritable, Text> {
                 cdxIndexes = indexer.indexFile(localFileSystem.pathToFile(path));
             }
         } else {
+            log.info("Indexing archive file '{}'", path);
             try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
                 cdxIndexes = cdxIndexer.index(in, warcPath.toString());
             }
