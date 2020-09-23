@@ -6,10 +6,13 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -42,14 +45,8 @@ public class WarcRecordClient {
     private URI baseUri;
 
     /** The length of time to wait for a get reply before giving up. */
-    private long getTimeout;
-    private final static int STREAM_ALL = -1;
     private static final String USER_AGENT = "Mozilla/5.0";
-    private static int timeout = 1000;
-    private String collectionId;
-    private Bitrepository bitrep;
-    private URI uri;
-    private  CloseableHttpClient httpClient = null;
+    private static int timeout = MILLISECONDS_PER_SECOND;
     private long offset;
     boolean atFirst = true;
 
@@ -74,17 +71,14 @@ public class WarcRecordClient {
 
         public static CloseableHttpClient getCloseableHttpClient() {
             PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-            cm.setMaxTotal(200);           // Increase max total connections to 200
-            cm.setDefaultMaxPerRoute(20);  // Increase  default max connections per route to 20
+            cm.setMaxTotal(Settings.getInt(CommonSettings.MAX_TOTAL_CONNECTIONS));
+            cm.setDefaultMaxPerRoute(Settings.getInt(CommonSettings.MAX_CONNECTIONS_PER_ROUTE));
             closeableHttpClient  = HttpClients.custom()
                     .setConnectionManager(cm)
                     .build();
             return closeableHttpClient;
         }
 
-        public static Singleton getInstance() {
-            return instance;
-        }
     }
 
     public WarcRecordClient(URI baseUri) throws URISyntaxException {
@@ -112,7 +106,7 @@ public class WarcRecordClient {
             HttpUriRequest request = RequestBuilder.get()
                     .setUri(uri)
                     .addHeader("User-Agent",USER_AGENT)
-                    .addHeader("Range", "bytes=" + offset + "-")   // offset + 1?? might require <= -1 check and > 1 check
+                    .addHeader("Range", "bytes=" + offset + "-")
                     .build();
             log.debug("Executing request " + request.getRequestLine());
 
@@ -151,12 +145,11 @@ public class WarcRecordClient {
                log.error("Received invalid argument reply: '" + reply + "'", e);
                throw new IOFailure("Received invalid argument reply: '" + reply + "'", e);
            }
+           finally {
+               closableHttpClient.close();
+           }
 
         return reply;
-    }
-
-    private  HttpGet getHttpfrom(String uri) {
-        return new HttpGet(uri);
     }
 
     public BitarchiveRecord get(String arcfileName, long index) throws IOFailure, IOException, URISyntaxException {
@@ -188,33 +181,12 @@ public class WarcRecordClient {
               warcInstance = this.getWarc(uri, index);
         } catch (Exception e) {
             log.error("Failed to retrieve record at offset {} from file {}.", index, arcfileName, e);
+            warcInstance = null;
             throw new IllegalArgumentException("Argument not valid");
         }
 
         return warcInstance;
     }
 
-    /**
-     * Retrieves a file from a repository and places it in a local file.
-     *
-     * @param arcfilename Name of the arcfile to retrieve.
-     * @param toFile Filename of a place where the file fetched can be put.
-     * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile is null
-     * @throws IOFailure if there are problems reading or writing file, or the file with the given arcfilename could not
-     * be found.
-     */
-
-    public void getFile(String arcfilename,  File toFile) {
-        ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "String arcfilename");
-        ArgumentNotValid.checkNotNull(toFile, "File toFile");
-
-        if (!bitrep.existsInCollection(arcfilename, collectionId)) {
-            log.warn("The file '{}' is not in collection '{}'.", arcfilename, collectionId);
-            throw new IOFailure("File '" + arcfilename + "' does not exist");
-        } else {
-            File f = bitrep.getFile(arcfilename, collectionId, null);
-            FileUtils.copyFile(f, toFile);
-        }
-    }
 
 }

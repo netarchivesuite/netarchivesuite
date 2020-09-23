@@ -545,5 +545,18 @@ public class CommonSettings {
      * the value of this setting with .* will find all metadata files.
      */
     public static String METADATAFILE_REGEX_SUFFIX = "settings.common.metadata.fileregexsuffix";
+
+
+    /**
+     * <b>settings.common.warcClient.max_total_connections</b>: </br>
+     * Increase max total connections to e.g. 200.
+     */
+    public static String MAX_TOTAL_CONNECTIONS = "settings.common.webinterface.warc.max_total_connections";
+
+    /**
+     * <b>settings.common.warcClient.DefaultMaxPerRoute</b> </br>
+     * Increase  default max connections per route, e.g. to 20.
+     */
+    public static String MAX_CONNECTIONS_PER_ROUTE = "settings.common.webinterface.warc.max_connections_per_route";
     
 }
