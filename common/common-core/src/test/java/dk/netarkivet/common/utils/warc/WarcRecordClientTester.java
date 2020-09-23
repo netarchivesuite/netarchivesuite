@@ -107,6 +107,25 @@ public class WarcRecordClientTester {
         assertFalse("Exception", fail);
     }
 
+    @Test
+    public void testPosBuildingBitarchiveRecord6() throws Exception {
+        String filename = "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc";
+        URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
+        URI test_uri = SAMPLE_HOST;
+        long offset = 3442L;
+        WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
+        BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, offset);
+        Boolean fail = false;
+
+        try {
+            BitarchiveRecord bitarchiveRecord = warcRecordClient.get(filename, offset);
+            bitarchiveRecord.getData(System.out);
+        } catch (NullPointerException e) {
+            System.out.println("Nullpointer Exception caused by offset errror");
+            fail = true;
+        }
+        assertFalse("Exception", fail);
+    }
 
     // ************** Negative tests ****************
 
