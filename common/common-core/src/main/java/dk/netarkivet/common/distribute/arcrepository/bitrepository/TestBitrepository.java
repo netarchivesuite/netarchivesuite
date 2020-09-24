@@ -6,7 +6,6 @@ import static dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitmag
 import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_USEPILLAR;
 
 import java.io.File;
-import java.util.List;
 
 import dk.netarkivet.common.utils.Settings;
 
@@ -24,7 +23,7 @@ public class TestBitrepository {
         String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
 
         // Initialize connection to the bitrepository
-        Bitrepository bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
+        Bitrepository bitrep = Bitrepository.getInstance(configDir, keyfilename);
 
 
         testGetFileIDs(bitrep);
@@ -45,7 +44,7 @@ public class TestBitrepository {
 
         if (bitrep.existsInCollection("70-metadata-1.warc", "books")){
             System.out.println("70-metadata-1.warc found in collection books");
-            File f = bitrep.getFile("70-metadata-1.warc", "books", null);
+            File f = bitrep.getFile("70-metadata-1.warc", "books", null, Settings.get(BITREPOSITORY_USEPILLAR));
             System.out.println("file fetched = " + f.getAbsolutePath());
         } else {
             System.out.println("70-metadata-1.warc NOT found in collection books");
@@ -75,7 +74,7 @@ public class TestBitrepository {
         }
 
         System.out.println("netarkiv-ids:");
-        for (String id: bitrep.getFileIds("netarkiv")) {
+        for (String id: bitrep.getFileIds("netarkiv", Settings.get(BITREPOSITORY_USEPILLAR))) {
             System.out.println(id);
         }
 

@@ -95,7 +95,8 @@
     <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
     <sonar.language>java</sonar.language>
 <!--    <jacoco.version>0.7.2.201409121644</jacoco.version> -->
-   <jacoco.version>0.7.9</jacoco.version>
+    <jacoco.version>0.7.9</jacoco.version>
+    <hadoop.version>2.7.6</hadoop.version>
   </properties>
 
   <modules>
@@ -820,6 +821,28 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.12</version>
         </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-client</artifactId>
+        <version>${hadoop.version}</version>
+        <exclusions>
+          <exclusion> <!-- Excluded because it conflicts with tomcat's ServletRequest -->
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency> <!-- Added this since it apparently helps Hadoop play nice with Xerces -->
+        <groupId>xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>1.4.01</version>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>

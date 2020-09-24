@@ -51,5 +51,10 @@
       <version>1.1.8</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+    </dependency>
+
   </dependencies>
 </project>

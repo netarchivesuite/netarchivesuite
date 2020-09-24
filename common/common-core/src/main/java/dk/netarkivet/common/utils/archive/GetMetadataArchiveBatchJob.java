@@ -74,7 +74,7 @@ public class GetMetadataArchiveBatchJob extends ArchiveBatchJob {
      *
      * @param record The arc-record to process.
      * @param os The output stream to write the results of the processing.
-     * @throws IOFailure In an IOException is caught during handling of the arc record.
+     * @throws IOFailure If an IOException is caught during handling of the arc record.
      */
     @Override
     public void processRecord(ArchiveRecordBase record, OutputStream os) throws IOFailure {

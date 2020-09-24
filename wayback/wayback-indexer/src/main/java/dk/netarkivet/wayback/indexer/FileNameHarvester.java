@@ -23,20 +23,26 @@
 package dk.netarkivet.wayback.indexer;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.BitmagUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.DatedFileListJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
@@ -47,14 +53,75 @@ public class FileNameHarvester {
     /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(FileNameHarvester.class);
 
+
     /**
      * This method harvests a list of all the files currently in the arcrepository and appends any new ones found to the
      * ArchiveFile object store.
      */
     public static synchronized void harvestAllFilenames() {
         ArchiveFileDAO dao = new ArchiveFileDAO();
-        PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
-        BatchStatus status = client.batch(new FileListJob(), Settings.get(WaybackSettings.WAYBACK_REPLICA));
+        //TODO I believe that by default this only fetches max 10000 files. Look at the query interface
+        //in bitmag
+        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
+            // Initialize connection to the bitrepository
+            Bitrepository bitrep = BitmagUtils.initBitrep();
+            String collection = Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_COLLECTIONID);
+            List<String> fileNames = bitrep.getFileIds(collection, Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_USEPILLAR));
+            if (fileNames != null) {
+                for (String fileName : fileNames) {
+                    if (!dao.exists(fileName)) {
+                        createArchiveFileInDB(fileName, dao);
+                    }
+                }
+            } else {
+                log.info("No files found in collection '{}'", collection);
+            }
+        } else {
+            PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
+            BatchStatus status = client.batch(new FileListJob(), Settings.get(WaybackSettings.WAYBACK_REPLICA));
+            getResultFileAndCreateInDB(status, dao);
+        }
+    }
+
+    /**
+     * This method harvests a list of all the recently added files in the archive.
+     */
+    public static synchronized void harvestRecentFilenames() {
+        ArchiveFileDAO dao = new ArchiveFileDAO();
+        long timeAgo = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_SINCE);
+        Date since = new Date(System.currentTimeMillis() - timeAgo);
+
+        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
+            log.info("Harvesting of recent files not yet implemented with bitmag.");
+            //TODO can this be implemented using queries in bitmag
+
+/*            Bitrepository bitrep = BitmagUtils.initBitrep();
+            String collection = Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_COLLECTIONID);
+            List<String> fileNames = bitrep.getFileIds(collection);
+            if (fileNames != null) {
+                for (String fileName : fileNames) {
+                    File file = bitrep.getFile(fileName, collection, null);
+                    if (file.lastModified() > since.getTime()) {
+                        createArchiveFileInDB(fileName, dao);
+                    }
+                }
+            } else {
+                log.info("No files found in collection '{}'", collection);
+            }*/
+        } else {
+            PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
+            BatchStatus status = client
+                    .batch(new DatedFileListJob(since), Settings.get(WaybackSettings.WAYBACK_REPLICA));
+            getResultFileAndCreateInDB(status, dao);
+        }
+    }
+
+    /**
+     * Helper method for handling results from BatchStatus and putting it in the database.
+     * @param status The BatchStatus with results from batch()
+     * @param dao The DAO through which the database is accessed.
+     */
+    private static void getResultFileAndCreateInDB(BatchStatus status, ArchiveFileDAO dao) {
         RemoteFile results = status.getResultFile();
         InputStream is = results.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -62,13 +129,9 @@ public class FileNameHarvester {
         try {
             while ((line = reader.readLine()) != null) {
                 if (!dao.exists(line.trim())) {
-                    ArchiveFile file = new ArchiveFile();
-                    file.setFilename(line.trim());
-                    file.setIndexed(false);
-                    log.info("Creating object store entry for '{}'", file.getFilename());
-                    dao.create(file);
+                    createArchiveFileInDB(line, dao);
                 } // If the file is already known in the persistent store, no
-                  // action needs to be taken.
+                // action needs to be taken.
             }
         } catch (IOException e) {
             throw new IOFailure("Error reading remote file", e);
@@ -78,33 +141,15 @@ public class FileNameHarvester {
     }
 
     /**
-     * This method harvests a list of all the recently added files in the archive.
+     * Helper method to create an ArchiveFile from a given filename and put it in the database.
+     * @param fileName The filename to create.
+     * @param dao The DAO through which the database is accessed.
      */
-    public static synchronized void harvestRecentFilenames() {
-        ArchiveFileDAO dao = new ArchiveFileDAO();
-        PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
-        long timeAgo = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_SINCE);
-        Date since = new Date(System.currentTimeMillis() - timeAgo);
-        BatchStatus status = client.batch(new DatedFileListJob(since), Settings.get(WaybackSettings.WAYBACK_REPLICA));
-        RemoteFile results = status.getResultFile();
-        InputStream is = results.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        String line;
-        try {
-            while ((line = reader.readLine()) != null) {
-                if (!dao.exists(line.trim())) {
-                    ArchiveFile file = new ArchiveFile();
-                    file.setFilename(line.trim());
-                    file.setIndexed(false);
-                    log.info("Creating object store entry for '{}'", file.getFilename());
-                    dao.create(file);
-                } // If the file is already known in the persistent store, no
-                  // action needs to be taken.
-            }
-        } catch (IOException e) {
-            throw new IOFailure("Error reading remote file", e);
-        } finally {
-            IOUtils.closeQuietly(reader);
-        }
+    private static void createArchiveFileInDB(String fileName, ArchiveFileDAO dao) {
+        ArchiveFile file = new ArchiveFile();
+        file.setFilename(fileName.trim());
+        file.setIndexed(false);
+        log.info("Creating object store entry for '{}'", file.getFilename());
+        dao.create(file);
     }
 }

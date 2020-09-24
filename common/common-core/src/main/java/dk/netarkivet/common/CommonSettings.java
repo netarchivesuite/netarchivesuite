@@ -546,6 +546,68 @@ public class CommonSettings {
      */
     public static String METADATAFILE_REGEX_SUFFIX = "settings.common.metadata.fileregexsuffix";
 
+    /**
+     * Specifies the name of the default file system for Hadoop to use (URI consisting of scheme and authority).
+     * If not set, Hadoop defaults to 'file:///'.
+     * If using hdfs Hadoop paths are auto-resolved to 'hdfs://hostname/user/current_user/specified_path
+     */
+    public static String HADOOP_DEFAULT_FS = "settings.common.hadoop.defaultFS";
+
+    /**
+     * The setting specifying the URI on which the used HDFS is located.
+     */
+    public static String HADOOP_HDFS_URI = "settings.common.hadoop.hdfs.uri";
+
+    /**
+     * Specifies the address on where to locate the ResourceManager (e.g. YARN).
+     */
+    public static String HADOOP_RESOURCEMANAGER_ADDRESS = "settings.common.hadoop.resourcemanager.address";
+
+    /**
+     * Specifies which framework is used for running mapreduce (e.g. YARN).
+     */
+    public static String HADOOP_MAPRED_FRAMEWORK = "settings.common.hadoop.mapred.framework";
+
+    /**
+     * TODO: Probably rename this
+     * Specifies where locally (?) to find the individual input files for a job
+     */
+    public static String HADOOP_MAPRED_INPUT_FILES_PARENT_DIR = "settings.common.hadoop.mapred.inputFilesParentDir";
+
+    /**
+     * The setting for the input path to use in cdx-indexing map-/reduce jobs.
+     */
+    public static String HADOOP_MAPRED_CDX_INPUT_DIR = "settings.common.hadoop.mapred.cdx.inputDir";
+
+    /**
+     * The setting for the output path to use in cdx-indexing map-/reduce jobs.
+     */
+    public static String HADOOP_MAPRED_CDX_OUTPUT_DIR = "settings.common.hadoop.mapred.cdx.outputDir";
+
+    /**
+     * The setting for the input path to use in cache map-/reduce jobs.
+     */
+    public static String HADOOP_MAPRED_CACHE_INPUT_DIR = "settings.common.hadoop.mapred.cache.inputDir";
+
+    /**
+     * The setting for the output path to use in cache map-/reduce jobs.
+     */
+    public static String HADOOP_MAPRED_CACHE_OUTPUT_DIR = "settings.common.hadoop.mapred.cache.outputDir";
+
+    /**
+     * Path on the client machine (wayback indexer machine) where the uber-jar file containing the
+     * indexing map-reduce job and dependencies is to be found
+     */
+    public static String HADOOP_MAPRED_WAYBACK_UBER_JAR = "settings.common.hadoop.mapred.waybackUberJar";
+
+    public static String HADOOP_USER_NAME = "settings.common.hadoop.username";
+
+    /**
+     * Specifies if hadoop is used for mass processing jobs.
+     */
+    public static String USING_HADOOP = "settings.common.useHadoopAsMassProcessor";
+
+
 
     /**
      * <b>settings.common.warcClient.max_total_connections</b>: </br>
@@ -558,5 +620,5 @@ public class CommonSettings {
      * Increase  default max connections per route, e.g. to 20.
      */
     public static String MAX_CONNECTIONS_PER_ROUTE = "settings.common.webinterface.warc.max_connections_per_route";
-    
+
 }

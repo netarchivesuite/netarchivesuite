@@ -207,5 +207,20 @@ National Library.
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <applicationName>NA</applicationName>
         <applicationInstanceId></applicationInstanceId>
+        <hadoop>
+            <defaultFS>hdfs://node1</defaultFS>
+            <hdfs>
+                <uri>hdfs://node1:8020</uri>
+            </hdfs>
+            <resourcemanager>
+                <address>node1:8032</address>
+            </resourcemanager>
+            <mapred>
+                <framework>yarn</framework>
+                <inputDir>nas_input</inputDir>
+                <outputDir>nas_output</outputDir>
+            </mapred>
+        </hadoop>
+        <useHadoopAsMassProcessor>true</useHadoopAsMassProcessor>
     </common>
 </settings>

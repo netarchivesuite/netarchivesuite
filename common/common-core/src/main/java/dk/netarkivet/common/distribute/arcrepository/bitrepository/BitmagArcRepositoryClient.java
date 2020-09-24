@@ -72,7 +72,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
 
     public static final String BITREPOSITORY_TEMPDIR = "settings.common.arcrepositoryClient.bitrepository.tempdir";
 
-    public static final String BITREPOSITORY_SETTINGS_DIR = "settings.common.arcrepositoryClient.bitrepository.settingsDir";
+    public static String BITREPOSITORY_SETTINGS_DIR = "settings.common.arcrepositoryClient.bitrepository.settingsDir";
 
     // optional so we don't force the user to use credentials.
     public static final String BITREPOSITORY_KEYFILENAME = "settings.common.arcrepositoryClient.bitrepository.keyfilename";
@@ -88,22 +88,27 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
 
     private final File tempdir;
 
+    private final String usepillar;
+
+    private final int maxStoreFailures;
+
     private final Bitrepository bitrep;
 
     /** Create a new BitmagArcRepositoryClient based on current settings. */
     public BitmagArcRepositoryClient() {
         this.collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
         this.tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
+        this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
+        this.maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
+
         tempdir.mkdirs();
         log.info("Storing tempfiles in folder {}", tempdir);
 
         File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
         String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
-        int maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
-        String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
 
         // Initialize connection to the bitrepository
-        this.bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
+        this.bitrep = Bitrepository.getInstance(configDir, keyfilename);
     }
 
     @Override
@@ -127,7 +132,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
             return;
         } else {
             // upload file
-            boolean uploadSuccessful = bitrep.uploadFile(file, file.getName(), collectionId);
+            boolean uploadSuccessful = bitrep.uploadFile(file, file.getName(), collectionId, maxStoreFailures);
             if (!uploadSuccessful) {
                 throw new IOFailure(
                         "Upload to collection '" + collectionId + "' of file '" + file.getName() + "' failed.");
@@ -155,7 +160,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
             log.warn("The file '{}' is not in collection '{}'. Returning null BitarchiveRecord", arcfile, collectionId);
             return null;
         } else {
-            File f = bitrep.getFile(arcfile, collectionId, null);
+            File f = bitrep.getFile(arcfile, collectionId, null, usepillar);
             return BitarchiveRecord.getBitarchiveRecord(arcfile, f, index);
         }
     }
@@ -179,7 +184,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
             log.warn("The file '{}' is not in collection '{}'.", arcfilename, collectionId);
             throw new IOFailure("File '" + arcfilename + "' does not exist");
         } else {
-            File f = bitrep.getFile(arcfilename, collectionId, null);
+            File f = bitrep.getFile(arcfilename, collectionId, null, usepillar);
             FileUtils.copyFile(f, toFile);
         }
     }
@@ -221,7 +226,7 @@ public class BitmagArcRepositoryClient implements ArcRepositoryClient {
             if (!bitrep.existsInCollection(nameToFetch, collectionId)) {
                 log.warn("The file '{}' is not in collection '{}'.", nameToFetch, collectionId);
             } else {
-                File tmpFile = bitrep.getFile(nameToFetch, this.collectionId, null);
+                File tmpFile = bitrep.getFile(nameToFetch, this.collectionId, null, usepillar);
                 File workFile = new File(tempdir, nameToFetch);
                 FileUtils.moveFile(tmpFile, workFile);
                 files.add(workFile);
