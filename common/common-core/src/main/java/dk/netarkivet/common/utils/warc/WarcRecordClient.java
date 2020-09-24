@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.utils.FileUtils;
 
 public class WarcRecordClient {
-    public static final String BITREPOSITORY_COLLECTIONID = "settings.common.arcrepositoryClient.bitrepository.collectionID";
     /** Logger for this class. */
     private static final Logger log = LoggerFactory.getLogger(WarcRecordClient.class);
     /** The amount of milliseconds in a second. 1000. */
@@ -63,7 +62,6 @@ public class WarcRecordClient {
          * Used to make one, and only one instance of closeableHttpClient
          * Constructor is called once
          */
-        private static Singleton instance;
         private static CloseableHttpClient closeableHttpClient;
 
         private Singleton() {
@@ -81,36 +79,37 @@ public class WarcRecordClient {
 
     }
 
-    public WarcRecordClient(URI baseUri) throws URISyntaxException {
+    public WarcRecordClient(URI baseUri) {
         this.baseUri = baseUri;
     }
 
+    /**
+     * Uses WarcRecordClient to call ApacheHttpClient
+     *
+     * @param uri Uniform Resource Identifier including base uri and name of file
+     * @param offset offset to fetch specific record from warc file
+     *              index must be the same as the offset that ends up in the range header
+     * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile is null
+     * @throws IOException if reading file fails
+     * @throws UnsupportedOperationException is used if method is not implemented
+     */
     public BitarchiveRecord getWarc( URI uri, long offset) throws Exception {
-        /**
-         * Uses WarcRecordClient to call ApacheHttpClient
-         *
-         * @param uri Uniform Resource Identifier including base uri and name of file
-         * @param offset offset to fetch specific record from warc file
-         *              index must be the same as the offset that ends up in the range header
-         * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile is null
-         * @throws IOException if reading file fails
-         * @throws UnsupportedOperationException is used if method is not implemented
-         */
-            RequestConfig.Builder requestBuilder = RequestConfig.custom();
-            requestBuilder.setConnectTimeout(timeout);
-            requestBuilder.setConnectionRequestTimeout(timeout);
+        RequestConfig.Builder requestBuilder = RequestConfig.custom();
+        requestBuilder.setConnectTimeout(timeout);
+        requestBuilder.setConnectionRequestTimeout(timeout);
+        BitarchiveRecord reply = null;
 
-            String fileName = Paths.get(uri.getPath()).getFileName().toString();
-            log.debug("fileName: " + fileName);
+        String fileName = Paths.get(uri.getPath()).getFileName().toString();
+        log.debug("fileName: " + fileName);
 
-            HttpUriRequest request = RequestBuilder.get()
-                    .setUri(uri)
-                    .addHeader("User-Agent",USER_AGENT)
-                    .addHeader("Range", "bytes=" + offset + "-")
-                    .build();
-            log.debug("Executing request " + request.getRequestLine());
+        HttpUriRequest request = RequestBuilder.get()
+                .setUri(uri)
+                .addHeader("User-Agent",USER_AGENT)
+                .addHeader("Range", "bytes=" + offset + "-")
+                .build();
+        log.debug("Executing request " + request.getRequestLine());
 
-            CloseableHttpClient closableHttpClient = WarcRecordClient.Singleton.getCloseableHttpClient();
+        try (CloseableHttpClient closableHttpClient = WarcRecordClient.Singleton.getCloseableHttpClient()) {
             HttpResponse httpResponse = closableHttpClient.execute(request);
             log.debug("httpResponse status: " + httpResponse.getStatusLine().toString());
             if (httpResponse.getStatusLine().getStatusCode() != 200) {
@@ -118,73 +117,57 @@ public class WarcRecordClient {
                 return null;
             }
 
-           BitarchiveRecord reply = null;
-           try {
-               HttpEntity entity = httpResponse.getEntity();
-               if (entity != null) {
-                   try {
-                        InputStream iStr = entity.getContent();
-                        ArchiveReader archiveReader = WARCReaderFactory.get("fake.warc", iStr, atFirst);
-                        ArchiveRecord archiveRecord = archiveReader.get();
-                        reply = new BitarchiveRecord(archiveRecord, fileName);
-                        log.debug("reply: " + reply.toString());
 
-                        return reply;
-                   } catch (IOException e) {
-                       log.error("IOException: ", e );
-                   } catch (UnsupportedOperationException e) {
-                       log.error("UnsupportedOperationException: ", e);
-                   }
-               }
-               else {
-                   log.error("Enity is null: '" );
-                   throw new Exception("Enity is null:");
-               }
-           }
-           catch (ClassCastException e) {
-               log.error("Received invalid argument reply: '" + reply + "'", e);
-               throw new IOFailure("Received invalid argument reply: '" + reply + "'", e);
-           }
-           finally {
-               closableHttpClient.close();
-           }
+            HttpEntity entity = httpResponse.getEntity();
+            if (entity != null) {
+                try {
+                    InputStream iStr = entity.getContent();
+                    ArchiveReader archiveReader = WARCReaderFactory.get("fake.warc", iStr, atFirst);
+                    ArchiveRecord archiveRecord = archiveReader.get();
+                    reply = new BitarchiveRecord(archiveRecord, fileName);
+                    log.debug("reply: " + reply.toString());
 
+                    return reply;
+                } catch (IOException e) {
+                    log.error("IOException: ", e );
+                } catch (UnsupportedOperationException e) {
+                    log.error("UnsupportedOperationException: ", e);
+                }
+            }
+            else {
+                log.error("Enity is null: '" );
+                throw new Exception("Enity is null:");
+            }
+        } catch (ClassCastException e) {
+            log.error("Received invalid argument reply: '" + reply + "'", e);
+            throw new IOFailure("Received invalid argument reply: '" + reply + "'", e);
+        }
         return reply;
     }
 
-    public BitarchiveRecord get(String arcfileName, long index) throws IOFailure, IOException, URISyntaxException {
-        /**
-         * Retrieves a file from a repository and places it in a local file.
-         *
-         * @param arcfilename Name of the arcfile to retrieve.
-         * @param index offset to fetch specific record from warc file
-         *              index must be the same as the offset that ends up in the range header
-         * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile is null
-         * @throws IOFailure Specific IOException from Netarkivet used if there are problems reading or writing file, or the file with the given arcfilename could not
-         * be found.
-         * @throws IOException if reading file fails
-         * @throws URISyntaxException if URI i not composed of baseUri + "/" + long name of file
-         */
-        BitarchiveRecord warcInstance = null;
+    /**
+     * Retrieves a single BitarchiveRecord from the repository from a given file and offset. If the operation fails for
+     * any reason, this method returns null.
+     *
+     * @param arcfileName Name of the arcfile to retrieve.
+     * @param index offset to fetch specific record from warc or arc file
+     */
+    public BitarchiveRecord get(String arcfileName, long index) {
 
-        ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfile");
+        BitarchiveRecord warcInstance = null;
+        try {
+            ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfile");
             ArgumentNotValid.checkNotNegative(index, "index");
 
-        log.debug("Requesting get of record '{}:{}'", arcfileName, index);
-        long start = System.currentTimeMillis();
+            log.debug("Requesting get of record '{}:{}'", arcfileName, index);
 
-        // call WarcRecordService to get the Warc record in the file on the given index
-        // and to parse it to a BitArchiveRecord
-        String strUri = this.getBaseUri().toString() + "/" + arcfileName;
-        URI uri = new URI(strUri);
-        try {
-              warcInstance = this.getWarc(uri, index);
+            String strUri = this.getBaseUri().toString() + "/" + arcfileName;
+
+            URI uri = new URI(strUri);
+            warcInstance = this.getWarc(uri, index);
         } catch (Exception e) {
             log.error("Failed to retrieve record at offset {} from file {}.", index, arcfileName, e);
-            warcInstance = null;
-            throw new IllegalArgumentException("Argument not valid");
         }
-
         return warcInstance;
     }
 

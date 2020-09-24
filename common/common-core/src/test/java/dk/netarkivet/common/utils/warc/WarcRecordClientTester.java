@@ -107,7 +107,7 @@ public class WarcRecordClientTester {
         assertFalse("Exception", fail);
     }
 
-    @Test
+    //@Test
     public void testPosBuildingBitarchiveRecord6() throws Exception {
         String filename = "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc";
         URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
