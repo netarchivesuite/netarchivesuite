@@ -1,6 +1,5 @@
 package dk.netarkivet.wayback.hadoop;
 
-import org.apache.hadoop.yarn.webapp.hamlet.HamletSpec;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
@@ -24,45 +23,45 @@ import dk.netarkivet.common.utils.batch.WARCBatchFilter;
 import dk.netarkivet.wayback.batch.UrlCanonicalizerFactory;
 
 /**
- * Class for creating CDX indexed from WARC files.
+ * Class for creating CDX indexes from archive files.
  */
 public class CDXIndexer implements Indexer {
     /** The warc record searcher.*/
     protected final WARCRecordToSearchResultAdapter warcAdapter;
     protected final ARCRecordToSearchResultAdapter arcAdapter;
     /** The CDX line creator, which creates the cdx lines from the warc records.*/
-    protected final SearchResultToCDXLineAdapter cdxLineCreater;
+    protected final SearchResultToCDXLineAdapter cdxLineCreator;
     protected final UrlCanonicalizer urlCanonicalizer;
 
     /** Constructor.*/
     public CDXIndexer() {
         warcAdapter = new WARCRecordToSearchResultAdapter();
         arcAdapter = new ARCRecordToSearchResultAdapter();
-        cdxLineCreater = new SearchResultToCDXLineAdapter();
+        cdxLineCreator = new SearchResultToCDXLineAdapter();
         urlCanonicalizer = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
     }
 
     /**
-     * Index the given WARC file.
-     * @param warcInputStream An inputstream to the given file.
-     * @param warcName The name of the given file.
+     * Index the given archive file.
+     * @param archiveInputStream An inputstream to the given file.
+     * @param archiveName The name of the given file.
      * @return The extracted CDX lines from the file.
      * @throws IOException
      */
-    public List<String> index(InputStream warcInputStream, String warcName) throws IOException {
-        ArchiveReader archiveReader = ArchiveReaderFactory.get(warcName, warcInputStream, false);
+    public List<String> index(InputStream archiveInputStream, String archiveName) throws IOException {
+        ArchiveReader archiveReader = ArchiveReaderFactory.get(archiveName, archiveInputStream, false);
         return extractCdxLines(archiveReader);
     }
 
 
     /**
-     * Create the CDX indexes from an WARC file.
-     * @param warcFile The WARC file.
-     * @return The CDX lines for the records in the WARC file.
-     * @throws IOException If it fails to read the WARC file.
+     * Create the CDX indexes from an archive file.
+     * @param archiveFile The archive file.
+     * @return The CDX lines for the records in the archive file.
+     * @throws IOException If it fails to read the archive file.
      */
-    public List<String> indexFile(File warcFile) throws IOException {
-        return index(new FileInputStream(warcFile), warcFile.getName());
+    public List<String> indexFile(File archiveFile) throws IOException {
+        return index(new FileInputStream(archiveFile), archiveFile.getName());
     }
 
 
@@ -99,13 +98,13 @@ public class CDXIndexer implements Indexer {
                if (captureSearchResult != null) {
                    //actualLinesWritten++;
                    //System.out.println("Actual cdx lines written: " + actualLinesWritten);
-                   res.add(cdxLineCreater.adapt(captureSearchResult));
+                   res.add(cdxLineCreator.adapt(captureSearchResult));
                }
            } else {
                ARCRecord arcRecord = (ARCRecord) archiveRecord;
                final CaptureSearchResult captureSearchResult = arcAdapter.adapt(arcRecord);
                if (captureSearchResult != null) {
-                   res.add(cdxLineCreater.adapt(captureSearchResult));
+                   res.add(cdxLineCreator.adapt(captureSearchResult));
                }
            }
         }
