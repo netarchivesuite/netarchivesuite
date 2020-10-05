@@ -67,32 +67,58 @@ public class WarcRecordClientTester {
         bitarchiveRecord.getData(System.out);
     }
 
-    /*
-    @Test
-    public void testBuildingBitarchiveRecord3() throws Exception {
-        String filename = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc";
-        URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
-        long offset = 3442L;
-        URI test_uri = SAMPLE_HOST;
-        WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
-        BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, offset);
-
-        File inputFile = new File("src/test/java/data.txt");
-        System.out.println(inputFile.getAbsolutePath());
-        FileInputStream fileInputStream = new FileInputStream(inputFile);
-        ArchiveReader archiveReader = WARCReaderFactory.get(filename, fileInputStream, true);
-        ArchiveRecord archiveRecord = archiveReader.get();
-        BitarchiveRecord bitarchiveRecord = new BitarchiveRecord(archiveRecord, filename);
-        bitarchiveRecord.getData(System.out);
-    }
-*/
-
     @Test
     public void testBuildingBitarchiveRecord5() throws Exception {
         String filename = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz";
         URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
         URI test_uri = SAMPLE_HOST;
         long offset = 3442L;
+        WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
+        BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, offset);
+        Boolean fail = false;
+
+        try {
+           //  BitarchiveRecord bitarchiveRecord = warcRecordClient.get(filename, offset);
+           //  bitarchiveRecord.getData(System.out);
+             warcRecord.getData(System.out);
+        } catch (NullPointerException e) {
+            System.out.println("Nullpointer Exception caused by offset errror");
+            fail = true;
+        }
+        assertFalse("Exception", fail);
+    }
+
+
+    @Test
+    public void testBuildingBitarchiveRecord8() throws Exception {
+        String filename = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz";
+        URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
+        URI test_uri = SAMPLE_HOST;
+        long offset = 0L;
+        WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
+        BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, offset);
+        Boolean fail = false;
+
+        try {
+            //  BitarchiveRecord bitarchiveRecord = warcRecordClient.get(filename, offset);
+            //  bitarchiveRecord.getData(System.out);
+            warcRecord.getData(System.out);
+        } catch (NullPointerException e) {
+            System.out.println("Nullpointer Exception caused by offset errror");
+            fail = true;
+        }
+        assertFalse("Exception", fail);
+    }
+
+
+    // Test reading .arc record
+    @Test
+    public void testBuildingBitarchiveRecord3() throws Exception {
+        String filename = "42-23-20060726143926-00000-udvikling.kb.dk.arc.gz";
+        URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
+        URI test_uri = SAMPLE_HOST;
+        long offset = 0L;
+
         WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
         BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, offset);
         Boolean fail = false;
@@ -107,12 +133,14 @@ public class WarcRecordClientTester {
         assertFalse("Exception", fail);
     }
 
-    //@Test
+    // Test for .arc records  ***** FEJLER *****
+    @Test
     public void testPosBuildingBitarchiveRecord6() throws Exception {
-        String filename = "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc";
+        String filename = "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc.gz";
         URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
         URI test_uri = SAMPLE_HOST;
-        long offset = 3442L;
+        long offset = 0;
+
         WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
         BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, offset);
         Boolean fail = false;

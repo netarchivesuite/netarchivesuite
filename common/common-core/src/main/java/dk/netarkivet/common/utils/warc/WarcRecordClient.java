@@ -25,11 +25,17 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.warc.WARCReaderFactory;
+import org.archive.io.arc.ARCReaderFactory;
+import org.jwat.arc.ArcReader;
+import org.jwat.arc.ArcReaderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.utils.FileUtils;
+
+import static org.archive.io.warc.WARCReaderFactory.isWARCSuffix;
 
 public class WarcRecordClient {
     /** Logger for this class. */
@@ -122,7 +128,14 @@ public class WarcRecordClient {
             if (entity != null) {
                 try {
                     InputStream iStr = entity.getContent();
-                    ArchiveReader archiveReader = WARCReaderFactory.get("fake.warc", iStr, atFirst);
+                    ArchiveReader archiveReader;
+
+                    if (isWARCSuffix(fileName)) {
+                        archiveReader = WARCReaderFactory.get("fake.warc", iStr, atFirst);
+                    }
+                    else {
+                        archiveReader = ARCReaderFactory.get("fake.arc", iStr, atFirst);
+                    }
                     ArchiveRecord archiveRecord = archiveReader.get();
                     reply = new BitarchiveRecord(archiveRecord, fileName);
                     log.debug("reply: " + reply.toString());
