@@ -33,7 +33,8 @@ public class TestInfo {
     static final File ARC_DIR = new File("tests/dk/netarkivet/common/utils/cdx/data/input/");
     static final File WARC_DIR = new File("tests/dk/netarkivet/common/utils/cdx/data/input/warcs");
 
-    static final File ARC_FILE1 = new File(ARC_DIR, "fyensdk.arc");
+   // static final File ARC_FILE1 = new File(ARC_DIR, "fyensdk.arc");
+   static final File ARC_FILE1 = new File(ARC_DIR, "91-7-20100212214140-00000-sb-test-har-001.statsbiblioteket.dk.arc.gz");
     static final File ARC_FILE2 = new File(ARC_DIR, "input-2.arc");
     static final File ARC_FILE3 = new File(ARC_DIR, "input-3.arc");
 

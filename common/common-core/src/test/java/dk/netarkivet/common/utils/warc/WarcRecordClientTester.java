@@ -124,7 +124,51 @@ public class WarcRecordClientTester {
         String filename = "91-7-20100212214140-00000-sb-test-har-001.statsbiblioteket.dk.arc.gz";
         URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
         URI test_uri = SAMPLE_HOST;
-        long offset = 0;
+        long offset = 0L;
+
+        WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
+        BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, offset);
+        Boolean fail = false;
+
+        try {
+            BitarchiveRecord bitarchiveRecord = warcRecordClient.get(filename, offset);
+            bitarchiveRecord.getData(System.out);
+        } catch (NullPointerException e) {
+            System.out.println("Nullpointer Exception caused by offset errror");
+            fail = true;
+        }
+        assertFalse("Exception", fail);
+    }
+
+    // Fails: nullPointer Exceptiion -but works directly against cgi-server
+    @Test
+    public void testPosBuildingBitarchiveRecord14() throws Exception {
+        String filename = "42-23-20060726143926-00000-udvikling.kb.dk.arc.gz";
+        URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
+        URI test_uri = SAMPLE_HOST;
+        long offset = 682L;
+
+        WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
+        BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, offset);
+        Boolean fail = false;
+
+        try {
+            BitarchiveRecord bitarchiveRecord = warcRecordClient.get(filename, offset);
+            bitarchiveRecord.getData(System.out);
+        } catch (NullPointerException e) {
+            System.out.println("Nullpointer Exception caused by offset errror");
+            fail = true;
+        }
+        assertFalse("Exception", fail);
+    }
+
+    // Fails: nullPointer Exceptiion -but works directly against cgi-server
+    @Test
+    public void testPosBuildingBitarchiveRecord13() throws Exception {
+        String filename = "42-23-20060726143926-00000-udvikling.kb.dk.arc.gz";
+        URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
+        URI test_uri = SAMPLE_HOST;
+        long offset = 789L;
 
         WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
         BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, offset);
@@ -141,28 +185,30 @@ public class WarcRecordClientTester {
     }
 
     // 3.rd test for .arc record at correct positive offset   ** Not yet solved **
-    /*
+/*
     @Test
     public void testPosBuildingBitarchiveRecord12() throws Exception {
-        String filename = "91-7-20100212214140-00000-sb-test-har-001.statsbiblioteket.dk.arc.gz";
+        String filename = "42-23-20060726143926-00000-udvikling.kb.dk.arc.gz";
         URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
         URI test_uri = SAMPLE_HOST;
-        long offset = 1000;  // Use the correct offset
+        boolean fail = false;
+        long offset = 789L;  // Use the correct offset
 
-        WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
-        BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, offset);
-        Boolean fail = false;
+            WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
+            BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, offset);
 
         try {
             BitarchiveRecord bitarchiveRecord = warcRecordClient.get(filename, offset);
             bitarchiveRecord.getData(System.out);
-        } catch (NullPointerException e) {
-            System.out.println("Nullpointer Exception caused by offset errror");
+        } catch (Exception e) {
+            System.out.println("Nullpointer Exception caused by offset errror ");
             fail = true;
         }
-        assertFalse("Exception", fail);
+        finally {
+            assertFalse("Exception", fail);
+        }
     }
-     */
+*/
 
     // ************** Negative tests ****************
 
