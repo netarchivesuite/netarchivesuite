@@ -43,7 +43,8 @@ public class GetFileAction implements ClientAction {
         GetFileEventHandler eventHandler = new GetFileEventHandler();
         try {
             URL url = new URL(BitmagUtils.getFileExchangeBaseURL().toExternalForm() + UUID.randomUUID().toString());
-            client.getFileFromFastestPillar(collectionID, fileID, null, url, eventHandler, null);
+            client.getFileFromFastestPillar(collectionID, fileID, null, url, eventHandler,
+                    "GetFile from NAS");
 
             eventHandler.waitForFinish();
 

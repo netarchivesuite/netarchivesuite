@@ -3,9 +3,12 @@ package dk.netarkivet.common.distribute.bitrepository.action.getchecksums;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import org.apache.commons.math3.util.Pair;
 import org.bitrepository.access.ContributorQuery;
 import org.bitrepository.access.getchecksums.GetChecksumsClient;
 import org.bitrepository.bitrepositoryelements.ChecksumDataForChecksumSpecTYPE;
@@ -23,13 +26,12 @@ import dk.netarkivet.common.distribute.bitrepository.action.ClientAction;
  */
 public class GetChecksumsAction implements ClientAction {
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ROOT);
     
     private final GetChecksumsClient checksumsClient;
     private final String collectionID;
     private final String pillarID;
     private final String fileID;
-    // TODO Add checksums together with date and fileID to some map or other structure? Need to know how this is going to be used.
+    private HashMap<String, Pair<Date, String>> result;
 
     public GetChecksumsAction(GetChecksumsClient checksumsClient, String collectionID, String pillarID, String fileID) {
         this.checksumsClient = checksumsClient;
@@ -42,27 +44,31 @@ public class GetChecksumsAction implements ClientAction {
     public void performAction() {
         GetChecksumsEventHandler eventHandler = new GetChecksumsEventHandler(pillarID);
         checksumsClient.getChecksums(collectionID, getQuery(pillarID, new Date(0)), fileID, 
-                BitmagUtils.getChecksumSpec(ChecksumType.MD5), null, eventHandler, null);
+                BitmagUtils.getChecksumSpec(ChecksumType.MD5), null, eventHandler,
+                "GetChecksums from NAS");
         
         try {
             eventHandler.waitForFinish();
             
             List<ChecksumDataForChecksumSpecTYPE> checksumData = eventHandler.getChecksumData();
-            System.out.println("Checksum:\t CalculationTime:\t FileID:");    
+            result = new HashMap<>();
             for (ChecksumDataForChecksumSpecTYPE cd : checksumData) {
                 Date calculationDate = CalendarUtils.convertFromXMLGregorianCalendar(cd.getCalculationTimestamp());
                 String checksum = Base16Utils.decodeBase16(cd.getChecksumValue());
-                System.out.printf(Locale.ROOT, "%s\t %s\t %s%n", checksum, sdf.format(calculationDate), cd.getFileID());
+                result.put(checksum, new Pair<>(calculationDate, cd.getFileID()));
             }
 
         } catch (InterruptedException e) {
             log.error("Got interrupted while waiting for operation to complete");
         }
-        
     }
-    
+
+    public HashMap<String, Pair<Date, String>> getActionResult() {
+        return result;
+    }
+
     private ContributorQuery[] getQuery(String pillarID, Date minDate) {
-        List<ContributorQuery> res = new ArrayList<ContributorQuery>();
+        List<ContributorQuery> res = new ArrayList<>();
         res.add(new ContributorQuery(pillarID, minDate, null, 10000));
         return res.toArray(new ContributorQuery[1]);
     } 
