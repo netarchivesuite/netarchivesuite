@@ -49,6 +49,7 @@ public class HadoopJobUtils {
         final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_WAYBACK_UBER_JAR);
         if (jarPath == null || !(new File(jarPath)).exists()) {
             log.warn("Specified jar file {} does not exist.", jarPath);
+            throw new RuntimeException("Jar file " + jarPath + " does not exist.");
         }
         conf.set("mapreduce.job.jar", jarPath);
         return conf;

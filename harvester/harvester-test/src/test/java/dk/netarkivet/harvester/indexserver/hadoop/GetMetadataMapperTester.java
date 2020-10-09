@@ -1,17 +1,15 @@
 package dk.netarkivet.harvester.indexserver.hadoop;
 
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.ZipUtils;
-import dk.netarkivet.common.utils.hadoop.GetMetadataMapper;
-import dk.netarkivet.common.utils.hadoop.HadoopJob;
-import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
-import dk.netarkivet.harvester.indexserver.TestInfo;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileUtil;
-import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
 import org.apache.hadoop.hdfs.MiniDFSCluster;
 import org.apache.hadoop.util.Tool;
@@ -25,16 +23,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.ZipUtils;
+import dk.netarkivet.common.utils.hadoop.GetMetadataMapper;
+import dk.netarkivet.common.utils.hadoop.HadoopJob;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
+import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
+import dk.netarkivet.harvester.indexserver.TestInfo;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 public class GetMetadataMapperTester {
     private MoveTestFiles mtf;
@@ -42,7 +38,7 @@ public class GetMetadataMapperTester {
     private MiniDFSCluster hdfsCluster;
     private File baseDir;
     private Configuration conf;
-    private MiniYARNCluster miniCluster;
+    private MiniYARNCluster miniYarnCluster;
     private DistributedFileSystem fileSystem;
 
 
@@ -61,15 +57,15 @@ public class GetMetadataMapperTester {
         conf.setInt(YarnConfiguration.RM_SCHEDULER_MINIMUM_ALLOCATION_MB, 64);
         conf.setClass(YarnConfiguration.RM_SCHEDULER,
                 FifoScheduler.class, ResourceScheduler.class);
-        miniCluster = new MiniYARNCluster("name", 1, 1, 1);
-        miniCluster.init(conf);
-        miniCluster.start();
+        miniYarnCluster = new MiniYARNCluster("name", 1, 1, 1);
+        miniYarnCluster.init(conf);
+        miniYarnCluster.start();
         // System.out.println("YARN started");
     }
 
     @After
     public void tearDown() throws IOException {
-        miniCluster.stop();
+        miniYarnCluster.stop();
         hdfsCluster.shutdown();
         FileUtil.fullyDelete(baseDir);
         mtf.tearDown();
@@ -98,7 +94,7 @@ public class GetMetadataMapperTester {
                     new String[] {"file://" + jobInputFile.toString(), outputURI});
             Assert.assertEquals(0, exitCode); // job success
 
-            List<String> metadataLines = collectHadoopResults(fileSystem, new Path(outputURI));
+            List<String> metadataLines = HadoopJobUtils.collectOutputLines(fileSystem, new Path(outputURI));
             Assert.assertEquals(624, metadataLines.size());
             //metadataLines.forEach(System.out::println);
         } finally {
@@ -127,7 +123,7 @@ public class GetMetadataMapperTester {
                     new String[] {"file://" + jobInputFile.toString(), outputURI});
             Assert.assertEquals(0, exitCode); // job success
 
-            List<String> metadataLines = collectHadoopResults(fileSystem, new Path(outputURI));
+            List<String> metadataLines = HadoopJobUtils.collectOutputLines(fileSystem, new Path(outputURI));
             Assert.assertEquals(612, metadataLines.size());
             //metadataLines.forEach(System.out::println);
         } finally {
@@ -135,40 +131,20 @@ public class GetMetadataMapperTester {
         }
     }
 
-
-    public List<String> collectHadoopResults(DistributedFileSystem fileSystem, Path outputFolderPath) throws IOException {
-        List<String> metadataLines = new ArrayList<>();
-        boolean foundResult = false;
-        RemoteIterator<LocatedFileStatus> iterator = fileSystem.listFiles(outputFolderPath, true);
-        while (iterator.hasNext()) {
-            LocatedFileStatus next = iterator.next();
-            Path nextPath = next.getPath();
-
-            if (nextPath.getName().startsWith("part-m")){
-                foundResult = true;
-
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(new BufferedInputStream(fileSystem.open(nextPath))))) {
-                    String line;
-                    while ((line = in.readLine()) != null) {
-                        metadataLines.add(line);
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        Assert.assertTrue(foundResult);
-        return metadataLines;
-    }
-
+    /**
+     * Prepare the input files for test by moving them to a temporary 'working' directory.
+     */
     public void setupTestFiles() {
         TestInfo.WORKING_DIR.mkdir();
         metadataDir = new File(TestInfo.WORKING_DIR, "metadata");
-        metadataDir.mkdir();
         mtf = new MoveTestFiles(TestInfo.METADATA_DIR, metadataDir);
         mtf.setUp();
     }
 
+    /**
+     * Unzip the compressed test files and return their insides.
+     * @return The non-compressed archive files
+     */
     public File[] getTestFiles() {
         File zipOne = new File(metadataDir, "1-metadata-1.warc.zip");
         File zipTwo = new File(metadataDir, "1-metadata-1.arc.zip");

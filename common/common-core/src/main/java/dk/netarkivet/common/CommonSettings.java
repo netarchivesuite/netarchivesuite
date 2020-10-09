@@ -569,45 +569,47 @@ public class CommonSettings {
     public static String HADOOP_MAPRED_FRAMEWORK = "settings.common.hadoop.mapred.framework";
 
     /**
-     * TODO: Probably rename this
-     * Specifies where locally (?) to find the individual input files for a job
+     * Specifies which directory to find the individual input files for a job in.
      */
     public static String HADOOP_MAPRED_INPUT_FILES_PARENT_DIR = "settings.common.hadoop.mapred.inputFilesParentDir";
 
     /**
      * The setting for the input path to use in cdx-indexing map-/reduce jobs.
      */
-    public static String HADOOP_MAPRED_CDX_INPUT_DIR = "settings.common.hadoop.mapred.cdx.inputDir";
+    public static String HADOOP_MAPRED_CDXJOB_INPUT_DIR = "settings.common.hadoop.mapred.cdxJob.inputDir";
 
     /**
      * The setting for the output path to use in cdx-indexing map-/reduce jobs.
      */
-    public static String HADOOP_MAPRED_CDX_OUTPUT_DIR = "settings.common.hadoop.mapred.cdx.outputDir";
+    public static String HADOOP_MAPRED_CDXJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.cdxJob.outputDir";
 
     /**
-     * The setting for the input path to use in cache map-/reduce jobs.
+     * The directory/path for Hadoop to use as input path in metadata extraction map-/reduce jobs.
+     * Used when Hadoop metadata extraction jobs are started by the IndexRequestServer after receiving requests.
      */
-    public static String HADOOP_MAPRED_CACHE_INPUT_DIR = "settings.common.hadoop.mapred.cache.inputDir";
+    public static String HADOOP_MAPRED_METADATAJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataJob.inputDir";
 
     /**
-     * The setting for the output path to use in cache map-/reduce jobs.
+     * The directory/path for Hadoop to use as output path in metadata extraction map-/reduce jobs.
+     * Used when Hadoop metadata extraction jobs are started by the IndexRequestServer after receiving requests.
      */
-    public static String HADOOP_MAPRED_CACHE_OUTPUT_DIR = "settings.common.hadoop.mapred.cache.outputDir";
+    public static String HADOOP_MAPRED_METADATAJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataJob.outputDir";
 
     /**
      * Path on the client machine (wayback indexer machine) where the uber-jar file containing the
-     * indexing map-reduce job and dependencies is to be found
+     * indexing map-/reduce job and dependencies is to be found.
      */
     public static String HADOOP_MAPRED_WAYBACK_UBER_JAR = "settings.common.hadoop.mapred.waybackUberJar";
 
+    /**
+     * Username to start map-/reduce jobs under on the Hadoop cluster.
+     */
     public static String HADOOP_USER_NAME = "settings.common.hadoop.username";
 
     /**
-     * Specifies if hadoop is used for mass processing jobs.
+     * Boolean specifying if Hadoop is used for mass processing jobs.
      */
     public static String USING_HADOOP = "settings.common.useHadoopAsMassProcessor";
-
-
 
     /**
      * <b>settings.common.warcClient.max_total_connections</b>: </br>

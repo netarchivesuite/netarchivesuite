@@ -171,10 +171,10 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         conf.setPattern(GetMetadataMapper.MIME_PATTERN, mimePattern);
         UUID uuid = UUID.randomUUID();
         try (FileSystem fileSystem = FileSystem.get(conf)) {
-            Path hadoopInputNameFile = HadoopFileUtils.initExtractionJobInput(fileSystem, uuid);
+            Path hadoopInputNameFile = HadoopFileUtils.createExtractionJobInputFilePath(fileSystem, uuid);
             log.info("Hadoop input file will be '{}'", hadoopInputNameFile);
 
-            Path jobOutputDir = HadoopFileUtils.initExtractionJobOutput(fileSystem, uuid);
+            Path jobOutputDir = HadoopFileUtils.createExtractionJobOutputDirPath(fileSystem, uuid);
             log.info("Output directory for job is '{}'", jobOutputDir);
 
             if (hadoopInputNameFile == null || jobOutputDir == null) {
@@ -202,8 +202,8 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 return null;
             }
 
-            log.info("Starting metadata extraction job on {} file(s) matching pattern '{}'",
-                    filePaths.size(), specifiedPattern);
+            log.info("Starting metadata extraction job on {} file(s) matching pattern '{}'. URL/MIME patterns used for"
+                    + " job are '{}' and '{}'", filePaths.size(), specifiedPattern, urlPattern, mimePattern);
             int exitCode = 0;
             try {
                 log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
@@ -256,10 +256,10 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             conf.setPattern(GetMetadataMapper.URL_PATTERN, Pattern.compile(".*duplicationmigration.*"));
             conf.setPattern(GetMetadataMapper.MIME_PATTERN, Pattern.compile("text/plain"));
             UUID uuid = UUID.randomUUID();
-            Path hadoopInputNameFile = HadoopFileUtils.initExtractionJobInput(fileSystem, uuid);
+            Path hadoopInputNameFile = HadoopFileUtils.createExtractionJobInputFilePath(fileSystem, uuid);
             log.info("Hadoop input file will be '{}'", hadoopInputNameFile);
 
-            Path jobOutputDir = HadoopFileUtils.initExtractionJobOutput(fileSystem, uuid);
+            Path jobOutputDir = HadoopFileUtils.createExtractionJobOutputDirPath(fileSystem, uuid);
             log.info("Output directory for job is '{}'", jobOutputDir);
 
             if (hadoopInputNameFile == null || jobOutputDir == null) {
@@ -287,8 +287,8 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 return;
             }
 
-            log.info("Starting metadata extraction job on {} file(s) matching pattern '{}'",
-                    filePaths.size(), specifiedPattern);
+            log.info("Starting metadata extraction job on {} file(s) matching pattern '{}'. URL/MIME patterns used for"
+                    + " job are '{}' and '{}'", filePaths.size(), specifiedPattern, urlPattern, mimePattern);
             int exitCode = 0;
             try {
                 log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
