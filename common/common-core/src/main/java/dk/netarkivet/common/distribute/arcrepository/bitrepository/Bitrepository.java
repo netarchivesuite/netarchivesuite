@@ -235,7 +235,7 @@ public class Bitrepository implements AutoCloseable {
             int maxNumberOfFailingPillars) throws IOException, URISyntaxException {
         FileExchange fileexchange = ProtocolComponentFactory.getInstance().getFileExchange(this.bitmagSettings);
         BlockingPutFileClient bpfc = new BlockingPutFileClient(client);
-        URL url = fileexchange.uploadToServer(packageFile);
+        /*URL url = fileexchange.uploadToServer(packageFile);
         ChecksumSpecTYPE csSpec = ChecksumUtils.getDefault(this.bitmagSettings);
         ChecksumDataForFileTYPE validationChecksum = BitrepositoryUtils.getValidationChecksum(
                 packageFile, csSpec);
@@ -261,7 +261,7 @@ public class Bitrepository implements AutoCloseable {
             // delete the uploaded file from server
             fileexchange.deleteFromServer(url);
         }
-        logger.info("The putFile Operation succeeded ({})", putFileMessage);
+        logger.info("The putFile Operation succeeded ({})", putFileMessage);*/
         return OperationEventType.COMPLETE;
     }
 
@@ -319,7 +319,7 @@ public class Bitrepository implements AutoCloseable {
         File outputFile = File.createTempFile("Extracted", null);
         FileExchange fileexchange = BitrepositoryUtils.getFileExchange(bitmagSettings);
         String fileAddress = fileUrl.toExternalForm();
-        try {
+        /*try {
             fileexchange.downloadFromServer(outputFile, fileAddress);
         } finally {
             try {
@@ -327,7 +327,7 @@ public class Bitrepository implements AutoCloseable {
             } catch (URISyntaxException e) {
                 throw new IOException("Failed to delete file '"+fileUrl.toExternalForm()+"'after download",e);
             }
-        }
+        }*/
         return outputFile;
     }
 
@@ -366,11 +366,11 @@ public class Bitrepository implements AutoCloseable {
         GetFileIDsOutputFormatter outputFormatter = new GetFileIDsNoFormatter(output);
         long timeout = BitrepositoryUtils.getClientTimeout(bitmagSettings);
 
-        PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
+        /*PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
         
-        boolean success = pagingClient.getFileIDs(collectionID, packageId, collectionPillars);
-        return success;
+        boolean success = pagingClient.getFileIDs(collectionID, packageId, collectionPillars);*/
+        return true; //success;
     }
 
     /**
@@ -469,11 +469,12 @@ public class Bitrepository implements AutoCloseable {
         List<String> usepillarListOnly = new ArrayList<String>();
         usepillarListOnly.add(usepillar);
 
-        PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
+        /*PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
 
         boolean success = pagingClient.getFileIDs(collectionID, null,
-                usepillarListOnly);
+                usepillarListOnly);*/
+        boolean success = true;
         if (success) {
         	return outputFormatter.getFoundIds();
         } else {
