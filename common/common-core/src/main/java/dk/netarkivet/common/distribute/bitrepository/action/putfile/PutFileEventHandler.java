@@ -27,6 +27,11 @@ public class PutFileEventHandler implements EventHandler {
     private boolean finished = false;
     private boolean failed = false;
 
+    /**
+     * Constructor
+     * @param targetFile The file to put in the bitrepository
+     * @param uploadURL The url where the file is uploaded to if the action is successful
+     */
     public PutFileEventHandler(File targetFile, URL uploadURL) {
         this.targetFile = targetFile;
         this.uploadURL = uploadURL;

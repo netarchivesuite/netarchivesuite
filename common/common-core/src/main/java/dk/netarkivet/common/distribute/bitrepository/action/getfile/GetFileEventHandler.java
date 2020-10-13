@@ -55,7 +55,7 @@ public class GetFileEventHandler implements EventHandler {
      */
     public void waitForFinish() throws InterruptedException {
         synchronized (finishLock) {
-            if(finished == false) {
+            if(!finished) {
                 log.trace("Thread waiting for client to finish");
                 finishLock.wait();
             }

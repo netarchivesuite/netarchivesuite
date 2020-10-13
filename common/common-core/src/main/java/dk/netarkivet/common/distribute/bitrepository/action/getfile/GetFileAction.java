@@ -25,6 +25,13 @@ public class GetFileAction implements ClientAction {
     private final String collectionID;
     private final String fileID;
 
+    /**
+     * Constructor to instantiate the get-file action
+     * @param client The client to perform the action on
+     * @param collectionID The ID of a known collection to operate on
+     * @param fileID The ID of a known pillar to download the file from
+     * @param targetFile A File specifying a path to download the file to
+     */
     public GetFileAction(GetFileClient client, String collectionID, String fileID, File targetFile) {
         this.client = client;
         this.collectionID = collectionID;

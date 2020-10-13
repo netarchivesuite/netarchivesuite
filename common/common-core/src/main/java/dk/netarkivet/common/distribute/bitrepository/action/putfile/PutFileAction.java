@@ -31,6 +31,13 @@ public class PutFileAction implements ClientAction {
     private final PutFileClient client;
     private final File targetFile;
 
+    /**
+     * Constructor to instantiate the put-file action
+     * @param client The client to perform the action on
+     * @param collectionID The ID of a known collection to put the file in
+     * @param targetFile The File to put in the bitrepository
+     * @param fileID ID for the targetFile to have in the bitrepository once it's been uploaded
+     */
     public PutFileAction(PutFileClient client, String collectionID, File targetFile, String fileID) {
         this.client = client;
         this.collectionID = collectionID;
