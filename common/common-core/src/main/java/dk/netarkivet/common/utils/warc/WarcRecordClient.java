@@ -105,6 +105,8 @@ public class WarcRecordClient {
         requestBuilder.setConnectionRequestTimeout(timeout);
         BitarchiveRecord reply = null;
 
+        if (offset > 0L)
+            atFirst = false;
         String fileName = Paths.get(uri.getPath()).getFileName().toString();
         log.debug("fileName: " + fileName);
 
@@ -143,8 +145,7 @@ public class WarcRecordClient {
                     return reply;
                 } catch (IOException e) {
                     log.error("IOException: ", e );
-                } catch (UnsupportedOperationException e) {
-                    log.error("UnsupportedOperationException: ", e);
+                    System.out.println(e.getStackTrace());
                 }
             }
             else {
