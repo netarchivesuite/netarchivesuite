@@ -3,18 +3,12 @@ package dk.netarkivet.common.tools;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.math3.util.Pair;
-
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 import dk.netarkivet.common.distribute.bitrepository.action.ClientAction;
-import dk.netarkivet.common.distribute.bitrepository.action.getchecksums.GetChecksumsAction;
 import dk.netarkivet.common.distribute.bitrepository.action.getfile.GetFileAction;
 import dk.netarkivet.common.distribute.bitrepository.action.getfileids.GetFileIDsAction;
 import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction;
@@ -37,13 +31,6 @@ public class BitmagSimpleApplication {
         try {
             String action = args[0];
             switch (action) {
-            case "getchecksums":
-                collectionID = args[1];
-                pillarID = args[2];
-                fileID = args[3];
-                clientAction = new GetChecksumsAction(BitmagUtils.getChecksumsClient(), collectionID, pillarID,
-                        fileID);
-                break;
             case "getfile":
                 collectionID = args[1];
                 fileID = args[2];
@@ -64,7 +51,6 @@ public class BitmagSimpleApplication {
                 break;
             case "help":
                 System.out.println("Valid actions:");
-                System.out.println("getchecksums <collectionID> <pillarID> <fileID>");
                 System.out.println("getfile <collectionID> <fileID> <targetFile>");
                 System.out.println("getfileids <collectionID> <pillarID>");
                 System.out.println("putfile <collectionID> <targetFile> <fileID>");
@@ -81,14 +67,7 @@ public class BitmagSimpleApplication {
         if (clientAction instanceof GetFileIDsAction) {
             Set<String> res = ((GetFileIDsAction) clientAction).getActionResult();
             res.forEach(System.out::println);
-        } else if (clientAction instanceof GetChecksumsAction) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ROOT);
-            HashMap<String, Pair<Date, String>> res = ((GetChecksumsAction) clientAction).getActionResult();
-            System.out.println("Checksum:\t CalculationTime:\t FileID:");
-            res.forEach((checksum, dateNamePair) -> System.out.println(checksum + "\t" + sdf.format(dateNamePair.getFirst()) +
-                    "\t" + dateNamePair.getSecond()));
         }
-
         System.exit(0);
     }
 }
