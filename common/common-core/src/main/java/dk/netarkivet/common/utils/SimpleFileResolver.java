@@ -2,6 +2,7 @@ package dk.netarkivet.common.utils;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.ArrayList;
@@ -23,11 +24,12 @@ public class SimpleFileResolver implements FileResolver {
         this.directory = directory;
     }
 
-    @Override public List<Path> getPaths(PathMatcher filepattern) {
+    @Override public List<Path> getPaths(String filepattern) {
+        PathMatcher globPattern = FileSystems.getDefault().getPathMatcher("glob:"+filepattern);
         File[] dirContents = new File(directory.toString()).listFiles(
             new FilenameFilter() {
                 @Override public boolean accept(File dir, String name) {
-                    return filepattern.matches(new File(name).toPath());
+                    return globPattern.matches(new File(name).toPath());
                 }
             }
         );

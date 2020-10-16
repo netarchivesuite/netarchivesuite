@@ -26,6 +26,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
+import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.warc.WARCReaderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +123,8 @@ public class WarcRecordClient {
             if (entity != null) {
                 try {
                     InputStream iStr = entity.getContent();
-                    ArchiveReader archiveReader = WARCReaderFactory.get("fake.warc", iStr, atFirst);
+                    //ArchiveReader archiveReader = WARCReaderFactory.get("fake.warc", iStr, atFirst);
+                    ArchiveReader archiveReader = ARCReaderFactory.get("fake.arc", iStr, false);
                     ArchiveRecord archiveRecord = archiveReader.get();
                     reply = new BitarchiveRecord(archiveRecord, fileName);
                     log.debug("reply: " + reply.toString());
@@ -130,8 +132,10 @@ public class WarcRecordClient {
                     return reply;
                 } catch (IOException e) {
                     log.error("IOException: ", e );
+                    e.printStackTrace();
                 } catch (UnsupportedOperationException e) {
                     log.error("UnsupportedOperationException: ", e);
+                    e.printStackTrace();
                 }
             }
             else {

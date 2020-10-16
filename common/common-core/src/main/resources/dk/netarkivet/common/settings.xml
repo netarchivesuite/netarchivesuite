@@ -222,5 +222,8 @@ National Library.
             </mapred>
         </hadoop>
         <useHadoopAsMassProcessor>true</useHadoopAsMassProcessor>
+        <fileResolver>
+            <class>dk.netarkivet.common.utils.FileResolverRESTClient</class>
+        </fileResolver>
     </common>
 </settings>

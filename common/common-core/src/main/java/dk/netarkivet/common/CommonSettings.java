@@ -623,4 +623,14 @@ public class CommonSettings {
      */
     public static String MAX_CONNECTIONS_PER_ROUTE = "settings.common.webinterface.warc.max_connections_per_route";
 
+    /**
+     * The implementation of FileResolver to use
+     */
+    public static String FILE_RESOLVER_CLASS = "settings.common.fileResolver.class";
+
+    /**
+     * The base url for the REST implementation of FileResolver.
+     */
+    public static String FILE_RESOLVER_BASE_URL = "settings.common.fileResolver.baseUrl";
+
 }

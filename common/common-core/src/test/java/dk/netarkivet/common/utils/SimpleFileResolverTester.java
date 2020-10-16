@@ -37,7 +37,7 @@ public class SimpleFileResolverTester {
     public void testGetPathsOnMatchingPattern() {
         filePattern = ".*\\.xml";
         matcher = FileSystems.getDefault().getPathMatcher("regex:" + filePattern);
-        List<Path> paths = fileResolver.getPaths(matcher);
+        List<Path> paths = fileResolver.getPaths(filePattern);
         Assert.assertTrue(paths.size() >= 2);
         paths.forEach(Assert::assertNotNull);
     }
@@ -47,7 +47,7 @@ public class SimpleFileResolverTester {
     public void testGetPathsOnNonMatchingPattern() {
         filePattern = "non(-matching)?.*\\.xml";
         matcher = FileSystems.getDefault().getPathMatcher("regex:" + filePattern);
-        List<Path> paths = fileResolver.getPaths(matcher);
+        List<Path> paths = fileResolver.getPaths(filePattern);
         Assert.assertTrue(paths.isEmpty());
     }
 }
