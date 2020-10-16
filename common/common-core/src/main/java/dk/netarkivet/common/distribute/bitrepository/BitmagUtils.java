@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.UUID;
 
 import javax.jms.JMSException;
 
@@ -14,7 +15,6 @@ import org.bitrepository.access.getfileids.GetFileIDsClient;
 import org.bitrepository.bitrepositoryelements.ChecksumDataForFileTYPE;
 import org.bitrepository.bitrepositoryelements.ChecksumSpecTYPE;
 import org.bitrepository.bitrepositoryelements.ChecksumType;
-import org.bitrepository.client.CommandLineSettingsProvider;
 import org.bitrepository.common.ArgumentValidator;
 import org.bitrepository.common.settings.Settings;
 import org.bitrepository.common.settings.SettingsProvider;
@@ -48,8 +48,7 @@ public class BitmagUtils {
     private static Settings settings;
     private static SecurityManager securityManager;
     private static Path certificate;
-    private static Path configDir;
-       
+
     /**
      * Method to initialize the utility class. Must be called prior to use of any other method 
      * as it initializes internal state.
@@ -58,9 +57,8 @@ public class BitmagUtils {
      * @param clientCertificate Path to the clients certificate.   
      */
     public static void initialize(Path configurationDir, Path clientCertificate) {
-        configDir = configurationDir;
         certificate = clientCertificate;
-        settings = loadSettings(configDir);
+        settings = loadSettings(configurationDir);
         securityManager = loadSecurityManager(); 
     }
     
@@ -70,7 +68,7 @@ public class BitmagUtils {
      */
     private static Settings loadSettings(Path configurationDir) {
         SettingsProvider settingsLoader =
-                new CommandLineSettingsProvider(new XMLFileSettingsLoader(configurationDir.toString()));
+                new SettingsProvider(new XMLFileSettingsLoader(configurationDir.toString()), generateComponentID());
         Settings settings = settingsLoader.getSettings();
         SettingsUtils.initialize(settings);
         return settings;
@@ -106,7 +104,16 @@ public class BitmagUtils {
     public static List<String> getKnownCollections() {
         return SettingsUtils.getAllCollectionsIDs();
     }
-    
+
+    /**
+     * Generates a component id, which includes the hostname and a random UUID.
+     * @return The Bitrepository component id for this NetarchiveSuite application.
+     */
+    public static String generateComponentID() {
+        String hn = HostNameUtils.getHostName();
+        return "NetarchivesuiteClient-" + hn + "-" + UUID.randomUUID();
+    }
+
     /**
      * Method to get the base part of the URL to the file exchange server. 
      * @return {@link URL} URL with the base part of the file exchange server.  

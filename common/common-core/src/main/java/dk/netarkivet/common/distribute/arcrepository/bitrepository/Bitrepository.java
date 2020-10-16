@@ -363,7 +363,7 @@ public class Bitrepository implements AutoCloseable {
 
         OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
 
-        GetFileIDsOutputFormatter outputFormatter = new GetFileIDsNoFormatter(output);
+        //GetFileIDsOutputFormatter outputFormatter = new GetFileIDsNoFormatter(output);
         long timeout = BitrepositoryUtils.getClientTimeout(bitmagSettings);
 
         /*PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
@@ -463,7 +463,7 @@ public class Bitrepository implements AutoCloseable {
     public List<String> getFileIds(String collectionID, String usepillar) {
 
     	OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
-        GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
+        //GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
 
         long timeout = BitrepositoryUtils.getClientTimeout(bitmagSettings);
         List<String> usepillarListOnly = new ArrayList<String>();
@@ -476,7 +476,8 @@ public class Bitrepository implements AutoCloseable {
                 usepillarListOnly);*/
         boolean success = true;
         if (success) {
-        	return outputFormatter.getFoundIds();
+            return null;
+        	//return outputFormatter.getFoundIds();
         } else {
         	return null;
         }

@@ -38,6 +38,7 @@ import org.bitrepository.protocol.FileExchange;
 import org.bitrepository.protocol.ProtocolComponentFactory;
 import org.bitrepository.settings.repositorysettings.ClientSettings;
 
+import dk.netarkivet.common.distribute.bitrepository.HostNameUtils;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /** Utilities used by the Bitrepository class. */
