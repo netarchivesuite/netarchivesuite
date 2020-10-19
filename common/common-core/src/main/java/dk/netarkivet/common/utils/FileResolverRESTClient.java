@@ -54,12 +54,13 @@ public class FileResolverRESTClient implements FileResolver {
             HttpUriRequest request = RequestBuilder.get()
                     .setUri(baseUrl + filepattern)
                     .build();
-            CloseableHttpResponse httpResponse = httpClient.execute(request);
-            InputStream istr = httpResponse.getEntity().getContent();
-            List<String> results = IOUtils.readLines(istr);
-            httpResponse.close();
-            return results.stream().map(pathString -> Paths.get(pathString)).collect(Collectors.toList());
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                InputStream istr = httpResponse.getEntity().getContent();
+                List<String> results = IOUtils.readLines(istr);
+                return results.stream().map(pathString -> Paths.get(pathString)).collect(Collectors.toList());
+            }
         } catch (IOException e) {
+            log.error("Problem resolving file " +filepattern, e);
             return new ArrayList<>();
         }
     }
