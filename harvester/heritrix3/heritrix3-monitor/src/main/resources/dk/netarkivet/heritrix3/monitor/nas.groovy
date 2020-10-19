@@ -345,7 +345,8 @@ void showFilters() {
 void addFilter(String pat) {
 	if(pat.length() > 0) {
 		Pattern myRegex = Pattern.compile(pat)
-		regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
+		//regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule }
+		regexRuleObj = appCtx.getBean("scope").rules.find{ it.class == org.archive.modules.deciderules.MatchesListRegexDecideRule && it.decision == org.archive.modules.deciderules.DecideResult.REJECT}
 		//to store our manually added filters, we have to put them in a map
 		def originalIndexSize = job.jobContext.data.get("original-filters-size")
 		if(originalIndexSize == null) {
