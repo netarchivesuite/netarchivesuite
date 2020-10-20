@@ -16,10 +16,11 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * Hadoop Mapper for creating the CDX indexes.
  *
- * The input is a key (not used) and a Text line, which we assume is the path to an WARC file.
+ * The input is a key (not used) and a Text line, which we assume is the path to an archive file.
  * The output is an exit code (not used), and the generated CDX lines.
  */
 public class CDXMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
@@ -35,21 +36,21 @@ public class CDXMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
     /**
      * Mapping method.
      *
-     * @param linenumber  The linenumber. Is ignored.
-     * @param warcPath The path to the WARC file.
+     * @param linenumber The linenumber. Is ignored.
+     * @param archiveFilePath The path to the archive file.
      * @param context Context used for writing output.
      * @throws IOException If it fails to generate the CDX indexes.
      */
     @Override
-    protected void map(LongWritable linenumber, Text warcPath, Context context) throws IOException,
+    protected void map(LongWritable linenumber, Text archiveFilePath, Context context) throws IOException,
             InterruptedException {
         // reject empty or null warc paths.
-        if(warcPath == null || warcPath.toString().trim().isEmpty()) {
+        if (archiveFilePath == null || archiveFilePath.toString().trim().isEmpty()) {
             log.warn("Encountered empty path in job {}", context.getJobID().toString());
             return;
         }
 
-        Path path = new Path(warcPath.toString());
+        Path path = new Path(archiveFilePath.toString());
         List<String> cdxIndexes;
         Indexer indexer;
 
@@ -70,7 +71,7 @@ public class CDXMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
         } else {
             log.info("Indexing archive file '{}'", path);
             try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
-                cdxIndexes = cdxIndexer.index(in, warcPath.toString());
+                cdxIndexes = cdxIndexer.index(in, archiveFilePath.toString());
             }
         }
         for (String cdxIndex : cdxIndexes) {

@@ -9,15 +9,15 @@ public interface FileResolver {
     /**
      * Return a list of file-paths matching a given pattern. Empty if there
      * are no matching files.
-     * @param filepattern
-     * @return
+     * @param filepattern Pattern to match.
+     * @return The list of matching file-paths.
      */
     List<Path> getPaths(PathMatcher filepattern);
 
     /**
      * Return a single path to a given file, or null if the file is not found.
-     * @param filename
-     * @return
+     * @param filename The filename to resolve.
+     * @return Path representing the file.
      */
     Path getPath(String filename);
 

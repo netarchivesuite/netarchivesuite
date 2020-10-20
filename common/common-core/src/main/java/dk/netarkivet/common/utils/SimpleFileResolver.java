@@ -11,6 +11,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A simple file resolver for resolving local files against a parent directory to get
+ * Path objects representing these files
+ */
 public class SimpleFileResolver implements FileResolver {
     private static final Logger log = LoggerFactory.getLogger(SimpleFileResolver.class);
     Path directory;
@@ -28,7 +32,7 @@ public class SimpleFileResolver implements FileResolver {
             }
         );
         if (dirContents == null) {
-            log.debug("No files found in {}. Returning empty list.", directory);
+            log.debug("No files found in directory '{}'. Returning empty list.", directory);
             return Collections.emptyList();
         }
         List<Path> result = new ArrayList<>();
@@ -43,6 +47,10 @@ public class SimpleFileResolver implements FileResolver {
     }
 
     @Override public Path getPath(String filename) {
-        return directory.resolve(filename);
+        Path path = directory.resolve(filename);
+        if (!path.toFile().exists()) {
+            return null;
+        }
+        return path;
     }
 }

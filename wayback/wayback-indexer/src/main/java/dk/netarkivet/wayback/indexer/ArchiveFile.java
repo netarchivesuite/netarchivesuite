@@ -218,9 +218,9 @@ public class ArchiveFile {
         UUID uuid = UUID.randomUUID();
         log.info("File {} indexed with job uuid for i/o {}.", this.filename, uuid);
         try (FileSystem fileSystem = FileSystem.get(conf)) {
-            String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDX_INPUT_DIR);
+            String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_INPUT_DIR);
             if (hadoopInputDir == null) {
-                log.error("Parent input dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CDX_INPUT_DIR);
+                log.error("Parent input dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CDXJOB_INPUT_DIR);
                 return;
             }
             try {
@@ -232,9 +232,9 @@ public class ArchiveFile {
             Path hadoopInputNameFile = new Path(hadoopInputDir, uuid.toString());
             log.info("Hadoop input file will be {}", hadoopInputNameFile);
 
-            String parentOutputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDX_OUTPUT_DIR);
+            String parentOutputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_OUTPUT_DIR);
             if (parentOutputDir == null) {
-                log.error("Parent output dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CDX_OUTPUT_DIR);
+                log.error("Parent output dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CDXJOB_OUTPUT_DIR);
                 return;
             }
             try {
@@ -285,7 +285,7 @@ public class ArchiveFile {
      */
     private void hadoopHDFSIndex() {
         // For now only handles WARC files
-        String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDX_INPUT_DIR);
+        String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_INPUT_DIR);
         // As each file for now has its own job, the inputfile for each job
         // is just made unique from the archivefile's name
         Path hadoopInputNameFile = new Path(
@@ -327,7 +327,7 @@ public class ArchiveFile {
                 // TODO Guess conditioning on which file it is should be handled here by designating different mapper classes
                 int exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMapper()),
                         new String[] {
-                                hadoopInputNameFile.getName(), Settings.get(CommonSettings.HADOOP_MAPRED_CDX_OUTPUT_DIR)});
+                                hadoopInputNameFile.getName(), Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_OUTPUT_DIR)});
 
                 if (exitCode != 0) {
                     log.warn("Hadoop job failed with exit code '{}'", exitCode);
@@ -337,7 +337,7 @@ public class ArchiveFile {
                         log.warn("Problem closing FileSystem: ", e);
                     }
                 } else {
-                    collectHadoopResults(fs, new Path(Settings.get(CommonSettings.HADOOP_MAPRED_CDX_OUTPUT_DIR)));
+                    collectHadoopResults(fs, new Path(Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_OUTPUT_DIR)));
                 }
             } catch (Exception e) {
                 log.warn("Running hadoop job threw exception", e);

@@ -71,10 +71,8 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
         }
 
         Path path = new Path(filePath.toString());
-        try {
-            FileSystem fs = path.getFileSystem(context.getConfiguration());
+        try (FileSystem fs = path.getFileSystem(context.getConfiguration())) {
             try (InputStream in = new BufferedInputStream(fs.open(path))) {
-                List<String> metadataLines = new ArrayList<>();
                 try (ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true)) {
                     for (ArchiveRecord archiveRecord : archiveReader) {
                         ArchiveRecordBase record = ArchiveRecordBase.wrapArchiveRecord(archiveRecord);
@@ -87,29 +85,36 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
                         boolean recordHeaderMatchesPatterns = urlMatcher.matcher(header.getUrl()).matches()
                                 && mimeMatcher.matcher(header.getMimetype()).matches();
                         if (recordHeaderMatchesPatterns) {
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(record.getInputStream()));
-                            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                                metadataLines.add(line);
-                            }
+                            writeRecordMetadataLinesToContext(record, path, context);
                         }
                     }
                 } catch (IOException e) {
                     log.warn("Failed creating archiveReader from archive file located at '{}'", filePath.toString());
-                }
-
-                for (int i = 0; i < metadataLines.size(); i++) {
-                    String line = metadataLines.get(i);
-                    try {
-                        context.write(NullWritable.get(), new Text(line));
-                    } catch (Exception e) {
-                        log.warn("Failed writing metadata line #{} for input file '{}'.", i, path.toString());
-                    }
                 }
             } catch (IOException e) {
                 log.error("Could not read input file at '{}'.", path.toString());
             }
         } catch (IOException e) {
             log.error("Could not get FileSystem from configuration", e);
+        }
+    }
+
+    /**
+     * Reads a record line by line and writes the metadata lines to output
+     *
+     * @param record The current record.
+     * @param path Path for the input file the job is run on.
+     * @param context The mapping context.
+     */
+    private void writeRecordMetadataLinesToContext(ArchiveRecordBase record, Path path, Context context) {
+        int lineCount = 0;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(record.getInputStream()))) {
+            for (String metadataLine = reader.readLine(); metadataLine != null; metadataLine = reader.readLine()) {
+                context.write(NullWritable.get(), new Text(metadataLine));
+                lineCount++;
+            }
+        } catch (Exception e) {
+            log.warn("Failed writing metadata line #{} for input file '{}'.", lineCount, path.toString());
         }
     }
 }

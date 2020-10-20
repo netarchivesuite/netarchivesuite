@@ -4,10 +4,7 @@ import static dk.netarkivet.common.utils.hadoop.HadoopJobUtils.DEFAULT_FILESYSTE
 import static dk.netarkivet.common.utils.hadoop.HadoopJobUtils.MAPREDUCE_FRAMEWORK;
 import static dk.netarkivet.common.utils.hadoop.HadoopJobUtils.YARN_RESOURCEMANAGER_ADDRESS;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -121,5 +118,4 @@ public class CDXJobTest {
         Files.write(localInputTempfile, fileData.getBytes());
         return localInputTempfile;
     }
-
 }
