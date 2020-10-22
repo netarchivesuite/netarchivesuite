@@ -33,12 +33,16 @@ public class WarcRecordClientTester {
 
     @Test
     public void testGet() throws Exception {
-        final URI  baseUri = new URI("http://localhost:8883/cgi-bin2/py1.cgi");
-        WarcRecordClient warcRecordClient = new WarcRecordClient(baseUri);
-        BitarchiveRecord bitarchiveRecord = warcRecordClient.get("10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz", 3442L);
-        assertNotNull("Should have non null BitarchiveRecord", bitarchiveRecord);
-        assertTrue("Expect a non-zero length bitarchiveRecord",IOUtils.toByteArray(bitarchiveRecord.getData()).length > 100);
-
+        for (int i=0; i < 40; i++) {
+            final URI baseUri = new URI("http://localhost:8883/cgi-bin2/py1.cgi");
+            WarcRecordClient warcRecordClient = new WarcRecordClient(baseUri);
+            BitarchiveRecord bitarchiveRecord = warcRecordClient
+                    .get("10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz", 3442L);
+            assertNotNull("Should have non null BitarchiveRecord", bitarchiveRecord);
+            assertTrue("Expect a non-zero length bitarchiveRecord",
+                    IOUtils.toByteArray(bitarchiveRecord.getData()).length > 100);
+            System.out.println(i);
+        }
     }
 
     // test read first existing warc record from file thisisa.warc

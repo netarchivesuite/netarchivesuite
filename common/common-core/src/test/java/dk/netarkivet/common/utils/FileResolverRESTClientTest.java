@@ -66,6 +66,21 @@ public class FileResolverRESTClientTest {
     }
 
     @Test
+    public void getPathNoSuchFile() {
+        String filename = "foobar10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz";
+        Path path = fileResolver.getPath(filename);
+        assertNull("Expected null, not " + path, path);
+    }
+
+    @Test
+    public void getPathsEmpty() {
+        String byJobNumber = "foobar1-*.warc*";
+        List<Path> paths = fileResolver.getPaths(byJobNumber);
+        assertTrue("Expected 0 results not " + paths, paths.isEmpty());
+    }
+
+
+    @Test
     public void testManyRuns() {
         for (int i = 0; i<40; i++ ) {
             String filename = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz";
@@ -75,5 +90,7 @@ public class FileResolverRESTClientTest {
             System.out.println("Done: " + i);
         }
     }
+
+
 
 }

@@ -3,6 +3,8 @@ package dk.netarkivet.common.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,8 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
@@ -28,9 +28,9 @@ public class FileResolverRESTClient implements FileResolver {
 
     private static final Logger log = LoggerFactory.getLogger(FileResolverRESTClient.class);
 
-    private URL baseUrl;
+    private final URL baseUrl;
 
-    private static PoolingHttpClientConnectionManager cManager = new PoolingHttpClientConnectionManager();
+    private static final PoolingHttpClientConnectionManager cManager = new PoolingHttpClientConnectionManager();
 
 
 
@@ -42,8 +42,8 @@ public class FileResolverRESTClient implements FileResolver {
             log.error("Malformed Url for FileResolver", e);
             throw new RuntimeException(e);
         }
-        cManager.setMaxTotal(20);
-        cManager.setDefaultMaxPerRoute(20);
+        cManager.setMaxTotal(Settings.getInt(CommonSettings.MAX_TOTAL_CONNECTIONS));
+        cManager.setDefaultMaxPerRoute(Settings.getInt(CommonSettings.MAX_CONNECTIONS_PER_ROUTE));
     }
 
 
@@ -51,21 +51,30 @@ public class FileResolverRESTClient implements FileResolver {
     @Override public List<Path> getPaths(String filepattern) {
         try {
             CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(cManager).build();
+            URL url = new URL(baseUrl + "/" + filepattern).toURI().normalize().toURL();
             HttpUriRequest request = RequestBuilder.get()
-                    .setUri(baseUrl + filepattern)
+                    .setUri(url.toString())
                     .build();
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 InputStream istr = httpResponse.getEntity().getContent();
                 List<String> results = IOUtils.readLines(istr);
-                return results.stream().map(pathString -> Paths.get(pathString)).collect(Collectors.toList());
+                return results.stream()
+                        .filter(path -> !"".equals(path.trim()))
+                        .map(pathString -> Paths.get(pathString.trim()))
+                        .collect(Collectors.toList());
             }
-        } catch (IOException e) {
-            log.error("Problem resolving file " +filepattern, e);
+        } catch (IOException | URISyntaxException e) {
+            log.error("Problem resolving file " + filepattern, e);
             return new ArrayList<>();
         }
     }
 
     @Override public Path getPath(String filename) {
-        return getPaths(filename).get(0);
+        final List<Path> paths = getPaths(filename);
+        if (!paths.isEmpty()) {
+            return paths.get(0);
+        } else {
+            return null;
+        }
     }
 }
