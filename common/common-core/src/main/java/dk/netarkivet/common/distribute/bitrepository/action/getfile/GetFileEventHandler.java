@@ -1,5 +1,7 @@
 package dk.netarkivet.common.distribute.bitrepository.action.getfile;
 
+import java.util.List;
+
 import org.bitrepository.client.eventhandler.EventHandler;
 import org.bitrepository.client.eventhandler.OperationEvent;
 import org.slf4j.Logger;
@@ -22,17 +24,17 @@ public class GetFileEventHandler implements EventHandler {
     public void handleEvent(OperationEvent event) {
         log.info("Got event from client: {}", event.getEventType());
         switch (event.getEventType()) {
-            case COMPLETE:
-                log.info("Finished getting file '{}'", event.getFileID());
-                finish();
-                break;
-            case FAILED:
-                log.info("Finished getting file '{}'", event.getFileID());
-                failed = true;
-                finish();
-                break;
-            default:
-                break;
+        case COMPLETE:
+            log.info("Finished getting file '{}'", event.getFileID());
+            finish();
+            break;
+        case FAILED:
+            log.info("Finished getting file '{}'", event.getFileID());
+            failed = true;
+            finish();
+            break;
+        default:
+            break;
         }
     }
 

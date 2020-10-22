@@ -20,9 +20,10 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.common.distribute.arcrepository.bitrepository;
+package dk.netarkivet.common.distribute.bitrepository;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -52,12 +53,10 @@ import org.bitrepository.client.eventhandler.ContributorFailedEvent;
 import org.bitrepository.client.eventhandler.OperationEvent;
 import org.bitrepository.client.eventhandler.OperationEvent.OperationEventType;
 import org.bitrepository.client.exceptions.NegativeResponseException;
-import org.bitrepository.commandline.clients.PagingGetFileIDsClient;
 import org.bitrepository.commandline.eventhandler.CompleteEventAwaiter;
 import org.bitrepository.commandline.eventhandler.GetFileEventHandler;
 import org.bitrepository.commandline.output.DefaultOutputHandler;
 import org.bitrepository.commandline.output.OutputHandler;
-import org.bitrepository.commandline.outputformatter.GetFileIDsOutputFormatter;
 import org.bitrepository.common.exceptions.OperationFailedException;
 import org.bitrepository.common.settings.Settings;
 import org.bitrepository.common.settings.SettingsProvider;
@@ -86,6 +85,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
+@Deprecated
 /**
  * The class for interacting with the BitRepository, e.g. put files, get files, etc.
  */
@@ -130,9 +130,9 @@ public class Bitrepository implements AutoCloseable {
         /* The authentication key used by the putfileClient. */
         File privateKeyFile;
         if (bitmagKeyFilename == null){
-        	privateKeyFile = new File(configDir, UUID.randomUUID().toString()); // This file should never exist
+            privateKeyFile = new File(configDir, UUID.randomUUID().toString()); // This file should never exist
         } else {
-        	privateKeyFile = new File(configDir, bitmagKeyFilename);
+            privateKeyFile = new File(configDir, bitmagKeyFilename);
         }
         logger.info("keyfile: {}", privateKeyFile.getAbsolutePath());
 
@@ -140,7 +140,7 @@ public class Bitrepository implements AutoCloseable {
 
 
         /* The bitrepository component id. */
-        String componentId = BitrepositoryUtils.generateComponentID();
+        String componentId = BitmagUtils.generateComponentID();
         logger.info("componentId: {}", componentId);
 
         SettingsProvider settingsLoader =
@@ -200,7 +200,7 @@ public class Bitrepository implements AutoCloseable {
             int maxNumberOfFailingPillars) {
         ArgumentNotValid.checkExistsNormalFile(file, "File file");
         // Does collection exists? If not return false
-        if (BitrepositoryUtils.getCollectionPillars(collectionId).isEmpty()) {
+        if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
             logger.warn("The given collection Id {} does not exist", collectionId);
             return false;
         }
@@ -235,9 +235,9 @@ public class Bitrepository implements AutoCloseable {
             int maxNumberOfFailingPillars) throws IOException, URISyntaxException {
         FileExchange fileexchange = ProtocolComponentFactory.getInstance().getFileExchange(this.bitmagSettings);
         BlockingPutFileClient bpfc = new BlockingPutFileClient(client);
-        /*URL url = fileexchange.uploadToServer(packageFile);
+        URL url = fileexchange.putFile(packageFile);
         ChecksumSpecTYPE csSpec = ChecksumUtils.getDefault(this.bitmagSettings);
-        ChecksumDataForFileTYPE validationChecksum = BitrepositoryUtils.getValidationChecksum(
+        ChecksumDataForFileTYPE validationChecksum = BitmagUtils.getValidationChecksum(
                 packageFile, csSpec);
 
         ChecksumSpecTYPE requestChecksum = null;
@@ -259,9 +259,9 @@ public class Bitrepository implements AutoCloseable {
             }
         } finally {
             // delete the uploaded file from server
-            fileexchange.deleteFromServer(url);
+            fileexchange.deleteFile(url);
         }
-        logger.info("The putFile Operation succeeded ({})", putFileMessage);*/
+        logger.info("The putFile Operation succeeded ({})", putFileMessage);
         return OperationEventType.COMPLETE;
     }
 
@@ -279,7 +279,7 @@ public class Bitrepository implements AutoCloseable {
         ArgumentNotValid.checkNotNullOrEmpty(fileId, "String fileId");
         ArgumentNotValid.checkNotNullOrEmpty(collectionId, "String collectionId");
         // Does collection exists? If not throw exception
-        if (BitrepositoryUtils.getCollectionPillars(collectionId).isEmpty()) {
+        if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
             throw new IOFailure("The given collection Id does not exist");
         }
         OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
@@ -317,17 +317,16 @@ public class Bitrepository implements AutoCloseable {
      */
     private File downloadFile(URL fileUrl) throws IOException {
         File outputFile = File.createTempFile("Extracted", null);
-        FileExchange fileexchange = BitrepositoryUtils.getFileExchange(bitmagSettings);
-        String fileAddress = fileUrl.toExternalForm();
-        /*try {
-            fileexchange.downloadFromServer(outputFile, fileAddress);
+        FileExchange fileexchange = BitmagUtils.getFileExchange();
+        try (FileInputStream fis = new FileInputStream(outputFile)){
+            fileexchange.putFile(fis, fileUrl);
         } finally {
             try {
-                fileexchange.deleteFromServer(fileUrl);
+                fileexchange.deleteFile(fileUrl);
             } catch (URISyntaxException e) {
                 throw new IOException("Failed to delete file '"+fileUrl.toExternalForm()+"'after download",e);
             }
-        }*/
+        }
         return outputFile;
     }
 
@@ -338,39 +337,11 @@ public class Bitrepository implements AutoCloseable {
      */
     private URL getDeliveryUrl(String fileId) {
         try {
-            return BitrepositoryUtils.getFileExchange(bitmagSettings).getURL(fileId);
+            return BitmagUtils.getFileExchange().getURL(fileId);
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Could not make an URL for the file '"
                     + fileId + "'.", e);
         }
-    }
-
-    /**
-     * Check if a package with the following id exists within a specific collection.
-     * @param packageId A given packageId
-     * @param collectionID A given collection ID
-     * @return true, if a package with the given ID exists within the given collection. Otherwise returns false
-     */
-    public boolean existsInCollection(String packageId, String collectionID) {
-    	ArgumentNotValid.checkNotNullOrEmpty(packageId, "String packageId");
-    	ArgumentNotValid.checkNotNullOrEmpty(collectionID, "String collectionId");
-        // Does collection exists? If not return false
-        List<String> collectionPillars = BitrepositoryUtils.getCollectionPillars(collectionID);
-        if (collectionPillars.isEmpty()) {
-            logger.warn("The given collection Id does not exist");
-            return false;
-        }
-
-        OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
-
-        //GetFileIDsOutputFormatter outputFormatter = new GetFileIDsNoFormatter(output);
-        long timeout = BitrepositoryUtils.getClientTimeout(bitmagSettings);
-
-        /*PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
-                bitMagGetFileIDsClient, timeout, outputFormatter, output);
-        
-        boolean success = pagingClient.getFileIDs(collectionID, packageId, collectionPillars);*/
-        return true; //success;
     }
 
     /**
@@ -383,8 +354,8 @@ public class Bitrepository implements AutoCloseable {
      */
     public Map<String, ChecksumsCompletePillarEvent> getChecksums(String packageID, String collectionID,
             int maxNumberOfFailingPillars) throws IOFailure {
-    	ArgumentNotValid.checkNotNullOrEmpty(collectionID, "String collectionId");
-       
+        ArgumentNotValid.checkNotNullOrEmpty(collectionID, "String collectionId");
+
         //If packageID = null, checksum is requested for all files in the collection.
         if (packageID != null) {
             logger.info("Collecting checksums for package '" + packageID + "' in collection '" + collectionID + "'");
@@ -419,7 +390,7 @@ public class Bitrepository implements AutoCloseable {
         }
 
         Map<String, ChecksumsCompletePillarEvent> resultsMap = new HashMap<String,
-		 ChecksumsCompletePillarEvent>();
+                ChecksumsCompletePillarEvent>();
 
         for (ContributorEvent e : eventhandler.getResults()) {
             ChecksumsCompletePillarEvent event = (ChecksumsCompletePillarEvent) e;
@@ -461,15 +432,14 @@ public class Bitrepository implements AutoCloseable {
      * @return The list of file ids.
      */
     public List<String> getFileIds(String collectionID, String usepillar) {
-
-    	OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
-        //GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
+    	/*OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
+        GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
 
         long timeout = BitrepositoryUtils.getClientTimeout(bitmagSettings);
         List<String> usepillarListOnly = new ArrayList<String>();
         usepillarListOnly.add(usepillar);
 
-        /*PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
+        PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
 
         boolean success = pagingClient.getFileIDs(collectionID, null,
@@ -477,9 +447,9 @@ public class Bitrepository implements AutoCloseable {
         boolean success = true;
         if (success) {
             return null;
-        	//return outputFormatter.getFoundIds();
+            //return outputFormatter.getFoundIds();
         } else {
-        	return null;
+            return null;
         }
     }
 

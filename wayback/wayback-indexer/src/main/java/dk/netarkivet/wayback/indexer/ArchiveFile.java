@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_COLLECTIONID;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -44,8 +46,8 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
+import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
+import dk.netarkivet.common.distribute.bitrepository.action.getfile.GetFileAction;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.BitmagUtils;
 import dk.netarkivet.common.utils.FileResolver;
@@ -295,7 +297,8 @@ public class ArchiveFile {
 
         // Get file and put it in hdfs
         log.info("Getting file '{}' from bitmag for indexing", filename);
-        File inputFile = bitrep.getFile(filename, "netarkivet", null, Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_USEPILLAR)); // TODO: Maybe put setting in BitmagUtils?
+        File inputFile = bitrep.getFile(filename, "netarkivet", null, Settings.get(
+                dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_USEPILLAR));
         Path inputFilePath = new Path(inputFile.getAbsolutePath());
         FileSystem fs = null;
         try {

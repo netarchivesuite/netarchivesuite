@@ -9,10 +9,10 @@ import java.util.UUID;
 
 import org.bitrepository.access.getfile.GetFileClient;
 import org.bitrepository.protocol.FileExchange;
-import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 import dk.netarkivet.common.distribute.bitrepository.action.ClientAction;
 
 /**
@@ -29,7 +29,7 @@ public class GetFileAction implements ClientAction {
      * Constructor to instantiate the get-file action
      * @param client The client to perform the action on
      * @param collectionID The ID of a known collection to operate on
-     * @param fileID The ID of a known pillar to download the file from
+     * @param fileID The ID of an existing file in the collection to download
      * @param targetFile A File specifying a path to download the file to
      */
     public GetFileAction(GetFileClient client, String collectionID, String fileID, File targetFile) {
