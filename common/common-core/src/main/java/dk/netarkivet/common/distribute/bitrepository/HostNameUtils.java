@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.common.distribute.arcrepository.bitrepository;
+package dk.netarkivet.common.distribute.bitrepository;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

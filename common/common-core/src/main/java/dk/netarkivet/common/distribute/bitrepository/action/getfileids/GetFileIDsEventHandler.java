@@ -30,29 +30,29 @@ public class GetFileIDsEventHandler implements EventHandler {
     public void handleEvent(OperationEvent event) {
         log.info("Got event from client: {}", event.getEventType());
         switch(event.getEventType()) {
-            case COMPONENT_COMPLETE:
-                log.debug("Got COMPONENT_COMPLETE event {}", event);
-                if(event instanceof FileIDsCompletePillarEvent) {
-                    FileIDsCompletePillarEvent getFileIDsEvent = (FileIDsCompletePillarEvent) event;
-                    if(getFileIDsEvent.getContributorID().equals(pillarID)) {
-                        fileIDsData = getFileIDsEvent.getFileIDs().getFileIDsData();
-                        partialResults = getFileIDsEvent.isPartialResult();
-                    } else {
-                        log.warn("Got an event from an unexpected contributor '{}' expected '{}'",
-                                getFileIDsEvent.getContributorID(), pillarID);
-                    }
+        case COMPONENT_COMPLETE:
+            log.debug("Got COMPONENT_COMPLETE event {}", event);
+            if(event instanceof FileIDsCompletePillarEvent) {
+                FileIDsCompletePillarEvent getFileIDsEvent = (FileIDsCompletePillarEvent) event;
+                if(getFileIDsEvent.getContributorID().equals(pillarID)) {
+                    fileIDsData = getFileIDsEvent.getFileIDs().getFileIDsData();
+                    partialResults = getFileIDsEvent.isPartialResult();
+                } else {
+                    log.warn("Got an event from an unexpected contributor '{}' expected '{}'",
+                            getFileIDsEvent.getContributorID(), pillarID);
                 }
-            case COMPLETE:
-                log.info("Finished getting fileIDs");
-                finish();
-                break;
-            case FAILED:
-                log.warn("Failed getting fileIDs");
-                failed = true;
-                finish();
-                break;
-            default:
-                break;
+            }
+        case COMPLETE:
+            log.info("Finished getting fileIDs");
+            finish();
+            break;
+        case FAILED:
+            log.warn("Failed getting fileIDs");
+            failed = true;
+            finish();
+            break;
+        default:
+            break;
         }
     }
 

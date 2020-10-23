@@ -30,7 +30,13 @@ public class GetFileIDsAction implements ClientAction {
     private final Date minDate;
     private final Set<String> fileIDs = new HashSet<>();
 
-
+    /**
+     * Constructor to instantiate the get-file-ids action
+     * @param client The client to perform the action on
+     * @param collectionID The ID of a known collection to operate on
+     * @param pillarID The ID of a known pillar to fetch the file IDs from
+     * @param minDate The date specifying how old file ids to fetch
+     */
     public GetFileIDsAction(GetFileIDsClient client, String collectionID, String pillarID, Date minDate) {
         this.client = client;
         this.collectionID = collectionID;

@@ -1,9 +1,12 @@
 package dk.netarkivet.common.distribute.bitrepository;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import javax.jms.JMSException;
 
@@ -14,13 +17,13 @@ import org.bitrepository.access.getfileids.GetFileIDsClient;
 import org.bitrepository.bitrepositoryelements.ChecksumDataForFileTYPE;
 import org.bitrepository.bitrepositoryelements.ChecksumSpecTYPE;
 import org.bitrepository.bitrepositoryelements.ChecksumType;
-import org.bitrepository.client.CommandLineSettingsProvider;
 import org.bitrepository.common.ArgumentValidator;
 import org.bitrepository.common.settings.Settings;
 import org.bitrepository.common.settings.SettingsProvider;
 import org.bitrepository.common.settings.XMLFileSettingsLoader;
 import org.bitrepository.common.utils.Base16Utils;
 import org.bitrepository.common.utils.CalendarUtils;
+import org.bitrepository.common.utils.ChecksumUtils;
 import org.bitrepository.common.utils.SettingsUtils;
 import org.bitrepository.modify.ModifyComponentFactory;
 import org.bitrepository.modify.putfile.PutFileClient;
@@ -39,28 +42,38 @@ import org.bitrepository.protocol.security.PermissionStore;
 import org.bitrepository.protocol.security.SecurityManager;
 import org.bitrepository.settings.referencesettings.FileExchangeSettings;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
 /**
  * Utility class to abstract away the specifics of setting up and obtaining bitrepository.org clients.  
  */
 public class BitmagUtils {
     public static final String BITREPOSITORY_GETFILEIDS_MAX_RESULTS = "settings.common.arcrepositoryClient.bitrepository.getFileIDsMaxResults";
-    
+    public static final String BITREPOSITORY_TEMPDIR = "settings.common.arcrepositoryClient.bitrepository.tempdir";
+    // optional so we don't force the user to use credentials.
+    public static final String BITREPOSITORY_KEYFILENAME = "settings.common.arcrepositoryClient.bitrepository.keyfilename";
+    public static final String BITREPOSITORY_STORE_MAX_PILLAR_FAILURES = "settings.common.arcrepositoryClient.bitrepository.storeMaxPillarFailures";
+    public static final String BITREPOSITORY_COLLECTIONID = "settings.common.arcrepositoryClient.bitrepository.collectionID";
+    public static final String BITREPOSITORY_USEPILLAR = "settings.common.arcrepositoryClient.bitrepository.usepillar";
+    public static String BITREPOSITORY_SETTINGS_DIR = "settings.common.arcrepositoryClient.bitrepository.settingsDir";
+
     private static Settings settings;
     private static SecurityManager securityManager;
     private static Path certificate;
-    private static Path configDir;
-       
+
     /**
      * Method to initialize the utility class. Must be called prior to use of any other method 
      * as it initializes internal state.
-     * @param configurationDir Path to the configuration base directory, this is the directory where 
-     * RepositorySettings.xml and ReferenceSettings.xml is expected to be found. 
-     * @param clientCertificate Path to the clients certificate.   
      */
-    public static void initialize(Path configurationDir, Path clientCertificate) {
-        configDir = configurationDir;
-        certificate = clientCertificate;
-        settings = loadSettings(configDir);
+    public static void initialize() {
+        Path configurationDir = Paths.get(dk.netarkivet.common.utils.Settings.get(BITREPOSITORY_SETTINGS_DIR));
+        String clientCertificateName = dk.netarkivet.common.utils.Settings.get(BITREPOSITORY_KEYFILENAME);
+        if (clientCertificateName.isEmpty()) {
+            certificate = configurationDir.resolve(UUID.randomUUID().toString()); // Random for no certificate
+        } else {
+            certificate = configurationDir.resolve(clientCertificateName);
+        }
+        settings = loadSettings(configurationDir);
         securityManager = loadSecurityManager(); 
     }
     
@@ -70,7 +83,7 @@ public class BitmagUtils {
      */
     private static Settings loadSettings(Path configurationDir) {
         SettingsProvider settingsLoader =
-                new CommandLineSettingsProvider(new XMLFileSettingsLoader(configurationDir.toString()));
+                new SettingsProvider(new XMLFileSettingsLoader(configurationDir.toString()), generateComponentID());
         Settings settings = settingsLoader.getSettings();
         SettingsUtils.initialize(settings);
         return settings;
@@ -106,7 +119,16 @@ public class BitmagUtils {
     public static List<String> getKnownCollections() {
         return SettingsUtils.getAllCollectionsIDs();
     }
-    
+
+    /**
+     * Generates a component id, which includes the hostname and a random UUID.
+     * @return The Bitrepository component id for this NetarchiveSuite application.
+     */
+    public static String generateComponentID() {
+        String hn = HostNameUtils.getHostName();
+        return "NetarchivesuiteClient-" + hn + "-" + UUID.randomUUID();
+    }
+
     /**
      * Method to get the base part of the URL to the file exchange server. 
      * @return {@link URL} URL with the base part of the file exchange server.  
@@ -126,21 +148,22 @@ public class BitmagUtils {
     public static FileExchange getFileExchange() {
         return ProtocolComponentFactory.getInstance().getFileExchange(settings);
     }
-    
+
     /**
-     * Method to build the datastructure to transport checksums in
-     * @param checksum The string form of the checksum 
-     * @return {@link ChecksumDataForFileTYPE} The bitrepository.org data structure 
-     * to transport the checksum 
+     * Creates the data structure for encapsulating the validation checksums for validation of the PutFile operation.
+     * @param file The file to have the checksum calculated.
+     * @param csSpec A given ChecksumSpecTYPE
+     * @return The ChecksumDataForFileTYPE for the pillars to validate the PutFile operation.
      */
-    public static ChecksumDataForFileTYPE getChecksum(String checksum) {
-        ChecksumDataForFileTYPE checksumData = new ChecksumDataForFileTYPE();
-        checksumData.setChecksumValue(Base16Utils.encodeBase16(checksum));
-        checksumData.setCalculationTimestamp(CalendarUtils.getNow());
-        ChecksumSpecTYPE checksumSpec = new ChecksumSpecTYPE();
-        checksumSpec.setChecksumType(ChecksumType.MD5);
-        checksumData.setChecksumSpec(checksumSpec);
-        return checksumData;
+    public static ChecksumDataForFileTYPE getValidationChecksum(File file, ChecksumSpecTYPE csSpec) {
+        ArgumentNotValid.checkExistsNormalFile(file, "File file");
+        ArgumentNotValid.checkNotNull(csSpec, "ChecksumSpecTYPE csSpec");
+        String checksum = ChecksumUtils.generateChecksum(file, csSpec);
+        ChecksumDataForFileTYPE res = new ChecksumDataForFileTYPE();
+        res.setCalculationTimestamp(CalendarUtils.getNow());
+        res.setChecksumSpec(csSpec);
+        res.setChecksumValue(Base16Utils.encodeBase16(checksum));
+        return res;
     }
     
     public static ChecksumSpecTYPE getChecksumSpec(ChecksumType checksumType) {

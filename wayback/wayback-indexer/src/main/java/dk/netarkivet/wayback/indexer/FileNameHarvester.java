@@ -22,8 +22,8 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_COLLECTIONID;
-import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_USEPILLAR;
+import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_COLLECTIONID;
+import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_USEPILLAR;
 
 import java.io.BufferedReader;
 import java.io.IOException;
