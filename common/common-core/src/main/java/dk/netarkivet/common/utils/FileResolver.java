@@ -2,6 +2,7 @@ package dk.netarkivet.common.utils;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public interface FileResolver {
 
@@ -11,7 +12,7 @@ public interface FileResolver {
      * @param filepattern String to match.
      * @return The list of matching file-paths.
      */
-    List<Path> getPaths(String filepattern);
+    List<Path> getPaths(Pattern filepattern);
 
     /**
      * Return a single path to a given file, or null if the file is not found.

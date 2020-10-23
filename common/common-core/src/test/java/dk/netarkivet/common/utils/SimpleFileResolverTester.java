@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class SimpleFileResolverTester {
     public void testGetPathsOnMatchingPattern() {
         filePattern = ".*\\.xml";
         matcher = FileSystems.getDefault().getPathMatcher("regex:" + filePattern);
-        List<Path> paths = fileResolver.getPaths(filePattern);
+        List<Path> paths = fileResolver.getPaths(Pattern.compile(filePattern));
         Assert.assertTrue(paths.size() >= 2);
         paths.forEach(Assert::assertNotNull);
     }
@@ -47,7 +48,7 @@ public class SimpleFileResolverTester {
     public void testGetPathsOnNonMatchingPattern() {
         filePattern = "non(-matching)?.*\\.xml";
         matcher = FileSystems.getDefault().getPathMatcher("regex:" + filePattern);
-        List<Path> paths = fileResolver.getPaths(filePattern);
+        List<Path> paths = fileResolver.getPaths(Pattern.compile(filePattern));
         Assert.assertTrue(paths.isEmpty());
     }
 }

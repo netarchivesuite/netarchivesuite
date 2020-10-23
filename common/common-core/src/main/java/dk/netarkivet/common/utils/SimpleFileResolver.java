@@ -8,6 +8,7 @@ import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +21,15 @@ public class SimpleFileResolver implements FileResolver {
     private static final Logger log = LoggerFactory.getLogger(SimpleFileResolver.class);
     Path directory;
 
+    public void setDirectory(Path directory) {
+        this.directory = directory;
+    }
+
     public SimpleFileResolver(Path directory) {
         this.directory = directory;
     }
 
-    @Override public List<Path> getPaths(String filepattern) {
+    @Override public List<Path> getPaths(Pattern filepattern) {
         PathMatcher globPattern = FileSystems.getDefault().getPathMatcher("glob:"+filepattern);
         File[] dirContents = new File(directory.toString()).listFiles(
             new FilenameFilter() {

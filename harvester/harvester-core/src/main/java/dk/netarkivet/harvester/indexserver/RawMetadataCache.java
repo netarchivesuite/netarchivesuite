@@ -53,6 +53,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -164,7 +165,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     private Long cacheDataHadoop(Long id) {
         final String metadataFilePatternSuffix = Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
         final String specifiedPattern = "(.*-)?" + id + "(-.*)?" + metadataFilePatternSuffix;
-        PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("regex:" + specifiedPattern);
+        //PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("regex:" + specifiedPattern);
         System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
         Configuration conf = HadoopJobUtils.getConfFromSettings();
         conf.setPattern(GetMetadataMapper.URL_PATTERN, urlPattern);
@@ -184,8 +185,11 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             java.nio.file.Path localInputTempFile = HadoopFileUtils.makeLocalInputTempFile();
 
             String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
-            FileResolver fileResolver = new SimpleFileResolver(Paths.get(pillarParentDir));
-            List<java.nio.file.Path> filePaths = fileResolver.getPaths(pathMatcher);
+            FileResolver fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
+            if (fileResolver instanceof SimpleFileResolver) {
+                ((SimpleFileResolver) fileResolver).setDirectory(Paths.get(pillarParentDir));
+            }
+            List<java.nio.file.Path> filePaths = fileResolver.getPaths(Pattern.compile(specifiedPattern));
             try {
                 HadoopJobUtils.writeHadoopInputFileLinesToInputFile(filePaths, localInputTempFile);
             } catch (IOException e) {
@@ -268,9 +272,14 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             }
             java.nio.file.Path localInputTempFile = HadoopFileUtils.makeLocalInputTempFile();
 
-            String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
-            FileResolver fileResolver = new SimpleFileResolver(Paths.get(pillarParentDir));
-            List<java.nio.file.Path> filePaths = fileResolver.getPaths(pathMatcher);
+            FileResolver fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
+            if (fileResolver instanceof SimpleFileResolver) {
+                String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
+                ((SimpleFileResolver) fileResolver).setDirectory(Paths.get(pillarParentDir));
+            }
+
+
+            List<java.nio.file.Path> filePaths = fileResolver.getPaths(Pattern.compile(specifiedPattern));
             try {
                 HadoopJobUtils.writeHadoopInputFileLinesToInputFile(filePaths, localInputTempFile);
             } catch (IOException e) {

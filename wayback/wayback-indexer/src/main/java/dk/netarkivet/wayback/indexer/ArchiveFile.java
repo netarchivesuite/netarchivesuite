@@ -50,6 +50,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.BitmagUtils;
 import dk.netarkivet.common.utils.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -247,9 +248,12 @@ public class ArchiveFile {
             log.info("Output directory for job is {}", jobOutputDir);
             java.nio.file.Path localInputTempFile = null;
             localInputTempFile = Files.createTempFile(null, null);
-            final String parentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
-            //TODO replace this with call to a factory method so we can configure different file resolvers
-            FileResolver fileResolver = new SimpleFileResolver(Paths.get(parentDir));
+
+            FileResolver fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
+            if (fileResolver instanceof SimpleFileResolver) {
+                String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
+                ((SimpleFileResolver) fileResolver).setDirectory(Paths.get(pillarParentDir));
+            }
             java.nio.file.Path filePath = fileResolver.getPath(filename);
             String inputLine = "file://" + filePath.toString();
             log.info("Inserting {} in {}.", inputLine, localInputTempFile);

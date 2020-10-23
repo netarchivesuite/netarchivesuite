@@ -7,6 +7,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,9 +53,16 @@ public class FileResolverRESTClientTest {
 
     @Test
     public void getPathsMultiple() {
-        String byJobNumber = "1-*.warc*";
-        List<Path> paths = fileResolver.getPaths(byJobNumber);
+        String byJobNumber = "^1-.*.warc.*";
+        List<Path> paths = fileResolver.getPaths(Pattern.compile(byJobNumber));
         assertEquals("Expected two files for " + byJobNumber + " not " + paths, paths.size(), 2);
+    }
+
+    @Test
+    public void getPathsMultipleMetadata() {
+        String byJobNumber = "(.*-)?" + 1 + "(-.*)?" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
+        List<Path> paths = fileResolver.getPaths(Pattern.compile(byJobNumber));
+        assertEquals("Expected two files for " + byJobNumber + " not " + paths, 2, paths.size());
     }
 
     @Test
@@ -75,7 +83,7 @@ public class FileResolverRESTClientTest {
     @Test
     public void getPathsEmpty() {
         String byJobNumber = "foobar1-*.warc*";
-        List<Path> paths = fileResolver.getPaths(byJobNumber);
+        List<Path> paths = fileResolver.getPaths(Pattern.compile(byJobNumber));
         assertTrue("Expected 0 results not " + paths, paths.isEmpty());
     }
 
