@@ -64,6 +64,7 @@ public class FileNameHarvester {
         ArchiveFileDAO dao = new ArchiveFileDAO();
         if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
             Set<String> fileNames = getFilesFromBitmagSince(new Date(0));
+            log.info("Harvested {} file(s) from bitmag", fileNames.size());
             createFilesInDB(fileNames, dao);
         } else {
             PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
@@ -82,6 +83,7 @@ public class FileNameHarvester {
 
         if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
             Set<String> fileNames = getFilesFromBitmagSince(sinceDate);
+            log.info("Harvested {} recent file(s) from bitmag", fileNames.size());
             createFilesInDB(fileNames, dao);
         } else {
             PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
@@ -93,12 +95,12 @@ public class FileNameHarvester {
 
     /**
      * Creates the given filenames in the database if they don't already exist.
-     * If the given set is null it just logs that no files were found in the collection.
+     * If the given set is empty it just logs that there were no files to add to the database.
      * @param fileNames Files to create
      * @param dao The DAO through which the database is accessed
      */
     private static void createFilesInDB(Set<String> fileNames, ArchiveFileDAO dao) {
-        if (fileNames != null) {
+        if (!fileNames.isEmpty()) {
             for (String fileName : fileNames) {
                 if (!dao.exists(fileName)) {
                     createArchiveFileInDB(fileName, dao);
@@ -106,7 +108,7 @@ public class FileNameHarvester {
             }
         } else {
             String collectionID = Settings.get(BITREPOSITORY_COLLECTIONID);
-            log.info("No files found in collection '{}'", collectionID);
+            log.info("No new files to add in database after harvest of collection '{}'", collectionID);
         }
     }
 
