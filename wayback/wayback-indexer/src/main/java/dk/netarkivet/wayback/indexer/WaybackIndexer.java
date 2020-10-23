@@ -22,16 +22,11 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_KEYFILENAME;
-import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_SETTINGS_DIR;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -91,9 +86,7 @@ public class WaybackIndexer implements CleanupIF {
         FileUtils.createDir(batchOutputDir);
 
         if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
-            Path configDir = Paths.get(Settings.get(BITREPOSITORY_SETTINGS_DIR));
-            Path clientCertificate = configDir.resolve(Settings.get(BITREPOSITORY_KEYFILENAME));
-            BitmagUtils.initialize(configDir, clientCertificate);
+            BitmagUtils.initialize();
         }
         ingestInitialFiles();
         startProducerThread();

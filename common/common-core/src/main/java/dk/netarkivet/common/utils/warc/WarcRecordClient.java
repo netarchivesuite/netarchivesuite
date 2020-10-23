@@ -1,35 +1,29 @@
 package dk.netarkivet.common.utils.warc;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.Settings;
-import org.apache.http.*;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.util.EntityUtils;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.warc.WARCReaderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import dk.netarkivet.common.utils.FileUtils;
+
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 
 public class WarcRecordClient {
     /** Logger for this class. */
