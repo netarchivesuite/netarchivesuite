@@ -218,7 +218,7 @@ public class ArchiveFile {
         Configuration conf = HadoopJobUtils.getConfFromSettings();
         UUID uuid = UUID.randomUUID();
         log.info("File {} indexed with job uuid for i/o {}.", this.filename, uuid);
-        try (FileSystem fileSystem = FileSystem.get(conf)) {
+        try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
             String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_INPUT_DIR);
             if (hadoopInputDir == null) {
                 log.error("Parent input dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CDXJOB_INPUT_DIR);
@@ -371,7 +371,7 @@ public class ArchiveFile {
             FileUtils.writeCollectionToFile(outputFile, cdxLines);
             log.info("Finished collecting index for '{}' to '{}'", this.getFilename(), outputFile.getAbsolutePath());
         } catch (IOException e) {
-            log.warn("Could not collect index results from '{}'", jobOutputDir.toString());
+            log.warn("Could not collect index results from '{}'", jobOutputDir.toString(), e);
         }
         File finalFile = moveFileToWaybackOutputDir(outputFile);
 
