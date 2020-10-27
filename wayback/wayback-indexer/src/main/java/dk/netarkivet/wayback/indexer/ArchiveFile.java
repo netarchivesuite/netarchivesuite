@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Entity;
@@ -356,25 +357,21 @@ public class ArchiveFile {
     }
 
     /**
-     * Collects the results from the Hadoop job in a file in a local tempdir and afterwards moves
+     * Copies the results from the Hadoop job to a file in a local tempdir and afterwards moves
      * the results to WAYBACK_BATCH_OUTPUTDIR. The status of this object is then updated to reflect that the
      * object has been indexed.
      * @param fs The Hadoop FileSystem that is used
+     * @param jobOutputDir The job output dir to find the 'part'-files in, which contain the resulting cdx lines.
      */
     private void collectHadoopResults(FileSystem fs, Path jobOutputDir) {
-        Path jobResultFilePath = new Path(jobOutputDir, "part-m-00000"); //TODO: Make non-hardcoded - should eventually run through all files named 'part-m-XXXXX'
         File outputFile = makeNewFileInWaybackTempDir();
-        log.info("Collecting index for '{}' from {} to '{}'", this.getFilename(), jobResultFilePath, outputFile.getAbsolutePath());
+        log.info("Collecting index for '{}' from parts in '{}' to '{}'", this.getFilename(), jobOutputDir, outputFile.getAbsolutePath());
         try {
-            if (fs.exists(jobResultFilePath)) {
-                fs.copyToLocalFile(jobResultFilePath, new Path(outputFile.getAbsolutePath()));
-                log.info("Finished collecting index for '{}' to '{}'", this.getFilename(), outputFile.getAbsolutePath());
-            } else {
-                throw new IllegalState(
-                        "No results to copy from hdfs '" + jobResultFilePath + "' to '" + outputFile + "'");
-            }
+            List<String> cdxLines = HadoopJobUtils.collectOutputLines(fs, jobOutputDir);
+            FileUtils.writeCollectionToFile(outputFile, cdxLines);
+            log.info("Finished collecting index for '{}' to '{}'", this.getFilename(), outputFile.getAbsolutePath());
         } catch (IOException e) {
-            log.warn("Could not collect index results from {}", jobResultFilePath.toString());
+            log.warn("Could not collect index results from '{}'", jobOutputDir.toString());
         }
         File finalFile = moveFileToWaybackOutputDir(outputFile);
 
