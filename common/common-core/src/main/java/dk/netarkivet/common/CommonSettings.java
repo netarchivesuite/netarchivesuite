@@ -28,8 +28,6 @@ import dk.netarkivet.common.utils.Settings;
  * Settings common to the entire NetarchiveSuite.
  */
 public class CommonSettings {
-    public static  String FILE_RESOLVER_BASE_URL = "settings.common.fileResolver.baseUrl";
-    public static  String FILE_RESOLVER_CLASS = "settings.common.fileResolver.class";
     /** The default place in classpath where the settings file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/common/settings.xml";
 
