@@ -7,7 +7,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.util.List;
 
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.utils.FileResolver;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SettingsFactory;
 import org.apache.commons.io.IOUtils;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
@@ -16,18 +22,23 @@ import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCReader;
 import org.archive.io.warc.WARCReaderFactory;
 // import org.archive.io.warc.WARCRecord;
+import org.junit.Before;
 import org.junit.Test;
 
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.*;
 
+// @Category(RequiresFileResolver.class)
 public class WarcRecordClientTester {
 
     /**
      * Tests that basic data retrieval function by issuing a get request.
      * @throws Exception
      */
+
+    FileResolver fileResolver;
 
     //     **************** Positive tests ***************
 
@@ -176,6 +187,52 @@ public class WarcRecordClientTester {
         assertNotNull(warcRecord);
     }
 
+// Testing .arc in a loop
+@Test
+public void testPosBuildingBitarchiveRecord12() throws Exception {
+    String filename = "42-23-20060726143926-00000-udvikling.kb.dk.arc.gz";
+    URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
+    URI test_uri = SAMPLE_HOST;
+    long offset = 789L;
+
+
+    BitarchiveRecord warcRecord = null;
+    WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
+
+    for (int i = 0; i<10; i++) {
+        try {
+            warcRecord = warcRecordClient.getWarc(SAMPLE_HOST, offset);
+            warcRecord.getData(System.out);
+        } catch (Exception e) {
+            System.out.println("Nullpointer Exception caused by offset errror ");
+        }
+        assertNotNull(warcRecord);
+    }
+}
+
+
+// Testing .warc in loop
+@Test
+public void testBuildingBitarchiveRecord13() throws Exception {
+    String filename = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz";
+    URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
+    URI test_uri = SAMPLE_HOST;
+    long offset = 0L;
+
+    BitarchiveRecord warcRecord = null;
+
+    WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
+
+    for (int i = 0; i<10; i++) {
+        try {
+            warcRecord = warcRecordClient.getWarc(SAMPLE_HOST, offset);
+            warcRecord.getData(System.out);
+        } catch (NullPointerException e) {
+            System.out.println("Nullpointer Exception caused by offset errror");
+        }
+        assertNotNull(warcRecord);
+    }
+}
 
     // ************** Negative tests ****************
 
@@ -282,8 +339,57 @@ public class WarcRecordClientTester {
     }
 
 
+    // Testting looping same test
 
 
+    // From csr -adapted to this part
+/*
+    @Before
+    public void testFactoryMethod() {
+        Settings.set(CommonSettings.FILE_RESOLVER_CLASS, "dk.netarkivet.common.utils.warc.WarcRecordClient");
+        Settings.set(CommonSettings.FILE_RESOLVER_BASE_URL, "http://localhost:8884/cgi-bin2/fileresolver.cgi/");
+        fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
+        assertTrue(fileResolver instanceof WarcRecordClient);
+    }
 
+    @Test
+    public void testFailOnBadUrl() {
+        Settings.set(CommonSettings.FILE_RESOLVER_CLASS, "dk.netarkivet.common.utils.FileResolverRESTClient");
+        Settings.set(CommonSettings.FILE_RESOLVER_BASE_URL, "localhost:8884/cgi-bin2/fileresolver.cgi/");
+        try {
+            SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
+            fail("Should have thrown exception before getting here.");
+        } catch (Exception e) {
+            //expected
+        }
+    }
+
+    @Test
+    public void getPathsMultiple() {
+        String byJobNumber = "1-*.warc*";
+        List<Path> paths = fileResolver.getPaths(byJobNumber); // Needs special adds
+        assertEquals("Expected two files for " + byJobNumber + " not " + paths, paths.size(), 2);
+    }
+
+    @Test
+    public void getPath() {
+        String filename = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz";
+        Path path = fileResolver.getPath(filename);
+        assertTrue("Expected a valid path for the file, not " + path,
+                path.toString().contains("/") && path.endsWith(filename));
+    }
+
+
+    @Test
+    public void testManyRuns() {
+        for (int i = 0; i<40; i++ ) {
+            String filename = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz";
+            Path path = fileResolver.getPath(filename);
+            assertTrue("Expected a valid path for the file, not " + path,
+                    path.toString().contains("/") && path.endsWith(filename));
+            System.out.println("Done: " + i);
+        }
+    }
+*/
 
 }

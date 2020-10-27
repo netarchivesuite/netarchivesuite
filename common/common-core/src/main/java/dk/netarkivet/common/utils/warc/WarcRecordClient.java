@@ -17,6 +17,7 @@ import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
@@ -68,18 +69,35 @@ public class WarcRecordClient {
          * Used to make one, and only one instance of closeableHttpClient
          * Constructor is called once
          */
+        private static PoolingHttpClientConnectionManager cm;
+
+        private static PoolingHttpClientConnectionManager getConectionManager() {  // Try this:  HttpClients.custom().setConnectionManager(manager).setConnectionManagerShared(true).build();
+            if (cm == null) {
+                cm = new PoolingHttpClientConnectionManager();
+                //cm.setMaxTotal(Settings.getInt(CommonSettings.MAX_TOTAL_CONNECTIONS));
+                cm.setMaxTotal(50);
+                cm.setDefaultMaxPerRoute(50);
+                // cm.setDefaultMaxPerRoute(Settings.getInt(CommonSettings.MAX_CONNECTIONS_PER_ROUTE));
+            }
+            return cm;
+        }
         private static CloseableHttpClient closeableHttpClient;
+        //private static PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 
         private Singleton() {
         }
 
         public static CloseableHttpClient getCloseableHttpClient() {
-            PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-            cm.setMaxTotal(Settings.getInt(CommonSettings.MAX_TOTAL_CONNECTIONS));
-            cm.setDefaultMaxPerRoute(Settings.getInt(CommonSettings.MAX_CONNECTIONS_PER_ROUTE));
-            closeableHttpClient  = HttpClients.custom()
+           // PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+           // PoolingHttpClientConnectionManager cm;
+           // cm.setMaxTotal(Settings.getInt(CommonSettings.MAX_TOTAL_CONNECTIONS));
+           // cm.setDefaultMaxPerRoute(Settings.getInt(CommonSettings.MAX_CONNECTIONS_PER_ROUTE));
+            if (closeableHttpClient == null) {
+                cm = getConectionManager();
+               closeableHttpClient  = HttpClients.custom()
                     .setConnectionManager(cm)
                     .build();
+            }
             return closeableHttpClient;
         }
 
@@ -117,19 +135,21 @@ public class WarcRecordClient {
                 .build();
         log.debug("Executing request " + request.getRequestLine());
 
+        CloseableHttpResponse httpResponse = null;
         try (CloseableHttpClient closableHttpClient = WarcRecordClient.Singleton.getCloseableHttpClient()) {
-            HttpResponse httpResponse = closableHttpClient.execute(request);
+            httpResponse = closableHttpClient.execute(request);
             log.debug("httpResponse status: " + httpResponse.getStatusLine().toString());
             if (httpResponse.getStatusLine().getStatusCode() != 200) {
                 log.error("Http request error " + httpResponse.getStatusLine().getStatusCode());
                 return null;
             }
 
-
-            HttpEntity entity = httpResponse.getEntity();
+            HttpEntity entity;
+            entity = httpResponse.getEntity();
             if (entity != null) {
                 try {
                     InputStream iStr = entity.getContent();
+                 //   entity.getContent().close();
                     ArchiveReader archiveReader;
 
                     if (isWARCSuffix(fileName)) {
@@ -142,7 +162,7 @@ public class WarcRecordClient {
                     reply = new BitarchiveRecord(archiveRecord, fileName);
                     log.debug("reply: " + reply.toString());
 
-                    return reply;
+                //    return reply;
                 } catch (IOException e) {
                     log.error("IOException: ", e );
                     System.out.println(e.getStackTrace());
@@ -156,7 +176,11 @@ public class WarcRecordClient {
             log.error("Received invalid argument reply: '" + reply + "'", e);
             throw new IOFailure("Received invalid argument reply: '" + reply + "'", e);
         }
-        return reply;
+       finally {
+            httpResponse.close();
+
+            return reply;
+        }
     }
 
     /**
