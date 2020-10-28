@@ -13,10 +13,13 @@ import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
+
+import org.apache.commons.httpclient.methods.ExpectContinueMethod;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
@@ -32,9 +35,13 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.utils.FileUtils;
 
 public class WarcRecordClient {
-    /** Logger for this class. */
+    /**
+     * Logger for this class.
+     */
     private static final Logger log = LoggerFactory.getLogger(WarcRecordClient.class);
-    /** The amount of milliseconds in a second. 1000. */
+    /**
+     * The amount of milliseconds in a second. 1000.
+     */
     private static final int MILLISECONDS_PER_SECOND = 1000;
 
     public URI getBaseUri() {
@@ -43,7 +50,9 @@ public class WarcRecordClient {
 
     private URI baseUri;
 
-    /** The length of time to wait for a get reply before giving up. */
+    /**
+     * The length of time to wait for a get reply before giving up.
+     */
     private static final String USER_AGENT = "Mozilla/5.0";
     private static int timeout = MILLISECONDS_PER_SECOND;
     private long offset;
@@ -57,27 +66,14 @@ public class WarcRecordClient {
         this.offset = offset;
     }
 
-    private static class Singleton {
-        /**
-         * Used to make one, and only one instance of closeableHttpClient
-         * Constructor is called once
-         */
-        private static CloseableHttpClient closeableHttpClient;
+    private static PoolingHttpClientConnectionManager cm;
 
-        private Singleton() {
-        }
-
-        public static CloseableHttpClient getCloseableHttpClient() {
-            PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-            cm.setMaxTotal(Settings.getInt(CommonSettings.MAX_TOTAL_CONNECTIONS));
-            cm.setDefaultMaxPerRoute(Settings.getInt(CommonSettings.MAX_CONNECTIONS_PER_ROUTE));
-            closeableHttpClient  = HttpClients.custom()
-                    .setConnectionManager(cm)
-                    .build();
-            return closeableHttpClient;
-        }
-
+    static {
+        cm = new PoolingHttpClientConnectionManager();
+        cm.setMaxTotal(Settings.getInt(CommonSettings.MAX_TOTAL_CONNECTIONS));
+        cm.setDefaultMaxPerRoute(Settings.getInt(CommonSettings.MAX_CONNECTIONS_PER_ROUTE));
     }
+    
 
     public WarcRecordClient(URI baseUri) {
         this.baseUri = baseUri;
@@ -86,63 +82,49 @@ public class WarcRecordClient {
     /**
      * Uses WarcRecordClient to call ApacheHttpClient
      *
-     * @param uri Uniform Resource Identifier including base uri and name of file
-     * @param offset offset to fetch specific record from warc file
-     *              index must be the same as the offset that ends up in the range header
-     * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile is null
-     * @throws IOException if reading file fails
+     * @param uri    Uniform Resource Identifier including base uri and name of file
+     * @param offset offset to fetch specific record from warc file index must be the same as the offset that ends up in
+     *               the range header
+     * @throws ArgumentNotValid              if arcfilename is null or empty, or if toFile is null
+     * @throws IOException                   if reading file fails
      * @throws UnsupportedOperationException is used if method is not implemented
      */
-    public BitarchiveRecord getWarc( URI uri, long offset) throws Exception {
+    public BitarchiveRecord getWarc(URI uri, long offset) throws Exception {
         RequestConfig.Builder requestBuilder = RequestConfig.custom();
         requestBuilder.setConnectTimeout(timeout);
         requestBuilder.setConnectionRequestTimeout(timeout);
-        BitarchiveRecord reply = null;
-
         String fileName = Paths.get(uri.getPath()).getFileName().toString();
         log.debug("fileName: " + fileName);
-
         HttpUriRequest request = RequestBuilder.get()
                 .setUri(uri)
-                .addHeader("User-Agent",USER_AGENT)
+                .addHeader("User-Agent", USER_AGENT)
                 .addHeader("Range", "bytes=" + offset + "-")
                 .build();
         log.debug("Executing request " + request.getRequestLine());
-
-        try (CloseableHttpClient closableHttpClient = WarcRecordClient.Singleton.getCloseableHttpClient()) {
-            HttpResponse httpResponse = closableHttpClient.execute(request);
-            log.debug("httpResponse status: " + httpResponse.getStatusLine().toString());
-            if (httpResponse.getStatusLine().getStatusCode() != 200) {
-                log.error("Http request error " + httpResponse.getStatusLine().getStatusCode());
-                return null;
-            }
-
-
-            HttpEntity entity = httpResponse.getEntity();
-            if (entity != null) {
-                try {
+        try {
+            CloseableHttpClient closableHttpClient = HttpClients.custom().setConnectionManager(cm).build();
+            try (CloseableHttpResponse httpResponse = closableHttpClient.execute(request)) {
+                log.debug("httpResponse status: " + httpResponse.getStatusLine().toString());
+                if (httpResponse.getStatusLine().getStatusCode() != 200) {
+                    log.error("Http request error " + httpResponse.getStatusLine().getStatusCode());
+                    return null;
+                }
+                HttpEntity entity = httpResponse.getEntity();
+                if (entity != null) {
                     InputStream iStr = entity.getContent();
                     ArchiveReader archiveReader = WARCReaderFactory.get("fake.warc", iStr, atFirst);
                     ArchiveRecord archiveRecord = archiveReader.get();
-                    reply = new BitarchiveRecord(archiveRecord, fileName);
+                    BitarchiveRecord reply = new BitarchiveRecord(archiveRecord, fileName);
                     log.debug("reply: " + reply.toString());
-
                     return reply;
-                } catch (IOException e) {
-                    log.error("IOException: ", e );
-                } catch (UnsupportedOperationException e) {
-                    log.error("UnsupportedOperationException: ", e);
+                } else {
+                    log.warn("Received null response entity for request for {}, {}", uri, offset);
+                    return null;
                 }
             }
-            else {
-                log.error("Enity is null: '" );
-                throw new Exception("Enity is null:");
-            }
-        } catch (ClassCastException e) {
-            log.error("Received invalid argument reply: '" + reply + "'", e);
-            throw new IOFailure("Received invalid argument reply: '" + reply + "'", e);
+        } catch (Exception e) {
+            throw e;
         }
-        return reply;
     }
 
     /**

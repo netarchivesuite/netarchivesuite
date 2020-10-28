@@ -1,5 +1,6 @@
 package dk.netarkivet.common.utils.warc;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -105,6 +106,22 @@ public class WarcRecordClientTester {
             fail = true;
         }
         assertFalse("Exception", fail);
+    }
+
+    @Test
+    public void testMultipleCalls() throws Exception {
+        String filename = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz";
+        URI HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
+        long offset = 3442L;
+        WarcRecordClient warcRecordClient = new WarcRecordClient(HOST);
+        for (int i = 0; i < 40; i++) {
+            BitarchiveRecord bitarchiveRecord = warcRecordClient.get(filename, offset);
+            assertNotNull("Expect non null record", bitarchiveRecord);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitarchiveRecord.getData(byteArrayOutputStream);
+            assertTrue("Expect significantly sized output", byteArrayOutputStream.toByteArray().length > 10);
+            System.out.println(i);
+        }
     }
 
     //@Test
