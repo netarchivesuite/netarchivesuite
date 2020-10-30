@@ -106,15 +106,40 @@ public class Reporting {
     }
 
     /**
-     * Submit a batch job to generate cdx for all metadata files for a job, and report result in a list.
+     * Depending on settings, submits either a Hadoop job or batch job to generate cdx for all metadata files for a job,
+     * and returns the results in a list.
      *
      * @param jobid The job to get cdx for.
-     * @return A list of cdx records.
      * @throws ArgumentNotValid If jobid is 0 or negative.
-     * @throws IOFailure On trouble generating the cdx
+     * @return A list of cdx records.
      */
     public static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
+        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
+            return getRecordsUsingHadoop(jobid);
+        } else {
+            return getRecordsUsingBatch(jobid);
+        }
+    }
+
+    /**
+     * TODO
+     * @param jobid The job to get cdx for.
+     * @return A list of cdx records.
+     */
+    private static List<CDXRecord> getRecordsUsingHadoop(long jobid) {
+        String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobid);
+        return null;
+    }
+
+    /**
+     * Submit a job to generate cdx for all metadata files for a job, and report result in a list.
+     *
+     * @param jobid The job to get cdx for.
+     * @return A list of cdx records.
+     * @throws IOFailure On trouble generating the cdx
+     */
+    private static List<CDXRecord> getRecordsUsingBatch(long jobid) {
         FileBatchJob cdxJob = new ArchiveExtractCDXJob(false) {
             @Override
             public ArchiveBatchFilter getFilter() {
@@ -139,6 +164,7 @@ public class Reporting {
             reader = new BufferedReader(new FileReader(f));
             records = new ArrayList<CDXRecord>();
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                System.out.println(line);
                 String[] parts = line.split("\\s+");
                 CDXRecord record = new CDXRecord(parts);
                 records.add(record);

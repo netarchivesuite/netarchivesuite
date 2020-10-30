@@ -4,7 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
@@ -13,9 +16,18 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveReaderFactory;
+import org.archive.io.ArchiveRecord;
+import org.jwat.common.ByteCountingPushBackInputStream;
+import org.jwat.common.ContentType;
+import org.jwat.common.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
+import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
 /**
  * Hadoop Mapper for creating the CDX indexes.
@@ -49,14 +61,13 @@ public class CDXMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
             log.warn("Encountered empty path in job {}", context.getJobID().toString());
             return;
         }
-
         Path path = new Path(archiveFilePath.toString());
         List<String> cdxIndexes;
         Indexer indexer;
 
         boolean doDedup = context.getConfiguration().getBoolean(METADATA_DO_DEDUP, false);
         if (doDedup && path.getName().contains("metadata")) {
-            log.info("Indexing metadata file '{}'", path);
+            log.info("Dedup-indexing metadata file '{}'", path);
             indexer = new DedupIndexer();
             final FileSystem fileSystem = path.getFileSystem(context.getConfiguration());
             if (!(fileSystem instanceof LocalFileSystem)) {
@@ -69,7 +80,7 @@ public class CDXMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
                 cdxIndexes = indexer.indexFile(localFileSystem.pathToFile(path));
             }
         } else {
-            log.info("Indexing archive file '{}'", path);
+            log.info("CDX-indexing archive file '{}'", path);
             try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
                 cdxIndexes = cdxIndexer.index(in, archiveFilePath.toString());
             }

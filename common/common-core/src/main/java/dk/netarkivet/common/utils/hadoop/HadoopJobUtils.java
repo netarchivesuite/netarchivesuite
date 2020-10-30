@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.cdx.CDXRecord;
 
 /** Utilities for Hadoop jobs. */
 public class HadoopJobUtils {
@@ -104,5 +105,20 @@ public class HadoopJobUtils {
         // Clean up once output has been collected
         fileSystem.delete(outputFolder, true);
         return resultLines;
+    }
+
+    /**
+     * Converts a list of CDX line strings to a list of CDXRecords
+     * @param cdxLines The list to convert
+     * @return A list of CDXRecords representing the old list
+     */
+    public static List<CDXRecord> getCDXRecordListFromCDXLines(List<String> cdxLines) {
+        List<CDXRecord> recordsForJob = new ArrayList<>();
+        for (String line : cdxLines) {
+            String[] parts = line.split("\\s+");
+            CDXRecord record = new CDXRecord(parts);
+            recordsForJob.add(record);
+        }
+        return recordsForJob;
     }
 }
