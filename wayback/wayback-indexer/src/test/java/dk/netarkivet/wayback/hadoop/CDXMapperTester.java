@@ -2,23 +2,13 @@ package dk.netarkivet.wayback.hadoop;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
 import org.apache.hadoop.hdfs.MiniDFSCluster;
@@ -28,17 +18,6 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.apache.hadoop.yarn.server.MiniYARNCluster;
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.ResourceScheduler;
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.fifo.FifoScheduler;
-import org.archive.io.ArchiveReader;
-import org.archive.io.ArchiveReaderFactory;
-import org.archive.io.ArchiveRecord;
-import org.archive.io.warc.WARCReader;
-import org.archive.io.warc.WARCReaderFactory;
-import org.archive.io.warc.WARCRecord;
-import org.archive.wayback.UrlCanonicalizer;
-import org.archive.wayback.core.CaptureSearchResult;
-import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
-import org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter;
-import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -46,12 +25,10 @@ import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
-import dk.netarkivet.common.utils.hadoop.GetMetadataMapper;
 import dk.netarkivet.common.utils.hadoop.HadoopJob;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-import dk.netarkivet.wayback.batch.UrlCanonicalizerFactory;
 
 public class CDXMapperTester {
     private final File WORKING_DIR = new File("../../harvester/harvester-test/tests/dk/netarkivet/viewerproxy/data/working");
@@ -149,6 +126,61 @@ public class CDXMapperTester {
                     "^metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs.*", recordsForJob.get(0).getURL());
             StringAsserts.assertStringMatches("Last record should be cdx", "^metadata://netarkivet.dk/crawl/index/cdx.*",
                     recordsForJob.get(recordsForJob.size() - 1).getURL());
+        } finally {
+            fileSystem.delete(new Path(outputURI), true);
+        }
+    }
+
+    @Test
+    public void testCDXIndexStandardARCFile() throws Exception {
+        File testFile = new File("../wayback-test/tests/dk/netarkivet/wayback/data/originals/arcfile_withredirects.arc");
+        String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
+        File jobInputFile = File.createTempFile("tmp", UUID.randomUUID().toString());
+        org.apache.commons.io.FileUtils.writeStringToFile(jobInputFile, "file://" + testFile.getAbsolutePath());
+        jobInputFile.deleteOnExit();
+
+        // Start the job
+        try {
+            Tool job = new HadoopJob(conf, new CDXMapper());
+            int exitCode = ToolRunner.run(conf, job,
+                    new String[] {"file://" + jobInputFile.toString(), outputURI});
+            assertEquals(0, exitCode); // job success
+
+            List<String> cdxLines = HadoopJobUtils.collectOutputLines(fileSystem, new Path(outputURI));
+            //cdxLines.forEach(System.out::println);
+            assertEquals(111, cdxLines.size());
+            StringAsserts.assertStringMatches("First line should be netarkivet.dk dns",
+                    "^dns:www.netarkivet.dk", cdxLines.get(0).split("\n")[0]);
+            StringAsserts.assertStringMatches("Last line should be emediate.dk",
+                    "^ad1.emediate.dk/eas\\?cu=4416;cre=mu;js=y;target=_blank;cat=byggeri",
+                    cdxLines.get(cdxLines.size()-1).split("\n")[0]);
+        } finally {
+            fileSystem.delete(new Path(outputURI), true);
+        }
+    }
+
+    @Test
+    public void testCDXIndexStandardWARCFile() throws Exception {
+        File testFile = new File("../wayback-test/tests/dk/netarkivet/wayback/data/originals/warcfile_withredirects.warc");
+        String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
+        File jobInputFile = File.createTempFile("tmp", UUID.randomUUID().toString());
+        org.apache.commons.io.FileUtils.writeStringToFile(jobInputFile, "file://" + testFile.getAbsolutePath());
+        jobInputFile.deleteOnExit();
+
+        // Start the job
+        try {
+            Tool job = new HadoopJob(conf, new CDXMapper());
+            int exitCode = ToolRunner.run(conf, job,
+                    new String[] {"file://" + jobInputFile.toString(), outputURI});
+            assertEquals(0, exitCode); // job success
+
+            List<String> cdxLines = HadoopJobUtils.collectOutputLines(fileSystem, new Path(outputURI));
+            //cdxLines.forEach(System.out::println);
+            assertEquals(291, cdxLines.size());
+            StringAsserts.assertStringMatches("First line should be netarkivet.dk dns",
+                    "^dns:www.netarkivet.dk", cdxLines.get(0).split("\n")[0]);
+            StringAsserts.assertStringMatches("Last line should be netarkivet with query",
+                    "^netarkivet.dk/\\?p=100", cdxLines.get(cdxLines.size()-1).split("\n")[0]);
         } finally {
             fileSystem.delete(new Path(outputURI), true);
         }

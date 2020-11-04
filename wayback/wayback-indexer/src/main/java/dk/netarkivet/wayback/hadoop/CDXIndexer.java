@@ -10,6 +10,7 @@ import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
 import org.archive.wayback.resourcestore.indexer.ARCRecordToSearchResultAdapter;
 import org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter;
+import org.archive.wayback.util.Adapter;
 import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
 import org.jwat.common.ByteCountingPushBackInputStream;
 import org.jwat.common.ContentType;
@@ -25,9 +26,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 import dk.netarkivet.common.utils.batch.WARCBatchFilter;
 import dk.netarkivet.wayback.batch.UrlCanonicalizerFactory;
@@ -60,7 +64,8 @@ public class CDXIndexer implements Indexer {
      */
     public List<String> index(InputStream archiveInputStream, String archiveName) throws IOException {
         try (ArchiveReader archiveReader = ArchiveReaderFactory.get(archiveName, archiveInputStream, false)) {
-            if (archiveName.contains("metadata")) {
+            boolean isMetadataFile = archiveName.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
+            if (isMetadataFile) {
                 return extractMetadataCDXLines(archiveReader);
             } else {
                 return extractCDXLines(archiveReader);
@@ -76,15 +81,6 @@ public class CDXIndexer implements Indexer {
      */
     public List<String> indexFile(File archiveFile) throws IOException {
         return index(new FileInputStream(archiveFile), archiveFile.getName());
-    }
-
-    /**
-     * Filter for filtering out the NON-RESPONSE records.
-     *
-     * @return The filter that defines what WARC records are wanted in the output CDX file.
-     */
-    public WARCBatchFilter getFilter() {
-        return WARCBatchFilter.EXCLUDE_NON_RESPONSE_RECORDS;
     }
 
     /**
@@ -172,26 +168,27 @@ public class CDXIndexer implements Indexer {
         List<String> res = new ArrayList<>();
 
         for (ArchiveRecord archiveRecord: reader) {
-            // TODO: look at logging something here instead of the below stuff
-            //recordNum++;
-            //System.out.println("Processing record #" + recordNum);
+            // TODO: look at logging something here
            if (archiveRecord instanceof WARCRecord) {
                WARCRecord warcRecord = (WARCRecord) archiveRecord;
                boolean isResponseRecord = WARCBatchFilter.EXCLUDE_NON_RESPONSE_RECORDS.accept(warcRecord);
                if (!isResponseRecord) {
-                   //System.out.println("Skipping non response record #" + recordNum);
                    continue;
                }
-               warcAdapter.setCanonicalizer(new IdentityUrlCanonicalizer());
+               warcAdapter.setCanonicalizer(urlCanonicalizer);
                //TODO this returns null and prints stack trace on OutOfMemoryError. Bad code. //jolf & abr
                CaptureSearchResult captureSearchResult = warcAdapter.adapt(warcRecord);
                if (captureSearchResult != null) {
-                   //actualLinesWritten++;
-                   //System.out.println("Actual cdx lines written: " + actualLinesWritten);
                    res.add(cdxLineCreator.adapt(captureSearchResult));
                }
+
            } else {
                ARCRecord arcRecord = (ARCRecord) archiveRecord;
+               boolean isResponseRecord = ARCBatchFilter.EXCLUDE_FILE_HEADERS.accept(arcRecord);
+               if (!isResponseRecord) {
+                   continue;
+               }
+               arcAdapter.setCanonicalizer(urlCanonicalizer);
                final CaptureSearchResult captureSearchResult = arcAdapter.adapt(arcRecord);
                if (captureSearchResult != null) {
                    res.add(cdxLineCreator.adapt(captureSearchResult));

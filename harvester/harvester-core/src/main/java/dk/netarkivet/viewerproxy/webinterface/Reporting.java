@@ -26,6 +26,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -34,19 +37,31 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.util.ToolRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SimpleFileResolver;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
+import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
+import dk.netarkivet.common.utils.hadoop.HadoopJob;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
+import dk.netarkivet.wayback.hadoop.CDXMapper;
 
 /**
  * Methods for generating the batch results needed by the QA pages.
@@ -58,6 +73,9 @@ public class Reporting {
      */
     private Reporting() {
     }
+
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(Reporting.class);
 
     /** The suffix for the data arc/warc files produced by Heritrix. 
      * TODO This should be configurable 
@@ -123,12 +141,68 @@ public class Reporting {
     }
 
     /**
-     * TODO
+     * Submits a Hadoop job to generate cdx for all metadata files for a jobID and returns the resulting list of records.
+     *
      * @param jobid The job to get cdx for.
      * @return A list of cdx records.
      */
     private static List<CDXRecord> getRecordsUsingHadoop(long jobid) {
+        Configuration hadoopConf = HadoopJobUtils.getConfFromSettings();
         String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobid);
+        PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("regex:" + metadataFileSearchPattern);
+        UUID uuid = UUID.randomUUID();
+        try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
+            Path jobInputNameFile = HadoopFileUtils.createUniquePathInDir(
+                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_INPUT_DIR), uuid);
+            log.info("Input file for job '{}' will be '{}'", jobid, jobInputNameFile);
+            Path jobOutputDir = HadoopFileUtils.createUniquePathInDir(
+                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_OUTPUT_DIR), uuid);
+            log.info("Output directory for job '{}' is '{}'", jobid, jobOutputDir);
+            if (jobInputNameFile == null || jobOutputDir == null) {
+                log.error("Failed initializing input/output for metadata CDX job '{}' with uuid '{}'", jobid, uuid);
+                return null;
+            }
+
+            java.nio.file.Path localInputTempFile = HadoopFileUtils.makeLocalInputTempFile();
+            String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
+            FileResolver fileResolver = new SimpleFileResolver(Paths.get(pillarParentDir));
+            List<java.nio.file.Path> filePaths = fileResolver.getPaths(pathMatcher);
+            try {
+                HadoopJobUtils.writeHadoopInputFileLinesToInputFile(filePaths, localInputTempFile);
+            } catch (IOException e) {
+                log.error("Failed writing filepaths to '{}' for metadata CDX job '{}'", localInputTempFile, jobid);
+                return null;
+            }
+            log.info("Copying file with input paths '{}' to hdfs path '{}' for metadata CDX job '{}'.",
+                    localInputTempFile, jobInputNameFile, jobid);
+            try {
+                fileSystem.copyFromLocalFile(true, new Path(localInputTempFile.toAbsolutePath().toString()),
+                        jobInputNameFile);
+            } catch (IOException e) {
+                log.error("Failed copying local input '{}' to '{}' for job '{}'",
+                        localInputTempFile.toAbsolutePath(), jobInputNameFile, jobid);
+                return null;
+            }
+
+            log.info("Starting metadata CDX job for jobID {}", jobid);
+            int exitCode = 0;
+            try {
+                exitCode = ToolRunner.run(new HadoopJob(hadoopConf, new CDXMapper()),
+                        new String[] {jobInputNameFile.toString(), jobOutputDir.toString()});
+                if (exitCode == 0) {
+                    log.info("Metadata CDX job with jobID {} was a success!", jobid);
+                    List<String> cdxLines = HadoopJobUtils.collectOutputLines(fileSystem, jobOutputDir);
+                    return HadoopJobUtils.getCDXRecordListFromCDXLines(cdxLines);
+                } else {
+                    log.warn("Metadata CDX job with ID {} failed with exit code '{}'", jobid, exitCode);
+                }
+            } catch (Exception e) {
+                log.error("Metadata CDX job with ID {} failed to run normally.", jobid, e);
+                return null;
+            }
+        } catch (IOException e) {
+            log.error("Error instantiating Hadoop filesystem for job {}.", jobid, e);
+        }
         return null;
     }
 

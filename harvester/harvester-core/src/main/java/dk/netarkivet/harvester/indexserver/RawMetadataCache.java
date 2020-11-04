@@ -170,14 +170,16 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         conf.setPattern(GetMetadataMapper.URL_PATTERN, urlPattern);
         conf.setPattern(GetMetadataMapper.MIME_PATTERN, mimePattern);
         UUID uuid = UUID.randomUUID();
-        try (FileSystem fileSystem = FileSystem.get(conf)) {
-            Path hadoopInputNameFile = HadoopFileUtils.createExtractionJobInputFilePath(fileSystem, uuid);
-            log.info("Hadoop input file will be '{}'", hadoopInputNameFile);
+        try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
+            Path jobInputNameFile = HadoopFileUtils.createUniquePathInDir(
+                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATAJOB_INPUT_DIR), uuid);
+            log.info("Input file for job '{}' will be '{}'", id, jobInputNameFile);
 
-            Path jobOutputDir = HadoopFileUtils.createExtractionJobOutputDirPath(fileSystem, uuid);
-            log.info("Output directory for job is '{}'", jobOutputDir);
+            Path jobOutputDir = HadoopFileUtils.createUniquePathInDir(
+                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATAJOB_OUTPUT_DIR), uuid);
+            log.info("Output directory for job '{}' is '{}'", id, jobOutputDir);
 
-            if (hadoopInputNameFile == null || jobOutputDir == null) {
+            if (jobInputNameFile == null || jobOutputDir == null) {
                 log.error("Failed initializing input/output for job '{}' with uuid '{}'", id, uuid);
                 return null;
             }
@@ -192,13 +194,13 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 log.error("Failed writing filepaths to '{}' for job '{}'", localInputTempFile, id);
                 return null;
             }
-            log.info("Copying file with input paths '{}' to hdfs '{}'.", localInputTempFile, hadoopInputNameFile);
+            log.info("Copying file with input paths '{}' to hdfs '{}'.", localInputTempFile, jobInputNameFile);
             try {
-                fileSystem.copyFromLocalFile(false, new Path(localInputTempFile.toAbsolutePath().toString()),
-                        hadoopInputNameFile);
+                fileSystem.copyFromLocalFile(true, new Path(localInputTempFile.toAbsolutePath().toString()),
+                        jobInputNameFile);
             } catch (IOException e) {
                 log.error("Failed copying local input '{}' to '{}' for job '{}'",
-                        localInputTempFile.toAbsolutePath(), hadoopInputNameFile, id);
+                        localInputTempFile.toAbsolutePath(), jobInputNameFile, id);
                 return null;
             }
 
@@ -206,9 +208,9 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                     + " job are '{}' and '{}'", filePaths.size(), specifiedPattern, urlPattern, mimePattern);
             int exitCode = 0;
             try {
-                log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
+                log.info("Starting hadoop job with input {} and output {}.", jobInputNameFile, jobOutputDir);
                 exitCode = ToolRunner.run(new HadoopJob(conf, new GetMetadataMapper()),
-                        new String[] {hadoopInputNameFile.toString(), jobOutputDir.toString()});
+                        new String[] {jobInputNameFile.toString(), jobOutputDir.toString()});
 
                 if (exitCode == 0) {
                     List<String> metadataLines = HadoopJobUtils.collectOutputLines(fileSystem, jobOutputDir);
@@ -256,10 +258,12 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             conf.setPattern(GetMetadataMapper.URL_PATTERN, Pattern.compile(".*duplicationmigration.*"));
             conf.setPattern(GetMetadataMapper.MIME_PATTERN, Pattern.compile("text/plain"));
             UUID uuid = UUID.randomUUID();
-            Path hadoopInputNameFile = HadoopFileUtils.createExtractionJobInputFilePath(fileSystem, uuid);
+            Path hadoopInputNameFile = HadoopFileUtils.createUniquePathInDir(
+                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATAJOB_INPUT_DIR), uuid);
             log.info("Hadoop input file will be '{}'", hadoopInputNameFile);
 
-            Path jobOutputDir = HadoopFileUtils.createExtractionJobOutputDirPath(fileSystem, uuid);
+            Path jobOutputDir = HadoopFileUtils.createUniquePathInDir(
+                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATAJOB_OUTPUT_DIR), uuid);
             log.info("Output directory for job is '{}'", jobOutputDir);
 
             if (hadoopInputNameFile == null || jobOutputDir == null) {

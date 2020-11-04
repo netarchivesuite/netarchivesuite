@@ -28,6 +28,12 @@
     </dependency>
 
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>wayback-indexer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>heritrix3-wrapper</artifactId>
     </dependency>
