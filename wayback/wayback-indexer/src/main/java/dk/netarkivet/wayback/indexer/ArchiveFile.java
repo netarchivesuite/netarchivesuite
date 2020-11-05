@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_COLLECTIONID;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,7 +45,6 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
-import dk.netarkivet.common.distribute.bitrepository.action.getfile.GetFileAction;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.BitmagUtils;
 import dk.netarkivet.common.utils.FileResolver;
@@ -204,7 +201,7 @@ public class ArchiveFile {
         // TODO shouldn't have check on filename here, but for now let it be
         boolean isMetadataFile = filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
         boolean isArchiveFile = ARCUtils.isARC(filename) || WARCUtils.isWarc(filename) || isMetadataFile;
-        if (Settings.getBoolean(CommonSettings.USING_HADOOP) && isArchiveFile) {
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND) && isArchiveFile) {
             hadoopIndex();
         } else {
             batchIndex();
