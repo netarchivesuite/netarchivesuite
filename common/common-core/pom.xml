@@ -12,7 +12,7 @@
 
   <name>NetarchiveSuite - common - core</name>
   <properties>
-    <bitrepository.version>1.4</bitrepository.version>
+    <bitrepository.version>1.10-SNAPSHOT</bitrepository.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomcat.version>${tomcat-embed-core.version}</tomcat.version>
   </properties>
