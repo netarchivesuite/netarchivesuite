@@ -23,10 +23,7 @@ public class BitmagSimpleApplication {
         String fileID;
         File targetFile;
 
-        // The location where to find the bitmag settings (e.g. Reference-/RepositorySettings)
-        Path configDir = Paths.get("/nas/nasclientconfig");
-        Path certificate = configDir.resolve(UUID.randomUUID().toString()); // Random for no certificate
-        BitmagUtils.initialize(configDir, certificate);
+        BitmagUtils.initialize();
         ClientAction clientAction = null;
         try {
             String action = args[0];

@@ -22,15 +22,18 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_COLLECTIONID;
+import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_USEPILLAR;
+
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.bitrepository.access.getfileids.GetFileIDsClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,10 +42,9 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
+import dk.netarkivet.common.distribute.bitrepository.action.getfileids.GetFileIDsAction;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.BitmagUtils;
+import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.DatedFileListJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
@@ -60,22 +62,10 @@ public class FileNameHarvester {
      */
     public static synchronized void harvestAllFilenames() {
         ArchiveFileDAO dao = new ArchiveFileDAO();
-        //TODO I believe that by default this only fetches max 10000 files. Look at the query interface
-        //in bitmag
-        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
-            // Initialize connection to the bitrepository
-            Bitrepository bitrep = BitmagUtils.initBitrep();
-            String collection = Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_COLLECTIONID);
-            List<String> fileNames = bitrep.getFileIds(collection, Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_USEPILLAR));
-            if (fileNames != null) {
-                for (String fileName : fileNames) {
-                    if (!dao.exists(fileName)) {
-                        createArchiveFileInDB(fileName, dao);
-                    }
-                }
-            } else {
-                log.info("No files found in collection '{}'", collection);
-            }
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
+            Set<String> fileNames = getFilesFromBitmagSince(new Date(0));
+            log.info("Harvested {} file(s) from bitmag", fileNames.size());
+            createFilesInDB(fileNames, dao);
         } else {
             PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
             BatchStatus status = client.batch(new FileListJob(), Settings.get(WaybackSettings.WAYBACK_REPLICA));
@@ -89,31 +79,51 @@ public class FileNameHarvester {
     public static synchronized void harvestRecentFilenames() {
         ArchiveFileDAO dao = new ArchiveFileDAO();
         long timeAgo = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_SINCE);
-        Date since = new Date(System.currentTimeMillis() - timeAgo);
+        Date sinceDate = new Date(System.currentTimeMillis() - timeAgo);
 
-        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
-            log.info("Harvesting of recent files not yet implemented with bitmag.");
-            //TODO can this be implemented using queries in bitmag
-
-/*            Bitrepository bitrep = BitmagUtils.initBitrep();
-            String collection = Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_COLLECTIONID);
-            List<String> fileNames = bitrep.getFileIds(collection);
-            if (fileNames != null) {
-                for (String fileName : fileNames) {
-                    File file = bitrep.getFile(fileName, collection, null);
-                    if (file.lastModified() > since.getTime()) {
-                        createArchiveFileInDB(fileName, dao);
-                    }
-                }
-            } else {
-                log.info("No files found in collection '{}'", collection);
-            }*/
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
+            Set<String> fileNames = getFilesFromBitmagSince(sinceDate);
+            log.info("Harvested {} recent file(s) from bitmag", fileNames.size());
+            createFilesInDB(fileNames, dao);
         } else {
             PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
-            BatchStatus status = client
-                    .batch(new DatedFileListJob(since), Settings.get(WaybackSettings.WAYBACK_REPLICA));
+            BatchStatus status = client.batch(
+                    new DatedFileListJob(sinceDate), Settings.get(WaybackSettings.WAYBACK_REPLICA));
             getResultFileAndCreateInDB(status, dao);
         }
+    }
+
+    /**
+     * Creates the given filenames in the database if they don't already exist.
+     * If the given set is empty it just logs that there were no files to add to the database.
+     * @param fileNames Files to create
+     * @param dao The DAO through which the database is accessed
+     */
+    private static void createFilesInDB(Set<String> fileNames, ArchiveFileDAO dao) {
+        if (!fileNames.isEmpty()) {
+            for (String fileName : fileNames) {
+                if (!dao.exists(fileName)) {
+                    createArchiveFileInDB(fileName, dao);
+                }
+            }
+        } else {
+            String collectionID = Settings.get(BITREPOSITORY_COLLECTIONID);
+            log.info("No new files to add in database after harvest of collection '{}'", collectionID);
+        }
+    }
+
+    /**
+     * Performs a get-file-ids action on the used bitmag instance and returns the results in a set.
+     * @param sinceDate A date specifying how far back to fetch files from
+     * @return The resulting set of filenames from the get-file-ids action
+     */
+    private static Set<String> getFilesFromBitmagSince(Date sinceDate) {
+        String collectionID = Settings.get(BITREPOSITORY_COLLECTIONID);
+        String usePillar = Settings.get(BITREPOSITORY_USEPILLAR);
+        GetFileIDsClient client = BitmagUtils.getFileIDsClient();
+        GetFileIDsAction action = new GetFileIDsAction(client, collectionID, usePillar, sinceDate);
+        action.performAction();
+        return action.getActionResult();
     }
 
     /**

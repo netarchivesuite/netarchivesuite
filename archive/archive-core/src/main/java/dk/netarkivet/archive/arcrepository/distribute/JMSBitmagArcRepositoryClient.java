@@ -37,8 +37,8 @@ import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.BitrepositoryUtils;
+import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
+import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -346,7 +346,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
                 bitrep.getChecksums(fileId, collectionId, maxStoreFailures);
 
         //for each pillar in this collection
-        for (String collectionPillar: BitrepositoryUtils.getCollectionPillars(collectionId) ){
+        for (String collectionPillar: BitmagUtils.getKnownPillars(collectionId) ){
             boolean foundInThisPillar = false;
 
             //Get the checksum result for this pillar for this file
@@ -362,7 +362,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
 
                     //Checksum the local file so we can compare
                     ChecksumDataForFileTYPE validationChecksum =
-                            BitrepositoryUtils.getValidationChecksum(file, checksumResult.getChecksumType());
+                            BitmagUtils.getValidationChecksum(file, checksumResult.getChecksumType());
 
                     //If the checksums do not match, we have a failure
                     if ( ! Arrays.equals(validationChecksum.getChecksumValue(), checksum.getChecksumValue())) {

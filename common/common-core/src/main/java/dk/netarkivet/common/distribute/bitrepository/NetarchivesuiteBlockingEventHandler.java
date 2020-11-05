@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.common.distribute.arcrepository.bitrepository;
+package dk.netarkivet.common.distribute.bitrepository;
 
 
 import java.util.List;
@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
  * Eventhandler for Netarchivesuite
  * Extends the BlockingEventHandler by allowing failures of some pillars.
  */
+@Deprecated
 public class NetarchivesuiteBlockingEventHandler extends BlockingEventHandler {
     /** Logging mechanism. */
     private final Logger logger = LoggerFactory.getLogger(NetarchivesuiteBlockingEventHandler.class);
