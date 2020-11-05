@@ -172,43 +172,42 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         UUID uuid = UUID.randomUUID();
         try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
             Path jobInputNameFile = HadoopFileUtils.createUniquePathInDir(
-                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATAJOB_INPUT_DIR), uuid);
-            log.info("Input file for job '{}' will be '{}'", id, jobInputNameFile);
-
+                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATA_EXTRACTIONJOB_INPUT_DIR), uuid);
+            log.info("Input file for metadata extraction job '{}' will be '{}'", id, jobInputNameFile);
             Path jobOutputDir = HadoopFileUtils.createUniquePathInDir(
-                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATAJOB_OUTPUT_DIR), uuid);
-            log.info("Output directory for job '{}' is '{}'", id, jobOutputDir);
-
+                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATA_EXTRACTIONJOB_OUTPUT_DIR), uuid);
+            log.info("Output directory for metadata extraction job '{}' is '{}'", id, jobOutputDir);
             if (jobInputNameFile == null || jobOutputDir == null) {
-                log.error("Failed initializing input/output for job '{}' with uuid '{}'", id, uuid);
+                log.error("Failed initializing input/output for metadata extraction job '{}' with uuid '{}'", id, uuid);
                 return null;
             }
-            java.nio.file.Path localInputTempFile = HadoopFileUtils.makeLocalInputTempFile();
 
+            java.nio.file.Path localInputTempFile = HadoopFileUtils.makeLocalInputTempFile();
             String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
             FileResolver fileResolver = new SimpleFileResolver(Paths.get(pillarParentDir));
             List<java.nio.file.Path> filePaths = fileResolver.getPaths(pathMatcher);
             try {
                 HadoopJobUtils.writeHadoopInputFileLinesToInputFile(filePaths, localInputTempFile);
             } catch (IOException e) {
-                log.error("Failed writing filepaths to '{}' for job '{}'", localInputTempFile, id);
+                log.error("Failed writing filepaths to '{}' for metadata extraction job '{}'", localInputTempFile, id);
                 return null;
             }
-            log.info("Copying file with input paths '{}' to hdfs '{}'.", localInputTempFile, jobInputNameFile);
+            log.info("Copying file with input paths '{}' to hdfs '{}' for metadata extraction job '{}'.",
+                    localInputTempFile, jobInputNameFile, id);
             try {
                 fileSystem.copyFromLocalFile(true, new Path(localInputTempFile.toAbsolutePath().toString()),
                         jobInputNameFile);
             } catch (IOException e) {
-                log.error("Failed copying local input '{}' to '{}' for job '{}'",
+                log.error("Failed copying local input '{}' to '{}' for metadata extraction job '{}'",
                         localInputTempFile.toAbsolutePath(), jobInputNameFile, id);
                 return null;
             }
 
-            log.info("Starting metadata extraction job on {} file(s) matching pattern '{}'. URL/MIME patterns used for"
-                    + " job are '{}' and '{}'", filePaths.size(), specifiedPattern, urlPattern, mimePattern);
             int exitCode = 0;
             try {
-                log.info("Starting hadoop job with input {} and output {}.", jobInputNameFile, jobOutputDir);
+                log.info("Starting metadata extraction job on {} file(s) matching pattern '{}'. URL/MIME patterns used for"
+                        + " job are '{}' and '{}'", filePaths.size(), specifiedPattern, urlPattern, mimePattern);
+                log.info("Starting hadoop job '{}' with input {} and output {}.", id, jobInputNameFile, jobOutputDir);
                 exitCode = ToolRunner.run(new HadoopJob(conf, new GetMetadataMapper()),
                         new String[] {jobInputNameFile.toString(), jobOutputDir.toString()});
 
@@ -227,14 +226,14 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                         log.info("No data found for job '{}' for '{}' in local bitarchive. ", id, prefix);
                     }
                 } else {
-                    log.warn("Hadoop job failed with exit code '{}'", exitCode);
+                    log.warn("Metadata extraction job '{}' failed with exit code '{}'", id, exitCode);
                 }
             } catch (Exception e) {
-                log.error("Hadoop indexing job failed to run normally.", e);
+                log.error("Metadata extraction job '{}' failed to run normally.", id, e);
                 return null;
             }
         } catch (IOException e) {
-            log.error("Error on hadoop filesystem.", e);
+            log.error("Error on hadoop filesystem for job '{}'.", id, e);
         }
         return null;
     }
@@ -259,11 +258,11 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             conf.setPattern(GetMetadataMapper.MIME_PATTERN, Pattern.compile("text/plain"));
             UUID uuid = UUID.randomUUID();
             Path hadoopInputNameFile = HadoopFileUtils.createUniquePathInDir(
-                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATAJOB_INPUT_DIR), uuid);
+                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATA_EXTRACTIONJOB_INPUT_DIR), uuid);
             log.info("Hadoop input file will be '{}'", hadoopInputNameFile);
 
             Path jobOutputDir = HadoopFileUtils.createUniquePathInDir(
-                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATAJOB_OUTPUT_DIR), uuid);
+                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATA_EXTRACTIONJOB_OUTPUT_DIR), uuid);
             log.info("Output directory for job is '{}'", jobOutputDir);
 
             if (hadoopInputNameFile == null || jobOutputDir == null) {

@@ -153,11 +153,11 @@ public class Reporting {
         UUID uuid = UUID.randomUUID();
         try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
             Path jobInputNameFile = HadoopFileUtils.createUniquePathInDir(
-                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_INPUT_DIR), uuid);
-            log.info("Input file for job '{}' will be '{}'", jobid, jobInputNameFile);
+                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATA_CDXJOB_INPUT_DIR), uuid);
+            log.info("Input file for metadata CDX job '{}' will be '{}'", jobid, jobInputNameFile);
             Path jobOutputDir = HadoopFileUtils.createUniquePathInDir(
-                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_OUTPUT_DIR), uuid);
-            log.info("Output directory for job '{}' is '{}'", jobid, jobOutputDir);
+                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATA_CDXJOB_OUTPUT_DIR), uuid);
+            log.info("Output directory for metadata CDX job '{}' is '{}'", jobid, jobOutputDir);
             if (jobInputNameFile == null || jobOutputDir == null) {
                 log.error("Failed initializing input/output for metadata CDX job '{}' with uuid '{}'", jobid, uuid);
                 return null;
@@ -184,9 +184,9 @@ public class Reporting {
                 return null;
             }
 
-            log.info("Starting metadata CDX job for jobID {}", jobid);
             int exitCode = 0;
             try {
+                log.info("Starting metadata CDX job for jobID {}", jobid);
                 exitCode = ToolRunner.run(new HadoopJob(hadoopConf, new CDXMapper()),
                         new String[] {jobInputNameFile.toString(), jobOutputDir.toString()});
                 if (exitCode == 0) {

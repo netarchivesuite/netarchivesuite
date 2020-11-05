@@ -589,13 +589,25 @@ public class CommonSettings {
      * The directory/path for Hadoop to use as input path in metadata extraction map-/reduce jobs.
      * Used when Hadoop metadata extraction jobs are started by the IndexRequestServer after receiving requests.
      */
-    public static String HADOOP_MAPRED_METADATAJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataJob.inputDir";
+    public static String HADOOP_MAPRED_METADATA_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataExtractionJob.inputDir";
 
     /**
      * The directory/path for Hadoop to use as output path in metadata extraction map-/reduce jobs.
      * Used when Hadoop metadata extraction jobs are started by the IndexRequestServer after receiving requests.
      */
-    public static String HADOOP_MAPRED_METADATAJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataJob.outputDir";
+    public static String HADOOP_MAPRED_METADATA_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataExtractionJob.outputDir";
+
+    /**
+     * The directory/path for Hadoop to use as input path in metadata cdx-indexing map-/reduce jobs
+     * (Hadoop equivalent of ArchiveExtractCDXJob).
+     */
+    public static String HADOOP_MAPRED_METADATA_CDXJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataCDXJob.inputDir";
+
+    /**
+     * The directory/path for Hadoop to use as output path in metadata cdx-indexing map-/reduce jobs
+     * (Hadoop equivalent of ArchiveExtractCDXJob).
+     */
+    public static String HADOOP_MAPRED_METADATA_CDXJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataCDXJob.outputDir";
 
     /**
      * Path on the client machine (wayback indexer machine) where the uber-jar file containing the
