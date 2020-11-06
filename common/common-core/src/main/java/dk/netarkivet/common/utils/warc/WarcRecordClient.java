@@ -1,38 +1,28 @@
 package dk.netarkivet.common.utils.warc;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 
-import org.apache.commons.httpclient.methods.ExpectContinueMethod;
 import org.apache.http.*;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.util.EntityUtils;
 import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
-import org.archive.io.warc.WARCReaderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import dk.netarkivet.common.utils.FileUtils;
 
 public class WarcRecordClient {
     /**
@@ -56,7 +46,6 @@ public class WarcRecordClient {
     private static final String USER_AGENT = "Mozilla/5.0";
     private static int timeout = MILLISECONDS_PER_SECOND;
     private long offset;
-    boolean atFirst = true;
 
     public long getOffset() {
         return offset;
@@ -89,7 +78,7 @@ public class WarcRecordClient {
      * @throws IOException                   if reading file fails
      * @throws UnsupportedOperationException is used if method is not implemented
      */
-    public BitarchiveRecord getWarc(URI uri, long offset) throws Exception {
+    private BitarchiveRecord fetchBitarchiveRecord(URI uri, long offset) throws Exception {
         RequestConfig.Builder requestBuilder = RequestConfig.custom();
         requestBuilder.setConnectTimeout(timeout);
         requestBuilder.setConnectionRequestTimeout(timeout);
@@ -101,29 +90,30 @@ public class WarcRecordClient {
                 .addHeader("Range", "bytes=" + offset + "-")
                 .build();
         log.debug("Executing request " + request.getRequestLine());
-        try {
-            CloseableHttpClient closableHttpClient = HttpClients.custom().setConnectionManager(cm).build();
-            try (CloseableHttpResponse httpResponse = closableHttpClient.execute(request)) {
-                log.debug("httpResponse status: " + httpResponse.getStatusLine().toString());
-                if (httpResponse.getStatusLine().getStatusCode() != 200) {
-                    log.error("Http request error " + httpResponse.getStatusLine().getStatusCode());
-                    return null;
-                }
-                HttpEntity entity = httpResponse.getEntity();
-                if (entity != null) {
-                    InputStream iStr = entity.getContent();
-                    ArchiveReader archiveReader = WARCReaderFactory.get("fake.warc", iStr, atFirst);
-                    ArchiveRecord archiveRecord = archiveReader.get();
-                    BitarchiveRecord reply = new BitarchiveRecord(archiveRecord, fileName);
-                    log.debug("reply: " + reply.toString());
-                    return reply;
-                } else {
-                    log.warn("Received null response entity for request for {}, {}", uri, offset);
-                    return null;
-                }
+        boolean atFirst = (offset == 0L);
+        CloseableHttpClient closableHttpClient = HttpClients.custom().setConnectionManager(cm).build();
+        try (CloseableHttpResponse httpResponse = closableHttpClient.execute(request)) {
+            log.debug("httpResponse status: " + httpResponse.getStatusLine().toString());
+            if (httpResponse.getStatusLine().getStatusCode() != 200) {
+                log.error("Http request error " + httpResponse.getStatusLine().getStatusCode());
+                return null;
             }
-        } catch (Exception e) {
-            throw e;
+            HttpEntity entity = httpResponse.getEntity();
+            if (entity != null) {
+                InputStream iStr = entity.getContent();
+                //Note that data that comes back from WarcRecordService has been decompressed so to get the
+                //right arc/warc parser from the ArchiveReaderFactory we have to give it the name of the
+                //uncompressed file.
+                final String inflatedName = fileName.replace(".gz", "");
+                ArchiveReader archiveReader = ArchiveReaderFactory.get(inflatedName, iStr, atFirst);
+                ArchiveRecord archiveRecord = archiveReader.get();
+                BitarchiveRecord reply = new BitarchiveRecord(archiveRecord, fileName);
+                log.debug("reply: " + reply.toString());
+                return reply;
+            } else {
+                log.warn("Received null response entity for request for {}, {}", uri, offset);
+                return null;
+            }
         }
     }
 
@@ -131,12 +121,12 @@ public class WarcRecordClient {
      * Retrieves a single BitarchiveRecord from the repository from a given file and offset. If the operation fails for
      * any reason, this method returns null.
      *
-     * @param arcfileName Name of the arcfile to retrieve.
+     * @param arcfileName Name of the arcfile/warcfile to retrieve.
      * @param index offset to fetch specific record from warc or arc file
      */
-    public BitarchiveRecord get(String arcfileName, long index) {
+    public BitarchiveRecord getBitarchiveRecord(String arcfileName, long index) {
 
-        BitarchiveRecord warcInstance = null;
+        BitarchiveRecord bitarchiveRecord = null;
         try {
             ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfile");
             ArgumentNotValid.checkNotNegative(index, "index");
@@ -146,11 +136,11 @@ public class WarcRecordClient {
             String strUri = this.getBaseUri().toString() + "/" + arcfileName;
 
             URI uri = new URI(strUri);
-            warcInstance = this.getWarc(uri, index);
+            bitarchiveRecord = this.fetchBitarchiveRecord(uri, index);
         } catch (Exception e) {
             log.error("Failed to retrieve record at offset {} from file {}.", index, arcfileName, e);
         }
-        return warcInstance;
+        return bitarchiveRecord;
     }
 
 
