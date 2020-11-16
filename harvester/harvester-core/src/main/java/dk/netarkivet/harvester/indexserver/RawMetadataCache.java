@@ -148,7 +148,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
      * @see FileBasedCache#cacheData(Object)
      */
     protected Long cacheData(Long id) {
-        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
             return cacheDataHadoop(id);
         } else {
             return cacheDataBatch(id);

@@ -607,9 +607,10 @@ public class CommonSettings {
     public static String HADOOP_USER_NAME = "settings.common.hadoop.username";
 
     /**
-     * Boolean specifying if Hadoop is used for mass processing jobs.
+     * Boolean setting specifying if the Bitrepository project is used as backend storage together with Hadoop
+     * for mass processing jobs.
      */
-    public static String USING_HADOOP = "settings.common.useHadoopAsMassProcessor";
+    public static String USE_BITMAG_HADOOP_BACKEND = "settings.common.useBitmagHadoopBackend";
 
     /**
      * <b>settings.common.warcClient.max_total_connections</b>: </br>

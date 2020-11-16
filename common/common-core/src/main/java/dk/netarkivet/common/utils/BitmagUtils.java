@@ -1,13 +1,13 @@
 package dk.netarkivet.common.utils;
 
-import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_KEYFILENAME;
-import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_SETTINGS_DIR;
-import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_STORE_MAX_PILLAR_FAILURES;
-import static dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.BITREPOSITORY_USEPILLAR;
+import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_KEYFILENAME;
+import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_SETTINGS_DIR;
+import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_STORE_MAX_PILLAR_FAILURES;
+import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_USEPILLAR;
 
 import java.io.File;
 
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
+import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
 
 /** Utilities for using Bitmag. */
 public class BitmagUtils {

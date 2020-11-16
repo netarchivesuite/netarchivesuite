@@ -45,8 +45,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
+import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.BitmagUtils;
 import dk.netarkivet.common.utils.FileResolver;
@@ -204,7 +203,7 @@ public class ArchiveFile {
         // TODO shouldn't have check on filename here, but for now let it be
         boolean isMetadataFile = filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
         boolean isArchiveFile = ARCUtils.isARC(filename) || WARCUtils.isWarc(filename) || isMetadataFile;
-        if (Settings.getBoolean(CommonSettings.USING_HADOOP) && isArchiveFile) {
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND) && isArchiveFile) {
             hadoopIndex();
         } else {
             batchIndex();
@@ -300,7 +299,8 @@ public class ArchiveFile {
 
         // Get file and put it in hdfs
         log.info("Getting file '{}' from bitmag for indexing", filename);
-        File inputFile = bitrep.getFile(filename, "netarkivet", null, Settings.get(BitmagArcRepositoryClient.BITREPOSITORY_USEPILLAR)); // TODO: Maybe put setting in BitmagUtils?
+        File inputFile = bitrep.getFile(filename, "netarkivet", null, Settings.get(
+                dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_USEPILLAR));
         Path inputFilePath = new Path(inputFile.getAbsolutePath());
         FileSystem fs = null;
         try {
