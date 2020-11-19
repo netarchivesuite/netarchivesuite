@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.archive.arcrepository.distribute;
 
+import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.getChecksumsClient;
+
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
@@ -39,6 +41,8 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
+import dk.netarkivet.common.distribute.bitrepository.NetarchivesuiteBlockingEventHandler;
+import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -47,14 +51,27 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import org.apache.commons.io.FileUtils;
+import org.bitrepository.access.getchecksums.GetChecksumsClient;
 import org.bitrepository.access.getchecksums.conversation.ChecksumsCompletePillarEvent;
 import org.bitrepository.bitrepositoryelements.ChecksumDataForChecksumSpecTYPE;
 import org.bitrepository.bitrepositoryelements.ChecksumDataForFileTYPE;
+import org.bitrepository.bitrepositoryelements.ChecksumSpecTYPE;
+import org.bitrepository.client.eventhandler.OperationEvent;
+import org.bitrepository.common.exceptions.OperationFailedException;
+import org.bitrepository.common.utils.ChecksumUtils;
+import org.bitrepository.modify.putfile.BlockingPutFileClient;
+import org.bitrepository.modify.putfile.PutFileClient;
+import org.bitrepository.protocol.FileExchange;
+import org.bitrepository.protocol.ProtocolComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -71,6 +88,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
 
         /** the one and only JMSBitmagArcRepositoryClient instance. */
     private static JMSBitmagArcRepositoryClient instance;
+    private static PutFileClient putfileClientInstance;  // NEW
 
     /** Logging output place. */
     protected static final Logger log = LoggerFactory.getLogger(JMSBitmagArcRepositoryClient.class);
@@ -95,6 +113,18 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      */
     static {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
+        if (putfileClientInstance == null) {            // NEW
+            putfileClientInstance = BitmagUtils.getPutFileClient();
+        }
+       // From Bitrepository.getInstance() (File configDir, String bitmagKeyFilename)
+        /*
+        final String  CLIENT_CERTIFICATE_FILE = "client-certificate.pem";
+           String applicationConfig = System.getProperty("dk.kb.applicationConfig");
+           Path configDir = Paths.get(applicationConfig);
+           Path clientCertificate = configDir.resolve(CLIENT_CERTIFICATE_FILE);
+           BitmagUtils.initialize(configDir, clientCertificate);
+        Bitrepository.getInstance(configDir, CLIENT_CERTIFICATE_FILE);
+        */
     }
 
     /**
@@ -508,6 +538,107 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             ArgumentNotValid {
         throw new NotImplementedException("Correct is delegated to the bitrepository software");
 
+    }
+
+
+    /**
+     * Attempts to upload a given file.    NEW
+     *
+     * @param file The file to upload. Should exist. The packageId is the name of the file
+     * @param collectionId The Id of the collection to upload to
+     * @param maxNumberOfFailingPillars Max number of acceptable store failures
+     * @return true if the upload succeeded, false otherwise.
+     */
+    public boolean uploadFile(final File file, final String fileId, final String collectionId,
+            int maxNumberOfFailingPillars) {
+        ArgumentNotValid.checkExistsNormalFile(file, "File file");
+        // Does collection exists? If not return false
+        if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
+            log.warn("The given collection Id {} does not exist", collectionId);
+            return false;
+        }
+        boolean success = false;
+        try {
+            OperationEvent.OperationEventType finalEvent = putTheFile(putfileClientInstance, file, fileId, collectionId,
+                    maxNumberOfFailingPillars); // TODO where to put it?
+            if(finalEvent == OperationEvent.OperationEventType.COMPLETE) {
+                success = true;
+                log.info("File '{}' uploaded successfully. ",file.getAbsolutePath());
+            } else {
+                log.warn("Upload of file '{}' failed with event-type '{}'.", file.getAbsolutePath(), finalEvent);
+            }
+        } catch (Exception e) {
+            log.warn("Unexpected error while storing file '{}'", file.getAbsolutePath(), e);
+            success = false;
+        }
+        return success;
+    }
+
+
+    /**
+     * Upload the file to the uploadserver, initiate the PutFile request, and wait for the  NEW NOT finished
+     * request to finish.
+     * @param client the PutFileClient responsible for the put operation.
+     * @param packageFile The package to upload
+     * @param collectionID The ID of the collection to upload to.
+     * @param maxNumberOfFailingPillars Max number of acceptable store failures
+     * @return OperationEventType.FAILED if operation failed; otherwise returns OperationEventType.COMPLETE
+     * @throws IOException If unable to upload the packageFile to the uploadserver
+     */
+    private OperationEvent.OperationEventType putTheFile(PutFileClient client, File packageFile, String fileID, String collectionID,
+            int maxNumberOfFailingPillars) throws IOException, URISyntaxException {
+
+        // use public PutFileAction(PutFileClient client, String collectionID, File targetFile, String fileID)
+        FileExchange fileExchange = null;
+        URL url = null;
+        try {                                                                                   // NEW
+            PutFileAction ca = new PutFileAction(client, collectionId, packageFile, fileID);
+            ca.performAction();
+
+            // --> To be changed
+            fileExchange = BitmagUtils.getFileExchange();
+            // FileExchange fileexchange = ProtocolComponentFactory.getInstance().getFileExchange(this.bitmagSettings);
+            // BlockingPutFileClient bpfc = new BlockingPutFileClient(client);
+
+            // URL url = fileexchange.putFile(packageFile);
+            url = BitmagUtils.getFileExchangeBaseURL();
+            // ChecksumSpecTYPE csSpec = ChecksumUtils.getDefault(this.bitmagSettings);
+
+            GetChecksumsClient chkClient = BitmagUtils.getChecksumsClient();
+            // chkClient.getChecksums();
+
+
+           // ChecksumDataForFileTYPE validationChecksum = BitmagUtils.getValidationChecksum(
+           //         packageFile, csSpec);
+
+            ChecksumSpecTYPE requestChecksum = null;
+            String putFileMessage = "Putting the file '" + packageFile + "' with the file id '"
+                    + fileID + "' from Netarchivesuite";
+
+            // NetarchivesuiteBlockingEventHandler putFileEventHandler = new NetarchivesuiteBlockingEventHandler(collectionID,
+            //      maxNumberOfFailingPillars);
+            // <-- To be changed
+        /*
+        try {
+            bpfc.putFile(collectionID, url, fileID, packageFile.length(), validationChecksum, requestChecksum,
+                    putFileEventHandler, putFileMessage);
+        } catch (OperationFailedException e) {
+            log.warn("The putFile Operation was not a complete success ({})."
+                    + " Checksum whether we accept anyway.", putFileMessage, e);
+            if(putFileEventHandler.hasFailed()) {
+                return OperationEvent.OperationEventType.FAILED;
+            } else {
+                return OperationEvent.OperationEventType.COMPLETE;
+            }
+         */
+
+
+        } finally {
+            // delete the uploaded file from server
+            fileExchange.deleteFile(url);
+        }
+        log.info("The putFile Operation succeeded ({})", "putFileMessage");
+        return OperationEvent.OperationEventType.COMPLETE;
     }
 
 }
