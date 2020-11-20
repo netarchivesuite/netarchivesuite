@@ -610,10 +610,10 @@ public class CommonSettings {
     public static String HADOOP_MAPRED_METADATA_CDXJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataCDXJob.outputDir";
 
     /**
-     * Path on the client machine (wayback indexer machine) where the uber-jar file containing the
-     * indexing map-/reduce job and dependencies is to be found.
+     * Path on the client machine where the uber-jar file containing the map-/reduce job and dependencies
+     * for the harvester and indexer module is to be found.
      */
-    public static String HADOOP_MAPRED_WAYBACK_UBER_JAR = "settings.common.hadoop.mapred.waybackUberJar";
+    public static String HADOOP_MAPRED_UBER_JAR = "settings.common.hadoop.mapred.hadoopUberJar";
 
     /**
      * Username to start map-/reduce jobs under on the Hadoop cluster.

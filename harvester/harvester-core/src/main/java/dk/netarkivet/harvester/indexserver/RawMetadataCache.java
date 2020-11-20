@@ -167,6 +167,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("regex:" + specifiedPattern);
         System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
         Configuration conf = HadoopJobUtils.getConfFromSettings();
+        //HadoopJobUtils.confSetUberJar(conf, CommonSettings.HADOOP_MAPRED_HARVESTER_UBER_JAR); //TODO: ensure this still works.
         conf.setPattern(GetMetadataMapper.URL_PATTERN, urlPattern);
         conf.setPattern(GetMetadataMapper.MIME_PATTERN, mimePattern);
         UUID uuid = UUID.randomUUID();

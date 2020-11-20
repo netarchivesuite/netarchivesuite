@@ -93,7 +93,6 @@ public class CDXJobTest {
         File jarFile = new File("target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
         conf.set("mapreduce.job.jar", jarFile.getAbsolutePath());
         ToolRunner.run(new HadoopJob(conf, new CDXMapper()), new String[]{hadoopInputPath.toString(), outputDir.toString()});
-        conf.setBoolean(CDXMapper.METADATA_DO_DEDUP, false);
         getAndPrintOutput();
     }
 

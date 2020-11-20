@@ -108,6 +108,7 @@
     <module>monitor</module>
     <module>wayback</module>
     <module>integration-test</module>
+    <module>hadoop-uber-jar</module>
   </modules>
 
   <licenses>

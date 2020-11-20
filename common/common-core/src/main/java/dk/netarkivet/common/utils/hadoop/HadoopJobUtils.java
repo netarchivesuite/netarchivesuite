@@ -35,7 +35,8 @@ public class HadoopJobUtils {
     }
 
     /**
-     * Initialize a configuration from settings and return it.
+     * Initialize a configuration from settings and return it. By default uses the wayback-uber-jar when spawning
+     * map-/reduce jobs.
      * @return A new configuration to use for a job.
      */
     public static Configuration getConfFromSettings() {
@@ -47,7 +48,7 @@ public class HadoopJobUtils {
         conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
         conf.set("dfs.client.use.datanode.hostname", "true");
 
-        final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_WAYBACK_UBER_JAR);
+        final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_UBER_JAR);
         if (jarPath == null || !(new File(jarPath)).exists()) {
             log.warn("Specified jar file {} does not exist.", jarPath);
             throw new RuntimeException("Jar file " + jarPath + " does not exist.");

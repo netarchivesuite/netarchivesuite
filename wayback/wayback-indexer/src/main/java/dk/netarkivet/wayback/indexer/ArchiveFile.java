@@ -200,10 +200,7 @@ public class ArchiveFile {
             throw new IllegalState("Attempted to index file '" + filename + "' which is already indexed");
         }
 
-        // TODO shouldn't have check on filename here, but for now let it be
-        boolean isMetadataFile = filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
-        boolean isArchiveFile = ARCUtils.isARC(filename) || WARCUtils.isWarc(filename) || isMetadataFile;
-        if (Settings.getBoolean(CommonSettings.USING_HADOOP) && isArchiveFile) {
+        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
             hadoopIndex();
         } else {
             batchIndex();
@@ -214,6 +211,12 @@ public class ArchiveFile {
      * Runs a map-only (no reduce) job to index this file.
      */
     private void hadoopIndex() {
+        boolean isArchiveFile = ARCUtils.isARC(filename) || WARCUtils.isWarc(filename);
+        if (!isArchiveFile) {
+            log.warn("Skipping indexing of file with filename '{}'", filename);
+            return;
+        }
+
         System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
         Configuration conf = HadoopJobUtils.getConfFromSettings();
         UUID uuid = UUID.randomUUID();

@@ -61,7 +61,7 @@ import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
 import dk.netarkivet.common.utils.hadoop.HadoopJob;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
-import dk.netarkivet.wayback.hadoop.CDXMapper;
+import dk.netarkivet.viewerproxy.webinterface.hadoop.MetadataCDXMapper;
 
 /**
  * Methods for generating the batch results needed by the QA pages.
@@ -187,7 +187,7 @@ public class Reporting {
             int exitCode = 0;
             try {
                 log.info("Starting metadata CDX job for jobID {}", jobid);
-                exitCode = ToolRunner.run(new HadoopJob(hadoopConf, new CDXMapper()),
+                exitCode = ToolRunner.run(new HadoopJob(hadoopConf, new MetadataCDXMapper()),
                         new String[] {jobInputNameFile.toString(), jobOutputDir.toString()});
                 if (exitCode == 0) {
                     log.info("Metadata CDX job with jobID {} was a success!", jobid);

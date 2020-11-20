@@ -1,6 +1,8 @@
 package dk.netarkivet.wayback.hadoop;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +20,8 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.apache.hadoop.yarn.server.MiniYARNCluster;
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.ResourceScheduler;
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.fifo.FifoScheduler;
+import org.archive.wayback.core.CaptureSearchResult;
+import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -74,7 +78,6 @@ public class CDXMapperTester {
 
     @Test
     public void testCDXIndexWARCMetadataFileNoDedup() throws Exception {
-        conf.setBoolean(CDXMapper.METADATA_DO_DEDUP, false); // false is already default value
         String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
         // Write the input lines to the the input file
         File testFile = new File(WORKING_DIR, "2-metadata-1.warc");
@@ -102,8 +105,37 @@ public class CDXMapperTester {
     }
 
     @Test
+    public void testCDXIndexARCMetadataFileDedup() throws Exception {
+        String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
+        // Write the input lines to the the input file
+        File testFile = new File("../wayback-test/tests/dk/netarkivet/wayback/data/originals/12345-metadata-4.arc");
+        File jobInputFile = File.createTempFile("tmp", UUID.randomUUID().toString());
+        org.apache.commons.io.FileUtils.writeStringToFile(jobInputFile, "file://" + testFile.getAbsolutePath());
+        jobInputFile.deleteOnExit();
+
+        // Start the job
+        try {
+            Tool job = new HadoopJob(conf, new CDXMapper());
+            int exitCode = ToolRunner.run(conf, job,
+                    new String[] {"file://" + jobInputFile.toString(), outputURI});
+            Assert.assertEquals(0, exitCode); // job success
+
+            List<String> cdxLines = HadoopJobUtils.collectOutputLines(fileSystem, new Path(outputURI));
+            assertTrue("Expect some results", cdxLines.size() > 2);
+            //cdxLines.forEach(System.out::println);
+
+            CDXLineToSearchResultAdapter adapter = new CDXLineToSearchResultAdapter();
+            for (String cdx_line : cdxLines) {
+                CaptureSearchResult csr = adapter.adapt(cdx_line);
+                assertNotNull("Expect a mime type for every result", csr.getMimeType());
+            }
+        } finally {
+            fileSystem.delete(new Path(outputURI), true);
+        }
+    }
+
+    @Test
     public void testCDXIndexARCMetadataFileNoDedup() throws Exception {
-        conf.setBoolean(CDXMapper.METADATA_DO_DEDUP, false); // false is already default value
         String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
         // Write the input lines to the the input file
         File testFile = new File(WORKING_DIR, "2-metadata-1.arc");

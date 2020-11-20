@@ -4,10 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
@@ -16,18 +13,11 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.archive.io.ArchiveReader;
-import org.archive.io.ArchiveReaderFactory;
-import org.archive.io.ArchiveRecord;
-import org.jwat.common.ByteCountingPushBackInputStream;
-import org.jwat.common.ContentType;
-import org.jwat.common.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
-import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * Hadoop Mapper for creating the CDX indexes.
@@ -40,10 +30,7 @@ public class CDXMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
     private static final Logger log = LoggerFactory.getLogger(CDXMapper.class);
 
     /** The CDX indexer.*/
-    private CDXIndexer cdxIndexer = new CDXIndexer();
-    private DedupIndexer dedupIndexer = new DedupIndexer();
-
-    public static final String METADATA_DO_DEDUP = "do_dedup";
+    private final CDXIndexer cdxIndexer = new CDXIndexer();
 
     /**
      * Mapping method.
@@ -65,8 +52,7 @@ public class CDXMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
         List<String> cdxIndexes;
         Indexer indexer;
 
-        boolean doDedup = context.getConfiguration().getBoolean(METADATA_DO_DEDUP, false);
-        if (doDedup && path.getName().contains("metadata")) {
+        if (path.getName().matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX))) {
             log.info("Dedup-indexing metadata file '{}'", path);
             indexer = new DedupIndexer();
             final FileSystem fileSystem = path.getFileSystem(context.getConfiguration());
