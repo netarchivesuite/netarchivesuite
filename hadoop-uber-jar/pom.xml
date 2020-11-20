@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>netarchivesuite</artifactId>
+    <groupId>org.netarchivesuite</groupId>
+    <version>5.7-IIPCH3-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>hadoop-uber-jar</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.netarchivesuite</groupId>
+      <artifactId>wayback-indexer</artifactId>
+      <version>5.7-IIPCH3-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.netarchivesuite</groupId>
+      <artifactId>harvester-core</artifactId>
+      <version>5.7-IIPCH3-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.2</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <artifactSet>
+                <excludes>
+                  <exclude>com.sun.jersey:*</exclude>
+                  <exclude>com.sun.messaging.mq:*</exclude>
+                  <exclude>fastutil:*</exclude>
+                  <exclude>javax.servlet:*</exclude>
+                  <!--<exclude>jaxen:*</exclude> TODO can't exclude this - fix overlapping classes -->
+                  <exclude>log4j:*</exclude>
+                  <exclude>org.apache.derby:*</exclude>
+                  <exclude>org.apache.jasper:*</exclude>
+                  <exclude>org.apache.lucene:*</exclude>
+                  <exclude>org.apache.tomcat:*</exclude>
+                  <exclude>org.apache.tomcat.embed:*</exclude>
+                  <exclude>org.bouncycastle:*</exclude>
+                  <exclude>org.mortbay.jetty:*</exclude>
+                  <exclude>org.slf4j:*</exclude>
+                  <exclude>org.springframework:*</exclude>
+                </excludes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                    <exclude>META-INF/*.episode</exclude>
+                    <exclude>META-INF/MANIFEST.MF</exclude>
+                    <exclude>META-INF/LICENSE.txt</exclude>
+                    <exclude>META-INF/LICENSE</exclude>
+                    <exclude>META-INF/NOTICE.txt</exclude>
+                    <exclude>META-INF/NOTICE</exclude>
+                    <exclude>META-INF/DEPENDENCIES</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <!--
+              The following line is crucial. Without it, the build creates a services directory that only contains a definition
+              for LocalClientProtocolProvider, and omits YarnClientProtocolProvider. This is also what happens if you use the maven
+              assembly plugin. With the following line, the two service directories are merged.
+              -->
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              </transformers>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
