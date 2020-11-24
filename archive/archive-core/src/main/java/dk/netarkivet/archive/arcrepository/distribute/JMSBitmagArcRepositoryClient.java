@@ -43,6 +43,7 @@ import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 import dk.netarkivet.common.distribute.bitrepository.NetarchivesuiteBlockingEventHandler;
 import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction;
+import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileEventHandler;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -591,8 +592,13 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         // use public PutFileAction(PutFileClient client, String collectionID, File targetFile, String fileID)
         FileExchange fileExchange = null;
         URL url = null;
+        PutFileAction ca = null;
+        PutFileEventHandler putFileEventHandler = null;
+        String putFileMessage = null;
         try {                                                                                   // NEW
-            PutFileAction ca = new PutFileAction(client, collectionId, packageFile, fileID);
+            putFileMessage = "Putting the file '" + packageFile + "' with the file id '"
+                    + fileID + "' from Netarchivesuite";
+            ca = new PutFileAction(client, collectionId, packageFile, fileID);
             ca.performAction();
 
             // --> To be changed
@@ -607,13 +613,13 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             GetChecksumsClient chkClient = BitmagUtils.getChecksumsClient();
             // chkClient.getChecksums();
 
+            // ChecksumDataForFileTYPE validationChecksum = BitmagUtils.getValidationChecksum(
+            //         packageFile, csSpec);
+            // ChecksumSpecTYPE requestChecksum = null;
 
-           // ChecksumDataForFileTYPE validationChecksum = BitmagUtils.getValidationChecksum(
-           //         packageFile, csSpec);
-
-            ChecksumSpecTYPE requestChecksum = null;
-            String putFileMessage = "Putting the file '" + packageFile + "' with the file id '"
-                    + fileID + "' from Netarchivesuite";
+            if (putFileEventHandler.hasFailed()) {
+                throw new OperationFailedException("Operation failed");
+            }
 
             // NetarchivesuiteBlockingEventHandler putFileEventHandler = new NetarchivesuiteBlockingEventHandler(collectionID,
             //      maxNumberOfFailingPillars);
@@ -631,6 +637,17 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
                 return OperationEvent.OperationEventType.COMPLETE;
             }
          */
+
+            // New
+        }
+             catch (OperationFailedException e) {
+                log.warn("The putFile Operation was not a complete success ({})."
+                        + " Checksum whether we accept anyway.", putFileMessage, e);
+                if(putFileEventHandler.hasFailed()) {
+                    return OperationEvent.OperationEventType.FAILED;
+                } else {
+                    return OperationEvent.OperationEventType.COMPLETE;
+                }
 
 
         } finally {
