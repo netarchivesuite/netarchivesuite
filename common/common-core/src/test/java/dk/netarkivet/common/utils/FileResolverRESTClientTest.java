@@ -36,6 +36,7 @@ public class FileResolverRESTClientTest {
         Settings.set(CommonSettings.FILE_RESOLVER_CLASS, "dk.netarkivet.common.utils.FileResolverRESTClient");
         Settings.set(CommonSettings.FILE_RESOLVER_BASE_URL, "http://localhost:8884/cgi-bin2/fileresolver.cgi/");
         fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
+        ((FileResolverRESTClient) fileResolver).setDoPrependCircumflex(false);
         assertTrue(fileResolver instanceof FileResolverRESTClient);
     }
 
@@ -53,7 +54,7 @@ public class FileResolverRESTClientTest {
 
     @Test
     public void getPathsMultiple() {
-        String byJobNumber = "^1-.*.warc.*";
+        String byJobNumber = "1-.*.warc.*";
         List<Path> paths = fileResolver.getPaths(Pattern.compile(byJobNumber));
         assertEquals("Expected two files for " + byJobNumber + " not " + paths, paths.size(), 2);
     }

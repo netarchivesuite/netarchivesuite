@@ -81,7 +81,7 @@ public class WarcRecordClientTest {
         //setting to NetarchiveSuite.
         WarcRecordClient warcRecordClient = new WarcRecordClient(baseUri);
         String filename = "42-23-20060726143926-00000-udvikling.kb.dk.arc.gz";
-        BitarchiveRecord bitarchiveRecord = warcRecordClient.get(filename, 682L);
+        BitarchiveRecord bitarchiveRecord = warcRecordClient.getBitarchiveRecord(filename, 682L);
         assertNotNull("Should have non null BitarchiveRecord", bitarchiveRecord);
         assertTrue("Expect a non-zero length bitarchiveRecord", IOUtils.toByteArray(bitarchiveRecord.getData()).length > 10);
         System.out.println("\n\n" + IOUtils.toString(bitarchiveRecord.getData()));

@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 
 /**
  * A FileResolver client to communicate with a service implementing the FileResolver API
@@ -46,7 +47,7 @@ public class FileResolverRESTClient implements FileResolver {
     /**
      * Whether or not to prepend a "^" to any regex patterns which do not already start with one. This defaults to true.
      */
-    private boolean doPrependCircumflex = true;
+    private boolean doPrependCircumflex = false;
 
     public FileResolverRESTClient() {
         String url = Settings.get(CommonSettings.FILE_RESOLVER_BASE_URL);
@@ -76,7 +77,7 @@ public class FileResolverRESTClient implements FileResolver {
             }
             URL url = new URL(baseUrl + "/" + URLEncoder.encode(pattern)).toURI().normalize().toURL();
             HttpUriRequest request = RequestBuilder.get()
-                    .setUri(url.toString())
+                    .setUri(url.toString()).addParameter("collectionId", Settings.get(BitmagUtils.BITREPOSITORY_COLLECTIONID))
                     .build();
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 InputStream istr = httpResponse.getEntity().getContent();
@@ -99,7 +100,7 @@ public class FileResolverRESTClient implements FileResolver {
      * @return The first Path to a matching file or null if no such file is found
      */
     @Override public Path getPath(String filename) {
-        final List<Path> paths = getPaths(Pattern.compile("^"+filename+"$"));
+        final List<Path> paths = getPaths(Pattern.compile(filename+"$"));
         if (!paths.isEmpty()) {
             return paths.get(0);
         } else {
