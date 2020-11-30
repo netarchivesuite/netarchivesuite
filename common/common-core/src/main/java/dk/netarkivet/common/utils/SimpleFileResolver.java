@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,11 +31,11 @@ public class SimpleFileResolver implements FileResolver {
     }
 
     @Override public List<Path> getPaths(Pattern filepattern) {
-        PathMatcher globPattern = FileSystems.getDefault().getPathMatcher("glob:"+filepattern);
+        PathMatcher globPattern = FileSystems.getDefault().getPathMatcher("regex:" + filepattern);
         File[] dirContents = new File(directory.toString()).listFiles(
             new FilenameFilter() {
                 @Override public boolean accept(File dir, String name) {
-                    return globPattern.matches(new File(name).toPath());
+                    return globPattern.matches(Paths.get(name));
                 }
             }
         );

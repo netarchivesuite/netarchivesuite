@@ -24,9 +24,7 @@ package dk.netarkivet.harvester.indexserver;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.Hashtable;
 import java.util.List;
@@ -61,7 +59,7 @@ import dk.netarkivet.common.utils.SimpleFileResolver;
 import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.common.utils.archive.GetMetadataArchiveBatchJob;
 import dk.netarkivet.common.utils.hadoop.GetMetadataMapper;
-import dk.netarkivet.common.utils.hadoop.HadoopJob;
+import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 
@@ -211,7 +209,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
                 log.info("Starting metadata extraction job on {} file(s) matching pattern '{}'. URL/MIME patterns used for"
                         + " job are '{}' and '{}'", filePaths.size(), specifiedPattern, urlPattern, mimePattern);
                 log.info("Starting hadoop job '{}' with input {} and output {}.", id, jobInputNameFile, jobOutputDir);
-                exitCode = ToolRunner.run(new HadoopJob(conf, new GetMetadataMapper()),
+                exitCode = ToolRunner.run(new HadoopJobTool(conf, new GetMetadataMapper()),
                         new String[] {jobInputNameFile.toString(), jobOutputDir.toString()});
 
                 if (exitCode == 0) {
@@ -302,7 +300,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             int exitCode = 0;
             try {
                 log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
-                exitCode = ToolRunner.run(new HadoopJob(conf, new GetMetadataMapper()),
+                exitCode = ToolRunner.run(new HadoopJobTool(conf, new GetMetadataMapper()),
                         new String[] {hadoopInputNameFile.toString(), jobOutputDir.toString()});
 
                 if (exitCode == 0) {
