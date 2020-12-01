@@ -232,6 +232,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         }
 
         // Initialize connection to the bitrepository
+        // ToDo remove or change bitrep
         this.bitrep = Bitrepository.getInstance(configDir, keyfilename);
         if (!bitrep.getKnownCollections().contains(this.collectionId)) {
             close();
@@ -252,6 +253,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     }
 
     /** Removes this object as a JMS listener. */
+    // ToDo remove or change bitrep
     @Override
     public synchronized void close() {
         JMSConnectionFactory.getInstance().removeListener(replyQ, this);
@@ -353,7 +355,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         // If not there, this will work
         // If already there, with same checksum, this will work.
         // If already there, with different checksum, this will fail
-        boolean uploadSuccessful = bitrep.uploadFile(file, fileId, collectionId, maxStoreFailures);
+        boolean uploadSuccessful = this.uploadFile(file, fileId, collectionId, maxStoreFailures);
         if (!uploadSuccessful) {
             String errMsg =
                     "Upload to collection '" + collectionId + "' of file '" + fileId + "' failed.";
