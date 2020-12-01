@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 
@@ -88,6 +89,7 @@ public class WarcRecordClient {
                 .setUri(uri)
                 .addHeader("User-Agent", USER_AGENT)
                 .addHeader("Range", "bytes=" + offset + "-")
+                .addParameter("collectionId", Settings.get(BitmagUtils.BITREPOSITORY_COLLECTIONID))
                 .build();
         log.debug("Executing request " + request.getRequestLine());
         boolean atFirst = (offset == 0L);
