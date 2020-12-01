@@ -44,10 +44,6 @@ public class FileResolverRESTClient implements FileResolver {
      */
     private static final PoolingHttpClientConnectionManager cManager = new PoolingHttpClientConnectionManager();
 
-    /**
-     * Whether or not to prepend a "^" to any regex patterns which do not already start with one. This defaults to true.
-     */
-    private boolean doPrependCircumflex = false;
 
     public FileResolverRESTClient() {
         String url = Settings.get(CommonSettings.FILE_RESOLVER_BASE_URL);
@@ -61,23 +57,19 @@ public class FileResolverRESTClient implements FileResolver {
         cManager.setDefaultMaxPerRoute(Settings.getInt(CommonSettings.MAX_CONNECTIONS_PER_ROUTE));
     }
 
-    /**
-     * Whether or not to prepend a "^" to any regex patterns which do not already start with one.
-     */
-    public void setDoPrependCircumflex(boolean doPrependCircumflex) {
-        this.doPrependCircumflex = doPrependCircumflex;
+    @Override public List<Path> getPaths(Pattern filepattern) {
+        return getPaths(filepattern, false);
     }
 
-    @Override public List<Path> getPaths(Pattern filepattern) {
+    private List<Path> getPaths(Pattern filepattern, boolean exactfilename) {
         try {
             CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(cManager).build();
             String pattern = filepattern.pattern();
-            if (doPrependCircumflex && !pattern.startsWith("^")) {
-                pattern = "^" + pattern;
-            }
             URL url = new URL(baseUrl + "/" + URLEncoder.encode(pattern)).toURI().normalize().toURL();
             HttpUriRequest request = RequestBuilder.get()
-                    .setUri(url.toString()).addParameter("collectionId", Settings.get(BitmagUtils.BITREPOSITORY_COLLECTIONID))
+                    .setUri(url.toString())
+                    .addParameter("collectionId", Settings.get(BitmagUtils.BITREPOSITORY_COLLECTIONID))
+                    .addParameter("exactfilename", Boolean.toString(exactfilename))
                     .build();
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 InputStream istr = httpResponse.getEntity().getContent();
@@ -100,7 +92,7 @@ public class FileResolverRESTClient implements FileResolver {
      * @return The first Path to a matching file or null if no such file is found
      */
     @Override public Path getPath(String filename) {
-        final List<Path> paths = getPaths(Pattern.compile(filename+"$"));
+        final List<Path> paths = getPaths(Pattern.compile(filename), true);
         if (!paths.isEmpty()) {
             return paths.get(0);
         } else {
