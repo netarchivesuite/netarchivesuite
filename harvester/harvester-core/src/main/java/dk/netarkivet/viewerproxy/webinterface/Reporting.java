@@ -36,7 +36,6 @@ import java.util.UUID;
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,12 +51,11 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
-import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
-import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.hadoop.HadoopJob;
-import dk.netarkivet.common.utils.hadoop.JobType;
-import dk.netarkivet.viewerproxy.webinterface.hadoop.CrawlLogExtractionMapper;
-import dk.netarkivet.viewerproxy.webinterface.hadoop.MetadataCDXMapper;
+import dk.netarkivet.common.utils.hadoop.HadoopJobStrategy;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
+import dk.netarkivet.viewerproxy.webinterface.hadoop.CrawlLogExtractionStrategy;
+import dk.netarkivet.viewerproxy.webinterface.hadoop.MetadataCDXExtractionStrategy;
 
 /**
  * Methods for generating the batch results needed by the QA pages.
@@ -139,45 +137,31 @@ public class Reporting {
     /**
      * Submits a Hadoop job to generate cdx for all metadata files for a jobID and returns the resulting list of records.
      *
-     * @param jobid The job to get cdx for.
-     * @return A list of cdx records.
+     * @param jobid The job to get CDX for.
+     * @return A list of CDX records.
      */
     private static List<CDXRecord> getRecordsUsingHadoop(long jobid) {
-        JobType jobType = JobType.METADATA_CDX;
         Configuration hadoopConf = HadoopJobUtils.getConfFromSettings();
         String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobid);
-        UUID uuid = UUID.randomUUID();
         try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
-            Path jobInputNameFile = HadoopFileUtils.createUniquePathInDir(
-                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATA_CDXJOB_INPUT_DIR), uuid);
-            log.info("Input file for {} job '{}' will be '{}'", jobType, jobid, jobInputNameFile);
-            Path jobOutputDir = HadoopFileUtils.createUniquePathInDir(
-                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATA_CDXJOB_OUTPUT_DIR), uuid);
-            log.info("Output directory for {} job '{}' is '{}'", jobType, jobid, jobOutputDir);
-            if (jobInputNameFile == null || jobOutputDir == null) {
-                log.error("Failed initializing input/output for {} job '{}' with uuid '{}'", jobType, jobid, uuid);
-                throw new IOFailure("Failed initializing input/output directory");
-            }
+            HadoopJobStrategy jobStrategy = new MetadataCDXExtractionStrategy(jobid, fileSystem);
+            HadoopJob job = new HadoopJob(jobid, jobStrategy);
+            job.processOnlyFilesMatching(metadataFileSearchPattern);
+            job.prepareJobInputOutput(fileSystem);
+            job.run();
 
-            HadoopJob hadoopJob = new HadoopJob(hadoopConf, jobInputNameFile, jobOutputDir, jobType);
-            hadoopJob.processOnlyFilesMatching(metadataFileSearchPattern);
-            hadoopJob.prepareJobInput(jobid, fileSystem);
-            if (hadoopJob.hasJobsetupFailed()) {
-                throw new IOFailure("Failed writing job input");
+            List<String> cdxLines;
+            try {
+                cdxLines = HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir());
+            } catch (IOException e) {
+                log.error("Failed getting CDX lines output for Hadoop job with ID: {}", jobid);
+                throw new IOFailure("Failed getting " + job.getJobType() + " job results");
             }
-
-            int exitCode = hadoopJob.run(jobid, new MetadataCDXMapper());
-            if (exitCode == 0) {
-                log.info("{} job with jobID {} was a success!", jobType, jobid);
-                List<String> cdxLines = HadoopJobUtils.collectOutputLines(fileSystem, jobOutputDir);
-                return HadoopJobUtils.getCDXRecordListFromCDXLines(cdxLines);
-            } else {
-                log.warn("{} job with ID {} failed with exit code '{}'", jobType, jobid, exitCode);
-            }
+            return HadoopJobUtils.getCDXRecordListFromCDXLines(cdxLines);
         } catch (IOException e) {
             log.error("Error instantiating Hadoop filesystem for job {}.", jobid, e);
+            throw new IOFailure("Failed instantiating Hadoop filesystem.");
         }
-        return null;
     }
 
     /**
@@ -313,7 +297,7 @@ public class Reporting {
     }
 
     /**
-     * Using Hadoop, gets crawllog lines for a given jobID matching a given regular expression
+     * Using Hadoop, gets crawllog lines for a given jobID matching a given regular expression.
      *
      * @param jobID The ID for the job.
      * @param regex The regular expression specifying files to process.
@@ -321,43 +305,26 @@ public class Reporting {
      */
     private static File getCrawlLogLinesUsingHadoop(long jobID, String regex) {
         String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobID);
-        JobType jobType = JobType.CRAWL_LOG_EXTRACTION;
         Configuration hadoopConf = HadoopJobUtils.getConfFromSettings();
         hadoopConf.set("regex", regex);
-        UUID uuid = UUID.randomUUID();
         try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
-            Path jobInputNameFile = HadoopFileUtils.createUniquePathInDir(
-                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATA_CDXJOB_INPUT_DIR), uuid);
-            log.info("Input file for {} job '{}' will be '{}'", jobType, jobID, jobInputNameFile);
-            Path jobOutputDir = HadoopFileUtils.createUniquePathInDir(
-                    fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATA_CDXJOB_OUTPUT_DIR), uuid);
-            log.info("Output directory for {} job '{}' is '{}'", jobType, jobID, jobOutputDir);
-            if (jobInputNameFile == null || jobOutputDir == null) {
-                log.error("Failed initializing input/output for {} job '{}' with uuid '{}'", jobType, jobID, uuid);
-                throw new IOFailure("Failed initializing input/output directory");
-            }
-
-            HadoopJob job = new HadoopJob(hadoopConf, jobInputNameFile, jobOutputDir, jobType);
+            HadoopJobStrategy jobStrategy = new CrawlLogExtractionStrategy(jobID, fileSystem);
+            HadoopJob job = new HadoopJob(jobID, jobStrategy);
             job.processOnlyFilesMatching(metadataFileSearchPattern);
-            job.prepareJobInput(jobID, fileSystem);
-
-            if (job.hasJobsetupFailed()) {
-                throw new IOFailure("Failed writing job input");
+            job.prepareJobInputOutput(fileSystem);
+            job.run();
+            List<String> crawlLogLines;
+            try {
+                crawlLogLines = HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir());
+            } catch (IOException e) {
+                log.error("Failed getting crawl log lines output for job with ID: {}", jobID);
+                throw new IOFailure("Failed getting " + job.getJobType() + " job results");
             }
-
-            int exitCode = job.run(jobID, new CrawlLogExtractionMapper());
-            if (exitCode == 0) {
-                log.info("{} job with jobID {} was a success!", jobType, jobID);
-                List<String> crawlLogLines = HadoopJobUtils.collectOutputLines(fileSystem, jobOutputDir);
-                return getResultFile(crawlLogLines);
-            } else {
-                log.warn("{} job with ID {} failed with exit code '{}'", jobType, jobID, exitCode);
-            }
-
+            return getResultFile(crawlLogLines);
         } catch (IOException e) {
             log.error("Error instantiating Hadoop filesystem for job {}.", jobID, e);
+            throw new IOFailure("Failed instantiating Hadoop filesystem.");
         }
-        return null;
     }
     
     /**

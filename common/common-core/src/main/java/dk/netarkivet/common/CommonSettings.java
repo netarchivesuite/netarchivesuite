@@ -596,16 +596,26 @@ public class CommonSettings {
     public static String HADOOP_MAPRED_METADATA_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataExtractionJob.outputDir";
 
     /**
-     * The directory/path for Hadoop to use as input path in metadata cdx-indexing map-/reduce jobs
+     * The directory/path for Hadoop to use as input path in metadata CDX-indexing map-/reduce jobs
      * (Hadoop equivalent of ArchiveExtractCDXJob).
      */
-    public static String HADOOP_MAPRED_METADATA_CDXJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataCDXJob.inputDir";
+    public static String HADOOP_MAPRED_METADATA_CDX_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataCDXExtractionJob.inputDir";
 
     /**
-     * The directory/path for Hadoop to use as output path in metadata cdx-indexing map-/reduce jobs
+     * The directory/path for Hadoop to use as output path in metadata CDX-indexing map-/reduce jobs
      * (Hadoop equivalent of ArchiveExtractCDXJob).
      */
-    public static String HADOOP_MAPRED_METADATA_CDXJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataCDXJob.outputDir";
+    public static String HADOOP_MAPRED_METADATA_CDX_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataCDXExtractionJob.outputDir";
+
+    /**
+     *
+     */
+    public static String HADOOP_MAPRED_CRAWLLOG_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.crawlLogExtractionJob.inputDir";
+
+    /**
+     *
+     */
+    public static String HADOOP_MAPRED_CRAWLLOG_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.crawlLogExtractionJob.outputDir";
 
     /**
      * Path on the client machine where the uber-jar file containing the map-/reduce job and dependencies
