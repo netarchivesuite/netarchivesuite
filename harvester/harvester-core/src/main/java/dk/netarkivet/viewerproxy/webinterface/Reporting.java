@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -306,7 +307,7 @@ public class Reporting {
     private static File getCrawlLogLinesUsingHadoop(long jobID, String regex) {
         String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobID);
         Configuration hadoopConf = HadoopJobUtils.getConfFromSettings();
-        hadoopConf.set("regex", regex);
+        hadoopConf.setPattern("regex", Pattern.compile(regex));
         try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
             HadoopJobStrategy jobStrategy = new CrawlLogExtractionStrategy(jobID, fileSystem);
             HadoopJob job = new HadoopJob(jobID, jobStrategy);
