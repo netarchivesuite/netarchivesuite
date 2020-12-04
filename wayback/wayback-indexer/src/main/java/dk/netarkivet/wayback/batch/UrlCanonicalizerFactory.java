@@ -50,7 +50,7 @@ public class UrlCanonicalizerFactory extends SettingsFactory<UrlCanonicalizer> {
         try {
             return SettingsFactory.getInstance(WaybackSettings.URL_CANONICALIZER_CLASSNAME);
         } catch (SecurityException e) {
-            logger.debug("The requested canoncializer could not be loaded. Falling back to {}",
+            logger.debug("The requested canonicalizer could not be loaded. Falling back to {}",
                     AggressiveUrlCanonicalizer.class.toString(), e);
             return new AggressiveUrlCanonicalizer();
         }

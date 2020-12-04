@@ -1,5 +1,14 @@
 package dk.netarkivet.wayback.hadoop;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
@@ -10,15 +19,17 @@ import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
 import org.archive.wayback.resourcestore.indexer.ARCRecordToSearchResultAdapter;
 import org.archive.wayback.resourcestore.indexer.WARCRecordToSearchResultAdapter;
-import org.archive.wayback.util.url.IdentityUrlCanonicalizer;
+import org.jwat.common.ByteCountingPushBackInputStream;
+import org.jwat.common.ContentType;
+import org.jwat.common.HttpHeader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
+import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
+import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 import dk.netarkivet.common.utils.batch.WARCBatchFilter;
 import dk.netarkivet.wayback.batch.UrlCanonicalizerFactory;
 
@@ -49,10 +60,15 @@ public class CDXIndexer implements Indexer {
      * @throws IOException
      */
     public List<String> index(InputStream archiveInputStream, String archiveName) throws IOException {
-        ArchiveReader archiveReader = ArchiveReaderFactory.get(archiveName, archiveInputStream, false);
-        return extractCdxLines(archiveReader);
+        try (ArchiveReader archiveReader = ArchiveReaderFactory.get(archiveName, archiveInputStream, false)) {
+            boolean isMetadataFile = archiveName.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
+            if (isMetadataFile) {
+                return extractMetadataCDXLines(archiveReader);
+            } else {
+                return extractCDXLines(archiveReader);
+            }
+        }
     }
-
 
     /**
      * Create the CDX indexes from an archive file.
@@ -64,14 +80,80 @@ public class CDXIndexer implements Indexer {
         return index(new FileInputStream(archiveFile), archiveFile.getName());
     }
 
-
     /**
-     * Filter for filtering out the NON-RESPONSE records.
-     *
-     * @return The filter that defines what WARC records are wanted in the output CDX file.
+     * Extracts CDX lines from an ArchiveReader specifically for metadata files.
+     * @param archiveReader The reader used for reading the archive file.
+     * @return A list of the CDX lines for the records in the archive file.
      */
-    public WARCBatchFilter getFilter() {
-        return WARCBatchFilter.EXCLUDE_NON_RESPONSE_RECORDS;
+    private List<String> extractMetadataCDXLines(ArchiveReader archiveReader) {
+        final int HTTP_HEADER_BUFFER_SIZE = 1024 * 1024;
+        String[] fields = {"A", "e", "b", "m", "n", "g", "v"};
+        List<String> cdxIndexes = new ArrayList<>();
+
+        for (ArchiveRecord archiveRecord : archiveReader) {
+            ArchiveRecordBase record = ArchiveRecordBase.wrapArchiveRecord(archiveRecord);
+            boolean isResponseRecord = ArchiveBatchFilter.EXCLUDE_NON_WARCINFO_RECORDS.accept(record);
+            if (!isResponseRecord) {
+                continue;
+            }
+            ArchiveHeaderBase header = record.getHeader();
+            Map<String, String> fieldsRead = new HashMap<>();
+            fieldsRead.put("A", header.getUrl());
+            fieldsRead.put("e", header.getIp());
+            fieldsRead.put("b", header.getArcDateStr());
+            fieldsRead.put("n", Long.toString(header.getLength()));
+            fieldsRead.put("g", record.getHeader().getArchiveFile().getName());
+            fieldsRead.put("v", Long.toString(record.getHeader().getOffset()));
+
+            String mimeType = header.getMimetype();
+            String msgType;
+            ContentType contentType = ContentType.parseContentType(mimeType);
+            boolean bResponse = false;
+            if (contentType != null) {
+                if (contentType.contentType.equals("application") && contentType.mediaType.equals("http")) {
+                    msgType = contentType.getParameter("msgtype");
+                    if (msgType.equals("response")) {
+                        bResponse = true;
+                    }
+                }
+                mimeType = contentType.toStringShort();
+            }
+            ByteCountingPushBackInputStream pbin = new ByteCountingPushBackInputStream(record.getInputStream(),
+                    HTTP_HEADER_BUFFER_SIZE);
+            HttpHeader httpResponse = null;
+            if (bResponse) {
+                try {
+                    httpResponse = HttpHeader.processPayload(HttpHeader.HT_RESPONSE, pbin, header.getLength(), null);
+                    if (httpResponse.contentType != null) {
+                        contentType = ContentType.parseContentType(httpResponse.contentType);
+                        if (contentType != null) {
+                            mimeType = contentType.toStringShort();
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new IOFailure("Error reading httpresponse header", e);
+                }
+            }
+            fieldsRead.put("m", mimeType);
+
+            if (httpResponse != null) {
+                try {
+                    httpResponse.close();
+                } catch (IOException e) {
+                    throw new IOFailure("Error closing httpresponse header", e);
+                }
+            }
+
+            // Build the cdx line
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < fields.length; i++) {
+                Object o = fieldsRead.get(fields[i]);
+                sb.append((i > 0) ? " " : "");
+                sb.append((o == null) ? "-" : o.toString());
+            }
+            cdxIndexes.add(sb.toString());
+        }
+        return cdxIndexes;
     }
 
     /**
@@ -79,29 +161,31 @@ public class CDXIndexer implements Indexer {
      * @param reader The ArchiveReader which is actively reading an archive file (e.g WARC).
      * @return The list of CDX index lines for the records of the archive in the reader.
      */
-    protected List<String> extractCdxLines(ArchiveReader reader) {
+    protected List<String> extractCDXLines(ArchiveReader reader) {
         List<String> res = new ArrayList<>();
 
         for (ArchiveRecord archiveRecord: reader) {
-            // TODO: look at logging something here instead of the below stuff
-            //recordNum++;
-            //System.out.println("Processing record #" + recordNum);
+            // TODO: look at logging something here
            if (archiveRecord instanceof WARCRecord) {
                WARCRecord warcRecord = (WARCRecord) archiveRecord;
-               if (!getFilter().accept(warcRecord)) {
-                   //System.out.println("Skipping non response record #" + recordNum);
+               boolean isResponseRecord = WARCBatchFilter.EXCLUDE_NON_RESPONSE_RECORDS.accept(warcRecord);
+               if (!isResponseRecord) {
                    continue;
                }
-               warcAdapter.setCanonicalizer(new IdentityUrlCanonicalizer());
+               warcAdapter.setCanonicalizer(urlCanonicalizer);
                //TODO this returns null and prints stack trace on OutOfMemoryError. Bad code. //jolf & abr
                CaptureSearchResult captureSearchResult = warcAdapter.adapt(warcRecord);
                if (captureSearchResult != null) {
-                   //actualLinesWritten++;
-                   //System.out.println("Actual cdx lines written: " + actualLinesWritten);
                    res.add(cdxLineCreator.adapt(captureSearchResult));
                }
+
            } else {
                ARCRecord arcRecord = (ARCRecord) archiveRecord;
+               boolean isResponseRecord = ARCBatchFilter.EXCLUDE_FILE_HEADERS.accept(arcRecord);
+               if (!isResponseRecord) {
+                   continue;
+               }
+               arcAdapter.setCanonicalizer(urlCanonicalizer);
                final CaptureSearchResult captureSearchResult = arcAdapter.adapt(arcRecord);
                if (captureSearchResult != null) {
                    res.add(cdxLineCreator.adapt(captureSearchResult));

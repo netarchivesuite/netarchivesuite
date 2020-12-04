@@ -17,6 +17,7 @@ public class DedupIndexer implements Indexer {
         fileBatchJob.initialize(baos);
         fileBatchJob.processFile(file, baos);
         fileBatchJob.finish(baos);
+        baos.flush();
         return Arrays.asList(baos.toString().split("\\n"));
     }
 

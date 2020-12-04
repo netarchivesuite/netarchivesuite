@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.cdx.CDXRecord;
 
 /** Utilities for Hadoop jobs. */
 public class HadoopJobUtils {
@@ -34,7 +35,8 @@ public class HadoopJobUtils {
     }
 
     /**
-     * Initialize a configuration from settings and return it.
+     * Initialize a configuration from settings and return it. By default uses the wayback-uber-jar when spawning
+     * map-/reduce jobs.
      * @return A new configuration to use for a job.
      */
     public static Configuration getConfFromSettings() {
@@ -46,7 +48,7 @@ public class HadoopJobUtils {
         conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
         conf.set("dfs.client.use.datanode.hostname", "true");
 
-        final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_WAYBACK_UBER_JAR);
+        final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_UBER_JAR);
         if (jarPath == null || !(new File(jarPath)).exists()) {
             log.warn("Specified jar file {} does not exist.", jarPath);
             throw new RuntimeException("Jar file " + jarPath + " does not exist.");
@@ -65,6 +67,7 @@ public class HadoopJobUtils {
     public static void writeHadoopInputFileLinesToInputFile(List<java.nio.file.Path> files,
             java.nio.file.Path inputFilePath) throws IOException {
         if (files.size() == 0) {
+            log.warn("No file paths to add. Input file will be empty.");
             return;
         }
         java.nio.file.Path lastElem = files.get(files.size() - 1);
@@ -104,5 +107,20 @@ public class HadoopJobUtils {
         // Clean up once output has been collected
         fileSystem.delete(outputFolder, true);
         return resultLines;
+    }
+
+    /**
+     * Converts a list of CDX line strings to a list of CDXRecords
+     * @param cdxLines The list to convert
+     * @return A list of CDXRecords representing the old list
+     */
+    public static List<CDXRecord> getCDXRecordListFromCDXLines(List<String> cdxLines) {
+        List<CDXRecord> recordsForJob = new ArrayList<>();
+        for (String line : cdxLines) {
+            String[] parts = line.split("\\s+");
+            CDXRecord record = new CDXRecord(parts);
+            recordsForJob.add(record);
+        }
+        return recordsForJob;
     }
 }

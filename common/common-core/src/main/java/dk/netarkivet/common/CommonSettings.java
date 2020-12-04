@@ -587,19 +587,41 @@ public class CommonSettings {
      * The directory/path for Hadoop to use as input path in metadata extraction map-/reduce jobs.
      * Used when Hadoop metadata extraction jobs are started by the IndexRequestServer after receiving requests.
      */
-    public static String HADOOP_MAPRED_METADATAJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataJob.inputDir";
+    public static String HADOOP_MAPRED_METADATA_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataExtractionJob.inputDir";
 
     /**
      * The directory/path for Hadoop to use as output path in metadata extraction map-/reduce jobs.
      * Used when Hadoop metadata extraction jobs are started by the IndexRequestServer after receiving requests.
      */
-    public static String HADOOP_MAPRED_METADATAJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataJob.outputDir";
+    public static String HADOOP_MAPRED_METADATA_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataExtractionJob.outputDir";
 
     /**
-     * Path on the client machine (wayback indexer machine) where the uber-jar file containing the
-     * indexing map-/reduce job and dependencies is to be found.
+     * The directory/path for Hadoop to use as input path in metadata CDX-indexing map-/reduce jobs
+     * (Hadoop equivalent of ArchiveExtractCDXJob).
      */
-    public static String HADOOP_MAPRED_WAYBACK_UBER_JAR = "settings.common.hadoop.mapred.waybackUberJar";
+    public static String HADOOP_MAPRED_METADATA_CDX_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataCDXExtractionJob.inputDir";
+
+    /**
+     * The directory/path for Hadoop to use as output path in metadata CDX-indexing map-/reduce jobs
+     * (Hadoop equivalent of ArchiveExtractCDXJob).
+     */
+    public static String HADOOP_MAPRED_METADATA_CDX_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataCDXExtractionJob.outputDir";
+
+    /**
+     *
+     */
+    public static String HADOOP_MAPRED_CRAWLLOG_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.crawlLogExtractionJob.inputDir";
+
+    /**
+     *
+     */
+    public static String HADOOP_MAPRED_CRAWLLOG_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.crawlLogExtractionJob.outputDir";
+
+    /**
+     * Path on the client machine where the uber-jar file containing the map-/reduce job and dependencies
+     * for the harvester and indexer module is to be found.
+     */
+    public static String HADOOP_MAPRED_UBER_JAR = "settings.common.hadoop.mapred.hadoopUberJar";
 
     /**
      * Username to start map-/reduce jobs under on the Hadoop cluster.

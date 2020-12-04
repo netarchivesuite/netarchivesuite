@@ -26,7 +26,7 @@ import org.junit.Test;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.common.utils.hadoop.GetMetadataMapper;
-import dk.netarkivet.common.utils.hadoop.HadoopJob;
+import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.harvester.indexserver.TestInfo;
@@ -89,7 +89,7 @@ public class GetMetadataMapperTester {
         conf.set("mime.pattern", "text/plain");
 
         try {
-            Tool job = new HadoopJob(conf, new GetMetadataMapper());
+            Tool job = new HadoopJobTool(conf, new GetMetadataMapper());
             int exitCode = ToolRunner.run(conf, job,
                     new String[] {"file://" + jobInputFile.toString(), outputURI});
             Assert.assertEquals(0, exitCode); // job success
@@ -118,7 +118,7 @@ public class GetMetadataMapperTester {
         conf.set("mime.pattern", "application/x-cdx");
 
         try {
-            Tool job = new HadoopJob(conf, new GetMetadataMapper());
+            Tool job = new HadoopJobTool(conf, new GetMetadataMapper());
             int exitCode = ToolRunner.run(conf, job,
                     new String[] {"file://" + jobInputFile.toString(), outputURI});
             Assert.assertEquals(0, exitCode); // job success
