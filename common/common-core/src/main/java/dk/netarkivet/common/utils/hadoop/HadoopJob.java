@@ -70,8 +70,6 @@ public class HadoopJob {
         }
         List<java.nio.file.Path> filePaths = fileResolver.getPaths(Pattern.compile(filenamePattern));
         fileCount = filePaths.size();
-        log.info("{} found {} file(s) matching pattern '{}' to add to input file for {} job {}",
-                fileResolver.getClass().getName(), fileCount, filenamePattern, jobType, jobID);
         try {
             HadoopJobUtils.writeHadoopInputFileLinesToInputFile(filePaths, localInputTempFile);
         } catch (IOException e) {

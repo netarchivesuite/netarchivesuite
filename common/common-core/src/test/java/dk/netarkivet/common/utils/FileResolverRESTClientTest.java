@@ -53,7 +53,7 @@ public class FileResolverRESTClientTest {
 
     @Test
     public void getPathsMultiple() {
-        String byJobNumber = "^1-.*.warc.*";
+        String byJobNumber = "1-.*.warc.*";
         List<Path> paths = fileResolver.getPaths(Pattern.compile(byJobNumber));
         assertEquals("Expected two files for " + byJobNumber + " not " + paths, paths.size(), 2);
     }
