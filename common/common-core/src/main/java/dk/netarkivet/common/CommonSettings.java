@@ -608,12 +608,14 @@ public class CommonSettings {
     public static String HADOOP_MAPRED_METADATA_CDX_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataCDXExtractionJob.outputDir";
 
     /**
-     *
+     * The directory/path for Hadoop to use as input path in crawl log extraction map-/reduce jobs
+     * (Hadoop equivalent of the CrawlLogLinesMatchingRegexp batch job).
      */
     public static String HADOOP_MAPRED_CRAWLLOG_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.crawlLogExtractionJob.inputDir";
 
     /**
-     *
+     * The directory/path for Hadoop to use as output path in crawl log extraction map-/reduce jobs
+     * (Hadoop equivalent of the CrawlLogLinesMatchingRegexp batch job).
      */
     public static String HADOOP_MAPRED_CRAWLLOG_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.crawlLogExtractionJob.outputDir";
 
@@ -642,12 +644,12 @@ public class CommonSettings {
 
     /**
      * <b>settings.common.warcClient.DefaultMaxPerRoute</b> </br>
-     * Increase  default max connections per route, e.g. to 20.
+     * Increase default max connections per route, e.g. to 20.
      */
     public static String MAX_CONNECTIONS_PER_ROUTE = "settings.common.webinterface.warc.max_connections_per_route";
 
     /**
-     * The implementation of FileResolver to use
+     * The implementation of FileResolver to use.
      */
     public static String FILE_RESOLVER_CLASS = "settings.common.fileResolver.class";
 
