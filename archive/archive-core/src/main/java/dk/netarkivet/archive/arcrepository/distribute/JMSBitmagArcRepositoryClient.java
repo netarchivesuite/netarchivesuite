@@ -350,7 +350,8 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         final String fileId = file.getName();
 
         // upload file
-
+        log.info(""
+                + "");
         //Attempt to upload the file.
         // If not there, this will work
         // If already there, with same checksum, this will work.
@@ -566,6 +567,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
                     maxNumberOfFailingPillars); // TODO where to put it?
             if(finalEvent == OperationEvent.OperationEventType.COMPLETE) {
                 success = true;
+                log.info("JMSBitmagArcRepositoryClient uploadFile.");
                 log.info("File '{}' uploaded successfully. ",file.getAbsolutePath());
             } else {
                 log.warn("Upload of file '{}' failed with event-type '{}'.", file.getAbsolutePath(), finalEvent);
