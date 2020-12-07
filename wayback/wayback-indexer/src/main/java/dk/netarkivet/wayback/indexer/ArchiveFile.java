@@ -63,7 +63,7 @@ import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
 import dk.netarkivet.wayback.hadoop.CDXMapper;
-import dk.netarkivet.common.utils.hadoop.HadoopJob;
+import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 
 /**
  * This class represents a file in the arcrepository which may be indexed by the indexer.
@@ -269,7 +269,7 @@ public class ArchiveFile {
             int exitCode = 0;
             try {
                 log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
-                exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMapper()),
+                exitCode = ToolRunner.run(new HadoopJobTool(conf, new CDXMapper()),
                         new String[] {hadoopInputNameFile.toString(), jobOutputDir.toString()});
                 if (exitCode == 0) {
                     log.info("CDX job for file {} was a success!", filename);
@@ -333,7 +333,7 @@ public class ArchiveFile {
             log.info("Starting CDXJob on file '{}'", filename);
             try {
                 // TODO Guess conditioning on which file it is should be handled here by designating different mapper classes
-                int exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMapper()),
+                int exitCode = ToolRunner.run(new HadoopJobTool(conf, new CDXMapper()),
                         new String[] {
                                 hadoopInputNameFile.getName(), Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_OUTPUT_DIR)});
 
@@ -416,7 +416,7 @@ public class ArchiveFile {
         theJob.processOnlyFileNamed(filename);
         PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
         String replicaId = Settings.get(WaybackSettings.WAYBACK_REPLICA);
-        log.info("Submitting {} for {} to {}", theJob.getClass().getName(), getFilename(), replicaId.toString());
+        log.info("Submitting {} for {} to {}", theJob.getClass().getName(), getFilename(), replicaId);
         BatchStatus batchStatus = client.batch(theJob, replicaId);
         log.info("Batch job for {} returned", this.getFilename());
         // Normally expect exactly one file per job.

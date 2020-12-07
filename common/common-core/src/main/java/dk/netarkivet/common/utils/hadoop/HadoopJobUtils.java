@@ -67,6 +67,7 @@ public class HadoopJobUtils {
     public static void writeHadoopInputFileLinesToInputFile(List<java.nio.file.Path> files,
             java.nio.file.Path inputFilePath) throws IOException {
         if (files.size() == 0) {
+            log.warn("No file paths to add. Input file will be empty.");
             return;
         }
         java.nio.file.Path lastElem = files.get(files.size() - 1);

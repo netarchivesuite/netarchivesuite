@@ -20,7 +20,7 @@ import org.apache.tools.ant.taskdefs.optional.ssh.Scp;
 import org.junit.Before;
 import org.junit.Test;
 
-import dk.netarkivet.common.utils.hadoop.HadoopJob;
+import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 
 public class CDXJobTest {
 
@@ -92,7 +92,7 @@ public class CDXJobTest {
         hdfs.copyFromLocalFile(false, new Path(localInputTempfile.toAbsolutePath().toString()), hadoopInputPath);
         File jarFile = new File("target/wayback-indexer-5.7-IIPCH3-SNAPSHOT-withdeps.jar");
         conf.set("mapreduce.job.jar", jarFile.getAbsolutePath());
-        ToolRunner.run(new HadoopJob(conf, new CDXMapper()), new String[]{hadoopInputPath.toString(), outputDir.toString()});
+        ToolRunner.run(new HadoopJobTool(conf, new CDXMapper()), new String[]{hadoopInputPath.toString(), outputDir.toString()});
         getAndPrintOutput();
     }
 

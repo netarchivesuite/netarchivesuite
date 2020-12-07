@@ -1,8 +1,6 @@
 package dk.netarkivet.common.utils;
 
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -15,7 +13,6 @@ public class SimpleFileResolverTester {
     String PARENT_DIR = "src/test/resources/"; //TODO make somewhere more meaningful??
     Path dirPath = Paths.get(PARENT_DIR);
     FileResolver fileResolver = new SimpleFileResolver(dirPath);
-    PathMatcher matcher;
     String filePattern;
 
     /** getPath() on an existing filename in PARENT_DIR should return the resolved Path */
@@ -37,7 +34,6 @@ public class SimpleFileResolverTester {
     @Test
     public void testGetPathsOnMatchingPattern() {
         filePattern = ".*\\.xml";
-        matcher = FileSystems.getDefault().getPathMatcher("regex:" + filePattern);
         List<Path> paths = fileResolver.getPaths(Pattern.compile(filePattern));
         Assert.assertTrue(paths.size() >= 2);
         paths.forEach(Assert::assertNotNull);
@@ -47,7 +43,6 @@ public class SimpleFileResolverTester {
     @Test
     public void testGetPathsOnNonMatchingPattern() {
         filePattern = "non(-matching)?.*\\.xml";
-        matcher = FileSystems.getDefault().getPathMatcher("regex:" + filePattern);
         List<Path> paths = fileResolver.getPaths(Pattern.compile(filePattern));
         Assert.assertTrue(paths.isEmpty());
     }
