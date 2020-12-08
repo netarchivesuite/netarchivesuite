@@ -26,11 +26,11 @@ National Library.
  */
 -->
 <!-- 
-	This file contains the default settings used by the JMSBitmagArcrepositoryClient
+	This file contains the default settings used by the BitmagArcrepositoryClient
 	class.
 
 	For documentation of the individual settings, please refer to the javadoc for
-	dk.netarkivet.archive.arcrepository.distribute.JMSBitmagArcRepositoryClient.java
+	dk.netarkivet.archive.arcrepository.distribute.BitmagArcRepositoryClient.java
 -->
 <settings>
     <common>
