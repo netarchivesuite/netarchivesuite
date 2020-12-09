@@ -115,8 +115,11 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     static {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
         if (putfileClientInstance == null) {            // NEW
-            putfileClientInstance = BitmagUtils.getPutFileClient();
+           //  putfileClientInstance = BitmagUtils.getPutFileClient(); // Wrong
+           // putfileClientInstance = instance;
+
         }
+        BitmagUtils.initialize();
        // From Bitrepository.getInstance() (File configDir, String bitmagKeyFilename)
         /*
         final String  CLIENT_CERTIFICATE_FILE = "client-certificate.pem";
@@ -350,7 +353,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         final String fileId = file.getName();
 
         // upload file
-        log.info(""
+        log.info("Before uploadFile:"
                 + "");
         //Attempt to upload the file.
         // If not there, this will work
@@ -563,7 +566,8 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         }
         boolean success = false;
         try {
-            OperationEvent.OperationEventType finalEvent = putTheFile(putfileClientInstance, file, fileId, collectionId,
+                log.info("Calling this.putTheFile...");
+            OperationEvent.OperationEventType finalEvent = this.putTheFile(putfileClientInstance, file, fileId, collectionId,
                     maxNumberOfFailingPillars); // TODO where to put it?
             if(finalEvent == OperationEvent.OperationEventType.COMPLETE) {
                 success = true;
@@ -597,7 +601,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         FileExchange fileExchange = null;
         URL url = null;
         PutFileAction ca = null;
-        PutFileEventHandler putFileEventHandler = null;
+       // PutFileEventHandler putFileEventHandler = null;
         String putFileMessage = null;
         try {                                                                                   // NEW
             putFileMessage = "Putting the file '" + packageFile + "' with the file id '"
@@ -621,9 +625,9 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             //         packageFile, csSpec);
             // ChecksumSpecTYPE requestChecksum = null;
 
-            if (putFileEventHandler.hasFailed()) {
-                throw new OperationFailedException("Operation failed");
-            }
+//            if (putFileEventHandler.hasFailed()) {
+//                throw new OperationFailedException("Operation failed");
+//            }
 
             // NetarchivesuiteBlockingEventHandler putFileEventHandler = new NetarchivesuiteBlockingEventHandler(collectionID,
             //      maxNumberOfFailingPillars);
@@ -644,16 +648,15 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
 
             // New
         }
-             catch (OperationFailedException e) {
+            // catch (OperationFailedException e) {
+        catch (Exception e) {
                 log.warn("The putFile Operation was not a complete success ({})."
                         + " Checksum whether we accept anyway.", putFileMessage, e);
-                if(putFileEventHandler.hasFailed()) {
+ //               if(putFileEventHandler.hasFailed()) {
                     return OperationEvent.OperationEventType.FAILED;
-                } else {
-                    return OperationEvent.OperationEventType.COMPLETE;
-                }
-
-
+               // } //else {
+                   // return OperationEvent.OperationEventType.COMPLETE;
+              //  }
         } finally {
             // delete the uploaded file from server
             fileExchange.deleteFile(url);
