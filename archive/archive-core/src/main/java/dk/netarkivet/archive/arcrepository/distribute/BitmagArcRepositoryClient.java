@@ -251,7 +251,8 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
         try {
             baseUrl = new URI(Settings.get(CommonSettings.WRS_BASE_URL));
         } catch (URISyntaxException e) {
-            throw new IOFailure("Invalid url provided for warc record service as base url");
+            throw new IOFailure("Invalid url '" + Settings.get(CommonSettings.WRS_BASE_URL)
+                    + "' provided for warc record service as base url");
         }
         WarcRecordClient client = new WarcRecordClient(baseUrl);
         BitarchiveRecord bitarchiveRecord = client.getBitarchiveRecord(arcfile, index);
