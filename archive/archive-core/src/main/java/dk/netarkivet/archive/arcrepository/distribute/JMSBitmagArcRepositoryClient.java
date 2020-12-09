@@ -114,11 +114,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      */
     static {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
-        if (putfileClientInstance == null) {            // NEW
-           //  putfileClientInstance = BitmagUtils.getPutFileClient(); // Wrong
-           // putfileClientInstance = instance;
 
-        }
         BitmagUtils.initialize();
        // From Bitrepository.getInstance() (File configDir, String bitmagKeyFilename)
         /*
