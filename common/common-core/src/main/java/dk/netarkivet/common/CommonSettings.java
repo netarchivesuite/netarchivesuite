@@ -629,6 +629,21 @@ public class CommonSettings {
     public static String HADOOP_USER_NAME = "settings.common.hadoop.username";
 
     /**
+     * Boolean setting to tell if the used Hadoop cluster has kerberos enabled.
+     */
+    public static String KERBEROS_ENABLED = "settings.common.hadoop.kerberos.enabled";
+
+    /**
+     * The user to use when authorizing with Kerberos (e.g. user@kb.dk).
+     */
+    public static String KERBEROS_USER = "settings.common.hadoop.kerberos.user";
+
+    /**
+     * Setting specifying the path for the keytab to use for authorization with Kerberos.
+     */
+    public static String KERBEROS_KEYTAB = "settings.common.hadoop.kerberos.keytab";
+
+    /**
      * Boolean setting specifying if the Bitrepository project is used as backend storage together with Hadoop
      * for mass processing jobs.
      */

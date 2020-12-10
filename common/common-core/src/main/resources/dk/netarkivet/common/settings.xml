@@ -234,6 +234,11 @@ National Library.
                 <inputDir>nas_input</inputDir>
                 <outputDir>nas_output</outputDir>
             </mapred>
+            <kerberos>
+                <enabled>false</enabled>
+                <user>user@kb.dk</user>
+                <keytab>something/path/keytab</keytab>
+            </kerberos>
         </hadoop>
         <useHadoopAsMassProcessor>true</useHadoopAsMassProcessor>
         <fileResolver>

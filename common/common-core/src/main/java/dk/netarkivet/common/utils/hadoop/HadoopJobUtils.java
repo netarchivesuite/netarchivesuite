@@ -15,6 +15,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
+import org.apache.hadoop.security.UserGroupInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,21 @@ public class HadoopJobUtils {
         conf.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
         conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
         conf.set("dfs.client.use.datanode.hostname", "true");
+
+        // TODO probably need to move elsewhere (HadoopJobTool?)
+        // TODO depending on if Configuration is initialized from config files, we could just check if
+        //  conf.get("hadoop.security.authentication", "simple") returns "kerberos" instead of having new setting.
+        //  More on https://www.edureka.co/community/393/programmatically-access-hadoop-cluster-where-kerberos-enable?show=394#a394
+        if (Settings.getBoolean(CommonSettings.KERBEROS_ENABLED)) {
+            UserGroupInformation.setConfiguration(conf);
+            String user = Settings.get(CommonSettings.KERBEROS_USER);
+            String keytab = Settings.get(CommonSettings.KERBEROS_KEYTAB);
+            try {
+                UserGroupInformation.loginUserFromKeytab(user, keytab);
+            } catch (IOException e) {
+                log.error("Failed logging in as '{}' with keytab file '{}'.", user, keytab, e);
+            }
+        }
 
         final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_UBER_JAR);
         if (jarPath == null || !(new File(jarPath)).exists()) {
