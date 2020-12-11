@@ -57,6 +57,8 @@ import org.bitrepository.access.getchecksums.conversation.ChecksumsCompletePilla
 import org.bitrepository.bitrepositoryelements.ChecksumDataForChecksumSpecTYPE;
 import org.bitrepository.bitrepositoryelements.ChecksumDataForFileTYPE;
 import org.bitrepository.bitrepositoryelements.ChecksumSpecTYPE;
+import org.bitrepository.bitrepositoryelements.ChecksumType;
+import org.bitrepository.client.eventhandler.EventHandler;
 import org.bitrepository.client.eventhandler.OperationEvent;
 import org.bitrepository.common.exceptions.OperationFailedException;
 import org.bitrepository.common.utils.ChecksumUtils;
@@ -74,6 +76,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -561,10 +564,25 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             return false;
         }
         boolean success = false;
+        URL url = null;
         try {
                 log.info("Calling this.putTheFile...");
-            OperationEvent.OperationEventType finalEvent = this.putTheFile(putfileClientInstance, file, fileId, collectionId,
-                    maxNumberOfFailingPillars); // TODO where to put it?
+         //   OperationEvent.OperationEventType finalEvent = this.putTheFile(putfileClientInstance, file, fileId, collectionId,
+         //           maxNumberOfFailingPillars); // TODO where to put it?
+            PutFileClient putFileClientLocal = BitmagUtils.getPutFileClient();
+            url = BitmagUtils.getFileExchangeBaseURL();
+            long sizeOfFile = file.length(); // size in bytes
+            Map<String, ChecksumsCompletePillarEvent> checksumResults = bitrep.getChecksums(fileId, collectionId, maxStoreFailures);
+            ChecksumSpecTYPE checksumSpec = BitmagUtils.getChecksumSpec(ChecksumType.MD5);
+            ChecksumDataForFileTYPE checksumDataForFileType = BitmagUtils.getValidationChecksum(file, checksumSpec);
+            // checksumDataForFileType ==checksumForValidationAtPillar ?
+            ChecksumDataForFileTYPE checksumData = BitmagUtils.getValidationChecksum(file, BitmagUtils.getChecksumSpec(ChecksumType.MD5));
+            List<String>  pillars = BitmagUtils.getKnownPillars(collectionId);
+            EventHandler eventHandler = new PutFileEventHandler(pillars, file, url);
+            String auditTrailInformation = "Retrieving package '" + fileId + "' from collection '" + collectionId
+                    + "' using pillar '" + usepillar + "'";
+            putFileClientLocal.putFile(collectionId, url,fileId, sizeOfFile, checksumDataForFileType,checksumSpec, eventHandler, auditTrailInformation);
+
             if(finalEvent == OperationEvent.OperationEventType.COMPLETE) {
                 success = true;
                 log.info("JMSBitmagArcRepositoryClient uploadFile.");
