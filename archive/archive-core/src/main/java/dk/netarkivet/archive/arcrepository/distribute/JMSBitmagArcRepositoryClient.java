@@ -567,13 +567,12 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         URL url = null;
         try {
                 log.info("Calling this.putTheFile...");
-         //   OperationEvent.OperationEventType finalEvent = this.putTheFile(putfileClientInstance, file, fileId, collectionId,
-         //           maxNumberOfFailingPillars); // TODO where to put it?
+
             PutFileClient putFileClientLocal = BitmagUtils.getPutFileClient();
             PutFileAction putfileInstance = new PutFileAction(putFileClientLocal, collectionId, file, fileId);
             putfileInstance.performAction();
 
-            finalEvent =
+            OperationEvent.OperationEventType finalEvent = putfileInstance.getFinalEvent();
             if(finalEvent == OperationEvent.OperationEventType.COMPLETE) {
                 success = true;
                 log.info("JMSBitmagArcRepositoryClient uploadFile.");

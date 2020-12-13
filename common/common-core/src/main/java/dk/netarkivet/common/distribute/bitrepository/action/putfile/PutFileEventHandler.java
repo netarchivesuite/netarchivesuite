@@ -36,6 +36,12 @@ public class PutFileEventHandler implements EventHandler {
     private boolean finished = false;
     private boolean failed = false;
 
+    public OperationEvent.OperationEventType getFinalEvent() {
+        return finalEvent;
+    }
+
+    private OperationEvent.OperationEventType finalEvent;
+
     /**
      * Constructor
      * @param pillars A list of pillars the file is put to
@@ -60,6 +66,7 @@ public class PutFileEventHandler implements EventHandler {
             break;
         case COMPLETE:
             log.info("Finished put fileID for file '{}'", event.getFileID());
+            finalEvent = OperationEvent.OperationEventType.COMPLETE;
             cleanUpFileExchange();
             finish();
             break;
