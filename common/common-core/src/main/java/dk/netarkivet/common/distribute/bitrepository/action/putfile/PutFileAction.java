@@ -32,7 +32,7 @@ public class PutFileAction implements ClientAction {
         return finalEvent;
     }
 
-    private OperationEvent.OperationEventType finalEvent;
+    private static OperationEvent.OperationEventType finalEvent;  // static?
 
     /**
      * Constructor to instantiate the put-file action

@@ -40,7 +40,7 @@ public class PutFileEventHandler implements EventHandler {
         return finalEvent;
     }
 
-    private OperationEvent.OperationEventType finalEvent;
+    private static OperationEvent.OperationEventType finalEvent;  // static?
 
     /**
      * Constructor
