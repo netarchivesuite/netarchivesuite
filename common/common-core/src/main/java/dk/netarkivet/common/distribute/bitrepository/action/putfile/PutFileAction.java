@@ -27,13 +27,14 @@ public class PutFileAction implements ClientAction {
     private final String fileID;
     private final PutFileClient client;
     private final File targetFile;
+    private boolean actionIsSuccess;
 
-    public OperationEvent.OperationEventType getFinalEvent() {
+ /*   public OperationEvent.OperationEventType getFinalEvent() {
         return finalEvent;
     }
 
     private static OperationEvent.OperationEventType finalEvent;  // static?
-
+*/
     /**
      * Constructor to instantiate the put-file action
      * @param client The client to perform the action on
@@ -46,6 +47,9 @@ public class PutFileAction implements ClientAction {
         this.collectionID = collectionID;
         this.targetFile = targetFile;
         this.fileID = fileID;
+    }
+    public boolean isActionIsSuccess() {
+        return actionIsSuccess;
     }
 
     @Override
@@ -62,11 +66,11 @@ public class PutFileAction implements ClientAction {
                     eventHandler, "PutFile from NAS");
             eventHandler.waitForFinish();
 
-            boolean actionIsSuccess = !eventHandler.hasFailed();
+            actionIsSuccess = !eventHandler.hasFailed();
             if (actionIsSuccess) {
                 log.info("Put operation was a success! Put file '{}' to bitmag with id: '{}'.",
                         targetFile.getName(), fileID);
-                finalEvent = eventHandler.getFinalEvent();
+                // finalEvent = eventHandler.getFinalEvent();
             } else {
                 log.warn("Failed put operation for file '{}'.", targetFile.getName());
             }

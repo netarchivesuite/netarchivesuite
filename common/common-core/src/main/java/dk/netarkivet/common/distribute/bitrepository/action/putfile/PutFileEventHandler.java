@@ -36,10 +36,10 @@ public class PutFileEventHandler implements EventHandler {
     private boolean finished = false;
     private boolean failed = false;
 
-    public OperationEvent.OperationEventType getFinalEvent() {
+/*    public OperationEvent.OperationEventType getFinalEvent() {
         return finalEvent;
     }
-
+*/
     private static OperationEvent.OperationEventType finalEvent;  // static?
 
     /**
@@ -66,7 +66,7 @@ public class PutFileEventHandler implements EventHandler {
             break;
         case COMPLETE:
             log.info("Finished put fileID for file '{}'", event.getFileID());
-            finalEvent = OperationEvent.OperationEventType.COMPLETE;
+            // finalEvent = OperationEvent.OperationEventType.COMPLETE;
             cleanUpFileExchange();
             finish();
             break;

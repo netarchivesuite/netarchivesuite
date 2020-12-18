@@ -572,13 +572,15 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             PutFileAction putfileInstance = new PutFileAction(putFileClientLocal, collectionId, file, fileId);
             putfileInstance.performAction();
 
-            OperationEvent.OperationEventType finalEvent = putfileInstance.getFinalEvent();
-            if(finalEvent == OperationEvent.OperationEventType.COMPLETE) {
+            // OperationEvent.OperationEventType finalEvent = putfileInstance.getFinalEvent();
+            //if(finalEvent == OperationEvent.OperationEventType.COMPLETE) {
+            if (putfileInstance.isActionIsSuccess()) {
                 success = true;
                 log.info("JMSBitmagArcRepositoryClient uploadFile.");
                 log.info("File '{}' uploaded successfully. ",file.getAbsolutePath());
             } else {
-                log.warn("Upload of file '{}' failed with event-type '{}'.", file.getAbsolutePath(), finalEvent);
+                // log.warn("Upload of file '{}' failed with event-type '{}'.", file.getAbsolutePath(), finalEvent);
+                log.warn("Upload of file '{}' failed ", file.getAbsolutePath());
             }
         } catch (Exception e) {
             log.warn("Unexpected error while storing file '{}'", file.getAbsolutePath(), e);
