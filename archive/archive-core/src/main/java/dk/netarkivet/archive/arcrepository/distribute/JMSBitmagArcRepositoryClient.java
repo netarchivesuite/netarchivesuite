@@ -22,17 +22,18 @@
  */
 package dk.netarkivet.archive.arcrepository.distribute;
 
-// import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.getChecksumsClient;
-
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
-import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.NetarkivetMessage;
+
+import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
+import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
+import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
+
 import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -42,8 +43,9 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 // import dk.netarkivet.common.distribute.bitrepository.NetarchivesuiteBlockingEventHandler;
-import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction;
+import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction; // ?
 // import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileEventHandler;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -51,6 +53,8 @@ import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.warc.WarcRecordClient;
+
 import org.apache.commons.io.FileUtils;
 /*   REMOVE BITREP
 import org.bitrepository.access.getchecksums.GetChecksumsClient;
@@ -75,12 +79,14 @@ import org.bitrepository.protocol.FileExchange;
 // import org.bitrepository.protocol.ProtocolComponentFactory;
 import org.bitrepository.client.eventhandler.OperationEvent;
 import org.bitrepository.modify.putfile.PutFileClient;
+
 import org.bitrepository.protocol.FileExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 // import java.nio.file.Path;
@@ -291,31 +297,21 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         ArgumentNotValid.checkNotNegative(index, "index");
         log.debug("Requesting get of record '{}:{}'", arcfile, index);
 
-        long start = System.currentTimeMillis();
-        GetMessage requestGetMsg = new GetMessage(Channels.getTheRepos(), replyQ, arcfile, index);
-        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(requestGetMsg, timeoutGetOpsMillis);
-        long timePassed = System.currentTimeMillis() - start;
-
-        if (replyNetMsg == null) {
-            
-            log.warn("Request for record({}:{}) timed out after {} seconds. Returning null BitarchiveRecord", arcfile,
-                    index, (timeoutGetOpsMillis / 1000));
-            return null;
-        } else {
-            log.debug("Reply for '{}:{}' received after {} seconds", arcfile, index, (timePassed / 1000));
-        }
-
-        GetMessage replyGetMsg;
+        URI baseUrl;
         try {
-            replyGetMsg = (GetMessage) replyNetMsg;
-        } catch (ClassCastException e) {
-            throw new IOFailure("Received invalid argument reply: '" + replyNetMsg + "'. Not a GetMessage", e);
-        }
+           baseUrl = new URI(Settings.get(CommonSettings.WRS_BASE_URL));
 
-        if (!replyGetMsg.isOk()) {
-            throw new IOFailure("GetMessage failed: '" + replyGetMsg.getErrMsg() + "'");
+        } catch (URISyntaxException e) {
+            throw new IOFailure("Invalid url: '" + Settings.get(CommonSettings.WRS_BASE_URL)
+                   + "' provided for warc record service as base url");
         }
-        return replyGetMsg.getRecord();
+        WarcRecordClient client = new WarcRecordClient((baseUrl));
+
+        BitarchiveRecord bitarchiveRecord = client.getBitarchiveRecord(arcfile, index);
+        if (bitarchiveRecord == null) {
+            throw new IOFailure("Got null when tryind to get record '" + arcfile + ":" + index + "*.");
+        }
+        return bitarchiveRecord;
     }
 
     /**

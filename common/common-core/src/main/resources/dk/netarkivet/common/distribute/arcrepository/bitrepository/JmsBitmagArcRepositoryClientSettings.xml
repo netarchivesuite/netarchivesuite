@@ -43,7 +43,7 @@ National Library.
                 <settingsDir></settingsDir>
                 <storeMaxPillarFailures>1</storeMaxPillarFailures>
                 <tempdir>arcrepositoryTemp</tempdir>
-		<collectionID>dvds</collectionID>
+		<collectionID>netarkivert</collectionID>
 		<usepillar></usepillar>
 		<!-- Set to 5 minutes to make it possible to retrieve large records
                  using FTP -->

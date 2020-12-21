@@ -623,4 +623,8 @@ public class CommonSettings {
      */
     public static String MAX_CONNECTIONS_PER_ROUTE = "settings.common.webinterface.warc.max_connections_per_route";
 
+    /**
+     * The base url for the Warc Record Service
+     */
+    public static String WRS_BASE_URL = "settings.common.warcRecordService.baseUrl";
 }
