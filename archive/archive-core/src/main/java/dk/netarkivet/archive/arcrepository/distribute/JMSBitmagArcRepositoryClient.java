@@ -22,7 +22,7 @@
  */
 package dk.netarkivet.archive.arcrepository.distribute;
 
-import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.getChecksumsClient;
+// import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.getChecksumsClient;
 
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
@@ -41,9 +41,9 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
-import dk.netarkivet.common.distribute.bitrepository.NetarchivesuiteBlockingEventHandler;
+// import dk.netarkivet.common.distribute.bitrepository.NetarchivesuiteBlockingEventHandler;
 import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction;
-import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileEventHandler;
+// import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileEventHandler;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -52,20 +52,30 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import org.apache.commons.io.FileUtils;
+/*   REMOVE BITREP
 import org.bitrepository.access.getchecksums.GetChecksumsClient;
 import org.bitrepository.access.getchecksums.conversation.ChecksumsCompletePillarEvent;
 import org.bitrepository.bitrepositoryelements.ChecksumDataForChecksumSpecTYPE;
 import org.bitrepository.bitrepositoryelements.ChecksumDataForFileTYPE;
-import org.bitrepository.bitrepositoryelements.ChecksumSpecTYPE;
-import org.bitrepository.bitrepositoryelements.ChecksumType;
-import org.bitrepository.client.eventhandler.EventHandler;
+ */
+// import org.bitrepository.bitrepositoryelements.ChecksumSpecTYPE;
+// import org.bitrepository.bitrepositoryelements.ChecksumType;
+// import org.bitrepository.client.eventhandler.EventHandler;
+/*  REMOVE BITREP
 import org.bitrepository.client.eventhandler.OperationEvent;
-import org.bitrepository.common.exceptions.OperationFailedException;
-import org.bitrepository.common.utils.ChecksumUtils;
-import org.bitrepository.modify.putfile.BlockingPutFileClient;
+ */
+// import org.bitrepository.common.exceptions.OperationFailedException;
+// import org.bitrepository.common.utils.ChecksumUtils;
+// import org.bitrepository.modify.putfile.BlockingPutFileClient;
+/*   REMOVE BITREP
 import org.bitrepository.modify.putfile.PutFileClient;
 import org.bitrepository.protocol.FileExchange;
-import org.bitrepository.protocol.ProtocolComponentFactory;
+ */
+
+// import org.bitrepository.protocol.ProtocolComponentFactory;
+import org.bitrepository.client.eventhandler.OperationEvent;
+import org.bitrepository.modify.putfile.PutFileClient;
+import org.bitrepository.protocol.FileExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,10 +83,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+// import java.nio.file.Path;
+// import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
+// import java.util.List;
 import java.util.Map;
 
 /**
@@ -92,8 +102,9 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
 
         /** the one and only JMSBitmagArcRepositoryClient instance. */
     private static JMSBitmagArcRepositoryClient instance;
+    /*  REMOVE BITREP?
     private static PutFileClient putfileClientInstance;  // NEW
-
+    */
     /** Logging output place. */
     protected static final Logger log = LoggerFactory.getLogger(JMSBitmagArcRepositoryClient.class);
 
@@ -366,7 +377,9 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         } else {
             //TODO check if this check is actually ever nessesary
             log.info("Upload to collection '{}' of file '{}' reported success, so let's check", collectionId, fileId);
+            /*  REMOVE BITREP
             checkFileConsistency(file, fileId);
+             */
             log.info("Upload to collection '{}' of file '{}' was successful", collectionId, fileId);
         }
     }
@@ -376,6 +389,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      * @param file The file to have been uploaded.
      * @param fileId The id of the file.
      */
+    /*  REMOVE BITREP
     protected void checkFileConsistency(File file, String fileId) {
         //get the known checksums for the file in bitrep
         Map<String, ChecksumsCompletePillarEvent> checksumResults =
@@ -418,6 +432,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             }
         }
     }
+     */
 
     /**
      * Handle an error situation. Sends a notification, and throws an error.
@@ -623,8 +638,8 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             // URL url = fileexchange.putFile(packageFile);
             url = BitmagUtils.getFileExchangeBaseURL();
             // ChecksumSpecTYPE csSpec = ChecksumUtils.getDefault(this.bitmagSettings);
-
-            GetChecksumsClient chkClient = BitmagUtils.getChecksumsClient();
+//
+         //   GetChecksumsClient chkClient = BitmagUtils.getChecksumsClient();
             // chkClient.getChecksums();
 
             // ChecksumDataForFileTYPE validationChecksum = BitmagUtils.getValidationChecksum(
