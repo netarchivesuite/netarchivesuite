@@ -29,11 +29,11 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-
+/*
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
-
+*/
 import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -42,9 +42,8 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
-// import dk.netarkivet.common.distribute.bitrepository.NetarchivesuiteBlockingEventHandler;
+
 import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction; // ?
-// import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileEventHandler;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -56,27 +55,6 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.warc.WarcRecordClient;
 
 import org.apache.commons.io.FileUtils;
-/*   REMOVE BITREP
-import org.bitrepository.access.getchecksums.GetChecksumsClient;
-import org.bitrepository.access.getchecksums.conversation.ChecksumsCompletePillarEvent;
-import org.bitrepository.bitrepositoryelements.ChecksumDataForChecksumSpecTYPE;
-import org.bitrepository.bitrepositoryelements.ChecksumDataForFileTYPE;
- */
-// import org.bitrepository.bitrepositoryelements.ChecksumSpecTYPE;
-// import org.bitrepository.bitrepositoryelements.ChecksumType;
-// import org.bitrepository.client.eventhandler.EventHandler;
-/*  REMOVE BITREP
-import org.bitrepository.client.eventhandler.OperationEvent;
- */
-// import org.bitrepository.common.exceptions.OperationFailedException;
-// import org.bitrepository.common.utils.ChecksumUtils;
-// import org.bitrepository.modify.putfile.BlockingPutFileClient;
-/*   REMOVE BITREP
-import org.bitrepository.modify.putfile.PutFileClient;
-import org.bitrepository.protocol.FileExchange;
- */
-
-// import org.bitrepository.protocol.ProtocolComponentFactory;
 import org.bitrepository.client.eventhandler.OperationEvent;
 import org.bitrepository.modify.putfile.PutFileClient;
 
@@ -89,12 +67,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-// import java.nio.file.Path;
-// import java.nio.file.Paths;
+/*
 import java.util.Arrays;
+ */
 // import java.util.List;
+/*
 import java.util.Map;
-
+*/
 /**
  * Client side usage of an arc repository. All non-writing requests are forwarded to the ArcRepositoryServer over the network.
  * Store requests are sent directly to the bitrepository messagebus.
@@ -108,9 +87,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
 
         /** the one and only JMSBitmagArcRepositoryClient instance. */
     private static JMSBitmagArcRepositoryClient instance;
-    /*  REMOVE BITREP?
-    private static PutFileClient putfileClientInstance;  // NEW
-    */
+
     /** Logging output place. */
     protected static final Logger log = LoggerFactory.getLogger(JMSBitmagArcRepositoryClient.class);
 
@@ -134,17 +111,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      */
     static {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
-
         BitmagUtils.initialize();
-       // From Bitrepository.getInstance() (File configDir, String bitmagKeyFilename)
-        /*
-        final String  CLIENT_CERTIFICATE_FILE = "client-certificate.pem";
-           String applicationConfig = System.getProperty("dk.kb.applicationConfig");
-           Path configDir = Paths.get(applicationConfig);
-           Path clientCertificate = configDir.resolve(CLIENT_CERTIFICATE_FILE);
-           BitmagUtils.initialize(configDir, clientCertificate);
-        Bitrepository.getInstance(configDir, CLIENT_CERTIFICATE_FILE);
-        */
     }
 
     /**
@@ -257,6 +224,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             close();
             throw new ArgumentNotValid("The bitrepository doesn't know about the collection " + this.collectionId);
         }
+
     }
 
     /**
@@ -273,6 +241,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
 
     /** Removes this object as a JMS listener. */
     // ToDo remove or change bitrep
+
     @Override
     public synchronized void close() {
         JMSConnectionFactory.getInstance().removeListener(replyQ, this);
@@ -379,56 +348,6 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             log.info("Upload to collection '{}' of file '{}' was successful", collectionId, fileId);
         }
     }
-
-    /**
-     * Checks the consistency of a file across all pillars after its upload.
-     * @param file The file to have been uploaded.
-     * @param fileId The id of the file.
-     */
-    /*  REMOVE BITREP
-    protected void checkFileConsistency(File file, String fileId) {
-        //get the known checksums for the file in bitrep
-        Map<String, ChecksumsCompletePillarEvent> checksumResults =
-                bitrep.getChecksums(fileId, collectionId, maxStoreFailures);
-
-        //for each pillar in this collection
-        for (String collectionPillar: BitmagUtils.getKnownPillars(collectionId) ){
-            boolean foundInThisPillar = false;
-
-            //Get the checksum result for this pillar for this file
-            ChecksumsCompletePillarEvent checksumResult = checksumResults.get(collectionPillar);
-
-            for (ChecksumDataForChecksumSpecTYPE checksum : checksumResult.getChecksums().getChecksumDataItems()) {
-
-                //for each checksum result for this file (there should be none others but...)
-                if (fileId.equals(checksum.getFileID())) {
-
-                    //mark the file as found in this pillar
-                    foundInThisPillar = true;
-
-                    //Checksum the local file so we can compare
-                    ChecksumDataForFileTYPE validationChecksum =
-                            BitmagUtils.getValidationChecksum(file, checksumResult.getChecksumType());
-
-                    //If the checksums do not match, we have a failure
-                    if ( ! Arrays.equals(validationChecksum.getChecksumValue(), checksum.getChecksumValue())) {
-                        String errMsg =
-                                fileId + " in " + collectionId + " in " + collectionPillar+" has a different checksum than local file " + file;
-                        error(errMsg);
-                        return;
-                    }
-                }
-            }
-
-            if (! foundInThisPillar ) {
-                String errMsg =
-                        fileId + " in " + collectionId + " was missing on pillar "+collectionPillar;
-                error(errMsg);
-                return;
-            }
-        }
-    }
-     */
 
     /**
      * Handle an error situation. Sends a notification, and throws an error.
@@ -577,22 +496,19 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         boolean success = false;
         URL url = null;
         try {
-                log.info("Calling this.putTheFile...");
+              log.info("Calling this.putTheFile...");
 
-            PutFileClient putFileClientLocal = BitmagUtils.getPutFileClient();
-            PutFileAction putfileInstance = new PutFileAction(putFileClientLocal, collectionId, file, fileId);
-            putfileInstance.performAction();
+              PutFileClient putFileClientLocal = BitmagUtils.getPutFileClient();
+              PutFileAction putfileInstance = new PutFileAction(putFileClientLocal, collectionId, file, fileId);
+              putfileInstance.performAction();
 
-            // OperationEvent.OperationEventType finalEvent = putfileInstance.getFinalEvent();
-            //if(finalEvent == OperationEvent.OperationEventType.COMPLETE) {
-            if (putfileInstance.isActionIsSuccess()) {
+              if (putfileInstance.isActionIsSuccess()) {
                 success = true;
                 log.info("JMSBitmagArcRepositoryClient uploadFile.");
                 log.info("File '{}' uploaded successfully. ",file.getAbsolutePath());
-            } else {
-                // log.warn("Upload of file '{}' failed with event-type '{}'.", file.getAbsolutePath(), finalEvent);
-                log.warn("Upload of file '{}' failed ", file.getAbsolutePath());
-            }
+              } else {
+                 log.warn("Upload of file '{}' failed ", file.getAbsolutePath());
+              }
         } catch (Exception e) {
             log.warn("Unexpected error while storing file '{}'", file.getAbsolutePath(), e);
             success = false;
@@ -614,12 +530,11 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     private OperationEvent.OperationEventType putTheFile(PutFileClient client, File packageFile, String fileID, String collectionID,
             int maxNumberOfFailingPillars) throws IOException, URISyntaxException {
 
-        // use public PutFileAction(PutFileClient client, String collectionID, File targetFile, String fileID)
         FileExchange fileExchange = null;
         URL url = null;
         PutFileAction ca = null;
-       // PutFileEventHandler putFileEventHandler = null;
         String putFileMessage = null;
+
         try {                                                                                   // NEW
             putFileMessage = "Putting the file '" + packageFile + "' with the file id '"
                     + fileID + "' from Netarchivesuite";
@@ -628,52 +543,13 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
 
             // --> To be changed
             fileExchange = BitmagUtils.getFileExchange();
-            // FileExchange fileexchange = ProtocolComponentFactory.getInstance().getFileExchange(this.bitmagSettings);
-            // BlockingPutFileClient bpfc = new BlockingPutFileClient(client);
-
-            // URL url = fileexchange.putFile(packageFile);
             url = BitmagUtils.getFileExchangeBaseURL();
-            // ChecksumSpecTYPE csSpec = ChecksumUtils.getDefault(this.bitmagSettings);
-//
-         //   GetChecksumsClient chkClient = BitmagUtils.getChecksumsClient();
-            // chkClient.getChecksums();
-
-            // ChecksumDataForFileTYPE validationChecksum = BitmagUtils.getValidationChecksum(
-            //         packageFile, csSpec);
-            // ChecksumSpecTYPE requestChecksum = null;
-
-//            if (putFileEventHandler.hasFailed()) {
-//                throw new OperationFailedException("Operation failed");
-//            }
-
-            // NetarchivesuiteBlockingEventHandler putFileEventHandler = new NetarchivesuiteBlockingEventHandler(collectionID,
-            //      maxNumberOfFailingPillars);
-            // <-- To be changed
-        /*
-        try {
-            bpfc.putFile(collectionID, url, fileID, packageFile.length(), validationChecksum, requestChecksum,
-                    putFileEventHandler, putFileMessage);
-        } catch (OperationFailedException e) {
-            log.warn("The putFile Operation was not a complete success ({})."
-                    + " Checksum whether we accept anyway.", putFileMessage, e);
-            if(putFileEventHandler.hasFailed()) {
-                return OperationEvent.OperationEventType.FAILED;
-            } else {
-                return OperationEvent.OperationEventType.COMPLETE;
-            }
-         */
 
             // New
-        }
-            // catch (OperationFailedException e) {
-        catch (Exception e) {
+        } catch (Exception e) {
                 log.warn("The putFile Operation was not a complete success ({})."
                         + " Checksum whether we accept anyway.", putFileMessage, e);
- //               if(putFileEventHandler.hasFailed()) {
-                    return OperationEvent.OperationEventType.FAILED;
-               // } //else {
-                   // return OperationEvent.OperationEventType.COMPLETE;
-              //  }
+                return OperationEvent.OperationEventType.FAILED;
         } finally {
             // delete the uploaded file from server
             fileExchange.deleteFile(url);
