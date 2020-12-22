@@ -14,7 +14,7 @@ public interface HadoopJobStrategy {
      *
      * @param jobInputFile The Path specifying the job's input file.
      * @param jobOutputDir The Path specifying the job's output directory.
-     * @return
+     * @return An exit code for the job.
      */
     int runJob(Path jobInputFile, Path jobOutputDir);
 
