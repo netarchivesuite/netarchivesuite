@@ -86,6 +86,7 @@ public class MetadataCDXMapper extends Mapper<LongWritable, Text, NullWritable, 
                     if (!isResponseRecord) {
                         continue;
                     }
+                    log.trace("Processing archive record in '{}' with offset: {}", archiveName, record.getHeader().getOffset());
                     ArchiveHeaderBase header = record.getHeader();
                     Map<String, String> fieldsRead = new HashMap<>();
                     fieldsRead.put("A", header.getUrl());

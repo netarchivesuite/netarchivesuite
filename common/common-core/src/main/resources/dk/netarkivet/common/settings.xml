@@ -144,10 +144,8 @@ National Library.
                 <defaultPageSize>100</defaultPageSize>
             </harvestStatus>
             <warc>
-                <max_total_connections>100</max_total_connections>
-            </warc>
-            <warc>
-                <max_connections_per_route>20</max_connections_per_route>
+                <maxTotalConnections>100</maxTotalConnections>
+                <maxConnectionsPerRoute>20</maxConnectionsPerRoute>
             </warc>
             <hideInactiveTemplates>false</hideInactiveTemplates>
         </webinterface>

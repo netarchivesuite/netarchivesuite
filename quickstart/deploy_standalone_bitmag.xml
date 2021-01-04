@@ -53,7 +53,7 @@ National Library.
       <environmentName>QUICKSTART</environmentName>
       <applicationInstanceId></applicationInstanceId>
       <arcrepositoryClient>
-        <class>dk.netarkivet.archive.arcrepository.distribute.JMSBitmagArcRepositoryClient</class>
+        <class>dk.netarkivet.archive.arcrepository.distribute.BitmagArcRepositoryClient</class>
         <bitrepository>
           <!-- if not set, use of certificates is disabled. If the keyfilename does not exist
               use of certificates is disabled as well.
