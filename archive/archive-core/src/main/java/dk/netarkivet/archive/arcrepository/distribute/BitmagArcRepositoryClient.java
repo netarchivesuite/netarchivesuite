@@ -147,6 +147,8 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
     /** The pillar to use.*/
     private String usepillar;
 
+    private WarcRecordClient warcRecordClient;
+
     /**
      * <b>settings.common.arcrepositoryClient.getTimeout</b>: <br>
      * The setting for how many milliseconds we will wait before giving up on a lookup request to the Arcrepository.
@@ -202,12 +204,22 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
             throw new IOFailure("Failed to create tempdir '" + tempdir + "'", e);
         }
 
+        URI baseUrl;
+        try {
+            baseUrl = new URI(Settings.get(CommonSettings.WRS_BASE_URL));
+        } catch (URISyntaxException e) {
+            throw new IOFailure("Invalid url '" + Settings.get(CommonSettings.WRS_BASE_URL)
+                    + "' provided for warc record service as base url");
+        }
+        warcRecordClient = new WarcRecordClient(baseUrl);
+
         // Initialize connection to the bitrepository
         this.bitrep = Bitrepository.getInstance(configDir, keyfilename);
         if (!bitrep.getKnownCollections().contains(this.collectionId)) {
             close();
             throw new ArgumentNotValid("The bitrepository doesn't know about the collection " + this.collectionId);
         }
+
     }
 
     /**
@@ -246,16 +258,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "arcfile");
         ArgumentNotValid.checkNotNegative(index, "index");
         log.debug("Requesting get of record '{}:{}'", arcfile, index);
-
-        URI baseUrl;
-        try {
-            baseUrl = new URI(Settings.get(CommonSettings.WRS_BASE_URL));
-        } catch (URISyntaxException e) {
-            throw new IOFailure("Invalid url '" + Settings.get(CommonSettings.WRS_BASE_URL)
-                    + "' provided for warc record service as base url");
-        }
-        WarcRecordClient client = new WarcRecordClient(baseUrl);
-        BitarchiveRecord bitarchiveRecord = client.getBitarchiveRecord(arcfile, index);
+        BitarchiveRecord bitarchiveRecord = warcRecordClient.getBitarchiveRecord(arcfile, index);
         if (bitarchiveRecord == null) {
             throw new IOFailure("Got null when trying to get record '" + arcfile + ":" + index + "'.");
         }
