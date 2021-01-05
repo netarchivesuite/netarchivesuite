@@ -29,18 +29,14 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-/*
-import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
-import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
-import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
-*/
+
 import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
-import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
+
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 
 import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction; // ?
@@ -67,13 +63,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-/*
-import java.util.Arrays;
- */
-// import java.util.List;
-/*
-import java.util.Map;
-*/
+
 /**
  * Client side usage of an arc repository. All non-writing requests are forwarded to the ArcRepositoryServer over the network.
  * Store requests are sent directly to the bitrepository messagebus.
@@ -157,8 +147,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     private File tempdir;
     /** The maximum number of failures for a storage to be accepted.*/
     private int maxStoreFailures;
-    /** The bitrepository interface.*/
-    private Bitrepository bitrep;
+
     /** The pillar to use.*/
     private String usepillar;
 
@@ -216,15 +205,6 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         } catch (IOException e) {
             throw new IOFailure("Failed to create tempdir '" + tempdir + "'", e);
         }
-
-        // Initialize connection to the bitrepository
-        // ToDo remove or change bitrep
-        this.bitrep = Bitrepository.getInstance(configDir, keyfilename);
-        if (!bitrep.getKnownCollections().contains(this.collectionId)) {
-            close();
-            throw new ArgumentNotValid("The bitrepository doesn't know about the collection " + this.collectionId);
-        }
-
     }
 
     /**
@@ -245,9 +225,10 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     @Override
     public synchronized void close() {
         JMSConnectionFactory.getInstance().removeListener(replyQ, this);
-        if (bitrep != null) {
+/*        if (bitrep != null) {
             bitrep.shutdown();
         }
+ */
         instance = null;
     }
 
