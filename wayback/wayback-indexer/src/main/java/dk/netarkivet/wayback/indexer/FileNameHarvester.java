@@ -62,7 +62,7 @@ public class FileNameHarvester {
      */
     public static synchronized void harvestAllFilenames() {
         ArchiveFileDAO dao = new ArchiveFileDAO();
-        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
             Set<String> fileNames = getFilesFromBitmagSince(new Date(0));
             log.info("Harvested {} file(s) from bitmag", fileNames.size());
             createFilesInDB(fileNames, dao);
@@ -81,7 +81,7 @@ public class FileNameHarvester {
         long timeAgo = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_SINCE);
         Date sinceDate = new Date(System.currentTimeMillis() - timeAgo);
 
-        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
             Set<String> fileNames = getFilesFromBitmagSince(sinceDate);
             log.info("Harvested {} recent file(s) from bitmag", fileNames.size());
             createFilesInDB(fileNames, dao);

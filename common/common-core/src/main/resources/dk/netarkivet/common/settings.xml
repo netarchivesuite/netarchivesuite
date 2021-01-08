@@ -36,6 +36,7 @@ National Library.
         <environmentName>DEV</environmentName>
         <organization>netarkivet.dk</organization>
         <tempDir>./tests/commontempdir</tempDir>
+        <useBitmagHadoopBackend>false</useBitmagHadoopBackend>
         <metadata>
             <fileregexsuffix>-metadata-[0-9]+.(w)?arc(.gz)?</fileregexsuffix>
         </metadata>
@@ -51,6 +52,20 @@ National Library.
         </http>
         <arcrepositoryClient>
             <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
+            <bitrepository>
+                <!-- if not set, use of certificates is disabled. If the keyfilename does not exist
+                        use of certificates is disabled as well.
+                 -->
+                <keyfilename></keyfilename>
+                <settingsDir></settingsDir>
+                <storeMaxPillarFailures>1</storeMaxPillarFailures>
+                <tempdir>arcrepositoryTemp</tempdir>
+                <collectionID>netarkivet</collectionID>
+                <usepillar></usepillar>
+                <!-- Set to 5 minutes to make it possible to retrieve large records
+                 using FTP -->
+                <getTimeout>300000</getTimeout>
+            </bitrepository>
         </arcrepositoryClient>
         <monitorregistryClient>
             <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
@@ -129,10 +144,8 @@ National Library.
                 <defaultPageSize>100</defaultPageSize>
             </harvestStatus>
             <warc>
-                <max_total_connections>100</max_total_connections>
-            </warc>
-            <warc>
-                <max_connections_per_route>20</max_connections_per_route>
+                <maxTotalConnections>100</maxTotalConnections>
+                <maxConnectionsPerRoute>20</maxConnectionsPerRoute>
             </warc>
             <hideInactiveTemplates>false</hideInactiveTemplates>
         </webinterface>
@@ -222,5 +235,8 @@ National Library.
             </mapred>
         </hadoop>
         <useHadoopAsMassProcessor>true</useHadoopAsMassProcessor>
+        <fileResolver>
+            <class>dk.netarkivet.common.utils.FileResolverRESTClient</class>
+        </fileResolver>
     </common>
 </settings>

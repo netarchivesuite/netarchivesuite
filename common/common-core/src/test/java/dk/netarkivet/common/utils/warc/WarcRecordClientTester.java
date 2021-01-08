@@ -2,9 +2,7 @@ package dk.netarkivet.common.utils.warc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,11 +10,8 @@ import java.net.URISyntaxException;
 import org.apache.commons.io.IOUtils;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
-import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
-import org.archive.io.warc.WARCReader;
 import org.archive.io.warc.WARCReaderFactory;
-import org.archive.io.warc.WARCRecord;
 import org.junit.Test;
 
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
@@ -99,6 +94,22 @@ public class WarcRecordClientTester {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         warcRecord.getData(baos);
         assertTrue("Should have significant data", baos.size() > 10);
+    }
+
+    @Test
+    public void testMultipleCalls() throws Exception {
+        String filename = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz";
+        URI HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
+        long offset = 3442L;
+        WarcRecordClient warcRecordClient = new WarcRecordClient(HOST);
+        for (int i = 0; i < 40; i++) {
+            BitarchiveRecord bitarchiveRecord = warcRecordClient.getBitarchiveRecord(filename, offset);
+            assertNotNull("Expect non null record", bitarchiveRecord);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitarchiveRecord.getData(byteArrayOutputStream);
+            assertTrue("Expect significantly sized output", byteArrayOutputStream.toByteArray().length > 10);
+            System.out.println(i);
+        }
     }
 
     //@Test
@@ -229,6 +240,18 @@ public class WarcRecordClientTester {
             System.out.println(Boolean.parseBoolean("Expect IOException: " + e.getMessage()));
         }
         assertTrue("Exception: ", fail);
+    }
+
+    @Test
+    public void testPosBuildingBitarchiveRecord13() throws Exception {
+        String filename = "42-23-20060726143926-00000-udvikling.kb.dk.arc.gz";
+        URI uri = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
+        long offset = 789L;
+        WarcRecordClient warcRecordClient = new WarcRecordClient(uri);
+        BitarchiveRecord bitarchiveRecord = warcRecordClient.getBitarchiveRecord(filename, offset);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitarchiveRecord.getData(baos);
+        assertTrue("Should have non-zero length output", baos.size() > 10);
     }
 
 }

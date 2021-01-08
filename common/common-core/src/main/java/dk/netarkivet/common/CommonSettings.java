@@ -587,19 +587,43 @@ public class CommonSettings {
      * The directory/path for Hadoop to use as input path in metadata extraction map-/reduce jobs.
      * Used when Hadoop metadata extraction jobs are started by the IndexRequestServer after receiving requests.
      */
-    public static String HADOOP_MAPRED_METADATAJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataJob.inputDir";
+    public static String HADOOP_MAPRED_METADATA_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataExtractionJob.inputDir";
 
     /**
      * The directory/path for Hadoop to use as output path in metadata extraction map-/reduce jobs.
      * Used when Hadoop metadata extraction jobs are started by the IndexRequestServer after receiving requests.
      */
-    public static String HADOOP_MAPRED_METADATAJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataJob.outputDir";
+    public static String HADOOP_MAPRED_METADATA_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataExtractionJob.outputDir";
 
     /**
-     * Path on the client machine (wayback indexer machine) where the uber-jar file containing the
-     * indexing map-/reduce job and dependencies is to be found.
+     * The directory/path for Hadoop to use as input path in metadata CDX-indexing map-/reduce jobs
+     * (Hadoop equivalent of ArchiveExtractCDXJob).
      */
-    public static String HADOOP_MAPRED_WAYBACK_UBER_JAR = "settings.common.hadoop.mapred.waybackUberJar";
+    public static String HADOOP_MAPRED_METADATA_CDX_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataCDXExtractionJob.inputDir";
+
+    /**
+     * The directory/path for Hadoop to use as output path in metadata CDX-indexing map-/reduce jobs
+     * (Hadoop equivalent of ArchiveExtractCDXJob).
+     */
+    public static String HADOOP_MAPRED_METADATA_CDX_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataCDXExtractionJob.outputDir";
+
+    /**
+     * The directory/path for Hadoop to use as input path in crawl log extraction map-/reduce jobs
+     * (Hadoop equivalent of the CrawlLogLinesMatchingRegexp batch job).
+     */
+    public static String HADOOP_MAPRED_CRAWLLOG_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.crawlLogExtractionJob.inputDir";
+
+    /**
+     * The directory/path for Hadoop to use as output path in crawl log extraction map-/reduce jobs
+     * (Hadoop equivalent of the CrawlLogLinesMatchingRegexp batch job).
+     */
+    public static String HADOOP_MAPRED_CRAWLLOG_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.crawlLogExtractionJob.outputDir";
+
+    /**
+     * Path on the client machine where the uber-jar file containing the map-/reduce job and dependencies
+     * for the harvester and indexer module is to be found.
+     */
+    public static String HADOOP_MAPRED_UBER_JAR = "settings.common.hadoop.mapred.hadoopUberJar";
 
     /**
      * Username to start map-/reduce jobs under on the Hadoop cluster.
@@ -607,21 +631,37 @@ public class CommonSettings {
     public static String HADOOP_USER_NAME = "settings.common.hadoop.username";
 
     /**
-     * Boolean specifying if Hadoop is used for mass processing jobs.
+     * Boolean setting specifying if the Bitrepository project is used as backend storage together with Hadoop
+     * for mass processing jobs.
      */
-    public static String USING_HADOOP = "settings.common.useHadoopAsMassProcessor";
+    public static String USE_BITMAG_HADOOP_BACKEND = "settings.common.useBitmagHadoopBackend";
 
     /**
-     * <b>settings.common.warcClient.max_total_connections</b>: </br>
+     * <b>settings.common.webinterface.warc.maxTotalConnections</b>: <br>
      * Increase max total connections to e.g. 200.
      */
-    public static String MAX_TOTAL_CONNECTIONS = "settings.common.webinterface.warc.max_total_connections";
+    public static String MAX_TOTAL_CONNECTIONS = "settings.common.webinterface.warc.maxTotalConnections";
 
     /**
-     * <b>settings.common.warcClient.DefaultMaxPerRoute</b> </br>
-     * Increase  default max connections per route, e.g. to 20.
+     * <b>settings.common.webinterface.warc.maxConnectionsPerRoute</b> <br>
+     * Increase default max connections per route, e.g. to 20.
      */
-    public static String MAX_CONNECTIONS_PER_ROUTE = "settings.common.webinterface.warc.max_connections_per_route";
+    public static String MAX_CONNECTIONS_PER_ROUTE = "settings.common.webinterface.warc.maxConnectionsPerRoute";
+
+    /**
+     * The base url for the Warc Record Service.
+     */
+    public static String WRS_BASE_URL = "settings.common.warcRecordService.baseUrl";
+
+    /**
+     * The implementation of FileResolver to use.
+     */
+    public static String FILE_RESOLVER_CLASS = "settings.common.fileResolver.class";
+
+    /**
+     * The base url for the REST implementation of FileResolver.
+     */
+    public static String FILE_RESOLVER_BASE_URL = "settings.common.fileResolver.baseUrl";
 
     /**
      * The base url for the Warc Record Service

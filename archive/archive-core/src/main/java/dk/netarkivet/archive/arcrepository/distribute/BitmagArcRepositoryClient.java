@@ -60,8 +60,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Map;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -73,13 +75,13 @@ import java.net.URL;
  * So called mixed-mode client, where the store is done to a Bitmagrepository, and the rest (access and batch-processing)
  * is done using the distributed netarchivesuite archive.
  */
-public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRepositoryClient, AutoCloseable {
+public class BitmagArcRepositoryClient extends Synchronizer implements ArcRepositoryClient, AutoCloseable {
 
-        /** the one and only JMSBitmagArcRepositoryClient instance. */
-    private static JMSBitmagArcRepositoryClient instance;
+    /** the one and only BitmagArcRepositoryClient instance. */
+    private static BitmagArcRepositoryClient instance;
 
     /** Logging output place. */
-    protected static final Logger log = LoggerFactory.getLogger(JMSBitmagArcRepositoryClient.class);
+    protected static final Logger log = LoggerFactory.getLogger(BitmagArcRepositoryClient.class);
 
     /** Listens on this queue for replies. */
     private final ChannelID replyQ;
@@ -93,7 +95,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
 
     /** The default place in classpath where the settings file can be found. */
     private static String defaultSettingsClasspath = "dk/netarkivet/common/distribute/arcrepository/bitrepository/"
-            + "JmsBitmagArcRepositoryClientSettings.xml";
+            + "BitmagArcRepositoryClientSettings.xml";
 
     /*
      * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
@@ -151,6 +153,8 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     /** The pillar to use.*/
     private String usepillar;
 
+    private WarcRecordClient warcRecordClient;
+
     /**
      * <b>settings.common.arcrepositoryClient.getTimeout</b>: <br>
      * The setting for how many milliseconds we will wait before giving up on a lookup request to the Arcrepository.
@@ -166,10 +170,10 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      * @see #BITREPOSITORY_TEMPDIR
      *
      */
-    private JMSBitmagArcRepositoryClient() {
-        synchronized (JMSBitmagArcRepositoryClient.class){
+    private BitmagArcRepositoryClient() {
+        synchronized (BitmagArcRepositoryClient.class){
             if (instance != null){
-                throw new RuntimeException("Attempting to start an additional "+JMSBitmagArcRepositoryClient.class+" instance");
+                throw new RuntimeException("Attempting to start an additional "+ BitmagArcRepositoryClient.class+" instance");
             } else {
                 instance = this;
             }
@@ -178,11 +182,11 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         timeoutGetOpsMillis = Settings.getLong(ARCREPOSITORY_GET_TIMEOUT);
 
         log.info(
-                "JMSBitmagArcRepositoryClient will timeout on each getrequest after {} milliseconds.",
+                "BitmagArcRepositoryClient will timeout on each getrequest after {} milliseconds.",
                 timeoutGetOpsMillis);
         replyQ = Channels.getThisReposClient();
         JMSConnectionFactory.getInstance().setListener(replyQ, this);
-        log.info("JMSBitmagArcRepositoryClient listens for replies on channel '{}'", replyQ);
+        log.info("BitmagArcRepositoryClient listens for replies on channel '{}'", replyQ);
 
         File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
         log.info("Getting bitmag config from " + BITREPOSITORY_SETTINGS_DIR + "=" + configDir.getAbsolutePath());
@@ -205,6 +209,23 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         } catch (IOException e) {
             throw new IOFailure("Failed to create tempdir '" + tempdir + "'", e);
         }
+
+        URI baseUrl;
+        try {
+            baseUrl = new URI(Settings.get(CommonSettings.WRS_BASE_URL));
+        } catch (URISyntaxException e) {
+            throw new IOFailure("Invalid url '" + Settings.get(CommonSettings.WRS_BASE_URL)
+                    + "' provided for warc record service as base url");
+        }
+        warcRecordClient = new WarcRecordClient(baseUrl);
+
+        // Initialize connection to the bitrepository
+        this.bitrep = Bitrepository.getInstance(configDir, keyfilename);
+        if (!bitrep.getKnownCollections().contains(this.collectionId)) {
+            close();
+            throw new ArgumentNotValid("The bitrepository doesn't know about the collection " + this.collectionId);
+        }
+
     }
 
     /**
@@ -212,9 +233,9 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      *
      * @return an JMSArcRepositoryClient instance.
      */
-    public static synchronized JMSBitmagArcRepositoryClient getInstance() {
+    public static synchronized BitmagArcRepositoryClient getInstance() {
         if (instance == null) {
-            instance = new JMSBitmagArcRepositoryClient();
+            instance = new BitmagArcRepositoryClient();
         }
         return instance;
     }
@@ -233,33 +254,22 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
     }
 
     /**
-     * Sends a GetMessage on the "TheArcrepos" queue and waits for a reply. This is a blocking call. Returns null if no
-     * message is returned within Settings.ARCREPOSITORY_GET_TIMEOUT
+     * Initializes a WarcRecordClient to interact with the warc records service and uses it to request a record
+     * with the given name and offset/index.
      *
      * @param arcfile The name of a file.
      * @param index The offset of the wanted record in the file
-     * @return a BitarchiveRecord-object or null if request times out or object is not found.
+     * @return a BitarchiveRecord-object.
      * @throws ArgumentNotValid If the given arcfile is null or empty, or the given index is negative.
-     * @throws IOFailure If a wrong message is returned or the get operation failed.
+     * @throws IOFailure If an invalid URL is provided for the warc record service or the operation failed.
      */
     public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "arcfile");
         ArgumentNotValid.checkNotNegative(index, "index");
         log.debug("Requesting get of record '{}:{}'", arcfile, index);
-
-        URI baseUrl;
-        try {
-           baseUrl = new URI(Settings.get(CommonSettings.WRS_BASE_URL));
-
-        } catch (URISyntaxException e) {
-            throw new IOFailure("Invalid url: '" + Settings.get(CommonSettings.WRS_BASE_URL)
-                   + "' provided for warc record service as base url");
-        }
-        WarcRecordClient client = new WarcRecordClient((baseUrl));
-
-        BitarchiveRecord bitarchiveRecord = client.getBitarchiveRecord(arcfile, index);
+        BitarchiveRecord bitarchiveRecord = warcRecordClient.getBitarchiveRecord(arcfile, index);
         if (bitarchiveRecord == null) {
-            throw new IOFailure("Got null when tryind to get record '" + arcfile + ":" + index + "*.");
+            throw new IOFailure("Got null when trying to get record '" + arcfile + ":" + index + "'.");
         }
         return bitarchiveRecord;
     }

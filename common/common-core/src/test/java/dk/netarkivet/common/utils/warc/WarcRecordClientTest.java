@@ -13,7 +13,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.SQLOutput;
 
 import static org.junit.Assert.*;
 
@@ -71,6 +70,20 @@ public class WarcRecordClientTest {
         BitarchiveRecord bitarchiveRecord = warcRecordClient.getBitarchiveRecord("10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz", 3442L);
         assertNotNull("Should have non null BitarchiveRecord", bitarchiveRecord);
         assertTrue("Expect a non-zero length bitarchiveRecord", IOUtils.toByteArray(bitarchiveRecord.getData()).length > 100);
+        System.out.println("\n\n" + IOUtils.toString(bitarchiveRecord.getData()));
+    }
+
+    @Test
+    public void getWithArc() throws IOException, URISyntaxException {
+        // String baseUri = "http://localhost:8883/cgi-bin2/py1.cgi";
+        URI baseUri = new URI("http://localhost:8883/cgi-bin2/py1.cgi");
+
+        //setting to NetarchiveSuite.
+        WarcRecordClient warcRecordClient = new WarcRecordClient(baseUri);
+        String filename = "42-23-20060726143926-00000-udvikling.kb.dk.arc.gz";
+        BitarchiveRecord bitarchiveRecord = warcRecordClient.getBitarchiveRecord(filename, 682L);
+        assertNotNull("Should have non null BitarchiveRecord", bitarchiveRecord);
+        assertTrue("Expect a non-zero length bitarchiveRecord", IOUtils.toByteArray(bitarchiveRecord.getData()).length > 10);
         System.out.println("\n\n" + IOUtils.toString(bitarchiveRecord.getData()));
     }
 

@@ -26,11 +26,11 @@ National Library.
  */
 -->
 <!-- 
-	This file contains the default settings used by the JMSBitmagArcrepositoryClient
+	This file contains the default settings used by the BitmagArcrepositoryClient
 	class.
 
 	For documentation of the individual settings, please refer to the javadoc for
-	dk.netarkivet.archive.arcrepository.distribute.JMSBitmagArcRepositoryClient.java
+	dk.netarkivet.archive.arcrepository.distribute.BitmagArcRepositoryClient.java
 -->
 <settings>
     <common>
@@ -43,7 +43,7 @@ National Library.
                 <settingsDir></settingsDir>
                 <storeMaxPillarFailures>1</storeMaxPillarFailures>
                 <tempdir>arcrepositoryTemp</tempdir>
-		<collectionID>netarkivert</collectionID>
+		<collectionID>netarkivet</collectionID>
 		<usepillar></usepillar>
 		<!-- Set to 5 minutes to make it possible to retrieve large records
                  using FTP -->

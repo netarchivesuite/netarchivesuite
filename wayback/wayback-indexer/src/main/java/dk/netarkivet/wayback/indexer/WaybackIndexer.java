@@ -85,7 +85,7 @@ public class WaybackIndexer implements CleanupIF {
         FileUtils.createDir(temporaryBatchDir);
         FileUtils.createDir(batchOutputDir);
 
-        if (Settings.getBoolean(CommonSettings.USING_HADOOP)) {
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
             BitmagUtils.initialize();
         }
         ingestInitialFiles();

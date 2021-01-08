@@ -1,18 +1,18 @@
 package dk.netarkivet.common.utils;
 
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public interface FileResolver {
 
     /**
      * Return a list of file-paths matching a given pattern. Empty if there
      * are no matching files.
-     * @param filepattern Pattern to match.
+     * @param filepattern String to match.
      * @return The list of matching file-paths.
      */
-    List<Path> getPaths(PathMatcher filepattern);
+    List<Path> getPaths(Pattern filepattern);
 
     /**
      * Return a single path to a given file, or null if the file is not found.

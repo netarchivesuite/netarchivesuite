@@ -2,11 +2,14 @@ package dk.netarkivet.common.utils;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,15 +22,20 @@ public class SimpleFileResolver implements FileResolver {
     private static final Logger log = LoggerFactory.getLogger(SimpleFileResolver.class);
     Path directory;
 
+    public void setDirectory(Path directory) {
+        this.directory = directory;
+    }
+
     public SimpleFileResolver(Path directory) {
         this.directory = directory;
     }
 
-    @Override public List<Path> getPaths(PathMatcher filepattern) {
+    @Override public List<Path> getPaths(Pattern filepattern) {
+        PathMatcher globPattern = FileSystems.getDefault().getPathMatcher("regex:" + filepattern);
         File[] dirContents = new File(directory.toString()).listFiles(
             new FilenameFilter() {
                 @Override public boolean accept(File dir, String name) {
-                    return filepattern.matches(new File(name).toPath());
+                    return globPattern.matches(Paths.get(name));
                 }
             }
         );

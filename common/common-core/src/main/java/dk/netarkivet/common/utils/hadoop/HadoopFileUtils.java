@@ -17,38 +17,6 @@ public class HadoopFileUtils {
     private static final Logger log = LoggerFactory.getLogger(HadoopFileUtils.class);
 
     /**
-     * Specifically creates a Path representing the input file for a metadata extraction job.
-     * Has the side effect of creating the job's input parent dir if it does not exist.
-     * @param fileSystem The used filesystem
-     * @param uuid The UUID used to name the input file
-     * @return A Hadoop path representing the unique input file or null if an error is encountered
-     */
-    public static Path createExtractionJobInputFilePath(FileSystem fileSystem, UUID uuid) {
-        String inputParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_METADATAJOB_INPUT_DIR);
-        if (inputParentDir == null) {
-            log.error("Parent input dir specified by '{}' in settings must not be null.", CommonSettings.HADOOP_MAPRED_METADATAJOB_INPUT_DIR);
-            return null;
-        }
-        return createUniquePathInDir(fileSystem, inputParentDir, uuid);
-    }
-
-    /**
-     * Specifically creates a Path representing the output dir for a metadata extraction job.
-     * Has the side effect of creating the job's parent output dir if it does not exist.
-     * @param fileSystem The used filesystem
-     * @param uuid The UUID used to name the output dir
-     * @return A Hadoop path representing the unique output dir or null if an error is encountered
-     */
-    public static Path createExtractionJobOutputDirPath(FileSystem fileSystem, UUID uuid) {
-        String outputParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_METADATAJOB_OUTPUT_DIR);
-        if (outputParentDir == null) {
-            log.error("Parent output dir specified by '{}' in settings must not be null.", CommonSettings.HADOOP_MAPRED_METADATAJOB_OUTPUT_DIR);
-            return null;
-        }
-        return createUniquePathInDir(fileSystem, outputParentDir, uuid);
-    }
-
-    /**
      * Creates and returns a unique path under a given directory.
      * @param fileSystem The used filesystem
      * @param dir A path to the parent directory to create the Path under

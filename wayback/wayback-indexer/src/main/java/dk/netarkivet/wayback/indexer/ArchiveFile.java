@@ -22,13 +22,12 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_COLLECTIONID;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Entity;
@@ -47,11 +46,11 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
-import dk.netarkivet.common.distribute.bitrepository.action.getfile.GetFileAction;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.BitmagUtils;
 import dk.netarkivet.common.utils.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -64,7 +63,7 @@ import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
 import dk.netarkivet.wayback.hadoop.CDXMapper;
-import dk.netarkivet.common.utils.hadoop.HadoopJob;
+import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 
 /**
  * This class represents a file in the arcrepository which may be indexed by the indexer.
@@ -201,10 +200,7 @@ public class ArchiveFile {
             throw new IllegalState("Attempted to index file '" + filename + "' which is already indexed");
         }
 
-        // TODO shouldn't have check on filename here, but for now let it be
-        boolean isMetadataFile = filename.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
-        boolean isArchiveFile = ARCUtils.isARC(filename) || WARCUtils.isWarc(filename) || isMetadataFile;
-        if (Settings.getBoolean(CommonSettings.USING_HADOOP) && isArchiveFile) {
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
             hadoopIndex();
         } else {
             batchIndex();
@@ -215,11 +211,17 @@ public class ArchiveFile {
      * Runs a map-only (no reduce) job to index this file.
      */
     private void hadoopIndex() {
+        boolean isArchiveFile = ARCUtils.isARC(filename) || WARCUtils.isWarc(filename);
+        if (!isArchiveFile) {
+            log.warn("Skipping indexing of file with filename '{}'", filename);
+            return;
+        }
+
         System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
         Configuration conf = HadoopJobUtils.getConfFromSettings();
         UUID uuid = UUID.randomUUID();
         log.info("File {} indexed with job uuid for i/o {}.", this.filename, uuid);
-        try (FileSystem fileSystem = FileSystem.get(conf)) {
+        try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
             String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_INPUT_DIR);
             if (hadoopInputDir == null) {
                 log.error("Parent input dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CDXJOB_INPUT_DIR);
@@ -249,9 +251,12 @@ public class ArchiveFile {
             log.info("Output directory for job is {}", jobOutputDir);
             java.nio.file.Path localInputTempFile = null;
             localInputTempFile = Files.createTempFile(null, null);
-            final String parentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
-            //TODO replace this with call to a factory method so we can configure different file resolvers
-            FileResolver fileResolver = new SimpleFileResolver(Paths.get(parentDir));
+
+            FileResolver fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
+            if (fileResolver instanceof SimpleFileResolver) {
+                String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
+                ((SimpleFileResolver) fileResolver).setDirectory(Paths.get(pillarParentDir));
+            }
             java.nio.file.Path filePath = fileResolver.getPath(filename);
             String inputLine = "file://" + filePath.toString();
             log.info("Inserting {} in {}.", inputLine, localInputTempFile);
@@ -264,7 +269,7 @@ public class ArchiveFile {
             int exitCode = 0;
             try {
                 log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
-                exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMapper()),
+                exitCode = ToolRunner.run(new HadoopJobTool(conf, new CDXMapper()),
                         new String[] {hadoopInputNameFile.toString(), jobOutputDir.toString()});
                 if (exitCode == 0) {
                     log.info("CDX job for file {} was a success!", filename);
@@ -328,7 +333,7 @@ public class ArchiveFile {
             log.info("Starting CDXJob on file '{}'", filename);
             try {
                 // TODO Guess conditioning on which file it is should be handled here by designating different mapper classes
-                int exitCode = ToolRunner.run(new HadoopJob(conf, new CDXMapper()),
+                int exitCode = ToolRunner.run(new HadoopJobTool(conf, new CDXMapper()),
                         new String[] {
                                 hadoopInputNameFile.getName(), Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_OUTPUT_DIR)});
 
@@ -359,25 +364,21 @@ public class ArchiveFile {
     }
 
     /**
-     * Collects the results from the Hadoop job in a file in a local tempdir and afterwards moves
+     * Copies the results from the Hadoop job to a file in a local tempdir and afterwards moves
      * the results to WAYBACK_BATCH_OUTPUTDIR. The status of this object is then updated to reflect that the
      * object has been indexed.
      * @param fs The Hadoop FileSystem that is used
+     * @param jobOutputDir The job output dir to find the 'part'-files in, which contain the resulting cdx lines.
      */
     private void collectHadoopResults(FileSystem fs, Path jobOutputDir) {
-        Path jobResultFilePath = new Path(jobOutputDir, "part-m-00000"); //TODO: Make non-hardcoded - should eventually run through all files named 'part-m-XXXXX'
         File outputFile = makeNewFileInWaybackTempDir();
-        log.info("Collecting index for '{}' from {} to '{}'", this.getFilename(), jobResultFilePath, outputFile.getAbsolutePath());
+        log.info("Collecting index for '{}' from parts in '{}' to '{}'", this.getFilename(), jobOutputDir, outputFile.getAbsolutePath());
         try {
-            if (fs.exists(jobResultFilePath)) {
-                fs.copyToLocalFile(jobResultFilePath, new Path(outputFile.getAbsolutePath()));
-                log.info("Finished collecting index for '{}' to '{}'", this.getFilename(), outputFile.getAbsolutePath());
-            } else {
-                throw new IllegalState(
-                        "No results to copy from hdfs '" + jobResultFilePath + "' to '" + outputFile + "'");
-            }
+            List<String> cdxLines = HadoopJobUtils.collectOutputLines(fs, jobOutputDir);
+            FileUtils.writeCollectionToFile(outputFile, cdxLines);
+            log.info("Finished collecting index for '{}' to '{}'", this.getFilename(), outputFile.getAbsolutePath());
         } catch (IOException e) {
-            log.warn("Could not collect index results from {}", jobResultFilePath.toString());
+            log.warn("Could not collect index results from '{}'", jobOutputDir.toString(), e);
         }
         File finalFile = moveFileToWaybackOutputDir(outputFile);
 
@@ -415,7 +416,7 @@ public class ArchiveFile {
         theJob.processOnlyFileNamed(filename);
         PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
         String replicaId = Settings.get(WaybackSettings.WAYBACK_REPLICA);
-        log.info("Submitting {} for {} to {}", theJob.getClass().getName(), getFilename(), replicaId.toString());
+        log.info("Submitting {} for {} to {}", theJob.getClass().getName(), getFilename(), replicaId);
         BatchStatus batchStatus = client.batch(theJob, replicaId);
         log.info("Batch job for {} returned", this.getFilename());
         // Normally expect exactly one file per job.

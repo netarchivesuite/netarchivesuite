@@ -48,7 +48,6 @@ import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
 
     /** The logger. */
-    //private final Log log = LogFactory.getLog(getClass().getName());
     private static final Logger log = LoggerFactory.getLogger(CrawlLogLinesMatchingRegexp.class);
 
     /** Metadata URL for crawl logs. */
