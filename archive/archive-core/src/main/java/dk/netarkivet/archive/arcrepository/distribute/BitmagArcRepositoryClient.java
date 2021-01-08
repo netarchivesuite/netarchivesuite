@@ -218,14 +218,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
                     + "' provided for warc record service as base url");
         }
         warcRecordClient = new WarcRecordClient(baseUrl);
-
-        // Initialize connection to the bitrepository
-        this.bitrep = Bitrepository.getInstance(configDir, keyfilename);
-        if (!bitrep.getKnownCollections().contains(this.collectionId)) {
-            close();
-            throw new ArgumentNotValid("The bitrepository doesn't know about the collection " + this.collectionId);
-        }
-
     }
 
     /**

@@ -662,9 +662,4 @@ public class CommonSettings {
      * The base url for the REST implementation of FileResolver.
      */
     public static String FILE_RESOLVER_BASE_URL = "settings.common.fileResolver.baseUrl";
-
-    /**
-     * The base url for the Warc Record Service
-     */
-    public static String WRS_BASE_URL = "settings.common.warcRecordService.baseUrl";
 }
