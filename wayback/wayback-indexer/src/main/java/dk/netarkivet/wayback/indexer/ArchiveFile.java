@@ -34,7 +34,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.ToolRunner;
@@ -45,25 +44,23 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
-import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.utils.BitmagUtils;
 import dk.netarkivet.common.utils.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.SettingsFactory;
-import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
-import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.common.utils.SimpleFileResolver;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
+import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.warc.WARCUtils;
 import dk.netarkivet.wayback.WaybackSettings;
 import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
 import dk.netarkivet.wayback.hadoop.CDXMapper;
-import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 
 /**
  * This class represents a file in the arcrepository which may be indexed by the indexer.
@@ -284,83 +281,6 @@ public class ArchiveFile {
            log.error("Error on hadoop filesystem.", e);
         }
 
-    }
-
-    /**
-     * Runs a map-only (no reduce) job to index this file.
-     * Uses the costly approach of copying the file to hdfs first
-     */
-    private void hadoopHDFSIndex() {
-        // For now only handles WARC files
-        String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_INPUT_DIR);
-        // As each file for now has its own job, the inputfile for each job
-        // is just made unique from the archivefile's name
-        Path hadoopInputNameFile = new Path(
-                filename.substring(0, filename.lastIndexOf('.')) + "_map_input.txt");
-        Configuration conf = HadoopJobUtils.getConfFromSettings();
-        Bitrepository bitrep = BitmagUtils.initBitrep();
-
-        // Get file and put it in hdfs
-        log.info("Getting file '{}' from bitmag for indexing", filename);
-        File inputFile = bitrep.getFile(filename, "netarkivet", null, Settings.get(
-                dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_USEPILLAR));
-        Path inputFilePath = new Path(inputFile.getAbsolutePath());
-        FileSystem fs = null;
-        try {
-            fs = FileSystem.get(conf);
-            try {
-                log.info("Copying '{}' to hdfs", inputFilePath.toString());
-                fs.copyFromLocalFile(false, inputFilePath, new Path(hadoopInputDir)); // TODO Need hadoopInputDir to exist prior to this!
-            } catch (IOException e) {
-                log.warn("Failed to upload '{}' to hdfs", inputFilePath.toString(), e);
-                return;
-            }
-            fs.deleteOnExit(hadoopInputNameFile);
-
-            // Write the filename/path of the WARC-file to the input file for Hadoop to process.
-            // NB files of same name are overwritten by default
-            try {
-                log.info("Creating input file '{}' on hdfs", hadoopInputNameFile);
-                FSDataOutputStream fsdos = fs.create(hadoopInputNameFile);
-                log.info("Writing input line '{}' to input file", hadoopInputDir + "/" + filename);
-                fsdos.writeBytes(hadoopInputDir + "/" + filename);
-            } catch (IOException e) {
-                log.warn("Could not write input line to {}", hadoopInputNameFile, e);
-                return;
-            }
-
-            // Start job on file
-            log.info("Starting CDXJob on file '{}'", filename);
-            try {
-                // TODO Guess conditioning on which file it is should be handled here by designating different mapper classes
-                int exitCode = ToolRunner.run(new HadoopJobTool(conf, new CDXMapper()),
-                        new String[] {
-                                hadoopInputNameFile.getName(), Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_OUTPUT_DIR)});
-
-                if (exitCode != 0) {
-                    log.warn("Hadoop job failed with exit code '{}'", exitCode);
-                    try {
-                        fs.close();
-                    } catch (IOException e) {
-                        log.warn("Problem closing FileSystem: ", e);
-                    }
-                } else {
-                    collectHadoopResults(fs, new Path(Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_OUTPUT_DIR)));
-                }
-            } catch (Exception e) {
-                log.warn("Running hadoop job threw exception", e);
-            }
-        } catch (Exception e) {
-            log.warn("Couldn't get FileSystem from configuration", e);
-        } finally {
-            try {
-                if (fs != null) {
-                    fs.close();
-                }
-            } catch (IOException e) {
-                log.warn("Problem closing FileSystem: ", e);
-            }
-        }
     }
 
     /**

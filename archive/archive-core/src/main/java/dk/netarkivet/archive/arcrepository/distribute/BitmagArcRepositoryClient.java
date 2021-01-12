@@ -22,6 +22,19 @@
  */
 package dk.netarkivet.archive.arcrepository.distribute;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import org.apache.commons.io.FileUtils;
+import org.bitrepository.client.eventhandler.OperationEvent;
+import org.bitrepository.modify.putfile.PutFileClient;
+import org.bitrepository.protocol.FileExchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
@@ -29,18 +42,14 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-
 import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
-
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
-
-import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction; // ?
-
+import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -49,22 +58,6 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.warc.WarcRecordClient;
-
-import org.apache.commons.io.FileUtils;
-import org.bitrepository.client.eventhandler.OperationEvent;
-import org.bitrepository.modify.putfile.PutFileClient;
-
-import org.bitrepository.protocol.FileExchange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Map;
-import java.net.URI;
-import java.net.URL;
 
 /**
  * Client side usage of an arc repository. All non-writing requests are forwarded to the ArcRepositoryServer over the network.
@@ -233,15 +226,9 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
     }
 
     /** Removes this object as a JMS listener. */
-    // ToDo remove or change bitrep
-
     @Override
     public synchronized void close() {
         JMSConnectionFactory.getInstance().removeListener(replyQ, this);
-/*        if (bitrep != null) {
-            bitrep.shutdown();
-        }
- */
         instance = null;
     }
 
@@ -323,11 +310,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
                     "Upload to collection '" + collectionId + "' of file '" + fileId + "' failed.";
             error(errMsg);
         } else {
-            //TODO check if this check is actually ever nessesary
-            log.info("Upload to collection '{}' of file '{}' reported success, so let's check", collectionId, fileId);
-            /*  REMOVE BITREP
-            checkFileConsistency(file, fileId);
-             */
             log.info("Upload to collection '{}' of file '{}' was successful", collectionId, fileId);
         }
     }
