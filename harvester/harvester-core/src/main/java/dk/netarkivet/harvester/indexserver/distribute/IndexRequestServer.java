@@ -314,14 +314,18 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
         } else {
             FileUtils.copyFile(cacheFileCreated, cacheFileWanted);
         }
-        File cacheFile = handler.getCacheFile(irMsg.getRequestedJobs());
-        log.info("Packaging result from cacheFile " + cacheFile.getAbsolutePath());
-        packageResultFiles(irMsg, cacheFile);
+        log.info("Packaging result from cacheFile " + cacheFileWanted.getAbsolutePath());
+        packageResultFiles(irMsg, cacheFileWanted);
         irMsg.setFoundJobs(irMsg.getRequestedJobs());
-//        IndexReadyMessage irm = new IndexReadyMessage(irMsg.getHarvestId(), true, irMsg.getReplyTo(),
-//                Channels.getTheIndexServer());
-//        JMSConnectionFactory.getInstance().send(irm);
-        JMSConnectionFactory.getInstance().reply(irMsg);
+        synchronized (this) {
+            currentJobs.remove(irMsg.getID());
+        }
+        // delete stored message
+        deleteStoredMessage(irMsg);
+        IndexReadyMessage irm = new IndexReadyMessage(irMsg.getHarvestId(), true, irMsg.getReplyTo(),
+                Channels.getTheIndexServer());
+        JMSConnectionFactory.getInstance().send(irm);
+//        JMSConnectionFactory.getInstance().reply(irMsg);
 
     }
 
