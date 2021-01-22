@@ -308,7 +308,9 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
         FileBasedCache<Set<Long>> handler = handlers.get(RequestType.DEDUP_CRAWL_LOG);
         File cacheFile = handler.getCacheFile(foundJobs);
         packageResultFiles(irMsg, cacheFile);
-        JMSConnectionFactory.getInstance().reply(irMsg);
+        IndexReadyMessage irm = new IndexReadyMessage(irMsg.getHarvestId(), true, irMsg.getReplyTo(),
+                Channels.getTheIndexServer());
+        JMSConnectionFactory.getInstance().send(irm);
     }
 
     /**
