@@ -322,10 +322,11 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
         }
         // delete stored message
         deleteStoredMessage(irMsg);
-        IndexReadyMessage irm = new IndexReadyMessage(irMsg.getHarvestId(), true, irMsg.getReplyTo(),
-                Channels.getTheIndexServer());
-        JMSConnectionFactory.getInstance().send(irm);
-//        JMSConnectionFactory.getInstance().reply(irMsg);
+//        IndexReadyMessage irm = new IndexReadyMessage(irMsg.getHarvestId(), true, irMsg.getReplyTo(),
+//                Channels.getTheIndexServer());
+//        log.info("Sending irm: "  + irm);
+//        JMSConnectionFactory.getInstance().send(irm);
+         JMSConnectionFactory.getInstance().reply(irMsg);
 
     }
 
