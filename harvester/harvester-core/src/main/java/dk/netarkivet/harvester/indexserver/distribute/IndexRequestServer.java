@@ -307,12 +307,14 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
         FileBasedCache<Set<Long>> handler = handlers.get(RequestType.DEDUP_CRAWL_LOG);
 
         File cacheFileWanted = handler.getCacheFile(irMsg.getRequestedJobs());
-        File cacheFileCreated = handler.getCacheFile(foundJobs);
-        if (cacheFileCreated.isDirectory()) {
-            cacheFileWanted.mkdirs();
-            FileUtils.copyDirectory(cacheFileCreated, cacheFileWanted);
-        } else {
-            FileUtils.copyFile(cacheFileCreated, cacheFileWanted);
+        File cacheFileCreated = handler.getCacheFile(foundJobs); //always empty-cache
+        if (!cacheFileCreated.getAbsolutePath().equals(cacheFileWanted.getAbsolutePath())) {
+            if (cacheFileCreated.isDirectory()) {
+                cacheFileWanted.mkdirs();
+                FileUtils.copyDirectory(cacheFileCreated, cacheFileWanted);
+            } else {
+                FileUtils.copyFile(cacheFileCreated, cacheFileWanted);
+            }
         }
         log.info("Packaging result from cacheFile " + cacheFileWanted.getAbsolutePath());
         packageResultFiles(irMsg, cacheFileWanted);
@@ -478,7 +480,9 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
             File[] cacheFiles = cacheFile.listFiles();
             List<RemoteFile> resultFiles = new ArrayList<RemoteFile>(cacheFiles.length);
             for (File f : cacheFiles) {
-                resultFiles.add(RemoteFileFactory.getCopyfileInstance(f, irMsg.getRemoteFileSettings()));
+                RemoteFile copyfileInstance = RemoteFileFactory.getCopyfileInstance(f, irMsg.getRemoteFileSettings());
+                log.info("Created remote file " + copyfileInstance + " for " + f.getAbsolutePath());
+                resultFiles.add(copyfileInstance);
             }
             irMsg.setResultFiles(resultFiles);
         } else {
