@@ -326,6 +326,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
 //                Channels.getTheIndexServer());
 //        log.info("Sending irm: "  + irm);
 //        JMSConnectionFactory.getInstance().send(irm);
+        log.info("Sending reply message:" + irMsg);
          JMSConnectionFactory.getInstance().reply(irMsg);
 
     }
