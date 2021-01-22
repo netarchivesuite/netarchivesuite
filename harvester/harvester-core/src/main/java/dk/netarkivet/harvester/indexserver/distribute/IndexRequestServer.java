@@ -301,6 +301,16 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
         }
     }
 
+    private void doReturnEmptyIndex(final IndexRequestMessage irMsg) {
+        HashSet<Long> foundJobs = new HashSet<>();
+        irMsg.setFoundJobs(foundJobs);
+        JMSConnectionFactory.getInstance().reply(irMsg);
+        FileBasedCache<Set<Long>> handler = handlers.get(RequestType.DEDUP_CRAWL_LOG);
+        File cacheFile = handler.getCacheFile(foundJobs);
+        packageResultFiles(irMsg, cacheFile);
+        JMSConnectionFactory.getInstance().reply(irMsg);
+    }
+
     /**
      * Method that handles the processing of an indexRequestMessage. Returns the requested index immediately, if already
      * available, otherwise proceeds with the index generation of the requested index. Must be run in its own thread,
@@ -310,6 +320,11 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
      * @see #visit(IndexRequestMessage)
      */
     private void doProcessIndexRequestMessage(final IndexRequestMessage irMsg) {
+        if (!Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED)
+                && irMsg.getRequestType().equals(RequestType.DEDUP_CRAWL_LOG)) {
+            doReturnEmptyIndex(irMsg);
+            return;
+        }
         final boolean mustReturnIndex = irMsg.mustReturnIndex();
         try {
             checkMessage(irMsg);
