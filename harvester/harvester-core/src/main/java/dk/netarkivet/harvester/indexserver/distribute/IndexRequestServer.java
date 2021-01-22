@@ -302,11 +302,12 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
     }
 
     private void doReturnEmptyIndex(final IndexRequestMessage irMsg) {
+        log.info("Returning an empty index as indexing is disabled.");
         HashSet<Long> foundJobs = new HashSet<>();
         irMsg.setFoundJobs(foundJobs);
-        JMSConnectionFactory.getInstance().reply(irMsg);
         FileBasedCache<Set<Long>> handler = handlers.get(RequestType.DEDUP_CRAWL_LOG);
         File cacheFile = handler.getCacheFile(foundJobs);
+        log.info("Packaging result from cacheFile " + cacheFile.getAbsolutePath());
         packageResultFiles(irMsg, cacheFile);
         IndexReadyMessage irm = new IndexReadyMessage(irMsg.getHarvestId(), true, irMsg.getReplyTo(),
                 Channels.getTheIndexServer());
