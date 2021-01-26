@@ -39,7 +39,7 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 
-import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction; // ?
+import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -85,9 +85,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
 
     /** Listens on this queue for replies. */
     private final ChannelID replyQ;
-
-    /** The length of time to wait for a get reply before giving up. */
-    private long timeoutGetOpsMillis;
 
     // NOTE: The constants defining setting names below are left non-final on
     // purpose! Otherwise, the static initialiser that loads default values
@@ -179,15 +176,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
             }
         }
 
-        timeoutGetOpsMillis = Settings.getLong(ARCREPOSITORY_GET_TIMEOUT);
-
-        log.info(
-                "BitmagArcRepositoryClient will timeout on each getrequest after {} milliseconds.",
-                timeoutGetOpsMillis);
-        replyQ = Channels.getThisReposClient();
-        JMSConnectionFactory.getInstance().setListener(replyQ, this);
-        log.info("BitmagArcRepositoryClient listens for replies on channel '{}'", replyQ);
-
         File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
         log.info("Getting bitmag config from " + BITREPOSITORY_SETTINGS_DIR + "=" + configDir.getAbsolutePath());
 
@@ -237,11 +225,12 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
 
     @Override
     public synchronized void close() {
-        JMSConnectionFactory.getInstance().removeListener(replyQ, this);
+//        JMSConnectionFactory.getInstance().removeListener(replyQ, this);
 /*        if (bitrep != null) {
             bitrep.shutdown();
         }
  */
+        BitmagUtils.shudown();
         instance = null;
     }
 
@@ -356,7 +345,10 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      * @return The status of the batch job after it ended.
      */
     public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
-        return batch(job, replicaId, "", args);
+        String msg = "Batch is no longer used";
+        log.warn(msg);
+//        return batch(job, replicaId, "", args);
+        return null;
     }
 
     /**
@@ -375,7 +367,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      */
     public BatchStatus batch(FileBatchJob job, String replicaId, String batchId, String... args) throws IOFailure,
             ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
+/*        ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
 
         log.debug("Starting batchjob '{}' running on replica '{}'", job, replicaId);
@@ -392,6 +384,11 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
         }
         return new BatchStatus(brMsg.getFilesFailed(), brMsg.getNoOfFilesProcessed(), brMsg.getResultFile(),
                 job.getExceptions());
+ */
+
+        String msg = "Batch is no longer used";
+        log.warn(msg);
+        return null;
     }
 
     /**
@@ -461,7 +458,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
 
 
     /**
-     * Attempts to upload a given file.    NEW
+     * Attempts to upload a given file.
      *
      * @param file The file to upload. Should exist. The packageId is the name of the file
      * @param collectionId The Id of the collection to upload to
@@ -477,7 +474,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
             return false;
         }
         boolean success = false;
-        URL url = null;
         try {
               log.info("Calling this.putTheFile...");
 
@@ -493,8 +489,8 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
                  log.warn("Upload of file '{}' failed ", file.getAbsolutePath());
               }
         } catch (Exception e) {
-            log.warn("Unexpected error while storing file '{}'", file.getAbsolutePath(), e);
-            success = false;
+              log.warn("Unexpected error while storing file '{}'", file.getAbsolutePath(), e);
+              success = false;
         }
         return success;
     }
