@@ -274,7 +274,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      * @throws IOFailure if there are problems getting a reply or the file could not be found.
      */
     public void getFile(String arcfilename, Replica replica, File toFile) throws ArgumentNotValid, IOFailure {
-        ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
+     /*   ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
         ArgumentNotValid.checkNotNull(replica, "replica");
         ArgumentNotValid.checkNotNull(toFile, "toFile");
 
@@ -288,6 +288,8 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
         } else {
             getFileMessage.getData(toFile);
         }
+        */
+        log.warn("Not yet implemented");
     }
 
 
@@ -306,9 +308,9 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
 
         final String fileId = file.getName();
 
-        // upload file
-        log.info("Before uploadFile:"
-                + "");
+        /* upload file
+        log.info("Before uploadFile:" + "");   */
+
         //Attempt to upload the file.
         // If not there, this will work
         // If already there, with same checksum, this will work.
@@ -443,10 +445,8 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
 
     /**
      * Attempts to upload a given file.
-     *
      * @param file The file to upload. Should exist. The packageId is the name of the file
-     * @param collectionId The Id of the collection to upload to
-     * @param maxNumberOfFailingPillars Max number of acceptable store failures
+     * @param fileId The Id of the file to upload
      * @return true if the upload succeeded, false otherwise.
      */
     public boolean uploadFile(final File file, final String fileId, final String collectionId) {
@@ -484,7 +484,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      * request to finish.
      * @param client the PutFileClient responsible for the put operation.
      * @param packageFile The package to upload
-     * @param collectionID The ID of the collection to upload to.
      * @param maxNumberOfFailingPillars Max number of acceptable store failures
      * @return OperationEventType.FAILED if operation failed; otherwise returns OperationEventType.COMPLETE
      * @throws IOException If unable to upload the packageFile to the uploadserver
