@@ -66,6 +66,8 @@ import java.util.Map;
 import java.net.URI;
 import java.net.URL;
 
+import javax.jms.JMSException;
+
 /**
  * Client side usage of an arc repository. All non-writing requests are forwarded to the ArcRepositoryServer over the network.
  * Store requests are sent directly to the bitrepository messagebus.
@@ -193,7 +195,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
         File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
         log.info("Getting bitmag config from " + BITREPOSITORY_SETTINGS_DIR + "=" + configDir.getAbsolutePath());
 
-        String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
+        // String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
 
         String collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
         if (collectionId == null || collectionId.trim().isEmpty()) {
@@ -201,6 +203,10 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
             log.info("No collectionId set so using default value {}", collectionId);
         }
         this.collectionId = collectionId;
+        if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
+            log.warn("The given collection Id {} does not exist", collectionId);
+            throw new RuntimeException("collection Id does not exist");
+        }
         this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
 
         File tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
@@ -238,8 +244,14 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
 
     @Override
     public synchronized void close() {
-        JMSConnectionFactory.getInstance().removeListener(replyQ, this);
-        instance = null;
+        try {
+            JMSConnectionFactory.getInstance().removeListener(replyQ, this);
+            instance = null;
+            BitmagUtils.shutdown();
+        }
+        catch (JMSException e){
+            log.error("JMS could not be closed properly");
+        }
     }
 
     /**
@@ -452,13 +464,14 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
     public boolean uploadFile(final File file, final String fileId, final String collectionId) {
         ArgumentNotValid.checkExistsNormalFile(file, "File file");
         // Does collection exists? If not return false
-        if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
+    /*    if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
             log.warn("The given collection Id {} does not exist", collectionId);
             return false;
         }
+    */
         boolean success = false;
         try {
-              log.info("Calling this.putTheFile...");
+              log.info("Calling putFileClient.");
 
               PutFileClient putFileClientLocal = BitmagUtils.getPutFileClient();
               PutFileAction putfileInstance = new PutFileAction(putFileClientLocal, collectionId, file, fileId);
@@ -484,15 +497,11 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      * request to finish.
      * @param client the PutFileClient responsible for the put operation.
      * @param packageFile The package to upload
-     * @param maxNumberOfFailingPillars Max number of acceptable store failures
      * @return OperationEventType.FAILED if operation failed; otherwise returns OperationEventType.COMPLETE
      * @throws IOException If unable to upload the packageFile to the uploadserver
      */
-    private OperationEvent.OperationEventType putTheFile(PutFileClient client, File packageFile, String fileID,
-            int maxNumberOfFailingPillars) throws IOException, URISyntaxException {
+    private OperationEvent.OperationEventType putTheFile(PutFileClient client, File packageFile, String fileID) {
 
-        FileExchange fileExchange = null;
-        URL url = null;
         PutFileAction ca = null;
         String putFileMessage = null;
         String collectionId = getCollectionId();
@@ -502,9 +511,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
                     + fileID + "' from Netarchivesuite";
             ca = new PutFileAction(client, collectionId, packageFile, fileID);
             ca.performAction();
-
-            fileExchange = BitmagUtils.getFileExchange();
-            url = BitmagUtils.getFileExchangeBaseURL();
 
         } catch (Exception e) {
             log.warn("The putFile Operation was not a complete success ({})."
