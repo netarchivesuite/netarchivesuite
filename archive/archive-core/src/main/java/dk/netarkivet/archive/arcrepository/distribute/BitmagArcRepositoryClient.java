@@ -175,6 +175,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      *
      */
     private BitmagArcRepositoryClient() {
+    /*
         synchronized (BitmagArcRepositoryClient.class){
             if (instance != null){
                 throw new RuntimeException("Attempting to start an additional "+ BitmagArcRepositoryClient.class+" instance");
@@ -182,7 +183,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
                 instance = this;
             }
         }
-
+    */
        timeoutGetOpsMillis = Settings.getLong(ARCREPOSITORY_GET_TIMEOUT);
         log.info(
                 "BitmagArcRepositoryClient will timeout on each get request after {} milliseconds.",
