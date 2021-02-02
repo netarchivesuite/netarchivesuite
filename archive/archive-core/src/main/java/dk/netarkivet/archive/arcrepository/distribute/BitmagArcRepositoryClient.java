@@ -44,7 +44,7 @@ import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.common.utils.warc.WarcRecordClient;
+import dk.netarkivet.common.utils.service.WarcRecordClient;
 
 import org.apache.commons.io.FileUtils;
 import org.bitrepository.access.getchecksums.conversation.ChecksumsCompletePillarEvent;

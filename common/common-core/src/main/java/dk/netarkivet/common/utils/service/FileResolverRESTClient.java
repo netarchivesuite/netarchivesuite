@@ -1,11 +1,13 @@
-package dk.netarkivet.common.utils;
+package dk.netarkivet.common.utils.service;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -16,15 +18,13 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
+import dk.netarkivet.common.utils.HttpsClientBuilder;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * A FileResolver client to communicate with a service implementing the FileResolver API
@@ -33,17 +33,11 @@ import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 public class FileResolverRESTClient implements FileResolver {
 
     private static final Logger log = LoggerFactory.getLogger(FileResolverRESTClient.class);
-
+    private final HttpsClientBuilder clientBuilder;
     /**
      * Base url for the API endpoint
      */
     private final URL baseUrl;
-
-    /**
-     * Pool of http connections
-     */
-    private static final PoolingHttpClientConnectionManager cManager = new PoolingHttpClientConnectionManager();
-
 
     public FileResolverRESTClient() {
         String url = Settings.get(CommonSettings.FILE_RESOLVER_BASE_URL);
@@ -53,8 +47,8 @@ public class FileResolverRESTClient implements FileResolver {
             log.error("Malformed Url for FileResolver", e);
             throw new RuntimeException(e);
         }
-        cManager.setMaxTotal(Settings.getInt(CommonSettings.MAX_TOTAL_CONNECTIONS));
-        cManager.setDefaultMaxPerRoute(Settings.getInt(CommonSettings.MAX_CONNECTIONS_PER_ROUTE));
+        String privateKeyFile = Settings.get(CommonSettings.FILE_RESOLVER_KEYFILE);
+        clientBuilder = new HttpsClientBuilder(privateKeyFile);
     }
 
     @Override public List<Path> getPaths(Pattern filepattern) {
@@ -63,14 +57,12 @@ public class FileResolverRESTClient implements FileResolver {
 
     private List<Path> getPaths(Pattern filepattern, boolean exactfilename) {
         try {
-            CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(cManager).build();
             String pattern = filepattern.pattern();
-            URL url = new URL(baseUrl + "/" + URLEncoder.encode(pattern)).toURI().normalize().toURL();
-            HttpUriRequest request = RequestBuilder.get()
-                    .setUri(url.toString())
-                    .addParameter("collectionId", Settings.get(BitmagUtils.BITREPOSITORY_COLLECTIONID))
-                    .addParameter("exactfilename", Boolean.toString(exactfilename))
-                    .build();
+            URI uri = new URL(baseUrl + "/" + URLEncoder.encode(pattern, StandardCharsets.UTF_8.toString())).toURI().normalize();
+            CGIRequestBuilder requestBuilder = new CGIRequestBuilder(uri);
+            HttpUriRequest request = requestBuilder.buildFileResolverRequest(exactfilename);
+            CloseableHttpClient httpClient = clientBuilder.getHttpsClient();
+
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 InputStream istr = httpResponse.getEntity().getContent();
                 List<String> results = IOUtils.readLines(istr);

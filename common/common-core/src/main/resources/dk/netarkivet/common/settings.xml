@@ -236,7 +236,7 @@ National Library.
         </hadoop>
         <useHadoopAsMassProcessor>true</useHadoopAsMassProcessor>
         <fileResolver>
-            <class>dk.netarkivet.common.utils.FileResolverRESTClient</class>
+            <class>dk.netarkivet.common.utils.service.FileResolverRESTClient</class>
         </fileResolver>
     </common>
 </settings>

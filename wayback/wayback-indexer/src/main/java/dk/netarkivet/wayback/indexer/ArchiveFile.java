@@ -48,13 +48,13 @@ import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryCl
 import dk.netarkivet.common.distribute.bitrepository.Bitrepository;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.BitmagUtils;
-import dk.netarkivet.common.utils.FileResolver;
+import dk.netarkivet.common.utils.service.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.SimpleFileResolver;
+import dk.netarkivet.common.utils.service.SimpleFileResolver;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.warc.WARCUtils;
