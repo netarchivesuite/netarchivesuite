@@ -16,10 +16,10 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.ssl.SSLContexts;
 import org.bitrepository.protocol.security.SecurityModuleConstants;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -149,10 +149,12 @@ public class BasicTwoWaySSLProvider {
      */
     private void buildSSLContext()
             throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, KeyManagementException {
-        sslContext = SSLContexts.custom()
-                .loadKeyMaterial(keyStore, defaultPassword.toCharArray())
-                .loadTrustMaterial(keyStore, TrustSelfSignedStrategy.INSTANCE) // TODO: should not trust self-signed in prod
-                .build();
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(SecurityModuleConstants.keyTrustStoreAlgorithm);
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(SecurityModuleConstants.keyTrustStoreAlgorithm);
+        tmf.init(keyStore);
+        kmf.init(keyStore, defaultPassword.toCharArray());
+        sslContext = SSLContext.getInstance(SecurityModuleConstants.defaultSSLProtocol);
+        sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), SecurityModuleConstants.defaultRandom);
     }
 
     public SSLContext getSSLContext() {
