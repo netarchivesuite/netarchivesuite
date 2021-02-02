@@ -96,7 +96,7 @@
     <sonar.language>java</sonar.language>
 <!--    <jacoco.version>0.7.2.201409121644</jacoco.version> -->
     <jacoco.version>0.7.9</jacoco.version>
-    <hadoop.version>2.7.6</hadoop.version>
+    <hadoop.version>3.3.0</hadoop.version>
   </properties>
 
   <modules>

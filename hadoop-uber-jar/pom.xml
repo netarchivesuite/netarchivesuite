@@ -12,6 +12,19 @@
   <artifactId>hadoop-uber-jar</artifactId>
 
   <dependencies>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>27.0-jre</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.25</version>
+    </dependency>
+
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>wayback-indexer</artifactId>
@@ -20,6 +33,10 @@
         <exclusion>
           <groupId>org.hibernate</groupId>
           <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava-parent</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -31,6 +48,10 @@
         <exclusion>
           <groupId>org.hibernate</groupId>
           <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava-parent</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -57,7 +78,7 @@
                   <exclude>fastutil:*</exclude>
                   <exclude>javax.servlet:*</exclude>
                   <!--<exclude>jaxen:*</exclude> TODO can't exclude this - fix overlapping classes -->
-                  <exclude>log4j:*</exclude>
+                  <!--<exclude>log4j:*</exclude>-->
                   <exclude>org.apache.derby:*</exclude>
                   <exclude>org.apache.jasper:*</exclude>
                   <exclude>org.apache.lucene:*</exclude>
@@ -65,8 +86,13 @@
                   <exclude>org.apache.tomcat.embed:*</exclude>
                   <exclude>org.bouncycastle:*</exclude>
                   <exclude>org.mortbay.jetty:*</exclude>
-                  <exclude>org.slf4j:*</exclude>
+                  <exclude>org.slf4j:log4j-over-slf4j:*</exclude>
+                  <exclude>org.slf4j:slf4j-simple:*</exclude>
+                  <exclude>ch.qos.logback:logback-classic:*</exclude>
                   <exclude>org.springframework:*</exclude>
+                  <!--<exclude>com.google.guava:*</exclude>
+                  <exclude>com.google.guava:failureaccess:*</exclude>
+                  <exclude>com.google.guava:listenablefuture:*</exclude> -->
                 </excludes>
               </artifactSet>
               <filters>

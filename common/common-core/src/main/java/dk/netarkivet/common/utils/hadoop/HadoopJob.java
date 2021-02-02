@@ -27,6 +27,15 @@ public class HadoopJob {
     private final HadoopJobStrategy jobStrategy;
     private final String jobType;
     private final long jobID;
+
+    public void setJobInputFile(Path jobInputFile) {
+        this.jobInputFile = jobInputFile;
+    }
+
+    public void setJobOutputDir(Path jobOutputDir) {
+        this.jobOutputDir = jobOutputDir;
+    }
+
     private Path jobInputFile;
     private Path jobOutputDir;
     private String filenamePattern = ".*";
