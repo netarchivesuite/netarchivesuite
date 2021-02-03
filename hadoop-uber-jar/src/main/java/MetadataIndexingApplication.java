@@ -89,10 +89,6 @@ public class MetadataIndexingApplication {
         java.nio.file.Path lastElem = files.get(files.size() - 1);
         for (java.nio.file.Path file : files) {
             String inputLine = "hdfs://" + file.toString() + "\n";
-            if (file.equals(lastElem)) {
-                // Not writing newline on last line to avoid a mapper being spawned on no input
-                inputLine = "hdfs://" + file.toString();
-            }
             Files.write(inputFilePath, inputLine.getBytes(), StandardOpenOption.APPEND);
         }
     }

@@ -14,15 +14,22 @@
   <dependencies>
 
     <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-mapreduce-client-core</artifactId>
+      <version>${hadoop.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+
+    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>27.0-jre</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.25</version>
     </dependency>
 
     <dependency>
@@ -31,20 +38,9 @@
       <version>5.7-IIPCH3-SNAPSHOT</version>
       <exclusions>
         <exclusion>
-          <groupId>org.hibernate</groupId>
+          <groupId>org.apache.hadoop</groupId>
           <artifactId>*</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava-parent</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.netarchivesuite</groupId>
-      <artifactId>harvester-core</artifactId>
-      <version>5.7-IIPCH3-SNAPSHOT</version>
-      <exclusions>
         <exclusion>
           <groupId>org.hibernate</groupId>
           <artifactId>*</artifactId>
@@ -55,14 +51,16 @@
         </exclusion>
       </exclusions>
     </dependency>
+
   </dependencies>
 
   <build>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.4</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -90,6 +88,7 @@
                   <exclude>org.slf4j:slf4j-simple:*</exclude>
                   <exclude>ch.qos.logback:logback-classic:*</exclude>
                   <exclude>org.springframework:*</exclude>
+                  <exclude>org.apache.hadoop:*</exclude>
                   <!--<exclude>com.google.guava:*</exclude>
                   <exclude>com.google.guava:failureaccess:*</exclude>
                   <exclude>com.google.guava:listenablefuture:*</exclude> -->
