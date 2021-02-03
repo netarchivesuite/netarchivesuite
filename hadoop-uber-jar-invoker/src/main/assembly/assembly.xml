@@ -18,7 +18,7 @@
     </files>
     <dependencySets>
         <dependencySet>
-            <outputDirectory>.</outputDirectory>
+            <outputDirectory>libs/</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
         </dependencySet>
     </dependencySets>
