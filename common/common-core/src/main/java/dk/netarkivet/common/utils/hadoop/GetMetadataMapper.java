@@ -5,8 +5,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configuration;
@@ -67,13 +65,15 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
     protected void map(LongWritable lineNumber, Text filePath, Context context) {
         log.info("Mapper processing line number {}", lineNumber.toString());
         // reject empty or null file paths.
-        if(filePath == null || filePath.toString().trim().isEmpty()) {
+        if (filePath == null || filePath.toString().trim().isEmpty()) {
             return;
         }
 
         Path path = new Path(filePath.toString());
         log.info("Mapper processing {}.", path);
-        try (FileSystem fs = path.getFileSystem(context.getConfiguration())) {
+        try {
+            //DO NOT CLOSE THIS FILESYSTEM, OR YOUR JOB WILL FAIL
+            FileSystem fs = path.getFileSystem(context.getConfiguration());
             try (InputStream in = new BufferedInputStream(fs.open(path))) {
                 try (ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true)) {
                     for (ArchiveRecord archiveRecord : archiveReader) {
@@ -83,7 +83,8 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
                         if (header.getUrl() == null) {
                             continue;
                         }
-                        log.info("Mapper processing header url {} with mime-type {}.", header.getUrl(), header.getMimetype());
+                        log.info("Mapper processing header url {} with mime-type {}.", header.getUrl(),
+                                header.getMimetype());
                         boolean recordHeaderMatchesPatterns = urlMatcher.matcher(header.getUrl()).matches()
                                 && mimeMatcher.matcher(header.getMimetype()).matches();
                         if (recordHeaderMatchesPatterns) {
