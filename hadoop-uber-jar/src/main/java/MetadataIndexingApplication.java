@@ -38,8 +38,10 @@ public class MetadataIndexingApplication {
     // /user/nat-csr/9385-metadata-1.warc.gz
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        String principal = Settings.get(CommonSettings.HADOOP_KERBEROS_PRINCIPAL);
+        String keytab = Settings.get(CommonSettings.HADOOP_KERBEROS_KEYTAB);
 
-        UserGroupInformation ugi = UserGroupInformation.loginUserFromKeytabAndReturnUGI("nat-csr@KBHPC.KB.DK", "/home/colin/nat-csr.keytab");
+        UserGroupInformation ugi = UserGroupInformation.loginUserFromKeytabAndReturnUGI(principal, keytab);
         ugi.doAs( (PrivilegedExceptionAction<Integer>)() -> {
             Configuration conf = new JobConf(new YarnConfiguration(new HdfsConfiguration()));
             conf.set("mapreduce.job.am-access-disabled","true");

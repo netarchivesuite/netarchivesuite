@@ -663,4 +663,9 @@ public class CommonSettings {
      */
     public static String FILE_RESOLVER_BASE_URL = "settings.common.fileResolver.baseUrl";
 
+
+    public static String HADOOP_KERBEROS_PRINCIPAL = "settings.common.hadoop.kerberos.principal";
+
+    public static String HADOOP_KERBEROS_KEYTAB = "settings.common.hadoop.kerberos.keytab";
+
 }

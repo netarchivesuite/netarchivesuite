@@ -109,6 +109,7 @@
     <module>wayback</module>
     <module>integration-test</module>
     <module>hadoop-uber-jar</module>
+    <module>hadoop-uber-jar-invoker</module>
   </modules>
 
   <licenses>
