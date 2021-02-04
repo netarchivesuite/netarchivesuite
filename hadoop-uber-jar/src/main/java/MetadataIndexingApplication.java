@@ -55,30 +55,37 @@ public class MetadataIndexingApplication {
                 throw new RuntimeException("Jar file " + jarPath + " does not exist.");
             }
             conf.set("mapreduce.job.jar", jarPath);
-            FileSystem fileSystem = FileSystem.newInstance(conf);
-            Long id = 0L;
-            HadoopJobStrategy jobStrategy = new MetadataExtractionStrategy(id, fileSystem);
-            HadoopJob job = new HadoopJob(id, jobStrategy);
-            UUID uuid = UUID.randomUUID();
-            Path jobInputFile = jobStrategy.createJobInputFile(uuid);
-            Path jobOutputDir = jobStrategy.createJobOutputDir(uuid);
-            job.setJobInputFile(jobInputFile);
-            job.setJobOutputDir(jobOutputDir);
-            java.nio.file.Path localInputTempFile = HadoopFileUtils.makeLocalInputTempFile();
-            log.info("Local input path is " + localInputTempFile);
-            List<java.nio.file.Path> filePaths = new ArrayList<>();
-            for (String filepath: args) {
-                log.info("Adding file " + filepath + " to input.");
-                filePaths.add(localInputTempFile.getFileSystem().getPath(filepath));
+
+            try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
+                Long id = 0L;
+
+                HadoopJobStrategy jobStrategy = new MetadataExtractionStrategy(id, fileSystem);
+                HadoopJob job = new HadoopJob(id, jobStrategy);
+
+                UUID uuid = UUID.randomUUID();
+
+                Path jobInputFile = jobStrategy.createJobInputFile(uuid);
+                job.setJobInputFile(jobInputFile);
+
+                java.nio.file.Path localInputTempFile = HadoopFileUtils.makeLocalInputTempFile();
+                log.info("Local input path is " + localInputTempFile);
+                List<java.nio.file.Path> filePaths = new ArrayList<>();
+                for (String filepath : args) {
+                    log.info("Adding file " + filepath + " to input.");
+                    filePaths.add(localInputTempFile.getFileSystem().getPath(filepath));
+                }
+                writeHdfsInputFileLinesToInputFile(filePaths, localInputTempFile);
+                log.info("Putting local input file in hdfs at " + jobInputFile);
+                fileSystem.copyFromLocalFile(true, new Path(localInputTempFile.toAbsolutePath().toString()),
+                        jobInputFile);
+
+                Path jobOutputDir = jobStrategy.createJobOutputDir(uuid);
+                job.setJobOutputDir(jobOutputDir);
+
+                ToolRunner.run(new HadoopJobTool(conf, new GetMetadataMapper()),
+                        new String[] {jobInputFile.toString(), jobOutputDir.toString()});
             }
-            writeHdfsInputFileLinesToInputFile(filePaths, localInputTempFile);
-            log.info("Putting local input file in hdfs at " + jobInputFile);
-            fileSystem.copyFromLocalFile(true, new Path(localInputTempFile.toAbsolutePath().toString()),
-                    jobInputFile);
-            //fileSystem.open(jobInputFile);
-            //job.run();
-            ToolRunner.run(new HadoopJobTool(conf, new GetMetadataMapper()),
-                    new String[] {jobInputFile.toString(), jobOutputDir.toString()});
+
             return 0;
         } );
     }

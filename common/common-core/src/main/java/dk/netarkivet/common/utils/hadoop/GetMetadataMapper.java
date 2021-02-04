@@ -71,9 +71,7 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
 
         Path path = new Path(filePath.toString());
         log.info("Mapper processing {}.", path);
-        try {
-            //DO NOT CLOSE THIS FILESYSTEM, OR YOUR JOB WILL FAIL
-            FileSystem fs = path.getFileSystem(context.getConfiguration());
+        try (FileSystem fs = FileSystem.newInstance(context.getConfiguration());){
             try (InputStream in = new BufferedInputStream(fs.open(path))) {
                 try (ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true)) {
                     for (ArchiveRecord archiveRecord : archiveReader) {
