@@ -47,7 +47,7 @@ public class MetadataIndexingApplication {
             conf.set("mapreduce.job.am-access-disabled","true");
             conf.set("yarn.timeline-service.enabled", "false");
             conf.set(MRConfig.FRAMEWORK_NAME, MRConfig.YARN_FRAMEWORK_NAME);
-            conf.setPattern(GetMetadataMapper.URL_PATTERN,  Pattern.compile(".*"));
+            conf.setPattern(GetMetadataMapper.URL_PATTERN,  Pattern.compile("metadata://[^/]*/crawl/index/cdx.*"));
             conf.setPattern(GetMetadataMapper.MIME_PATTERN,  Pattern.compile(".*"));
             final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_UBER_JAR);
             if (jarPath == null || !(new File(jarPath)).exists()) {

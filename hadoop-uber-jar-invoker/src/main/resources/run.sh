@@ -2,6 +2,11 @@
 
 SCRIPT_DIR=$(dirname "$(readlink -f -- ${BASH_SOURCE[0]})")
 
+if [ ! -d "$SCRIPT_DIR/libs" ]; then
+  echo "This script must be run from the version in the target directory after compilation."
+  exit 1
+fi
+
 clusterUser=${1:-nat-$USER}
 kerberosPrincipal=${clusterUser}@KBHPC.KB.DK
 
