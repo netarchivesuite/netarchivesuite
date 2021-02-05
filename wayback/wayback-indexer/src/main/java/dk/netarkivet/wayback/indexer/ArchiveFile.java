@@ -305,9 +305,7 @@ public class ArchiveFile {
         File inputFile = bitrep.getFile(filename, "netarkivet", null, Settings.get(
                 dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_USEPILLAR));
         Path inputFilePath = new Path(inputFile.getAbsolutePath());
-        FileSystem fs = null;
-        try {
-            fs = FileSystem.get(conf);
+        try (FileSystem fs =  FileSystem.newInstance(conf);){
             try {
                 log.info("Copying '{}' to hdfs", inputFilePath.toString());
                 fs.copyFromLocalFile(false, inputFilePath, new Path(hadoopInputDir)); // TODO Need hadoopInputDir to exist prior to this!
@@ -352,14 +350,6 @@ public class ArchiveFile {
             }
         } catch (Exception e) {
             log.warn("Couldn't get FileSystem from configuration", e);
-        } finally {
-            try {
-                if (fs != null) {
-                    fs.close();
-                }
-            } catch (IOException e) {
-                log.warn("Problem closing FileSystem: ", e);
-            }
         }
     }
 
