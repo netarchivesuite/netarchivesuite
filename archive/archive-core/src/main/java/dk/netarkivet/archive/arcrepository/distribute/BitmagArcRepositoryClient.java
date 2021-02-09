@@ -464,12 +464,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      */
     public boolean uploadFile(final File file, final String fileId, final String collectionId) {
         ArgumentNotValid.checkExistsNormalFile(file, "File file");
-        // Does collection exists? If not return false
-    /*    if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
-            log.warn("The given collection Id {} does not exist", collectionId);
-            return false;
-        }
-    */
+
         boolean success = false;
         try {
               log.info("Calling putFileClient.");
