@@ -31,16 +31,10 @@ public class PutFileEventHandler implements EventHandler {
     private final URL uploadURL;
     private final List<ContributorEvent> componentCompleteEvents = new ArrayList<>();
     private final List<ContributorFailedEvent> componentFailedEvents = new ArrayList<>();
-
     private final Object finishLock = new Object();
     private boolean finished = false;
     private boolean failed = false;
-
-/*    public OperationEvent.OperationEventType getFinalEvent() {
-        return finalEvent;
-    }
-*/
-    private static OperationEvent.OperationEventType finalEvent;  // static?
+    private static OperationEvent.OperationEventType finalEvent;
 
     /**
      * Constructor
@@ -66,7 +60,6 @@ public class PutFileEventHandler implements EventHandler {
             break;
         case COMPLETE:
             log.info("Finished put fileID for file '{}'", event.getFileID());
-            // finalEvent = OperationEvent.OperationEventType.COMPLETE;
             cleanUpFileExchange();
             finish();
             break;
