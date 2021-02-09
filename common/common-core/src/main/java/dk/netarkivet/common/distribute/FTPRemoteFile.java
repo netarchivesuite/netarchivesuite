@@ -161,7 +161,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 log.debug(message, e);
                 throw new IOFailure(message, e);
             }
-            log.debug("Writing '{}' as '{}' on ftp-server {}", file.getName(), ftpFileName, cm.getFtpServer());
+            log.debug("Writing '{}' as '{}' on ftp-server {}", file.getAbsolutePath(), ftpFileName, cm.getFtpServer());
 
             // Writing inlined in constructor to allow the checksum field to
             // be final (and thus must be set in constructor).
