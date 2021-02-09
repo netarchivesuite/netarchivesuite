@@ -144,6 +144,11 @@ public abstract class AbstractRemoteFile implements RemoteFile {
         } catch (Exception e) {
             FileUtils.remove(destFile);
             throw new IOFailure("IO trouble transferring file", e);
+        } finally {
+            if (!multipleDownloads) {
+                log.debug("Cleaning up remote file for " + getName());
+                cleanup();
+            }
         }
     }
 
