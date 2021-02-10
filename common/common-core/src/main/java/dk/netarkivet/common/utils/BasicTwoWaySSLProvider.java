@@ -36,8 +36,12 @@ import dk.netarkivet.common.CommonSettings;
  * Class for loading certificates and keys from a key- and truststore
  * and configuring an Apache HTTP Registry to use these.
  *
- * SSL can be enabled for an HTTPClient by instantiating this class and then configuring the HTTPClient's
- * connection socket to use the SSLContext provided through {@link #getSSLContext()}.
+ * To enable SSL for an HTTPClient using this class follow the below steps:
+ * - Configure {@link CommonSettings#TRUSTSTORE_PATH} to point at a Java KeyStore file containing your trusted
+ *   certificates (e.g. the standard truststore provided by Java located by default at /etc/ssl/certs/java/cacerts).
+ * - Configure {@link CommonSettings#TRUSTSTORE_PASSWORD} with the truststore password (default truststore pw is 'changeit').
+ * - Instantiate this class with a provided keyfile to use for authentication.
+ * - Configure the HTTPClient's connection socket to use the SSLContext provided through {@link #getSSLContext()}.
  */
 public class BasicTwoWaySSLProvider {
     private static final Logger log = LoggerFactory.getLogger(BasicTwoWaySSLProvider.class);
@@ -50,6 +54,8 @@ public class BasicTwoWaySSLProvider {
      * - Creates keystore object from truststore
      * - Loads private key and certificate
      * - Sets up SSLContext
+     *
+     * @param privateKeyFile The path to the private key file to use for authentication.
      */
     public BasicTwoWaySSLProvider(String privateKeyFile) {
         Security.addProvider(new BouncyCastleProvider());
@@ -65,7 +71,6 @@ public class BasicTwoWaySSLProvider {
     /**
      * Load the truststore specified by the common settings.
      * @return KeyStore object representing the truststore provided by the settings.
-     *         If no truststore is specified by the settings null is returned.
      * @throws KeyStoreException If the security provider somehow can't load the default JKS-keystore.
      * @throws IOException If the truststore file cannot be found or read.
      * @throws NoSuchAlgorithmException If the truststore can't be loaded with the used algorithm (should never happen with default).

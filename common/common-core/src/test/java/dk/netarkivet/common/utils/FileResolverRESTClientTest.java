@@ -32,13 +32,20 @@ public class FileResolverRESTClientTest {
 
     @Before
     public void testFactoryMethod() {
-        Settings.set(CommonSettings.TRUSTSTORE_PATH, "/home/rbkr/Desktop/netarchivesuite-docker-compose/nasapp/security/truststore.jks");
-        Settings.set(CommonSettings.TRUSTSTORE_PASSWORD, "test");
+        Settings.set(CommonSettings.TRUSTSTORE_PATH, "/etc/ssl/certs/java/cacerts");
+        Settings.set(CommonSettings.TRUSTSTORE_PASSWORD, "changeit");
         Settings.set(CommonSettings.FILE_RESOLVER_CLASS, "dk.netarkivet.common.utils.service.FileResolverRESTClient");
-        Settings.set(CommonSettings.FILE_RESOLVER_BASE_URL, "https://localhost:10444/cgi-bin/fileresolver.cgi");
-        Settings.set(CommonSettings.FILE_RESOLVER_KEYFILE, "/home/rbkr/Desktop/netarchivesuite-docker-compose/nasapp/security/test-client.pem");
+        Settings.set(CommonSettings.FILE_RESOLVER_BASE_URL, "https://kb-test-netarkivet-bitmag-acs-01.kb.dk/cgi-bin/fileresolver.cgi/");
+        //Settings.set(CommonSettings.FILE_RESOLVER_BASE_URL, "https://localhost:10444/cgi-bin/fileresolver.cgi");
+        Settings.set(CommonSettings.FILE_RESOLVER_KEYFILE, "/home/rbkr/Desktop/https_key.pem");
         fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
         assertTrue(fileResolver instanceof FileResolverRESTClient);
+    }
+
+    @Test
+    public void testFileresolver() {
+        List<Path> paths = fileResolver.getPaths(Pattern.compile(".*warc.gz"));
+        paths.forEach(System.out::println);
     }
 
     @Test

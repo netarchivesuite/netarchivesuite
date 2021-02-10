@@ -21,6 +21,8 @@ public class HttpsClientBuilder {
     /**
      * Constructor that sets up the whole SSL connection when called.
      * Simply use {@link #getHttpsClient()} to get a configured client.
+     *
+     * @param privateKeyFile The path to the private key file to use for authentication.
      */
     public HttpsClientBuilder(String privateKeyFile) {
         clientBuilder = HttpClients.custom();
