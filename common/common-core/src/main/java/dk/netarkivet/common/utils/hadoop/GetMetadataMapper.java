@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configuration;
@@ -71,7 +73,7 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
 
         Path path = new Path(filePath.toString());
         log.info("Mapper processing {}.", path);
-        try (FileSystem fs = FileSystem.newInstance(context.getConfiguration());){
+        try (FileSystem fs = FileSystem.newInstance(new URI(filePath.toString()), context.getConfiguration());){
             try (InputStream in = new BufferedInputStream(fs.open(path))) {
                 try (ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true)) {
                     for (ArchiveRecord archiveRecord : archiveReader) {
@@ -98,6 +100,8 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
             }
         } catch (IOException e) {
             log.error("Could not get FileSystem from configuration", e);
+        } catch (URISyntaxException e) {
+            log.error("Not a URI:", e);
         }
     }
 

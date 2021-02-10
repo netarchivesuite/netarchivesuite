@@ -55,6 +55,7 @@ public class MetadataIndexingApplication {
                 throw new RuntimeException("Jar file " + jarPath + " does not exist.");
             }
             conf.set("mapreduce.job.jar", jarPath);
+            conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
 
             try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
                 Long id = 0L;
@@ -74,7 +75,7 @@ public class MetadataIndexingApplication {
                     log.info("Adding file " + filepath + " to input.");
                     filePaths.add(localInputTempFile.getFileSystem().getPath(filepath));
                 }
-                writeHdfsInputFileLinesToInputFile(filePaths, localInputTempFile);
+                writeFileInputFileLinesToInputFile(filePaths, localInputTempFile);
                 log.info("Putting local input file in hdfs at " + jobInputFile);
                 fileSystem.copyFromLocalFile(true, new Path(localInputTempFile.toAbsolutePath().toString()),
                         jobInputFile);
@@ -102,4 +103,15 @@ public class MetadataIndexingApplication {
         }
     }
 
+    public static void writeFileInputFileLinesToInputFile(List<java.nio.file.Path> files,
+            java.nio.file.Path inputFilePath) throws IOException {
+        if (files.size() == 0) {
+            return;
+        }
+        java.nio.file.Path lastElem = files.get(files.size() - 1);
+        for (java.nio.file.Path file : files) {
+            String inputLine = "file://" + file.toString() + "\n";
+            Files.write(inputFilePath, inputLine.getBytes(), StandardOpenOption.APPEND);
+        }
+    }
 }
