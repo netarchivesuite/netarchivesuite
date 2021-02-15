@@ -44,7 +44,7 @@ public class MetadataIndexingApplication {
      * @throws IOException
      * @throws InterruptedException
      */
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws Exception {
 
         String localInputFileString = args[0];
         if (localInputFileString == null || localInputFileString.length() == 0) {
@@ -58,57 +58,25 @@ public class MetadataIndexingApplication {
             System.exit(2);
         }
 
-        UserGroupInformation ugi = null;
-        try {
-            ugi = HadoopJobUtils.getUserGroupInformation();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        ugi.doAs( (PrivilegedExceptionAction<Integer>)() -> {
-            Configuration conf = HadoopJobUtils.getConf();
-            conf.setPattern(GetMetadataMapper.URL_PATTERN,  Pattern.compile("metadata://[^/]*/crawl/reports/seeds-report.txt.*"));
-            conf.setPattern(GetMetadataMapper.MIME_PATTERN,  Pattern.compile(".*"));
+        HadoopJobUtils.doKerberosLogin();
+        Configuration conf = HadoopJobUtils.getConf();
+        conf.setPattern(GetMetadataMapper.URL_PATTERN,  Pattern.compile("metadata://[^/]*/crawl/reports/seeds-report.txt.*"));
+        conf.setPattern(GetMetadataMapper.MIME_PATTERN,  Pattern.compile(".*"));
 
-            try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
-                long id = 0L;
-                HadoopJobStrategy jobStrategy = new MetadataExtractionStrategy(id, fileSystem);
-                HadoopJob job = new HadoopJob(id, jobStrategy);
-                UUID uuid = UUID.randomUUID();
-                Path jobInputFile = jobStrategy.createJobInputFile(uuid);
-                job.setJobInputFile(jobInputFile);
-                log.info("Putting local input file in hdfs at " + jobInputFile);
-                fileSystem.copyFromLocalFile(false, new Path(localInputFile.getAbsolutePath()),
-                        jobInputFile);
-                Path jobOutputDir = jobStrategy.createJobOutputDir(uuid);
-                job.setJobOutputDir(jobOutputDir);
-                ToolRunner.run(new HadoopJobTool(conf, new GetMetadataMapper()),
-                        new String[] {jobInputFile.toString(), jobOutputDir.toString()});
-            }
-            return 0;
-        } );
-    }
-
-    public static void writeHdfsInputFileLinesToInputFile(List<java.nio.file.Path> files,
-            java.nio.file.Path inputFilePath) throws IOException {
-        if (files.size() == 0) {
-            return;
-        }
-        java.nio.file.Path lastElem = files.get(files.size() - 1);
-        for (java.nio.file.Path file : files) {
-            String inputLine = "hdfs://" + file.toString() + "\n";
-            Files.write(inputFilePath, inputLine.getBytes(), StandardOpenOption.APPEND);
-        }
-    }
-
-    public static void writeFileInputFileLinesToInputFile(List<java.nio.file.Path> files,
-            java.nio.file.Path inputFilePath) throws IOException {
-        if (files.size() == 0) {
-            return;
-        }
-        java.nio.file.Path lastElem = files.get(files.size() - 1);
-        for (java.nio.file.Path file : files) {
-            String inputLine = "file://" + file.toString() + "\n";
-            Files.write(inputFilePath, inputLine.getBytes(), StandardOpenOption.APPEND);
+        try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
+            long id = 0L;
+            HadoopJobStrategy jobStrategy = new MetadataExtractionStrategy(id, fileSystem);
+            HadoopJob job = new HadoopJob(id, jobStrategy);
+            UUID uuid = UUID.randomUUID();
+            Path jobInputFile = jobStrategy.createJobInputFile(uuid);
+            job.setJobInputFile(jobInputFile);
+            log.info("Putting local input file in hdfs at " + jobInputFile);
+            fileSystem.copyFromLocalFile(false, new Path(localInputFile.getAbsolutePath()),
+                    jobInputFile);
+            Path jobOutputDir = jobStrategy.createJobOutputDir(uuid);
+            job.setJobOutputDir(jobOutputDir);
+            ToolRunner.run(new HadoopJobTool(conf, new GetMetadataMapper()),
+                    new String[] {jobInputFile.toString(), jobOutputDir.toString()});
         }
     }
 }

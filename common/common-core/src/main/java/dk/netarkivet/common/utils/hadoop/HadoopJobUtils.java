@@ -56,6 +56,16 @@ public class HadoopJobUtils {
         return UserGroupInformation.loginUserFromKeytabAndReturnUGI(principal, keytab);
     }
 
+    public static void doKerberosLogin() throws KrbException, IOException {
+        String principal = Settings.get(CommonSettings.HADOOP_KERBEROS_PRINCIPAL);
+        String keytab = Settings.get(CommonSettings.HADOOP_KERBEROS_KEYTAB);
+        String krb5_conf = Settings.get(CommonSettings.HADOOP_KERBEROS_CONF);
+        System.setProperty("java.security.krb5.conf", krb5_conf);
+        sun.security.krb5.Config.refresh();
+        UserGroupInformation.loginUserFromKeytab(principal, keytab);
+    }
+
+
     /**
      * Initialize a hadoop configuration. The basic configuration must be in a directory on the classpath. This class
      * additionally sets the path to the uber jar specificied in CommonSettings#HADOOP_MAPRED_UBER_JAR
