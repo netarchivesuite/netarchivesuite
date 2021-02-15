@@ -56,6 +56,11 @@ public class HadoopJobUtils {
         return UserGroupInformation.loginUserFromKeytabAndReturnUGI(principal, keytab);
     }
 
+    /**
+     * Login to Kerberos from the settings specified in CommonSettings.
+     * @throws KrbException if the kerberos configuration is invalid
+     * @throws IOException if the kerberos login fails
+     */
     public static void doKerberosLogin() throws KrbException, IOException {
         String principal = Settings.get(CommonSettings.HADOOP_KERBEROS_PRINCIPAL);
         String keytab = Settings.get(CommonSettings.HADOOP_KERBEROS_KEYTAB);
@@ -68,16 +73,12 @@ public class HadoopJobUtils {
 
     /**
      * Initialize a hadoop configuration. The basic configuration must be in a directory on the classpath. This class
-     * additionally sets the path to the uber jar specificied in CommonSettings#HADOOP_MAPRED_UBER_JAR
+     * additionally sets the path to the uber jar specified in CommonSettings#HADOOP_MAPRED_UBER_JAR
      * @return A new configuration to use for a job.
      */
     public static Configuration getConf() {
         Configuration conf = new JobConf(new YarnConfiguration(new HdfsConfiguration()));
-        conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
-        conf.set("dfs.client.use.datanode.hostname", "true");
         conf.set("mapreduce.job.am-access-disabled","true");
-        conf.set("yarn.timeline-service.enabled", "false");
-        conf.set(MRConfig.FRAMEWORK_NAME, MRConfig.YARN_FRAMEWORK_NAME);
         final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_UBER_JAR);
         if (jarPath == null || !(new File(jarPath)).exists()) {
             log.warn("Specified jar file {} does not exist.", jarPath);
