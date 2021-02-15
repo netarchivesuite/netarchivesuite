@@ -233,6 +233,9 @@ National Library.
                 <inputDir>nas_input</inputDir>
                 <outputDir>nas_output</outputDir>
             </mapred>
+            <kerberos>
+                <krb5-conf>/etc/krb5.conf</krb5-conf>
+            </kerberos>
         </hadoop>
         <useHadoopAsMassProcessor>true</useHadoopAsMassProcessor>
         <fileResolver>

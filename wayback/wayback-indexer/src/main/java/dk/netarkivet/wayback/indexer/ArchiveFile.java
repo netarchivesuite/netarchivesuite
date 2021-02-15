@@ -218,7 +218,7 @@ public class ArchiveFile {
         }
 
         System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
-        Configuration conf = HadoopJobUtils.getConfFromSettings();
+        Configuration conf = HadoopJobUtils.getConf();
         UUID uuid = UUID.randomUUID();
         log.info("File {} indexed with job uuid for i/o {}.", this.filename, uuid);
         try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
@@ -297,7 +297,7 @@ public class ArchiveFile {
         // is just made unique from the archivefile's name
         Path hadoopInputNameFile = new Path(
                 filename.substring(0, filename.lastIndexOf('.')) + "_map_input.txt");
-        Configuration conf = HadoopJobUtils.getConfFromSettings();
+        Configuration conf = HadoopJobUtils.getConf();
         Bitrepository bitrep = BitmagUtils.initBitrep();
 
         // Get file and put it in hdfs

@@ -1,0 +1,4 @@
+file:///netarkiv/001/test0/8-metadata-1.warc.gz
+file:///netarkiv/002/test7/2-metadata-1.warc.gz
+file:///netarkiv/002/test6/2-metadata-1.warc.gz
+hdfs:///user/nat-csr/2-metadata-1.warc.gz

@@ -22,6 +22,6 @@ java \
  -Dsettings.common.hadoop.kerberos.principal=${kerberosPrincipal} \
  -Dsettings.common.hadoop.kerberos.keytab=$HOME/${clusterUser}.keytab \
  -Dsettings.common.hadoop.mapred.hadoopUberJar=$SCRIPT_DIR/libs/hadoop-uber-jar-${project.version}-shaded.jar \
- -Djava.security.krb5.conf=/etc/krb5.conf \
- MetadataIndexingApplication /netarkiv/001/test0/12-metadata-1.warc.gz
+ -Dsettings.common.hadoop.kerberos.krb5-conf=/etc/krb5.conf \
+ MetadataIndexingApplication $2
 

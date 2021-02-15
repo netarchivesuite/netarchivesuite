@@ -142,7 +142,7 @@ public class Reporting {
      * @return A list of CDX records.
      */
     private static List<CDXRecord> getRecordsUsingHadoop(long jobid) {
-        Configuration hadoopConf = HadoopJobUtils.getConfFromSettings();
+        Configuration hadoopConf = HadoopJobUtils.getConf();
         String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobid);
         try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
             HadoopJobStrategy jobStrategy = new MetadataCDXExtractionStrategy(jobid, fileSystem);
@@ -306,7 +306,7 @@ public class Reporting {
      */
     private static File getCrawlLogLinesUsingHadoop(long jobID, String regex) {
         String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobID);
-        Configuration hadoopConf = HadoopJobUtils.getConfFromSettings();
+        Configuration hadoopConf = HadoopJobUtils.getConf();
         hadoopConf.setPattern("regex", Pattern.compile(regex));
         try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
             HadoopJobStrategy jobStrategy = new CrawlLogExtractionStrategy(jobID, fileSystem);

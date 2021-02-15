@@ -11,82 +11,79 @@ import java.util.regex.Pattern;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hdfs.HdfsConfiguration;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapreduce.MRConfig;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.util.ToolRunner;
-import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.utils.LoggingOutputStream;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.hadoop.GetMetadataMapper;
 import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
 import dk.netarkivet.common.utils.hadoop.HadoopJob;
 import dk.netarkivet.common.utils.hadoop.HadoopJobStrategy;
 import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.hadoop.MetadataExtractionStrategy;
+import sun.security.krb5.KrbException;
 
 public class MetadataIndexingApplication {
-
     private static final Logger log = LoggerFactory.getLogger(MetadataIndexingApplication.class);
 
+    private static void usage() {
+        System.out.println("Usage: java MetadataIndexingApplication <inputFile>");
+    }
 
-    // /user/nat-csr/9385-metadata-1.warc.gz
-
+    /**
+     * Start a hadoop job that fetches seeds reports out of metadata files. The single input argument
+     * is a path to the input file in the local file system. The input file is a newline-separated
+     * list of metadata paths to be processed. The lines input paths may be any combination of "file://"
+     * and "hdfs://" URIs.
+     *
+     * @param args
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public static void main(String[] args) throws IOException, InterruptedException {
-        String principal = Settings.get(CommonSettings.HADOOP_KERBEROS_PRINCIPAL);
-        String keytab = Settings.get(CommonSettings.HADOOP_KERBEROS_KEYTAB);
 
-        UserGroupInformation ugi = UserGroupInformation.loginUserFromKeytabAndReturnUGI(principal, keytab);
+        String localInputFileString = args[0];
+        if (localInputFileString == null || localInputFileString.length() == 0) {
+            usage();
+            System.exit(1);
+        }
+        File localInputFile = new File(localInputFileString);
+        if (!localInputFile.exists() && localInputFile.isFile()) {
+            System.out.println("No such file " + localInputFile.getAbsolutePath());
+            usage();
+            System.exit(2);
+        }
+
+        UserGroupInformation ugi = null;
+        try {
+            ugi = HadoopJobUtils.getUserGroupInformation();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         ugi.doAs( (PrivilegedExceptionAction<Integer>)() -> {
-            Configuration conf = new JobConf(new YarnConfiguration(new HdfsConfiguration()));
-            conf.set("mapreduce.job.am-access-disabled","true");
-            conf.set("yarn.timeline-service.enabled", "false");
-            conf.set(MRConfig.FRAMEWORK_NAME, MRConfig.YARN_FRAMEWORK_NAME);
-            conf.setPattern(GetMetadataMapper.URL_PATTERN,  Pattern.compile("metadata://[^/]*/crawl/index/cdx.*"));
+            Configuration conf = HadoopJobUtils.getConf();
+            conf.setPattern(GetMetadataMapper.URL_PATTERN,  Pattern.compile("metadata://[^/]*/crawl/reports/seeds-report.txt.*"));
             conf.setPattern(GetMetadataMapper.MIME_PATTERN,  Pattern.compile(".*"));
-            final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_UBER_JAR);
-            if (jarPath == null || !(new File(jarPath)).exists()) {
-                log.warn("Specified jar file {} does not exist.", jarPath);
-                throw new RuntimeException("Jar file " + jarPath + " does not exist.");
-            }
-            conf.set("mapreduce.job.jar", jarPath);
-            conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
 
             try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
-                Long id = 0L;
-
+                long id = 0L;
                 HadoopJobStrategy jobStrategy = new MetadataExtractionStrategy(id, fileSystem);
                 HadoopJob job = new HadoopJob(id, jobStrategy);
-
                 UUID uuid = UUID.randomUUID();
-
                 Path jobInputFile = jobStrategy.createJobInputFile(uuid);
                 job.setJobInputFile(jobInputFile);
-
-                java.nio.file.Path localInputTempFile = HadoopFileUtils.makeLocalInputTempFile();
-                log.info("Local input path is " + localInputTempFile);
-                List<java.nio.file.Path> filePaths = new ArrayList<>();
-                for (String filepath : args) {
-                    log.info("Adding file " + filepath + " to input.");
-                    filePaths.add(localInputTempFile.getFileSystem().getPath(filepath));
-                }
-                writeFileInputFileLinesToInputFile(filePaths, localInputTempFile);
                 log.info("Putting local input file in hdfs at " + jobInputFile);
-                fileSystem.copyFromLocalFile(true, new Path(localInputTempFile.toAbsolutePath().toString()),
+                fileSystem.copyFromLocalFile(false, new Path(localInputFile.getAbsolutePath()),
                         jobInputFile);
-
                 Path jobOutputDir = jobStrategy.createJobOutputDir(uuid);
                 job.setJobOutputDir(jobOutputDir);
-
                 ToolRunner.run(new HadoopJobTool(conf, new GetMetadataMapper()),
                         new String[] {jobInputFile.toString(), jobOutputDir.toString()});
             }
-
             return 0;
         } );
     }

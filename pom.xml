@@ -1111,7 +1111,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <excludedGroups />
+              <excludedGroups>dk.netarkivet.common.utils.RequiresFileResolver.class</excludedGroups>
             </configuration>
           </plugin>
         </plugins>
