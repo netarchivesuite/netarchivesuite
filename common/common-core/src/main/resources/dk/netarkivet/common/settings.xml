@@ -238,5 +238,9 @@ National Library.
         <fileResolver>
             <class>dk.netarkivet.common.utils.service.FileResolverRESTClient</class>
         </fileResolver>
+        <trustStore>
+            <path>/etc/ssl/certs/java/cacerts</path>
+            <password>changeit</password>
+        </trustStore>
     </common>
 </settings>
