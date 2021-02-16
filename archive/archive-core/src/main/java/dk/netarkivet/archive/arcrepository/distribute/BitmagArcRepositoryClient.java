@@ -289,7 +289,9 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      * @throws IOFailure if there are problems getting a reply or the file could not be found.
      */
     public void getFile(String arcfilename, Replica replica, File toFile) throws ArgumentNotValid, IOFailure {
-
+        if (toFile.exists() && toFile.length() == 0) {
+            toFile.delete();
+        }
         GetFileClient getFileClient = BitmagUtils.getFileClient();
         GetFileAction getFileAction = new GetFileAction(getFileClient, collectionId, arcfilename, toFile);
         getFileAction.performAction();
