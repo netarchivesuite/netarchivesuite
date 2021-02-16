@@ -99,13 +99,17 @@ public class Reporting {
         String metadataFilePatternForJobId = getMetadataFilePatternForJobId(jobid);
         log.debug("Looking for metadata files matching {}.", metadataFilePatternForJobId);
         List<Path> metadataPaths =  fileResolver.getPaths(Pattern.compile(metadataFilePatternForJobId));
-        log.debug("Found metadata files: {}", metadataPaths);
+        log.debug("Initial found metadata files: {}", metadataPaths);
         String archiveFilePatternForJobId = harvestprefix + archivefile_suffix;
         log.debug("Looking for archive files matching {}.", archiveFilePatternForJobId);
         List<Path> archivePaths = fileResolver.getPaths(Pattern.compile(archiveFilePatternForJobId));
-        log.debug("Found archive files {}.", archivePaths);
+        log.debug("Initial found archive files {}.", archivePaths);
         metadataPaths.addAll(archivePaths);
-        return metadataPaths.stream().map(path -> path.getFileName().toString()).collect(Collectors.toList());
+        List<String> filteredFiles =  metadataPaths.stream()
+                .filter(path -> fileResolver.getPath(path.getFileName().toString())!=null)
+                .map(path -> path.getFileName().toString()).collect(Collectors.toList());
+        log.debug("After filtering by collection we have the following files: {}", filteredFiles);
+        return filteredFiles;
     }
 
     /**
