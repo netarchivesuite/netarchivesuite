@@ -96,7 +96,7 @@
     <sonar.language>java</sonar.language>
 <!--    <jacoco.version>0.7.2.201409121644</jacoco.version> -->
     <jacoco.version>0.7.9</jacoco.version>
-    <hadoop.version>2.7.6</hadoop.version>
+    <hadoop.version>3.2.2</hadoop.version>
   </properties>
 
   <modules>
@@ -109,6 +109,7 @@
     <module>wayback</module>
     <module>integration-test</module>
     <module>hadoop-uber-jar</module>
+    <module>hadoop-uber-jar-invoker</module>
   </modules>
 
   <licenses>
@@ -1110,7 +1111,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <excludedGroups />
+              <excludedGroups>dk.netarkivet.common.utils.RequiresFileResolver.class</excludedGroups>
             </configuration>
           </plugin>
         </plugins>

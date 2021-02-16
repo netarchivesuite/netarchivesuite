@@ -550,21 +550,29 @@ public class CommonSettings {
      * Specifies the name of the default file system for Hadoop to use (URI consisting of scheme and authority).
      * If not set, Hadoop defaults to 'file:///'.
      * If using hdfs Hadoop paths are auto-resolved to 'hdfs://hostname/user/current_user/specified_path
+     * In production we now load the entire hadoop configuration from the classpath so this is
+     * @deprecated
      */
     public static String HADOOP_DEFAULT_FS = "settings.common.hadoop.defaultFS";
 
     /**
      * The setting specifying the URI on which the used HDFS is located.
+     * In production we now load the entire hadoop configuration from the classpath so this is
+     * @deprecated
      */
     public static String HADOOP_HDFS_URI = "settings.common.hadoop.hdfs.uri";
 
     /**
      * Specifies the address on where to locate the ResourceManager (e.g. YARN).
+     * In production we now load the entire hadoop configuration from the classpath so this is
+     * @deprecated
      */
     public static String HADOOP_RESOURCEMANAGER_ADDRESS = "settings.common.hadoop.resourcemanager.address";
 
     /**
      * Specifies which framework is used for running mapreduce (e.g. YARN).
+     * In production we now load the entire hadoop configuration from the classpath so this is
+     * @deprecated
      */
     public static String HADOOP_MAPRED_FRAMEWORK = "settings.common.hadoop.mapred.framework";
 
@@ -627,6 +635,8 @@ public class CommonSettings {
 
     /**
      * Username to start map-/reduce jobs under on the Hadoop cluster.
+     * In production we now use kerberos so this is
+     * @deprecated
      */
     public static String HADOOP_USER_NAME = "settings.common.hadoop.username";
 
@@ -681,5 +691,21 @@ public class CommonSettings {
      * Password for the default truststore.
      */
     public static String TRUSTSTORE_PASSWORD = "settings.common.trustStore.password";
+
+    /**
+     * The kerberos principal to use when running hadoop jobs.
+     */
+    public static String HADOOP_KERBEROS_PRINCIPAL = "settings.common.hadoop.kerberos.principal";
+
+    /**
+     * The path to the kerberos keytab file to use when running hadoop jobs.
+     */
+    public static String HADOOP_KERBEROS_KEYTAB = "settings.common.hadoop.kerberos.keytab";
+
+    /**
+     * The path to the kerberos configuration to use when running hadoop jobs. The default
+     * is /etc/krb5.conf .
+     */
+    public static String HADOOP_KERBEROS_CONF = "settings.common.hadoop.kerberos.krb5-conf";
 
 }

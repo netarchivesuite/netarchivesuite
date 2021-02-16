@@ -5,8 +5,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configuration;
@@ -53,6 +53,7 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
         Configuration conf = context.getConfiguration();
         urlMatcher = conf.getPattern(URL_PATTERN, MATCH_ALL_PATTERN);
         mimeMatcher = conf.getPattern(MIME_PATTERN, MATCH_ALL_PATTERN);
+        log.info("Setting up mapper for urls matching {} and mime-types matching {}.", urlMatcher, mimeMatcher);
     }
 
     /**
@@ -64,14 +65,15 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
      */
     @Override
     protected void map(LongWritable lineNumber, Text filePath, Context context) {
-
+        log.info("Mapper processing line number {}", lineNumber.toString());
         // reject empty or null file paths.
-        if(filePath == null || filePath.toString().trim().isEmpty()) {
+        if (filePath == null || filePath.toString().trim().isEmpty()) {
             return;
         }
 
         Path path = new Path(filePath.toString());
-        try (FileSystem fs = path.getFileSystem(context.getConfiguration())) {
+        log.info("Mapper processing {}.", path);
+        try (FileSystem fs = FileSystem.newInstance(new URI(filePath.toString()), context.getConfiguration());){
             try (InputStream in = new BufferedInputStream(fs.open(path))) {
                 try (ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true)) {
                     for (ArchiveRecord archiveRecord : archiveReader) {
@@ -81,10 +83,12 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
                         if (header.getUrl() == null) {
                             continue;
                         }
-                        log.info(header.getUrl() + " - " + header.getMimetype());
+                        log.info("Mapper processing header url {} with mime-type {}.", header.getUrl(),
+                                header.getMimetype());
                         boolean recordHeaderMatchesPatterns = urlMatcher.matcher(header.getUrl()).matches()
                                 && mimeMatcher.matcher(header.getMimetype()).matches();
                         if (recordHeaderMatchesPatterns) {
+                            log.info("Mapper accepting header so writing to output.");
                             writeRecordMetadataLinesToContext(record, path, context);
                         }
                     }
@@ -96,6 +100,8 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
             }
         } catch (IOException e) {
             log.error("Could not get FileSystem from configuration", e);
+        } catch (URISyntaxException e) {
+            log.error("Not a URI:", e);
         }
     }
 
@@ -113,6 +119,7 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
                 context.write(NullWritable.get(), new Text(metadataLine));
                 lineCount++;
             }
+            log.info("Mapper written {} lines to output.", lineCount);
         } catch (Exception e) {
             log.warn("Failed writing metadata line #{} for input file '{}'.", lineCount, path.toString());
         }

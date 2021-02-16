@@ -12,36 +12,55 @@
   <artifactId>hadoop-uber-jar</artifactId>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-mapreduce-client-core</artifactId>
+      <version>${hadoop.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>27.0-jre</version>
+    </dependency>
+
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>wayback-indexer</artifactId>
       <version>5.7-IIPCH3-SNAPSHOT</version>
       <exclusions>
         <exclusion>
-          <groupId>org.hibernate</groupId>
+          <groupId>org.apache.hadoop</groupId>
           <artifactId>*</artifactId>
         </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.netarchivesuite</groupId>
-      <artifactId>harvester-core</artifactId>
-      <version>5.7-IIPCH3-SNAPSHOT</version>
-      <exclusions>
         <exclusion>
           <groupId>org.hibernate</groupId>
           <artifactId>*</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava-parent</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
+
   </dependencies>
 
   <build>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.4</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -57,7 +76,7 @@
                   <exclude>fastutil:*</exclude>
                   <exclude>javax.servlet:*</exclude>
                   <!--<exclude>jaxen:*</exclude> TODO can't exclude this - fix overlapping classes -->
-                  <exclude>log4j:*</exclude>
+                  <!--<exclude>log4j:*</exclude>-->
                   <exclude>org.apache.derby:*</exclude>
                   <exclude>org.apache.jasper:*</exclude>
                   <exclude>org.apache.lucene:*</exclude>
@@ -65,8 +84,14 @@
                   <exclude>org.apache.tomcat.embed:*</exclude>
                   <exclude>org.bouncycastle:*</exclude>
                   <exclude>org.mortbay.jetty:*</exclude>
-                  <exclude>org.slf4j:*</exclude>
+                  <exclude>org.slf4j:log4j-over-slf4j:*</exclude>
+                  <exclude>org.slf4j:slf4j-simple:*</exclude>
+                  <exclude>ch.qos.logback:logback-classic:*</exclude>
                   <exclude>org.springframework:*</exclude>
+                  <exclude>org.apache.hadoop:*</exclude>
+                  <!--<exclude>com.google.guava:*</exclude>
+                  <exclude>com.google.guava:failureaccess:*</exclude>
+                  <exclude>com.google.guava:listenablefuture:*</exclude> -->
                 </excludes>
               </artifactSet>
               <filters>
