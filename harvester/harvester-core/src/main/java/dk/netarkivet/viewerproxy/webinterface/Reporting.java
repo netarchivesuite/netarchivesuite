@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -45,8 +47,10 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
@@ -81,7 +85,29 @@ public class Reporting {
      * should probably replaced by: Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
      */
     static final String metadatafile_suffix = "-metadata-[0-9]+\\.(w)?arc(\\.gz)?";
-    
+
+    public static List<String> getFilesForJob(long jobid, String harvestprefix) {
+        if (!Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
+            return getFilesForJobBatch(jobid, harvestprefix);
+        } else {
+            return getFilesForJobFileResolver(jobid, harvestprefix);
+        }
+    }
+
+    public static List<String> getFilesForJobFileResolver(long jobid, String harvestprefix) {
+        FileResolver fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
+        String metadataFilePatternForJobId = getMetadataFilePatternForJobId(jobid);
+        log.debug("Looking for metadata files matching {}.", metadataFilePatternForJobId);
+        List<Path> metadataPaths =  fileResolver.getPaths(Pattern.compile(metadataFilePatternForJobId));
+        log.debug("Found metadata files: {}", metadataPaths);
+        String archiveFilePatternForJobId = harvestprefix + archivefile_suffix;
+        log.debug("Looking for archive files matching {}.", archiveFilePatternForJobId);
+        List<Path> archivePaths = fileResolver.getPaths(Pattern.compile(archiveFilePatternForJobId));
+        log.debug("Found archive files {}.", archivePaths);
+        metadataPaths.addAll(archivePaths);
+        return metadataPaths.stream().map(path -> path.getFileName().toString()).collect(Collectors.toList());
+    }
+
     /**
      * Submit a batch job to list all files for a job, and report result in a sorted list.
      *
@@ -91,7 +117,7 @@ public class Reporting {
      * @throws ArgumentNotValid If jobid is 0 or negative.
      * @throws IOFailure On trouble generating the file list
      */
-    public static List<String> getFilesForJob(long jobid, String harvestprefix) {
+    public static List<String> getFilesForJobBatch(long jobid, String harvestprefix) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob fileListJob = new FileListJob();
         List<String> acceptedPatterns = new ArrayList<String>();
