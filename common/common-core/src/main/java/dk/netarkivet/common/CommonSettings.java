@@ -664,6 +664,10 @@ public class CommonSettings {
     public static String WRS_BASE_URL = "settings.common.warcRecordService.baseUrl";
 
     /**
+     * The path to the keyfile to use when communicating with the Warc Record Service over HTTPS.
+     */
+    public static String WRS_KEYFILE = "settings.common.fileResolver.keyfile";
+    /**
      * The implementation of FileResolver to use.
      */
     public static String FILE_RESOLVER_CLASS = "settings.common.fileResolver.class";
@@ -672,6 +676,21 @@ public class CommonSettings {
      * The base url for the REST implementation of FileResolver.
      */
     public static String FILE_RESOLVER_BASE_URL = "settings.common.fileResolver.baseUrl";
+
+    /**
+     * The path to the keyfile to use when communicating with the file resolver service over HTTPS.
+     */
+    public static String FILE_RESOLVER_KEYFILE = "settings.common.fileResolver.keyfile";
+
+    /**
+     * Path to the default truststore used for safe communication over HTTPS.
+     */
+    public static String TRUSTSTORE_PATH = "settings.common.trustStore.path";
+
+    /**
+     * Password for the default truststore.
+     */
+    public static String TRUSTSTORE_PASSWORD = "settings.common.trustStore.password";
 
     /**
      * The kerberos principal to use when running hadoop jobs.

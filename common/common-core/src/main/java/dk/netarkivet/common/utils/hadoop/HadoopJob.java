@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileResolver;
+import dk.netarkivet.common.utils.service.FileResolver;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SettingsFactory;
-import dk.netarkivet.common.utils.SimpleFileResolver;
+import dk.netarkivet.common.utils.service.SimpleFileResolver;
 
 /**
  * Wrapper for a Hadoop job to prepare/handle a job.
