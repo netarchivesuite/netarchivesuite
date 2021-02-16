@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.bitrepository.bitrepositoryelements.ChecksumDataForFileTYPE;
 import org.bitrepository.bitrepositoryelements.ChecksumType;
+import org.bitrepository.client.eventhandler.OperationEvent;
 import org.bitrepository.common.utils.SettingsUtils;
 import org.bitrepository.modify.putfile.PutFileClient;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ public class PutFileAction implements ClientAction {
     private final String fileID;
     private final PutFileClient client;
     private final File targetFile;
+    private boolean actionIsSuccess;
 
     /**
      * Constructor to instantiate the put-file action
@@ -40,6 +42,9 @@ public class PutFileAction implements ClientAction {
         this.targetFile = targetFile;
         this.fileID = fileID;
     }
+    public boolean isActionIsSuccess() {
+        return actionIsSuccess;
+    }
 
     @Override
     public void performAction() {
@@ -50,12 +55,11 @@ public class PutFileAction implements ClientAction {
 
             ChecksumDataForFileTYPE checksumData = BitmagUtils.getValidationChecksum(targetFile,
                     BitmagUtils.getChecksumSpec(ChecksumType.MD5));
-
             client.putFile(collectionID, url, fileID, targetFile.length(), checksumData, null,
                     eventHandler, "PutFile from NAS");
             eventHandler.waitForFinish();
 
-            boolean actionIsSuccess = !eventHandler.hasFailed();
+            actionIsSuccess = !eventHandler.hasFailed();
             if (actionIsSuccess) {
                 log.info("Put operation was a success! Put file '{}' to bitmag with id: '{}'.",
                         targetFile.getName(), fileID);
