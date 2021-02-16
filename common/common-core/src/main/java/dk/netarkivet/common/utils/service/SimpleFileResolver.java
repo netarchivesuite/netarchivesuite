@@ -1,4 +1,4 @@
-package dk.netarkivet.common.utils;
+package dk.netarkivet.common.utils.service;
 
 import java.io.File;
 import java.io.FilenameFilter;

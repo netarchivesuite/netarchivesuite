@@ -1,4 +1,4 @@
-package dk.netarkivet.common.utils;
+package dk.netarkivet.common.utils.service;
 
 import java.nio.file.Path;
 import java.util.List;

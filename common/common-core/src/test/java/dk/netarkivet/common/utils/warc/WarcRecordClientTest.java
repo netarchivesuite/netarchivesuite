@@ -1,12 +1,7 @@
 package dk.netarkivet.common.utils.warc;
 
-import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import org.apache.commons.io.IOUtils;
-import org.archive.io.ArchiveReader;
-import org.archive.io.ArchiveRecord;
-import org.archive.io.warc.WARCReaderFactory;
-import org.archive.io.warc.WARCRecord;
-import org.junit.Test;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,13 +9,18 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.*;
+import org.apache.commons.io.IOUtils;
+import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveRecord;
+import org.archive.io.warc.WARCReaderFactory;
+import org.archive.io.warc.WARCRecord;
+import org.junit.Test;
+
+import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.utils.service.WarcRecordClient;
 
 public class WarcRecordClientTest {
-    // Hvordan man parser en InputStream til en BitarchiveRecord
-    // Vigtigt:  Kode skal kunne håndtere både Arc og Warc records. Før den begynder
-    // at parse dats så kan den se om det er arc eller warc kun med at kigge på id'er dvs. filnavnet hvorfra
-    // dataene blev hentet.
+    final String WRS_URL = "https://localhost:10443/cgi-bin/warcrecordservice.cgi";
 
     @Test
     public void testBuildingBitarchiveRecord() throws IOException {
@@ -62,8 +62,7 @@ public class WarcRecordClientTest {
 
     @Test
     public void get() throws IOException, URISyntaxException {
-        // String baseUri = "http://localhost:8883/cgi-bin2/py1.cgi";
-        URI baseUri = new URI("http://localhost:8883/cgi-bin2/py1.cgi");
+        URI baseUri = new URI(WRS_URL);
 
         //setting to NetarchiveSuite.
         WarcRecordClient warcRecordClient = new WarcRecordClient(baseUri);
@@ -75,8 +74,7 @@ public class WarcRecordClientTest {
 
     @Test
     public void getWithArc() throws IOException, URISyntaxException {
-        // String baseUri = "http://localhost:8883/cgi-bin2/py1.cgi";
-        URI baseUri = new URI("http://localhost:8883/cgi-bin2/py1.cgi");
+        URI baseUri = new URI(WRS_URL);
 
         //setting to NetarchiveSuite.
         WarcRecordClient warcRecordClient = new WarcRecordClient(baseUri);

@@ -8,6 +8,9 @@ import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.junit.Test;
 
+import dk.netarkivet.common.utils.service.FileResolver;
+import dk.netarkivet.common.utils.service.SimpleFileResolver;
+
 // TODO: Will fail on moving files/restructuring
 public class SimpleFileResolverTester {
     String PARENT_DIR = "src/test/resources/"; //TODO make somewhere more meaningful??
