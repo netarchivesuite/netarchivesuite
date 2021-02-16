@@ -39,6 +39,7 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 
+import dk.netarkivet.common.distribute.bitrepository.action.getfile.GetFileAction;
 import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -51,6 +52,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.service.WarcRecordClient;
 
 import org.apache.commons.io.FileUtils;
+import org.bitrepository.access.getfile.GetFileClient;
 import org.bitrepository.client.eventhandler.OperationEvent;
 import org.bitrepository.modify.putfile.PutFileClient;
 
@@ -287,6 +289,12 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      * @throws IOFailure if there are problems getting a reply or the file could not be found.
      */
     public void getFile(String arcfilename, Replica replica, File toFile) throws ArgumentNotValid, IOFailure {
+
+        GetFileClient getFileClient = BitmagUtils.getFileClient();
+        GetFileAction getFileAction = new GetFileAction(getFileClient, collectionId, arcfilename, toFile);
+        getFileAction.performAction();
+
+
      /*   ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
         ArgumentNotValid.checkNotNull(replica, "replica");
         ArgumentNotValid.checkNotNull(toFile, "toFile");
@@ -302,7 +310,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
             getFileMessage.getData(toFile);
         }
         */
-        log.warn("Not yet implemented");
     }
 
 
