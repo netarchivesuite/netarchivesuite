@@ -29,12 +29,6 @@ public class PutFileAction implements ClientAction {
     private final File targetFile;
     private boolean actionIsSuccess;
 
- /*   public OperationEvent.OperationEventType getFinalEvent() {
-        return finalEvent;
-    }
-
-    private static OperationEvent.OperationEventType finalEvent;  // static?
-*/
     /**
      * Constructor to instantiate the put-file action
      * @param client The client to perform the action on
@@ -61,7 +55,6 @@ public class PutFileAction implements ClientAction {
 
             ChecksumDataForFileTYPE checksumData = BitmagUtils.getValidationChecksum(targetFile,
                     BitmagUtils.getChecksumSpec(ChecksumType.MD5));
-
             client.putFile(collectionID, url, fileID, targetFile.length(), checksumData, null,
                     eventHandler, "PutFile from NAS");
             eventHandler.waitForFinish();
@@ -70,7 +63,6 @@ public class PutFileAction implements ClientAction {
             if (actionIsSuccess) {
                 log.info("Put operation was a success! Put file '{}' to bitmag with id: '{}'.",
                         targetFile.getName(), fileID);
-                // finalEvent = eventHandler.getFinalEvent();
             } else {
                 log.warn("Failed put operation for file '{}'.", targetFile.getName());
             }
