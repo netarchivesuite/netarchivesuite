@@ -47,7 +47,6 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SettingsFactory;
@@ -59,6 +58,7 @@ import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.hadoop.HadoopJob;
 import dk.netarkivet.common.utils.hadoop.HadoopJobStrategy;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
+import dk.netarkivet.common.utils.service.FileResolver;
 import dk.netarkivet.viewerproxy.webinterface.hadoop.CrawlLogExtractionStrategy;
 import dk.netarkivet.viewerproxy.webinterface.hadoop.MetadataCDXExtractionStrategy;
 
