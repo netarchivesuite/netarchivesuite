@@ -13,11 +13,20 @@ public class GetFileEventHandler implements EventHandler {
     private final Object finishLock = new Object();
     private boolean finished = false;
     private boolean failed = false;
+    private String info = "";
 
     /**
      * Constructor
      */
     public GetFileEventHandler() {
+    }
+
+    public boolean isFailed() {
+        return failed;
+    }
+
+    public String getInfo() {
+        return info;
     }
 
     @Override
@@ -29,7 +38,8 @@ public class GetFileEventHandler implements EventHandler {
             finish();
             break;
         case FAILED:
-            log.info("Finished getting file '{}'", event.getFileID());
+            log.info("Failed getting file '{}'", event.getFileID());
+            info = event.getInfo();
             failed = true;
             finish();
             break;

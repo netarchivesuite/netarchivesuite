@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -86,6 +87,15 @@ public class Reporting {
      */
     static final String metadatafile_suffix = "-metadata-[0-9]+\\.(w)?arc(\\.gz)?";
 
+    /**
+     * Retrieve a list of all files uploaded for a given harvest job. For installations that use batch, this is
+     * done via a batch job, and for hadoop-based implementations it is done via an implementation of
+     * dk.netarkivet.common.utils.service.FileResolver
+     * @param jobid the job for which files are required
+     * @param harvestprefix the prefix for the (w)arc datafiles for this job as determined by the implementation of
+     *                      ArchiveFileNaming used in the installation
+     * @return a list of filenames
+     */
     public static List<String> getFilesForJob(long jobid, String harvestprefix) {
         if (!Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
             return getFilesForJobBatch(jobid, harvestprefix);
@@ -94,7 +104,7 @@ public class Reporting {
         }
     }
 
-    public static List<String> getFilesForJobFileResolver(long jobid, String harvestprefix) {
+    private static List<String> getFilesForJobFileResolver(long jobid, String harvestprefix) {
         FileResolver fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
         String metadataFilePatternForJobId = getMetadataFilePatternForJobId(jobid);
         log.debug("Looking for metadata files matching {}.", metadataFilePatternForJobId);
@@ -104,31 +114,24 @@ public class Reporting {
         log.debug("Looking for archive files matching {}.", archiveFilePatternForJobId);
         List<Path> archivePaths = fileResolver.getPaths(Pattern.compile(archiveFilePatternForJobId));
         log.debug("Initial found archive files {}.", archivePaths);
-        metadataPaths.addAll(archivePaths);
-        List<String> filteredFiles =  metadataPaths.stream()
+        //What is this? When using getPaths() with a pattern we get all files in the installation matching the pattern.
+        //When using getPath() with an exact filename we include filtering by collectionId. This should only make a
+        //difference in the case of test installations where we have multiple collections with overlapping filenames. It's
+        //irritating to have to do this but the overhead should be low.
+        List<String> filteredFiles = Stream.concat(metadataPaths.stream(), archivePaths.stream())
                 .filter(path -> fileResolver.getPath(path.getFileName().toString())!=null)
-                .map(path -> path.getFileName().toString()).collect(Collectors.toList());
+                .map(path -> path.getFileName().toString()).distinct().sorted().collect(Collectors.toList());
         log.debug("After filtering by collection we have the following files: {}", filteredFiles);
         return filteredFiles;
     }
 
-    /**
-     * Submit a batch job to list all files for a job, and report result in a sorted list.
-     *
-     * @param jobid The job to get files for.
-     * @param harvestprefix The harvestprefix for the files produced by heritrix
-     * @return A sorted list of files.
-     * @throws ArgumentNotValid If jobid is 0 or negative.
-     * @throws IOFailure On trouble generating the file list
-     */
-    public static List<String> getFilesForJobBatch(long jobid, String harvestprefix) {
+    private static List<String> getFilesForJobBatch(long jobid, String harvestprefix) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob fileListJob = new FileListJob();
         List<String> acceptedPatterns = new ArrayList<String>();
         acceptedPatterns.add(getMetadataFilePatternForJobId(jobid));
         acceptedPatterns.add(harvestprefix + archivefile_suffix);
         fileListJob.processOnlyFilesMatching(acceptedPatterns);
-
         File f;
         try {
             f = File.createTempFile(jobid + "-files", ".txt", FileUtils.getTempDir());

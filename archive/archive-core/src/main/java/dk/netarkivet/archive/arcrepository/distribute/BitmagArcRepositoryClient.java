@@ -279,39 +279,37 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
     }
 
     /**
-     * Synchronously retrieves a file from a bitarchive and places it in a local file. This is the interface for sending
-     * GetFileMessage on the "TheArcrepos" queue. This is a blocking call.
+     * Synchronously retrieves a file from a bitarchive and places it in a local file. This implementation retrieves the
+     * file using bitrepository.org software.
      *
      * @param arcfilename Name of the arcfile to retrieve.
-     * @param replica The bitarchive to retrieve the data from.
-     * @param toFile Filename of a place where the file fetched can be put.
+     * @param replica This parameter is ignored in this implementation. The file is retrieved from the fastest pillar.
+     * @param toFile Filename of a place where the file fetched can be put. If this file already exists it must be empty
+     *               otherwise this method-call will fail.
      * @throws ArgumentNotValid If the arcfilename are null or empty, or if either replica or toFile is null.
      * @throws IOFailure if there are problems getting a reply or the file could not be found.
      */
     public void getFile(String arcfilename, Replica replica, File toFile) throws ArgumentNotValid, IOFailure {
+        ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
+        ArgumentNotValid.checkNotNull(toFile, "toFile");
+
         if (toFile.exists() && toFile.length() == 0) {
             toFile.delete();
+        }
+        if (toFile.exists() && toFile.length() != 0) {
+            throw new IOFailure("Cannot retrieve file from bitrepository as target file " + toFile.getAbsolutePath()
+                    + " not empty.");
         }
         GetFileClient getFileClient = BitmagUtils.getFileClient();
         GetFileAction getFileAction = new GetFileAction(getFileClient, collectionId, arcfilename, toFile);
         getFileAction.performAction();
 
-
-     /*   ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
-        ArgumentNotValid.checkNotNull(replica, "replica");
-        ArgumentNotValid.checkNotNull(toFile, "toFile");
-
-        log.debug("Requesting get of file '{}' from '{}'", arcfilename, replica);
-        GetFileMessage gfMsg = new GetFileMessage(Channels.getTheRepos(), replyQ, arcfilename, replica.getId());
-        GetFileMessage getFileMessage = (GetFileMessage) sendAndWaitForOneReply(gfMsg, 0);
-        if (getFileMessage == null) {
-            throw new IOFailure("GetFileMessage timed out before returning." + "File not found?");
-        } else if (!getFileMessage.isOk()) {
-            throw new IOFailure("GetFileMessage failed: " + getFileMessage.getErrMsg());
-        } else {
-            getFileMessage.getData(toFile);
+        if (!getFileAction.isSucceeded()) {
+            String message = "Could not retrieve file " + arcfilename + ". Last status from bitrepository is " + getFileAction
+                    .getInfo();
+            log.warn(message);
+            throw new IOFailure(message);
         }
-        */
     }
 
 
