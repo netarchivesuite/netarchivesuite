@@ -15,12 +15,18 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
+import org.apache.hadoop.hdfs.HdfsConfiguration;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapreduce.MRConfig;
+import org.apache.hadoop.security.UserGroupInformation;
+import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
+import sun.security.krb5.KrbException;
 
 /** Utilities for Hadoop jobs. */
 public class HadoopJobUtils {
@@ -35,19 +41,44 @@ public class HadoopJobUtils {
     }
 
     /**
-     * Initialize a configuration from settings and return it. By default uses the wayback-uber-jar when spawning
-     * map-/reduce jobs.
+     * Obtain a logged in UserGroupInformation for running hadoop jobs from the kerberos parameters
+     * defined in CommonSettings.
+     * @return The UserGroupInformation instance
+     * @throws KrbException if the kerberos configuration is invalid
+     * @throws IOException if the kerberos login fails
+     */
+    public static UserGroupInformation getUserGroupInformation() throws KrbException, IOException {
+        String principal = Settings.get(CommonSettings.HADOOP_KERBEROS_PRINCIPAL);
+        String keytab = Settings.get(CommonSettings.HADOOP_KERBEROS_KEYTAB);
+        String krb5_conf = Settings.get(CommonSettings.HADOOP_KERBEROS_CONF);
+        System.setProperty("java.security.krb5.conf", krb5_conf);
+        sun.security.krb5.Config.refresh();
+        return UserGroupInformation.loginUserFromKeytabAndReturnUGI(principal, keytab);
+    }
+
+    /**
+     * Login to Kerberos from the settings specified in CommonSettings.
+     * @throws KrbException if the kerberos configuration is invalid
+     * @throws IOException if the kerberos login fails
+     */
+    public static void doKerberosLogin() throws KrbException, IOException {
+        String principal = Settings.get(CommonSettings.HADOOP_KERBEROS_PRINCIPAL);
+        String keytab = Settings.get(CommonSettings.HADOOP_KERBEROS_KEYTAB);
+        String krb5_conf = Settings.get(CommonSettings.HADOOP_KERBEROS_CONF);
+        System.setProperty("java.security.krb5.conf", krb5_conf);
+        sun.security.krb5.Config.refresh();
+        UserGroupInformation.loginUserFromKeytab(principal, keytab);
+    }
+
+
+    /**
+     * Initialize a hadoop configuration. The basic configuration must be in a directory on the classpath. This class
+     * additionally sets the path to the uber jar specified in CommonSettings#HADOOP_MAPRED_UBER_JAR
      * @return A new configuration to use for a job.
      */
-    public static Configuration getConfFromSettings() {
-        Configuration conf = new Configuration();
-        conf.set(DEFAULT_FILESYSTEM, Settings.get(CommonSettings.HADOOP_DEFAULT_FS));
-        conf.set(MAPREDUCE_FRAMEWORK, Settings.get(CommonSettings.HADOOP_MAPRED_FRAMEWORK));
-        conf.set(YARN_RESOURCEMANAGER_ADDRESS, Settings.get(CommonSettings.HADOOP_RESOURCEMANAGER_ADDRESS));
-        conf.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
-        conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
-        conf.set("dfs.client.use.datanode.hostname", "true");
-
+    public static Configuration getConf() {
+        Configuration conf = new JobConf(new YarnConfiguration(new HdfsConfiguration()));
+        conf.set("mapreduce.job.am-access-disabled","true");
         final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_UBER_JAR);
         if (jarPath == null || !(new File(jarPath)).exists()) {
             log.warn("Specified jar file {} does not exist.", jarPath);

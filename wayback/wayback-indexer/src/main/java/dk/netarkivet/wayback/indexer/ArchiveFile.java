@@ -64,6 +64,7 @@ import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
 import dk.netarkivet.wayback.hadoop.CDXMapper;
 import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
+import sun.security.krb5.KrbException;
 
 /**
  * This class represents a file in the arcrepository which may be indexed by the indexer.
@@ -217,8 +218,13 @@ public class ArchiveFile {
             return;
         }
 
-        System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
-        Configuration conf = HadoopJobUtils.getConfFromSettings();
+        Configuration conf = HadoopJobUtils.getConf();
+        try {
+            HadoopJobUtils.doKerberosLogin();
+        } catch (KrbException | IOException e) {
+            log.error("Failed authentication with Kerberos");
+            throw new RuntimeException("PANIC");
+        }
         UUID uuid = UUID.randomUUID();
         log.info("File {} indexed with job uuid for i/o {}.", this.filename, uuid);
         try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
@@ -297,7 +303,7 @@ public class ArchiveFile {
         // is just made unique from the archivefile's name
         Path hadoopInputNameFile = new Path(
                 filename.substring(0, filename.lastIndexOf('.')) + "_map_input.txt");
-        Configuration conf = HadoopJobUtils.getConfFromSettings();
+        Configuration conf = HadoopJobUtils.getConf();
         Bitrepository bitrep = BitmagUtils.initBitrep();
 
         // Get file and put it in hdfs
@@ -305,9 +311,7 @@ public class ArchiveFile {
         File inputFile = bitrep.getFile(filename, "netarkivet", null, Settings.get(
                 dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_USEPILLAR));
         Path inputFilePath = new Path(inputFile.getAbsolutePath());
-        FileSystem fs = null;
-        try {
-            fs = FileSystem.get(conf);
+        try (FileSystem fs = FileSystem.newInstance(conf);){
             try {
                 log.info("Copying '{}' to hdfs", inputFilePath.toString());
                 fs.copyFromLocalFile(false, inputFilePath, new Path(hadoopInputDir)); // TODO Need hadoopInputDir to exist prior to this!
@@ -352,14 +356,6 @@ public class ArchiveFile {
             }
         } catch (Exception e) {
             log.warn("Couldn't get FileSystem from configuration", e);
-        } finally {
-            try {
-                if (fs != null) {
-                    fs.close();
-                }
-            } catch (IOException e) {
-                log.warn("Problem closing FileSystem: ", e);
-            }
         }
     }
 

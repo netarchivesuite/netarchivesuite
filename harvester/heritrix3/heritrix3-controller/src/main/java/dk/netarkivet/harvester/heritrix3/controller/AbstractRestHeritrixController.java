@@ -154,6 +154,7 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             h3handler = new LaunchResultHandler(outputPrinter, errorPrinter);
             h3launcher.start(h3handler);
             Runtime.getRuntime().addShutdownHook(new HeritrixKiller());
+            //            TODO HERE WE SHOULD DRAIN THE UMBRA QUEUE AFTER SHUTDOWN HOOK
             log.info("Heritrix3 engine launched successfully");
         } catch( Throwable e) {
             String errMsg = "Unexpected error while launching H3: ";
