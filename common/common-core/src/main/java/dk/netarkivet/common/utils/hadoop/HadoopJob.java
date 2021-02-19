@@ -86,7 +86,7 @@ public class HadoopJob {
         } catch (IOException e) {
             log.error("Failed writing filepaths to '{}' for {} job '{}'",
                     localInputTempFile, jobType, jobID);
-            throw new IOFailure("Failed preparing job: failed to write job input to input file");
+            throw new IOFailure("Failed preparing job: failed to write job input to input file", e);
         }
         log.info("Copying file with input paths '{}' to job input path '{}' for {} job '{}'.",
                 localInputTempFile, jobInputFile, jobType, jobID);
@@ -94,9 +94,9 @@ public class HadoopJob {
             fileSystem.copyFromLocalFile(true, new Path(localInputTempFile.toAbsolutePath().toString()),
                     jobInputFile);
         } catch (IOException e) {
-            log.error("Failed copying local input '{}' to job input path '{}' for job '{}'",
-                    localInputTempFile, jobInputFile, jobID);
-            throw new IOFailure("Failed preparing job: failed copying input to job input path");
+            log.error("Failed copying local input '{}' to job input path '{}' on filesystem '{}' for job '{}'",
+                    localInputTempFile, jobInputFile, fileSystem, jobID);
+            throw new IOFailure("Failed preparing job: failed copying input to job input path", e);
         }
     }
 
