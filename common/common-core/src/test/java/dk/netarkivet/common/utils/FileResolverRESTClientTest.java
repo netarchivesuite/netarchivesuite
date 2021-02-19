@@ -2,10 +2,7 @@ package dk.netarkivet.common.utils;
 
 import static org.junit.Assert.*;
 
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -14,6 +11,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.utils.service.FileResolver;
+import dk.netarkivet.common.utils.service.FileResolverRESTClient;
 
 /**
  * Test suite assumes the existence of a FileResolver with the following files
@@ -33,16 +32,26 @@ public class FileResolverRESTClientTest {
 
     @Before
     public void testFactoryMethod() {
-        Settings.set(CommonSettings.FILE_RESOLVER_CLASS, "dk.netarkivet.common.utils.FileResolverRESTClient");
-        Settings.set(CommonSettings.FILE_RESOLVER_BASE_URL, "http://localhost:8884/cgi-bin2/fileresolver.cgi/");
+        Settings.set(CommonSettings.TRUSTSTORE_PATH, "/etc/ssl/certs/java/cacerts");
+        Settings.set(CommonSettings.TRUSTSTORE_PASSWORD, "changeit");
+        Settings.set(CommonSettings.FILE_RESOLVER_CLASS, "dk.netarkivet.common.utils.service.FileResolverRESTClient");
+        Settings.set(CommonSettings.FILE_RESOLVER_BASE_URL, "https://kb-test-netarkivet-bitmag-acs-01.kb.dk/cgi-bin/fileresolver.cgi/");
+        //Settings.set(CommonSettings.FILE_RESOLVER_BASE_URL, "https://localhost:10444/cgi-bin/fileresolver.cgi");
+        Settings.set(CommonSettings.FILE_RESOLVER_KEYFILE, "/home/rbkr/Desktop/https_key.pem");
         fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
         assertTrue(fileResolver instanceof FileResolverRESTClient);
     }
 
     @Test
+    public void testFileresolver() {
+        List<Path> paths = fileResolver.getPaths(Pattern.compile(".*warc.gz"));
+        paths.forEach(System.out::println);
+    }
+
+    @Test
     public void testFailOnBadUrl() {
-        Settings.set(CommonSettings.FILE_RESOLVER_CLASS, "dk.netarkivet.common.utils.FileResolverRESTClient");
-        Settings.set(CommonSettings.FILE_RESOLVER_BASE_URL, "localhost:8884/cgi-bin2/fileresolver.cgi/");
+        Settings.set(CommonSettings.FILE_RESOLVER_CLASS, "dk.netarkivet.common.utils.service.FileResolverRESTClient");
+        Settings.set(CommonSettings.FILE_RESOLVER_BASE_URL, "localhost:10444/cgi-bin/fileresolver.cgi");
         try {
             SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
             fail("Should have thrown exception before getting here.");
