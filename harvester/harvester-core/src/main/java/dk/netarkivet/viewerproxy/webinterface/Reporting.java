@@ -26,6 +26,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -177,7 +179,7 @@ public class Reporting {
     private static List<CDXRecord> getRecordsUsingHadoop(long jobid) {
         Configuration hadoopConf = HadoopJobUtils.getConf();
         String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobid);
-        try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
+        try (FileSystem fileSystem = FileSystem.newInstance(new URI("hdfs://foobar"), hadoopConf)) {
             HadoopJobStrategy jobStrategy = new MetadataCDXExtractionStrategy(jobid, fileSystem);
             HadoopJob job = new HadoopJob(jobid, jobStrategy);
             job.processOnlyFilesMatching(metadataFileSearchPattern);
@@ -192,7 +194,7 @@ public class Reporting {
                 throw new IOFailure("Failed getting " + job.getJobType() + " job results");
             }
             return HadoopJobUtils.getCDXRecordListFromCDXLines(cdxLines);
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             log.error("Error instantiating Hadoop filesystem for job {}.", jobid, e);
             throw new IOFailure("Failed instantiating Hadoop filesystem.");
         }
