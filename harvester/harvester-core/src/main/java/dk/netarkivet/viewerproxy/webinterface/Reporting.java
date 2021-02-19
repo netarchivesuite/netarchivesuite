@@ -179,7 +179,8 @@ public class Reporting {
     private static List<CDXRecord> getRecordsUsingHadoop(long jobid) {
         Configuration hadoopConf = HadoopJobUtils.getConf();
         String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobid);
-        try (FileSystem fileSystem = FileSystem.newInstance(new URI("hdfs:///user/nat-csr"), hadoopConf)) {
+        //try (FileSystem fileSystem = FileSystem.newInstance(new URI("hdfs:///user/nat-csr"), hadoopConf)) {
+        try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
             HadoopJobStrategy jobStrategy = new MetadataCDXExtractionStrategy(jobid, fileSystem);
             HadoopJob job = new HadoopJob(jobid, jobStrategy);
             job.processOnlyFilesMatching(metadataFileSearchPattern);
@@ -194,7 +195,7 @@ public class Reporting {
                 throw new IOFailure("Failed getting " + job.getJobType() + " job results");
             }
             return HadoopJobUtils.getCDXRecordListFromCDXLines(cdxLines);
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             log.error("Error instantiating Hadoop filesystem for job {}.", jobid, e);
             throw new IOFailure("Failed instantiating Hadoop filesystem.");
         }
