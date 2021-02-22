@@ -34,8 +34,11 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.common.utils.hadoop.GetMetadataMapper;
+import dk.netarkivet.common.utils.hadoop.HadoopJob;
+import dk.netarkivet.common.utils.hadoop.HadoopJobStrategy;
 import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
+import dk.netarkivet.common.utils.hadoop.MetadataExtractionStrategy;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.harvester.indexserver.TestInfo;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
@@ -51,7 +54,7 @@ public class GetMetadataMapperTester {
     private DistributedFileSystem fileSystem;
 
 
-    @Before
+    //@Before
     public void setUp() throws IOException {
         setupTestFiles();
         baseDir = Files.createTempDirectory("test_hdfs").toFile().getAbsoluteFile();
@@ -72,7 +75,7 @@ public class GetMetadataMapperTester {
         // System.out.println("YARN started");
     }
 
-    @After
+    //@After
     public void tearDown() throws IOException {
         miniYarnCluster.stop();
         hdfsCluster.shutdown();
@@ -140,25 +143,39 @@ public class GetMetadataMapperTester {
         }
     }
 
-    /*@Test
+    @Test
     public void testKerberizedMetadataJob() throws KrbException, IOException {
         Settings.set(CommonSettings.HADOOP_KERBEROS_PRINCIPAL, "nat-rbkr@KBHPC.KB.DK");
         Settings.set(CommonSettings.HADOOP_KERBEROS_KEYTAB, "/home/rbkr/nat-rbkr.keytab");
         Settings.set(CommonSettings.HADOOP_KERBEROS_CONF, "/etc/krb5.conf");
 
+        File[] files = getTestFiles();
+        java.nio.file.Path localInputFile = Files.createTempFile("", UUID.randomUUID().toString());
+        Files.write(localInputFile, Arrays.asList("file://" + files[0].getAbsolutePath(), "file://" + files[1].getAbsolutePath()));
+        localInputFile.toFile().deleteOnExit();
 
         HadoopJobUtils.doKerberosLogin();
         Configuration conf = new JobConf(new YarnConfiguration(new HdfsConfiguration()));
         conf.set("mapreduce.job.am-access-disabled","true");
-        conf.set("hadoop.security.authentication", "kerberos");
+        //conf.set("hadoop.security.authentication", "kerberos");
         //conf.set("fs.defaultFS", "hdfs://narchive-t-hdfs01.kb.dk");
-        conf.set("hadoop.security.authorization", "true");
+        //conf.set("hadoop.security.authorization", "true");
+
+        try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
+            long id = 0L;
+            HadoopJobStrategy jobStrategy = new MetadataExtractionStrategy(id, fileSystem);
+            HadoopJob job = new HadoopJob(id, jobStrategy);
+            UUID uuid = UUID.randomUUID();
+            Path jobInputFile = jobStrategy.createJobInputFile(uuid);
+            job.setJobInputFile(jobInputFile);
+            // TODO Finish me! Look at MetadataIndexingApplication and your own stuff
+        }
 
         try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
             FileStatus[] fileStatuses = fileSystem.listStatus(new Path("/user/nat-rbkr"));
             Arrays.stream(fileStatuses).forEach(System.out::println);
         }
-    }*/
+    }
 
     /**
      * Prepare the input files for test by moving them to a temporary 'working' directory.

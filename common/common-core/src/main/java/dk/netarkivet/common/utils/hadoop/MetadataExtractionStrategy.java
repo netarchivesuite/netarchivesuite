@@ -43,7 +43,8 @@ public class MetadataExtractionStrategy implements HadoopJobStrategy {
         mimePattern = hadoopConf.getPattern(GetMetadataMapper.MIME_PATTERN, Pattern.compile(".*"));
     }
 
-    @Override public int runJob(Path jobInputFile, Path jobOutputDir) {
+    @Override
+    public int runJob(Path jobInputFile, Path jobOutputDir) {
         int exitCode;
         try {
             log.info("URL/MIME patterns used for metadata extraction job {} are '{}' and '{}'",
@@ -57,21 +58,24 @@ public class MetadataExtractionStrategy implements HadoopJobStrategy {
         return exitCode;
     }
 
-    @Override public Path createJobInputFile(UUID uuid) {
+    @Override
+    public Path createJobInputFile(UUID uuid) {
         Path jobInputFile = HadoopFileUtils.createUniquePathInDir(
                 fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATA_EXTRACTIONJOB_INPUT_DIR), uuid);
         log.info("Input file for metadata extraction job '{}' will be '{}'", jobID, jobInputFile);
         return jobInputFile;
     }
 
-    @Override public Path createJobOutputDir(UUID uuid) {
+    @Override
+    public Path createJobOutputDir(UUID uuid) {
         Path jobOutputDir = HadoopFileUtils.createUniquePathInDir(
                 fileSystem, Settings.get(CommonSettings.HADOOP_MAPRED_METADATA_EXTRACTIONJOB_OUTPUT_DIR), uuid);
         log.info("Output directory for metadata extraction job '{}' is '{}'", jobID, jobOutputDir);
         return jobOutputDir;
     }
 
-    @Override public String getJobType() {
+    @Override
+    public String getJobType() {
         return "METADATA EXTRACTION";
     }
 }
