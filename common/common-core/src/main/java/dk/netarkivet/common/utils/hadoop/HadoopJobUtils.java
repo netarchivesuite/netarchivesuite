@@ -79,6 +79,17 @@ public class HadoopJobUtils {
     public static Configuration getConf() {
         Configuration conf = new JobConf(new YarnConfiguration(new HdfsConfiguration()));
         conf.set("mapreduce.job.am-access-disabled","true");
+        String truststorePath = Settings.get(CommonSettings.HADOOP_KERBEROS_TRUSTSTORE_PATH);
+        if (truststorePath != null && !"".equals(truststorePath)) {
+            File trustStoreFile = new File(truststorePath);
+            if (!trustStoreFile.exists()) {
+                throw new RuntimeException("No such truststore file: " + trustStoreFile.getAbsolutePath());
+            }
+            if (!trustStoreFile.isFile()) {
+                throw new RuntimeException("Not a file: " + trustStoreFile.getAbsolutePath());
+            }
+            conf.set("ssl.client.truststore.location", truststorePath);
+        }
         final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_UBER_JAR);
         if (jarPath == null || !(new File(jarPath)).exists()) {
             log.warn("Specified jar file {} does not exist.", jarPath);

@@ -30,6 +30,7 @@ import javax.servlet.ServletException;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.hadoop.mapred.JobPriority;
 import org.apache.tomcat.util.scan.Constants;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
 
@@ -131,7 +132,7 @@ public class GUIWebServer implements CleanupIF {
         }
 
         if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
-            HadoopJobUtils.getConf();
+            HadoopJobUtils.getConf().set("mapred.job.priority", JobPriority.VERY_HIGH.toString());
             try {
                 HadoopJobUtils.doKerberosLogin();
             } catch (Exception e) {
