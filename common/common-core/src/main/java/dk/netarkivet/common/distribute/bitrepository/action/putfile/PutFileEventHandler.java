@@ -31,10 +31,10 @@ public class PutFileEventHandler implements EventHandler {
     private final URL uploadURL;
     private final List<ContributorEvent> componentCompleteEvents = new ArrayList<>();
     private final List<ContributorFailedEvent> componentFailedEvents = new ArrayList<>();
-
     private final Object finishLock = new Object();
     private boolean finished = false;
     private boolean failed = false;
+    private static OperationEvent.OperationEventType finalEvent;
 
     /**
      * Constructor

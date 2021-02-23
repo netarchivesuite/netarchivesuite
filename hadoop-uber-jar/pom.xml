@@ -52,6 +52,26 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>org.netarchivesuite</groupId>
+      <artifactId>harvester-core</artifactId>
+      <version>5.7-IIPCH3-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava-parent</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
   </dependencies>
 
   <build>

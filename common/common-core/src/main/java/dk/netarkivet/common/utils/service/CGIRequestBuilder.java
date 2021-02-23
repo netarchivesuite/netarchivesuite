@@ -6,6 +6,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 import dk.netarkivet.common.utils.Settings;
 
@@ -30,10 +31,14 @@ public class CGIRequestBuilder {
      * Initializes the request builder and sets the default configurations that every request will have.
      */
     private void setUpDefaultRequestBuilder() {
+        String collectionId = Settings.get(BitmagUtils.BITREPOSITORY_COLLECTIONID);
+        if (collectionId == null || "".equals(collectionId)) {
+            collectionId = Settings.get(CommonSettings.ENVIRONMENT_NAME);
+        }
         requestBuilder = RequestBuilder.get()
                 .setUri(uri)
                 .addHeader("User-Agent", USER_AGENT)
-                .addParameter("collectionId", Settings.get(BitmagUtils.BITREPOSITORY_COLLECTIONID));
+                .addParameter("collectionId", collectionId);
     }
 
     /**

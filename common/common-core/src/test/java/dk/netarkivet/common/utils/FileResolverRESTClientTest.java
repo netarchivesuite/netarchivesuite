@@ -32,7 +32,7 @@ public class FileResolverRESTClientTest {
 
     @Before
     public void testFactoryMethod() {
-        Settings.set(CommonSettings.TRUSTSTORE_PATH, "/etc/ssl/certs/java/cacerts");
+        Settings.set(CommonSettings.ACCESS_TRUSTSTORE_PATH, "/etc/ssl/certs/java/cacerts");
         Settings.set(CommonSettings.TRUSTSTORE_PASSWORD, "changeit");
         Settings.set(CommonSettings.FILE_RESOLVER_CLASS, "dk.netarkivet.common.utils.service.FileResolverRESTClient");
         Settings.set(CommonSettings.FILE_RESOLVER_BASE_URL, "https://kb-test-netarkivet-bitmag-acs-01.kb.dk/cgi-bin/fileresolver.cgi/");

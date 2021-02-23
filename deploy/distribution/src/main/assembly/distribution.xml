@@ -49,11 +49,17 @@
     </fileSets>
 
     <dependencySets>
+
+        <!--Adds artefacts to lib without version-number -->
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
                 <include>org.netarchivesuite:*:jar</include>
             </includes>
+            <excludes>
+                <exclude>org.netarchivesuite:hadoop-uber-jar:*</exclude>
+                <exclude>org.netarchivesuite:hadoop-uber-jar-invoker:*</exclude>
+            </excludes>
             <outputFileNameMapping>netarchivesuite-${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
             <outputDirectory>/lib/</outputDirectory>
         </dependencySet>
@@ -75,11 +81,26 @@
             <outputDirectory>/lib/db/</outputDirectory>
         </dependencySet>
 
+        <!--Adds shaded uber-jar to separate uberlib directory  -->
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>org.netarchivesuite:hadoop-uber-jar:*</include>
+            </includes>
+            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <outputDirectory>/uberlib/</outputDirectory>
+        </dependencySet>
+
+        <!--Adds artefacts _with_ build version to lib directory (but excluding uber-jar) -->
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
                 <include>*:jar</include>
             </includes>
+            <excludes>
+                <exclude>org.netarchivesuite:hadoop-uber-jar:*</exclude>
+                <exclude>org.netarchivesuite:hadoop-uber-jar-invoker:*</exclude>
+            </excludes>
             <!--
             It is insanely annoying that we currently have duplicate versions of all our jarfiles in the
             main distro zip. The reason is that the MANIFEST.MF files in the individual jars refer to the original
