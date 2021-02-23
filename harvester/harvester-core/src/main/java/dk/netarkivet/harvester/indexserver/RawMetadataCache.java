@@ -57,7 +57,6 @@ import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.hadoop.MetadataExtractionStrategy;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
-import sun.security.krb5.KrbException;
 
 /**
  * This is an implementation of the RawDataCache specialized for data out of metadata files. It uses regular expressions

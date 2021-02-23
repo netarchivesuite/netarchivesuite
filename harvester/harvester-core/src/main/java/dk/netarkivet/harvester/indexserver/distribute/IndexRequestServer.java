@@ -128,14 +128,6 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
         handlers = new EnumMap<RequestType, FileBasedCache<Set<Long>>>(RequestType.class);
         conn = JMSConnectionFactory.getInstance();
         checkIflisteningTimer = new Timer();
-        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
-            try {
-                HadoopJobUtils.doKerberosLogin();
-            } catch (KrbException | IOException e) {
-                log.error("Failed authentication with Kerberos");
-                throw new RuntimeException("Could not authenticate with Kerberos.");
-            }
-        }
     }
 
     /**
