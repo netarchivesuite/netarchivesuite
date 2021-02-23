@@ -67,9 +67,8 @@ public class GetFileAction implements ClientAction {
 
             eventHandler.waitForFinish();
 
-            boolean actionIsSuccess = !eventHandler.hasFailed();
-            if (actionIsSuccess) {
-                succeeded = true;
+            succeeded = !eventHandler.hasFailed();
+            if (succeeded) {
                 log.info("Retrieving {} from {}.", fileID, url.toExternalForm());
                 fileExchange.getFile(targetFile, url.toExternalForm());
                 try {
@@ -79,7 +78,6 @@ public class GetFileAction implements ClientAction {
                     log.error("Failed cleaning up after file '{}' because of {}.", fileID, e.getMessage());
                 }
             } else {
-                succeeded = false;
                 info = eventHandler.getInfo();
                 log.error("Failed to get file '{}'", fileID);
             }
