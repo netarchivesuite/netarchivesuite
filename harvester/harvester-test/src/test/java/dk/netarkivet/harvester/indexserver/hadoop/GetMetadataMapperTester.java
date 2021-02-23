@@ -149,10 +149,10 @@ public class GetMetadataMapperTester {
         Settings.set(CommonSettings.HADOOP_KERBEROS_KEYTAB, "/home/rbkr/nat-rbkr.keytab");
         Settings.set(CommonSettings.HADOOP_KERBEROS_CONF, "/etc/krb5.conf");
 
-        File[] files = getTestFiles();
+        /*File[] files = getTestFiles();
         java.nio.file.Path localInputFile = Files.createTempFile("", UUID.randomUUID().toString());
         Files.write(localInputFile, Arrays.asList("file://" + files[0].getAbsolutePath(), "file://" + files[1].getAbsolutePath()));
-        localInputFile.toFile().deleteOnExit();
+        localInputFile.toFile().deleteOnExit();*/
 
         HadoopJobUtils.doKerberosLogin();
         Configuration conf = new JobConf(new YarnConfiguration(new HdfsConfiguration()));
@@ -161,7 +161,7 @@ public class GetMetadataMapperTester {
         //conf.set("fs.defaultFS", "hdfs://narchive-t-hdfs01.kb.dk");
         //conf.set("hadoop.security.authorization", "true");
 
-        try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
+        /*try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
             long id = 0L;
             HadoopJobStrategy jobStrategy = new MetadataExtractionStrategy(id, fileSystem);
             HadoopJob job = new HadoopJob(id, jobStrategy);
@@ -169,7 +169,7 @@ public class GetMetadataMapperTester {
             Path jobInputFile = jobStrategy.createJobInputFile(uuid);
             job.setJobInputFile(jobInputFile);
             // TODO Finish me! Look at MetadataIndexingApplication and your own stuff
-        }
+        }*/
 
         try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
             FileStatus[] fileStatuses = fileSystem.listStatus(new Path("/user/nat-rbkr"));
