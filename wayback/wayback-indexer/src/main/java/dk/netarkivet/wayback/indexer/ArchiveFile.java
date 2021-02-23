@@ -219,12 +219,6 @@ public class ArchiveFile {
         }
 
         Configuration conf = HadoopJobUtils.getConf();
-        try {
-            HadoopJobUtils.doKerberosLogin();
-        } catch (KrbException | IOException e) {
-            log.error("Failed authentication with Kerberos");
-            throw new RuntimeException("PANIC");
-        }
         UUID uuid = UUID.randomUUID();
         log.info("File {} indexed with job uuid for i/o {}.", this.filename, uuid);
         try (FileSystem fileSystem = FileSystem.newInstance(conf)) {

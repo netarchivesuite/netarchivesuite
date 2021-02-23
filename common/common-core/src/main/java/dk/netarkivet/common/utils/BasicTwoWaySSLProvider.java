@@ -55,7 +55,7 @@ public class BasicTwoWaySSLProvider {
      * - Loads private key and certificate
      * - Sets up SSLContext
      *
-     * @param privateKeyFile The path to the private key file to use for authentication.
+     * @param privateKeyFile The path to the private key file to use for authentication. Expects file in PEM format.
      */
     public BasicTwoWaySSLProvider(String privateKeyFile) {
         Security.addProvider(new BouncyCastleProvider());

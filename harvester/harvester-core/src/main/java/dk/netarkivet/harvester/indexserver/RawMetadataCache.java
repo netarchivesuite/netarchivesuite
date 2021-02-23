@@ -160,14 +160,9 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
         final String metadataFilePatternSuffix = Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
         final String specifiedPattern = "(.*-)?" + id + "(-.*)?" + metadataFilePatternSuffix;
         Configuration conf = HadoopJobUtils.getConf();
-        try {
-            HadoopJobUtils.doKerberosLogin();
-        } catch (KrbException | IOException e) {
-            log.error("Failed authentication with Kerberos");
-            throw new RuntimeException("PANIC");
-        }
         conf.setPattern(GetMetadataMapper.URL_PATTERN, urlPattern);
         conf.setPattern(GetMetadataMapper.MIME_PATTERN, mimePattern);
+
         try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
             HadoopJobStrategy jobStrategy = new MetadataExtractionStrategy(id, fileSystem);
             HadoopJob job = new HadoopJob(id, jobStrategy);

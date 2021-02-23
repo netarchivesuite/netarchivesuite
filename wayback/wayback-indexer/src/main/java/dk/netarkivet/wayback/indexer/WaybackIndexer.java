@@ -43,7 +43,9 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.wayback.WaybackSettings;
+import sun.security.krb5.KrbException;
 
 /**
  * The WaybackIndexer starts threads to find new files to be indexed and indexes them.
@@ -87,6 +89,12 @@ public class WaybackIndexer implements CleanupIF {
 
         if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
             BitmagUtils.initialize();
+            try {
+                HadoopJobUtils.doKerberosLogin();
+            } catch (KrbException | IOException e) {
+                log.error("Failed authentication with Kerberos");
+                throw new RuntimeException("Could not authenticate with Kerberos.");
+            }
         }
         ingestInitialFiles();
         startProducerThread();

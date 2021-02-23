@@ -43,6 +43,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -59,11 +60,13 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.distribute.HarvesterMessageHandler;
 import dk.netarkivet.harvester.distribute.IndexReadyMessage;
 import dk.netarkivet.harvester.indexserver.FileBasedCache;
 import dk.netarkivet.harvester.indexserver.IndexRequestServerInterface;
+import sun.security.krb5.KrbException;
 
 /**
  * Index request server singleton.
@@ -125,6 +128,14 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
         handlers = new EnumMap<RequestType, FileBasedCache<Set<Long>>>(RequestType.class);
         conn = JMSConnectionFactory.getInstance();
         checkIflisteningTimer = new Timer();
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
+            try {
+                HadoopJobUtils.doKerberosLogin();
+            } catch (KrbException | IOException e) {
+                log.error("Failed authentication with Kerberos");
+                throw new RuntimeException("Could not authenticate with Kerberos.");
+            }
+        }
     }
 
     /**
