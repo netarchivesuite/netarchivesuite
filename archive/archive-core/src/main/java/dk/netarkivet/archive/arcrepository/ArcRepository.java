@@ -119,8 +119,8 @@ public class ArcRepository implements CleanupIF {
     protected ArcRepository() throws IOFailure, IllegalState {
         // UpdateableAdminData Throws IOFailure
         this.ad = AdminFactory.getInstance();
-        //this.arcReposhandler = new ArcRepositoryServer(this);
-        this.arcReposhandler = new NonFunctionalArcRepositoryServer(this);
+        this.arcReposhandler = (CleanupIF) new ArcRepositoryServer(this);
+        // this.arcReposhandler = new NonFunctionalArcRepositoryServer(this);
         initialiseReplicaClients();
 
         log.info("Starting the ArcRepository");
