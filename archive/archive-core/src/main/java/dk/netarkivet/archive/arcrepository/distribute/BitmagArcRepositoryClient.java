@@ -22,9 +22,19 @@
  */
 package dk.netarkivet.archive.arcrepository.distribute;
 
-import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
-import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
-import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.jms.JMSException;
+
+import org.apache.commons.io.FileUtils;
+import org.bitrepository.access.getfile.GetFileClient;
+import org.bitrepository.modify.putfile.PutFileClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -36,7 +46,6 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
-
 import dk.netarkivet.common.distribute.bitrepository.action.getfile.GetFileAction;
 import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -47,25 +56,6 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.service.WarcRecordClient;
-
-import org.apache.commons.io.FileUtils;
-import org.bitrepository.access.getfile.GetFileClient;
-import org.bitrepository.client.eventhandler.OperationEvent;
-import org.bitrepository.modify.putfile.PutFileClient;
-
-import org.bitrepository.protocol.FileExchange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Map;
-import java.net.URI;
-import java.net.URL;
-
-import javax.jms.JMSException;
 
 /**
  * Client side usage of an arc repository. All non-writing requests are forwarded to the ArcRepositoryServer over the network.
@@ -170,15 +160,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      *
      */
     private BitmagArcRepositoryClient() {
-    /*
-        synchronized (BitmagArcRepositoryClient.class){
-            if (instance != null){
-                throw new RuntimeException("Attempting to start an additional "+ BitmagArcRepositoryClient.class+" instance");
-            } else {
-                instance = this;
-            }
-        }
-    */
         timeoutGetOpsMillis = Settings.getLong(ARCREPOSITORY_GET_TIMEOUT);
         log.info("BitmagArcRepositoryClient will timeout on each get request after {} milliseconds.",
                 timeoutGetOpsMillis);
@@ -191,7 +172,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
         log.info("Getting bitmag config from " + BITREPOSITORY_SETTINGS_DIR + "=" + configDir.getAbsolutePath());
 
         this.collectionId = BitmagUtils.getDefaultCollectionID();
-        log.info("Using default collectionID '{}'", collectionId);
+        log.info("Using '{}' as default collectionID", collectionId);
 
         if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
             log.warn("The given collection Id '{}' does not exist", collectionId);
