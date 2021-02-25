@@ -133,7 +133,7 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
             try {
                 HadoopJobUtils.doKerberosLogin();
             } catch (KrbException | IOException e) {
-                log.error("Fatal error starting IndexRequestServer - could not connect to hadoop. " + e.getMessage());
+                log.error("Fatal error starting IndexRequestServer - could not connect to Hadoop. " + e.getMessage());
                 throw new RuntimeException(e);
             }
         }

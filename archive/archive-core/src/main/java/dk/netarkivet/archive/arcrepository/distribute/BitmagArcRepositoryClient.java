@@ -200,14 +200,11 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
 
         // String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
 
-        String collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
-        if (collectionId == null || collectionId.trim().isEmpty()) {
-            collectionId = Settings.get(CommonSettings.ENVIRONMENT_NAME);
-            log.info("No collectionId set so using default value {}", collectionId);
-        }
-        this.collectionId = collectionId;
+        this.collectionId = BitmagUtils.getDefaultCollectionID();
+        log.info("Using default collectionID '{}'", collectionId);
+
         if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
-            log.warn("The given collection Id {} does not exist", collectionId);
+            log.warn("The given collection Id '{}' does not exist", collectionId);
             throw new RuntimeException("collection Id does not exist");
         }
         this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
@@ -215,7 +212,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
         File tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
         try {
             FileUtils.forceMkdir(tempdir);
-            log.info("Storing tempfiles in folder {}", tempdir);
+            log.info("Storing tempfiles in folder '{}'", tempdir);
         } catch (IOException e) {
             throw new IOFailure("Failed to create tempdir '" + tempdir + "'", e);
         }

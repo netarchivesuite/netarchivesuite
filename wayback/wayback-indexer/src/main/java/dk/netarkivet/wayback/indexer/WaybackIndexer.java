@@ -92,8 +92,8 @@ public class WaybackIndexer implements CleanupIF {
             try {
                 HadoopJobUtils.doKerberosLogin();
             } catch (KrbException | IOException e) {
-                log.error("Failed authentication with Kerberos");
-                throw new RuntimeException("Could not authenticate with Kerberos.");
+                log.error("Fatal error starting WaybackIndexer - could not connect to Hadoop. " + e.getMessage());
+                throw new RuntimeException(e);
             }
         }
         ingestInitialFiles();

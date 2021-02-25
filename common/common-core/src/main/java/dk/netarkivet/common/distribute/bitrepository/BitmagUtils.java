@@ -42,6 +42,7 @@ import org.bitrepository.protocol.security.PermissionStore;
 import org.bitrepository.protocol.security.SecurityManager;
 import org.bitrepository.settings.referencesettings.FileExchangeSettings;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
@@ -206,6 +207,19 @@ public class BitmagUtils {
     public static GetFileClient getFileClient() {
         return AccessComponentFactory.getInstance().createGetFileClient(settings, securityManager, 
                 settings.getComponentID());
+    }
+
+    /**
+     * Retrieves the default collectionID to use from settings.
+     * If the collectionID is not set it defaults to the environment name.
+     * @return The ID of the default collection to execute actions on.
+     */
+    public static String getDefaultCollectionID() {
+        String collectionId = dk.netarkivet.common.utils.Settings.get(BitmagUtils.BITREPOSITORY_COLLECTIONID);
+        if (collectionId == null || collectionId.trim().isEmpty()) {
+            collectionId = dk.netarkivet.common.utils.Settings.get(CommonSettings.ENVIRONMENT_NAME);
+        }
+        return collectionId;
     }
     
     /**

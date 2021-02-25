@@ -107,7 +107,7 @@ public class FileNameHarvester {
                 }
             }
         } else {
-            String collectionID = Settings.get(BITREPOSITORY_COLLECTIONID);
+            String collectionID = BitmagUtils.getDefaultCollectionID();
             log.info("No new files to add in database after harvest of collection '{}'", collectionID);
         }
     }
@@ -118,7 +118,7 @@ public class FileNameHarvester {
      * @return The resulting set of filenames from the get-file-ids action
      */
     private static Set<String> getFilesFromBitmagSince(Date sinceDate) {
-        String collectionID = Settings.get(BITREPOSITORY_COLLECTIONID);
+        String collectionID = BitmagUtils.getDefaultCollectionID();
         String usePillar = Settings.get(BITREPOSITORY_USEPILLAR);
         GetFileIDsClient client = BitmagUtils.getFileIDsClient();
         GetFileIDsAction action = new GetFileIDsAction(client, collectionID, usePillar, sinceDate);
