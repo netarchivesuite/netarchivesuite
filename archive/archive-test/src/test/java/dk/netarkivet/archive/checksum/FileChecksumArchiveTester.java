@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.archive.ArchiveSettings;
@@ -110,7 +111,8 @@ public class FileChecksumArchiveTester {
      *
      * @throws Exception So it is unnecessary to catch IOExceptions, since the test should fail.
      */
-//    @Test
+    @Test
+    @Ignore
     public void testContent() throws Exception {
         RemoteFile arcfile1 = RemoteFileFactory.getInstance(TestInfo.UPLOAD_FILE_1, false, false, false);
         assertFalse("The archive should not already contain TEST1.arc", fca.hasEntry("TEST1.arc"));

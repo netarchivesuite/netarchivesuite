@@ -777,8 +777,8 @@ public class JMSArcRepositoryClientTester {
         assertEquals("Unexpected checksum sent back", "checksum", res);
     }
 
-//    @Test
-//    @Ignore
+    @Test
+    @Ignore
     public void testCorrect() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException,
             IllegalAccessException {
         final File result = new File(WORKING, "correct.file");

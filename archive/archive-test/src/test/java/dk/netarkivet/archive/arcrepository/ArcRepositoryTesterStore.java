@@ -167,7 +167,8 @@ public class ArcRepositoryTesterStore {
      *
      * @throws InterruptedException
      */
- //   @Test
+    @Test
+    @Ignore
     public void testStoreFileAlreadyStored() throws InterruptedException, IOException {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         // Set listeners
@@ -281,7 +282,8 @@ public class ArcRepositoryTesterStore {
      * Tests that if we call store with a new file, a store message is sent to the bitarchives. Also tests that state is
      * now UPLOAD_STARTED for all bitarchives
      */
- //   @Test
+    @Test
+    @Ignore
     public void testStoreNewFile() throws IOException {
         // Set listeners
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -335,7 +337,8 @@ public class ArcRepositoryTesterStore {
      * Tests that if we call store with a file in state FAILED a checksum job is submitted to the bitarchive. Also test
      * that state is changed to UPLOADED
      */
- //   @Test
+    @Test
+    @Ignore
     public void testStoreFailedFile() throws IOException {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -466,7 +469,8 @@ public class ArcRepositoryTesterStore {
      * Tests that if we call store with a file in state STARTED a checksum job is submitted to the bitarchive. Also test
      * that state is still STARTED
      */
- //   @Test
+    @Test
+    @Ignore
     public void testStoreStartedFile() throws IOException {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
@@ -662,7 +666,8 @@ public class ArcRepositoryTesterStore {
      * Tests that a batch reply with correct checksum results in an OK message (all bitarchives are OK) Also test that
      * state is completed
      */
-//    @Test
+    @Test
+    @Ignore
     public void testOnBatchReplyOk() throws IOException, NoSuchFieldException, IllegalAccessException {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
@@ -731,7 +736,8 @@ public class ArcRepositoryTesterStore {
      * Tests that a batch reply with un-correct checksum after an upload results in a not OK message, unless some
      * bitarchive is waiting for replies Also test that state is failed
      */
- //   @Test
+    @Test
+    @Ignore
     public void testOnBatchReplyNotOkOnUpload() throws IOException, NoSuchFieldException, IllegalAccessException {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
@@ -797,6 +803,7 @@ public class ArcRepositoryTesterStore {
      * store the file again Also test that state is upload started
      */
     @Test
+    @Ignore
     public void testOnBatchReplyNotOkOnRetry() throws IOException, NoSuchFieldException, IllegalAccessException {
         JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
