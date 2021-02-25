@@ -778,7 +778,7 @@ public class JMSArcRepositoryClientTester {
     }
 
     @Test
-//    @Ignore
+    @Ignore
     public void testCorrect() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException,
             IllegalAccessException {
         final File result = new File(WORKING, "correct.file");
