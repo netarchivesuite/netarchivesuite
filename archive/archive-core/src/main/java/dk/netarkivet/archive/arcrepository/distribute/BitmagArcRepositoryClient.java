@@ -29,19 +29,16 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-
 import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
-
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 
 import dk.netarkivet.common.distribute.bitrepository.action.getfile.GetFileAction;
 import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -147,10 +144,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
     private static final String BITREPOSITORY_USEPILLAR =
             "settings.common.arcrepositoryClient.bitrepository.usepillar";
 
-    public String getCollectionId() {
-        return collectionId;
-    }
-
     /** The bitrepository collection id for the */
     private String collectionId;
     /** The temporary directory for the bitrepository client.*/
@@ -186,9 +179,8 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
             }
         }
     */
-       timeoutGetOpsMillis = Settings.getLong(ARCREPOSITORY_GET_TIMEOUT);
-        log.info(
-                "BitmagArcRepositoryClient will timeout on each get request after {} milliseconds.",
+        timeoutGetOpsMillis = Settings.getLong(ARCREPOSITORY_GET_TIMEOUT);
+        log.info("BitmagArcRepositoryClient will timeout on each get request after {} milliseconds.",
                 timeoutGetOpsMillis);
 
         replyQ = Channels.getThisReposClient();
@@ -197,8 +189,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
 
         File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
         log.info("Getting bitmag config from " + BITREPOSITORY_SETTINGS_DIR + "=" + configDir.getAbsolutePath());
-
-        // String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
 
         this.collectionId = BitmagUtils.getDefaultCollectionID();
         log.info("Using default collectionID '{}'", collectionId);
@@ -325,21 +315,16 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
 
         final String fileId = file.getName();
 
-        /* upload file
-        log.info("Before uploadFile:" + "");   */
-
         //Attempt to upload the file.
         // If not there, this will work
         // If already there, with same checksum, this will work.
         // If already there, with different checksum, this will fail
-        boolean uploadSuccessful = this.uploadFile(file, fileId, collectionId);
+        boolean uploadSuccessful = this.uploadFile(file, fileId);
         if (!uploadSuccessful) {
             String errMsg =
                     "Upload to collection '" + collectionId + "' of file '" + fileId + "' failed.";
             error(errMsg);
         } else {
-            //TODO check if this check is actually ever nessesary
-            log.info("Upload to collection '{}' of file '{}' reported success, so let's check", collectionId, fileId);
             log.info("Upload to collection '{}' of file '{}' was successful", collectionId, fileId);
         }
     }
@@ -466,64 +451,22 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      * @param fileId The Id of the file to upload
      * @return true if the upload succeeded, false otherwise.
      */
-    public boolean uploadFile(final File file, final String fileId, final String collectionId) {
+    public boolean uploadFile(final File file, final String fileId) {
         ArgumentNotValid.checkExistsNormalFile(file, "File file");
-        // Does collection exists? If not return false
-    /*    if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
-            log.warn("The given collection Id {} does not exist", collectionId);
-            return false;
-        }
-    */
         boolean success = false;
-        try {
-              log.info("Calling putFileClient.");
 
-              PutFileClient putFileClientLocal = BitmagUtils.getPutFileClient();
-              PutFileAction putfileInstance = new PutFileAction(putFileClientLocal, collectionId, file, fileId);
-              putfileInstance.performAction();
+        log.info("Calling putFileClient.");
+        PutFileClient putFileClientLocal = BitmagUtils.getPutFileClient();
+        PutFileAction putfileInstance = new PutFileAction(putFileClientLocal, collectionId, file, fileId);
+        putfileInstance.performAction();
 
-              if (putfileInstance.isActionIsSuccess()) {
-                success = true;
-                log.info("BitmagArcRepositoryClient uploadFile.");
-                log.info("File '{}' uploaded successfully. ",file.getAbsolutePath());
-              } else {
-                 log.warn("Upload of file '{}' failed ", file.getAbsolutePath());
-              }
-        } catch (Exception e) {
-              log.warn("Unexpected error while storing file '{}'", file.getAbsolutePath(), e);
-              success = false;
+        if (putfileInstance.isActionIsSuccess()) {
+            success = true;
+            log.info("BitmagArcRepositoryClient uploadFile.");
+            log.info("File '{}' uploaded successfully. ",file.getAbsolutePath());
+        } else {
+            log.warn("Upload of file '{}' failed ", file.getAbsolutePath());
         }
         return success;
     }
-
-
-    /**
-     * Upload the file to the uploadserver, initiate the PutFile request, and wait for the
-     * request to finish.
-     * @param client the PutFileClient responsible for the put operation.
-     * @param packageFile The package to upload
-     * @return OperationEventType.FAILED if operation failed; otherwise returns OperationEventType.COMPLETE
-     * @throws IOException If unable to upload the packageFile to the uploadserver
-     */
-    private OperationEvent.OperationEventType putTheFile(PutFileClient client, File packageFile, String fileID) {
-
-        PutFileAction ca = null;
-        String putFileMessage = null;
-        String collectionId = getCollectionId();
-
-        try {
-            putFileMessage = "Putting the file '" + packageFile + "' with the file id '"
-                    + fileID + "' from Netarchivesuite";
-            ca = new PutFileAction(client, collectionId, packageFile, fileID);
-            ca.performAction();
-
-        } catch (Exception e) {
-            log.warn("The putFile Operation was not a complete success ({})."
-                    + " Checksum whether we accept anyway.", putFileMessage, e);
-            return OperationEvent.OperationEventType.FAILED;
-        } 
-        log.info("The putFile Operation succeeded ({})", "putFileMessage");
-        return OperationEvent.OperationEventType.COMPLETE;
-    }
-
 }
