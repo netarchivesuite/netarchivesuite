@@ -35,7 +35,7 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>wayback-indexer</artifactId>
-      <version>5.7-IIPCH3-SNAPSHOT</version>
+      <version>6.1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
@@ -55,7 +55,7 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>harvester-core</artifactId>
-      <version>5.7-IIPCH3-SNAPSHOT</version>
+      <version>6.1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
