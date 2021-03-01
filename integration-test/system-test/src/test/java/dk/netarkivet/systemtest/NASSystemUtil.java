@@ -56,7 +56,7 @@ public class NASSystemUtil {
     }
 
     /**
-     * Defines the application setup in the DK test system when using JMSBitmagArcRepositoryClient .
+     * Defines the application setup in the DK test system when using BitmagArcRepositoryClient .
      */
     public static Application[] getBitmagApplications() {
         return new Application[] {

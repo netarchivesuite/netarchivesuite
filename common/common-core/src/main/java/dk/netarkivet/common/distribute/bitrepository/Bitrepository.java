@@ -20,9 +20,10 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package dk.netarkivet.common.distribute.arcrepository.bitrepository;
+package dk.netarkivet.common.distribute.bitrepository;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -52,12 +53,10 @@ import org.bitrepository.client.eventhandler.ContributorFailedEvent;
 import org.bitrepository.client.eventhandler.OperationEvent;
 import org.bitrepository.client.eventhandler.OperationEvent.OperationEventType;
 import org.bitrepository.client.exceptions.NegativeResponseException;
-import org.bitrepository.commandline.clients.PagingGetFileIDsClient;
 import org.bitrepository.commandline.eventhandler.CompleteEventAwaiter;
 import org.bitrepository.commandline.eventhandler.GetFileEventHandler;
 import org.bitrepository.commandline.output.DefaultOutputHandler;
 import org.bitrepository.commandline.output.OutputHandler;
-import org.bitrepository.commandline.outputformatter.GetFileIDsOutputFormatter;
 import org.bitrepository.common.exceptions.OperationFailedException;
 import org.bitrepository.common.settings.Settings;
 import org.bitrepository.common.settings.SettingsProvider;
@@ -86,6 +85,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
+@Deprecated
 /**
  * The class for interacting with the BitRepository, e.g. put files, get files, etc.
  */
@@ -112,35 +112,27 @@ public class Bitrepository implements AutoCloseable {
     /** The message bus used by the putfileClient. */
     private final MessageBus bitMagMessageBus;
 
-    /** The maximum number of failing pillars. Default is 0. */
-    private final int maxNumberOfFailingPillars;
-
-    /** Which pillar to get from. */
-    private final String usepillar;
+    private static volatile Bitrepository instance;
 
     /**
      * Constructor for the BitRepository class.
      * @param configDir A Bitrepository settingsdirectory
-     * @param maxStoreFailures Max number of acceptable store failures
-     * @param usepillar The pillar to use when retrieving files
      * @param bitmagKeyFilename Optional certificate filename relative to configDir
      * @throws ArgumentNotValid if configDir is null
      */
-    public Bitrepository(File configDir, String bitmagKeyFilename, int maxStoreFailures, String usepillar) {
+    private Bitrepository(File configDir, String bitmagKeyFilename) {
         logger.debug("Initialising bitrepository");
         ArgumentNotValid.checkExistsDirectory(configDir, "File configDir");
 
-        maxNumberOfFailingPillars = maxStoreFailures;
-        this.usepillar = usepillar;
         /* The archive settings directory needed to upload to a bitmag style repository */
         logger.info("Reading bitrepository settings from {}", configDir.getAbsolutePath());
 
         /* The authentication key used by the putfileClient. */
         File privateKeyFile;
         if (bitmagKeyFilename == null){
-        	privateKeyFile = new File(configDir, UUID.randomUUID().toString()); // This file should never exist
+            privateKeyFile = new File(configDir, UUID.randomUUID().toString()); // This file should never exist
         } else {
-        	privateKeyFile = new File(configDir, bitmagKeyFilename);
+            privateKeyFile = new File(configDir, bitmagKeyFilename);
         }
         logger.info("keyfile: {}", privateKeyFile.getAbsolutePath());
 
@@ -148,7 +140,7 @@ public class Bitrepository implements AutoCloseable {
 
 
         /* The bitrepository component id. */
-        String componentId = BitrepositoryUtils.generateComponentID();
+        String componentId = BitmagUtils.generateComponentID();
         logger.info("componentId: {}", componentId);
 
         SettingsProvider settingsLoader =
@@ -184,23 +176,38 @@ public class Bitrepository implements AutoCloseable {
         bitMagGetChecksumsClient = acf.createGetChecksumsClient(bitmagSettings, bitMagSecurityManager, componentId);
     }
 
+    public static Bitrepository getInstance(File configDir, String bitmagKeyFilename) {
+        if (instance == null) {
+            //Double-checked locking. See https://www.baeldung.com/java-singleton-double-checked-locking
+            synchronized (Bitrepository.class) {
+                if (instance == null) {
+                    instance = new Bitrepository(configDir, bitmagKeyFilename);
+                }
+            }
+        }
+        return instance;
+    }
+
     /**
      * Attempts to upload a given file.
      *
      * @param file The file to upload. Should exist. The packageId is the name of the file
      * @param collectionId The Id of the collection to upload to
+     * @param maxNumberOfFailingPillars Max number of acceptable store failures
      * @return true if the upload succeeded, false otherwise.
      */
-    public boolean uploadFile(final File file, final String fileId, final String collectionId) {
+    public boolean uploadFile(final File file, final String fileId, final String collectionId,
+            int maxNumberOfFailingPillars) {
         ArgumentNotValid.checkExistsNormalFile(file, "File file");
         // Does collection exists? If not return false
-        if (BitrepositoryUtils.getCollectionPillars(collectionId).isEmpty()) {
+        if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
             logger.warn("The given collection Id {} does not exist", collectionId);
             return false;
         }
         boolean success = false;
         try {
-            OperationEventType finalEvent = putTheFile(bitMagPutClient, file, fileId, collectionId);
+            OperationEventType finalEvent = putTheFile(bitMagPutClient, file, fileId, collectionId,
+                    maxNumberOfFailingPillars); // TODO where to put it?
             if(finalEvent == OperationEventType.COMPLETE) {
                 success = true;
                 logger.info("File '{}' uploaded successfully. ",file.getAbsolutePath());
@@ -220,17 +227,18 @@ public class Bitrepository implements AutoCloseable {
      * @param client the PutFileClient responsible for the put operation.
      * @param packageFile The package to upload
      * @param collectionID The ID of the collection to upload to.
+     * @param maxNumberOfFailingPillars Max number of acceptable store failures
      * @return OperationEventType.FAILED if operation failed; otherwise returns OperationEventType.COMPLETE
      * @throws IOException If unable to upload the packageFile to the uploadserver
      */
-    private OperationEventType putTheFile(PutFileClient client, File packageFile, String fileID, String collectionID)
-            throws IOException, URISyntaxException {
+    private OperationEventType putTheFile(PutFileClient client, File packageFile, String fileID, String collectionID,
+            int maxNumberOfFailingPillars) throws IOException, URISyntaxException {
         FileExchange fileexchange = ProtocolComponentFactory.getInstance().getFileExchange(this.bitmagSettings);
         BlockingPutFileClient bpfc = new BlockingPutFileClient(client);
-        URL url = fileexchange.uploadToServer(packageFile);
+        URL url = fileexchange.putFile(packageFile);
         ChecksumSpecTYPE csSpec = ChecksumUtils.getDefault(this.bitmagSettings);
-        ChecksumDataForFileTYPE validationChecksum = BitrepositoryUtils.getValidationChecksum(
-                packageFile,csSpec);
+        ChecksumDataForFileTYPE validationChecksum = BitmagUtils.getValidationChecksum(
+                packageFile, csSpec);
 
         ChecksumSpecTYPE requestChecksum = null;
         String putFileMessage = "Putting the file '" + packageFile + "' with the file id '"
@@ -251,7 +259,7 @@ public class Bitrepository implements AutoCloseable {
             }
         } finally {
             // delete the uploaded file from server
-            fileexchange.deleteFromServer(url);
+            fileexchange.deleteFile(url);
         }
         logger.info("The putFile Operation succeeded ({})", putFileMessage);
         return OperationEventType.COMPLETE;
@@ -262,15 +270,16 @@ public class Bitrepository implements AutoCloseable {
      * @param fileId A fileId of a package known to exist in the repository
      * @param collectionId A given collection in the repository
      * @param filePart The part of the file to 'get'. Set to null, if retrieving the whole file.
+     * @param usepillar Which pillar to get from
      * @return the file if found. Otherwise an exception is thrown
      * @throws IOFailure If not found or an error occurred during the fetch process.
      */
-    public File getFile(final String fileId, final String collectionId, final FilePart filePart) 
-            throws IOFailure{
+    public File getFile(final String fileId, final String collectionId, final FilePart filePart, String usepillar)
+            throws IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(fileId, "String fileId");
         ArgumentNotValid.checkNotNullOrEmpty(collectionId, "String collectionId");
         // Does collection exists? If not throw exception
-        if (BitrepositoryUtils.getCollectionPillars(collectionId).isEmpty()) {
+        if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
             throw new IOFailure("The given collection Id does not exist");
         }
         OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
@@ -308,13 +317,12 @@ public class Bitrepository implements AutoCloseable {
      */
     private File downloadFile(URL fileUrl) throws IOException {
         File outputFile = File.createTempFile("Extracted", null);
-        FileExchange fileexchange = BitrepositoryUtils.getFileExchange(bitmagSettings);
-        String fileAddress = fileUrl.toExternalForm();
-        try {
-            fileexchange.downloadFromServer(outputFile, fileAddress);
+        FileExchange fileexchange = BitmagUtils.getFileExchange();
+        try (FileInputStream fis = new FileInputStream(outputFile)){
+            fileexchange.putFile(fis, fileUrl);
         } finally {
             try {
-                fileexchange.deleteFromServer(fileUrl);
+                fileexchange.deleteFile(fileUrl);
             } catch (URISyntaxException e) {
                 throw new IOException("Failed to delete file '"+fileUrl.toExternalForm()+"'after download",e);
             }
@@ -329,7 +337,7 @@ public class Bitrepository implements AutoCloseable {
      */
     private URL getDeliveryUrl(String fileId) {
         try {
-            return BitrepositoryUtils.getFileExchange(bitmagSettings).getURL(fileId);
+            return BitmagUtils.getFileExchange().getURL(fileId);
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Could not make an URL for the file '"
                     + fileId + "'.", e);
@@ -337,44 +345,17 @@ public class Bitrepository implements AutoCloseable {
     }
 
     /**
-     * Check if a package with the following id exists within a specific collection.
-     * @param packageId A given packageId
-     * @param collectionID A given collection ID
-     * @return true, if a package with the given ID exists within the given collection. Otherwise returns false
-     */
-    public boolean existsInCollection(String packageId, String collectionID) {
-    	ArgumentNotValid.checkNotNullOrEmpty(packageId, "String packageId");
-    	ArgumentNotValid.checkNotNullOrEmpty(collectionID, "String collectionId");
-        // Does collection exists? If not return false
-        List<String> collectionPillars = BitrepositoryUtils.getCollectionPillars(collectionID);
-        if (collectionPillars.isEmpty()) {
-            logger.warn("The given collection Id does not exist");
-            return false;
-        }
-
-        OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
-
-        GetFileIDsOutputFormatter outputFormatter = new GetFileIDsNoFormatter(output);
-        long timeout = BitrepositoryUtils.getClientTimeout(bitmagSettings);
-
-        PagingGetFileIDsClient pagingClient = new PagingGetFileIDsClient(
-                bitMagGetFileIDsClient, timeout, outputFormatter, output);
-        
-        boolean success = pagingClient.getFileIDs(collectionID, packageId, collectionPillars);
-        return success;
-    }
-
-    /**
      * Check the checksums for a whole collection, or only a single packageId in a collection.
      * @param packageID A given package ID (if null, checksums for the whole collection is requested)
      * @param collectionID A given collection ID
+     * @param maxNumberOfFailingPillars Max number of acceptable store failures
      * @return a map with the results from the pillars
      * @throws IOFailure If it fails to retrieve the checksums.
      */
-    public Map<String, ChecksumsCompletePillarEvent> getChecksums(String packageID, String collectionID) 
-            throws IOFailure {
-    	ArgumentNotValid.checkNotNullOrEmpty(collectionID, "String collectionId");
-       
+    public Map<String, ChecksumsCompletePillarEvent> getChecksums(String packageID, String collectionID,
+            int maxNumberOfFailingPillars) throws IOFailure {
+        ArgumentNotValid.checkNotNullOrEmpty(collectionID, "String collectionId");
+
         //If packageID = null, checksum is requested for all files in the collection.
         if (packageID != null) {
             logger.info("Collecting checksums for package '" + packageID + "' in collection '" + collectionID + "'");
@@ -409,7 +390,7 @@ public class Bitrepository implements AutoCloseable {
         }
 
         Map<String, ChecksumsCompletePillarEvent> resultsMap = new HashMap<String,
-		 ChecksumsCompletePillarEvent>();
+                ChecksumsCompletePillarEvent>();
 
         for (ContributorEvent e : eventhandler.getResults()) {
             ChecksumsCompletePillarEvent event = (ChecksumsCompletePillarEvent) e;
@@ -447,11 +428,11 @@ public class Bitrepository implements AutoCloseable {
     /**
      * Retrieves the list of file ids in the given collection from the default pillar.
      * @param collectionID The collection to retrieve the list of file ids from.
+     * @param usepillar Which pillar to get from
      * @return The list of file ids.
      */
-    public List<String> getFileIds(String collectionID) {
-    	
-    	OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
+    public List<String> getFileIds(String collectionID, String usepillar) {
+    	/*OutputHandler output = new DefaultOutputHandler(Bitrepository.class);
         GetFileIDsListFormatter outputFormatter = new GetFileIDsListFormatter(output);
 
         long timeout = BitrepositoryUtils.getClientTimeout(bitmagSettings);
@@ -462,11 +443,13 @@ public class Bitrepository implements AutoCloseable {
                 bitMagGetFileIDsClient, timeout, outputFormatter, output);
 
         boolean success = pagingClient.getFileIDs(collectionID, null,
-                usepillarListOnly);
+                usepillarListOnly);*/
+        boolean success = true;
         if (success) {
-        	return outputFormatter.getFoundIds();
+            return null;
+            //return outputFormatter.getFoundIds();
         } else {
-        	return null;
+            return null;
         }
     }
 

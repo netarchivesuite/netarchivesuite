@@ -149,7 +149,7 @@ public abstract class FileBatchJob implements Serializable {
      * any path information, but should match the entire filename (e.g. .*foo.* for any file with foo in the name).
      */
     public void processOnlyFilesMatching(String specifiedPattern) {
-        ArgumentNotValid.checkNotNullOrEmpty(specifiedPattern, "specificedPattern");
+        ArgumentNotValid.checkNotNullOrEmpty(specifiedPattern, "specifiedPattern");
         filesToProcess = Pattern.compile(specifiedPattern);
     }
 

@@ -8,6 +8,7 @@ working/
 *~
 .idea/
 .gitignore
+copy-nas-and-heritrix.sh
 # NAS junk files
 derby.log
 **/archive-test/checksum/

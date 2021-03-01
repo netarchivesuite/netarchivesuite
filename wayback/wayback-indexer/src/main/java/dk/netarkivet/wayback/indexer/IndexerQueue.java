@@ -23,6 +23,8 @@
 package dk.netarkivet.wayback.indexer;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
@@ -42,6 +44,8 @@ public class IndexerQueue {
     /** This is the basic underlying datastructure of the indexer - a queue of files waiting to be indexed. */
     private static LinkedBlockingQueue<ArchiveFile> queue;
 
+    private static Set<String> indexing;
+
     /**
      * Factory method for obtaining the unique instance of this class.
      *
@@ -59,6 +63,7 @@ public class IndexerQueue {
      */
     private IndexerQueue() {
         queue = new LinkedBlockingQueue<ArchiveFile>();
+        indexing = new CopyOnWriteArraySet<>();
     }
 
     /**
@@ -91,10 +96,19 @@ public class IndexerQueue {
                     file = queue.take();
                     log.info("Taken file '{}' from indexing queue.", file.getFilename());
                     log.info("Files in queue: '{}'", queue.size());
+                    if (!indexing.contains(file.getFilename())) {
+                        indexing.add(file.getFilename());
+                        try {
+                            file.index();
+                        } finally {
+                            indexing.remove(file.getFilename());
+                        }
+                    } else {
+                        log.info("Not indexing " + file.getFilename() + " as it is already being indexed.");
+                    }
                 } catch (InterruptedException e) {
                     log.error("Unexpected interrupt in indexer while waiting for new elements", e);
                 }
-                file.index();
             } catch (Exception e) { // Fault Barrier
                 log.warn("Caught exception at fault barrier for {}", Thread.currentThread().getName(), e);
             }

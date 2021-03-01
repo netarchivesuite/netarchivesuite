@@ -25,20 +25,23 @@ package dk.netarkivet.archive.arcrepository.distribute;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
-import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.NetarkivetMessage;
+
 import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.Bitrepository;
-import dk.netarkivet.common.distribute.arcrepository.bitrepository.BitrepositoryUtils;
+
+import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
+
+import dk.netarkivet.common.distribute.bitrepository.action.getfile.GetFileAction;
+import dk.netarkivet.common.distribute.bitrepository.action.putfile.PutFileAction;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -46,17 +49,26 @@ import dk.netarkivet.common.utils.NotificationType;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.service.WarcRecordClient;
+
 import org.apache.commons.io.FileUtils;
-import org.bitrepository.access.getchecksums.conversation.ChecksumsCompletePillarEvent;
-import org.bitrepository.bitrepositoryelements.ChecksumDataForChecksumSpecTYPE;
-import org.bitrepository.bitrepositoryelements.ChecksumDataForFileTYPE;
+import org.bitrepository.access.getfile.GetFileClient;
+import org.bitrepository.client.eventhandler.OperationEvent;
+import org.bitrepository.modify.putfile.PutFileClient;
+
+import org.bitrepository.protocol.FileExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Map;
+import java.net.URI;
+import java.net.URL;
+
+import javax.jms.JMSException;
 
 /**
  * Client side usage of an arc repository. All non-writing requests are forwarded to the ArcRepositoryServer over the network.
@@ -67,18 +79,17 @@ import java.util.Map;
  * So called mixed-mode client, where the store is done to a Bitmagrepository, and the rest (access and batch-processing)
  * is done using the distributed netarchivesuite archive.
  */
-public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRepositoryClient, AutoCloseable {
+public class BitmagArcRepositoryClient extends Synchronizer implements ArcRepositoryClient, AutoCloseable {
 
-        /** the one and only JMSBitmagArcRepositoryClient instance. */
-    private static JMSBitmagArcRepositoryClient instance;
+    /** the one and only BitmagArcRepositoryClient instance. */
+    private static BitmagArcRepositoryClient instance;
 
     /** Logging output place. */
-    protected static final Logger log = LoggerFactory.getLogger(JMSBitmagArcRepositoryClient.class);
+    protected static final Logger log = LoggerFactory.getLogger(BitmagArcRepositoryClient.class);
 
     /** Listens on this queue for replies. */
     private final ChannelID replyQ;
 
-    /** The length of time to wait for a get reply before giving up. */
     private long timeoutGetOpsMillis;
 
     // NOTE: The constants defining setting names below are left non-final on
@@ -87,7 +98,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
 
     /** The default place in classpath where the settings file can be found. */
     private static String defaultSettingsClasspath = "dk/netarkivet/common/distribute/arcrepository/bitrepository/"
-            + "JmsBitmagArcRepositoryClientSettings.xml";
+            + "BitmagArcRepositoryClientSettings.xml";
 
     /*
      * The static initialiser is called when the class is loaded. It will add default values for all settings defined in
@@ -95,6 +106,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      */
     static {
         Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
+        BitmagUtils.initialize();
     }
 
     /**
@@ -134,16 +146,20 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      */
     private static final String BITREPOSITORY_USEPILLAR =
             "settings.common.arcrepositoryClient.bitrepository.usepillar";
+
+    public String getCollectionId() {
+        return collectionId;
+    }
+
     /** The bitrepository collection id for the */
     private String collectionId;
     /** The temporary directory for the bitrepository client.*/
     private File tempdir;
-    /** The maximum number of failures for a storage to be accepted.*/
-    private int maxStoreFailures;
-    /** The bitrepository interface.*/
-    private Bitrepository bitrep;
+
     /** The pillar to use.*/
     private String usepillar;
+
+    private WarcRecordClient warcRecordClient;
 
     /**
      * <b>settings.common.arcrepositoryClient.getTimeout</b>: <br>
@@ -160,28 +176,29 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      * @see #BITREPOSITORY_TEMPDIR
      *
      */
-    private JMSBitmagArcRepositoryClient() {
-        synchronized (JMSBitmagArcRepositoryClient.class){
+    private BitmagArcRepositoryClient() {
+    /*
+        synchronized (BitmagArcRepositoryClient.class){
             if (instance != null){
-                throw new RuntimeException("Attempting to start an additional "+JMSBitmagArcRepositoryClient.class+" instance");
+                throw new RuntimeException("Attempting to start an additional "+ BitmagArcRepositoryClient.class+" instance");
             } else {
                 instance = this;
             }
         }
-
-        timeoutGetOpsMillis = Settings.getLong(ARCREPOSITORY_GET_TIMEOUT);
-
+    */
+       timeoutGetOpsMillis = Settings.getLong(ARCREPOSITORY_GET_TIMEOUT);
         log.info(
-                "JMSBitmagArcRepositoryClient will timeout on each getrequest after {} milliseconds.",
+                "BitmagArcRepositoryClient will timeout on each get request after {} milliseconds.",
                 timeoutGetOpsMillis);
+
         replyQ = Channels.getThisReposClient();
         JMSConnectionFactory.getInstance().setListener(replyQ, this);
-        log.info("JMSBitmagArcRepositoryClient listens for replies on channel '{}'", replyQ);
+        log.info("BitmagArcRepositoryClient listens for replies on channel '{}'", replyQ);
 
         File configDir = Settings.getFile(BITREPOSITORY_SETTINGS_DIR);
         log.info("Getting bitmag config from " + BITREPOSITORY_SETTINGS_DIR + "=" + configDir.getAbsolutePath());
 
-        String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
+        // String keyfilename = Settings.get(BITREPOSITORY_KEYFILENAME);
 
         String collectionId = Settings.get(BITREPOSITORY_COLLECTIONID);
         if (collectionId == null || collectionId.trim().isEmpty()) {
@@ -189,9 +206,11 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             log.info("No collectionId set so using default value {}", collectionId);
         }
         this.collectionId = collectionId;
-
-        int maxStoreFailures = Settings.getInt(BITREPOSITORY_STORE_MAX_PILLAR_FAILURES);
-        String usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
+        if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
+            log.warn("The given collection Id {} does not exist", collectionId);
+            throw new RuntimeException("collection Id does not exist");
+        }
+        this.usepillar = Settings.get(BITREPOSITORY_USEPILLAR);
 
         File tempdir = Settings.getFile(BITREPOSITORY_TEMPDIR);
         try {
@@ -201,12 +220,14 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             throw new IOFailure("Failed to create tempdir '" + tempdir + "'", e);
         }
 
-        // Initialize connection to the bitrepository
-        this.bitrep = new Bitrepository(configDir, keyfilename, maxStoreFailures, usepillar);
-        if (!bitrep.getKnownCollections().contains(this.collectionId)) {
-            close();
-            throw new ArgumentNotValid("The bitrepository doesn't know about the collection " + this.collectionId);
+        URI baseUrl;
+        try {
+            baseUrl = new URI(Settings.get(CommonSettings.WRS_BASE_URL));
+        } catch (URISyntaxException e) {
+            throw new IOFailure("Invalid url '" + Settings.get(CommonSettings.WRS_BASE_URL)
+                    + "' provided for warc record service as base url");
         }
+        warcRecordClient = new WarcRecordClient(baseUrl);
     }
 
     /**
@@ -214,90 +235,80 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      *
      * @return an JMSArcRepositoryClient instance.
      */
-    public static synchronized JMSBitmagArcRepositoryClient getInstance() {
+    public static synchronized BitmagArcRepositoryClient getInstance() {
         if (instance == null) {
-            instance = new JMSBitmagArcRepositoryClient();
+            instance = new BitmagArcRepositoryClient();
         }
         return instance;
     }
 
     /** Removes this object as a JMS listener. */
+    // ToDo remove or change bitrep
+
     @Override
     public synchronized void close() {
-        JMSConnectionFactory.getInstance().removeListener(replyQ, this);
-        if (bitrep != null) {
-            bitrep.shutdown();
+        try {
+            JMSConnectionFactory.getInstance().removeListener(replyQ, this);
+            instance = null;
+            BitmagUtils.shutdown();
         }
-        instance = null;
+        catch (JMSException e){
+            log.error("JMS could not be closed properly");
+        }
     }
 
     /**
-     * Sends a GetMessage on the "TheArcrepos" queue and waits for a reply. This is a blocking call. Returns null if no
-     * message is returned within Settings.ARCREPOSITORY_GET_TIMEOUT
+     * Initializes a WarcRecordClient to interact with the warc records service and uses it to request a record
+     * with the given name and offset/index.
      *
      * @param arcfile The name of a file.
      * @param index The offset of the wanted record in the file
-     * @return a BitarchiveRecord-object or null if request times out or object is not found.
+     * @return a BitarchiveRecord-object.
      * @throws ArgumentNotValid If the given arcfile is null or empty, or the given index is negative.
-     * @throws IOFailure If a wrong message is returned or the get operation failed.
+     * @throws IOFailure If an invalid URL is provided for the warc record service or the operation failed.
      */
     public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "arcfile");
         ArgumentNotValid.checkNotNegative(index, "index");
         log.debug("Requesting get of record '{}:{}'", arcfile, index);
-
-        long start = System.currentTimeMillis();
-        GetMessage requestGetMsg = new GetMessage(Channels.getTheRepos(), replyQ, arcfile, index);
-        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(requestGetMsg, timeoutGetOpsMillis);
-        long timePassed = System.currentTimeMillis() - start;
-
-        if (replyNetMsg == null) {
-            
-            log.warn("Request for record({}:{}) timed out after {} seconds. Returning null BitarchiveRecord", arcfile,
-                    index, (timeoutGetOpsMillis / 1000));
-            return null;
-        } else {
-            log.debug("Reply for '{}:{}' received after {} seconds", arcfile, index, (timePassed / 1000));
+        BitarchiveRecord bitarchiveRecord = warcRecordClient.getBitarchiveRecord(arcfile, index);
+        if (bitarchiveRecord == null) {
+            throw new IOFailure("Got null when trying to get record '" + arcfile + ":" + index + "'.");
         }
-
-        GetMessage replyGetMsg;
-        try {
-            replyGetMsg = (GetMessage) replyNetMsg;
-        } catch (ClassCastException e) {
-            throw new IOFailure("Received invalid argument reply: '" + replyNetMsg + "'. Not a GetMessage", e);
-        }
-
-        if (!replyGetMsg.isOk()) {
-            throw new IOFailure("GetMessage failed: '" + replyGetMsg.getErrMsg() + "'");
-        }
-        return replyGetMsg.getRecord();
+        return bitarchiveRecord;
     }
 
     /**
-     * Synchronously retrieves a file from a bitarchive and places it in a local file. This is the interface for sending
-     * GetFileMessage on the "TheArcrepos" queue. This is a blocking call.
+     * Synchronously retrieves a file from a bitarchive and places it in a local file. This implementation retrieves the
+     * file using bitrepository.org software.
      *
      * @param arcfilename Name of the arcfile to retrieve.
-     * @param replica The bitarchive to retrieve the data from.
-     * @param toFile Filename of a place where the file fetched can be put.
+     * @param replica This parameter is ignored in this implementation. The file is retrieved from the fastest pillar.
+     * @param toFile Filename of a place where the file fetched can be put. If this file already exists it must be empty
+     *               otherwise this method-call will fail.
      * @throws ArgumentNotValid If the arcfilename are null or empty, or if either replica or toFile is null.
      * @throws IOFailure if there are problems getting a reply or the file could not be found.
      */
     public void getFile(String arcfilename, Replica replica, File toFile) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
-        ArgumentNotValid.checkNotNull(replica, "replica");
         ArgumentNotValid.checkNotNull(toFile, "toFile");
 
-        log.debug("Requesting get of file '{}' from '{}'", arcfilename, replica);
-        // ArgumentNotValid.checkNotNull(replyQ, "replyQ must not be null");
-        GetFileMessage gfMsg = new GetFileMessage(Channels.getTheRepos(), replyQ, arcfilename, replica.getId());
-        GetFileMessage getFileMessage = (GetFileMessage) sendAndWaitForOneReply(gfMsg, 0);
-        if (getFileMessage == null) {
-            throw new IOFailure("GetFileMessage timed out before returning." + "File not found?");
-        } else if (!getFileMessage.isOk()) {
-            throw new IOFailure("GetFileMessage failed: " + getFileMessage.getErrMsg());
-        } else {
-            getFileMessage.getData(toFile);
+        if (toFile.exists() && toFile.length() == 0) {
+            toFile.delete();
+        }
+        if (toFile.exists() && toFile.length() != 0) {
+            throw new IOFailure("Cannot retrieve file from bitrepository as target file " + toFile.getAbsolutePath()
+                    + " not empty.");
+        }
+        GetFileClient getFileClient = BitmagUtils.getFileClient();
+        GetFileAction getFileAction = new GetFileAction(getFileClient, collectionId, arcfilename, toFile);
+        getFileAction.performAction();
+
+        if (!getFileAction.isSucceeded()) {
+            String message = "Could not retrieve file " + arcfilename + ". Last status from bitrepository is " + getFileAction
+                    .getInfo();
+            log.warn(message);
+            throw new IOFailure(message);
         }
     }
 
@@ -317,13 +328,14 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
 
         final String fileId = file.getName();
 
-        // upload file
+        /* upload file
+        log.info("Before uploadFile:" + "");   */
 
         //Attempt to upload the file.
         // If not there, this will work
         // If already there, with same checksum, this will work.
         // If already there, with different checksum, this will fail
-        boolean uploadSuccessful = bitrep.uploadFile(file, fileId, collectionId);
+        boolean uploadSuccessful = this.uploadFile(file, fileId, collectionId);
         if (!uploadSuccessful) {
             String errMsg =
                     "Upload to collection '" + collectionId + "' of file '" + fileId + "' failed.";
@@ -331,56 +343,7 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
         } else {
             //TODO check if this check is actually ever nessesary
             log.info("Upload to collection '{}' of file '{}' reported success, so let's check", collectionId, fileId);
-            checkFileConsistency(file, fileId);
             log.info("Upload to collection '{}' of file '{}' was successful", collectionId, fileId);
-        }
-    }
-
-    /**
-     * Checks the consistency of a file across all pillars after its upload.
-     * @param file The file to have been uploaded.
-     * @param fileId The id of the file.
-     */
-    protected void  checkFileConsistency(File file, String fileId) {
-        //get the known checksums for the file in bitrep
-        Map<String, ChecksumsCompletePillarEvent> checksumResults =
-                bitrep.getChecksums(fileId, collectionId);
-
-        //for each pillar in this collection
-        for (String collectionPillar: BitrepositoryUtils.getCollectionPillars(collectionId) ){
-            boolean foundInThisPillar = false;
-
-            //Get the checksum result for this pillar for this file
-            ChecksumsCompletePillarEvent checksumResult = checksumResults.get(collectionPillar);
-
-            for (ChecksumDataForChecksumSpecTYPE checksum : checksumResult.getChecksums().getChecksumDataItems()) {
-
-                //for each checksum result for this file (there should be none others but...)
-                if (fileId.equals(checksum.getFileID())) {
-
-                    //mark the file as found in this pillar
-                    foundInThisPillar = true;
-
-                    //Checksum the local file so we can compare
-                    ChecksumDataForFileTYPE validationChecksum =
-                            BitrepositoryUtils.getValidationChecksum(file, checksumResult.getChecksumType());
-
-                    //If the checksums do not match, we have a failure
-                    if ( ! Arrays.equals(validationChecksum.getChecksumValue(), checksum.getChecksumValue())) {
-                        String errMsg =
-                                fileId + " in " + collectionId + " in " + collectionPillar+" has a different checksum than local file " + file;
-                        error(errMsg);
-                        return;
-                    }
-                }
-            }
-
-            if (! foundInThisPillar ) {
-                String errMsg =
-                        fileId + " in " + collectionId + " was missing on pillar "+collectionPillar;
-                error(errMsg);
-                return;
-            }
         }
     }
 
@@ -408,7 +371,9 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      * @return The status of the batch job after it ended.
      */
     public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
-        return batch(job, replicaId, "", args);
+        String msg = "Batch is no longer used";
+        log.warn(msg);
+        return null;
     }
 
     /**
@@ -427,23 +392,9 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
      */
     public BatchStatus batch(FileBatchJob job, String replicaId, String batchId, String... args) throws IOFailure,
             ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
-        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-
-        log.debug("Starting batchjob '{}' running on replica '{}'", job, replicaId);
-        BatchMessage bMsg = new BatchMessage(Channels.getTheRepos(), replyQ, job, replicaId, batchId, args);
-        log.debug("Sending batchmessage to queue '{}' with replyqueue set to '{}'", Channels.getTheRepos(), replyQ);
-        BatchReplyMessage brMsg = (BatchReplyMessage) sendAndWaitForOneReply(bMsg, 0);
-        if (!brMsg.isOk()) {
-            String msg = "The batch job '" + bMsg + "' resulted in the following " + "error: " + brMsg.getErrMsg();
-            log.warn(msg);
-            if (brMsg.getResultFile() == null) {
-                // If no result is available at all, this is non-recoverable
-                throw new IOFailure(msg);
-            }
-        }
-        return new BatchStatus(brMsg.getFilesFailed(), brMsg.getNoOfFilesProcessed(), brMsg.getResultFile(),
-                job.getExceptions());
+        String msg = "Batch is no longer used";
+        log.warn(msg);
+        return null;
     }
 
     /**
@@ -509,6 +460,73 @@ public class JMSBitmagArcRepositoryClient extends Synchronizer implements ArcRep
             ArgumentNotValid {
         throw new NotImplementedException("Correct is delegated to the bitrepository software");
 
+    }
+
+
+    /**
+     * Attempts to upload a given file.
+     * @param file The file to upload. Should exist. The packageId is the name of the file
+     * @param fileId The Id of the file to upload
+     * @return true if the upload succeeded, false otherwise.
+     */
+    public boolean uploadFile(final File file, final String fileId, final String collectionId) {
+        ArgumentNotValid.checkExistsNormalFile(file, "File file");
+        // Does collection exists? If not return false
+    /*    if (BitmagUtils.getKnownPillars(collectionId).isEmpty()) {
+            log.warn("The given collection Id {} does not exist", collectionId);
+            return false;
+        }
+    */
+        boolean success = false;
+        try {
+              log.info("Calling putFileClient.");
+
+              PutFileClient putFileClientLocal = BitmagUtils.getPutFileClient();
+              PutFileAction putfileInstance = new PutFileAction(putFileClientLocal, collectionId, file, fileId);
+              putfileInstance.performAction();
+
+              if (putfileInstance.isActionIsSuccess()) {
+                success = true;
+                log.info("BitmagArcRepositoryClient uploadFile.");
+                log.info("File '{}' uploaded successfully. ",file.getAbsolutePath());
+              } else {
+                 log.warn("Upload of file '{}' failed ", file.getAbsolutePath());
+              }
+        } catch (Exception e) {
+              log.warn("Unexpected error while storing file '{}'", file.getAbsolutePath(), e);
+              success = false;
+        }
+        return success;
+    }
+
+
+    /**
+     * Upload the file to the uploadserver, initiate the PutFile request, and wait for the
+     * request to finish.
+     * @param client the PutFileClient responsible for the put operation.
+     * @param packageFile The package to upload
+     * @return OperationEventType.FAILED if operation failed; otherwise returns OperationEventType.COMPLETE
+     * @throws IOException If unable to upload the packageFile to the uploadserver
+     */
+    private OperationEvent.OperationEventType putTheFile(PutFileClient client, File packageFile, String fileID) {
+
+        PutFileAction ca = null;
+        String putFileMessage = null;
+        String collectionId = getCollectionId();
+
+        try {
+            putFileMessage = "Putting the file '" + packageFile + "' with the file id '"
+                    + fileID + "' from Netarchivesuite";
+            ca = new PutFileAction(client, collectionId, packageFile, fileID);
+            ca.performAction();
+
+        } catch (Exception e) {
+            log.warn("The putFile Operation was not a complete success ({})."
+                    + " Checksum whether we accept anyway.", putFileMessage, e);
+            return OperationEvent.OperationEventType.FAILED;
+        } 
+        log.info("The putFile Operation succeeded ({})", "putFileMessage");
+        return OperationEvent.OperationEventType.COMPLETE;
     }
 
 }

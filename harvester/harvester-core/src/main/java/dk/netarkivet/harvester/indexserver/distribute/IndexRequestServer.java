@@ -71,7 +71,12 @@ import dk.netarkivet.harvester.indexserver.IndexRequestServerInterface;
  * This class contains a singleton that handles requesting an index over JMS.
  * <p>
  * It will ALWAYS reply to such messages, either with the index, a message telling that only a subset is available, and
- * which, or an error message,
+ * which, or an error message.
+ *
+ * If the flag "settings.common.deduplication.enabled" is set to false then a request for a deduplication
+ * index will result in an empty index being returned, although the return message will claim that all
+ * requested files have been indexed.
+ *
  */
 public final class IndexRequestServer extends HarvesterMessageHandler implements CleanupIF, IndexRequestServerInterface {
 
@@ -301,6 +306,36 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
         }
     }
 
+    private void doReturnEmptyIndex(final IndexRequestMessage irMsg) {
+        log.info("Returning an empty index for " + irMsg.getRequestedJobs() +  " as indexing is disabled.");
+        try {
+            HashSet<Long> emptyJobs = new HashSet<>();
+            FileBasedCache<Set<Long>> handler = handlers.get(RequestType.DEDUP_CRAWL_LOG);
+            File cacheFileWanted = handler.getCacheFile(irMsg.getRequestedJobs());
+            File cacheFileCreated = handler.getCacheFile(emptyJobs); //always empty-cache
+            if (!cacheFileCreated.getAbsolutePath().equals(cacheFileWanted.getAbsolutePath())) {
+                log.info("Faking dedup index by copying " + cacheFileCreated.getName()
+                        + " to " + cacheFileWanted.getName());
+                if (cacheFileCreated.isDirectory()) {
+                    cacheFileWanted.mkdirs();
+                    FileUtils.copyDirectory(cacheFileCreated, cacheFileWanted);
+                } else {
+                    FileUtils.copyFile(cacheFileCreated, cacheFileWanted);
+                }
+            }
+            log.info("Packaging result from cacheFile " + cacheFileWanted.getAbsolutePath());
+            packageResultFiles(irMsg, cacheFileWanted);
+            irMsg.setFoundJobs(irMsg.getRequestedJobs());
+        } finally {
+            synchronized (this) {
+                currentJobs.remove(irMsg.getID());
+            }
+            deleteStoredMessage(irMsg);
+            log.info("Sending reply message:" + irMsg);
+            JMSConnectionFactory.getInstance().reply(irMsg);
+        }
+    }
+
     /**
      * Method that handles the processing of an indexRequestMessage. Returns the requested index immediately, if already
      * available, otherwise proceeds with the index generation of the requested index. Must be run in its own thread,
@@ -310,6 +345,11 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
      * @see #visit(IndexRequestMessage)
      */
     private void doProcessIndexRequestMessage(final IndexRequestMessage irMsg) {
+        if (!Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED)
+                && irMsg.getRequestType().equals(RequestType.DEDUP_CRAWL_LOG)) {
+            doReturnEmptyIndex(irMsg);
+            return;
+        }
         final boolean mustReturnIndex = irMsg.mustReturnIndex();
         try {
             checkMessage(irMsg);
@@ -443,7 +483,9 @@ public final class IndexRequestServer extends HarvesterMessageHandler implements
             File[] cacheFiles = cacheFile.listFiles();
             List<RemoteFile> resultFiles = new ArrayList<RemoteFile>(cacheFiles.length);
             for (File f : cacheFiles) {
-                resultFiles.add(RemoteFileFactory.getCopyfileInstance(f, irMsg.getRemoteFileSettings()));
+                RemoteFile copyfileInstance = RemoteFileFactory.getCopyfileInstance(f, irMsg.getRemoteFileSettings());
+                log.info("Created remote file " + copyfileInstance + " for " + f.getAbsolutePath());
+                resultFiles.add(copyfileInstance);
             }
             irMsg.setResultFiles(resultFiles);
         } else {

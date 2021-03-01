@@ -31,7 +31,7 @@
     <jaxen.version>1.1.6</jaxen.version>
     <xerces.version>2.11.0</xerces.version>
     <commons-io.version>2.4</commons-io.version>
-    <commons-cli.version>1.2</commons-cli.version>
+    <commons-cli.version>1.4</commons-cli.version>
     <commons-net.version>3.0.1</commons-net.version>
     <commons-codec.version>1.9</commons-codec.version>
     <commons-lang.version>2.3</commons-lang.version>
@@ -61,7 +61,7 @@
     <commons-pool.version>1.6</commons-pool.version>
     <jfreechart.version>1.0.13</jfreechart.version>
     <gagawa.version>1.0.1</gagawa.version>
-    <guava.version>17.0</guava.version>
+    <guava.version>27.0-jre</guava.version>
     <javax.inject.version>1</javax.inject.version>
     <commons-logging.version>1.2</commons-logging.version>
     <mg4j.version>1.0.1</mg4j.version>
@@ -95,7 +95,8 @@
     <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
     <sonar.language>java</sonar.language>
 <!--    <jacoco.version>0.7.2.201409121644</jacoco.version> -->
-   <jacoco.version>0.7.9</jacoco.version>
+    <jacoco.version>0.7.9</jacoco.version>
+    <hadoop.version>3.2.2</hadoop.version>
   </properties>
 
   <modules>
@@ -107,6 +108,8 @@
     <module>monitor</module>
     <module>wayback</module>
     <module>integration-test</module>
+    <module>hadoop-uber-jar</module>
+    <module>hadoop-uber-jar-invoker</module>
   </modules>
 
   <licenses>
@@ -814,6 +817,34 @@
         <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
         <version>${mockobjects-core.version}</version>
       </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.12</version>
+        </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-client</artifactId>
+        <version>${hadoop.version}</version>
+        <exclusions>
+          <exclusion> <!-- Excluded because it conflicts with tomcat's ServletRequest -->
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency> <!-- Added this since it apparently helps Hadoop play nice with Xerces -->
+        <groupId>xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>1.4.01</version>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
@@ -1083,7 +1114,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <excludedGroups />
+              <excludedGroups>dk.netarkivet.common.utils.RequiresFileResolver.class</excludedGroups>
             </configuration>
           </plugin>
         </plugins>

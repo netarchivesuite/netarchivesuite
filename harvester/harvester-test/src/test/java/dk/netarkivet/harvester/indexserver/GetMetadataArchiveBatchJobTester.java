@@ -28,7 +28,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.regex.Pattern;
 
 import org.junit.After;
@@ -63,7 +65,7 @@ public class GetMetadataArchiveBatchJobTester {
     }
 
     @Test
-    public void testBatchJob() throws FileNotFoundException {
+    public void testBatchJob() throws IOException {
 
         File ZipOne = new File(metadataDir, "1-metadata-1.warc.zip");
         File ZipTwo = new File(metadataDir, "1-metadata-1.arc.zip");
@@ -86,7 +88,8 @@ public class GetMetadataArchiveBatchJobTester {
         BatchLocalFiles blf = new BatchLocalFiles(files);
         OutputStream os = new FileOutputStream("tmp");
         blf.run(job, os);
-        // System.out.println(job.getNoOfFilesProcessed());
+
+        //System.out.println(job.getNoOfFilesProcessed());
 
         assertEquals("Expected no files to fail, but " + job.getFilesFailed().size() + " failed", 0, job
                 .getFilesFailed().size());

@@ -30,22 +30,25 @@ National Library.
 	class.
 
 	For documentation of the individual settings, please refer to the javadoc for
-	dk.netarkivet.common.distribute.arcrepository.bitrepository.BitmagArcRepositoryClient.java 
+	dk.netarkivet.archive.arcrepository.distribute.BitmagArcRepositoryClient.java
 -->
 <settings>
     <common>
         <arcrepositoryClient>
-        <bitrepository>
+            <bitrepository>
         <!-- if not set, use of certificates is disabled. If the keyfilename does not exist
         	use of certificates is disabled as well.
          -->
-        <keyfilename></keyfilename>
-        <settingsDir></settingsDir>
-        <storeMaxPillarFailures>1</storeMaxPillarFailures>
-        <tempdir>arcrepositoryTemp</tempdir>
-		<collectionID>dvds</collectionID>
+                <keyfilename></keyfilename>
+                <settingsDir></settingsDir>
+                <storeMaxPillarFailures>1</storeMaxPillarFailures>
+                <tempdir>arcrepositoryTemp</tempdir>
+		<collectionID>netarkivet</collectionID>
 		<usepillar></usepillar>
-		</bitrepository>
+		<!-- Set to 5 minutes to make it possible to retrieve large records
+                 using FTP -->
+                <getTimeout>300000</getTimeout>
+            </bitrepository>
         </arcrepositoryClient>
     </common>
 </settings>

@@ -161,7 +161,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 log.debug(message, e);
                 throw new IOFailure(message, e);
             }
-            log.debug("Writing '{}' as '{}' on ftp-server {}", file.getName(), ftpFileName, cm.getFtpServer());
+            log.debug("Writing '{}' as '{}' on ftp-server {}", file.getAbsolutePath(), ftpFileName, cm.getFtpServer());
 
             // Writing inlined in constructor to allow the checksum field to
             // be final (and thus must be set in constructor).
@@ -314,7 +314,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
     @Override
     public void appendTo(OutputStream out) {
         ArgumentNotValid.checkNotNull(out, "OutputStream out");
-
+        boolean failed = false;
         if (filesize == 0) {
             return;
         }
@@ -328,6 +328,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
             if (!cm.getFTPClient().retrieveFile(ftpFileName, out)) {
                 final String msg = "Append operation from '" + ftpFileName + "' failed: " + cm.getFtpErrorMessage();
                 log.warn(msg);
+                failed = true;
                 throw new IOFailure(msg);
             }
             out.flush();
@@ -337,6 +338,7 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                     final String msg = "Checksums of '" + ftpFileName + "' do not match! Should be " + checksum
                             + " but was " + newChecksum;
                     log.warn(msg);
+                    failed = true;
                     throw new IOFailure(msg);
                 }
             }
@@ -347,11 +349,14 @@ public final class FTPRemoteFile extends AbstractRemoteFile {
                 msg += "(real cause = " + realException.getIOException() + ")";
             }
             log.warn(msg, e);
+            failed = true;
             throw new IOFailure(msg, e);
         } finally {
             cm.logOut();
-            if (!multipleDownloads) {
+            if (!multipleDownloads && !failed) {
                 cleanup();
+            } else {
+                log.debug("Not cleaning up " + ftpFileName);
             }
         }
     }

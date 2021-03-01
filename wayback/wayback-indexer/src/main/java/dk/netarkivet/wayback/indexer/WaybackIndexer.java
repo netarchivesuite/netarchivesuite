@@ -35,6 +35,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -82,6 +84,10 @@ public class WaybackIndexer implements CleanupIF {
         File batchOutputDir = Settings.getFile(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
         FileUtils.createDir(temporaryBatchDir);
         FileUtils.createDir(batchOutputDir);
+
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
+            BitmagUtils.initialize();
+        }
         ingestInitialFiles();
         startProducerThread();
         startConsumerThreads();
