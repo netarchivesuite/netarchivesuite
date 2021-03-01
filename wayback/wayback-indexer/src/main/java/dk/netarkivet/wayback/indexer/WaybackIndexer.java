@@ -174,9 +174,9 @@ public class WaybackIndexer implements CleanupIF {
      * any new ones to the database. It then checks the database for unindexed files and adds them to the queue.
      */
     private static void startProducerThread() {
-        Long producerDelay = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_DELAY);
-        Long producerInterval = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_INTERVAL);
-        Long recentProducerInterval = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_INTERVAL);
+        long producerDelay = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_DELAY);
+        long producerInterval = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_INTERVAL);
+        long recentProducerInterval = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_INTERVAL);
         TimerTask completeProducerTask = new TimerTask() {
             @Override
             public void run() {
