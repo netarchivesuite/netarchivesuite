@@ -23,14 +23,18 @@ import dk.netarkivet.common.utils.Settings;
 
 public class WarcRecordClient {
     private static final Logger log = LoggerFactory.getLogger(WarcRecordClient.class);
-    private final HttpsClientBuilder clientBuilder;
+    private static final HttpsClientBuilder clientBuilder;
     private final URI baseUri;
     private long offset;
 
-    public WarcRecordClient(URI baseUri) {
-        this.baseUri = baseUri;
+    static {
         String privateKeyFile = Settings.get(CommonSettings.WRS_KEYFILE);
         clientBuilder = new HttpsClientBuilder(privateKeyFile);
+    }
+
+    public WarcRecordClient(URI baseUri) {
+        this.baseUri = baseUri;
+
     }
 
     /**
