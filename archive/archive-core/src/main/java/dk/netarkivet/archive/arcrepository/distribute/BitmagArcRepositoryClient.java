@@ -211,8 +211,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
     }
 
     /** Removes this object as a JMS listener. */
-    // ToDo remove or change bitrep
-
     @Override
     public synchronized void close() {
         try {

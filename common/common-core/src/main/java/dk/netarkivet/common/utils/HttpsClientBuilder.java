@@ -9,14 +9,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 
 /** Class for providing configured HTTPS clients to execute requests over SSL. */
 public class HttpsClientBuilder {
-    private static final Logger log = LoggerFactory.getLogger(HttpsClientBuilder.class);
     private final HttpClientBuilder clientBuilder;
     private final BasicTwoWaySSLProvider sslProvider;
 
@@ -28,7 +25,6 @@ public class HttpsClientBuilder {
      */
     public HttpsClientBuilder(String privateKeyFile) {
         clientBuilder = HttpClients.custom();
-        log.info("Setting up TLS using key {}", privateKeyFile);
         sslProvider = new BasicTwoWaySSLProvider(privateKeyFile);
 
         setupConnection();

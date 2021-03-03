@@ -18,20 +18,11 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.utils.BasicTwoWaySSLProvider;
 import dk.netarkivet.common.utils.HttpsClientBuilder;
 import dk.netarkivet.common.utils.Settings;
 
@@ -43,24 +34,10 @@ public class FileResolverRESTClient implements FileResolver {
 
     private static final Logger log = LoggerFactory.getLogger(FileResolverRESTClient.class);
     private static final HttpsClientBuilder clientBuilder;
-    //private static final PoolingHttpClientConnectionManager cm;
 
     static {
         String privateKeyFile = Settings.get(CommonSettings.FILE_RESOLVER_KEYFILE);
         clientBuilder = new HttpsClientBuilder(privateKeyFile);
-        /*HttpClientBuilder clientBuilder;
-        String privateKeyFile = Settings.get(CommonSettings.FILE_RESOLVER_KEYFILE);
-        clientBuilder = HttpClients.custom();
-        BasicTwoWaySSLProvider sslProvider = new BasicTwoWaySSLProvider(privateKeyFile);
-        SSLConnectionSocketFactory sslsf =
-                new SSLConnectionSocketFactory(sslProvider.getSSLContext(), new DefaultHostnameVerifier());
-        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory> create()
-                .register("https", sslsf) //register http also?
-                .build();
-        cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-        cm.setMaxTotal(Settings.getInt(CommonSettings.MAX_TOTAL_CONNECTIONS));
-        cm.setDefaultMaxPerRoute(Settings.getInt(CommonSettings.MAX_CONNECTIONS_PER_ROUTE));
-        clientBuilder.setConnectionManager(cm);*/
     }
 
     /**
@@ -70,7 +47,6 @@ public class FileResolverRESTClient implements FileResolver {
 
     public FileResolverRESTClient() {
         baseUrl = getBaseURL();
-
     }
 
     private URL getBaseURL() {

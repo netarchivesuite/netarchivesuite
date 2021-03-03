@@ -34,7 +34,6 @@ public class WarcRecordClient {
 
     public WarcRecordClient(URI baseUri) {
         this.baseUri = baseUri;
-
     }
 
     /**
