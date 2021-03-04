@@ -52,9 +52,7 @@ public class SystemOverviewTest extends AbstractSystemTest {
     @Test(groups = {"guitest", "functest"})
     public void generalTest() throws Exception {
         addDescription("Test specification: http://netarchive.dk/suite/It23JMXMailCheck");
-        String s = Settings.get(CommonSettings.ARC_REPOSITORY_CLIENT);
-        boolean isBitmag = s.contains("BitmagArcRepositoryClient");
-        addDescription("Using client class " + s);
+        boolean isBitmag = (getTestController().ENV.getBitmagConf() != null);
         Set<Application> expectedApplicationSet = null;
         if (isBitmag) {
             expectedApplicationSet =
