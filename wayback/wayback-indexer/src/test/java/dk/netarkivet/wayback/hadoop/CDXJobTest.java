@@ -18,10 +18,12 @@ import org.apache.hadoop.util.ToolRunner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.optional.ssh.Scp;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 
+@Ignore
 public class CDXJobTest {
 
     private Configuration conf;

@@ -15,10 +15,13 @@ import org.archive.io.ArchiveRecord;
 import org.archive.io.warc.WARCReaderFactory;
 import org.archive.io.warc.WARCRecord;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.utils.RequiresFileResolver;
 import dk.netarkivet.common.utils.service.WarcRecordClient;
 
+@Category(RequiresFileResolver.class)
 public class WarcRecordClientTest {
     final String WRS_URL = "https://localhost:10443/cgi-bin/warcrecordservice.cgi";
 

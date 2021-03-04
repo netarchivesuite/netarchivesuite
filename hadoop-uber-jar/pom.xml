@@ -55,7 +55,7 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>harvester-core</artifactId>
-      <version>5.7-IIPCH3-SNAPSHOT</version>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.hadoop</groupId>

@@ -709,9 +709,4 @@ public class CommonSettings {
      */
     public static String HADOOP_KERBEROS_CONF = "settings.common.hadoop.kerberos.krb5-conf";
 
-    /**
-     * The path to the hadoop kerberos truststore, corresponding to the hadoop setting
-     * ssl.client.truststore.location. It overrides any value set in hadoop's ssl-client.xml
-     */
-    public static String HADOOP_KERBEROS_TRUSTSTORE_PATH = "settings.common.hadoop.kerberos.trustStore.path";
 }

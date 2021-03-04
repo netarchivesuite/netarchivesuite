@@ -179,7 +179,6 @@ public class Reporting {
     private static List<CDXRecord> getRecordsUsingHadoop(long jobid) {
         Configuration hadoopConf = HadoopJobUtils.getConf();
         String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobid);
-        //try (FileSystem fileSystem = FileSystem.newInstance(new URI("hdfs:///user/nat-csr"), hadoopConf)) {
         try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
             HadoopJobStrategy jobStrategy = new MetadataCDXExtractionStrategy(jobid, fileSystem);
             HadoopJob job = new HadoopJob(jobid, jobStrategy);
