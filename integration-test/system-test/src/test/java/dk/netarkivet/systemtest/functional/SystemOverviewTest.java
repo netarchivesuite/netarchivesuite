@@ -97,8 +97,12 @@ public class SystemOverviewTest extends AbstractSystemTest {
             String channel = rowCells.get(3).getText();
             String replica = rowCells.get(4).getText();
             log.debug("Checking row " + rowCounter + ", value is: " + machine + ": " + application);
-            rowCounter++;
-            displayedApplicationSet.add(new Application(machine, application, instance_Id, channel, replica));
+            if (!application.equals("GUIWebServer")) {
+                rowCounter++;
+                displayedApplicationSet.add(new Application(machine, application, instance_Id, channel, replica));
+            } else {
+                log.debug("Ignoring transient jmx from GUIWebServer");
+            }
         }
 
         NASAssert.assertEquals(expectedApplicationSet, displayedApplicationSet);
