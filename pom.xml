@@ -1145,7 +1145,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <test.excluded.groups>dk.netarkivet.common.utils.marker.FailsOnJenkins</test.excluded.groups>
+        <test.excluded.groups>dk.netarkivet.common.utils.FailsOnJenkins</test.excluded.groups>
       </properties>
     </profile>
     <profile>

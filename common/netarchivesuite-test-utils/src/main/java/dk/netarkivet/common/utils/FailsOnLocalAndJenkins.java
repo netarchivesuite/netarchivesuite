@@ -1,4 +1,4 @@
-package dk.netarkivet.common.utils.marker;
+package dk.netarkivet.common.utils;
 
 public interface FailsOnLocalAndJenkins {
 }

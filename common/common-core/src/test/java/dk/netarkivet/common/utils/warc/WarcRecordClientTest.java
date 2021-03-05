@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import dk.netarkivet.common.utils.FailsOnJenkins;
 import org.apache.commons.io.IOUtils;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
@@ -72,8 +73,7 @@ public class WarcRecordClientTest {
         assertTrue("Expect a non-zero length bitarchiveRecord", IOUtils.toByteArray(bitarchiveRecord.getData()).length > 100);
         System.out.println("\n\n" + IOUtils.toString(bitarchiveRecord.getData()));
     }
-
-   // @Category(FailsOnJenkins.class)
+    @Category(FailsOnJenkins.class)
     @Test
     public void getWithArc() throws IOException, URISyntaxException {
         URI baseUri = new URI(WRS_URL);

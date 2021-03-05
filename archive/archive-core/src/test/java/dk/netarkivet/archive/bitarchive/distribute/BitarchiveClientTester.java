@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import dk.netarkivet.common.utils.*;
-import dk.netarkivet.common.utils.marker.FailsOnJenkins;
+import dk.netarkivet.common.utils.FailsOnJenkins;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

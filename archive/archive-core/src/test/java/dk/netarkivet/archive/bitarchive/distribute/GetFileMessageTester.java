@@ -33,7 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-import dk.netarkivet.common.utils.marker.FailsOnJenkins;
+import dk.netarkivet.common.utils.FailsOnJenkins;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
