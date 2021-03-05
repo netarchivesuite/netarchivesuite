@@ -73,7 +73,7 @@ public class WarcRecordClientTest {
         System.out.println("\n\n" + IOUtils.toString(bitarchiveRecord.getData()));
     }
 
-   @Category(FailsOnJenkins.class)
+   // @Category(FailsOnJenkins.class)
     @Test
     public void getWithArc() throws IOException, URISyntaxException {
         URI baseUri = new URI(WRS_URL);
