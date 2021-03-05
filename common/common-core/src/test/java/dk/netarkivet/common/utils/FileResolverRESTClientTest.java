@@ -25,7 +25,7 @@ import dk.netarkivet.common.utils.service.FileResolverRESTClient;
  * /kbhpillar/collection-netarkivet/dkcollection-1-1-metadata-1.warc.gz
  * although not necessarily with these exact paths.
  */
-@Category(RequiresFileResolver.class)
+//@Category(RequiresFileResolver.class)
 public class FileResolverRESTClientTest {
 
     FileResolver fileResolver;
