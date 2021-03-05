@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.utils.service.WarcRecordClient;
+import org.junit.experimental.categories.Category;
 
 public class WarcRecordClientTest {
     final String WRS_URL = "https://localhost:10443/cgi-bin/warcrecordservice.cgi";
@@ -72,6 +73,7 @@ public class WarcRecordClientTest {
         System.out.println("\n\n" + IOUtils.toString(bitarchiveRecord.getData()));
     }
 
+   @Category(FailsOnJenkins.class)
     @Test
     public void getWithArc() throws IOException, URISyntaxException {
         URI baseUri = new URI(WRS_URL);

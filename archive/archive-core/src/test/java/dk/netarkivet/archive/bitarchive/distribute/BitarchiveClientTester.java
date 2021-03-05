@@ -35,9 +35,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import dk.netarkivet.common.utils.*;
+import dk.netarkivet.common.utils.marker.FailsOnJenkins;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.archive.ArchiveSettings;
@@ -55,16 +56,13 @@ import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.PrintNotifications;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.MessageAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import org.junit.experimental.categories.Category;
 
 /**
  * Test bitarchive client and server As a number of tests only succeed if both the client and server both operate
@@ -195,6 +193,7 @@ public class BitarchiveClientTester {
     /**
      * Initiate upload and verify that corresponding upload message received by onUpload message handler.
      */
+    @Category(FailsOnJenkins.class)
     @Test
     public void testUpload() {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME, FILE_TO_UPLOAD.exists());
@@ -212,6 +211,7 @@ public class BitarchiveClientTester {
     /**
      * Verify that it is possible to retrieve previously uploaded file.
      */
+    @Category(FailsOnJenkins.class)
     @Test
     public void testGetFile() {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME, FILE_TO_UPLOAD.exists());
@@ -243,6 +243,7 @@ public class BitarchiveClientTester {
      * Try to upload the same file twice and verify that corresponding error message received by onUpload message
      * handler.
      */
+    @Category(FailsOnJenkins.class)
     @Test
     public void testUploadTwice() {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.TestRemoteFile");
@@ -276,6 +277,7 @@ public class BitarchiveClientTester {
      *
      * @throws IOException
      */
+    @Category(FailsOnJenkins.class)
     @Test
     public void testGet() throws IOException {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME, FILE_TO_UPLOAD.exists());
@@ -313,6 +315,7 @@ public class BitarchiveClientTester {
      * Test the batch(BatchMessage) method. Initiate batch job and verify that onBatch receives the corresponding
      * message with correct result data from the batch job.
      */
+    @Category(FailsOnJenkins.class)
     @Test
     public void testBatch1() {
         uploadInPreparationOfBatchTest();
@@ -348,6 +351,7 @@ public class BitarchiveClientTester {
     /**
      * Verify that the batch(ChannelID,FileBatchJob,RemoteFile) method does not accept null parameters.
      */
+    @Category(FailsOnJenkins.class)
     @Test
     public void testBatch2() {
         uploadInPreparationOfBatchTest();
@@ -404,6 +408,7 @@ public class BitarchiveClientTester {
         }
     }
 
+    @Category(FailsOnJenkins.class)
     @Test
     public void testNewMessages() {
         // make sure, that the listener 'handler' is the only one on the

@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import dk.netarkivet.common.utils.marker.FailsOnJenkins;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +47,7 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import org.junit.experimental.categories.Category;
 
 /**
  * Tests for GetFileMessage
@@ -71,6 +73,7 @@ public class GetFileMessageTester {
         rs.tearDown();
     }
 
+    @Category(FailsOnJenkins.class)
     @Test
     public void testGetData() throws IOException, NoSuchFieldException, IllegalAccessException {
         File origFile = new File(WORKING, "NetarchiveSuite-store1.arc");

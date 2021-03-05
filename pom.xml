@@ -917,6 +917,16 @@
           </configuration>
         </plugin>
 
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+          <!-- Read jUnit categories to be excluded from Maven property -->
+          <configuration>
+            <excludedGroups>${test.excluded.groups}</excludedGroups>
+          </configuration>
+        </plugin>
+
       </plugins>
     </pluginManagement>
 
@@ -1125,6 +1135,26 @@
       <properties>
         <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
       </properties>
+    </profile>
+
+    <profile>
+      <!-- JenkinsUnitTest -->
+      <id>Default</id>
+      <!-- Set profile to be active by default -->
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <test.excluded.groups>dk.netarkivet.common.utils.marker.FailsOnJenkins</test.excluded.groups>
+      </properties>
+    </profile>
+    <profile>
+      <!-- Set profile to localUnitTest -->
+      <id>LocalUnitTest</id>
+      <properties>
+        <test.excluded.groups>dk.netarkivet.common.utils.FailsOnBoth</test.excluded.groups>
+      </properties>
+
     </profile>
 
   </profiles>
