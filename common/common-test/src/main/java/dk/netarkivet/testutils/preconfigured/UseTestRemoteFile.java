@@ -69,6 +69,8 @@ public class UseTestRemoteFile implements TestConfigurationIF {
 
     public void tearDown() {
         TestRemoteFile.removeRemainingFiles();
-        Settings.set(CommonSettings.REMOTE_FILE_CLASS, originalRemoteFileClass);
+        if (originalRemoteFileClass != null) {
+            Settings.set(CommonSettings.REMOTE_FILE_CLASS, originalRemoteFileClass);
+        }
     }
 }

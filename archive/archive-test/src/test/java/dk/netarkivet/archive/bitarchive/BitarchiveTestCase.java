@@ -24,6 +24,7 @@ package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,8 +41,8 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 /** A collection of setup/teardown stuff usable by most bitarchive tests.. */
 public abstract class BitarchiveTestCase {
 
-    private UseTestRemoteFile rf = new UseTestRemoteFile();
-    protected static Bitarchive archive;
+    private final UseTestRemoteFile rf = new UseTestRemoteFile();
+    protected Bitarchive archive;
     ReloadSettings rs = new ReloadSettings();
 
     MockupJMS mj = new MockupJMS();
@@ -49,44 +50,50 @@ public abstract class BitarchiveTestCase {
     /**
      * Make a new BitarchiveTestCase using the given directory for originals.
      *
-     * @param s Name of the test.
      */
-
     protected abstract File getOriginalsDir();
 
     @Before
     public void setUp() throws Exception {
+        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
+
+        // Copy over the "existing" bit archive.
+        TestFileUtils.copyDirectoryNonCVS(getOriginalsDir(), TestInfo.WORKING_DIR);
+        setUpArchive(TestInfo.WORKING_DIR.getAbsolutePath());
+    }
+
+    public void setUpArchive(final String... filedir) {
+        this.tearDownArchive();
         // super.setUp();
         rs.setUp();
         mj.setUp();
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        try {
-            // Copy over the "existing" bit archive.
-            TestFileUtils.copyDirectoryNonCVS(getOriginalsDir(), TestInfo.WORKING_DIR);
-            Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.WORKING_DIR.getAbsolutePath());
-            Channels.reset(); // resetting channels
-            archive = Bitarchive.getInstance();
-        } catch (Exception e) {
-            throw new ExceptionInInitializerError(e);
-        }
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, filedir);
+        Channels.reset(); // resetting channels
+        archive = Bitarchive.getInstance();
+
         rf.setUp();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    public void tearDownArchive() {
         if (archive != null) {
             archive.close();
         }
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         mj.tearDown();
         rf.tearDown();
         rs.tearDown();
-        // super.tearDown();
+    }
+
+    @After
+    public void tearDownArchiveAndClean() {
+        tearDownArchive();
+        Arrays.stream(Settings.getAll(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR)).map(string -> new File(string))
+                .forEach(file ->
+                        FileUtils.removeRecursively(file));
     }
 
     public static void resetChannels() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
     	Field field = Channels.class.getDeclaredField("instance");
-    	field.set(null, (Channels) null);
+    	field.set(null, null);
     }
     
 }

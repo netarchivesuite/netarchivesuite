@@ -56,20 +56,7 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
         return ARC_FILE_DIR;
     }
 
-    /**
-     * Create Bitarchive
-     *
-     * @throws Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
 
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
 
     /**
      * Verify that uploading a file adds the appropriate record to admin data.
@@ -127,11 +114,8 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
      */
     @Test
     public void testCTOR() {
-        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR_1.getAbsolutePath(),
-                ARCHIVE_DIR_2.getAbsolutePath());
-        archive.close();
-        archive = null;
-        archive = Bitarchive.getInstance();
+        tearDownArchiveAndClean();
+        setUpArchive(ARCHIVE_DIR_1.getAbsolutePath(), ARCHIVE_DIR_2.getAbsolutePath());
         assertTrue(ARCHIVE_DIR_1 + " should exist after creating bitarchive", ARCHIVE_DIR_1.exists());
         assertTrue(ARCHIVE_DIR_2 + " should exist after creating bitarchive", ARCHIVE_DIR_2.exists());
         assertTrue(ARCHIVE_DIR_1 + " should be writeable after creating bitarchive", ARCHIVE_DIR_1.canWrite());
@@ -141,18 +125,16 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
     /** Check that the constructor handles illegal directories correctly. */
     @Test
     public void testCTORErrors() {
-        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, "/foo:bar");
-        archive.close();
-        archive = null;
+        tearDownArchiveAndClean();
         try {
-            archive = Bitarchive.getInstance();
+            setUpArchive("/foo:bar");
             fail("Should fail when given a nonexisting path");
         } catch (PermissionDenied e) {
             // Expected
         }
-        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, "/:");
+
         try {
-            archive = Bitarchive.getInstance();
+            setUpArchive("/:");
             fail("Should fail when given a nonwritable path");
         } catch (PermissionDenied e) {
             // Expected

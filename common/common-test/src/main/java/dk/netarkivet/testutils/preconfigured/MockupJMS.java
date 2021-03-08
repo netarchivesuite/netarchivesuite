@@ -47,7 +47,9 @@ public class MockupJMS implements TestConfigurationIF {
         } catch (Exception e) {
             // just ignore it
         }
-        Settings.set(CommonSettings.JMS_BROKER_CLASS, originalClass);
+        if (originalClass != null) {
+            Settings.set(CommonSettings.JMS_BROKER_CLASS, originalClass);
+        }
     }
 
     public JMSConnection getJMSConnection() {

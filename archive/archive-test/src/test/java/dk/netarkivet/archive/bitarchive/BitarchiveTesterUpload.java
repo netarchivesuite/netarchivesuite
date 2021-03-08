@@ -76,9 +76,8 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * At start of test, set up an archive we can run against.
      */
     @Before
-    public void setUp() throws Exception {
-        super.setUp(); 
-        try { 
+    public void startBitArchiveServer() throws Exception {
+        try {
         	Channels.getAllBa();
         } catch (Exception e){
         	fail("Channels.getAllBa should not throw Exception " + e);
@@ -90,11 +89,10 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * At end of test, remove any files we managed to upload.
      */
     @After
-    public void tearDown() throws Exception {
+    public void closeServer() throws Exception {
         if (server != null) {
             server.close();
         }
-        super.tearDown();
     }
 
     /* **** Part one: Test that illegal parameters are handled correctly. ** */
@@ -230,17 +228,16 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     @Test
     public void testUploadUsesDir() {
         final File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
-        setupBitarchiveWithDirs(new String[] {dir1.getAbsolutePath(),});
+        setupBitarchiveWithDirs(dir1.getAbsolutePath());
         archive.upload(new TestRemoteFile(new File(ORIGINALS_DIR, UPLOADED_FILES.get(2)), false, false, false),
                 UPLOADED_FILES.get(2));
         assertTrue("Should place file in directory " + dir1,
                 new File(new File(dir1, "filedir"), UPLOADED_FILES.get(2)).exists());
     }
 
-    private void setupBitarchiveWithDirs(final String[] dirpaths) {
+    public void setupBitarchiveWithDirs(final String dirpaths) {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirpaths);
         // Don't like the archive made in setup, try again:)
-        archive.close();
-        archive = Bitarchive.getInstance();
+        setUpArchive(dirpaths);
     }
 }

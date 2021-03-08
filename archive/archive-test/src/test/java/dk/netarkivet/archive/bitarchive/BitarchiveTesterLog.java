@@ -56,15 +56,7 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
         return EXISTING_ARCHIVE_DIR;
     }
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
 
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
 
     /**
      * Asserts that a source string does not contain a given string, and prints out the source string if the target

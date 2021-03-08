@@ -73,6 +73,18 @@ public class Bitarchive {
     }
 
     /**
+     * Get the one instance of the bitarchive.
+     *
+     * @return An instance of the Bitarchive class.
+     * @throws PermissionDenied If the storage area used for files is not accessible.
+     */
+    public static Bitarchive getInstance() throws PermissionDenied {
+        if (instance == null) {
+            instance = new Bitarchive();
+        }
+        return instance;
+    }
+    /**
      * Release all resources allocated by the bitarchive Ensures that all admin data and log data are flushed.
      */
     public void close() {
@@ -281,17 +293,6 @@ public class Bitarchive {
         return path;
     }
 
-    /**
-     * Get the one instance of the bitarchive.
-     *
-     * @return An instance of the Bitarchive class.
-     * @throws PermissionDenied If the storage area used for files is not accessible.
-     */
-    public static Bitarchive getInstance() throws PermissionDenied {
-        if (instance == null) {
-            instance = new Bitarchive();
-        }
-        return instance;
-    }
+
 
 }

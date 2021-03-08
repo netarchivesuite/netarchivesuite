@@ -41,16 +41,6 @@ public class BitarchiveTesterGetFile extends BitarchiveTestCase {
         //return ORIGINALS_DIR;
     }
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     @Test
     public void testGetFile_Failure() throws Exception {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
