@@ -136,7 +136,7 @@ public class GUIWebServer implements CleanupIF {
             try {
                 HadoopJobUtils.doKerberosLogin();
             } catch (Exception e) {
-                log.error("Fatal error starting GUI - could not connect to hadoop. " + e.getMessage());
+                log.error("Fatal error starting GUI - could not connect to Hadoop. " + e.getMessage());
                 throw new RuntimeException(e);
             }
         }

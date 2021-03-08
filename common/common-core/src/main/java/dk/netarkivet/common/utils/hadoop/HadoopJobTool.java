@@ -37,7 +37,8 @@ public class HadoopJobTool extends Configured implements Tool {
         Path inputPath = new Path(args[0]);
         Path outputPath = new Path(args[1]);
         Configuration conf = getConf();
-        Job job = Job.getInstance(conf, this.getClass().getName());
+        Job job = Job.getInstance(conf);
+        job.setJobName("HadoopJob using " + mapper.getClass().getSimpleName());
 
         //job.setJarByClass(this.getClass());
         job.setInputFormatClass(NLineInputFormat.class);

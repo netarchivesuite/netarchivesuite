@@ -31,10 +31,7 @@ public class CGIRequestBuilder {
      * Initializes the request builder and sets the default configurations that every request will have.
      */
     private void setUpDefaultRequestBuilder() {
-        String collectionId = Settings.get(BitmagUtils.BITREPOSITORY_COLLECTIONID);
-        if (collectionId == null || "".equals(collectionId)) {
-            collectionId = Settings.get(CommonSettings.ENVIRONMENT_NAME);
-        }
+        String collectionId = BitmagUtils.getDefaultCollectionID();
         requestBuilder = RequestBuilder.get()
                 .setUri(uri)
                 .addHeader("User-Agent", USER_AGENT)
