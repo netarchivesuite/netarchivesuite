@@ -13,12 +13,15 @@ import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCReaderFactory;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.utils.RequiresFileResolver;
 import dk.netarkivet.common.utils.service.WarcRecordClient;
 
 import static org.junit.Assert.*;
 
+@Category(RequiresFileResolver.class)
 public class WarcRecordClientTester {
 
     /**
