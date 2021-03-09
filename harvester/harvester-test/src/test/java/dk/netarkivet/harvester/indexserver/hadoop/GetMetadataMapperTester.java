@@ -21,6 +21,7 @@ import org.apache.hadoop.yarn.server.resourcemanager.scheduler.fifo.FifoSchedule
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.utils.FileUtils;
@@ -32,6 +33,7 @@ import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.harvester.indexserver.TestInfo;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
+@Ignore
 public class GetMetadataMapperTester {
     private MoveTestFiles mtf;
     private File metadataDir;

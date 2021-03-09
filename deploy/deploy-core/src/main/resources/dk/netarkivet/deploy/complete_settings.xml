@@ -69,6 +69,7 @@
         <environmentName>DEV</environmentName>
         <organization>netarkivet.dk</organization>
         <tempDir>./tests/commontempdir</tempDir>
+        <useBitmagHadoopBackend>false</useBitmagHadoopBackend>
         <metadata>
             <fileregexsuffix>-metadata-[0-9]+.(w)?arc(.gz)?</fileregexsuffix>
         </metadata>
@@ -84,6 +85,20 @@
         </http>
         <arcrepositoryClient>
             <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
+            <bitrepository>
+                <!-- if not set, use of certificates is disabled. If the keyfilename does not exist
+                        use of certificates is disabled as well.
+                 -->
+                <keyfilename/>
+                <settingsDir/>
+                <storeMaxPillarFailures>1</storeMaxPillarFailures>
+                <tempdir>arcrepositoryTemp</tempdir>
+                <collectionID>netarkivet</collectionID>
+                <usepillar/>
+                <!-- Set to 5 minutes to make it possible to retrieve large records
+                 using FTP -->
+                <getTimeout>300000</getTimeout>
+            </bitrepository>
         <fileDir>ArcRepository</fileDir><getTimeout>300000</getTimeout><storeRetries>3</storeRetries><storeTimeout>3600000</storeTimeout></arcrepositoryClient>
         <monitorregistryClient>
             <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
@@ -161,6 +176,10 @@
             <harvestStatus>
                 <defaultPageSize>100</defaultPageSize>
             </harvestStatus>
+            <warc>
+                <maxTotalConnections>100</maxTotalConnections>
+                <maxConnectionsPerRoute>20</maxConnectionsPerRoute>
+            </warc>
             <hideInactiveTemplates>false</hideInactiveTemplates>
         </webinterface>
         <topLevelDomains>
@@ -234,6 +253,28 @@
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <applicationName>NA</applicationName>
         <applicationInstanceId/>
+        <hadoop>
+            <defaultFS>hdfs://node1</defaultFS>
+            <hdfs>
+                <uri>hdfs://node1:8020</uri>
+            </hdfs>
+            <resourcemanager>
+                <address>node1:8032</address>
+            </resourcemanager>
+            <mapred>
+                <framework>yarn</framework>
+                <inputDir>nas_input</inputDir>
+                <outputDir>nas_output</outputDir>
+            </mapred>
+        </hadoop>
+        <useHadoopAsMassProcessor>true</useHadoopAsMassProcessor>
+        <fileResolver>
+            <class>dk.netarkivet.common.utils.service.FileResolverRESTClient</class>
+        </fileResolver>
+        <trustStore>
+            <path>/etc/ssl/certs/java/cacerts</path>
+            <password>changeit</password>
+        </trustStore>
     </common><harvester>
     	<!-- snapshotChannelId>SNAPSHOT</snapshotChannelId -->
         <performer/>

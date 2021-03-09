@@ -60,6 +60,7 @@ public class HarvesterStatusReceiverTest {
         verify(jobDispatcher).submitNextNewJob(highChan);
     }
 
+    // Logged exception is expected!
     @Test
     public void testInvalidMessageType() {
         CrawlProgressMessage statusmessage = new CrawlProgressMessage(1, 1);

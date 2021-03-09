@@ -12,6 +12,7 @@ import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCReaderFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
@@ -19,6 +20,7 @@ import dk.netarkivet.common.utils.service.WarcRecordClient;
 
 import static org.junit.Assert.*;
 
+@Ignore
 public class WarcRecordClientTester {
 
     /**
