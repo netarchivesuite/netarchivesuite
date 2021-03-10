@@ -42,6 +42,8 @@ import java.util.Iterator;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+import dk.netarkivet.common.utils.*;
+import dk.netarkivet.common.utils.FailsOnJenkins;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -64,10 +66,6 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.exceptions.BatchTermination;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.RememberNotifications;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.SlowTest;
 import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
@@ -161,6 +159,7 @@ public class BitarchiveServerTester {
      *
      * @throws InterruptedException
      */
+    @Category(FailsOnJenkins.class)
     @Test
     public void testVisitUploadMessage() throws InterruptedException {
         SERVER1.mkdirs();
@@ -231,6 +230,7 @@ public class BitarchiveServerTester {
      * <p>
      * We currently don't resend the message, but just reply.
      */
+    @Category(FailsOnJenkins.class)
     @Test
     //@Ignore("Number of listeners on queue not 1.")
     public void testVisitUploadMessageDiskcrash() {
@@ -279,6 +279,7 @@ public class BitarchiveServerTester {
         assertTrue("Should have received at least two messages on arcRepos q", listener.messagesReceived.size() >= 2);
     }
 
+    @Category(FailsOnJenkins.class)
     @Test
     //@Ignore("Number of listeners on queue not 1.")
     public void testListenerNotRemovedOnErrors() {
@@ -393,7 +394,7 @@ public class BitarchiveServerTester {
     /**
      * Pass a batch message to BitarchiveServer and test that it replies with an appropriate BatchEndedMessage.
      */
-    @Category(SlowTest.class) // This is actually not true, but the test fails if the other slowTest
+    @Category({SlowTest.class, FailsOnJenkins.class}) // This is actually not true, but the test fails if the other slowTest
     // 'testVisitGetMessageNoSuchFile' hasn't run, and takes a long while to do this.
     @Test
     public void testVisitBatchMessage() throws InterruptedException {
@@ -541,7 +542,7 @@ public class BitarchiveServerTester {
     /**
      * Test that a visit(RemoveAndGetMessage) call actually removes (moves) the file.
      */
-    @Category(SlowTest.class) // This is actually not true, but the test fails if the other slowTest
+    @Category({SlowTest.class, FailsOnJenkins.class }) // This is actually not true, but the test fails if the other slowTest
     // 'testVisitGetMessageNoSuchFile' hasn't run, and takes a long while to do this.
     @Test
     public void testVisitRemoveAndGetFileMessage() throws Exception {

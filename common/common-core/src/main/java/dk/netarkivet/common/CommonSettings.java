@@ -545,5 +545,167 @@ public class CommonSettings {
      * the value of this setting with .* will find all metadata files.
      */
     public static String METADATAFILE_REGEX_SUFFIX = "settings.common.metadata.fileregexsuffix";
-    
+
+    /**
+     * Specifies the name of the default file system for Hadoop to use (URI consisting of scheme and authority).
+     * If not set, Hadoop defaults to 'file:///'.
+     * If using hdfs Hadoop paths are auto-resolved to 'hdfs://hostname/user/current_user/specified_path
+     * In production we now load the entire hadoop configuration from the classpath so this is
+     * @deprecated
+     */
+    public static String HADOOP_DEFAULT_FS = "settings.common.hadoop.defaultFS";
+
+    /**
+     * The setting specifying the URI on which the used HDFS is located.
+     * In production we now load the entire hadoop configuration from the classpath so this is
+     * @deprecated
+     */
+    public static String HADOOP_HDFS_URI = "settings.common.hadoop.hdfs.uri";
+
+    /**
+     * Specifies the address on where to locate the ResourceManager (e.g. YARN).
+     * In production we now load the entire hadoop configuration from the classpath so this is
+     * @deprecated
+     */
+    public static String HADOOP_RESOURCEMANAGER_ADDRESS = "settings.common.hadoop.resourcemanager.address";
+
+    /**
+     * Specifies which framework is used for running mapreduce (e.g. YARN).
+     * In production we now load the entire hadoop configuration from the classpath so this is
+     * @deprecated
+     */
+    public static String HADOOP_MAPRED_FRAMEWORK = "settings.common.hadoop.mapred.framework";
+
+    /**
+     * Specifies which directory to find the individual input files for a job in.
+     */
+    public static String HADOOP_MAPRED_INPUT_FILES_PARENT_DIR = "settings.common.hadoop.mapred.inputFilesParentDir";
+
+    /**
+     * The setting for the input path to use in cdx-indexing map-/reduce jobs.
+     */
+    public static String HADOOP_MAPRED_CDXJOB_INPUT_DIR = "settings.common.hadoop.mapred.cdxJob.inputDir";
+
+    /**
+     * The setting for the output path to use in cdx-indexing map-/reduce jobs.
+     */
+    public static String HADOOP_MAPRED_CDXJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.cdxJob.outputDir";
+
+    /**
+     * The directory/path for Hadoop to use as input path in metadata extraction map-/reduce jobs.
+     * Used when Hadoop metadata extraction jobs are started by the IndexRequestServer after receiving requests.
+     */
+    public static String HADOOP_MAPRED_METADATA_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataExtractionJob.inputDir";
+
+    /**
+     * The directory/path for Hadoop to use as output path in metadata extraction map-/reduce jobs.
+     * Used when Hadoop metadata extraction jobs are started by the IndexRequestServer after receiving requests.
+     */
+    public static String HADOOP_MAPRED_METADATA_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataExtractionJob.outputDir";
+
+    /**
+     * The directory/path for Hadoop to use as input path in metadata CDX-indexing map-/reduce jobs
+     * (Hadoop equivalent of ArchiveExtractCDXJob).
+     */
+    public static String HADOOP_MAPRED_METADATA_CDX_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.metadataCDXExtractionJob.inputDir";
+
+    /**
+     * The directory/path for Hadoop to use as output path in metadata CDX-indexing map-/reduce jobs
+     * (Hadoop equivalent of ArchiveExtractCDXJob).
+     */
+    public static String HADOOP_MAPRED_METADATA_CDX_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.metadataCDXExtractionJob.outputDir";
+
+    /**
+     * The directory/path for Hadoop to use as input path in crawl log extraction map-/reduce jobs
+     * (Hadoop equivalent of the CrawlLogLinesMatchingRegexp batch job).
+     */
+    public static String HADOOP_MAPRED_CRAWLLOG_EXTRACTIONJOB_INPUT_DIR = "settings.common.hadoop.mapred.crawlLogExtractionJob.inputDir";
+
+    /**
+     * The directory/path for Hadoop to use as output path in crawl log extraction map-/reduce jobs
+     * (Hadoop equivalent of the CrawlLogLinesMatchingRegexp batch job).
+     */
+    public static String HADOOP_MAPRED_CRAWLLOG_EXTRACTIONJOB_OUTPUT_DIR = "settings.common.hadoop.mapred.crawlLogExtractionJob.outputDir";
+
+    /**
+     * Path on the client machine where the uber-jar file containing the map-/reduce job and dependencies
+     * for the harvester and indexer module is to be found.
+     */
+    public static String HADOOP_MAPRED_UBER_JAR = "settings.common.hadoop.mapred.hadoopUberJar";
+
+    /**
+     * Username to start map-/reduce jobs under on the Hadoop cluster.
+     * In production we now use kerberos so this is
+     * @deprecated
+     */
+    public static String HADOOP_USER_NAME = "settings.common.hadoop.username";
+
+    /**
+     * Boolean setting specifying if the Bitrepository project is used as backend storage together with Hadoop
+     * for mass processing jobs.
+     */
+    public static String USE_BITMAG_HADOOP_BACKEND = "settings.common.useBitmagHadoopBackend";
+
+    /**
+     * <b>settings.common.webinterface.warc.maxTotalConnections</b>: <br>
+     * Increase max total connections to e.g. 200.
+     */
+    public static String MAX_TOTAL_CONNECTIONS = "settings.common.webinterface.warc.maxTotalConnections";
+
+    /**
+     * <b>settings.common.webinterface.warc.maxConnectionsPerRoute</b> <br>
+     * Increase default max connections per route, e.g. to 20.
+     */
+    public static String MAX_CONNECTIONS_PER_ROUTE = "settings.common.webinterface.warc.maxConnectionsPerRoute";
+
+    /**
+     * The base url for the Warc Record Service.
+     */
+    public static String WRS_BASE_URL = "settings.common.warcRecordService.baseUrl";
+
+    /**
+     * The path to the keyfile to use when communicating with the Warc Record Service over HTTPS.
+     */
+    public static String WRS_KEYFILE = "settings.common.fileResolver.keyfile";
+    /**
+     * The implementation of FileResolver to use.
+     */
+    public static String FILE_RESOLVER_CLASS = "settings.common.fileResolver.class";
+
+    /**
+     * The base url for the REST implementation of FileResolver.
+     */
+    public static String FILE_RESOLVER_BASE_URL = "settings.common.fileResolver.baseUrl";
+
+    /**
+     * The path to the keyfile to use when communicating with the file resolver service over HTTPS.
+     */
+    public static String FILE_RESOLVER_KEYFILE = "settings.common.fileResolver.keyfile";
+
+    /**
+     * Path to the default truststore used for safe communication over HTTPS.
+     */
+    public static String TRUSTSTORE_PATH = "settings.common.trustStore.path";
+
+    /**
+     * Password for the default truststore.
+     */
+    public static String TRUSTSTORE_PASSWORD = "settings.common.trustStore.password";
+
+    /**
+     * The kerberos principal to use when running hadoop jobs.
+     */
+    public static String HADOOP_KERBEROS_PRINCIPAL = "settings.common.hadoop.kerberos.principal";
+
+    /**
+     * The path to the kerberos keytab file to use when running hadoop jobs.
+     */
+    public static String HADOOP_KERBEROS_KEYTAB = "settings.common.hadoop.kerberos.keytab";
+
+    /**
+     * The path to the kerberos configuration to use when running hadoop jobs. The default
+     * is /etc/krb5.conf .
+     */
+    public static String HADOOP_KERBEROS_CONF = "settings.common.hadoop.kerberos.krb5-conf";
+
 }

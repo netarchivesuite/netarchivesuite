@@ -5,14 +5,14 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>common</artifactId>
-    <version>6.1-SNAPSHOT</version>
+    <version>5.7-IIPCH3-SNAPSHOT</version>
   </parent>
 
   <artifactId>common-core</artifactId>
 
   <name>NetarchiveSuite - common - core</name>
   <properties>
-    <bitrepository.version>1.4</bitrepository.version>
+    <bitrepository.version>1.10-SNAPSHOT</bitrepository.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomcat.version>${tomcat-embed-core.version}</tomcat.version>
   </properties>
@@ -46,7 +46,7 @@
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-logging-juli</artifactId>
-      <version>8.5.2</version>
+      <version>${tomcat.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
@@ -279,6 +279,17 @@
     <dependency>
       <groupId>org.netpreserve.commons</groupId>
       <artifactId>webarchive-commons</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

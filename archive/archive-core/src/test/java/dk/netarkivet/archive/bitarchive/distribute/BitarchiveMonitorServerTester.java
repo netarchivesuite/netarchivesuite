@@ -44,6 +44,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
+import dk.netarkivet.common.utils.FailsOnJenkins;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -88,6 +89,7 @@ import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import org.junit.experimental.categories.Category;
 
 /**
  * Unit tests for the BitarchiveMonitorServer class.
@@ -149,6 +151,7 @@ public class BitarchiveMonitorServerTester {
      * Verify that batch jobs do not have to wait for each other. In particular, check that the postprocessing of one
      * job can overtake the postprocessing of another.
      */
+    @Category(FailsOnJenkins.class)
     @Test
     public void testParallelBatchJobs() throws InterruptedException {
         bam_server = BitarchiveMonitorServer.getInstance();
@@ -831,6 +834,7 @@ Caused by: dk.netarkivet.common.exceptions.ArgumentNotValid: File '/home/svc/dev
      * Testing GetChecksumMessage.
      * Requires file TestInfo.BATCH_ONE_CHECKSUM_OUTPUT_FILE
      */
+    @Category(FailsOnJenkins.class)
     @Test
     public void testGetChecksumMessage() throws InterruptedException, IOException {
     	assertTrue("Missing file '" + TestInfo.BATCH_ONE_CHECKSUM_OUTPUT_FILE.getAbsolutePath() + "' needed by RemoteFileFactory", 
@@ -885,6 +889,7 @@ Caused by: dk.netarkivet.common.exceptions.ArgumentNotValid: File '/home/svc/dev
      * Tests the opportunity to correct a entry in the archive through CorrectMessage.
      * Uses the file TestInfo.CORRECT_ARC_FILE and file TestInfo.BAD_ARC_FILE
      */
+    @Category(FailsOnJenkins.class)
     @Test
     public void testCorrectMessage() throws InterruptedException {
     	assertTrue("Missing file '" + TestInfo.CORRECT_ARC_FILE.getAbsolutePath() + "' needed by RemoteFileFactory", TestInfo.CORRECT_ARC_FILE.isFile());

@@ -169,7 +169,7 @@ public class DefaultJobGenerator extends AbstractJobGenerator {
             }
             // excluding configs with no active seeds
             if (ignoreConfiguration(cfg)) {
-            	log.info("Ignoring config '{}' for domain '{}' - no active seeds !");
+            	log.info("Ignoring config '{}' for domain '{}' - no active seeds !", cfg.getName(), cfg.getDomainName());
             	continue;
             }
             

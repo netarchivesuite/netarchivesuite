@@ -1,0 +1,34 @@
+WARC/1.0
+WARC-Type: response
+WARC-Target-URI: http://www.kb.dk/export/sites/kb_dk/robots.txt
+WARC-Date: 2016-12-18T23:43:45Z
+WARC-IP-Address: 130.226.229.120
+WARC-Payload-Digest: sha1:KLLVMTGA2AYGQYWFQS5YBZB5K5ZS355D
+WARC-Record-ID: <urn:uuid:cfb9d22d-6af5-486b-8b56-52a3fad1bfe5>
+Content-Type: application/http; msgtype=response
+Content-Length: 557
+
+HTTP/1.1 200 OK
+Server: Apache/2.2.15 (Red Hat)
+Last-Modified: Mon, 05 Jan 2009 11:09:04 GMT
+Expires: Mon, 19 Dec 2016 10:25:01 GMT
+Cache-Control: max-age=86400
+Vary: Accept-Encoding
+Content-Type: text/plain;charset=UTF-8
+X-Varnish-TTL: 86400.000
+Date: Sun, 18 Dec 2016 23:43:45 GMT
+X-Varnish: 116463867 115468707
+Age: 47924
+Via: 1.1 varnish
+Connection: close
+
+User-Agent: *
+Disallow: /da/error/
+Disallow: /en/error/
+Disallow: /image_client
+Disallow: /da/soeg/
+Sitemap: http://www.kb.dk/da/Sitemap.jsp
+Sitemap: http://www.kb.dk/en/Sitemap.jsp
+
+
+

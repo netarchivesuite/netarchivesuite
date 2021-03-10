@@ -1,0 +1,1 @@
+mvn test -P LocalUnitTest

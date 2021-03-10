@@ -32,8 +32,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -47,6 +52,11 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
 import dk.netarkivet.common.utils.cdx.ArchiveExtractCDXJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
+import dk.netarkivet.common.utils.hadoop.HadoopJob;
+import dk.netarkivet.common.utils.hadoop.HadoopJobStrategy;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
+import dk.netarkivet.viewerproxy.webinterface.hadoop.CrawlLogExtractionStrategy;
+import dk.netarkivet.viewerproxy.webinterface.hadoop.MetadataCDXExtractionStrategy;
 
 /**
  * Methods for generating the batch results needed by the QA pages.
@@ -58,6 +68,9 @@ public class Reporting {
      */
     private Reporting() {
     }
+
+    /** Logger for this class. */
+    private static final Logger log = LoggerFactory.getLogger(Reporting.class);
 
     /** The suffix for the data arc/warc files produced by Heritrix. 
      * TODO This should be configurable 
@@ -106,15 +119,60 @@ public class Reporting {
     }
 
     /**
-     * Submit a batch job to generate cdx for all metadata files for a job, and report result in a list.
+     * Depending on settings, submits either a Hadoop job or batch job to generate cdx for all metadata files for a job,
+     * and returns the results in a list.
      *
      * @param jobid The job to get cdx for.
-     * @return A list of cdx records.
      * @throws ArgumentNotValid If jobid is 0 or negative.
-     * @throws IOFailure On trouble generating the cdx
+     * @return A list of cdx records.
      */
     public static List<CDXRecord> getMetadataCDXRecordsForJob(long jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
+            return getRecordsUsingHadoop(jobid);
+        } else {
+            return getRecordsUsingBatch(jobid);
+        }
+    }
+
+    /**
+     * Submits a Hadoop job to generate cdx for all metadata files for a jobID and returns the resulting list of records.
+     *
+     * @param jobid The job to get CDX for.
+     * @return A list of CDX records.
+     */
+    private static List<CDXRecord> getRecordsUsingHadoop(long jobid) {
+        Configuration hadoopConf = HadoopJobUtils.getConf();
+        String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobid);
+        try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
+            HadoopJobStrategy jobStrategy = new MetadataCDXExtractionStrategy(jobid, fileSystem);
+            HadoopJob job = new HadoopJob(jobid, jobStrategy);
+            job.processOnlyFilesMatching(metadataFileSearchPattern);
+            job.prepareJobInputOutput(fileSystem);
+            job.run();
+
+            List<String> cdxLines;
+            try {
+                cdxLines = HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir());
+            } catch (IOException e) {
+                log.error("Failed getting CDX lines output for Hadoop job with ID: {}", jobid);
+                throw new IOFailure("Failed getting " + job.getJobType() + " job results");
+            }
+            return HadoopJobUtils.getCDXRecordListFromCDXLines(cdxLines);
+        } catch (IOException e) {
+            log.error("Error instantiating Hadoop filesystem for job {}.", jobid, e);
+            throw new IOFailure("Failed instantiating Hadoop filesystem.");
+        }
+    }
+
+    /**
+     * Submit a job to generate cdx for all metadata files for a job, and report result in a list.
+     *
+     * @param jobid The job to get cdx for.
+     * @return A list of cdx records.
+     * @throws IOFailure On trouble generating the cdx
+     */
+    private static List<CDXRecord> getRecordsUsingBatch(long jobid) {
         FileBatchJob cdxJob = new ArchiveExtractCDXJob(false) {
             @Override
             public ArchiveBatchFilter getFilter() {
@@ -139,6 +197,7 @@ public class Reporting {
             reader = new BufferedReader(new FileReader(f));
             records = new ArrayList<CDXRecord>();
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                System.out.println(line);
                 String[] parts = line.split("\\s+");
                 CDXRecord record = new CDXRecord(parts);
                 records.add(record);
@@ -169,29 +228,54 @@ public class Reporting {
     }
 
     /**
+     * Helper method to create temp file for storage of result
+     *
+     * @param uuidSuffix Suffix of temp file.
+     * @return a new temp File.
+     */
+    private static File createTempResultFile(String uuidSuffix) {
+        File tempFile;
+        try {
+            tempFile = File.createTempFile("temp", uuidSuffix + ".txt", FileUtils.getTempDir());
+            tempFile.deleteOnExit();
+        } catch (IOException e) {
+            throw new IOFailure("Unable to create temporary file", e);
+        }
+        return tempFile;
+    }
+
+    /**
+     * Helper method to get sorted File of crawllog lines.
+     *
+     * @param crawlLogLines The crawllog lines output from a job.
+     * @return A File containing the sorted lines.
+     */
+    private static File getResultFile(List<String> crawlLogLines) {
+        final String uuid = UUID.randomUUID().toString();
+        File tempFile = createTempResultFile(uuid);
+        File sortedTempFile = createTempResultFile(uuid + "-sorted");
+        FileUtils.writeCollectionToFile(tempFile, crawlLogLines);
+        FileUtils.sortCrawlLogOnTimestamp(tempFile, sortedTempFile);
+        FileUtils.remove(tempFile);
+        return sortedTempFile;
+    }
+
+    /**
      * Helper method to get result from a batchjob.
      *
      * @param batchJob a certain FileBatchJob
      * @return a file with the result.
      */
     private static File getResultFile(FileBatchJob batchJob) {
-        File f;
-        File fsorted;
-        try {
-            final String uuid = UUID.randomUUID().toString();
-            f = File.createTempFile("temp", uuid + ".txt", FileUtils.getTempDir());
-            f.deleteOnExit();
-            fsorted = File.createTempFile("temp", uuid + "-sorted.txt", FileUtils.getTempDir());
-            fsorted.deleteOnExit();
-        } catch (IOException e) {
-            throw new IOFailure("Unable to create temporary file", e);
-        }
+        final String uuid = UUID.randomUUID().toString();
+        File tempFile = createTempResultFile(uuid);
+        File sortedTempFile = createTempResultFile(uuid);
         BatchStatus status = ArcRepositoryClientFactory.getViewerInstance().batch(batchJob,
                 Settings.get(CommonSettings.USE_REPLICA_ID));
-        status.getResultFile().copyTo(f);
-        FileUtils.sortCrawlLogOnTimestamp(f, fsorted);
-        FileUtils.remove(f);
-        return fsorted;
+        status.getResultFile().copyTo(tempFile);
+        FileUtils.sortCrawlLogOnTimestamp(tempFile, sortedTempFile);
+        FileUtils.remove(tempFile);
+        return sortedTempFile;
     }
 
     /**
@@ -204,9 +288,44 @@ public class Reporting {
     public static File getCrawlLoglinesMatchingRegexp(long jobid, String regexp) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         ArgumentNotValid.checkNotNullOrEmpty(regexp, "String regexp");
-        FileBatchJob crawlLogBatchJob = new CrawlLogLinesMatchingRegexp(regexp);
-        crawlLogBatchJob.processOnlyFilesMatching(getMetadataFilePatternForJobId(jobid));
-        return getResultFile(crawlLogBatchJob);
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
+            return getCrawlLogLinesUsingHadoop(jobid, regexp);
+        } else {
+            FileBatchJob crawlLogBatchJob = new CrawlLogLinesMatchingRegexp(regexp);
+            crawlLogBatchJob.processOnlyFilesMatching(getMetadataFilePatternForJobId(jobid));
+            return getResultFile(crawlLogBatchJob);
+        }
+    }
+
+    /**
+     * Using Hadoop, gets crawllog lines for a given jobID matching a given regular expression.
+     *
+     * @param jobID The ID for the job.
+     * @param regex The regular expression specifying files to process.
+     * @return a File with the matching lines.
+     */
+    private static File getCrawlLogLinesUsingHadoop(long jobID, String regex) {
+        String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobID);
+        Configuration hadoopConf = HadoopJobUtils.getConf();
+        hadoopConf.setPattern("regex", Pattern.compile(regex));
+        try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
+            HadoopJobStrategy jobStrategy = new CrawlLogExtractionStrategy(jobID, fileSystem);
+            HadoopJob job = new HadoopJob(jobID, jobStrategy);
+            job.processOnlyFilesMatching(metadataFileSearchPattern);
+            job.prepareJobInputOutput(fileSystem);
+            job.run();
+            List<String> crawlLogLines;
+            try {
+                crawlLogLines = HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir());
+            } catch (IOException e) {
+                log.error("Failed getting crawl log lines output for job with ID: {}", jobID);
+                throw new IOFailure("Failed getting " + job.getJobType() + " job results");
+            }
+            return getResultFile(crawlLogLines);
+        } catch (IOException e) {
+            log.error("Error instantiating Hadoop filesystem for job {}.", jobID, e);
+            throw new IOFailure("Failed instantiating Hadoop filesystem.");
+        }
     }
     
     /**
