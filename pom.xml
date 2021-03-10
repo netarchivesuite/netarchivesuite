@@ -817,12 +817,13 @@
         <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
         <version>${mockobjects-core.version}</version>
       </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.12</version>
-        </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+      <!--<dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.5.12</version>
+      </dependency>-->
 
       <dependency>
         <groupId>org.apache.hadoop</groupId>
