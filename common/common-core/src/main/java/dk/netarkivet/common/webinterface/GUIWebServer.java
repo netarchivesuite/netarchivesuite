@@ -159,32 +159,27 @@ public class GUIWebServer implements CleanupIF {
                     break;
                 }
             }
-            try {
-                //add the jar file to tomcat
-                final File warfileFile = new File(basedir.getAbsolutePath(), webapp);
-                if (!warfileFile.exists() || !warfileFile.isFile()) {
-                    throw new IOFailure("Could not find expected file " + warfileFile.getAbsolutePath());
-                }
-                String warfile = warfileFile.getAbsolutePath();
-                log.info("Deploying webapp with context {} at docbase {}.", webbase, warfile);
-                StandardContext ctx = (StandardContext) server.addWebapp(webbase, warfile);
+            //add the jar file to tomcat
+            final File warfileFile = new File(basedir.getAbsolutePath(), webapp);
+            if (!warfileFile.exists() || !warfileFile.isFile()) {
+                throw new IOFailure("Could not find expected file " + warfileFile.getAbsolutePath());
+            }
+            String warfile = warfileFile.getAbsolutePath();
+            log.info("Deploying webapp with context {} at docbase {}.", webbase, warfile);
+            StandardContext ctx = (StandardContext) server.addWebapp(webbase, warfile);
+            if (taglibsScanningDisabled) {
+                StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) ctx.getJarScanner().getJarScanFilter();
+                // Disable scanning for taglibs
+                jarScanFilter.setTldSkip("*");
+            }
+            if (webapp.equals(webApps[0])) {
+                //Re-add the 1st context as also the root context
+                StandardContext rootCtx = (StandardContext) server.addWebapp("/", warfile);
                 if (taglibsScanningDisabled) {
-                    StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) ctx.getJarScanner().getJarScanFilter();
+                    StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx.getJarScanner().getJarScanFilter();
                     // Disable scanning for taglibs
                     jarScanFilter.setTldSkip("*");
                 }
-                if (webapp.equals(webApps[0])) {
-                    //Re-add the 1st context as also the root context
-                    StandardContext rootCtx = (StandardContext) server.addWebapp("/", warfile);
-                    if (taglibsScanningDisabled) {
-                        StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx.getJarScanner().getJarScanFilter();
-                        // Disable scanning for taglibs
-                        jarScanFilter.setTldSkip("*");
-                    }
-                }
-            }
-            catch (ServletException e) {
-                log.error("Unable to add webapp " + webapp, e);
             }
         }
     }
