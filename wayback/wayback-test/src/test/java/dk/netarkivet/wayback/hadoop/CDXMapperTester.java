@@ -25,7 +25,6 @@ import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
@@ -33,7 +32,6 @@ import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
-@Ignore
 public class CDXMapperTester {
     private final File BASE_DIR = new File("tests/dk/netarkivet/wayback/data");
     private final File ORIGINALS_DIR = new File(BASE_DIR, "originals/");

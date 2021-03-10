@@ -58,6 +58,7 @@ public class CrawlLogExtractionMapperTester {
         }
     }
 
+    // TODO Should be handled through some Hadoop test helper class
     private static void initCluster() throws IOException {
         File baseDir = Files.createTempDirectory("test_hdfs").toFile().getAbsoluteFile();
         conf = new YarnConfiguration();
