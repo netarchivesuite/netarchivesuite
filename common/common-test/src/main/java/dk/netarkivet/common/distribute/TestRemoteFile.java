@@ -29,6 +29,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
@@ -54,6 +57,8 @@ public class TestRemoteFile extends HTTPRemoteFile implements RemoteFile {
         remainingRemoteFiles.put(this, localFile.getName());
     }
 
+    @Test
+    @Ignore("Fix me")
     public static RemoteFile getInstance(File remoteFile, Boolean useChecksums, Boolean fileDeletable,
             Boolean multipleDownloads) throws IOFailure {
         return new TestRemoteFile(remoteFile, useChecksums, fileDeletable, multipleDownloads);
