@@ -5,7 +5,7 @@
 
   <groupId>org.netarchivesuite</groupId>
   <artifactId>netarchivesuite</artifactId>
-  <version>6.1-SNAPSHOT</version>
+  <version>7.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>NetarchiveSuite</name>
@@ -50,7 +50,7 @@
     <mysql-connector-java.version>5.1.13</mysql-connector-java.version>
     <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
     <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
-    <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
+    <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
     <maven-deploy-plugin.version>2.8.1</maven-deploy-plugin.version>
     <maven-release-plugin.version>2.5.2</maven-release-plugin.version>
     <license-maven-plugin.version>1.7</license-maven-plugin.version>
@@ -904,7 +904,7 @@
             <dependency>
               <groupId>org.netarchivesuite</groupId>
               <artifactId>build-tools</artifactId>
-              <version>6.1-SNAPSHOT</version>
+              <version>7.0-SNAPSHOT</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -988,7 +988,13 @@
           <!-- Note: This fails with a JVM older than Java 8 -->
           <!-- <additionalparam>-Xdoclint:none</additionalparam> -->
           <additionalparam>${javadoc.doclint.none}</additionalparam>
+          <additionalparam>-Xdoclint:none</additionalparam>
+          <additionalOptions>
+            <additionalOption>-Xdoclint:none</additionalOption>
+          </additionalOptions>
           <aggregate>true</aggregate>
+          <failOnError>false</failOnError>
+          <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
         </configuration>
         <executions>
           <execution>
