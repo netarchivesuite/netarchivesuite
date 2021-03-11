@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>harvester</artifactId>
-    <version>5.7-IIPCH3-SNAPSHOT</version>
+    <version>5.7-SNAPSHOT</version>
   </parent>
 
   <artifactId>harvester-test</artifactId>
@@ -131,6 +131,24 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+      <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-hdfs</artifactId>
+          <version>2.7.6</version>
+          <scope>test</scope>
+      </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-hdfs</artifactId>
+      <version>2.7.6</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-hdfs</artifactId>
+      <version>2.7.6</version>
       <scope>test</scope>
     </dependency>
 

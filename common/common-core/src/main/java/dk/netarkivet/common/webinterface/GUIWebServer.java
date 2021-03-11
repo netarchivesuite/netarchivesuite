@@ -71,7 +71,7 @@ public class GUIWebServer implements CleanupIF {
      *
      * @throws IOFailure on trouble starting server.
      */
-    public GUIWebServer() {
+    public GUIWebServer() throws ServletException {
         // Read and log settings.
 
         int port = Integer.parseInt(Settings.get(CommonSettings.HTTP_PORT_NUMBER));
@@ -176,7 +176,7 @@ public class GUIWebServer implements CleanupIF {
      *
      * @return the instance
      */
-    public static synchronized GUIWebServer getInstance() {
+    public static synchronized GUIWebServer getInstance() throws ServletException {
         if (instance == null) {
             instance = new GUIWebServer();
             instance.startServer();

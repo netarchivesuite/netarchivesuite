@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>netarchivesuite</artifactId>
-    <version>5.7-IIPCH3-SNAPSHOT</version>
+    <version>5.7-SNAPSHOT</version>
   </parent>
 
   <artifactId>hadoop-uber-jar-invoker</artifactId>
@@ -58,7 +58,7 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>hadoop-uber-jar</artifactId>
-      <version>5.7-IIPCH3-SNAPSHOT</version>
+      <version>5.7-SNAPSHOT</version>
       <classifier>shaded</classifier>
       <exclusions>
         <exclusion>
