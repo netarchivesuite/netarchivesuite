@@ -45,8 +45,8 @@ public abstract class AbstractStressTest extends SeleniumTest {
     final Long DAY = 24 * HOUR;
 
     final static TestEnvironment ENV = new DefaultTestEnvironment(
-            "Stresstest",
-            "csr@statsbiblioteket.dk",
+            "StressTest",
+            "csr@kb.dk",
             "SystemTest",
             8073,
             TestEnvironment.JOB_ADMIN_SERVER,
