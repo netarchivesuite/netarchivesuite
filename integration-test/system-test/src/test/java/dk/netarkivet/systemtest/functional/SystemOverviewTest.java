@@ -31,11 +31,14 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
+import dk.netarkivet.archive.arcrepository.distribute.BitmagArcRepositoryClient;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.Application;
 import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.NASSystemUtil;
 import dk.netarkivet.systemtest.page.PageHelper;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * Test specification: http://netarchive.dk/suite/TEST1 .
@@ -49,11 +52,14 @@ public class SystemOverviewTest extends AbstractSystemTest {
     @Test(groups = {"guitest", "functest"})
     public void generalTest() throws Exception {
         addDescription("Test specification: http://netarchive.dk/suite/It23JMXMailCheck");
-        Set<Application> expectedApplicationSet = new HashSet<Application>(Arrays.asList(NASSystemUtil
-                .getStdApplications()));
-        if (getTestController().ENV.getBitmagConf() != null ) {
-            expectedApplicationSet = new HashSet<Application>(Arrays.asList(NASSystemUtil
-                            .getBitmagApplications()));
+        boolean isBitmag = (getTestController().ENV.getBitmagConf() != null);
+        Set<Application> expectedApplicationSet = null;
+        if (isBitmag) {
+            expectedApplicationSet =
+                    new HashSet<>(Arrays.asList(NASSystemUtil.getBitmagApplications()));
+        } else {
+            expectedApplicationSet =
+                    new HashSet<>(Arrays.asList(NASSystemUtil.getStdApplications()));
         }
         int numberOfApps = expectedApplicationSet.size();
         int MAX_SECONDS_TO_WAIT = 120;
@@ -91,8 +97,12 @@ public class SystemOverviewTest extends AbstractSystemTest {
             String channel = rowCells.get(3).getText();
             String replica = rowCells.get(4).getText();
             log.debug("Checking row " + rowCounter + ", value is: " + machine + ": " + application);
-            rowCounter++;
-            displayedApplicationSet.add(new Application(machine, application, instance_Id, channel, replica));
+            if (!application.equals("GUIWebServer")) {
+                rowCounter++;
+                displayedApplicationSet.add(new Application(machine, application, instance_Id, channel, replica));
+            } else {
+                log.debug("Ignoring transient jmx from GUIWebServer");
+            }
         }
 
         NASAssert.assertEquals(expectedApplicationSet, displayedApplicationSet);

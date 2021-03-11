@@ -40,6 +40,8 @@ import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+import javax.servlet.ServletException;
+
 /**
  * Unit-test for the GUIWebServer class when the DefinitionsSiteSection is loaded. FIXME Some of these tests can be
  * merged into the GUIWebServerTester.
@@ -77,7 +79,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
             Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, "not_a_webapp");
             gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid webapp");
-        } catch (IOFailure e) {
+        } catch (IOFailure | ServletException e) {
             // expected
         }
     }
@@ -88,7 +90,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
             Settings.set(CommonSettings.HTTP_PORT_NUMBER, "not_a_number");
             gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid port number");
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | ServletException e) {
             // expected
         }
     }
@@ -99,7 +101,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         try {
             gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid port number");
-        } catch (IOFailure e) {
+        } catch (IOFailure | ServletException e) {
             // expected
         }
     }

@@ -683,9 +683,10 @@ public class CommonSettings {
     public static String FILE_RESOLVER_KEYFILE = "settings.common.fileResolver.keyfile";
 
     /**
-     * Path to the default truststore used for safe communication over HTTPS.
+     * Path to the default truststore used for safe communication over HTTPS with FileResolver
+     * and WarcRecordService
      */
-    public static String TRUSTSTORE_PATH = "settings.common.trustStore.path";
+    public static String ACCESS_TRUSTSTORE_PATH = "settings.common.trustStore.path";
 
     /**
      * Password for the default truststore.

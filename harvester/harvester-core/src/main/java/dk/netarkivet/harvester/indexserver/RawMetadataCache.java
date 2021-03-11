@@ -158,10 +158,10 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     private Long cacheDataHadoop(Long id) {
         final String metadataFilePatternSuffix = Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX);
         final String specifiedPattern = "(.*-)?" + id + "(-.*)?" + metadataFilePatternSuffix;
-        System.setProperty("HADOOP_USER_NAME", Settings.get(CommonSettings.HADOOP_USER_NAME));
         Configuration conf = HadoopJobUtils.getConf();
         conf.setPattern(GetMetadataMapper.URL_PATTERN, urlPattern);
         conf.setPattern(GetMetadataMapper.MIME_PATTERN, mimePattern);
+
         try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
             HadoopJobStrategy jobStrategy = new MetadataExtractionStrategy(id, fileSystem);
             HadoopJob job = new HadoopJob(id, jobStrategy);

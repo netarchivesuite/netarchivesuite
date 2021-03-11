@@ -43,6 +43,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+import javax.servlet.ServletException;
+
 /**
  * Tests running a web server, represented by the GUIWebServer() class.
  */
@@ -95,7 +97,7 @@ public class GUIWebServerTester {
     	
     }
     
-    public void testRunningServer() {
+    public void testRunningServer() throws ServletException {
         server = new GUIWebServer();
         try {
         	server.startServer();
@@ -120,7 +122,7 @@ public class GUIWebServerTester {
         try {
             server = new GUIWebServer();
             fail("IOFailure expected for port " + 65536);
-        } catch (IOFailure e) {
+        } catch (IOFailure | ServletException e) {
             // Expected
         }
 
@@ -129,7 +131,7 @@ public class GUIWebServerTester {
         try {
             server = new GUIWebServer();
             fail("IOFailure expected for port " + -1);
-        } catch (IOFailure e) {
+        } catch (IOFailure | ServletException e) {
             // Expected
         }
 
@@ -138,7 +140,7 @@ public class GUIWebServerTester {
         try {
             server = new GUIWebServer();
             fail("IOFailure expected for port " + 1023);
-        } catch (IOFailure e) {
+        } catch (IOFailure | ServletException e) {
             // Expected
         }
 
@@ -149,7 +151,7 @@ public class GUIWebServerTester {
             server = new GUIWebServer();
             server.startServer();
             fail("IOFailure expected when running on port already in use");
-        } catch (IOFailure e) {
+        } catch (IOFailure | ServletException e) {
             // Expected
         }
 
@@ -164,13 +166,13 @@ public class GUIWebServerTester {
             server = new GUIWebServer();
             server.startServer();
             fail("IOFailure expected when directory is not found");
-        } catch (IOFailure e) {
+        } catch (IOFailure | ServletException e) {
             // Expected
         }
     }
 
     
-    public void testStopServer() throws InterruptedException {
+    public void testStopServer() throws InterruptedException, ServletException {
         server = new GUIWebServer();
         try {
         	server.startServer();

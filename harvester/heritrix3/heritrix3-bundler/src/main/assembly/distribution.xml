@@ -105,6 +105,8 @@
                 <exclude>commons-configuration:commons-configuration:jar:1.6</exclude>
                 <exclude>org.apache.httpcomponents:httpclient:jar:4.2.5</exclude>
                 <exclude>org.apache.httpcomponents:httpcore:jar:4.2.4</exclude>
+                <exclude>org.apache.httpcomponents:httpclient:jar:4.5.12</exclude>
+                <exclude>com.sleepycat:je:jar:5.0.73</exclude>
             </excludes>
 <!--3.3.0-LBS-2014-03-->
             <outputDirectory>/heritrix-${heritrix3.version}/lib/</outputDirectory>

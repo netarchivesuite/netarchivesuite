@@ -37,7 +37,7 @@ import dk.netarkivet.common.CommonSettings;
  * and configuring an Apache HTTP Registry to use these.
  *
  * To enable SSL for an HTTPClient using this class follow the below steps:
- * - Configure {@link CommonSettings#TRUSTSTORE_PATH} to point at a Java KeyStore file containing your trusted
+ * - Configure {@link CommonSettings#ACCESS_TRUSTSTORE_PATH} to point at a Java KeyStore file containing your trusted
  *   certificates (e.g. the standard truststore provided by Java located by default at /etc/ssl/certs/java/cacerts).
  * - Configure {@link CommonSettings#TRUSTSTORE_PASSWORD} with the truststore password (default truststore pw is 'changeit').
  * - Instantiate this class with a provided keyfile to use for authentication.
@@ -55,7 +55,7 @@ public class BasicTwoWaySSLProvider {
      * - Loads private key and certificate
      * - Sets up SSLContext
      *
-     * @param privateKeyFile The path to the private key file to use for authentication.
+     * @param privateKeyFile The path to the private key file to use for authentication. Expects file in PEM format.
      */
     public BasicTwoWaySSLProvider(String privateKeyFile) {
         Security.addProvider(new BouncyCastleProvider());
@@ -79,7 +79,7 @@ public class BasicTwoWaySSLProvider {
     private KeyStore loadSystemTrustStore() throws KeyStoreException, IOException, NoSuchAlgorithmException,
             CertificateException {
         KeyStore store = null;
-        String defaultTrustStoreLocation = Settings.get(CommonSettings.TRUSTSTORE_PATH);
+        String defaultTrustStoreLocation = Settings.get(CommonSettings.ACCESS_TRUSTSTORE_PATH);
         if (defaultTrustStoreLocation != null) {
             File defaultTrustStore = new File(defaultTrustStoreLocation);
             if (defaultTrustStore.isFile() && defaultTrustStore.canRead()) {

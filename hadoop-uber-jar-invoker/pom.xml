@@ -7,10 +7,36 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>netarchivesuite</artifactId>
-    <version>5.7-SNAPSHOT</version>
+    <version>6.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>hadoop-uber-jar-invoker</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-mapreduce-client-core</artifactId>
+      <version>${hadoop.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+      <version>${hadoop.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hadoop-uber-jar</artifactId>
+      <version>${project.version}</version>
+      <classifier>shaded</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
 
   <build>
     <resources>
@@ -22,7 +48,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>${maven-assembly-plugin.version}</version> <!-- 3.1.1 -->
         <executions>
           <execution>
             <phase>package</phase>
@@ -42,30 +68,4 @@
 
     </plugins>
   </build>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-mapreduce-client-core</artifactId>
-      <version>${hadoop.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-client</artifactId>
-      <version>${hadoop.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.netarchivesuite</groupId>
-      <artifactId>hadoop-uber-jar</artifactId>
-      <version>5.7-SNAPSHOT</version>
-      <classifier>shaded</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-  </dependencies>
 </project>

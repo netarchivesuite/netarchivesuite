@@ -33,13 +33,24 @@ import dk.netarkivet.common.utils.Settings;
 public class FileResolverRESTClient implements FileResolver {
 
     private static final Logger log = LoggerFactory.getLogger(FileResolverRESTClient.class);
-    private final HttpsClientBuilder clientBuilder;
+    private static final HttpsClientBuilder clientBuilder;
+
+    static {
+        String privateKeyFile = Settings.get(CommonSettings.FILE_RESOLVER_KEYFILE);
+        clientBuilder = new HttpsClientBuilder(privateKeyFile);
+    }
+
     /**
      * Base url for the API endpoint
      */
     private final URL baseUrl;
 
     public FileResolverRESTClient() {
+        baseUrl = getBaseURL();
+    }
+
+    private URL getBaseURL() {
+        final URL baseUrl;
         String url = Settings.get(CommonSettings.FILE_RESOLVER_BASE_URL);
         try {
             baseUrl = new URL(url);
@@ -47,8 +58,7 @@ public class FileResolverRESTClient implements FileResolver {
             log.error("Malformed Url for FileResolver", e);
             throw new RuntimeException(e);
         }
-        String privateKeyFile = Settings.get(CommonSettings.FILE_RESOLVER_KEYFILE);
-        clientBuilder = new HttpsClientBuilder(privateKeyFile);
+        return baseUrl;
     }
 
     @Override public List<Path> getPaths(Pattern filepattern) {

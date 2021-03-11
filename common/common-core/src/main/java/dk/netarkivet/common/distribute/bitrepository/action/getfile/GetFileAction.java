@@ -24,6 +24,8 @@ public class GetFileAction implements ClientAction {
     private final GetFileClient client;
     private final String collectionID;
     private final String fileID;
+    private boolean succeeded;
+    private String info;
 
     /**
      * Constructor to instantiate the get-file action
@@ -39,10 +41,20 @@ public class GetFileAction implements ClientAction {
         this.targetFile = targetFile;
     }
 
+    public boolean isSucceeded() {
+        return succeeded;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
     @Override
     public void performAction() {
         if (targetFile.exists()) {
             log.error("Output file '{}' already exists.", targetFile);
+            succeeded = false;
+            info = "Output file " + targetFile + " already exists.";
             return;
         }
 
@@ -51,25 +63,34 @@ public class GetFileAction implements ClientAction {
         try {
             URL url = new URL(BitmagUtils.getFileExchangeBaseURL().toExternalForm() + UUID.randomUUID().toString());
             client.getFileFromFastestPillar(collectionID, fileID, null, url, eventHandler,
-                    "GetFile from NAS");
+                    "GetFile from NetarchiveSuite");
 
             eventHandler.waitForFinish();
 
-            boolean actionIsSuccess = !eventHandler.hasFailed();
-            if (actionIsSuccess) {
+            succeeded = !eventHandler.hasFailed();
+            if (succeeded) {
+                log.info("Retrieving {} from {}.", fileID, url.toExternalForm());
                 fileExchange.getFile(targetFile, url.toExternalForm());
                 try {
+                    log.debug("Deleting {}.", url.toExternalForm());
                     fileExchange.deleteFile(url);
                 } catch (IOException | URISyntaxException e) {
-                    log.error("Failed cleaning up after file '{}'", fileID);
+                    log.error("Failed cleaning up after file '{}' because of {}.", fileID, e.getMessage());
                 }
             } else {
+                info = eventHandler.getInfo();
                 log.error("Failed to get file '{}'", fileID);
             }
         } catch (InterruptedException e) {
-            log.error("Got interrupted while waiting for operation to complete");
+            succeeded=false;
+            info = "Got an InterruptedException in GetFileAction.";
+            log.error("Got interrupted while waiting for operation to complete.");
         } catch (MalformedURLException e) {
-            log.error("Got malformed URL while trying to get file '{}'", fileID);
+            succeeded = false;
+            String message = "Got a malformed URL exception while retrieving " + fileID +
+                    e.getMessage();
+            info = message;
+            log.error(message);
         }
     }
 }

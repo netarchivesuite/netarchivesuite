@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>deploy</artifactId>
-    <version>5.7-SNAPSHOT</version>
+    <version>6.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>distribution</artifactId>
@@ -48,6 +48,13 @@
       <artifactId>wayback-indexer</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hadoop-uber-jar-invoker</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
 
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -94,7 +101,7 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>heritrix3-monitor</artifactId>
-      <version>5.7-SNAPSHOT</version>
+      <version>6.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>

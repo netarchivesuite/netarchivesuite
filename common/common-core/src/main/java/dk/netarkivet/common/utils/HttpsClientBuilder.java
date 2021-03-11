@@ -14,9 +14,8 @@ import dk.netarkivet.common.CommonSettings;
 
 /** Class for providing configured HTTPS clients to execute requests over SSL. */
 public class HttpsClientBuilder {
-    HttpClientBuilder clientBuilder;
-    BasicTwoWaySSLProvider sslProvider;
-    PoolingHttpClientConnectionManager cm;
+    private final HttpClientBuilder clientBuilder;
+    private final BasicTwoWaySSLProvider sslProvider;
 
     /**
      * Constructor that sets up the whole SSL connection when called.
@@ -40,7 +39,7 @@ public class HttpsClientBuilder {
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory> create()
                 .register("https", sslsf) //register http also?
                 .build();
-        cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
         configureMaxConnections(cm);
         clientBuilder.setConnectionManager(cm);
     }

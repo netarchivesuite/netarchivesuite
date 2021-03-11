@@ -1,5 +1,10 @@
 package dk.netarkivet.common.utils.warc;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,13 +17,13 @@ import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCReaderFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.utils.service.WarcRecordClient;
 
-import static org.junit.Assert.*;
-
+@Ignore
 public class WarcRecordClientTester {
 
     /**
@@ -35,7 +40,6 @@ public class WarcRecordClientTester {
         BitarchiveRecord bitarchiveRecord = warcRecordClient.getBitarchiveRecord("10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc.gz", 3442L);
         assertNotNull("Should have non null BitarchiveRecord", bitarchiveRecord);
         assertTrue("Expect a non-zero length bitarchiveRecord",IOUtils.toByteArray(bitarchiveRecord.getData()).length > 100);
-
     }
 
     // test read first existing warc record from file thisisa.warc
@@ -63,26 +67,6 @@ public class WarcRecordClientTester {
         BitarchiveRecord bitarchiveRecord = new BitarchiveRecord(archiveRecord, filename);
         bitarchiveRecord.getData(System.out);
     }
-
-    /*
-    @Test
-    public void testBuildingBitarchiveRecord3() throws Exception {
-        String filename = "10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc";
-        URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/" + filename);
-        long offset = 3442L;
-        URI test_uri = SAMPLE_HOST;
-        WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
-        BitarchiveRecord warcRecord  = warcRecordClient.getWarc(SAMPLE_HOST, offset);
-
-        File inputFile = new File("src/test/java/data.txt");
-        System.out.println(inputFile.getAbsolutePath());
-        FileInputStream fileInputStream = new FileInputStream(inputFile);
-        ArchiveReader archiveReader = WARCReaderFactory.get(filename, fileInputStream, true);
-        ArchiveRecord archiveRecord = archiveReader.get();
-        BitarchiveRecord bitarchiveRecord = new BitarchiveRecord(archiveRecord, filename);
-        bitarchiveRecord.getData(System.out);
-    }
-*/
 
     @Test
     public void testBuildingBitarchiveRecord5() throws Exception {
@@ -154,13 +138,13 @@ public class WarcRecordClientTester {
         assertTrue("Exception", fail);
     }
 
-    // Test for offset not atFirstRecord     OK
+    // Test for offset not atFirstRecord
     // test read existing arc record from offset 5000
     @Test
     public void testBuildingBitarchiveRecord001() throws Exception {
         URI SAMPLE_HOST = new URI("http://localhost:8883/cgi-bin2/py1.cgi/10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc");
         URI test_uri = SAMPLE_HOST;
-        long offset = 5000L;  // 3442L; //5000L;
+        long offset = 5000L;  // 3442L;
         WarcRecordClient warcRecordClient = new WarcRecordClient(test_uri);
         BitarchiveRecord warcRecord  = warcRecordClient.getBitarchiveRecord("10-4-20161218234343407-00000-kb-test-har-003.kb.dk.warc", offset);
         assertNull(warcRecord);

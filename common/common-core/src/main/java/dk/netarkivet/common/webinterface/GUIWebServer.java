@@ -23,12 +23,14 @@
 package dk.netarkivet.common.webinterface;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.hadoop.mapred.JobPriority;
 import org.apache.tomcat.util.scan.Constants;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
 
@@ -42,6 +44,8 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
+import sun.security.krb5.KrbException;
 
 /**
  * A class representing an HttpServer. This class loads web applications as given in settings.
@@ -125,6 +129,16 @@ public class GUIWebServer implements CleanupIF {
         if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
             log.info("Scanning for taglibs is disabled as " + Constants.SKIP_JARS_PROPERTY + " is unset."); // Only log this once for all contexts
             taglibsScanningDisabled = true;
+        }
+
+        if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
+            HadoopJobUtils.getConf().set("mapred.job.priority", JobPriority.VERY_HIGH.toString());
+            try {
+                HadoopJobUtils.doKerberosLogin();
+            } catch (Exception e) {
+                log.error("Fatal error starting GUI - could not connect to Hadoop. " + e.getMessage());
+                throw new RuntimeException(e);
+            }
         }
 
         //add webapps to tomcat

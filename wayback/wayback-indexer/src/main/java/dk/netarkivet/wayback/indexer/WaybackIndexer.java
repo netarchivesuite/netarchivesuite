@@ -43,7 +43,9 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.wayback.WaybackSettings;
+import sun.security.krb5.KrbException;
 
 /**
  * The WaybackIndexer starts threads to find new files to be indexed and indexes them.
@@ -87,6 +89,12 @@ public class WaybackIndexer implements CleanupIF {
 
         if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
             BitmagUtils.initialize();
+            try {
+                HadoopJobUtils.doKerberosLogin();
+            } catch (KrbException | IOException e) {
+                log.error("Fatal error starting WaybackIndexer - could not connect to Hadoop. " + e.getMessage());
+                throw new RuntimeException(e);
+            }
         }
         ingestInitialFiles();
         startProducerThread();
@@ -166,9 +174,9 @@ public class WaybackIndexer implements CleanupIF {
      * any new ones to the database. It then checks the database for unindexed files and adds them to the queue.
      */
     private static void startProducerThread() {
-        Long producerDelay = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_DELAY);
-        Long producerInterval = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_INTERVAL);
-        Long recentProducerInterval = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_INTERVAL);
+        long producerDelay = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_DELAY);
+        long producerInterval = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_INTERVAL);
+        long recentProducerInterval = Settings.getLong(WaybackSettings.WAYBACK_INDEXER_RECENT_PRODUCER_INTERVAL);
         TimerTask completeProducerTask = new TimerTask() {
             @Override
             public void run() {

@@ -22,7 +22,6 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_COLLECTIONID;
 import static dk.netarkivet.common.distribute.bitrepository.BitmagUtils.BITREPOSITORY_USEPILLAR;
 
 import java.io.BufferedReader;
@@ -42,9 +41,9 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 import dk.netarkivet.common.distribute.bitrepository.action.getfileids.GetFileIDsAction;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.DatedFileListJob;
 import dk.netarkivet.common.utils.batch.FileListJob;
@@ -107,7 +106,7 @@ public class FileNameHarvester {
                 }
             }
         } else {
-            String collectionID = Settings.get(BITREPOSITORY_COLLECTIONID);
+            String collectionID = BitmagUtils.getDefaultCollectionID();
             log.info("No new files to add in database after harvest of collection '{}'", collectionID);
         }
     }
@@ -118,7 +117,7 @@ public class FileNameHarvester {
      * @return The resulting set of filenames from the get-file-ids action
      */
     private static Set<String> getFilesFromBitmagSince(Date sinceDate) {
-        String collectionID = Settings.get(BITREPOSITORY_COLLECTIONID);
+        String collectionID = BitmagUtils.getDefaultCollectionID();
         String usePillar = Settings.get(BITREPOSITORY_USEPILLAR);
         GetFileIDsClient client = BitmagUtils.getFileIDsClient();
         GetFileIDsAction action = new GetFileIDsAction(client, collectionID, usePillar, sinceDate);

@@ -47,12 +47,13 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.Settings;
 
 /**
  * Listens on the queue "TheArcrepos" and submits the messages to a corresponding visit method on BitarchiveClient.
  */
-public class ArcRepositoryServer extends ArchiveMessageHandler {
+public class ArcRepositoryServer extends ArchiveMessageHandler implements CleanupIF {
 
     /** The log. */
     private static final Logger log = LoggerFactory.getLogger(ArcRepositoryServer.class);
@@ -327,4 +328,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         JMSConnectionFactory.getInstance().removeListener(Channels.getTheRepos(), this);
     }
 
+    @Override public void cleanup() {
+
+    }
 }

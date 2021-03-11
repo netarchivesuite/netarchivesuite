@@ -5,7 +5,7 @@
   <parent>
     <artifactId>netarchivesuite</artifactId>
     <groupId>org.netarchivesuite</groupId>
-    <version>5.7-SNAPSHOT</version>
+    <version>6.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -29,13 +29,33 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>27.0-jre</version>
+      <version>${guava.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>wayback-indexer</artifactId>
-      <version>5.7-SNAPSHOT</version>
+      <version>6.1-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava-parent</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.netarchivesuite</groupId>
+      <artifactId>harvester-core</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.hadoop</groupId>

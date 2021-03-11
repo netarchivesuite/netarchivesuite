@@ -80,6 +80,7 @@ public class SelectiveHarvestPageHelper {
         List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
         for (WebElement webElement : tr_collection) {
             if (webElement.getText().contains(name)) {
+                TestEventManager.getInstance().addStimuli("Clicking on 'Activate' link");
                 webElement.findElement(By.linkText("Activate")).click();
                 break;
             }
@@ -110,6 +111,7 @@ public class SelectiveHarvestPageHelper {
         List<WebElement> tr_collection = table.findElements(By.tagName("tr"));
         for (WebElement webElement : tr_collection) {
             if (webElement.getText().contains(name)) {
+                TestEventManager.getInstance().addStimuli("Clicking on 'Deactivate' link");
                 webElement.findElement(By.linkText("Deactivate")).click();
             }
         }
