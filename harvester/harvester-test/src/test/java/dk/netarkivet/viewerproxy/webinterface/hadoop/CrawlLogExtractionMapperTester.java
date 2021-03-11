@@ -5,20 +5,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hdfs.DistributedFileSystem;
-import org.apache.hadoop.hdfs.MiniDFSCluster;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import org.apache.hadoop.yarn.conf.YarnConfiguration;
-import org.apache.hadoop.yarn.server.MiniYARNCluster;
-import org.apache.hadoop.yarn.server.resourcemanager.scheduler.ResourceScheduler;
-import org.apache.hadoop.yarn.server.resourcemanager.scheduler.fifo.FifoScheduler;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,42 +24,17 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.viewerproxy.webinterface.TestInfo;
 
-public class CrawlLogExtractionMapperTester {
-    private final File WORKING_DIR = new File(TestInfo.DATA_DIR, "working");
+public class CrawlLogExtractionMapperTester extends HadoopMapperTester {
+    private static final File WORKING_DIR = new File(TestInfo.DATA_DIR, "working");
     private final File WARC_FILE = new File(WORKING_DIR, "2-metadata-1.warc");
     private final File ARC_FILE = new File(WORKING_DIR, "2-metadata-1.arc");
-    private MoveTestFiles mtf;
-    private MiniDFSCluster hdfsCluster;
-    private File baseDir;
-    private Configuration conf;
-    private MiniYARNCluster miniYarnCluster;
-    private DistributedFileSystem fileSystem;
+    private static MoveTestFiles mtf;
 
     @Before
     public void setUp() throws IOException {
-        setupTestFiles();
-        baseDir = Files.createTempDirectory("test_hdfs").toFile().getAbsoluteFile();
-        conf = new YarnConfiguration();
-        conf.set(MiniDFSCluster.HDFS_MINIDFS_BASEDIR, baseDir.getAbsolutePath());
-        MiniDFSCluster.Builder builder = new MiniDFSCluster.Builder(conf);
-        hdfsCluster = builder.build();
-
-        fileSystem = hdfsCluster.getFileSystem();
-        // System.out.println("HDFS started");
-
-        conf.setInt(YarnConfiguration.RM_SCHEDULER_MINIMUM_ALLOCATION_MB, 64);
-        conf.setClass(YarnConfiguration.RM_SCHEDULER,
-                FifoScheduler.class, ResourceScheduler.class);
-        miniYarnCluster = new MiniYARNCluster("name", 1, 1, 1);
-        miniYarnCluster.init(conf);
-        miniYarnCluster.start();
-        // System.out.println("YARN started");
-    }
-
-    public void setupTestFiles() {
         mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, WORKING_DIR);
         mtf.setUp();
-        // There is probably a better solution, but would need 2 working dirs if using MoveTestFiles since it deletes working dir on setupUp()
+        // There is probably a better solution, but would need 2 working dirs if using MoveTestFiles since it deletes working dir on setUp()
         for (File file : TestInfo.WARC_ORIGINALS_DIR.listFiles()) {
             FileUtils.copyFile(file, new File(WORKING_DIR, file.getName()));
         }
@@ -166,10 +133,7 @@ public class CrawlLogExtractionMapperTester {
     }
 
     @After
-    public void tearDown() throws IOException {
-        miniYarnCluster.stop();
-        hdfsCluster.shutdown(true);
-        fileSystem.close();
+    public void tearDown() {
         mtf.tearDown();
     }
 }

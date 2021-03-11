@@ -1,5 +1,10 @@
 package dk.netarkivet.common.utils.warc;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,16 +17,13 @@ import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCReaderFactory;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.utils.RequiresFileResolver;
 import dk.netarkivet.common.utils.service.WarcRecordClient;
 
-import static org.junit.Assert.*;
-
-@Category(RequiresFileResolver.class)
+@Ignore
 public class WarcRecordClientTester {
 
     /**

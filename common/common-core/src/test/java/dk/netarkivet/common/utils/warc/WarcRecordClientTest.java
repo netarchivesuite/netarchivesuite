@@ -9,21 +9,20 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import dk.netarkivet.common.utils.FailsOnJenkins;
 import org.apache.commons.io.IOUtils;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.warc.WARCReaderFactory;
 import org.archive.io.warc.WARCRecord;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.utils.RequiresFileResolver;
+import dk.netarkivet.common.utils.FailsOnJenkins;
 import dk.netarkivet.common.utils.service.WarcRecordClient;
-import org.junit.experimental.categories.Category;
 
-@Category(RequiresFileResolver.class)
+@Ignore
 public class WarcRecordClientTest {
     final String WRS_URL = "https://localhost:10443/cgi-bin/warcrecordservice.cgi";
 

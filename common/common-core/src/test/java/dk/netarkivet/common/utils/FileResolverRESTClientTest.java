@@ -1,14 +1,17 @@
 package dk.netarkivet.common.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.service.FileResolver;
@@ -25,7 +28,7 @@ import dk.netarkivet.common.utils.service.FileResolverRESTClient;
  * /kbhpillar/collection-netarkivet/dkcollection-1-1-metadata-1.warc.gz
  * although not necessarily with these exact paths.
  */
-//@Category(RequiresFileResolver.class)
+@Ignore
 public class FileResolverRESTClientTest {
 
     FileResolver fileResolver;

@@ -70,12 +70,6 @@ public class RawMetadataCacheTester extends CacheTestCase {
                 .getCacheFile(42L).getName());
         assertEquals("Should get dirname for cache files based on prefix", "test1", cache.getCacheFile(42L)
                 .getParentFile().getName());
-
-        // check that the matchers of the batchjob have the correct settings.
-        Field job = ReflectUtils.getPrivateField(RawMetadataCache.class, "job");
-        ArchiveBatchJob a = (ArchiveBatchJob) job.get(cache);
-        assertTrue("The batchjob should tell which arguments they have.",
-                a.toString().contains(" with arguments: URLMatcher = .*, mimeMatcher = .*"));
     }
 
     @Test

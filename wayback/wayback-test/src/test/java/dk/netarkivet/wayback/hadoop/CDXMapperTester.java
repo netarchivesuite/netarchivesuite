@@ -27,16 +27,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 public class CDXMapperTester {
-    // TODO shouldn't this class and CDXJobTest be moved to wayback-test?
-    private final File BASE_DIR = new File("../wayback-test/tests/dk/netarkivet/wayback/data");
+    private final File BASE_DIR = new File("tests/dk/netarkivet/wayback/data");
     private final File ORIGINALS_DIR = new File(BASE_DIR, "originals/");
     private final File WORKING_DIR = new File(BASE_DIR, "working");
     private MoveTestFiles mtf;
@@ -116,10 +113,10 @@ public class CDXMapperTester {
             List<String> cdxLines = HadoopJobUtils.collectOutputLines(fileSystem, new Path(outputURI));
             //cdxLines.forEach(System.out::println);
             assertEquals(111, cdxLines.size());
-            StringAsserts.assertStringMatches("First line should be netarkivet.dk dns",
-                    "^dns:www.netarkivet.dk", cdxLines.get(0).split("\n")[0]);
-            StringAsserts.assertStringMatches("Last line should be emediate.dk",
-                    "^ad1.emediate.dk/eas\\?cu=4416;cre=mu;js=y;target=_blank;cat=byggeri",
+            StringAsserts.assertStringContains("First line should be netarkivet.dk dns",
+                    "dns:www.netarkivet.dk", cdxLines.get(0).split("\n")[0]);
+            StringAsserts.assertStringContains("Last line should be emediate.dk",
+                    "ad1.emediate.dk/eas?cu=4416;cre=mu;js=y;target=_blank;cat=byggeri",
                     cdxLines.get(cdxLines.size()-1).split("\n")[0]);
         } finally {
             fileSystem.delete(new Path(outputURI), true);
@@ -144,10 +141,12 @@ public class CDXMapperTester {
             List<String> cdxLines = HadoopJobUtils.collectOutputLines(fileSystem, new Path(outputURI));
             //cdxLines.forEach(System.out::println);
             assertEquals(291, cdxLines.size());
-            StringAsserts.assertStringMatches("First line should be netarkivet.dk dns",
-                    "^dns:www.netarkivet.dk", cdxLines.get(0).split("\n")[0]);
-            StringAsserts.assertStringMatches("Last line should be netarkivet with query",
-                    "^netarkivet.dk/\\?p=100", cdxLines.get(cdxLines.size()-1).split("\n")[0]);
+            String firstLine = cdxLines.get(0).split("\n")[0];
+            StringAsserts.assertStringContains("First line should be netarkivet.dk dns",
+                    "dns:www.netarkivet.dk", firstLine);
+            String lastLine = cdxLines.get(cdxLines.size() - 1).split("\n")[0];
+            StringAsserts.assertStringContains("Last line should be netarkivet with query",
+                    "netarkivet.dk/?p=100", lastLine);
         } finally {
             fileSystem.delete(new Path(outputURI), true);
         }
