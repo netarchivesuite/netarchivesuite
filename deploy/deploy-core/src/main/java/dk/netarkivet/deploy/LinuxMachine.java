@@ -586,18 +586,6 @@ public class LinuxMachine extends Machine {
                                 + Constants.SPACE + Constants.DASH + ScriptConstants.OPTION_SECURITY_POLICY
                                 + getConfDirPath() + Constants.SECURITY_POLICY_FILE_NAME;
                     }
-                    String bitmagOptions = "";
-                    //if (app.getTotalName().contains(Constants.HARVEST_CONTROLLER_APPLICATION) &&  bitmagasinFolder != null) {
-                        bitmagOptions = Constants.SPACE
-                                + Constants.DASH
-                                + ScriptConstants.OPTION_BITMAG_SETTINGS_DIR
-                                + getConfDirPath()
-                                + Constants.BITMAG_CLIENT_CONFIG_DIR
-                                + Constants.SPACE
-                                + Constants.DASH
-                                + ScriptConstants.OPTION_BITMAG_CERTKEY_FILENAME
-                                + Constants.BITMAG_CERTKEY_FILE
-                                + Constants.SPACE;
                     //}
                     appPrint.println(ScriptConstants.MULTI_SPACE_4
                             + ScriptConstants.JAVA
@@ -617,7 +605,6 @@ public class LinuxMachine extends Machine {
                             + Constants.EXTENSION_XML_FILES
 
                             + securityManagement
-                            + bitmagOptions
                             + Constants.SPACE + app.getTotalName() + Constants.SPACE + ScriptConstants.LINUX_DEV_NULL
                             + Constants.SPACE + Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification()
                             + Constants.EXTENSION_LOG_FILES + Constants.SPACE
