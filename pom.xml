@@ -986,14 +986,9 @@
         <configuration>
           <linksource>true</linksource>
           <quiet>true</quiet>
-          <!-- Note: This fails with a JVM older than Java 8 -->
-          <!-- <additionalparam>-Xdoclint:none</additionalparam> -->
-          <additionalparam>${javadoc.doclint.none}</additionalparam>
-          <additionalparam>-Xdoclint:none</additionalparam>
           <additionalOptions>
             <additionalOption>-Xdoclint:none</additionalOption>
           </additionalOptions>
-          <aggregate>true</aggregate>
           <failOnError>false</failOnError>
           <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
         </configuration>
