@@ -94,7 +94,7 @@
     <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
     <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
     <sonar.language>java</sonar.language>
-<!--    <jacoco.version>0.7.2.201409121644</jacoco.version> -->
+    <!--    <jacoco.version>0.7.2.201409121644</jacoco.version> -->
     <jacoco.version>0.7.9</jacoco.version>
     <hadoop.version>3.2.2</hadoop.version>
   </properties>
@@ -270,10 +270,10 @@
       </dependency>
 
       <dependency>
-           <groupId>org.testng</groupId>
-           <artifactId>testng</artifactId>
-           <version>${testng.version}</version>
-         </dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>${testng.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>berkeleydb</groupId>
@@ -283,11 +283,10 @@
 
       <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
       <dependency>
-          <groupId>org.seleniumhq.selenium</groupId>
-          <artifactId>selenium-java</artifactId>
-          <version>${selenium-api.version}</version>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>${selenium-api.version}</version>
       </dependency>
-
 
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
@@ -306,14 +305,12 @@
         <artifactId>selenium-support</artifactId>
         <version>${selenium-api.version}</version>
       </dependency>
-      
-      
+
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>htmlunit-driver</artifactId>
         <version>${htmlunit-driver.version}</version>
       </dependency>
-      
 
       <dependency>
         <groupId>org.jaccept</groupId>
@@ -574,10 +571,10 @@
       </dependency>
 
       <dependency>
-         <groupId>org.postgresql</groupId>
-         <artifactId>postgresql</artifactId>
-         <version>${postgresql.version}</version>
-       </dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgresql.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>javassist</groupId>
@@ -838,6 +835,10 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
 
@@ -1054,31 +1055,31 @@
           <autoVersionSubmodules>true</autoVersionSubmodules>
         </configuration>
       </plugin>
-<plugin>
-  <groupId>org.jacoco</groupId>
-  <artifactId>jacoco-maven-plugin</artifactId>
-  <version>0.7.5.201505241946</version>
-  <executions>
-    <execution>
-      <goals>
-        <goal>prepare-agent</goal>
-      </goals>
-    </execution>
-    <execution>
-      <id>report</id>
-      <phase>test</phase>
-      <goals>
-        <goal>report</goal>
-      </goals>
-    </execution>
-  </executions>
-</plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.7.5.201505241946</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
   <profiles>
 
-  <profile>
+    <profile>
       <id>sonar-coverage</id>
       <activation>
         <activeByDefault>true</activeByDefault>
@@ -1124,9 +1125,9 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <!--<excludedGroups>dk.netarkivet.common.utils.RequiresFileResolver.class</excludedGroups>-->
-            </configuration>
+            <!--<configuration>
+              <excludedGroups>dk.netarkivet.common.utils.RequiresFileResolver.class</excludedGroups>
+            </configuration>-->
           </plugin>
         </plugins>
       </build>
