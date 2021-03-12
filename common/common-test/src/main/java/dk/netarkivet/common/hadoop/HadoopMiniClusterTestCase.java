@@ -1,4 +1,4 @@
-package dk.netarkivet.viewerproxy.webinterface.hadoop;
+package dk.netarkivet.common.hadoop;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 /** Overhead class for Hadoop tests that need to use a mini cluster. */
-public class HadoopMapperTester {
+public class HadoopMiniClusterTestCase {
     protected static MiniDFSCluster hdfsCluster;
     protected static Configuration conf;
     protected static MiniYARNCluster miniYarnCluster;
@@ -23,18 +23,31 @@ public class HadoopMapperTester {
 
     @BeforeClass
     public static void initCluster() throws IOException {
-        File baseDir = Files.createTempDirectory("test_hdfs").toFile().getAbsoluteFile();
-        conf = new YarnConfiguration();
-        conf.set(MiniDFSCluster.HDFS_MINIDFS_BASEDIR, baseDir.getAbsolutePath());
-        MiniDFSCluster.Builder builder = new MiniDFSCluster.Builder(conf);
-        hdfsCluster = builder.build();
+        setupConfiguration();
+        startDFSCluster();
+        startYarnCluster();
 
         fileSystem = hdfsCluster.getFileSystem();
-        // System.out.println("HDFS started");
+    }
+
+    private static void setupConfiguration() throws IOException {
+        conf = new YarnConfiguration();
+
+        File baseDir = Files.createTempDirectory("test_hdfs").toFile().getAbsoluteFile();
+        baseDir.deleteOnExit();
+        conf.set(MiniDFSCluster.HDFS_MINIDFS_BASEDIR, baseDir.getAbsolutePath());
 
         conf.setInt(YarnConfiguration.RM_SCHEDULER_MINIMUM_ALLOCATION_MB, 64);
         conf.setClass(YarnConfiguration.RM_SCHEDULER,
                 FifoScheduler.class, ResourceScheduler.class);
+    }
+
+    private static void startDFSCluster() throws IOException {
+        MiniDFSCluster.Builder builder = new MiniDFSCluster.Builder(conf);
+        hdfsCluster = builder.build();
+    }
+
+    private static void startYarnCluster() {
         miniYarnCluster = new MiniYARNCluster("name", 1, 1, 1);
         miniYarnCluster.init(conf);
         miniYarnCluster.start();
