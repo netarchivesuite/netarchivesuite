@@ -270,7 +270,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
         GetFileAction getFileAction = new GetFileAction(getFileClient, collectionId, arcfilename, toFile);
         getFileAction.performAction();
 
-        if (!getFileAction.isSucceeded()) {
+        if (!getFileAction.actionIsSuccess()) {
             String message = "Could not retrieve file " + arcfilename + ". Last status from bitrepository is " + getFileAction
                     .getInfo();
             log.warn(message);
@@ -439,7 +439,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
         PutFileAction putfileInstance = new PutFileAction(putFileClientLocal, collectionId, file, fileId);
         putfileInstance.performAction();
 
-        if (putfileInstance.isActionIsSuccess()) {
+        if (putfileInstance.actionIsSuccess()) {
             success = true;
             log.info("BitmagArcRepositoryClient uploadFile.");
             log.info("File '{}' uploaded successfully. ",file.getAbsolutePath());

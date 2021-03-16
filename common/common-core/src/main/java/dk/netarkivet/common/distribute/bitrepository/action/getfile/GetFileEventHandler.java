@@ -1,7 +1,5 @@
 package dk.netarkivet.common.distribute.bitrepository.action.getfile;
 
-import java.util.List;
-
 import org.bitrepository.client.eventhandler.EventHandler;
 import org.bitrepository.client.eventhandler.OperationEvent;
 import org.slf4j.Logger;
@@ -19,10 +17,6 @@ public class GetFileEventHandler implements EventHandler {
      * Constructor
      */
     public GetFileEventHandler() {
-    }
-
-    public boolean isFailed() {
-        return failed;
     }
 
     public String getInfo() {
@@ -76,9 +70,9 @@ public class GetFileEventHandler implements EventHandler {
     }
 
     /**
-     * Method to determine if the operation was successful.
+     * Method to determine if the operation failed.
      * The method should not be called prior to a call to {@link #waitForFinish()} have returned.
-     * @return true if the operation succeeded, otherwise false.
+     * @return false if the operation succeeded, otherwise true.
      */
     public boolean hasFailed() {
         return failed;
