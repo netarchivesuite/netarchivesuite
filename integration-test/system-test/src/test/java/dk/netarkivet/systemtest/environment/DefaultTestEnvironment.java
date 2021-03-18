@@ -23,9 +23,7 @@ public class DefaultTestEnvironment implements TestEnvironment {
         this.deployconf = deployconf;
     }
 
-    @Override public String getTESTX() {
-        return testX;
-    }
+    @Override public String getTESTX() { return System.getProperty("systemtest.testx", testX); }
 
     @Override public String getGuiHost() {
         return System.getProperty("systemtest.host", guiHost);
