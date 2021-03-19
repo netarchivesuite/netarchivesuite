@@ -984,13 +984,15 @@
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
+          <source>8</source>
+          <detectJavaApiLink>false</detectJavaApiLink>
           <linksource>true</linksource>
           <quiet>true</quiet>
           <additionalOptions>
             <additionalOption>-Xdoclint:none</additionalOption>
           </additionalOptions>
           <failOnError>false</failOnError>
-          <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+          <!--<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>-->
         </configuration>
         <executions>
           <execution>
@@ -1164,4 +1166,30 @@
     </profile>
 
   </profiles>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.2.0</version>
+        <reportSets>
+          <reportSet>
+            <id>aggregate</id>
+            <inherited>false</inherited>
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>default</id>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+
 </project>
