@@ -1144,11 +1144,19 @@
 
     <profile>
       <!-- JenkinsUnitTest -->
-      <id>Default</id>
+      <id>JenkinsUnitTest</id>
       <!-- Set profile to be active by default -->
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <activeByDefault>false</activeByDefault>
       </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
       <properties>
         <test.excluded.groups>dk.netarkivet.common.utils.FailsOnJenkins</test.excluded.groups>
       </properties>
@@ -1156,6 +1164,17 @@
     <profile>
       <!-- Set profile to localUnitTest -->
       <id>LocalUnitTest</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <!--<configuration>
+              <excludedGroups>dk.netarkivet.common.utils.RequiresFileResolver.class</excludedGroups>
+            </configuration>-->
+          </plugin>
+        </plugins>
+      </build>
       <properties>
         <test.excluded.groups>dk.netarkivet.common.utils.FailsOnBoth</test.excluded.groups>
       </properties>

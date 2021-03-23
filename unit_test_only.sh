@@ -1,1 +1,1 @@
-mvn test
+mvn test -P JenkinsUnitTest

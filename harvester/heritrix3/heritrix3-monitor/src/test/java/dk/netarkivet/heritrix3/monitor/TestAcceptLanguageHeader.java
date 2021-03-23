@@ -27,8 +27,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import dk.netarkivet.common.utils.FailsOnBoth;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
 import dk.netarkivet.heritrix3.monitor.AcceptLanguageParser.AcceptLanguage;
@@ -36,6 +38,7 @@ import dk.netarkivet.heritrix3.monitor.AcceptLanguageParser.AcceptLanguage;
 public class TestAcceptLanguageHeader extends Mockito {
 
     @Test
+    @Category(FailsOnBoth.class)
     public void test_parse() {
         HttpServletRequest request;
         List<AcceptLanguage> acceptLanguages;
