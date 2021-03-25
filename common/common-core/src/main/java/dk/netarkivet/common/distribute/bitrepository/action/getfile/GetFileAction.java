@@ -41,7 +41,7 @@ public class GetFileAction implements ClientAction {
         this.targetFile = targetFile;
     }
 
-    public boolean isSucceeded() {
+    public boolean actionIsSuccess() {
         return succeeded;
     }
 
@@ -82,7 +82,7 @@ public class GetFileAction implements ClientAction {
                 log.error("Failed to get file '{}'", fileID);
             }
         } catch (InterruptedException e) {
-            succeeded=false;
+            succeeded = false;
             info = "Got an InterruptedException in GetFileAction.";
             log.error("Got interrupted while waiting for operation to complete.");
         } catch (MalformedURLException e) {

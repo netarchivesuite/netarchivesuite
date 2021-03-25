@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>netarchivesuite</artifactId>
     <groupId>org.netarchivesuite</groupId>
-    <version>6.1-SNAPSHOT</version>
+    <version>7.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -35,7 +33,7 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>wayback-indexer</artifactId>
-      <version>6.1-SNAPSHOT</version>
+      <version>7.1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
@@ -137,7 +135,7 @@
               assembly plugin. With the following line, the two service directories are merged.
               -->
               <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
               </transformers>
               <shadedArtifactAttached>true</shadedArtifactAttached>
             </configuration>

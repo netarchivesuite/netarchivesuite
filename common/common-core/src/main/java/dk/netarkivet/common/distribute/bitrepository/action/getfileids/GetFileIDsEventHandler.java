@@ -32,9 +32,9 @@ public class GetFileIDsEventHandler implements EventHandler {
         switch(event.getEventType()) {
         case COMPONENT_COMPLETE:
             log.debug("Got COMPONENT_COMPLETE event {}", event);
-            if(event instanceof FileIDsCompletePillarEvent) {
+            if (event instanceof FileIDsCompletePillarEvent) {
                 FileIDsCompletePillarEvent getFileIDsEvent = (FileIDsCompletePillarEvent) event;
-                if(getFileIDsEvent.getContributorID().equals(pillarID)) {
+                if (getFileIDsEvent.getContributorID().equals(pillarID)) {
                     fileIDsData = getFileIDsEvent.getFileIDs().getFileIDsData();
                     partialResults = getFileIDsEvent.isPartialResult();
                 } else {
@@ -43,11 +43,11 @@ public class GetFileIDsEventHandler implements EventHandler {
                 }
             }
         case COMPLETE:
-            log.info("Finished getting fileIDs");
+            log.info("Finished getting fileIDs from pillar '{}'", pillarID);
             finish();
             break;
         case FAILED:
-            log.warn("Failed getting fileIDs");
+            log.warn("Failed getting fileIDs from pillar '{}'", pillarID);
             failed = true;
             finish();
             break;
@@ -84,7 +84,7 @@ public class GetFileIDsEventHandler implements EventHandler {
      */
     public void waitForFinish() throws InterruptedException {
         synchronized (finishLock) {
-            if(!finished) {
+            if (!finished) {
                 log.trace("Thread waiting for client to finish");
                 finishLock.wait();
             }

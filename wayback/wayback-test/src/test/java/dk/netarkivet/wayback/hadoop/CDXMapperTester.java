@@ -6,20 +6,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hdfs.DistributedFileSystem;
-import org.apache.hadoop.hdfs.MiniDFSCluster;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import org.apache.hadoop.yarn.conf.YarnConfiguration;
-import org.apache.hadoop.yarn.server.MiniYARNCluster;
-import org.apache.hadoop.yarn.server.resourcemanager.scheduler.ResourceScheduler;
-import org.apache.hadoop.yarn.server.resourcemanager.scheduler.fifo.FifoScheduler;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
 import org.junit.After;
@@ -27,42 +19,22 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import dk.netarkivet.common.hadoop.HadoopMiniClusterTestCase;
 import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
-public class CDXMapperTester {
+public class CDXMapperTester extends HadoopMiniClusterTestCase {
     private final File BASE_DIR = new File("tests/dk/netarkivet/wayback/data");
     private final File ORIGINALS_DIR = new File(BASE_DIR, "originals/");
     private final File WORKING_DIR = new File(BASE_DIR, "working");
     private MoveTestFiles mtf;
-    private MiniDFSCluster hdfsCluster;
-    private File baseDir;
-    private Configuration conf;
-    private MiniYARNCluster miniYarnCluster;
-    private DistributedFileSystem fileSystem;
 
     @Before
     public void setUp() throws IOException {
         mtf = new MoveTestFiles(ORIGINALS_DIR, WORKING_DIR);
         mtf.setUp();
-        baseDir = Files.createTempDirectory("test_hdfs").toFile().getAbsoluteFile();
-        conf = new YarnConfiguration();
-        conf.set(MiniDFSCluster.HDFS_MINIDFS_BASEDIR, baseDir.getAbsolutePath());
-        MiniDFSCluster.Builder builder = new MiniDFSCluster.Builder(conf);
-        hdfsCluster = builder.build();
-
-        fileSystem = hdfsCluster.getFileSystem();
-        // System.out.println("HDFS started");
-
-        conf.setInt(YarnConfiguration.RM_SCHEDULER_MINIMUM_ALLOCATION_MB, 64);
-        conf.setClass(YarnConfiguration.RM_SCHEDULER,
-                FifoScheduler.class, ResourceScheduler.class);
-        miniYarnCluster = new MiniYARNCluster("name", 1, 1, 1);
-        miniYarnCluster.init(conf);
-        miniYarnCluster.start();
-        // System.out.println("YARN started");
     }
 
     @Test
@@ -154,9 +126,6 @@ public class CDXMapperTester {
 
     @After
     public void tearDown() throws IOException {
-        miniYarnCluster.stop();
-        hdfsCluster.shutdown(true);
-        fileSystem.close();
         mtf.tearDown();
     }
 }

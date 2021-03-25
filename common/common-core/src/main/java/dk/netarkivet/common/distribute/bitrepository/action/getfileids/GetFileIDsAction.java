@@ -54,6 +54,10 @@ public class GetFileIDsAction implements ClientAction {
 
             try {
                 eventHandler.waitForFinish();
+                if (eventHandler.hasFailed()) {
+                    log.warn("Failed getting fileIDs from pillar '{}'.", pillarID);
+                    return;
+                }
 
                 FileIDsData fileIDsData = eventHandler.getFileIDsData();
                 for (FileIDsDataItem fileIDsDataItem : fileIDsData.getFileIDsDataItems().getFileIDsDataItem()) {

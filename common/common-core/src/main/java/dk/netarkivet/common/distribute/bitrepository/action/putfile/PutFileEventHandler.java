@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.bitrepository.client.eventhandler.ContributorEvent;
@@ -34,7 +33,6 @@ public class PutFileEventHandler implements EventHandler {
     private final Object finishLock = new Object();
     private boolean finished = false;
     private boolean failed = false;
-    private static OperationEvent.OperationEventType finalEvent;
 
     /**
      * Constructor

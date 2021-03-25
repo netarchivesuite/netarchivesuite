@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>common</artifactId>
-    <version>6.1-SNAPSHOT</version>
+    <version>7.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>common-test</artifactId>
@@ -52,6 +52,18 @@
       <artifactId>commons-lang</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-minicluster</artifactId>
+      <version>${hadoop.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 
   <build>
@@ -81,23 +93,23 @@
           </argLine>
         </configuration>
       </plugin>
-     <plugin>
-    <groupId>org.jacoco</groupId>
-    <artifactId>jacoco-maven-plugin</artifactId>
-    <version>${jacoco.version}</version>
-    <configuration>
-        <destFile>${sonar.jacoco.reportPath}</destFile>
-        <append>true</append>
-    </configuration>
-    <executions>
-        <execution>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <configuration>
+          <destFile>${sonar.jacoco.reportPath}</destFile>
+          <append>true</append>
+        </configuration>
+        <executions>
+          <execution>
             <id>agent</id>
             <goals>
-                <goal>prepare-agent</goal>
+              <goal>prepare-agent</goal>
             </goals>
-        </execution>
-    </executions>
-</plugin>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>

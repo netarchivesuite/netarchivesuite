@@ -15,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import dk.netarkivet.common.hadoop.HadoopMiniClusterTestCase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
@@ -23,7 +24,7 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.viewerproxy.webinterface.TestInfo;
 
-public class MetadataCDXMapperTester extends HadoopMapperTester {
+public class MetadataCDXMapperTester extends HadoopMiniClusterTestCase {
     private final File WORKING_DIR = new File(TestInfo.DATA_DIR, "working");
     private final File WARC_FILE = new File(WORKING_DIR, "2-metadata-1.warc");
     private final File ARC_FILE = new File(WORKING_DIR, "2-metadata-1.arc");

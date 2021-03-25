@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>harvester</artifactId>
-    <version>6.1-SNAPSHOT</version>
+    <version>7.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>harvester-test</artifactId>
@@ -64,19 +64,6 @@
       <version>${project.version}</version>
       <scope>test</scope>
       <type>test-jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-minicluster</artifactId>
-      <version>${hadoop.version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
