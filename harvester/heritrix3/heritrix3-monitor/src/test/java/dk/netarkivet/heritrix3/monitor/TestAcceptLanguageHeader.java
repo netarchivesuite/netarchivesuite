@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import dk.netarkivet.common.utils.FailsOnBoth;
 import org.junit.Assert;
 import org.junit.Test;
+
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
