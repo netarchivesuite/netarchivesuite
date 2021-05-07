@@ -116,6 +116,12 @@
       <version>1.6.3</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.netarchivesuite</groupId>
+      <artifactId>netarchivesuite-test-utils</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
