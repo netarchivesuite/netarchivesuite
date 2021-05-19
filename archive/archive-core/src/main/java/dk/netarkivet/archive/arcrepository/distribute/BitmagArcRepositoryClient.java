@@ -305,6 +305,10 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
             error(errMsg);
         } else {
             log.info("Upload to collection '{}' of file '{}' was successful", collectionId, fileId);
+            log.info("Deleting file from disk: {}." + file.getAbsolutePath());
+            if (!file.delete()) {
+                log.warn("Problem deleting file {}." + file.getAbsolutePath());
+            }
         }
     }
 
