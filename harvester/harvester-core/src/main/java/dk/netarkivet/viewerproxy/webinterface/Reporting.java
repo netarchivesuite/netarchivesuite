@@ -26,8 +26,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -170,7 +168,7 @@ public class Reporting {
         }
     }
 
-    private static File getCDXCache(long jobid) {
+    private static File getCDXCacheFile(long jobid) {
         String cacheDir = "metadata_cache";
         String cdxcache = "cdxcache";
         File cdxdir = new File(new File(cacheDir), cdxcache);
@@ -179,9 +177,9 @@ public class Reporting {
         return cacheFile;
     }
 
-    private static List<CDXRecord> getCachedCDX(long jobid) {
+    private static List<CDXRecord> getCachedCDXRecords(long jobid) {
         List<String> cdxLines;
-        File cacheFile = getCDXCache(jobid);
+        File cacheFile = getCDXCacheFile(jobid);
         if (cacheFile.exists()) {
             try {
                 cdxLines = org.apache.commons.io.FileUtils.readLines(cacheFile);
@@ -201,12 +199,14 @@ public class Reporting {
      * @return A list of CDX records.
      */
     private static List<CDXRecord> getRecordsUsingHadoop(long jobid) {
-
-       List<CDXRecord> cdxRecords = getCachedCDX(jobid);
+       log.info("Getting records for jobid {}.", jobid);
+       List<CDXRecord> cdxRecords = getCachedCDXRecords(jobid);
        if (cdxRecords != null) {
+           log.info("Found {} cached records for jobid {}.", cdxRecords.size(), jobid);
            return cdxRecords;
        } else {
-           File cacheFile = getCDXCache(jobid);
+           File cacheFile = getCDXCacheFile(jobid);
+           log.info("Cached records not found for jobid {} so fetching them to {} via hadoop.", jobid, cacheFile.getAbsolutePath());
            Configuration hadoopConf = HadoopJobUtils.getConf();
            String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobid);
 
@@ -224,7 +224,7 @@ public class Reporting {
                    log.error("Failed getting CDX lines output for Hadoop job with ID: {}", jobid);
                    throw new IOFailure("Failed getting " + job.getJobType() + " job results");
                }
-               return getCachedCDX(jobid);
+               return getCachedCDXRecords(jobid);
            } catch (IOException e) {
                log.error("Error instantiating Hadoop filesystem for job {}.", jobid, e);
                throw new IOFailure("Failed instantiating Hadoop filesystem.");
