@@ -173,8 +173,9 @@ public class Reporting {
     private static File getCDXCache(long jobid) {
         String cacheDir = "metadata_cache";
         String cdxcache = "cdxcache";
-        File cacheFile = new File(new File(new File(cacheDir), cdxcache), "" + jobid);
-        cacheFile.mkdirs();
+        File cdxdir = new File(new File(cacheDir), cdxcache);
+        cdxdir.mkdirs();
+        File cacheFile = new File(cdxdir, "" + jobid);
         return cacheFile;
     }
 
@@ -363,6 +364,17 @@ public class Reporting {
         }
     }
 
+    private static File getCrawlLogCache(long jobid) {
+        String cacheDir = "metadata_cache";
+        String crawllog_cache = "crawllog_cache";
+        File crawllog_dir = new File(new File(cacheDir), crawllog_cache);
+        crawllog_dir.mkdirs();
+        File cacheFile = new File(crawllog_dir, "" + jobid);
+        return cacheFile;
+    }
+
+
+
     /**
      * Using Hadoop, gets crawllog lines for a given jobID matching a given regular expression.
      *
@@ -371,9 +383,29 @@ public class Reporting {
      * @return a File with the matching lines.
      */
     private static File getCrawlLogLinesUsingHadoop(long jobID, String regex) {
+        File cacheFile = getCrawlLogCache(jobID);
+        if (!cacheFile.exists()) {
+            File outputFile = getCrawlLogUsingHadoop(jobID);
+            try {
+                org.apache.commons.io.FileUtils.copyFile(outputFile, cacheFile);
+            } catch (IOException e) {
+                throw new RuntimeException((e));
+            }
+        }
+        List<String> matches = null;
+        try {
+            matches = org.apache.commons.io.FileUtils.readLines(cacheFile).stream().filter(s -> s.matches(regex)).collect(
+                    Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return getResultFile(matches);
+    }
+
+    private static File getCrawlLogUsingHadoop(long jobID) {
         String metadataFileSearchPattern = getMetadataFilePatternForJobId(jobID);
         Configuration hadoopConf = HadoopJobUtils.getConf();
-        hadoopConf.setPattern("regex", Pattern.compile(regex));
+        hadoopConf.setPattern("regex", Pattern.compile(".*"));
         try (FileSystem fileSystem = FileSystem.newInstance(hadoopConf)) {
             HadoopJobStrategy jobStrategy = new CrawlLogExtractionStrategy(jobID, fileSystem);
             HadoopJob job = new HadoopJob(jobID, jobStrategy);
