@@ -6,6 +6,7 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -24,7 +25,7 @@ public class HttpsClientBuilder {
      * @param privateKeyFile The path to the private key file to use for authentication.
      */
     public HttpsClientBuilder(String privateKeyFile) {
-        clientBuilder = HttpClients.custom();
+        clientBuilder = HttpClients.custom().setRetryHandler(new DefaultHttpRequestRetryHandler());
         sslProvider = new BasicTwoWaySSLProvider(privateKeyFile);
 
         setupConnection();
