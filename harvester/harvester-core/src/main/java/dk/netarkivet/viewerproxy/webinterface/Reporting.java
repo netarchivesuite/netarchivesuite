@@ -169,7 +169,7 @@ public class Reporting {
     }
 
     private static File getCDXCacheFile(long jobid) {
-        String cacheDir = "metadata_cache";
+        String cacheDir = Settings.get(CommonSettings.METADATA_CACHE);
         String cdxcache = "cdxcache";
         File cdxdir = new File(new File(cacheDir), cdxcache);
         cdxdir.mkdirs();
@@ -365,7 +365,7 @@ public class Reporting {
     }
 
     private static File getCrawlLogCache(long jobid) {
-        String cacheDir = "metadata_cache";
+        String cacheDir = Settings.get(CommonSettings.METADATA_CACHE);
         String crawllog_cache = "crawllog_cache";
         File crawllog_dir = new File(new File(cacheDir), crawllog_cache);
         crawllog_dir.mkdirs();

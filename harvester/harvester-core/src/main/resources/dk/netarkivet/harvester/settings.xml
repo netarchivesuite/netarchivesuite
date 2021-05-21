@@ -239,6 +239,7 @@ National Library.
         <webinterface>
             <maxCrawlLogInBrowser>1000</maxCrawlLogInBrowser>
             <runningjobsFilteringMethod>database</runningjobsFilteringMethod>
+            <metadata_cache_dir>metadata_cache</metadata_cache_dir>
         </webinterface>
     </harvester>
 </settings>

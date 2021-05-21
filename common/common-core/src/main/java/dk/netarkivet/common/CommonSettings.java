@@ -259,7 +259,13 @@ public class CommonSettings {
      * The default number of jobs to show in the harvest status section, on one result page.
      */
     public static String HARVEST_STATUS_DFT_PAGE_SIZE = "settings.common.webinterface.harvestStatus.defaultPageSize";
-    
+
+    /**
+     * A directory where the webinterface can store cached crawl logs and indexes to minimise the number
+     * of hadoop jobs needed
+     */
+    public static String METADATA_CACHE = "settings.common.webinterface.metadata_cache_dir";
+
     /**
      * <b>settings.common.topLevelDomains.tld</b>: <br>
      * Extra valid top level domain, like .co.uk, .dk, .org., not part of current embedded public_suffix_list.dat file 
