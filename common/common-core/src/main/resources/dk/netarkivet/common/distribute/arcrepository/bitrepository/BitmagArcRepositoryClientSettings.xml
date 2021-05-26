@@ -41,7 +41,8 @@ National Library.
          -->
                 <keyfilename></keyfilename>
                 <settingsDir></settingsDir>
-                <storeMaxPillarFailures>1</storeMaxPillarFailures>
+                <storeMaxPillarFailures>0</storeMaxPillarFailures>
+                <store_retries>3</store_retries>
                 <tempdir>arcrepositoryTemp</tempdir>
 		<collectionID>netarkivet</collectionID>
 		<usepillar></usepillar>

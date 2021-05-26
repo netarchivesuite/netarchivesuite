@@ -134,6 +134,8 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
     private static final String BITREPOSITORY_USEPILLAR =
             "settings.common.arcrepositoryClient.bitrepository.usepillar";
 
+    private static final String BITREPOSITORY_STORE_RETRIES = "settings.common.arcrepositoryClient.bitrepository.store_retries";
+
     /** The bitrepository collection id for the */
     private String collectionId;
     /** The temporary directory for the bitrepository client.*/
@@ -281,7 +283,6 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
 
     /**
      * Store the file in the bitrepository.
-     * After a successful storage operation, both the local copy of the file and the copy on the ftp server are deleted.
      *
      * @param file A file to be stored. Must exist.
      * @throws IOFailure thrown if store is unsuccessful, or failed to clean up files locally or on the ftp server after
@@ -289,27 +290,30 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      * @throws ArgumentNotValid if file parameter is null or file is not an existing file.
      */
     public void store(File file) throws IOFailure, ArgumentNotValid {
-        //TODO revisit this method if we want to be able to accept uploads to only a subset of pillars, and have the bitrepo heal itself later
         ArgumentNotValid.checkExistsNormalFile(file, "File '" + file + "' does not exist");
-
+        Long storeRetries = Settings.getLong(BITREPOSITORY_STORE_RETRIES);
         final String fileId = file.getName();
 
         //Attempt to upload the file.
         // If not there, this will work
         // If already there, with same checksum, this will work.
         // If already there, with different checksum, this will fail
-        boolean uploadSuccessful = this.uploadFile(file, fileId);
-        if (!uploadSuccessful) {
-            String errMsg =
-                    "Upload to collection '" + collectionId + "' of file '" + fileId + "' failed.";
-            error(errMsg);
-        } else {
-            log.info("Upload to collection '{}' of file '{}' was successful", collectionId, fileId);
-            log.info("Deleting file from disk: {}." + file.getAbsolutePath());
-            if (!file.delete()) {
-                log.warn("Problem deleting file {}." + file.getAbsolutePath());
+        for (long i = 0; i < storeRetries; i++) {
+            boolean uploadSuccessful = this.uploadFile(file, fileId);
+            if (!uploadSuccessful) {
+                log.warn("Upload of {} to collection {} failed on attempt {}.", fileId, collectionId, i);
+            } else {
+                log.info("Upload to collection '{}' of file '{}' was successful", collectionId, fileId);
+                log.info("Deleting file from disk: {}." + file.getAbsolutePath());
+                if (!file.delete()) {
+                    log.warn("Problem deleting file {}." + file.getAbsolutePath());
+                }
+                return;
             }
         }
+        String errMsg =
+                "Upload to collection '" + collectionId + "' of file '" + fileId + "' failed.";
+        error(errMsg);
     }
 
     /**
