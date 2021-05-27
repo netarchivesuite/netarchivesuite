@@ -10,11 +10,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bitrepository.client.eventhandler.AbstractOperationEvent;
 import org.bitrepository.client.eventhandler.ContributorEvent;
 import org.bitrepository.client.eventhandler.ContributorFailedEvent;
 import org.bitrepository.client.eventhandler.EventHandler;
 import org.bitrepository.client.eventhandler.IdentificationCompleteEvent;
 import org.bitrepository.client.eventhandler.OperationEvent;
+import org.bitrepository.client.eventhandler.OperationFailedEvent;
 import org.bitrepository.protocol.FileExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +50,10 @@ public class PutFileEventHandler implements EventHandler {
 
     @Override
     public void handleEvent(OperationEvent event) {
-        log.info("Got event from client: {}", event.getEventType());
+        log.info("Got event from client: {}, {}", event.getEventType(), event.getInfo());
+        if (event instanceof ContributorFailedEvent) {
+            log.info("Additional info: {}", ((ContributorFailedEvent) event).additionalInfo());
+        }
         switch (event.getEventType()) {
         case IDENTIFICATION_COMPLETE:
             IdentificationCompleteEvent completeEvent = (IdentificationCompleteEvent) event;
@@ -63,6 +68,15 @@ public class PutFileEventHandler implements EventHandler {
             break;
         case FAILED:
             log.info("Failed put fileID for file '{}'", event.getFileID());
+            if (event instanceof OperationFailedEvent) {
+                for (ContributorEvent contributorEvent: ((OperationFailedEvent) event).getComponentResults()) {
+                      log.info("During put of {}, event {} from {} had status {} ({}).",
+                              event.getFileID(),
+                              contributorEvent.getInfo(),
+                              contributorEvent.getContributorID(),
+                              contributorEvent.additionalInfo());
+                }
+            }
             failed = true;
             cleanUpFileExchange();
             finish();
