@@ -101,12 +101,16 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
      * The setting for where the bitrepository has its temporary directory.
      */
     private static final String BITREPOSITORY_TEMPDIR = "settings.common.arcrepositoryClient.bitrepository.tempdir";
+
     /**
      * <b>settings.common.arcrepositoryClient.bitrepository.settingsDir</b>: <br/>
      * The setting for where the bitrepository settings directory can be found.
      */
     private static final String BITREPOSITORY_SETTINGS_DIR =
             "settings.common.arcrepositoryClient.bitrepository.settingsDir";
+
+    private static final String BITREPOSITORY_RETRY_WAIT_SECONDS = "settings.common.arcrepositoryClient.bitrepository.retryWaitSeconds";
+
     /**
      * <b>settings.common.arcrepositoryClient.bitrepository.keyfilename</b>: <br/>
      * The setting for the name of the keyfile for the bitrepository certificate.
@@ -292,6 +296,7 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
     public void store(File file) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkExistsNormalFile(file, "File '" + file + "' does not exist");
         Long storeRetries = Settings.getLong(BITREPOSITORY_STORE_RETRIES);
+        Long retryWaitSeconds = Settings.getLong(BITREPOSITORY_RETRY_WAIT_SECONDS);
         final String fileId = file.getName();
 
         //Attempt to upload the file.
@@ -299,6 +304,14 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
         // If already there, with same checksum, this will work.
         // If already there, with different checksum, this will fail
         for (long i = 0; i < storeRetries; i++) {
+            if (i > 0) {
+                log.info("Waiting {} seconds before retrying.", retryWaitSeconds);
+                try {
+                    Thread.sleep(retryWaitSeconds*1000L);
+                } catch (InterruptedException e) {
+                    log.info("Upload of {} continuing after InterruptedException.", fileId);
+                }
+            }
             boolean uploadSuccessful = this.uploadFile(file, fileId);
             if (!uploadSuccessful) {
                 log.warn("Upload of {} to collection {} failed on attempt {}.", fileId, collectionId, i);

@@ -58,13 +58,15 @@ National Library.
                  -->
                 <keyfilename></keyfilename>
                 <settingsDir></settingsDir>
-                <storeMaxPillarFailures>1</storeMaxPillarFailures>
+                <storeMaxPillarFailures>0</storeMaxPillarFailures>
                 <tempdir>arcrepositoryTemp</tempdir>
                 <collectionID>netarkivet</collectionID>
                 <usepillar></usepillar>
                 <!-- Set to 5 minutes to make it possible to retrieve large records
                  using FTP -->
                 <getTimeout>300000</getTimeout>
+                <store_retries>3</store_retries>
+                <retryWaitSeconds>1800</retryWaitSeconds>
             </bitrepository>
         </arcrepositoryClient>
         <monitorregistryClient>

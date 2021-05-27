@@ -49,6 +49,7 @@ National Library.
 		<!-- Set to 5 minutes to make it possible to retrieve large records
                  using FTP -->
                 <getTimeout>300000</getTimeout>
+              <waitRetrySeconds>1800</waitRetrySeconds>
             </bitrepository>
         </arcrepositoryClient>
     </common>
