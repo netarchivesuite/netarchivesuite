@@ -25,7 +25,7 @@ public class HttpsClientBuilder {
      * @param privateKeyFile The path to the private key file to use for authentication.
      */
     public HttpsClientBuilder(String privateKeyFile) {
-        clientBuilder = HttpClients.custom().setRetryHandler(new DefaultHttpRequestRetryHandler());
+        clientBuilder = HttpClients.custom().setRetryHandler(new DefaultHttpRequestRetryHandler(3, true));
         sslProvider = new BasicTwoWaySSLProvider(privateKeyFile);
 
         setupConnection();
