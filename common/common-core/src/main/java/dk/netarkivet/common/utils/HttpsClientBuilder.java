@@ -22,13 +22,20 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-
+import org.apache.http.protocol.HttpContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.CommonSettings;
+
+
 
 /** Class for providing configured HTTPS clients to execute requests over SSL. */
 public class HttpsClientBuilder {
     private final HttpClientBuilder clientBuilder;
     private final BasicTwoWaySSLProvider sslProvider;
+
+    private static final Logger log = LoggerFactory.getLogger(HttpsClientBuilder.class);
+
 
     /**
      * Constructor that sets up the whole SSL connection when called.
@@ -40,6 +47,11 @@ public class HttpsClientBuilder {
         class AggressiveHttpRequestRetryHandler extends DefaultHttpRequestRetryHandler {
             public AggressiveHttpRequestRetryHandler() {
                 super(3, true, Arrays.asList(UnknownHostException.class));
+            }
+
+            @Override public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
+                log.info("Retrying failed http request after {}, {}.", exception.getClass(), exception.getMessage() );
+                return super.retryRequest(exception, executionCount, context);
             }
         }
         clientBuilder = HttpClients.custom().setRetryHandler(new AggressiveHttpRequestRetryHandler());
