@@ -6,6 +6,7 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.net.ssl.SSLException;
@@ -36,7 +37,12 @@ public class HttpsClientBuilder {
      * @param privateKeyFile The path to the private key file to use for authentication.
      */
     public HttpsClientBuilder(String privateKeyFile) {
-        clientBuilder = HttpClients.custom().setRetryHandler(new DefaultHttpRequestRetryHandler(3, true));
+        class AggressiveHttpRequestRetryHandler extends DefaultHttpRequestRetryHandler {
+            public AggressiveHttpRequestRetryHandler() {
+                super(3, true, Arrays.asList(UnknownHostException.class));
+            }
+        }
+        clientBuilder = HttpClients.custom().setRetryHandler(new AggressiveHttpRequestRetryHandler());
         sslProvider = new BasicTwoWaySSLProvider(privateKeyFile);
         setupConnection();
     }
