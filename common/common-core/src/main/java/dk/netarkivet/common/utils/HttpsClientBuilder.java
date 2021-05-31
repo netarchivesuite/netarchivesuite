@@ -47,6 +47,7 @@ public class HttpsClientBuilder {
         class AggressiveHttpRequestRetryHandler extends DefaultHttpRequestRetryHandler {
             public AggressiveHttpRequestRetryHandler() {
                 super(3, true, Arrays.asList(UnknownHostException.class));
+                log.info("Creating Aggressive retry handler for https queries.");
             }
 
             @Override public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
