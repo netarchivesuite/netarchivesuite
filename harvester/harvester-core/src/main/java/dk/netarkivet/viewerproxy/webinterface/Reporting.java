@@ -180,7 +180,7 @@ public class Reporting {
     private static List<CDXRecord> getCachedCDXRecords(long jobid) {
         List<String> cdxLines;
         File cacheFile = getCDXCacheFile(jobid);
-        if (cacheFile.exists()) {
+        if (cacheFile.exists() && cacheFile.length() != 0) {
             try {
                 cdxLines = org.apache.commons.io.FileUtils.readLines(cacheFile);
                 return HadoopJobUtils.getCDXRecordListFromCDXLines(cdxLines);
@@ -384,7 +384,10 @@ public class Reporting {
      */
     private static File getCrawlLogLinesUsingHadoop(long jobID, String regex) {
         File cacheFile = getCrawlLogCache(jobID);
-        if (!cacheFile.exists()) {
+        if (cacheFile.exists() && cacheFile.length() == 0) {
+            log.info("Overwriting empty cache file {}.", cacheFile.getAbsolutePath());
+        }
+        if (cacheFile.length()==0 || !cacheFile.exists()) { //The || part of this is strictly unnecessary
             File outputFile = getCrawlLogUsingHadoop(jobID);
             try {
                 org.apache.commons.io.FileUtils.copyFile(outputFile, cacheFile);
