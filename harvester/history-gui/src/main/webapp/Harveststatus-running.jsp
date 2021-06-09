@@ -394,7 +394,7 @@ This page displays a list of running jobs.
                     break;
                 }
             %>
-            <img src="<%=bullet%>" alt="<%=I18N.getString(locale, altStatus)%>" title="<%=I18N.getString(locale, altStatus)%>"/>
+            <img src="<%=bullet%>" alt="<fmt:message key="<%=altStatus%>"/>" title="<fmt:message key="<%=altStatus%>"/>"/>
             &nbsp;
             <a href="<%=info.getHostUrl()%>" target="_blank"><%=info.getHostName()%></a>
         </td>
