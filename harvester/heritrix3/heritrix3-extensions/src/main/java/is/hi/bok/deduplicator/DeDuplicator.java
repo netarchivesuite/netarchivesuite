@@ -520,10 +520,11 @@ public class DeDuplicator extends Processor implements InitializingBean {
 
         if (duplicate != null){
             // Perform tasks common to when a duplicate is found.
-
+			
         	//// Code taken from LuceneIndexSearcher.wrap() method //////////////////////////
-        	IdenticalPayloadDigestRevisit duplicateRevisit = new IdenticalPayloadDigestRevisit(
-        			duplicate.get("digest")); //DIGEST.name()));
+        	// Add digestscheme fix 2021-05-26
+			IdenticalPayloadDigestRevisit duplicateRevisit = new IdenticalPayloadDigestRevisit(
+        			curi.getContentDigestSchemeString());
 
         	duplicateRevisit.setRefersToTargetURI(
         			duplicate.get("url"));  // URL.name()
