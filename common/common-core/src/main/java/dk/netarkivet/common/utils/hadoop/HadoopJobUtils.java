@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -17,7 +18,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.hdfs.HdfsConfiguration;
 import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapreduce.MRConfig;
+import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.slf4j.Logger;
@@ -78,15 +79,94 @@ public class HadoopJobUtils {
      */
     public static Configuration getConf() {
         Configuration conf = new JobConf(new YarnConfiguration(new HdfsConfiguration()));
-        conf.set("mapreduce.job.am-access-disabled","true");
+        conf.setBoolean(MRJobConfig.JOB_AM_ACCESS_DISABLED,true);
         final String jarPath = Settings.get(CommonSettings.HADOOP_MAPRED_UBER_JAR);
         if (jarPath == null || !(new File(jarPath)).exists()) {
             log.warn("Specified jar file {} does not exist.", jarPath);
             throw new RuntimeException("Jar file " + jarPath + " does not exist.");
         }
-        conf.set("mapreduce.job.jar", jarPath);
+        conf.set(MRJobConfig.JAR, jarPath);
         return conf;
     }
+
+    /**
+     * Call the set*CoresPerTask() and set*Memory BEFORE callling this, as it uses their values
+     *
+     * @param configuration
+     * @return
+     */
+    public static Configuration enableUberTask(Configuration configuration, Integer appMasterMemory,
+            Integer appMasterCores) {
+        setAppMasterCores(configuration,
+                Math.max(configuration.getInt(MRJobConfig.MAP_CPU_VCORES, MRJobConfig.DEFAULT_MAP_CPU_VCORES)
+                        , configuration.getInt(MRJobConfig.REDUCE_CPU_VCORES, MRJobConfig.DEFAULT_REDUCE_CPU_VCORES))
+                        + Optional.ofNullable(appMasterCores).orElse(MRJobConfig.DEFAULT_MR_AM_CPU_VCORES));
+        setAppMasterMemory(configuration,
+                Math.max(configuration.getInt(MRJobConfig.MAP_MEMORY_MB, MRJobConfig.DEFAULT_MAP_MEMORY_MB)
+                        , configuration.getInt(MRJobConfig.REDUCE_MEMORY_MB, MRJobConfig.DEFAULT_REDUCE_MEMORY_MB))
+                        + Optional.ofNullable(appMasterMemory)
+                        .orElse(MRJobConfig.DEFAULT_MR_AM_VMEM_MB)); //must have enough for both the map and the reduce tasks
+        configuration.setBoolean(MRJobConfig.JOB_UBERTASK_ENABLE, true);
+        return configuration;
+    }
+
+    /**
+     * Call the setMapCoresPerTask() and setMapMemory BEFORE callling this, as it uses their values
+     *
+     * @param configuration
+     * @return
+     */
+    public static Configuration enableMapOnlyUberTask(Configuration configuration, Integer appMasterMemory,
+            Integer appMasterCores) {
+        setAppMasterCores(configuration,
+                configuration.getInt(MRJobConfig.MAP_CPU_VCORES, MRJobConfig.DEFAULT_MAP_CPU_VCORES)
+                        + Optional.ofNullable(appMasterCores).orElse(MRJobConfig.DEFAULT_MR_AM_CPU_VCORES));
+        setAppMasterMemory(configuration,
+                configuration.getInt(MRJobConfig.MAP_MEMORY_MB, MRJobConfig.DEFAULT_MAP_MEMORY_MB)
+                        + Optional.ofNullable(appMasterMemory).orElse(MRJobConfig.DEFAULT_MR_AM_VMEM_MB));
+
+        configuration.setBoolean(MRJobConfig.JOB_UBERTASK_ENABLE, true);
+
+        setReducerMemory(configuration, 0);
+        setReduceCoresPerTask(configuration, 0);
+        configuration.setInt(MRJobConfig.NUM_REDUCES, 0);
+
+        return configuration;
+    }
+
+    public static Configuration setMapMemory(Configuration configuration, int memory) {
+        configuration.setInt(MRJobConfig.MAP_MEMORY_MB, memory);
+        configuration.set(MRJobConfig.MAP_JAVA_OPTS, "-Xmx" + Math.max(memory - 512, 512) + "m");
+        return configuration;
+    }
+
+    public static Configuration setReducerMemory(Configuration configuration, int memory) {
+        configuration.setInt(MRJobConfig.REDUCE_MEMORY_MB, memory);
+        configuration.set(MRJobConfig.REDUCE_JAVA_OPTS, "-Xmx" + Math.max(memory - 512, 512) + "m");
+        return configuration;
+    }
+
+    public static Configuration setAppMasterMemory(Configuration configuration, int memory) {
+        configuration.setInt(MRJobConfig.MR_AM_VMEM_MB, memory);
+        configuration.set(MRJobConfig.MR_AM_COMMAND_OPTS, "-Xmx" + Math.max(memory - 512, 512) + "m");
+        return configuration;
+    }
+
+    public static Configuration setMapCoresPerTask(Configuration configuration, int cores) {
+        configuration.setInt(MRJobConfig.MAP_CPU_VCORES, cores);
+        return configuration;
+    }
+
+    public static Configuration setReduceCoresPerTask(Configuration configuration, int cores) {
+        configuration.setInt(MRJobConfig.REDUCE_CPU_VCORES, cores);
+        return configuration;
+    }
+
+    public static Configuration setAppMasterCores(Configuration configuration, int cores) {
+        configuration.setInt(MRJobConfig.MR_AM_CPU_VCORES, cores);
+        return configuration;
+    }
+
 
     /**
      * Given a list of file paths prepend 'file://' to every entry and write them as newline
