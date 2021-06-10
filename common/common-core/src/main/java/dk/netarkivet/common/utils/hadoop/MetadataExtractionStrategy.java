@@ -39,6 +39,9 @@ public class MetadataExtractionStrategy implements HadoopJobStrategy {
         this.jobID = jobID;
         this.fileSystem = fileSystem;
         hadoopConf = fileSystem.getConf();
+        HadoopJobUtils.setMapMemory(hadoopConf, 4096);
+        HadoopJobUtils.setMapCoresPerTask(hadoopConf, 2);
+        HadoopJobUtils.enableMapOnlyUberTask(hadoopConf, 4096, 2);
         urlPattern = hadoopConf.getPattern(GetMetadataMapper.URL_PATTERN, Pattern.compile(".*"));
         mimePattern = hadoopConf.getPattern(GetMetadataMapper.MIME_PATTERN, Pattern.compile(".*"));
     }

@@ -14,6 +14,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
 import dk.netarkivet.common.utils.hadoop.HadoopJobStrategy;
 import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
+import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 
 /**
  * Strategy to extract CDX lines from metadata files.
@@ -36,6 +37,9 @@ public class MetadataCDXExtractionStrategy implements HadoopJobStrategy {
         this.jobID = jobID;
         this.fileSystem = fileSystem;
         hadoopConf = fileSystem.getConf();
+        HadoopJobUtils.setMapMemory(hadoopConf, 4096);
+        HadoopJobUtils.setMapCoresPerTask(hadoopConf, 2);
+        HadoopJobUtils.enableMapOnlyUberTask(hadoopConf, 4096, 2);
     }
 
     @Override

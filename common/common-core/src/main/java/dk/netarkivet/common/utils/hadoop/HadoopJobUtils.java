@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Optional;
 
 import org.apache.hadoop.conf.Configuration;
@@ -221,11 +222,19 @@ public class HadoopJobUtils {
     }
 
     /**
+     * TODO now here's some code that would look better with streams
      * Converts a list of CDX line strings to a list of CDXRecords
      * @param cdxLines The list to convert
      * @return A list of CDXRecords representing the old list
      */
     public static List<CDXRecord> getCDXRecordListFromCDXLines(List<String> cdxLines) {
+
+/*      TODO when we have time to test this ...
+        return cdxLines.stream()
+                .map(line -> line.split("\\s+"))
+                .map(split -> new CDXRecord(split))
+                .collect(Collectors.toList());*/
+
         List<CDXRecord> recordsForJob = new ArrayList<>();
         for (String line : cdxLines) {
             String[] parts = line.split("\\s+");
