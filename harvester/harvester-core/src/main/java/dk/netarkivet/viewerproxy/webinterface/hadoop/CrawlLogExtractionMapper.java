@@ -1,25 +1,34 @@
 package dk.netarkivet.viewerproxy.webinterface.hadoop;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveRecord;
+import org.archive.io.warc.WARCReaderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
 import dk.netarkivet.viewerproxy.webinterface.CrawlLogLinesMatchingRegexp;
 
 /**
@@ -41,6 +50,7 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
     @Override
     protected void map(LongWritable linenumber, Text archiveFilePath, Context context) throws IOException,
             InterruptedException {
+        boolean copyToHdfs = true;
         // reject empty or null warc paths.
         if (archiveFilePath == null || archiveFilePath.toString().trim().isEmpty()) {
             log.warn("Encountered empty path in job {}", context.getJobID().toString());
@@ -60,12 +70,48 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
             crawlLogLines = new ArrayList<>();
         } else {
             LocalFileSystem localFileSystem = ((LocalFileSystem) fileSystem);
-            crawlLogLines = extractCrawlLogLines(localFileSystem.pathToFile(path), crawlLogRegex.pattern());
+            if (copyToHdfs) {
+                crawlLogLines = extractCrawlLogLinesWithHdfs(localFileSystem.pathToFile(path), crawlLogRegex.pattern(), context);
+            } else {
+                crawlLogLines = extractCrawlLogLines(localFileSystem.pathToFile(path), crawlLogRegex.pattern());
+            }
         }
-
         for (String crawlLog : crawlLogLines) {
             context.write(NullWritable.get(), new Text(crawlLog));
         }
+    }
+
+    private List<String> extractCrawlLogLinesWithHdfs(File file, String regex, Context context) throws IOException {
+        log.info("Executing experimental copy to hdfs.");
+        ArrayList<String> output = new ArrayList<>();
+        Path cachePath = new Path("/netarkivet_cache");
+        FileSystem hdfsFileSystem = FileSystem.get(context.getConfiguration());
+        log.info("Creating cache at {}", cachePath);
+        hdfsFileSystem.mkdirs(cachePath);
+        Path dst = new Path(cachePath, file.getName());
+        log.info("Copying input file {} to cache at {}", file.getAbsolutePath(), dst);
+        FileUtil.copy(file, hdfsFileSystem, dst, false, context.getConfiguration());
+        try (FSDataInputStream inputStream = hdfsFileSystem.open(dst)) {
+            ArchiveReader archiveRecords = WARCReaderFactory.get(file.getName(), inputStream, true);
+            for (Iterator<ArchiveRecord> recordIterator = archiveRecords.iterator(); recordIterator.hasNext(); ) {
+                try (ArchiveRecord archiveRecord = recordIterator.next()) {
+                    String url = archiveRecord.getHeader().getUrl();
+                    log.info("Processing record with url {}", url);
+                    if (url.contains("crawl/logs/crawl.log")) {
+                        log.info("Processing crawl log");
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(archiveRecord));
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            if (line.matches(regex)) {
+                                output.add(line);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        hdfsFileSystem.delete(dst, false);
+        return output;
     }
 
     /**
