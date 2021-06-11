@@ -639,6 +639,12 @@ public class CommonSettings {
      */
     public static String HADOOP_MAPRED_UBER_JAR = "settings.common.hadoop.mapred.hadoopUberJar";
 
+    public static String HADOOP_MAP_MEMORY_MB = "settings.common.hadoop.mapred.mapMemoryMb";
+    public static String HADOOP_MAP_MEMORY_CORES = "settings.common.hadoop.mapred.mapMemoryCores";
+    public static String HADOOP_ENABLE_HDFS_CACHE = "settings.common.hadoop.mapred.hdfsCacheEnabled";
+    public static String HADOOP_HDFS_CACHE_DIR = "settings.common.hadoop.mapred.hdfsCacheDir";
+    public static String HADOOP_CACHE_DAYS = "settings.common.hadoop.mapred.hdfsCacheDays";
+
     /**
      * Username to start map-/reduce jobs under on the Hadoop cluster.
      * In production we now use kerberos so this is

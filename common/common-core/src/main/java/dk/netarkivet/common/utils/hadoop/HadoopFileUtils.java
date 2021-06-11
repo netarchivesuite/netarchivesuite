@@ -23,23 +23,21 @@ import dk.netarkivet.common.utils.Settings;
 public class HadoopFileUtils {
     private static final Logger log = LoggerFactory.getLogger(HadoopFileUtils.class);
 
-    private static boolean CACHING_ENABLED = true;
-    private static String CACHE_PATH = "/user/nat-nas-devel/netarkivet_cache";
-    private static int MAX_CACHE_DAYS = 0; //if zero, always delete
-
     /**
      * Given a file on a local file system, return a cached version of the same file on
      * a hdfs file system.
      * @param file
      * @return a hdfs path to the file
-     * @throws IOException
+     * @throws IOException if caching not enabled or fails otherwise
      */
     public static Path cacheFile(File file, Configuration conf) throws IOException {
-        if (!CACHING_ENABLED) {
+        if (!Settings.getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE)) {
             throw new InvalidRequestException("Hdfs caching not enabled.");
         }
-        Path cachePath = new Path(CACHE_PATH);
+        cleanCache(conf);
+        Path cachePath = new Path(Settings.get(CommonSettings.HADOOP_HDFS_CACHE_DIR));
         Path dst = new Path(cachePath, file.getName());
+        log.info("Caching {} to {}.", file.getAbsolutePath(), dst);
         FileSystem hdfsFileSystem = FileSystem.get(conf);
         if (!hdfsFileSystem.exists(dst)) {
             FileUtil.copy(file, hdfsFileSystem, dst, false, conf);
@@ -48,16 +46,22 @@ public class HadoopFileUtils {
     }
 
      public static void cleanCache(Configuration configuration) throws IOException {
-        long currentTime = System.currentTimeMillis();
-        long maxAgeMillis = MAX_CACHE_DAYS*24*3600*1000;
-        Path cachePath = new Path(CACHE_PATH);
+         log.info("Cleaning hdfs cache");
+         long currentTime = System.currentTimeMillis();
+         int days = Settings.getInt(CommonSettings.HADOOP_CACHE_DAYS);
+         long maxAgeMillis = days *24L*3600L*1000L;
+         Path cachePath = new Path(Settings.get(CommonSettings.HADOOP_HDFS_CACHE_DIR));;
+         log.info("Scanning {} for files older than {} days.", cachePath, days);
          RemoteIterator<LocatedFileStatus> locatedFileStatusRemoteIterator = FileSystem.get(configuration)
                  .listFiles(cachePath, false);
          while (locatedFileStatusRemoteIterator.hasNext()) {
              LocatedFileStatus locatedFileStatus = locatedFileStatusRemoteIterator.next();
              long modTime = locatedFileStatus.getModificationTime();
-             if (MAX_CACHE_DAYS == 0 || (currentTime - modTime) > maxAgeMillis ) {
+             if (days == 0 || (currentTime - modTime) > maxAgeMillis ) {
+                 log.info("Deleting {}.", locatedFileStatus.getPath());
                  FileSystem.get(configuration).delete(locatedFileStatus.getPath(), false);
+             } else {
+                 log.info("Not deleting {}.", locatedFileStatus.getPath());
              }
          }
      }

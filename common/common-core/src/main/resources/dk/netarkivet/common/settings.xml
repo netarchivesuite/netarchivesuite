@@ -234,6 +234,11 @@ National Library.
                 <framework>yarn</framework>
                 <inputDir>nas_input</inputDir>
                 <outputDir>nas_output</outputDir>
+                <mapMemoryMb>4096</mapMemoryMb>
+                <mapMemoryCores>2</mapMemoryCores>
+                <hdfsCacheEnabled>true</hdfsCacheEnabled>
+                <hdfsCacheDir>ChangeMeToSomethingYouCanWriteTo</hdfsCacheDir>
+                <hdfsCacheDays>7</hdfsCacheDays>
             </mapred>
         </hadoop>
         <useHadoopAsMassProcessor>true</useHadoopAsMassProcessor>
