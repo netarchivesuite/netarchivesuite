@@ -37,9 +37,11 @@ public class MetadataCDXExtractionStrategy implements HadoopJobStrategy {
         this.jobID = jobID;
         this.fileSystem = fileSystem;
         hadoopConf = fileSystem.getConf();
-        HadoopJobUtils.setMapMemory(hadoopConf, 4096);
-        HadoopJobUtils.setMapCoresPerTask(hadoopConf, 2);
-        HadoopJobUtils.enableMapOnlyUberTask(hadoopConf, 4096, 2);
+        int totalMemory = Settings.getInt(CommonSettings.HADOOP_MAP_MEMORY_MB);
+        int totalCores = Settings.getInt(CommonSettings.HADOOP_MAP_MEMORY_CORES);
+        HadoopJobUtils.setMapMemory(hadoopConf, totalMemory);
+        HadoopJobUtils.setMapCoresPerTask(hadoopConf, totalCores);
+        HadoopJobUtils.enableMapOnlyUberTask(hadoopConf, totalMemory, totalCores);
     }
 
     @Override

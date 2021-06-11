@@ -15,6 +15,7 @@ import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
 import dk.netarkivet.common.utils.hadoop.HadoopJobStrategy;
 import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
+import dk.netarkivet.harvester.webinterface.CookieUtils;
 
 /**
  * Strategy to give a HadoopJob when wanting to extract crawl log lines matching some regex from metadata files.
@@ -39,9 +40,11 @@ public class CrawlLogExtractionStrategy implements HadoopJobStrategy {
         this.jobID = jobID;
         this.fileSystem = fileSystem;
         hadoopConf = fileSystem.getConf();
-        HadoopJobUtils.setMapMemory(hadoopConf, 4096);
-        HadoopJobUtils.setMapCoresPerTask(hadoopConf, 2);
-        HadoopJobUtils.enableMapOnlyUberTask(hadoopConf, 4096, 2);
+        int totalMemory = Settings.getInt(CommonSettings.HADOOP_MAP_MEMORY_MB);
+        int totalCores = Settings.getInt(CommonSettings.HADOOP_MAP_MEMORY_CORES);
+        HadoopJobUtils.setMapMemory(hadoopConf, totalMemory);
+        HadoopJobUtils.setMapCoresPerTask(hadoopConf, totalCores);
+        HadoopJobUtils.enableMapOnlyUberTask(hadoopConf, totalMemory, totalCores);
     }
 
     @Override public int runJob(Path jobInputFile, Path jobOutputDir) {

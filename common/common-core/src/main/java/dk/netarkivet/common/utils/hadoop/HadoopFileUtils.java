@@ -34,11 +34,13 @@ public class HadoopFileUtils {
         if (!Settings.getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE)) {
             throw new InvalidRequestException("Hdfs caching not enabled.");
         }
-        cleanCache(conf);
+        FileSystem hdfsFileSystem = FileSystem.get(conf);
         Path cachePath = new Path(Settings.get(CommonSettings.HADOOP_HDFS_CACHE_DIR));
+        log.info("Creating the cache directory at {} if necessary.", cachePath);
+        hdfsFileSystem.mkdirs(cachePath);
+        cleanCache(conf);
         Path dst = new Path(cachePath, file.getName());
         log.info("Caching {} to {}.", file.getAbsolutePath(), dst);
-        FileSystem hdfsFileSystem = FileSystem.get(conf);
         if (!hdfsFileSystem.exists(dst)) {
             FileUtil.copy(file, hdfsFileSystem, dst, false, conf);
         }
