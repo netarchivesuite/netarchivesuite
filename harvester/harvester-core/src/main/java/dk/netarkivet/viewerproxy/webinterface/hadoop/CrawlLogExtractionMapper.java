@@ -84,7 +84,7 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
     private List<String> extractCrawlLogLinesWithHdfs(File file, String regex, Context context) throws IOException {
         log.info("Executing experimental copy to hdfs.");
         ArrayList<String> output = new ArrayList<>();
-        Path cachePath = new Path("/netarkivet_cache");
+        Path cachePath = new Path("/user/nat-nas-devel/netarkivet_cache");
         FileSystem hdfsFileSystem = FileSystem.get(context.getConfiguration());
         log.info("Creating cache at {}", cachePath);
         hdfsFileSystem.mkdirs(cachePath);
