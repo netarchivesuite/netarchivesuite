@@ -54,14 +54,16 @@ public class HadoopFileUtils {
          long maxAgeMillis = days *24L*3600L*1000L;
          Path cachePath = new Path(Settings.get(CommonSettings.HADOOP_HDFS_CACHE_DIR));;
          log.info("Scanning {} for files older than {} days.", cachePath, days);
-         RemoteIterator<LocatedFileStatus> locatedFileStatusRemoteIterator = FileSystem.get(configuration)
+         FileSystem fileSystem = FileSystem.get(configuration);
+         fileSystem.mkdirs(cachePath);
+         RemoteIterator<LocatedFileStatus> locatedFileStatusRemoteIterator = fileSystem
                  .listFiles(cachePath, false);
          while (locatedFileStatusRemoteIterator.hasNext()) {
              LocatedFileStatus locatedFileStatus = locatedFileStatusRemoteIterator.next();
              long modTime = locatedFileStatus.getModificationTime();
              if (days == 0 || (currentTime - modTime) > maxAgeMillis ) {
                  log.info("Deleting {}.", locatedFileStatus.getPath());
-                 FileSystem.get(configuration).delete(locatedFileStatus.getPath(), false);
+                 fileSystem.delete(locatedFileStatus.getPath(), false);
              } else {
                  log.info("Not deleting {}.", locatedFileStatus.getPath());
              }
