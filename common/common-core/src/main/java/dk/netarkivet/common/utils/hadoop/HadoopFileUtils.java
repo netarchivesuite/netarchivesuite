@@ -10,9 +10,11 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.InvalidRequestException;
+import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
+import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,5 +115,18 @@ public class HadoopFileUtils {
             log.error("Failed writing to/creating file.", e);
         }
         return localInputTempFile;
+    }
+
+    public static Path replaceWithCachedPathIfEnabled(Mapper.Context context, Path path)
+            throws IOException {
+        boolean cachingEnabled = Settings.getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE);
+        boolean isLocal = path.getFileSystem(context.getConfiguration()) instanceof LocalFileSystem;
+        if (isLocal && cachingEnabled) {
+            log.info("Replacing {} with hdfs cached version.", path);
+            File localFile = ((LocalFileSystem) path.getFileSystem(context.getConfiguration())).pathToFile(path);
+            path = cacheFile(localFile, context.getConfiguration());
+            log.info("New input path is {}.", path);
+        }
+        return path;
     }
 }

@@ -1,7 +1,6 @@
 package dk.netarkivet.viewerproxy.webinterface.hadoop;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -9,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -32,7 +29,6 @@ import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
 import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
-import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 
 /**
  * Hadoop Mapper for creating CDX indexes for metadata files through the GUI application's QA pages.
@@ -60,13 +56,8 @@ public class MetadataCDXMapper extends Mapper<LongWritable, Text, NullWritable, 
             log.warn("Encountered empty path in job {}", context.getJobID().toString());
             return;
         }
-        boolean cachingEnabled = Settings.getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE);
         Path path = new Path(archiveFilePath.toString());
-        boolean isLocal = path.getFileSystem(context.getConfiguration()) instanceof LocalFileSystem;
-        if (isLocal && cachingEnabled) {
-            File localFile = ((LocalFileSystem) path.getFileSystem(context.getConfiguration())).pathToFile(path);
-            path = HadoopFileUtils.cacheFile(localFile, context.getConfiguration());
-        }
+        path = HadoopFileUtils.replaceWithCachedPathIfEnabled(context, path);
         List<String> cdxIndexes;
         try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
             log.info("CDX-indexing archive file '{}'", path);

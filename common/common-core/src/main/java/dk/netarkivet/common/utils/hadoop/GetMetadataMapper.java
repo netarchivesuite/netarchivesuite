@@ -64,14 +64,14 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
      * @param context Context used for writing output.
      */
     @Override
-    protected void map(LongWritable lineNumber, Text filePath, Context context) {
+    protected void map(LongWritable lineNumber, Text filePath, Context context) throws IOException {
         log.info("Mapper processing line number {}", lineNumber.toString());
         // reject empty or null file paths.
         if (filePath == null || filePath.toString().trim().isEmpty()) {
             return;
         }
-
         Path path = new Path(filePath.toString());
+        path = HadoopFileUtils.replaceWithCachedPathIfEnabled(context, path);
         log.info("Mapper processing {}.", path);
         try (FileSystem fs = FileSystem.newInstance(new URI(filePath.toString()), context.getConfiguration());){
             try (InputStream in = new BufferedInputStream(fs.open(path))) {
