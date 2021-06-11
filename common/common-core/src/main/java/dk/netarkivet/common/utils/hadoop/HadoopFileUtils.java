@@ -1,10 +1,14 @@
 package dk.netarkivet.common.utils.hadoop;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.UUID;
 
+import javax.security.auth.login.Configuration;
+
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.InvalidRequestException;
 import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +19,22 @@ import dk.netarkivet.common.utils.Settings;
 /** Utilities for file actions related to Hadoop. */
 public class HadoopFileUtils {
     private static final Logger log = LoggerFactory.getLogger(HadoopFileUtils.class);
+
+    private static boolean CACHING_ENABLED = true;
+    private static String CACHE_PATH = "/user/nat-nas-devel/netarkivet_cache";
+    private static int MAX_CACHE_DAYS = 0; //if zero, always delete
+
+    /**
+     * Given a file on a local file system, return a cached version of the same file on
+     * a hdfs file system.
+     * @param file
+     * @return a hdfs path to the file
+     * @throws InvalidRequestException if caching is not enabled
+     */
+    public static Path cacheFile(File file, Configuration conf) throws InvalidRequestException {
+        throw new InvalidRequestException("not implemented");
+    }
+
 
     /**
      * Creates and returns a unique path under a given directory.

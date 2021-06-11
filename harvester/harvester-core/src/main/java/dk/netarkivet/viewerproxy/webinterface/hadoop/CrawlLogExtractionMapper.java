@@ -97,7 +97,7 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
                 try (ArchiveRecord archiveRecord = recordIterator.next()) {
                     String url = archiveRecord.getHeader().getUrl();
                     log.info("Processing record with url {}", url);
-                    if (url.contains("crawl/logs/crawl.log")) {
+                    if (url != null && url.contains("crawl/logs/crawl.log")) {
                         log.info("Processing crawl log");
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(archiveRecord));
                         String line;
