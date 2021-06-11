@@ -640,6 +640,53 @@ public class CommonSettings {
     public static String HADOOP_MAPRED_UBER_JAR = "settings.common.hadoop.mapred.hadoopUberJar";
 
     /**
+     * The amount of memory to assign to mapper-tasks in hadoop jobs.
+     */
+    public static String HADOOP_MAP_MEMORY_MB = "settings.common.hadoop.mapred.mapMemoryMb";
+
+    /**
+     * The number of cores to assign to mapper tasks in haddop.
+     */
+    public static String HADOOP_MAP_MEMORY_CORES = "settings.common.hadoop.mapred.mapMemoryCores";
+
+    /**
+     * Whether to enable caching of "local" (ie non-hdfs) warcfiles to hdfs before processing. This should
+     * speed up future jobs working on the same files.
+     */
+    public static String HADOOP_ENABLE_HDFS_CACHE = "settings.common.hadoop.mapred.hdfsCacheEnabled";
+
+    /**
+     * Hdfs directory in which to cache warcfiles. ("hdfs://"prefix is not needed.)
+     */
+    public static String HADOOP_HDFS_CACHE_DIR = "settings.common.hadoop.mapred.hdfsCacheDir";
+
+    /**
+     * The number of days for which to retain files in the hdfs cache if enabled. If set to zero, files
+     * will be copied to hdfs before processing but not retained for future jobs.
+     */
+    public static String HADOOP_CACHE_DAYS = "settings.common.hadoop.mapred.hdfsCacheDays";
+
+    /**
+     * Enable/disable ubertasking - a hadoop optimisation for efficient running of small jobs.
+     */
+    public static String HADOOP_MAPRED_ENABLE_UBERTASK = "settings.common.hadoop.mapred.enableUbertask";
+
+    /**
+     * Here we enable separate queues for interactive jobs (started by clicking in the NAS GUI) and batch jobs.
+     * If set to valid queuenames for the hadoop cluster, this ensures that there is always some minimum capacity
+     * for interactive jobs
+     */
+    public static String HADOOP_MAPRED_QUEUENAME_INTERACTIVE = "settings.common.hadoop.mapred.queue.interactive";
+
+    /**
+     * Here we enable separate queues for interactive jobs (started by clicking in the NAS GUI) and batch jobs.
+     * If set to valid queuenames for the hadoop cluster, this ensures that there is always some minimum capacity
+     * for interactive jobs
+     */
+    public static String HADOOP_MAPRED_QUEUENAME_BATCH = "settings.common.hadoop.mapred.queue.batch";
+
+
+    /**
      * Username to start map-/reduce jobs under on the Hadoop cluster.
      * In production we now use kerberos so this is
      * @deprecated

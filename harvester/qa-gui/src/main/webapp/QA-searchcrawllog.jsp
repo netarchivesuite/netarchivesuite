@@ -43,6 +43,7 @@ domain - the domain to get the log for
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.utils.StreamUtils,
                  dk.netarkivet.common.webinterface.HTMLUtils,
+                 dk.netarkivet.common.CommonSettings,
                  dk.netarkivet.viewerproxy.webinterface.Constants,
                  dk.netarkivet.viewerproxy.webinterface.Reporting"
          pageEncoding="UTF-8"
@@ -63,6 +64,7 @@ domain - the domain to get the log for
     String regexp;
     int jobid;
     File crawlLogExtract;
+    boolean byDomain = false;
     try {
         HTMLUtils.forwardOnMissingParameter(pageContext, Constants.JOBID_PARAM);
         regexp = request.getParameter(Constants.REGEXP_PARAM);
@@ -82,9 +84,21 @@ domain - the domain to get the log for
             crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
         } else { // use 'domain' as the regular expression
         	//regexp = ".*" + domain.replaceAll("\\.", "\\\\.") + ".*";
+            //TODO this ugly regex is a sign that this is the wrong approach. We should parse
+            //the crawl log to extract the domain from each line and then check for equality.
+            //But see https://sbforge.org/jira/browse/NAS-2690 and
+            //https://sbprojects.statsbiblioteket.dk/jira/browse/NARK-1212 for the
+            //reasoning behind this approach first.
+            //Also as written it appears to allow the domain to be immediately followed by
+            //a word character (\w) which is wrong.
            	regexp = ".*(https?:\\/\\/(www\\.)?|dns:|ftp:\\/\\/)([\\w_-]+\\.)?([\\w_-]+\\.)?([\\w_-]+\\.)?" 
             		+ domain.replaceAll("\\.", "\\\\.") +  "($|\\/|\\w|\\s).*";
-        	crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
+            if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
+                byDomain = true;
+                crawlLogExtract = Reporting.getCrawlLogLinesMatchingDomain(jobid, domain);
+            } else {
+                crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
+            }
         }
         LineNumberReader reader = new LineNumberReader(new FileReader(crawlLogExtract));
         reader.skip(Long.MAX_VALUE);
@@ -105,13 +119,19 @@ domain - the domain to get the log for
         return;
     }
     HTMLUtils.generateHeader(pageContext);
+    if (!byDomain) {
 %>
 <h3><fmt:message key="pagetitle;qa.crawllog.lines.for.job.0.matching.regexp.1">
     <fmt:param value="<%=jobid%>"/>
     <fmt:param value="<%=regexp%>"/>
 </fmt:message></h3>
 <pre>
-<%
+<% } else
+{%>
+<h3><fmt:message key="pagetitle;qa.crawllog.lines.for.domain.0.in.1">
+    <fmt:param value="<%=domain%>"/>
+    <fmt:param value="<%=jobid%>"/>
+</fmt:message></h3><pre><%}
     StreamUtils.copyInputStreamToJspWriter(new FileInputStream(crawlLogExtract), out);
     FileUtils.remove(crawlLogExtract);
 %>

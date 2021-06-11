@@ -126,7 +126,9 @@ public class HadoopJobUtils {
                 configuration.getInt(MRJobConfig.MAP_MEMORY_MB, MRJobConfig.DEFAULT_MAP_MEMORY_MB)
                         + Optional.ofNullable(appMasterMemory).orElse(MRJobConfig.DEFAULT_MR_AM_VMEM_MB));
 
-        configuration.setBoolean(MRJobConfig.JOB_UBERTASK_ENABLE, true);
+        if (Settings.getBoolean(CommonSettings.HADOOP_MAPRED_ENABLE_UBERTASK)) {
+            configuration.setBoolean(MRJobConfig.JOB_UBERTASK_ENABLE, true);
+        }
 
         setReducerMemory(configuration, 0);
         setReduceCoresPerTask(configuration, 0);
@@ -243,4 +245,19 @@ public class HadoopJobUtils {
         }
         return recordsForJob;
     }
+
+    public static void configureCaching(Configuration configuration) {
+        configuration.setBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE, Settings.getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE));
+        configuration.set(CommonSettings.HADOOP_HDFS_CACHE_DIR, Settings.get(CommonSettings.HADOOP_HDFS_CACHE_DIR));
+        configuration.setInt(CommonSettings.HADOOP_CACHE_DAYS, Settings.getInt(CommonSettings.HADOOP_CACHE_DAYS));
+    }
+
+    public static void setBatchQueue(Configuration conf) {
+        conf.set("mapreduce.job.queuename", Settings.get(CommonSettings.HADOOP_MAPRED_QUEUENAME_BATCH));
+    }
+
+    public static void setInteractiveQueue(Configuration conf) {
+        conf.set("mapreduce.job.queuename", Settings.get(CommonSettings.HADOOP_MAPRED_QUEUENAME_INTERACTIVE));
+    }
+
 }

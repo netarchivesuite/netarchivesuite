@@ -28,6 +28,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
+import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
 
 /**
  * Hadoop Mapper for creating CDX indexes for metadata files through the GUI application's QA pages.
@@ -56,10 +57,11 @@ public class MetadataCDXMapper extends Mapper<LongWritable, Text, NullWritable, 
             return;
         }
         Path path = new Path(archiveFilePath.toString());
+        path = HadoopFileUtils.replaceWithCachedPathIfEnabled(context, path);
         List<String> cdxIndexes;
         try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
             log.info("CDX-indexing archive file '{}'", path);
-            cdxIndexes = index(in, archiveFilePath.toString());
+            cdxIndexes = index(in, archiveFilePath.toString(), context);
         }
         for (String cdxIndex : cdxIndexes) {
             context.write(NullWritable.get(), new Text(cdxIndex));
@@ -71,10 +73,11 @@ public class MetadataCDXMapper extends Mapper<LongWritable, Text, NullWritable, 
      * @param archiveInputStream The inputstream the archive file is read from
      * @return A list of the CDX lines for the records in the archive file.
      */
-    public List<String> index(InputStream archiveInputStream, String archiveName) throws IOException {
+    public List<String> index(InputStream archiveInputStream, String archiveName, Context context) throws IOException {
         try (ArchiveReader archiveReader = ArchiveReaderFactory.get(archiveName, archiveInputStream, false)) {
+            //TODO if this is to be configurable then put it in the hadoop config. As is it always uses the default compiled-in version.
             boolean isMetadataFile = archiveName
-                    .matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
+                    .matches("(.*)" + context.getConfiguration().get(CommonSettings.METADATAFILE_REGEX_SUFFIX) );
             if (isMetadataFile) {
                 final int HTTP_HEADER_BUFFER_SIZE = 1024 * 1024;
                 String[] fields = {"A", "e", "b", "m", "n", "g", "v"};
