@@ -106,6 +106,8 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
                                 output.add(line);
                             }
                         }
+                        hdfsFileSystem.delete(dst, false);
+                        return output; //Just return here as there is only one crawl log
                     }
                 }
             }

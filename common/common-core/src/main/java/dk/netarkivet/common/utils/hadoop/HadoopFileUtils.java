@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.UUID;
 
-import javax.security.auth.login.Configuration;
-
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.InvalidRequestException;
+import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.RemoteIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,12 +32,35 @@ public class HadoopFileUtils {
      * a hdfs file system.
      * @param file
      * @return a hdfs path to the file
-     * @throws InvalidRequestException if caching is not enabled
+     * @throws IOException
      */
-    public static Path cacheFile(File file, Configuration conf) throws InvalidRequestException {
-        throw new InvalidRequestException("not implemented");
+    public static Path cacheFile(File file, Configuration conf) throws IOException {
+        if (!CACHING_ENABLED) {
+            throw new InvalidRequestException("Hdfs caching not enabled.");
+        }
+        Path cachePath = new Path(CACHE_PATH);
+        Path dst = new Path(cachePath, file.getName());
+        FileSystem hdfsFileSystem = FileSystem.get(conf);
+        if (!hdfsFileSystem.exists(dst)) {
+            FileUtil.copy(file, hdfsFileSystem, dst, false, conf);
+        }
+        return dst;
     }
 
+     public static void cleanCache(Configuration configuration) throws IOException {
+        long currentTime = System.currentTimeMillis();
+        long maxAgeMillis = MAX_CACHE_DAYS*24*3600*1000;
+        Path cachePath = new Path(CACHE_PATH);
+         RemoteIterator<LocatedFileStatus> locatedFileStatusRemoteIterator = FileSystem.get(configuration)
+                 .listFiles(cachePath, false);
+         while (locatedFileStatusRemoteIterator.hasNext()) {
+             LocatedFileStatus locatedFileStatus = locatedFileStatusRemoteIterator.next();
+             long modTime = locatedFileStatus.getModificationTime();
+             if (MAX_CACHE_DAYS == 0 || (currentTime - modTime) > maxAgeMillis ) {
+                 FileSystem.get(configuration).delete(locatedFileStatus.getPath(), false);
+             }
+         }
+     }
 
     /**
      * Creates and returns a unique path under a given directory.
