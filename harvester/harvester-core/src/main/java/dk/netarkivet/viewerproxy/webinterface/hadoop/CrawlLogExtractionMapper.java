@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
 import dk.netarkivet.viewerproxy.webinterface.CrawlLogLinesMatchingRegexp;
@@ -54,7 +53,7 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
     @Override
     protected void map(LongWritable linenumber, Text archiveFilePath, Context context) throws IOException,
             InterruptedException {
-        boolean cacheHdfs = Settings.getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE);
+        boolean cacheHdfs = context.getConfiguration().getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE, true);
         // reject empty or null warc paths.
         if (archiveFilePath == null || archiveFilePath.toString().trim().isEmpty()) {
             log.warn("Encountered empty path in job {}", context.getJobID().toString());
