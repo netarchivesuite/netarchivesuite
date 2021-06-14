@@ -82,6 +82,13 @@ domain - the domain to get the log for
             crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
         } else { // use 'domain' as the regular expression
         	//regexp = ".*" + domain.replaceAll("\\.", "\\\\.") + ".*";
+            //TODO this ugly regex is a sign that this is the wrong approach. We should parse
+            //the crawl log to extract the domain from each line and then check for equality.
+            //But see https://sbforge.org/jira/browse/NAS-2690 and
+            //https://sbprojects.statsbiblioteket.dk/jira/browse/NARK-1212 for the
+            //reasoning behind this approach first.
+            //Also as written it appears to allow the domain to be immediately followed by
+            //a word character (\w) which is wrong.
            	regexp = ".*(https?:\\/\\/(www\\.)?|dns:|ftp:\\/\\/)([\\w_-]+\\.)?([\\w_-]+\\.)?([\\w_-]+\\.)?" 
             		+ domain.replaceAll("\\.", "\\\\.") +  "($|\\/|\\w|\\s).*";
         	crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
