@@ -75,9 +75,9 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
         } else {
             LocalFileSystem localFileSystem = ((LocalFileSystem) fileSystem);
             if (cacheHdfs) {
-                crawlLogLines = extractCrawlLogLinesWithHdfs(localFileSystem.pathToFile(path), crawlLogRegex.pattern(), context);
+                crawlLogLines = extractCrawlLogLinesWithHdfs(localFileSystem.pathToFile(path), crawlLogRegex, context);
             } else {
-                crawlLogLines = extractCrawlLogLines(localFileSystem.pathToFile(path), crawlLogRegex.pattern());
+                crawlLogLines = extractCrawlLogLines(localFileSystem.pathToFile(path), crawlLogRegex);
             }
         }
         for (String crawlLog : crawlLogLines) {
@@ -85,8 +85,7 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
         }
     }
 
-    private List<String> extractCrawlLogLinesWithHdfs(File file, String regex, Context context) throws IOException {
-        Pattern regexp = Pattern.compile(regex);
+    private List<String> extractCrawlLogLinesWithHdfs(File file, Pattern regex, Context context) throws IOException {
         log.info("Executing experimental copy to hdfs.");
         ArrayList<String> output = new ArrayList<>();
         Path dst = HadoopFileUtils.cacheFile(file, context.getConfiguration());
@@ -103,11 +102,11 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
                     String url = archiveRecord.getHeader().getUrl();
                     log.info("Processing record with url {}", url);
                     if (url != null && url.contains("crawl/logs/crawl.log")) {
-                        log.info("Processing crawl log");
+                        log.info("Processing crawl log with regex {}.", regex.pattern());
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(archiveRecord));
                         String line;
                         while ((line = bufferedReader.readLine()) != null) {
-                            if (regexp.matcher(line).matches()) {
+                            if (regex.equals(".*") || regex.matcher(line).matches()) {
                                 output.add(line);
                             }
                         }
@@ -125,8 +124,8 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
      * @param regex The regex to match lines with.
      * @return A list of crawl log lines extracted from the file.
      */
-    private List<String> extractCrawlLogLines(File file, String regex) {
-        FileBatchJob batchJob = new CrawlLogLinesMatchingRegexp(regex);
+    private List<String> extractCrawlLogLines(File file, Pattern regex) {
+        FileBatchJob batchJob = new CrawlLogLinesMatchingRegexp(regex.pattern());
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         batchJob.processFile(file, baos);
         try {

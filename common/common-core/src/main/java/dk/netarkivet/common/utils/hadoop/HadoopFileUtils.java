@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.util.UUID;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.InvalidRequestException;
@@ -33,11 +32,11 @@ public class HadoopFileUtils {
      * @throws IOException if caching not enabled or fails otherwise
      */
     public static Path cacheFile(File file, Configuration conf) throws IOException {
-        if (!Settings.getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE)) {
+        if (!conf.getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE, false)) {
             throw new InvalidRequestException("Hdfs caching not enabled.");
         }
         FileSystem hdfsFileSystem = FileSystem.get(conf);
-        Path cachePath = new Path(Settings.get(CommonSettings.HADOOP_HDFS_CACHE_DIR));
+        Path cachePath = new Path(conf.get(CommonSettings.HADOOP_HDFS_CACHE_DIR));
         log.info("Creating the cache directory at {} if necessary.", cachePath);
         hdfsFileSystem.mkdirs(cachePath);
         cleanCache(conf);
@@ -52,9 +51,9 @@ public class HadoopFileUtils {
      public static void cleanCache(Configuration configuration) throws IOException {
          log.info("Cleaning hdfs cache");
          long currentTime = System.currentTimeMillis();
-         int days = Settings.getInt(CommonSettings.HADOOP_CACHE_DAYS);
+         int days = configuration.getInt(CommonSettings.HADOOP_CACHE_DAYS, 0);
          long maxAgeMillis = days *24L*3600L*1000L;
-         Path cachePath = new Path(Settings.get(CommonSettings.HADOOP_HDFS_CACHE_DIR));;
+         Path cachePath = new Path(configuration.get(CommonSettings.HADOOP_HDFS_CACHE_DIR));;
          log.info("Scanning {} for files older than {} days.", cachePath, days);
          FileSystem fileSystem = FileSystem.get(configuration);
          fileSystem.mkdirs(cachePath);
@@ -119,7 +118,7 @@ public class HadoopFileUtils {
 
     public static Path replaceWithCachedPathIfEnabled(Mapper.Context context, Path path)
             throws IOException {
-        boolean cachingEnabled = Settings.getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE);
+        boolean cachingEnabled = context.getConfiguration().getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE, false);
         boolean isLocal = path.getFileSystem(context.getConfiguration()) instanceof LocalFileSystem;
         if (isLocal && cachingEnabled) {
             log.info("Replacing {} with hdfs cached version.", path);

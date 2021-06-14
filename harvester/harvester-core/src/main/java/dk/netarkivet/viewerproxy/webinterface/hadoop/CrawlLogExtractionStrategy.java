@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
+import dk.netarkivet.common.utils.hadoop.HadoopJob;
 import dk.netarkivet.common.utils.hadoop.HadoopJobStrategy;
 import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
@@ -45,6 +46,7 @@ public class CrawlLogExtractionStrategy implements HadoopJobStrategy {
         HadoopJobUtils.setMapMemory(hadoopConf, totalMemory);
         HadoopJobUtils.setMapCoresPerTask(hadoopConf, totalCores);
         HadoopJobUtils.enableMapOnlyUberTask(hadoopConf, totalMemory, totalCores);
+        HadoopJobUtils.configureCaching(hadoopConf);
     }
 
     @Override public int runJob(Path jobInputFile, Path jobOutputDir) {

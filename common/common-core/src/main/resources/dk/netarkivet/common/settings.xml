@@ -239,6 +239,7 @@ National Library.
                 <hdfsCacheEnabled>true</hdfsCacheEnabled>
                 <hdfsCacheDir>ChangeMeToSomethingYouCanWriteTo</hdfsCacheDir>
                 <hdfsCacheDays>7</hdfsCacheDays>
+                <enableUbertask>true</enableUbertask>
             </mapred>
         </hadoop>
         <useHadoopAsMassProcessor>true</useHadoopAsMassProcessor>

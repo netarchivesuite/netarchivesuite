@@ -644,6 +644,7 @@ public class CommonSettings {
     public static String HADOOP_ENABLE_HDFS_CACHE = "settings.common.hadoop.mapred.hdfsCacheEnabled";
     public static String HADOOP_HDFS_CACHE_DIR = "settings.common.hadoop.mapred.hdfsCacheDir";
     public static String HADOOP_CACHE_DAYS = "settings.common.hadoop.mapred.hdfsCacheDays";
+    public static String HADOOP_MAPRED_ENABLE_UBERTASK = "settings.common.hadoop.mapred.enableUbertask";
 
     /**
      * Username to start map-/reduce jobs under on the Hadoop cluster.

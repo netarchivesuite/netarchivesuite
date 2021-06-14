@@ -243,4 +243,11 @@ public class HadoopJobUtils {
         }
         return recordsForJob;
     }
+
+    public static void configureCaching(Configuration configuration) {
+        configuration.setBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE, Settings.getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE));
+        configuration.set(CommonSettings.HADOOP_HDFS_CACHE_DIR, Settings.get(CommonSettings.HADOOP_HDFS_CACHE_DIR));
+        configuration.setInt(CommonSettings.HADOOP_CACHE_DAYS, Settings.getInt(CommonSettings.HADOOP_CACHE_DAYS));
+    }
+
 }
