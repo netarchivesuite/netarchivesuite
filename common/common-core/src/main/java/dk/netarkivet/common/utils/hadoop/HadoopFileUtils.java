@@ -44,6 +44,8 @@ public class HadoopFileUtils {
         log.info("Caching {} to {}.", file.getAbsolutePath(), dst);
         if (!hdfsFileSystem.exists(dst)) {
             FileUtil.copy(file, hdfsFileSystem, dst, false, conf);
+        } else {
+            log.info("Cached copy found - copying not necessary.");
         }
         return dst;
     }
