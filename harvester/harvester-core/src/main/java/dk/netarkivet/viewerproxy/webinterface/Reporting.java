@@ -396,8 +396,9 @@ public class Reporting {
             }
         }
         List<String> matches = null;
+        Pattern regexp = Pattern.compile(regex);
         try {
-            matches = org.apache.commons.io.FileUtils.readLines(cacheFile).stream().filter(s -> s.matches(regex)).collect(
+            matches = org.apache.commons.io.FileUtils.readLines(cacheFile).stream().filter(s -> regexp.matcher(s).matches() ).collect(
                     Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);
