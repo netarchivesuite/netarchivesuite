@@ -408,7 +408,7 @@ public class Reporting {
 
     private static boolean lineMatchesDomain(String crawlLine, String domain) {
         try {
-            String urlS = crawlLine.split("\\s+")[3];
+            String urlS = crawlLine.split("\\s+")[10];
             URL url = new URL(urlS);
             return url.getHost().equals(domain) || url.getHost().endsWith("."+domain);
         } catch (Exception e) {

@@ -43,6 +43,7 @@ domain - the domain to get the log for
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.utils.StreamUtils,
                  dk.netarkivet.common.webinterface.HTMLUtils,
+                 dk.netarkivet.common.CommonSettings,
                  dk.netarkivet.viewerproxy.webinterface.Constants,
                  dk.netarkivet.viewerproxy.webinterface.Reporting"
          pageEncoding="UTF-8"
