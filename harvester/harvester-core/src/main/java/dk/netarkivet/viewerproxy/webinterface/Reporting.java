@@ -26,6 +26,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -291,7 +293,7 @@ public class Reporting {
         ArgumentNotValid.checkNotNullOrEmpty(domain, "String domain");
         FileBatchJob urlsForDomainBatchJob = new HarvestedUrlsForDomainBatchJob(domain);
         urlsForDomainBatchJob.processOnlyFilesMatching(getMetadataFilePatternForJobId(jobid));
-        return getResultFile(urlsForDomainBatchJob);
+        return createSortedResultFile(urlsForDomainBatchJob);
     }
 
     /**
@@ -317,7 +319,7 @@ public class Reporting {
      * @param crawlLogLines The crawllog lines output from a job.
      * @return A File containing the sorted lines.
      */
-    private static File getResultFile(List<String> crawlLogLines) {
+    private static File createSortedResultFile(List<String> crawlLogLines) {
         final String uuid = UUID.randomUUID().toString();
         File tempFile = createTempResultFile(uuid);
         File sortedTempFile = createTempResultFile(uuid + "-sorted");
@@ -333,7 +335,7 @@ public class Reporting {
      * @param batchJob a certain FileBatchJob
      * @return a file with the result.
      */
-    private static File getResultFile(FileBatchJob batchJob) {
+    private static File createSortedResultFile(FileBatchJob batchJob) {
         final String uuid = UUID.randomUUID().toString();
         File tempFile = createTempResultFile(uuid);
         File sortedTempFile = createTempResultFile(uuid);
@@ -360,7 +362,7 @@ public class Reporting {
         } else {
             FileBatchJob crawlLogBatchJob = new CrawlLogLinesMatchingRegexp(regexp);
             crawlLogBatchJob.processOnlyFilesMatching(getMetadataFilePatternForJobId(jobid));
-            return getResultFile(crawlLogBatchJob);
+            return createSortedResultFile(crawlLogBatchJob);
         }
     }
 
@@ -383,6 +385,51 @@ public class Reporting {
      * @return a File with the matching lines.
      */
     private static File getCrawlLogLinesUsingHadoop(long jobID, String regex) {
+        File cacheFile = getCrawlLogFromCacheOrHdfs(jobID);
+        List<String> matches = getMatchingStringsFromFile(cacheFile, regex);
+        return createSortedResultFile(matches);
+    }
+
+    public static File getCrawlLogLinesMatchingDomain(long jobID, String domain) {
+        File cacheFile = getCrawlLogFromCacheOrHdfs(jobID);
+        List<String> matches = getMatchingDomainStringsFromFile(cacheFile, domain);
+        return createSortedResultFile(matches);
+    }
+
+    private static List<String> getMatchingDomainStringsFromFile(File cacheFile, String domain) {
+        try {
+            return org.apache.commons.io.FileUtils.readLines(cacheFile).stream()
+                    .filter(line -> lineMatchesDomain(line, domain)).collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    private static boolean lineMatchesDomain(String crawlLine, String domain) {
+        try {
+            String urlS = crawlLine.split("\\s+")[3];
+            URL url = new URL(urlS);
+            return url.getHost().equals(domain) || url.getHost().endsWith("."+domain);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static List<String> getMatchingStringsFromFile(File cacheFile,
+            String regex) {
+        List<String> matches = null;
+        Pattern regexp = Pattern.compile(regex);
+        try {
+            matches = org.apache.commons.io.FileUtils.readLines(cacheFile).stream().filter(s -> regexp.matcher(s).matches() ).collect(
+                    Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return matches;
+    }
+
+    private static File getCrawlLogFromCacheOrHdfs(long jobID) {
         File cacheFile = getCrawlLogCache(jobID);
         if (cacheFile.exists() && cacheFile.length() == 0) {
             log.info("Overwriting empty cache file {}.", cacheFile.getAbsolutePath());
@@ -395,15 +442,7 @@ public class Reporting {
                 throw new RuntimeException((e));
             }
         }
-        List<String> matches = null;
-        com.google.re2j.Pattern regexp = com.google.re2j.Pattern.compile(regex);
-        try {
-            matches = org.apache.commons.io.FileUtils.readLines(cacheFile).stream().filter(s -> regexp.matcher(s).matches() ).collect(
-                    Collectors.toList());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return getResultFile(matches);
+        return cacheFile;
     }
 
     private static File getCrawlLogUsingHadoop(long jobID) {
@@ -423,7 +462,7 @@ public class Reporting {
                 log.error("Failed getting crawl log lines output for job with ID: {}", jobID);
                 throw new IOFailure("Failed getting " + job.getJobType() + " job results");
             }
-            return getResultFile(crawlLogLines);
+            return createSortedResultFile(crawlLogLines);
         } catch (IOException e) {
             log.error("Error instantiating Hadoop filesystem for job {}.", jobID, e);
             throw new IOFailure("Failed instantiating Hadoop filesystem.");

@@ -91,7 +91,11 @@ domain - the domain to get the log for
             //a word character (\w) which is wrong.
            	regexp = ".*(https?:\\/\\/(www\\.)?|dns:|ftp:\\/\\/)([\\w_-]+\\.)?([\\w_-]+\\.)?([\\w_-]+\\.)?" 
             		+ domain.replaceAll("\\.", "\\\\.") +  "($|\\/|\\w|\\s).*";
-        	crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
+            if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
+                crawlLogExtract = Reporting.getCrawlLogLinesMatchingDomain(jobid, domain);
+            } else {
+                crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
+            }
         }
         LineNumberReader reader = new LineNumberReader(new FileReader(crawlLogExtract));
         reader.skip(Long.MAX_VALUE);
