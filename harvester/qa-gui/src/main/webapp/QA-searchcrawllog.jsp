@@ -119,7 +119,7 @@ domain - the domain to get the log for
         return;
     }
     HTMLUtils.generateHeader(pageContext);
-    if (byDomain) {
+    if (!byDomain) {
 %>
 <h3><fmt:message key="pagetitle;qa.crawllog.lines.for.job.0.matching.regexp.1">
     <fmt:param value="<%=jobid%>"/>
@@ -131,8 +131,7 @@ domain - the domain to get the log for
 <h3><fmt:message key="pagetitle;qa.crawllog.lines.for.domain.0.in.1">
     <fmt:param value="<%=domain%>"/>
     <fmt:param value="<%=jobid%>"/>
-</fmt:message></h3>
-    <%}
+</fmt:message></h3><pre><%}
     StreamUtils.copyInputStreamToJspWriter(new FileInputStream(crawlLogExtract), out);
     FileUtils.remove(crawlLogExtract);
 %>

@@ -126,7 +126,9 @@ public class HadoopJobUtils {
                 configuration.getInt(MRJobConfig.MAP_MEMORY_MB, MRJobConfig.DEFAULT_MAP_MEMORY_MB)
                         + Optional.ofNullable(appMasterMemory).orElse(MRJobConfig.DEFAULT_MR_AM_VMEM_MB));
 
-        configuration.setBoolean(MRJobConfig.JOB_UBERTASK_ENABLE, true);
+        if (Settings.getBoolean(CommonSettings.HADOOP_MAPRED_ENABLE_UBERTASK)) {
+            configuration.setBoolean(MRJobConfig.JOB_UBERTASK_ENABLE, true);
+        }
 
         setReducerMemory(configuration, 0);
         setReduceCoresPerTask(configuration, 0);
