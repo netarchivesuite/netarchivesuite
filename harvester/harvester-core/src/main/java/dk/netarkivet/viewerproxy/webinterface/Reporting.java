@@ -396,7 +396,7 @@ public class Reporting {
             }
         }
         List<String> matches = null;
-        Pattern regexp = Pattern.compile(regex);
+        com.google.re2j.Pattern regexp = com.google.re2j.Pattern.compile(regex);
         try {
             matches = org.apache.commons.io.FileUtils.readLines(cacheFile).stream().filter(s -> regexp.matcher(s).matches() ).collect(
                     Collectors.toList());
