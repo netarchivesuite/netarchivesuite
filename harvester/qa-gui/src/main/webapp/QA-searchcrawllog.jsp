@@ -64,6 +64,7 @@ domain - the domain to get the log for
     String regexp;
     int jobid;
     File crawlLogExtract;
+    boolean byDomain = false;
     try {
         HTMLUtils.forwardOnMissingParameter(pageContext, Constants.JOBID_PARAM);
         regexp = request.getParameter(Constants.REGEXP_PARAM);
@@ -93,6 +94,7 @@ domain - the domain to get the log for
            	regexp = ".*(https?:\\/\\/(www\\.)?|dns:|ftp:\\/\\/)([\\w_-]+\\.)?([\\w_-]+\\.)?([\\w_-]+\\.)?" 
             		+ domain.replaceAll("\\.", "\\\\.") +  "($|\\/|\\w|\\s).*";
             if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
+                byDomain = true;
                 crawlLogExtract = Reporting.getCrawlLogLinesMatchingDomain(jobid, domain);
             } else {
                 crawlLogExtract = Reporting.getCrawlLoglinesMatchingRegexp(jobid, regexp);
@@ -117,13 +119,20 @@ domain - the domain to get the log for
         return;
     }
     HTMLUtils.generateHeader(pageContext);
+    if (byDomain) {
 %>
 <h3><fmt:message key="pagetitle;qa.crawllog.lines.for.job.0.matching.regexp.1">
     <fmt:param value="<%=jobid%>"/>
     <fmt:param value="<%=regexp%>"/>
 </fmt:message></h3>
 <pre>
-<%
+<% } else
+{%>
+<h3><fmt:message key="pagetitle;qa.crawllog.lines.for.domain.0.in.1">
+    <fmt:param value="<%=domain%>"/>
+    <fmt:param value="<%=jobid%>"/>
+</fmt:message></h3>
+    <%}
     StreamUtils.copyInputStreamToJspWriter(new FileInputStream(crawlLogExtract), out);
     FileUtils.remove(crawlLogExtract);
 %>
