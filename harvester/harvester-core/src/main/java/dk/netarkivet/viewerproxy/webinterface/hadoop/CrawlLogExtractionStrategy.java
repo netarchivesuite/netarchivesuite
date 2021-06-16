@@ -47,6 +47,7 @@ public class CrawlLogExtractionStrategy implements HadoopJobStrategy {
         HadoopJobUtils.setMapCoresPerTask(hadoopConf, totalCores);
         HadoopJobUtils.enableMapOnlyUberTask(hadoopConf, totalMemory, totalCores);
         HadoopJobUtils.configureCaching(hadoopConf);
+        HadoopJobUtils.setInteractiveQueue(hadoopConf);
     }
 
     @Override public int runJob(Path jobInputFile, Path jobOutputDir) {

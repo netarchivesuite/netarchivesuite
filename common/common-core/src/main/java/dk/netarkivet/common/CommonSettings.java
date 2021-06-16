@@ -672,6 +672,21 @@ public class CommonSettings {
     public static String HADOOP_MAPRED_ENABLE_UBERTASK = "settings.common.hadoop.mapred.enableUbertask";
 
     /**
+     * Here we enable separate queues for interactive jobs (started by clicking in the NAS GUI) and batch jobs.
+     * If set to valid queuenames for the hadoop cluster, this ensures that there is always some minimum capacity
+     * for interactive jobs
+     */
+    public static String HADOOP_MAPRED_QUEUENAME_INTERACTIVE = "settings.common.hadoop.mapred.queue.interactive";
+
+    /**
+     * Here we enable separate queues for interactive jobs (started by clicking in the NAS GUI) and batch jobs.
+     * If set to valid queuenames for the hadoop cluster, this ensures that there is always some minimum capacity
+     * for interactive jobs
+     */
+    public static String HADOOP_MAPRED_QUEUENAME_BATCH = "settings.common.hadoop.mapred.queue.batch";
+
+
+    /**
      * Username to start map-/reduce jobs under on the Hadoop cluster.
      * In production we now use kerberos so this is
      * @deprecated

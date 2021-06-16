@@ -44,6 +44,7 @@ public class MetadataCDXExtractionStrategy implements HadoopJobStrategy {
         HadoopJobUtils.enableMapOnlyUberTask(hadoopConf, totalMemory, totalCores);
         HadoopJobUtils.configureCaching(hadoopConf);
         hadoopConf.set(CommonSettings.METADATAFILE_REGEX_SUFFIX, Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
+        HadoopJobUtils.setInteractiveQueue(hadoopConf);
     }
 
     @Override

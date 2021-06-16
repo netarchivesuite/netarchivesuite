@@ -252,4 +252,12 @@ public class HadoopJobUtils {
         configuration.setInt(CommonSettings.HADOOP_CACHE_DAYS, Settings.getInt(CommonSettings.HADOOP_CACHE_DAYS));
     }
 
+    public static void setBatchQueue(Configuration conf) {
+        conf.set("mapreduce.job.queuename", Settings.get(CommonSettings.HADOOP_MAPRED_QUEUENAME_BATCH));
+    }
+
+    public static void setInteractiveQueue(Configuration conf) {
+        conf.set("mapreduce.job.queuename", Settings.get(CommonSettings.HADOOP_MAPRED_QUEUENAME_INTERACTIVE));
+    }
+
 }

@@ -47,6 +47,7 @@ public class MetadataExtractionStrategy implements HadoopJobStrategy {
         HadoopJobUtils.configureCaching(hadoopConf);
         urlPattern = hadoopConf.getPattern(GetMetadataMapper.URL_PATTERN, Pattern.compile(".*"));
         mimePattern = hadoopConf.getPattern(GetMetadataMapper.MIME_PATTERN, Pattern.compile(".*"));
+        HadoopJobUtils.setBatchQueue(hadoopConf);
     }
 
     @Override

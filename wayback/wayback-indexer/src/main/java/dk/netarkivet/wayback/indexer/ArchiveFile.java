@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -45,6 +46,7 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.hadoop.GetMetadataMapper;
 import dk.netarkivet.common.utils.service.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SettingsFactory;
@@ -263,6 +265,13 @@ public class ArchiveFile {
                     hadoopInputNameFile);
             log.info("Starting CDX job on file '{}'", filename);
             int exitCode = 0;
+            int totalMemory = Settings.getInt(CommonSettings.HADOOP_MAP_MEMORY_MB);
+            int totalCores = Settings.getInt(CommonSettings.HADOOP_MAP_MEMORY_CORES);
+            HadoopJobUtils.setMapMemory(conf, totalMemory);
+            HadoopJobUtils.setMapCoresPerTask(conf, totalCores);
+            HadoopJobUtils.enableMapOnlyUberTask(conf, totalMemory, totalCores);
+            HadoopJobUtils.configureCaching(conf);
+            HadoopJobUtils.setBatchQueue(conf);
             try {
                 log.info("Starting hadoop job with input {} and output {}.", hadoopInputNameFile, jobOutputDir);
                 exitCode = ToolRunner.run(new HadoopJobTool(conf, new CDXMapper()),
