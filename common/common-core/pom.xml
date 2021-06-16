@@ -14,7 +14,7 @@
   <properties>
     <bitrepository.version>1.10-SNAPSHOT</bitrepository.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomcat.version>${tomcat-embed-core.version}</tomcat.version>
+    <tomcat.version>8.5.61</tomcat.version>
   </properties>
 
   <dependencies>
