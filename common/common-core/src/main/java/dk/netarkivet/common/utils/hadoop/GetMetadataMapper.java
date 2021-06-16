@@ -94,14 +94,18 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
                     }
                 } catch (IOException e) {
                     log.warn("Failed creating archiveReader from archive file located at '{}'", filePath.toString(), e);
+                    throw e;
                 }
             } catch (IOException e) {
                 log.error("Could not read input file at '{}'.", path.toString(), e);
+                throw e;
             }
         } catch (IOException e) {
             log.error("Could not get FileSystem from configuration", e);
+            throw e;
         } catch (URISyntaxException e) {
             log.error("Not a URI:", e);
+            throw new IOException(e);
         }
     }
 
@@ -112,7 +116,8 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
      * @param path Path for the input file the job is run on.
      * @param context The mapping context.
      */
-    private void writeRecordMetadataLinesToContext(ArchiveRecordBase record, Path path, Context context) {
+    private void writeRecordMetadataLinesToContext(ArchiveRecordBase record, Path path, Context context)
+            throws IOException {
         int lineCount = 0;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(record.getInputStream()))) {
             for (String metadataLine = reader.readLine(); metadataLine != null; metadataLine = reader.readLine()) {
@@ -121,7 +126,8 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
             }
             log.info("Mapper written {} lines to output.", lineCount);
         } catch (Exception e) {
-            log.warn("Failed writing metadata line #{} for input file '{}'.", lineCount, path.toString());
+            log.warn("Failed writing metadata line #{} for input file '{}'.", lineCount, path.toString(), e);
+            throw new IOException(e);
         }
     }
 }
