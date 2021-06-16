@@ -73,7 +73,7 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
         Path path = new Path(filePath.toString());
         path = HadoopFileUtils.replaceWithCachedPathIfEnabled(context, path);
         log.info("Mapper processing {}.", path);
-        try (FileSystem fs = FileSystem.newInstance(new URI(filePath.toString()), context.getConfiguration());){
+        try (FileSystem fs = FileSystem.newInstance(new URI(path.toString()), context.getConfiguration());){
             try (InputStream in = new BufferedInputStream(fs.open(path))) {
                 try (ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true)) {
                     for (ArchiveRecord archiveRecord : archiveReader) {
@@ -93,10 +93,10 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
                         }
                     }
                 } catch (IOException e) {
-                    log.warn("Failed creating archiveReader from archive file located at '{}'", filePath.toString());
+                    log.warn("Failed creating archiveReader from archive file located at '{}'", filePath.toString(), e);
                 }
             } catch (IOException e) {
-                log.error("Could not read input file at '{}'.", path.toString());
+                log.error("Could not read input file at '{}'.", path.toString(), e);
             }
         } catch (IOException e) {
             log.error("Could not get FileSystem from configuration", e);
