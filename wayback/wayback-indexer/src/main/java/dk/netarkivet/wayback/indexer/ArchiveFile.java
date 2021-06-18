@@ -259,7 +259,7 @@ public class ArchiveFile {
             java.nio.file.Path filePath = fileResolver.getPath(filename);
             if (filePath == null) {
                 log.warn("No path identified for file '{}'", filename);
-                throw new FileNotFoundException(filename);
+                throw new FileNotFoundException("File resolver failed to identity file " + filename);
             }
             String inputLine = "file://" + filePath.toString();
             log.info("Inserting {} in {}.", inputLine, localInputTempFile);
@@ -291,7 +291,7 @@ public class ArchiveFile {
                log.error("Hadoop indexing job failed to run normally.", exception);
             }
         } catch (IOException e) {
-           log.error("Error on hadoop filesystem.", e);
+           log.error("Error indexing file " + filename + " with hadoop.", e);
         }
 
     }
