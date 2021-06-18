@@ -23,6 +23,7 @@
 package dk.netarkivet.wayback.indexer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -256,6 +257,10 @@ public class ArchiveFile {
                 ((SimpleFileResolver) fileResolver).setDirectory(Paths.get(pillarParentDir));
             }
             java.nio.file.Path filePath = fileResolver.getPath(filename);
+            if (filePath == null) {
+                log.warn("No path identified for file '{}'", filename);
+                throw new FileNotFoundException(filename);
+            }
             String inputLine = "file://" + filePath.toString();
             log.info("Inserting {} in {}.", inputLine, localInputTempFile);
             Files.write(localInputTempFile, inputLine.getBytes());
