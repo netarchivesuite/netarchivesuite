@@ -241,8 +241,8 @@ National Library.
                 <hdfsCacheDays>7</hdfsCacheDays>
                 <enableUbertask>true</enableUbertask>
                 <queue> <!--These values will always be cluster- and user-dependent -->
-                    <interactive></interactive>
-                    <batch></batch>
+                    <interactive>default</interactive>
+                    <batch>default</batch>
                 </queue>
             </mapred>
         </hadoop>
