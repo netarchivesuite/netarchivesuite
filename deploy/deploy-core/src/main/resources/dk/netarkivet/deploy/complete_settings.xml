@@ -65,7 +65,7 @@
             </database>
         </admin>
     </archive>
-<common>
+    <common>
         <environmentName>DEV</environmentName>
         <organization>netarkivet.dk</organization>
         <tempDir>./tests/commontempdir</tempDir>
@@ -75,11 +75,11 @@
         </metadata>
         <remoteFile>
             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-        <serverName>localhost</serverName><serverPort>21</serverPort><userName>anonymous</userName><userPassword>anonymous</userPassword><retries>3</retries><datatimeout>600</datatimeout><port>8100</port><certificateKeyStore>conf/keystore</certificateKeyStore><certificateKeyStorePassword>1234</certificateKeyStorePassword><certificatePassword>1234</certificatePassword></remoteFile>
+            <serverName>localhost</serverName><serverPort>21</serverPort><userName>anonymous</userName><userPassword>anonymous</userPassword><retries>3</retries><datatimeout>600</datatimeout><port>8100</port><certificateKeyStore>conf/keystore</certificateKeyStore><certificateKeyStorePassword>1234</certificateKeyStorePassword><certificatePassword>1234</certificatePassword></remoteFile>
         <jms> <!-- Connection data for JMS-->
             <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
             <retries>3</retries>
-        <broker>localhost</broker><port>7676</port></jms>
+            <broker>localhost</broker><port>7676</port></jms>
         <http>
             <port/>
         </http>
@@ -91,22 +91,24 @@
                  -->
                 <keyfilename/>
                 <settingsDir/>
-                <storeMaxPillarFailures>1</storeMaxPillarFailures>
+                <storeMaxPillarFailures>0</storeMaxPillarFailures>
                 <tempdir>arcrepositoryTemp</tempdir>
                 <collectionID>netarkivet</collectionID>
                 <usepillar/>
                 <!-- Set to 5 minutes to make it possible to retrieve large records
                  using FTP -->
                 <getTimeout>300000</getTimeout>
+                <store_retries>3</store_retries>
+                <retryWaitSeconds>1800</retryWaitSeconds>
             </bitrepository>
-        <fileDir>ArcRepository</fileDir><getTimeout>300000</getTimeout><storeRetries>3</storeRetries><storeTimeout>3600000</storeTimeout></arcrepositoryClient>
+            <fileDir>ArcRepository</fileDir><getTimeout>300000</getTimeout><storeRetries>3</storeRetries><storeTimeout>3600000</storeTimeout></arcrepositoryClient>
         <monitorregistryClient>
             <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
             <reregisterdelay>1</reregisterdelay>
         </monitorregistryClient>
         <indexClient>
             <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestClient</class>
-        <indexRequestTimeout>3600000</indexRequestTimeout><useLocalFtpServer>false</useLocalFtpServer></indexClient>
+            <indexRequestTimeout>3600000</indexRequestTimeout><useLocalFtpServer>false</useLocalFtpServer></indexClient>
         <unixSort>
             <useCommonTempDir>false</useCommonTempDir>
         </unixSort>
@@ -114,10 +116,10 @@
         <processTimeout>5000</processTimeout>
         <notifications>
             <class>dk.netarkivet.common.utils.EMailNotifications</class>
-        <receiver>root@localhost</receiver><sender>root@localhost</sender><subjectPrefix>NetarchiveSuite</subjectPrefix></notifications>
+            <receiver>root@localhost</receiver><sender>root@localhost</sender><subjectPrefix>NetarchiveSuite</subjectPrefix></notifications>
         <freespaceprovider>
             <class>dk.netarkivet.common.utils.DefaultFreeSpaceProvider</class>
-        <dir>/home/netarchivesuite/freespace</dir></freespaceprovider>
+            <dir>/home/netarchivesuite/freespace</dir></freespaceprovider>
         <mail>
             <server>localhost</server>
         </mail>
@@ -183,10 +185,10 @@
             <hideInactiveTemplates>false</hideInactiveTemplates>
         </webinterface>
         <topLevelDomains>
-        <silentlyIgnoreStarredTlds>true</silentlyIgnoreStarredTlds>
-        <!-- add extra top level domains here not included in embedded https://publicsuffix.org/list/public_suffix_list.dat
-        	e.g: <tld> anothertld </tld> 
-         -->
+            <silentlyIgnoreStarredTlds>true</silentlyIgnoreStarredTlds>
+            <!-- add extra top level domains here not included in embedded https://publicsuffix.org/list/public_suffix_list.dat
+                    e.g: <tld> anothertld </tld>
+             -->
         </topLevelDomains>
         <database>
             <class>dk.netarkivet.harvester.datamodel.DerbyServerSpecifics</class>
@@ -265,6 +267,16 @@
                 <framework>yarn</framework>
                 <inputDir>nas_input</inputDir>
                 <outputDir>nas_output</outputDir>
+                <mapMemoryMb>4096</mapMemoryMb>
+                <mapMemoryCores>2</mapMemoryCores>
+                <hdfsCacheEnabled>true</hdfsCacheEnabled>
+                <hdfsCacheDir>ChangeMeToSomethingYouCanWriteTo</hdfsCacheDir>
+                <hdfsCacheDays>7</hdfsCacheDays>
+                <enableUbertask>true</enableUbertask>
+                <queue> <!--These values will always be cluster- and user-dependent -->
+                    <interactive>default</interactive>
+                    <batch>default</batch>
+                </queue>
             </mapred>
         </hadoop>
         <useHadoopAsMassProcessor>true</useHadoopAsMassProcessor>
@@ -276,273 +288,274 @@
             <password>changeit</password>
         </trustStore>
     </common><harvester>
-    	<!-- snapshotChannelId>SNAPSHOT</snapshotChannelId -->
-        <performer/>
-        <aliases>
-            <timeout>31536000</timeout>
-        </aliases>
-        <datamodel>
-            <domain>
-                <defaultSeedlist>defaultseeds</defaultSeedlist>
-                <defaultConfig>defaultconfig</defaultConfig>
-                <defaultOrderxml>default_orderxml</defaultOrderxml>
-                <defaultMaxrate>100</defaultMaxrate>
-                <defaultMaxbytes>1000000000</defaultMaxbytes>
-                <defaultMaxobjects>-1</defaultMaxobjects>
-                <defaultSchedule/>
-                <!-- Used when creating ids for new jobs after a admin
-                database restore. -->
-                <nextJobId>0</nextJobId>
-                <validSeedRegex>^.*$</validSeedRegex>
-            </domain>
-        </datamodel>
-        <scheduler>
-            <limitSubmittedJobsInQueue>false</limitSubmittedJobsInQueue>
-            <submittedJobsInQueueLimit>1</submittedJobsInQueueLimit>
-            <!-- one week in seconds  - time before jobs terminate -->
-            <jobtimeouttime>604800</jobtimeouttime>
-            <jobgenerationperiod>60</jobgenerationperiod>
-            <jobGen>
-                <class>dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator</class>
-                <objectLimitIsSetByQuotaEnforcer>true</objectLimitIsSetByQuotaEnforcer>
-                <!-- used to set a limit on how long Heritrix should run. 0 means no limit. -->
-                <maxTimeToCompleteJob>0</maxTimeToCompleteJob>
-                <domainConfigSubsetSize>10000</domainConfigSubsetSize>
-                <useAlternateSnapshotJobgenerationMethod>false</useAlternateSnapshotJobgenerationMethod>
-                <config>
-                    <!-- Only used by DefaultJobGenerator -->
-                    <splitByObjectLimit>false</splitByObjectLimit>
-                    <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
-                    <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
-                    <maxTotalSize>8000000</maxTotalSize>
-                    <errorFactorPrevResult>10</errorFactorPrevResult>
-                    <errorFactorBestGuess>2</errorFactorBestGuess>
-                    <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
-                    <maxDomainSize>5000</maxDomainSize>
-                    <!-- Used by FixedDomainConfigurationCountJobGenerator and as an absolute limit in DefaultJobGenerator -->
-                    <fixedDomainCountSnapshot>10000</fixedDomainCountSnapshot>
-                    <!-- Only used by FixedDomainConfigurationCountJobGenerator -->
-                    <fixedDomainCountFocused>0</fixedDomainCountFocused>
-                    <excludeDomainsWithZeroBudget>false</excludeDomainsWithZeroBudget>
-                    <postponeUnregisteredChannel>true</postponeUnregisteredChannel>
-                </config>
-            </jobGen>
-        </scheduler>
-        <monitor>
-            <!--  1 minute -->
-            <refreshInterval>60</refreshInterval>
-            <displayedHistorySize>30</displayedHistorySize>
-            <displayedFrontierQueuesSize>100</displayedFrontierQueuesSize> <!-- optional, default = 100 -->
-            <historySampleRate>300</historySampleRate><!--  in seconds, 5 minutes -->
-            <historyChartGenInterval>300</historyChartGenInterval><!--  in seconds, 5 minutes -->
-        </monitor>
-        <harvesting>
-            <serverDir>server</serverDir>
-            <!-- Default is 400000000 bytes (~400 Mbytes). -->
-            <minSpaceLeft>400000000</minSpaceLeft>
-            <oldjobsDir>oldjobs</oldjobsDir>
-            <channel/>
-            <sendReadyInterval>30</sendReadyInterval>
-            <sendReadyDelay>300</sendReadyDelay>
-	    <!-- not implemented for Heritrix3 -->
-            <continuationFromHeritrixRecoverlogEnabled>false</continuationFromHeritrixRecoverlogEnabled>
-            <heritrix> <!-- heritrix1 settings -->
-                <!-- 30 minutes -->
-                <inactivityTimeout>1800</inactivityTimeout>
-                <!-- 30 minutes -->
-                <noresponseTimeout>1800</noresponseTimeout>
-                <!--  10 minutes -->
-                <waitForReportGenerationTimeout>600</waitForReportGenerationTimeout>
-                <!--  20 seconds -->
-                <crawlLoopWaitTime>20</crawlLoopWaitTime>
-                <abortIfConnectionLost>true</abortIfConnectionLost>
-                <adminName>admin</adminName>
-                <adminPassword>adminPassword</adminPassword>
-                <guiPort>8090</guiPort>
-                <jmxPort>8091</jmxPort>
-                <jmxUsername>controlRole</jmxUsername>
-                <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
-                <heapSize>1598M</heapSize>
-                <javaOpts/>
-                <archiveFormat>warc</archiveFormat>
-                <archiveNaming>
-                    <class>dk.netarkivet.harvester.harvesting.LegacyNamingConvention</class>
-                </archiveNaming>
-                <warc>
-                	<skipIdenticalDigests>false</skipIdenticalDigests>
-                	<writeRequests>true</writeRequests>
-                	<writeMetadata>true</writeMetadata>
-                	<writeMetadataOutlinks>false</writeMetadataOutlinks>
-                	<writeRevisitForIdenticalDigests>false</writeRevisitForIdenticalDigests>
-                	<writeRevisitForNotModified>false</writeRevisitForNotModified>
-                	<startNewFilesOnCheckpoint>true</startNewFilesOnCheckpoint>
-                	<writeMetadataOutlinks>true</writeMetadataOutlinks>
-                </warc>
-            </heritrix>
-	    <heritrix3>	<!-- heritrix3 settings -->
-                <!-- 30 minutes -->
-                <inactivityTimeout>1800</inactivityTimeout>
-                <!-- 30 minutes -->
-                <noresponseTimeout>1800</noresponseTimeout>
-                <!--  10 minutes -->
-                <waitForReportGenerationTimeout>600</waitForReportGenerationTimeout>
-                <!--  20 seconds -->
-                <crawlLoopWaitTime>20</crawlLoopWaitTime>
-                <abortIfConnectionLost>true</abortIfConnectionLost>
-                <adminName>admin</adminName>
-                <adminPassword>adminPassword</adminPassword>
-                <guiPort>8090</guiPort>
-                <heapSize>1598M</heapSize>
-                <javaOpts/>
-                <archiveFormat>warc</archiveFormat>
-                <archiveNaming>
-                    <class>dk.netarkivet.harvester.harvesting.LegacyNamingConvention</class>
-                </archiveNaming>
-                <arc>
-			<compression>false</compression>
-                	<poolMaxActive>1</poolMaxActive>
-			<maxFileSizeBytes>1000000000</maxFileSizeBytes>
-			<suffix>${HOSTNAME}</suffix>
-                </arc>
-		<warc>	
-			<template>${prefix}-${timestamp17}-${serialno}-${heritrix.hostname}</template>			
-			<compression>false</compression>
-                	<poolMaxActive>1</poolMaxActive>
-			<maxFileSizeBytes>1000000000</maxFileSizeBytes>
-	        	<writeRequests>true</writeRequests>
-			<writeMetadata>true</writeMetadata>
-			<writeMetadataOutlinks>false</writeMetadataOutlinks>
-			<skipIdenticalDigests>false</skipIdenticalDigests>
-			<startNewFilesOnCheckpoint>true</startNewFilesOnCheckpoint>
-                </warc>
-            </heritrix3>
-            <frontier>
-                <!-- 10 minutes -->
-                <frontierReportWaitTime>600</frontierReportWaitTime>
-                <filter>
-                    <class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
-                    <args/>
-                </filter>
-            </frontier>
-            <heritrixLauncher>
-                <class>dk.netarkivet.harvester.heritrix3.controller.HeritrixLauncher</class>
-            </heritrixLauncher>
-            <heritrixController>
-                <class>dk.netarkivet.harvester.heritrix3.controller.HeritrixController</class>
-            </heritrixController>
-            <harvestReport>
-                <class>dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport</class>
-                <disregardSeedURLInfo>false</disregardSeedURLInfo>
-            </harvestReport>
-            <deduplication>
-                <enabled>true</enabled>
-            </deduplication>
-            <metadata>
-                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out|\.cxml)</heritrixFilePattern>
-                <reportFilePattern>.*-report.txt</reportFilePattern>
-                <logFilePattern>.*(\.log|\.out)</logFilePattern>
-                <archiveFilesReport>
-                	<generate>true</generate>
-                	<fileName>archivefiles-report.txt</fileName>
-                	<fileHeader>[ARCHIVEFILE] [Opened] [Closed] [Size]</fileHeader>
-                </archiveFilesReport>
-                <metadataFormat>warc</metadataFormat>
+    <!-- snapshotChannelId>SNAPSHOT</snapshotChannelId -->
+    <performer/>
+    <aliases>
+        <timeout>31536000</timeout>
+    </aliases>
+    <datamodel>
+        <domain>
+            <defaultSeedlist>defaultseeds</defaultSeedlist>
+            <defaultConfig>defaultconfig</defaultConfig>
+            <defaultOrderxml>default_orderxml</defaultOrderxml>
+            <defaultMaxrate>100</defaultMaxrate>
+            <defaultMaxbytes>1000000000</defaultMaxbytes>
+            <defaultMaxobjects>-1</defaultMaxobjects>
+            <defaultSchedule/>
+            <!-- Used when creating ids for new jobs after a admin
+            database restore. -->
+            <nextJobId>0</nextJobId>
+            <validSeedRegex>^.*$</validSeedRegex>
+        </domain>
+    </datamodel>
+    <scheduler>
+        <limitSubmittedJobsInQueue>false</limitSubmittedJobsInQueue>
+        <submittedJobsInQueueLimit>1</submittedJobsInQueueLimit>
+        <!-- one week in seconds  - time before jobs terminate -->
+        <jobtimeouttime>604800</jobtimeouttime>
+        <jobgenerationperiod>60</jobgenerationperiod>
+        <jobGen>
+            <class>dk.netarkivet.harvester.scheduler.jobgen.DefaultJobGenerator</class>
+            <objectLimitIsSetByQuotaEnforcer>true</objectLimitIsSetByQuotaEnforcer>
+            <!-- used to set a limit on how long Heritrix should run. 0 means no limit. -->
+            <maxTimeToCompleteJob>0</maxTimeToCompleteJob>
+            <domainConfigSubsetSize>10000</domainConfigSubsetSize>
+            <useAlternateSnapshotJobgenerationMethod>false</useAlternateSnapshotJobgenerationMethod>
+            <config>
+                <!-- Only used by DefaultJobGenerator -->
+                <splitByObjectLimit>false</splitByObjectLimit>
+                <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
+                <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
+                <maxTotalSize>8000000</maxTotalSize>
+                <errorFactorPrevResult>10</errorFactorPrevResult>
+                <errorFactorBestGuess>2</errorFactorBestGuess>
+                <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
+                <maxDomainSize>5000</maxDomainSize>
+                <!-- Used by FixedDomainConfigurationCountJobGenerator and as an absolute limit in DefaultJobGenerator -->
+                <fixedDomainCountSnapshot>10000</fixedDomainCountSnapshot>
+                <!-- Only used by FixedDomainConfigurationCountJobGenerator -->
+                <fixedDomainCountFocused>0</fixedDomainCountFocused>
+                <excludeDomainsWithZeroBudget>false</excludeDomainsWithZeroBudget>
+                <postponeUnregisteredChannel>true</postponeUnregisteredChannel>
+            </config>
+        </jobGen>
+    </scheduler>
+    <monitor>
+        <!--  1 minute -->
+        <refreshInterval>60</refreshInterval>
+        <displayedHistorySize>30</displayedHistorySize>
+        <displayedFrontierQueuesSize>100</displayedFrontierQueuesSize> <!-- optional, default = 100 -->
+        <historySampleRate>300</historySampleRate><!--  in seconds, 5 minutes -->
+        <historyChartGenInterval>300</historyChartGenInterval><!--  in seconds, 5 minutes -->
+    </monitor>
+    <harvesting>
+        <serverDir>server</serverDir>
+        <!-- Default is 400000000 bytes (~400 Mbytes). -->
+        <minSpaceLeft>400000000</minSpaceLeft>
+        <oldjobsDir>oldjobs</oldjobsDir>
+        <channel/>
+        <sendReadyInterval>30</sendReadyInterval>
+        <sendReadyDelay>300</sendReadyDelay>
+        <!-- not implemented for Heritrix3 -->
+        <continuationFromHeritrixRecoverlogEnabled>false</continuationFromHeritrixRecoverlogEnabled>
+        <heritrix> <!-- heritrix1 settings -->
+            <!-- 30 minutes -->
+            <inactivityTimeout>1800</inactivityTimeout>
+            <!-- 30 minutes -->
+            <noresponseTimeout>1800</noresponseTimeout>
+            <!--  10 minutes -->
+            <waitForReportGenerationTimeout>600</waitForReportGenerationTimeout>
+            <!--  20 seconds -->
+            <crawlLoopWaitTime>20</crawlLoopWaitTime>
+            <abortIfConnectionLost>true</abortIfConnectionLost>
+            <adminName>admin</adminName>
+            <adminPassword>adminPassword</adminPassword>
+            <guiPort>8090</guiPort>
+            <jmxPort>8091</jmxPort>
+            <jmxUsername>controlRole</jmxUsername>
+            <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
+            <heapSize>1598M</heapSize>
+            <javaOpts/>
+            <archiveFormat>warc</archiveFormat>
+            <archiveNaming>
+                <class>dk.netarkivet.harvester.harvesting.LegacyNamingConvention</class>
+            </archiveNaming>
+            <warc>
+                <skipIdenticalDigests>false</skipIdenticalDigests>
+                <writeRequests>true</writeRequests>
+                <writeMetadata>true</writeMetadata>
+                <writeMetadataOutlinks>false</writeMetadataOutlinks>
+                <writeRevisitForIdenticalDigests>false</writeRevisitForIdenticalDigests>
+                <writeRevisitForNotModified>false</writeRevisitForNotModified>
+                <startNewFilesOnCheckpoint>true</startNewFilesOnCheckpoint>
+                <writeMetadataOutlinks>true</writeMetadataOutlinks>
+            </warc>
+        </heritrix>
+        <heritrix3>	<!-- heritrix3 settings -->
+            <!-- 30 minutes -->
+            <inactivityTimeout>1800</inactivityTimeout>
+            <!-- 30 minutes -->
+            <noresponseTimeout>1800</noresponseTimeout>
+            <!--  10 minutes -->
+            <waitForReportGenerationTimeout>600</waitForReportGenerationTimeout>
+            <!--  20 seconds -->
+            <crawlLoopWaitTime>20</crawlLoopWaitTime>
+            <abortIfConnectionLost>true</abortIfConnectionLost>
+            <adminName>admin</adminName>
+            <adminPassword>adminPassword</adminPassword>
+            <guiPort>8090</guiPort>
+            <heapSize>1598M</heapSize>
+            <javaOpts/>
+            <archiveFormat>warc</archiveFormat>
+            <archiveNaming>
+                <class>dk.netarkivet.harvester.harvesting.LegacyNamingConvention</class>
+            </archiveNaming>
+            <arc>
                 <compression>false</compression>
-                <metadataFileNameFormat>default</metadataFileNameFormat>
-                <filename>
-                    <versionnumber>1</versionnumber>
-                </filename>
-            </metadata>
-            <monitor>
-                <tempPath>cached_crawllogs</tempPath>
-            </monitor>
-        </harvesting>
-        <indexserver>
-            <listeningcheckinterval>30000</listeningcheckinterval>
-            <maxclients>20</maxclients>
-            <maxthreads>10</maxthreads>
-            <requestdir>requests</requestdir>
-            <checkinterval>30000</checkinterval>
-            <indexingtimeout>259200000</indexingtimeout>
-            <maxsegments>42</maxsegments>
-            <satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
-            <tryToMigrateDuplicationRecords>false</tryToMigrateDuplicationRecords>
-            <lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
-            <indexrequestserver>
-                <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>
-            </indexrequestserver>
-        </indexserver>
-        <viewerproxy>
-            <baseDir>viewerproxy</baseDir>
-            <tryLookupUriAsFtp>false</tryLookupUriAsFtp>
-            <!-- 10 MB -->
-            <maxSizeInBrowser>10000000</maxSizeInBrowser>
-            <allowFileDownloads>true</allowFileDownloads>
-        </viewerproxy>
-        <webinterface>
-            <maxCrawlLogInBrowser>1000</maxCrawlLogInBrowser>
-            <runningjobsFilteringMethod>database</runningjobsFilteringMethod>
-        </webinterface>
-    </harvester><monitor>
-        <jmxUsername>monitorRole</jmxUsername>
-        <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
-        <jmxProxyTimeout>500</jmxProxyTimeout>
-        <logging>
-            <historySize>100</historySize>
-        </logging>
-        <reregisterDelay>1</reregisterDelay>
-        <preferredMaxJMXLogLength>70</preferredMaxJMXLogLength>
-        <absoluteMaxJMXLogLength>100</absoluteMaxJMXLogLength>
-    </monitor><wayback>
-        <urlcanonicalizer>
-            <classname>
-              org.archive.wayback.util.url.AggressiveUrlCanonicalizer
-            </classname>
-        </urlcanonicalizer>
-        <hibernate>
-            <c3p0>
-                <acquireIncrement>1</acquireIncrement>
-                <idleTestPeriod>100</idleTestPeriod>
-                <maxSize>100</maxSize>
-                <maxStatements>100</maxStatements>
-                <minSize>10</minSize>
-                <timeout>100</timeout>
-            </c3p0>
-            <connectionUrl>jdbc:derby:derbyDB/wayback_indexer_db;create=true</connectionUrl>
-            <dbDriverClass>org.apache.derby.jdbc.ClientDriver</dbDriverClass>
-            <useReflectionOptimizer>false</useReflectionOptimizer>
-            <transactionFactory>org.hibernate.transaction.JDBCTransactionFactory</transactionFactory>
-            <dialect>org.hibernate.dialect.DerbyDialect</dialect>
-            <showSql>true</showSql>
-            <formatSql>true</formatSql>
-            <hbm2ddlAuto>update</hbm2ddlAuto>
-            <user/>
-            <password/>
-        </hibernate>
-        <indexer>
-            <replicaId>ONE</replicaId>
-            <finalBatchOutputDir>batchOutputDir</finalBatchOutputDir>
-            <tempBatchOutputDir>tempdir</tempBatchOutputDir>
-            <maxFailedAttempts>3</maxFailedAttempts>
-            <recentProducerSince>86400000</recentProducerSince>
-            <recentProducerInterval>1800000</recentProducerInterval>
-            <producerDelay>0</producerDelay>
-            <producerInterval>86400000</producerInterval>
-            <consumerThreads>5</consumerThreads>
-            <initialFiles/>
-        </indexer>
-        <aggregator>
-            <indexFileOutputDir>indexDir</indexFileOutputDir>
-            <tempAggregatorDir>aggregator_tempdir</tempAggregatorDir>
-            <!-- 600000 milliseconds = 10 minutes -->
-            <aggregationInterval>600000</aggregationInterval>
-            <!-- 102400 KB = 100 MB -->
-            <maxIntermediateIndexFileSize>102400</maxIntermediateIndexFileSize>
-            <!-- 104857600 KB = 100 GB -->
-            <maxMainIndexFileSize>104857600</maxMainIndexFileSize>
-        </aggregator>
-        <resourcestore>
-            <cachedir>filecache</cachedir>
-            <maxfiles>100</maxfiles>
-        </resourcestore>
-    </wayback></settings>
+                <poolMaxActive>1</poolMaxActive>
+                <maxFileSizeBytes>1000000000</maxFileSizeBytes>
+                <suffix>${HOSTNAME}</suffix>
+            </arc>
+            <warc>
+                <template>${prefix}-${timestamp17}-${serialno}-${heritrix.hostname}</template>
+                <compression>false</compression>
+                <poolMaxActive>1</poolMaxActive>
+                <maxFileSizeBytes>1000000000</maxFileSizeBytes>
+                <writeRequests>true</writeRequests>
+                <writeMetadata>true</writeMetadata>
+                <writeMetadataOutlinks>false</writeMetadataOutlinks>
+                <skipIdenticalDigests>false</skipIdenticalDigests>
+                <startNewFilesOnCheckpoint>true</startNewFilesOnCheckpoint>
+            </warc>
+        </heritrix3>
+        <frontier>
+            <!-- 10 minutes -->
+            <frontierReportWaitTime>600</frontierReportWaitTime>
+            <filter>
+                <class>dk.netarkivet.harvester.harvesting.frontier.TopTotalEnqueuesFilter</class>
+                <args/>
+            </filter>
+        </frontier>
+        <heritrixLauncher>
+            <class>dk.netarkivet.harvester.heritrix3.controller.HeritrixLauncher</class>
+        </heritrixLauncher>
+        <heritrixController>
+            <class>dk.netarkivet.harvester.heritrix3.controller.HeritrixController</class>
+        </heritrixController>
+        <harvestReport>
+            <class>dk.netarkivet.harvester.harvesting.report.LegacyHarvestReport</class>
+            <disregardSeedURLInfo>false</disregardSeedURLInfo>
+        </harvestReport>
+        <deduplication>
+            <enabled>true</enabled>
+        </deduplication>
+        <metadata>
+            <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out|\.cxml)</heritrixFilePattern>
+            <reportFilePattern>.*-report.txt</reportFilePattern>
+            <logFilePattern>.*(\.log|\.out)</logFilePattern>
+            <archiveFilesReport>
+                <generate>true</generate>
+                <fileName>archivefiles-report.txt</fileName>
+                <fileHeader>[ARCHIVEFILE] [Opened] [Closed] [Size]</fileHeader>
+            </archiveFilesReport>
+            <metadataFormat>warc</metadataFormat>
+            <compression>false</compression>
+            <metadataFileNameFormat>default</metadataFileNameFormat>
+            <filename>
+                <versionnumber>1</versionnumber>
+            </filename>
+        </metadata>
+        <monitor>
+            <tempPath>cached_crawllogs</tempPath>
+        </monitor>
+    </harvesting>
+    <indexserver>
+        <listeningcheckinterval>30000</listeningcheckinterval>
+        <maxclients>20</maxclients>
+        <maxthreads>10</maxthreads>
+        <requestdir>requests</requestdir>
+        <checkinterval>30000</checkinterval>
+        <indexingtimeout>259200000</indexingtimeout>
+        <maxsegments>42</maxsegments>
+        <satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
+        <tryToMigrateDuplicationRecords>false</tryToMigrateDuplicationRecords>
+        <lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
+        <indexrequestserver>
+            <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>
+        </indexrequestserver>
+    </indexserver>
+    <viewerproxy>
+        <baseDir>viewerproxy</baseDir>
+        <tryLookupUriAsFtp>false</tryLookupUriAsFtp>
+        <!-- 10 MB -->
+        <maxSizeInBrowser>10000000</maxSizeInBrowser>
+        <allowFileDownloads>true</allowFileDownloads>
+    </viewerproxy>
+    <webinterface>
+        <maxCrawlLogInBrowser>1000</maxCrawlLogInBrowser>
+        <runningjobsFilteringMethod>database</runningjobsFilteringMethod>
+        <metadata_cache_dir>metadata_cache</metadata_cache_dir>
+    </webinterface>
+</harvester><monitor>
+    <jmxUsername>monitorRole</jmxUsername>
+    <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
+    <jmxProxyTimeout>500</jmxProxyTimeout>
+    <logging>
+        <historySize>100</historySize>
+    </logging>
+    <reregisterDelay>1</reregisterDelay>
+    <preferredMaxJMXLogLength>70</preferredMaxJMXLogLength>
+    <absoluteMaxJMXLogLength>100</absoluteMaxJMXLogLength>
+</monitor><wayback>
+    <urlcanonicalizer>
+        <classname>
+            org.archive.wayback.util.url.AggressiveUrlCanonicalizer
+        </classname>
+    </urlcanonicalizer>
+    <hibernate>
+        <c3p0>
+            <acquireIncrement>1</acquireIncrement>
+            <idleTestPeriod>100</idleTestPeriod>
+            <maxSize>100</maxSize>
+            <maxStatements>100</maxStatements>
+            <minSize>10</minSize>
+            <timeout>100</timeout>
+        </c3p0>
+        <connectionUrl>jdbc:derby:derbyDB/wayback_indexer_db;create=true</connectionUrl>
+        <dbDriverClass>org.apache.derby.jdbc.ClientDriver</dbDriverClass>
+        <useReflectionOptimizer>false</useReflectionOptimizer>
+        <transactionFactory>org.hibernate.transaction.JDBCTransactionFactory</transactionFactory>
+        <dialect>org.hibernate.dialect.DerbyDialect</dialect>
+        <showSql>true</showSql>
+        <formatSql>true</formatSql>
+        <hbm2ddlAuto>update</hbm2ddlAuto>
+        <user/>
+        <password/>
+    </hibernate>
+    <indexer>
+        <replicaId>ONE</replicaId>
+        <finalBatchOutputDir>batchOutputDir</finalBatchOutputDir>
+        <tempBatchOutputDir>tempdir</tempBatchOutputDir>
+        <maxFailedAttempts>3</maxFailedAttempts>
+        <recentProducerSince>86400000</recentProducerSince>
+        <recentProducerInterval>1800000</recentProducerInterval>
+        <producerDelay>0</producerDelay>
+        <producerInterval>86400000</producerInterval>
+        <consumerThreads>5</consumerThreads>
+        <initialFiles/>
+    </indexer>
+    <aggregator>
+        <indexFileOutputDir>indexDir</indexFileOutputDir>
+        <tempAggregatorDir>aggregator_tempdir</tempAggregatorDir>
+        <!-- 600000 milliseconds = 10 minutes -->
+        <aggregationInterval>600000</aggregationInterval>
+        <!-- 102400 KB = 100 MB -->
+        <maxIntermediateIndexFileSize>102400</maxIntermediateIndexFileSize>
+        <!-- 104857600 KB = 100 GB -->
+        <maxMainIndexFileSize>104857600</maxMainIndexFileSize>
+    </aggregator>
+    <resourcestore>
+        <cachedir>filecache</cachedir>
+        <maxfiles>100</maxfiles>
+    </resourcestore>
+</wayback></settings>
