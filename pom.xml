@@ -981,6 +981,7 @@
       </plugin>
 
       <!-- Generate javadoc jar. Note: Java 8 (doclint) check has been disabled. -->
+      <!--
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
@@ -992,7 +993,7 @@
             <additionalOption>-Xdoclint:none</additionalOption>
           </additionalOptions>
           <failOnError>false</failOnError>
-          <!--<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>-->
+          <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
         </configuration>
         <executions>
           <execution>
@@ -1004,7 +1005,7 @@
           </execution>
         </executions>
       </plugin>
-
+-->
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
@@ -1172,7 +1173,18 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>${javadoc-plugin.version}</version>
+        <configuration>
+          <source>8</source>
+          <detectJavaApiLink>false</detectJavaApiLink>
+          <linksource>true</linksource>
+          <quiet>true</quiet>
+          <additionalOptions>
+            <additionalOption>-Xdoclint:none</additionalOption>
+          </additionalOptions>
+          <failOnError>false</failOnError>
+          <javadocExecutable>/usr/bin/javadoc</javadocExecutable>
+        </configuration>
         <reportSets>
           <reportSet>
             <id>aggregate</id>
