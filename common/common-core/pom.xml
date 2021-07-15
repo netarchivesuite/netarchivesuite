@@ -296,6 +296,7 @@
       </exclusions>
     </dependency>
 
+    <!--TODO exclude dnsjava and add as separate dep. -->
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
@@ -305,8 +306,20 @@
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-log4j12</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>dnsjava</groupId>
+          <artifactId>dnsjava</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/dnsjava/dnsjava -->
+    <dependency>
+      <groupId>dnsjava</groupId>
+      <artifactId>dnsjava</artifactId>
+      <version>${dnsjava.version}</version>
+    </dependency>
+
 
     <dependency>
       <groupId>junit</groupId>
