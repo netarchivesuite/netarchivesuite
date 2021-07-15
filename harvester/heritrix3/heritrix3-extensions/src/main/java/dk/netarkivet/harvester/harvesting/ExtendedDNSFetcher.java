@@ -271,7 +271,8 @@ public class ExtendedDNSFetcher extends Processor {
         try {
             recordDNS(curi, rrecordSet);
             curi.setFetchStatus(S_DNS_SUCCESS);
-            curi.setDNSServerIPLabel(ResolverConfig.getCurrentConfig().server());
+            //curi.setDNSServerIPLabel(ResolverConfig.getCurrentConfig().server());
+            curi.setServerIP(ResolverConfig.getCurrentConfig().server());
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Failed store of DNS Record for " +
                 curi.toString(), e);
