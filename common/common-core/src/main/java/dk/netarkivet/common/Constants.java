@@ -22,7 +22,9 @@
  */
 package dk.netarkivet.common;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.lucene.util.Version;
@@ -166,6 +168,29 @@ public final class Constants {
     public static final String PROJECT_WEBSITE = "https://sbforge.org/display/NAS";
 
     public static String getHeritrix3VersionString() {
-        return HERITRIX3_VERSION;
+        String h3version = null;
+        try {
+            Properties p = new Properties();
+            InputStream is = Constants.class.getResourceAsStream("/META-INF/maven/org.archive.heritrix/heritrix-commons/pom.properties");
+            if (is != null) {
+                p.load(is);
+                h3version = p.getProperty("version", "");
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        if (h3version == null) {
+            Package aPackage = org.archive.util.UriUtils.class.getPackage();
+            if (aPackage != null) {
+                h3version = aPackage.getImplementationVersion();
+                if (h3version == null) {
+                    h3version = aPackage.getSpecificationVersion();
+                }
+            }
+        }
+        if (h3version == null) {
+            h3version = "unknownHeritrixVersion";
+        }
+        return h3version;
     }
 }
