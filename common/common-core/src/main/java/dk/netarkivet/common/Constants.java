@@ -28,6 +28,8 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.lucene.util.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is used for global constants only.
@@ -42,6 +44,10 @@ import org.apache.lucene.util.Version;
  * This class is never instantiated, so thread security is not an issue.
  */
 public final class Constants {
+
+    private static final Logger log = LoggerFactory.getLogger(Constants.class);
+
+
     /** The pattern for an IP-address key. */
     public static final String IP_REGEX_STRING = "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}";
     /** A full string matcher for an IP-address. */
@@ -175,6 +181,7 @@ public final class Constants {
             if (is != null) {
                 p.load(is);
                 h3version = p.getProperty("version", "");
+               log.debug("H3 version read from pom: {}", h3version);
             }
         } catch (Exception e) {
             // ignore
@@ -183,14 +190,17 @@ public final class Constants {
             Package aPackage = org.archive.util.UriUtils.class.getPackage();
             if (aPackage != null) {
                 h3version = aPackage.getImplementationVersion();
+                log.debug("H3 version read from implementation: {}", h3version);
                 if (h3version == null) {
                     h3version = aPackage.getSpecificationVersion();
+                    log.debug("H3 version read from specification: {}", h3version);
                 }
             }
         }
         if (h3version == null) {
             h3version = "unknownHeritrixVersion";
         }
+        log.debug("Final H3 version: {}", h3version);
         return h3version;
     }
 }
