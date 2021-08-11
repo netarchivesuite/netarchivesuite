@@ -68,11 +68,9 @@ public final class Constants {
     /** Current version of Heritrix 1 used by netarkivet-code. */
     private static final String HERITRIX_VERSION = "1.14.4";
     
-    /** Current version of Heritrix 3 used by netarkivet-code. 
-     * This should be the same value as the property 'heritrix3.version' in the main pom.xml.
-     * TODO: Could this be tested?
-     * TODO: See https://stackoverflow.com/questions/2712970/get-maven-artifact-version-at-runtime/43383222 for the correct way
-     * to do this at runtime
+    /**
+     * The code will try to read the heritrix version from the pom in the jar Manifest. This
+     * constant is only ever read as a fallback.
      * */
     private static final String HERITRIX3_VERSION = "3.4.0-NAS-7.2-SNAPSHOT";
 
