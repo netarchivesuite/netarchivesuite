@@ -198,7 +198,9 @@ public final class Constants {
             }
         }
         if (h3version == null) {
-            h3version = "unknownHeritrixVersion";
+            log.warn("Could not determine Heritrix 3 version, falling back to hard-coded"
+                    + "value {}", HERITRIX3_VERSION);
+            h3version = HERITRIX3_VERSION;
         }
         log.debug("Final H3 version: {}", h3version);
         return h3version;
