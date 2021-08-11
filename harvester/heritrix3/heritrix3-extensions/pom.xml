@@ -88,6 +88,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.netpreserve.commons</groupId>
+      <artifactId>webarchive-commons</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.archive.heritrix</groupId>
       <artifactId>heritrix-contrib</artifactId>
       <exclusions>
