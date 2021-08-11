@@ -22,10 +22,14 @@
  */
 package dk.netarkivet.common;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.lucene.util.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is used for global constants only.
@@ -40,6 +44,10 @@ import org.apache.lucene.util.Version;
  * This class is never instantiated, so thread security is not an issue.
  */
 public final class Constants {
+
+    private static final Logger log = LoggerFactory.getLogger(Constants.class);
+
+
     /** The pattern for an IP-address key. */
     public static final String IP_REGEX_STRING = "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}";
     /** A full string matcher for an IP-address. */
@@ -166,6 +174,33 @@ public final class Constants {
     public static final String PROJECT_WEBSITE = "https://sbforge.org/display/NAS";
 
     public static String getHeritrix3VersionString() {
-        return HERITRIX3_VERSION;
+        String h3version = null;
+        try {
+            Properties p = new Properties();
+            InputStream is = Constants.class.getResourceAsStream("/META-INF/maven/org.archive.heritrix/heritrix-commons/pom.properties");
+            if (is != null) {
+                p.load(is);
+                h3version = p.getProperty("version", "");
+               log.debug("H3 version read from pom: {}", h3version);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        if (h3version == null) {
+            Package aPackage = org.archive.util.UriUtils.class.getPackage();
+            if (aPackage != null) {
+                h3version = aPackage.getImplementationVersion();
+                log.debug("H3 version read from implementation: {}", h3version);
+                if (h3version == null) {
+                    h3version = aPackage.getSpecificationVersion();
+                    log.debug("H3 version read from specification: {}", h3version);
+                }
+            }
+        }
+        if (h3version == null) {
+            h3version = "unknownHeritrixVersion";
+        }
+        log.debug("Final H3 version: {}", h3version);
+        return h3version;
     }
 }
