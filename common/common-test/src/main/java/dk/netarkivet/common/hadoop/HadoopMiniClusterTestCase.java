@@ -14,6 +14,8 @@ import org.apache.hadoop.yarn.server.resourcemanager.scheduler.fifo.FifoSchedule
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
+import dk.netarkivet.common.CommonSettings;
+
 /** Overhead class for Hadoop tests that need to use a mini cluster. */
 public class HadoopMiniClusterTestCase {
     protected static MiniDFSCluster hdfsCluster;
@@ -40,6 +42,7 @@ public class HadoopMiniClusterTestCase {
         conf.setInt(YarnConfiguration.RM_SCHEDULER_MINIMUM_ALLOCATION_MB, 64);
         conf.setClass(YarnConfiguration.RM_SCHEDULER,
                 FifoScheduler.class, ResourceScheduler.class);
+        conf.setBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE, false);
     }
 
     private static void startDFSCluster() throws IOException {
