@@ -15,6 +15,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.utils.Settings;
 
 /** Overhead class for Hadoop tests that need to use a mini cluster. */
 public class HadoopMiniClusterTestCase {
@@ -43,6 +44,8 @@ public class HadoopMiniClusterTestCase {
         conf.setClass(YarnConfiguration.RM_SCHEDULER,
                 FifoScheduler.class, ResourceScheduler.class);
         conf.setBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE, false);
+        conf.set(CommonSettings.METADATAFILE_REGEX_SUFFIX, Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
+
     }
 
     private static void startDFSCluster() throws IOException {
