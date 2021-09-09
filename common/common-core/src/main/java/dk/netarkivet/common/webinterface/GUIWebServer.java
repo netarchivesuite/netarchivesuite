@@ -31,10 +31,11 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.hadoop.mapred.JobPriority;
+import org.apache.tomcat.JarScanner;
 import org.apache.tomcat.util.scan.Constants;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
 
-
+import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -167,8 +168,10 @@ public class GUIWebServer implements CleanupIF {
             String warfile = warfileFile.getAbsolutePath();
             log.info("Deploying webapp with context {} at docbase {}.", webbase, warfile);
             StandardContext ctx = (StandardContext) server.addWebapp(webbase, warfile);
+            JarScanner jarScanner = ctx.getJarScanner();
+            ((StandardJarScanner) jarScanner).setScanManifest(false);
             if (taglibsScanningDisabled) {
-                StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) ctx.getJarScanner().getJarScanFilter();
+                StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) jarScanner.getJarScanFilter();
                 // Disable scanning for taglibs
                 jarScanFilter.setTldSkip("*");
             }
