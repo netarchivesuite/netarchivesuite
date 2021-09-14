@@ -63,12 +63,12 @@ public class CDXMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
                 cdxIndexes = new ArrayList<>();
             } else {
                 LocalFileSystem localFileSystem = ((LocalFileSystem) fileSystem);
-                cdxIndexes = indexer.indexFile(localFileSystem.pathToFile(path));
+                cdxIndexes = indexer.indexFile(localFileSystem.pathToFile(path), context);
             }
         } else {
             log.info("CDX-indexing archive file '{}'", path);
             try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
-                cdxIndexes = cdxIndexer.index(in, archiveFilePath.toString());
+                cdxIndexes = cdxIndexer.index(in, archiveFilePath.toString(), context);
             }
         }
         for (String cdxIndex : cdxIndexes) {
