@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.hadoop.util.Progressable;
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
@@ -59,13 +60,13 @@ public class CDXIndexer implements Indexer {
      * @return The extracted CDX lines from the file.
      * @throws IOException
      */
-    public List<String> index(InputStream archiveInputStream, String archiveName) throws IOException {
+    public List<String> index(InputStream archiveInputStream, String archiveName, Progressable progressable) throws IOException {
         try (ArchiveReader archiveReader = ArchiveReaderFactory.get(archiveName, archiveInputStream, false)) {
             boolean isMetadataFile = archiveName.matches("(.*)" + Settings.get(CommonSettings.METADATAFILE_REGEX_SUFFIX));
             if (isMetadataFile) {
-                return extractMetadataCDXLines(archiveReader);
+                return extractMetadataCDXLines(archiveReader, progressable);
             } else {
-                return extractCDXLines(archiveReader);
+                return extractCDXLines(archiveReader, progressable);
             }
         }
     }
@@ -76,8 +77,8 @@ public class CDXIndexer implements Indexer {
      * @return The CDX lines for the records in the archive file.
      * @throws IOException If it fails to read the archive file.
      */
-    public List<String> indexFile(File archiveFile) throws IOException {
-        return index(new FileInputStream(archiveFile), archiveFile.getName());
+    public List<String> indexFile(File archiveFile, Progressable progressable) throws IOException {
+        return index(new FileInputStream(archiveFile), archiveFile.getName(), progressable);
     }
 
     /**
@@ -85,12 +86,13 @@ public class CDXIndexer implements Indexer {
      * @param archiveReader The reader used for reading the archive file.
      * @return A list of the CDX lines for the records in the archive file.
      */
-    private List<String> extractMetadataCDXLines(ArchiveReader archiveReader) {
+    private List<String> extractMetadataCDXLines(ArchiveReader archiveReader, Progressable progressable) {
         final int HTTP_HEADER_BUFFER_SIZE = 1024 * 1024;
         String[] fields = {"A", "e", "b", "m", "n", "g", "v"};
         List<String> cdxIndexes = new ArrayList<>();
 
         for (ArchiveRecord archiveRecord : archiveReader) {
+            progressable.progress();
             ArchiveRecordBase record = ArchiveRecordBase.wrapArchiveRecord(archiveRecord);
             boolean isResponseRecord = ArchiveBatchFilter.EXCLUDE_NON_WARCINFO_RECORDS.accept(record);
             if (!isResponseRecord) {
@@ -161,16 +163,18 @@ public class CDXIndexer implements Indexer {
      * @param reader The ArchiveReader which is actively reading an archive file (e.g WARC).
      * @return The list of CDX index lines for the records of the archive in the reader.
      */
-    protected List<String> extractCDXLines(ArchiveReader reader) {
+    protected List<String> extractCDXLines(ArchiveReader reader, Progressable progressable) {
         List<String> res = new ArrayList<>();
 
         for (ArchiveRecord archiveRecord: reader) {
+            progressable.progress();
             // TODO: look at logging something here
            if (archiveRecord instanceof WARCRecord) {
                WARCRecord warcRecord = (WARCRecord) archiveRecord;
                boolean isResponseRecord = WARCBatchFilter.EXCLUDE_NON_RESPONSE_RECORDS.accept(warcRecord);
                if (!isResponseRecord) {
                    continue;
+
                }
                warcAdapter.setCanonicalizer(urlCanonicalizer);
                //TODO this returns null and prints stack trace on OutOfMemoryError. Bad code. //jolf & abr
