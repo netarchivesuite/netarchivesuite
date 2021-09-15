@@ -72,15 +72,19 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
         }
         Path path = new Path(filePath.toString());
         path = HadoopFileUtils.replaceWithCachedPathIfEnabled(context, path);
-        log.info("Mapper processing {}.", path);
+        log.info("Mapper processing {}", path);
         try (FileSystem fs = FileSystem.newInstance(new URI(path.toString()), context.getConfiguration());){
+            log.info("Opened FileSystem {}",fs.toString());
             try (InputStream in = new BufferedInputStream(fs.open(path))) {
+                log.info("Opened InputStream for file.");
                 try (ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true)) {
+                    log.info("Opened ArchiveReader");
                     for (ArchiveRecord archiveRecord : archiveReader) {
                         ArchiveRecordBase record = ArchiveRecordBase.wrapArchiveRecord(archiveRecord);
                         ArchiveHeaderBase header = record.getHeader();
 
                         if (header.getUrl() == null) {
+                            log.info("Found header with no url - probably warcinfo record. Continuing.");
                             continue;
                         }
                         log.info("Mapper processing header url {} with mime-type {}.", header.getUrl(),
@@ -92,6 +96,7 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
                             writeRecordMetadataLinesToContext(record, path, context);
                         }
                     }
+                    log.info("Finished with archive reader");
                 } catch (IOException e) {
                     log.warn("Failed creating archiveReader from archive file located at '{}'", filePath.toString(), e);
                     throw e;
@@ -106,7 +111,11 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
         } catch (URISyntaxException e) {
             log.error("Not a URI:", e);
             throw new IOException(e);
+        } catch (Exception e) {
+            log.error("Unexpected exception", e);
+            throw (e);
         }
+        log.info("Finished map method.");
     }
 
     /**
