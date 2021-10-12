@@ -50,9 +50,11 @@ public class PutFileEventHandler implements EventHandler {
 
     @Override
     public void handleEvent(OperationEvent event) {
-        log.info("Got event from client: {}, {}", event.getEventType(), event.getInfo());
+        //TODO messages received after we are in finished=true should only be logged, but no further action taken.
+        logIfFinished(event);
+        log.info("Got event from client: {}, {} for conversation {}.", event.getEventType(), event.getInfo(), event.getConversationID());
         if (event instanceof ContributorFailedEvent) {
-            log.info("Additional info: {}", ((ContributorFailedEvent) event).additionalInfo());
+            log.info("Additional info: {} for conversation {}.", ((ContributorFailedEvent) event).additionalInfo(), event.getConversationID());
         }
         switch (event.getEventType()) {
         case IDENTIFICATION_COMPLETE:
@@ -62,19 +64,23 @@ public class PutFileEventHandler implements EventHandler {
             }
             break;
         case COMPLETE:
-            log.info("Finished put fileID for file '{}'", event.getFileID());
+            logIfFinished(event);
+            log.info("Finished put fileID for file '{}' from conversation {}.", event.getFileID(), event.getConversationID());
             cleanUpFileExchange();
             finish();
             break;
         case FAILED:
+            logIfFinished(event);
             log.info("Failed put fileID for file '{}'", event.getFileID());
             if (event instanceof OperationFailedEvent) {
                 for (ContributorEvent contributorEvent: ((OperationFailedEvent) event).getComponentResults()) {
-                      log.info("During put of {}, event {} from {} had status {} ({}).",
+                      log.info("During put of {}, event {} from {} had status {} ({}) in conversation {}.",
                               event.getFileID(),
                               contributorEvent.getInfo(),
                               contributorEvent.getContributorID(),
-                              contributorEvent.additionalInfo());
+                              contributorEvent.additionalInfo(),
+                              event.getConversationID()
+                      );
                 }
             }
             failed = true;
@@ -89,6 +95,13 @@ public class PutFileEventHandler implements EventHandler {
             break;
         default:
             break;
+        }
+    }
+
+    private void logIfFinished(OperationEvent event) {
+        if (finished) {
+            log.info("CAREFUL! The following is an out-of-sync message for an event which we are finished handling: ", event
+                    .getConversationID());
         }
     }
 
