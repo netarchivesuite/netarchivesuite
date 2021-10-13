@@ -56,6 +56,10 @@ public class PutFileEventHandler implements EventHandler {
         if (event instanceof ContributorFailedEvent) {
             log.info("Additional info: {} for conversation {}.", ((ContributorFailedEvent) event).additionalInfo(), event.getConversationID());
         }
+        if (finished) {
+            log.info("Ignoring out of sync message.");
+            return;
+        }
         switch (event.getEventType()) {
         case IDENTIFICATION_COMPLETE:
             IdentificationCompleteEvent completeEvent = (IdentificationCompleteEvent) event;
@@ -63,24 +67,27 @@ public class PutFileEventHandler implements EventHandler {
                 uploadToFileExchange();
             }
             break;
+        case IDENTIFY_TIMEOUT:
+            log.info("Timed out on identify for {} for conversation {}.", event.getFileID(), event.getConversationID());
+            failed = true;
+            finish();
+            break;
         case COMPLETE:
-            logIfFinished(event);
             log.info("Finished put fileID for file '{}' from conversation {}.", event.getFileID(), event.getConversationID());
             cleanUpFileExchange();
             finish();
             break;
         case FAILED:
-            logIfFinished(event);
             log.info("Failed put fileID for file '{}'", event.getFileID());
             if (event instanceof OperationFailedEvent) {
                 for (ContributorEvent contributorEvent: ((OperationFailedEvent) event).getComponentResults()) {
-                      log.info("During put of {}, event {} from {} had status {} ({}) in conversation {}.",
-                              event.getFileID(),
-                              contributorEvent.getInfo(),
-                              contributorEvent.getContributorID(),
-                              contributorEvent.additionalInfo(),
-                              event.getConversationID()
-                      );
+                    log.info("During put of {}, event {} from {} had status {} ({}) in conversation {}.",
+                            event.getFileID(),
+                            contributorEvent.getInfo(),
+                            contributorEvent.getContributorID(),
+                            contributorEvent.additionalInfo(),
+                            event.getConversationID()
+                    );
                 }
             }
             failed = true;
