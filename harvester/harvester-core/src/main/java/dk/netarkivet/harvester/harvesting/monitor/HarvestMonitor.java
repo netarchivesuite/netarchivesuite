@@ -207,7 +207,7 @@ public class HarvestMonitor extends HarvesterMessageHandler implements MessageLi
         int insertCount = RunningJobsInfoDAO.getInstance().storeFrontierReport(msg.getFilterId(), msg.getReport(),
                 msg.getJobID());
         if (LOG.isInfoEnabled() && insertCount > 0) {
-            LOG.info("Stored frontier report {}-{}' ({} lines): inserted {} lines in the DB", msg.getReport()
+            LOG.debug("Stored frontier report {}-{}' ({} lines): inserted {} lines in the DB", msg.getReport()
                     .getJobName(), msg.getFilterId(), msg.getReport().getSize(), insertCount);
         }
     }
