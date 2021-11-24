@@ -87,34 +87,36 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
     private List<String> extractCrawlLogLinesWithHdfs(File file, Pattern regex, Context context) throws IOException {
         log.info("Executing experimental copy to hdfs.");
         ArrayList<String> output = new ArrayList<>();
-        Path dst = HadoopFileUtils.cacheFile(file, context.getConfiguration());
-        FileSystem hdfsFileSystem = FileSystem.get(context.getConfiguration());
-        try (FSDataInputStream inputStream = hdfsFileSystem.open(dst)) {
-            ArchiveReader archiveRecords = null;
-            if (WARCReaderFactory.isWARCSuffix(file.getName())) {
-                archiveRecords = WARCReaderFactory.get(file.getName(), inputStream, true);
-            } else {
-                archiveRecords = ARCReaderFactory.get(file.getName(), inputStream, true);
-            }
-            for (Iterator<ArchiveRecord> recordIterator = archiveRecords.iterator(); recordIterator.hasNext(); ) {
-                try (ArchiveRecord archiveRecord = recordIterator.next()) {
-                    String url = archiveRecord.getHeader().getUrl();
-                    log.info("Processing record with url {}", url);
-                    if (url != null && url.contains("crawl/logs/crawl.log")) {
-                        log.info("Processing crawl log with regex {}.", regex.pattern());
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(archiveRecord));
-                        String line;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            if (regex.equals(".*") || regex.matcher(line).matches()) {
-                                output.add(line);
+
+        try (FileSystem hdfsFileSystem = FileSystem.newInstance(context.getConfiguration())) {
+            Path dst = HadoopFileUtils.cacheFile(file, hdfsFileSystem);
+            try (FSDataInputStream inputStream = hdfsFileSystem.open(dst)) {
+                ArchiveReader archiveRecords = null;
+                if (WARCReaderFactory.isWARCSuffix(file.getName())) {
+                    archiveRecords = WARCReaderFactory.get(file.getName(), inputStream, true);
+                } else {
+                    archiveRecords = ARCReaderFactory.get(file.getName(), inputStream, true);
+                }
+                for (Iterator<ArchiveRecord> recordIterator = archiveRecords.iterator(); recordIterator.hasNext(); ) {
+                    try (ArchiveRecord archiveRecord = recordIterator.next()) {
+                        String url = archiveRecord.getHeader().getUrl();
+                        log.info("Processing record with url {}", url);
+                        if (url != null && url.contains("crawl/logs/crawl.log")) {
+                            log.info("Processing crawl log with regex {}.", regex.pattern());
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(archiveRecord));
+                            String line;
+                            while ((line = bufferedReader.readLine()) != null) {
+                                if (regex.equals(".*") || regex.matcher(line).matches()) {
+                                    output.add(line);
+                                }
                             }
+                            return output; //Just return here as there is only one crawl log
                         }
-                        return output; //Just return here as there is only one crawl log
                     }
                 }
             }
+            return output;
         }
-        return output;
     }
 
     /**

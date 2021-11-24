@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.regex.Pattern;
 
@@ -71,10 +70,12 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
             return;
         }
         Path path = new Path(filePath.toString());
-        path = HadoopFileUtils.replaceWithCachedPathIfEnabled(context, path);
-        log.info("Mapper processing {}", path);
-        try (FileSystem fs = FileSystem.newInstance(new URI(path.toString()), context.getConfiguration());){
-            log.info("Opened FileSystem {}",fs.toString());
+        try (FileSystem fs = FileSystem.newInstance(context.getConfiguration());){
+            log.info("Opened FileSystem {}", fs);
+
+            path = HadoopFileUtils.replaceWithCachedPathIfEnabled(fs, path);
+            log.info("Mapper processing {}", path);
+
             try (InputStream in = new BufferedInputStream(fs.open(path))) {
                 log.info("Opened InputStream for file.");
                 try (ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true)) {
@@ -108,9 +109,6 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
         } catch (IOException e) {
             log.error("Could not get FileSystem from configuration", e);
             throw e;
-        } catch (URISyntaxException e) {
-            log.error("Not a URI:", e);
-            throw new IOException(e);
         } catch (Exception e) {
             log.error("Unexpected exception", e);
             throw (e);

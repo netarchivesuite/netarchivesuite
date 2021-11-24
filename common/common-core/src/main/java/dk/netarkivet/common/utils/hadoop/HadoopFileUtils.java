@@ -28,18 +28,19 @@ public class HadoopFileUtils {
      * Given a file on a local file system, return a cached version of the same file on
      * a hdfs file system.
      * @param file
+     * @param hdfsFileSystem
      * @return a hdfs path to the file
      * @throws IOException if caching not enabled or fails otherwise
      */
-    public static Path cacheFile(File file, Configuration conf) throws IOException {
+    public static Path cacheFile(File file, FileSystem hdfsFileSystem) throws IOException {
+        final Configuration conf = hdfsFileSystem.getConf();
         if (!conf.getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE, false)) {
             throw new InvalidRequestException("Hdfs caching not enabled.");
         }
-        FileSystem hdfsFileSystem = FileSystem.get(conf);
         Path cachePath = new Path(conf.get(CommonSettings.HADOOP_HDFS_CACHE_DIR));
         log.info("Creating the cache directory at {} if necessary.", cachePath);
         hdfsFileSystem.mkdirs(cachePath);
-        cleanCache(conf);
+        cleanCache(hdfsFileSystem);
         Path dst = new Path(cachePath, file.getName());
         log.info("Caching {} to {}.", file.getAbsolutePath(), dst);
         if (!hdfsFileSystem.exists(dst)) {
@@ -50,14 +51,13 @@ public class HadoopFileUtils {
         return dst;
     }
 
-     public static void cleanCache(Configuration configuration) throws IOException {
+     public static void cleanCache(FileSystem fileSystem) throws IOException {
          log.info("Cleaning hdfs cache");
          long currentTime = System.currentTimeMillis();
-         int days = configuration.getInt(CommonSettings.HADOOP_CACHE_DAYS, 0);
+         int days = fileSystem.getConf().getInt(CommonSettings.HADOOP_CACHE_DAYS, 0);
          long maxAgeMillis = days *24L*3600L*1000L;
-         Path cachePath = new Path(configuration.get(CommonSettings.HADOOP_HDFS_CACHE_DIR));;
+         Path cachePath = new Path(fileSystem.getConf().get(CommonSettings.HADOOP_HDFS_CACHE_DIR));;
          log.info("Scanning {} for files older than {} days.", cachePath, days);
-         FileSystem fileSystem = FileSystem.get(configuration);
          fileSystem.mkdirs(cachePath);
          RemoteIterator<LocatedFileStatus> locatedFileStatusRemoteIterator = fileSystem
                  .listFiles(cachePath, false);
@@ -118,14 +118,17 @@ public class HadoopFileUtils {
         return localInputTempFile;
     }
 
-    public static Path replaceWithCachedPathIfEnabled(Mapper.Context context, Path path)
+    public static Path replaceWithCachedPathIfEnabled(
+            FileSystem hdfsFileSystem,
+            Path path)
             throws IOException {
-        boolean cachingEnabled = context.getConfiguration().getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE, false);
-        boolean isLocal = path.getFileSystem(context.getConfiguration()) instanceof LocalFileSystem;
+        final Configuration conf = hdfsFileSystem.getConf();
+        boolean cachingEnabled = conf.getBoolean(CommonSettings.HADOOP_ENABLE_HDFS_CACHE, false);
+        boolean isLocal = path.getFileSystem(conf) instanceof LocalFileSystem;
         if (isLocal && cachingEnabled) {
             log.info("Replacing {} with hdfs cached version.", path);
-            File localFile = ((LocalFileSystem) path.getFileSystem(context.getConfiguration())).pathToFile(path);
-            path = cacheFile(localFile, context.getConfiguration());
+            File localFile = ((LocalFileSystem) path.getFileSystem(conf)).pathToFile(path);
+            path = cacheFile(localFile, hdfsFileSystem);
             log.info("New input path is {}.", path);
         }
         return path;
