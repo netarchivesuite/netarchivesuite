@@ -13,12 +13,16 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.NLineInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A simple generic Hadoop map-only tool that runs a given mapper on the passed input file
  * containing new-line separated file paths and outputs the job's resulting files in the passed output path
  */
 public class HadoopJobTool extends Configured implements Tool {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     private Mapper<LongWritable, Text, NullWritable, Text> mapper;
 
     public HadoopJobTool(Configuration conf, Mapper<LongWritable, Text, NullWritable, Text> mapper) {
@@ -57,7 +61,15 @@ public class HadoopJobTool extends Configured implements Tool {
             job.setOutputKeyClass(NullWritable.class);
             job.setOutputValueClass(Text.class);
 
-            return job.waitForCompletion(true) ? 0 : 1;
+            boolean success = job.waitForCompletion(true);
+            if (!success){
+                log.error("Job {} failed, state is {}."
+                                + "See more info at {}",
+                        job.getJobID(),
+                        job.toString(),
+                        job.getHistoryUrl());
+            }
+            return success ? 0 : 1;
         }
     }
 }
