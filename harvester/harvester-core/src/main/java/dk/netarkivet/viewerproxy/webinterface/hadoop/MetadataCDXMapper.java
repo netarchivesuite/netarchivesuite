@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -24,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 import dk.netarkivet.common.utils.batch.ArchiveBatchFilter;
@@ -56,15 +56,20 @@ public class MetadataCDXMapper extends Mapper<LongWritable, Text, NullWritable, 
             log.warn("Encountered empty path in job {}", context.getJobID().toString());
             return;
         }
+
         Path path = new Path(archiveFilePath.toString());
-        path = HadoopFileUtils.replaceWithCachedPathIfEnabled(context, path);
-        List<String> cdxIndexes;
-        try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
-            log.info("CDX-indexing archive file '{}'", path);
-            cdxIndexes = index(in, archiveFilePath.toString(), context);
-        }
-        for (String cdxIndex : cdxIndexes) {
-            context.write(NullWritable.get(), new Text(cdxIndex));
+
+        try (FileSystem hdfsFileSystem =
+                FileSystem.newInstance(context.getConfiguration())) {
+            path = HadoopFileUtils.replaceWithCachedPathIfEnabled(hdfsFileSystem, path);
+            List<String> cdxIndexes;
+            try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
+                log.info("CDX-indexing archive file '{}'", path);
+                cdxIndexes = index(in, archiveFilePath.toString(), context);
+            }
+            for (String cdxIndex : cdxIndexes) {
+                context.write(NullWritable.get(), new Text(cdxIndex));
+            }
         }
     }
 

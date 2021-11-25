@@ -37,26 +37,27 @@ public class HadoopJobTool extends Configured implements Tool {
         Path inputPath = new Path(args[0]);
         Path outputPath = new Path(args[1]);
         Configuration conf = getConf();
-        Job job = Job.getInstance(conf);
-        job.setJobName("HadoopJob using " + mapper.getClass().getSimpleName());
+        try (Job job = Job.getInstance(conf)) {
+            job.setJobName("HadoopJob using " + mapper.getClass().getSimpleName());
 
-        //job.setJarByClass(this.getClass());
-        job.setInputFormatClass(NLineInputFormat.class);
-        job.setOutputFormatClass(TextOutputFormat.class);
-        NLineInputFormat.addInputPath(job, inputPath);
-        TextOutputFormat.setOutputPath(job, outputPath);
-        job.setMapperClass(mapper.getClass());
-        job.setNumReduceTasks(0); // Ensure job is map-only
+            //job.setJarByClass(this.getClass());
+            job.setInputFormatClass(NLineInputFormat.class);
+            job.setOutputFormatClass(TextOutputFormat.class);
+            NLineInputFormat.addInputPath(job, inputPath);
+            TextOutputFormat.setOutputPath(job, outputPath);
+            job.setMapperClass(mapper.getClass());
+            job.setNumReduceTasks(0); // Ensure job is map-only
 
-        // How many files should each node process at a time (how many lines are read from the input file)
-        NLineInputFormat.setNumLinesPerSplit(job, 5);
+            // How many files should each node process at a time (how many lines are read from the input file)
+            NLineInputFormat.setNumLinesPerSplit(job, 5);
 
-        // In- and output types
-        job.setMapOutputKeyClass(NullWritable.class);
-        job.setMapOutputValueClass(Text.class);
-        job.setOutputKeyClass(NullWritable.class);
-        job.setOutputValueClass(Text.class);
+            // In- and output types
+            job.setMapOutputKeyClass(NullWritable.class);
+            job.setMapOutputValueClass(Text.class);
+            job.setOutputKeyClass(NullWritable.class);
+            job.setOutputValueClass(Text.class);
 
-        return job.waitForCompletion(true) ? 0 : 1;
+            return job.waitForCompletion(true) ? 0 : 1;
+        }
     }
 }
