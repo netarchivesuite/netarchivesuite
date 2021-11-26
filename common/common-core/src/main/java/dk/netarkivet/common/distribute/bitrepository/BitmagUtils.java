@@ -41,6 +41,8 @@ import org.bitrepository.protocol.security.OperationAuthorizor;
 import org.bitrepository.protocol.security.PermissionStore;
 import org.bitrepository.protocol.security.SecurityManager;
 import org.bitrepository.settings.referencesettings.FileExchangeSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -62,12 +64,17 @@ public class BitmagUtils {
     private static SecurityManager securityManager;
     private static Path certificate;
 
+    private static Logger logger = LoggerFactory.getLogger(BitmagUtils.class);
+
     /**
      * Method to initialize the utility class. Must be called prior to use of any other method 
      * as it initializes internal state.
      */
     public static void initialize() {
-        Path configurationDir = Paths.get(dk.netarkivet.common.utils.Settings.get(BITREPOSITORY_SETTINGS_DIR));
+        String bitrepositoryDir = dk.netarkivet.common.utils.Settings.get(BITREPOSITORY_SETTINGS_DIR);
+        logger.debug("Bitrepository settings will be loaded from {}.", bitrepositoryDir);
+        Path configurationDir = Paths.get(bitrepositoryDir);
+        logger.debug("Path to Bitrepository settings is {}.", configurationDir);
         String clientCertificateName = dk.netarkivet.common.utils.Settings.get(BITREPOSITORY_KEYFILENAME);
         if (clientCertificateName.isEmpty()) {
             certificate = configurationDir.resolve(UUID.randomUUID().toString()); // Random for no certificate
@@ -83,9 +90,9 @@ public class BitmagUtils {
      * Use CommandLineSettingsProvider as that will help give a convenient clientID. 
      */
     private static Settings loadSettings(Path configurationDir) {
-        SettingsProvider settingsLoader =
+        SettingsProvider settingsProvider =
                 new SettingsProvider(new XMLFileSettingsLoader(configurationDir.toString()), generateComponentID());
-        Settings settings = settingsLoader.getSettings();
+        Settings settings = settingsProvider.getSettings();
         SettingsUtils.initialize(settings);
         return settings;
     }
