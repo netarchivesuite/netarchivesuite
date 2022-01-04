@@ -3,6 +3,7 @@ package dk.netarkivet.wayback.hadoop;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,13 +16,16 @@ public class DedupIndexer implements Indexer {
 
     @Override public List<String> indexFile(File file, Progressable progressable) throws IOException {
         FileBatchJob fileBatchJob = new DeduplicationCDXExtractionBatchJob();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        fileBatchJob.initialize(baos);
-        //TODO this could fail on timeout as the progressable is not updated
-        fileBatchJob.processFile(file, baos);
-        fileBatchJob.finish(baos);
-        baos.flush();
-        return Arrays.asList(baos.toString().split("\\n"));
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                OutputStream progressableOutputStream = new ProgressableOutputStream(baos, progressable);) {
+            fileBatchJob.initialize(progressableOutputStream);
+            //TODO This can timeout if no dedup records are written to the OS for 300 seconds
+            // The right way is to ditch the BatchJob interface and thread progressable through the code
+            fileBatchJob.processFile(file, progressableOutputStream);
+            fileBatchJob.finish(progressableOutputStream);
+            progressableOutputStream.flush();
+            return Arrays.asList(baos.toString().split("\\n"));
+        }
     }
 
 }
