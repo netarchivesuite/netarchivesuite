@@ -115,6 +115,7 @@ public class PutFileEventHandler implements EventHandler {
     private void uploadToFileExchange() {
         int bufferSize = 16384;
         try (InputStream is = new BufferedInputStream(new FileInputStream(targetFile), bufferSize)) {
+            log.debug("Started uploading file '{}' to file exchange", targetFile.getName());
             fileExchange.putFile(is, uploadURL);
             log.debug("Finished uploading file '{}' to file exchange", targetFile.getName());
         } catch (IOException e) {

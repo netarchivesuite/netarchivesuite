@@ -73,7 +73,7 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
         try (FileSystem fs = FileSystem.newInstance(context.getConfiguration());){
             log.info("Opened FileSystem {}", fs);
 
-            path = HadoopFileUtils.replaceWithCachedPathIfEnabled(fs, path);
+            path = HadoopFileUtils.replaceWithCachedPathIfEnabled(context, path);
             log.info("Mapper processing {}", path);
 
             try (InputStream in = new BufferedInputStream(fs.open(path))) {
