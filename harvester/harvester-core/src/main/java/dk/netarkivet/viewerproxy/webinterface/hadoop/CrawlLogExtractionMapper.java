@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -22,7 +21,6 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.archive.io.ArchiveReader;
-import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.warc.WARCReaderFactory;
@@ -87,7 +85,7 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
     private List<String> extractCrawlLogLinesWithHdfs(File file, Pattern regex, Context context) throws IOException {
         log.info("Executing experimental copy to hdfs.");
         ArrayList<String> output = new ArrayList<>();
-        Path dst = HadoopFileUtils.cacheFile(file, context.getConfiguration());
+        Path dst = HadoopFileUtils.cacheFile(file, context.getConfiguration(), context);
         FileSystem hdfsFileSystem = FileSystem.get(context.getConfiguration());
         try (FSDataInputStream inputStream = hdfsFileSystem.open(dst)) {
             ArchiveReader archiveRecords = null;
@@ -97,6 +95,7 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
                 archiveRecords = ARCReaderFactory.get(file.getName(), inputStream, true);
             }
             for (Iterator<ArchiveRecord> recordIterator = archiveRecords.iterator(); recordIterator.hasNext(); ) {
+                context.progress();
                 try (ArchiveRecord archiveRecord = recordIterator.next()) {
                     String url = archiveRecord.getHeader().getUrl();
                     log.info("Processing record with url {}", url);

@@ -80,6 +80,7 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
                 try (ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true)) {
                     log.info("Opened ArchiveReader");
                     for (ArchiveRecord archiveRecord : archiveReader) {
+                        context.progress();
                         ArchiveRecordBase record = ArchiveRecordBase.wrapArchiveRecord(archiveRecord);
                         ArchiveHeaderBase header = record.getHeader();
 
