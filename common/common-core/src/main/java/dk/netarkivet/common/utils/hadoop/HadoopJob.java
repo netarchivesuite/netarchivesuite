@@ -112,7 +112,7 @@ public class HadoopJob {
             log.info("{} job with jobID {} was a success!", jobType, jobID);
         } else {
             log.warn("{} job with ID {} failed with exit code '{}'", jobType, jobID, exitCode);
-            throw new IOFailure("Hadoop job failed with exit code {}");
+            throw new IOFailure("Hadoop job failed with exit code "+exitCode);
         }
     }
 
