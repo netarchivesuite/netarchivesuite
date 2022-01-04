@@ -61,7 +61,7 @@ public class MetadataCDXMapper extends Mapper<LongWritable, Text, NullWritable, 
 
         try (FileSystem hdfsFileSystem =
                 FileSystem.newInstance(context.getConfiguration())) {
-            path = HadoopFileUtils.replaceWithCachedPathIfEnabled(hdfsFileSystem, path);
+            path = HadoopFileUtils.replaceWithCachedPathIfEnabled(context, path);
             List<String> cdxIndexes;
             try (InputStream in = new BufferedInputStream(path.getFileSystem(context.getConfiguration()).open(path))) {
                 log.info("CDX-indexing archive file '{}'", path);
