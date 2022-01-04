@@ -49,6 +49,8 @@ public class HadoopFileUtils {
             try (OutputStream destStream = hdfsFileSystem.createFile(dst)
                     .overwrite(false)
                     .progress(progressable)
+                    .create() //nessesary to actually create the file, otherwise
+                    .recursive() //just in case the file
                     .build();
                     InputStream srcStream = new FileInputStream(file)
             ) {
