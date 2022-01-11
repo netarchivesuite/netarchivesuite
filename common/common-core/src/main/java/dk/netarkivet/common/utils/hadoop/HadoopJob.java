@@ -81,6 +81,9 @@ public class HadoopJob {
         fileCount = filePaths.size();
         log.info("{} found {} file(s) matching pattern '{}' to add to input file for {} job {}",
                 fileResolver.getClass().getName(), fileCount, filenamePattern, jobType, jobID);
+        if (fileCount == 0) {
+            log.warn("Zero input files found for job {}, {}. Proceeding with caution.", jobType, jobID);
+        }
         try {
             HadoopJobUtils.writeHadoopInputFileLinesToInputFile(filePaths, localInputTempFile);
         } catch (IOException e) {

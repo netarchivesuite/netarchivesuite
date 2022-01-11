@@ -74,6 +74,11 @@ public class FileResolverRESTClient implements FileResolver {
             CloseableHttpClient httpClient = clientBuilder.getHttpsClient();
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                if (statusCode != 200) {
+                    log.warn("FileResolver call to {} returned status code {}.", uri, statusCode);
+                    return new ArrayList<>();
+                }
                 InputStream istr = httpResponse.getEntity().getContent();
                 List<String> results = IOUtils.readLines(istr);
                 return results.stream()
