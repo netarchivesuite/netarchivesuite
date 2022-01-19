@@ -45,6 +45,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.wayback.WaybackSettings;
+import dk.netarkivet.wayback.hadoop.Indexer;
 import sun.security.krb5.KrbException;
 
 /**
@@ -97,6 +98,8 @@ public class WaybackIndexer implements CleanupIF {
             }
         }
         ingestInitialFiles();
+        IndexerQueue iq = IndexerQueue.getInstance();
+        iq.populate();
         startProducerThread();
         startConsumerThreads();
     }
@@ -183,11 +186,13 @@ public class WaybackIndexer implements CleanupIF {
                 log.info("Starting producer task for all filenames");
                 IndexerQueue iq = IndexerQueue.getInstance();
                 iq.populate();
+                log.info("Doing harvest of all filenames.");
                 FileNameHarvester.harvestAllFilenames();
                 iq.populate();
             }
         };
         Timer producerThreadTimer = new Timer("ProducerThread");
+        log.info("Creating producer thread {}/{} for all filenames.", producerDelay, producerInterval);
         producerThreadTimer.schedule(completeProducerTask, producerDelay, producerInterval);
         TimerTask recentProducerTask = new TimerTask() {
             @Override
@@ -195,10 +200,12 @@ public class WaybackIndexer implements CleanupIF {
                 log.info("Starting producer task for recent files");
                 IndexerQueue iq = IndexerQueue.getInstance();
                 iq.populate();
+                log.info("Doing harvest of recent filenames.");
                 FileNameHarvester.harvestRecentFilenames();
                 iq.populate();
             }
         };
+        log.info("Creating producer thread {}/{} for recent filenames.", producerDelay, recentProducerInterval);
         producerThreadTimer.schedule(recentProducerTask, producerDelay, recentProducerInterval);
     }
 

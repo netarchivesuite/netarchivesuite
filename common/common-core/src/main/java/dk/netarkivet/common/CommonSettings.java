@@ -736,6 +736,17 @@ public class CommonSettings {
     public static String FILE_RESOLVER_KEYFILE = "settings.common.fileResolver.keyfile";
 
     /**
+     * Number of retries for fileresolver if an empty result is obtained (0 = try only once)
+     */
+    public static String FILE_RESOLVER_RETRIES = "settings.common.fileResolver.retries";
+
+    /**
+     * Seconds to wait between retries
+     */
+    public static String FILE_RESOLVER_RETRY_WAIT = "settings.common.fileResolver.retryWaitSeconds";
+
+
+    /**
      * Path to the default truststore used for safe communication over HTTPS with FileResolver
      * and WarcRecordService
      */

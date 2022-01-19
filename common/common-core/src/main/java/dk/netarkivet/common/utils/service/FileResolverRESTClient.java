@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -66,6 +67,28 @@ public class FileResolverRESTClient implements FileResolver {
     }
 
     private List<Path> getPaths(Pattern filepattern, boolean exactfilename) {
+        int retries = Settings.getInt(CommonSettings.FILE_RESOLVER_RETRIES);
+        int retryWaitSeconds = Settings.getInt(CommonSettings.FILE_RESOLVER_RETRY_WAIT);
+        for (int i = 0;  i <= retries; i++) {
+            List<Path> results = getPathsSingleAttempt(filepattern, exactfilename);
+            if (results == null || results.isEmpty()) {
+                if (i == retries) break;
+                try {
+                    log.debug("FileResolver call on {} gave empty result, retrying.", filepattern);
+                    Thread.sleep(retryWaitSeconds*1000L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                log.debug("FileResolver call on {} gave non-empty result with {} match(es).", filepattern, results.size());
+                return results;
+            }
+        }
+        log.debug("No matching results for FileResolver for {}" + filepattern);
+        return new ArrayList<>();
+    }
+
+    private List<Path> getPathsSingleAttempt(Pattern filepattern, boolean exactfilename) {
         try {
             String pattern = filepattern.pattern();
             URI uri = new URL(baseUrl + "/" + URLEncoder.encode(pattern, StandardCharsets.UTF_8.toString())).toURI().normalize();

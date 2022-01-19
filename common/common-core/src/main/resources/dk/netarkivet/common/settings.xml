@@ -50,6 +50,10 @@ National Library.
         <http>
             <port></port>
         </http>
+        <fileResolver>
+            <retries>3</retries>
+            <retryWaitSeconds>5</retryWaitSeconds>
+        </fileResolver>
         <arcrepositoryClient>
             <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
             <bitrepository>

@@ -70,10 +70,13 @@ public class IndexerQueue {
      * Check the database for any new ArchiveFile objects and add them to the queue.
      */
     public synchronized void populate() {
+        log.info("Reading files awaiting indexing from db.");
         List<ArchiveFile> files = (new ArchiveFileDAO()).getFilesAwaitingIndexing();
         if (!files.isEmpty()) {
             log.info("Will now add '{}' unindexed files from object store to queue (if they are not already queued).",
                     files.size());
+        } else {
+            log.info("No files awaiting indecing found in db.");
         }
         for (ArchiveFile file : files) {
             if (!queue.contains(file)) {

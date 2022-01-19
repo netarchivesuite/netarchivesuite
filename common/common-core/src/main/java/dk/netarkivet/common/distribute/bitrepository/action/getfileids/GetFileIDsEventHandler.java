@@ -2,8 +2,12 @@ package dk.netarkivet.common.distribute.bitrepository.action.getfileids;
 
 import org.bitrepository.access.getfileids.conversation.FileIDsCompletePillarEvent;
 import org.bitrepository.bitrepositoryelements.FileIDsData;
+import org.bitrepository.client.eventhandler.ContributorEvent;
+import org.bitrepository.client.eventhandler.ContributorFailedEvent;
 import org.bitrepository.client.eventhandler.EventHandler;
+import org.bitrepository.client.eventhandler.IdentificationCompleteEvent;
 import org.bitrepository.client.eventhandler.OperationEvent;
+import org.bitrepository.client.eventhandler.OperationFailedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,26 +32,54 @@ public class GetFileIDsEventHandler implements EventHandler {
 
     @Override
     public void handleEvent(OperationEvent event) {
-        log.info("Got event from client: {}", event.getEventType());
+        //logIfFinished(event);
+        log.info("Got event from client: {} ({}), {} for conversation {}.", event.getEventType(), event.getClass(), event.getInfo(), event.getConversationID());
+        if (event instanceof ContributorFailedEvent) {
+            log.info("Additional info: {} for conversation {}.", ((ContributorFailedEvent) event).additionalInfo(), event.getConversationID());
+        }
         switch(event.getEventType()) {
         case COMPONENT_COMPLETE:
-            log.debug("Got COMPONENT_COMPLETE event {}", event);
+            log.debug("Got COMPONENT_COMPLETE event {} for conversation {}.", event, event.getConversationID());
             if (event instanceof FileIDsCompletePillarEvent) {
                 FileIDsCompletePillarEvent getFileIDsEvent = (FileIDsCompletePillarEvent) event;
                 if (getFileIDsEvent.getContributorID().equals(pillarID)) {
                     fileIDsData = getFileIDsEvent.getFileIDs().getFileIDsData();
                     partialResults = getFileIDsEvent.isPartialResult();
+                    log.info("Received {} results (partialResults = {}) for {}.",
+                            getFileIDsData().getFileIDsDataItems().getFileIDsDataItem().size(), partialResults, event.getConversationID());
                 } else {
-                    log.warn("Got an event from an unexpected contributor '{}' expected '{}'",
-                            getFileIDsEvent.getContributorID(), pillarID);
+                    log.warn("Got an event from an unexpected contributor '{}' expected '{}' for {}.",
+                            getFileIDsEvent.getContributorID(), pillarID, event.getConversationID());
                 }
             }
+            break;
+        case IDENTIFICATION_COMPLETE:
+            log.info("Identification complete for {} (class is {})", event.getConversationID(), event.getClass());
+            break;
+        case IDENTIFY_TIMEOUT:
+            log.info("Timed out on identify for conversation {}.", event.getConversationID());
+            failed = true;
+            finish();
+            break;
+        case IDENTIFY_REQUEST_SENT:
+            log.info("Received Identify Request Sent event {} for {}", event.getClass(), event.getConversationID());
+            break;
         case COMPLETE:
-            log.info("Finished getting fileIDs from pillar '{}'", pillarID);
+            log.info("Finished getting fileIDs from pillar '{}', {}", pillarID, event.getConversationID());
             finish();
             break;
         case FAILED:
-            log.warn("Failed getting fileIDs from pillar '{}'", pillarID);
+            log.warn("Failed getting fileIDs from pillar '{}', {}", pillarID, event.getConversationID());
+            if (event instanceof OperationFailedEvent) {
+                for (ContributorEvent contributorEvent: ((OperationFailedEvent) event).getComponentResults()) {
+                    log.info("During GetFileIDs event {} from {} had status {} in conversation {}.",
+                            contributorEvent.getInfo(),
+                            contributorEvent.getContributorID(),
+                            contributorEvent.additionalInfo(),
+                            event.getConversationID()
+                    );
+                }
+            }
             failed = true;
             finish();
             break;
@@ -63,6 +95,13 @@ public class GetFileIDsEventHandler implements EventHandler {
      */
     public FileIDsData getFileIDsData() {
         return fileIDsData;
+    }
+
+    private void logIfFinished(OperationEvent event) {
+        if (finished) {
+            log.info("CAREFUL! The following is an out-of-sync message for an event which we are finished handling: {}, {}", event
+                    .getConversationID());
+        }
     }
 
     /**
@@ -83,6 +122,7 @@ public class GetFileIDsEventHandler implements EventHandler {
      * @throws InterruptedException if the thread is interrupted
      */
     public void waitForFinish() throws InterruptedException {
+        finished = false;
         synchronized (finishLock) {
             if (!finished) {
                 log.trace("Thread waiting for client to finish");

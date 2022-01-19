@@ -46,12 +46,21 @@ public class GetFileIDsAction implements ClientAction {
 
     @Override
     public void performAction() {
+        log.info("Performing getFileIds action from {} since date {}.", pillarID, minDate);
         GetFileIDsEventHandler eventHandler = new GetFileIDsEventHandler(pillarID);
         Date latestDate = minDate;
+        boolean newDate = true;
 
         do {
-            client.getFileIDs(collectionID, getQuery(pillarID, latestDate, new Date(System.currentTimeMillis())), null, null, eventHandler);
-
+            if (newDate) {
+                log.info("Performing incremental getFileIds action from {} since date {}.", pillarID, latestDate);
+                client.getFileIDs(collectionID, getQuery(pillarID, latestDate, new Date(System.currentTimeMillis())),
+                        null, null, eventHandler);
+                newDate = false;
+            } else {
+                log.info("Not incrementing getFileIds because latest date not increased.");
+                break;
+            }
             try {
                 eventHandler.waitForFinish();
                 if (eventHandler.hasFailed()) {
@@ -60,14 +69,19 @@ public class GetFileIDsAction implements ClientAction {
                 }
 
                 FileIDsData fileIDsData = eventHandler.getFileIDsData();
+                log.info("Found {} fileIds",fileIDsData.getFileIDsDataItems().getFileIDsDataItem().size());
                 for (FileIDsDataItem fileIDsDataItem : fileIDsData.getFileIDsDataItems().getFileIDsDataItem()) {
                     String fileID = fileIDsDataItem.getFileID();
                     Date lastModificationDate = CalendarUtils.convertFromXMLGregorianCalendar(fileIDsDataItem.getLastModificationTime());
+                    log.debug("FileId {}, mtime {}, lastModificationDate {}, {}", fileID, fileIDsDataItem.getLastModificationTime(), lastModificationDate, lastModificationDate.getTime());
                     if (lastModificationDate.after(latestDate)) {
+                        log.debug("Updating latestDate to {}, {}", lastModificationDate, lastModificationDate.getTime());
                         latestDate = lastModificationDate;
+                        newDate = true;
                     }
                     fileIDs.add(fileID);
                 }
+                log.info("Total distinct fileIds now found is {}", fileIDs.size());
             } catch (InterruptedException e) {
                 log.error("Got interrupted while waiting for operation to complete");
             }
@@ -75,6 +89,7 @@ public class GetFileIDsAction implements ClientAction {
     }
 
     private ContributorQuery[] getQuery(String pillarID, Date minDate, Date maxDate) {
+        log.info("Constructing contributor query {},{} ({},{})", minDate, maxDate, minDate.getTime(), maxDate.getTime());
         List<ContributorQuery> res = new ArrayList<ContributorQuery>();
         int maxResults = Settings.getInt(BitmagUtils.BITREPOSITORY_GETFILEIDS_MAX_RESULTS);
         res.add(new ContributorQuery(pillarID, minDate, maxDate, maxResults));
