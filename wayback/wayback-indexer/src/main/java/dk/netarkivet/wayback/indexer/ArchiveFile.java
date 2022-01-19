@@ -38,6 +38,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.Progressable;
@@ -51,6 +52,8 @@ import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.hadoop.GetMetadataMapper;
+import dk.netarkivet.common.utils.hadoop.HadoopJob;
+import dk.netarkivet.common.utils.hadoop.HadoopJobStrategy;
 import dk.netarkivet.common.utils.service.FileResolver;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SettingsFactory;
@@ -67,6 +70,7 @@ import dk.netarkivet.wayback.batch.DeduplicationCDXExtractionBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
 import dk.netarkivet.wayback.hadoop.CDXMapper;
+import dk.netarkivet.wayback.hadoop.CDXStrategy;
 
 /**
  * This class represents a file in the arcrepository which may be indexed by the indexer.
@@ -221,88 +225,62 @@ public class ArchiveFile {
         }
 
         Configuration conf = HadoopJobUtils.getConf();
-        UUID uuid = UUID.randomUUID();
-        log.info("File {} indexed with job uuid for i/o {}.", this.filename, uuid);
-        String hadoopInputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_INPUT_DIR);
+        conf.set("cdx_filename", filename);
         try (FileSystem fileSystem = FileSystem.newInstance(conf)) {
-
-            //Get path for input file and create its parent directories
-            Path hadoopInputFile = HadoopFileUtils.createUniquePathInDir(
-                    fileSystem, hadoopInputDir, uuid);
-            log.info("Hadoop input file will be {}", hadoopInputFile);
-
-            //Create parent directories for output directory
-            String parentOutputDir = Settings.get(CommonSettings.HADOOP_MAPRED_CDXJOB_OUTPUT_DIR);
-            if (parentOutputDir == null) {
-                log.error("Parent output dir specified by {} must not be null.", CommonSettings.HADOOP_MAPRED_CDXJOB_OUTPUT_DIR);
-                return;
-            }
-            try {
-                HadoopFileUtils.initDir(fileSystem, parentOutputDir);
-            } catch (IOException e) {
-                log.error("Failed to init output dir {}", parentOutputDir, e);
-                return;
-            }
-
-            //Get path to output directory
-            Path jobOutputDir = null;
-            File localInputTempFile = null;
-            jobOutputDir = new Path(parentOutputDir, uuid.toString());
-            log.info("Output directory for job is {}", jobOutputDir);
-
-            //Create the input file locally
-            localInputTempFile = File.createTempFile("cdxextract", ".txt");
-            FileResolver fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
-            if (fileResolver instanceof SimpleFileResolver) {
-                String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
-                ((SimpleFileResolver) fileResolver).setDirectory(Paths.get(pillarParentDir));
-            }
-            java.nio.file.Path filePath = fileResolver.getPath(filename);
-            if (filePath == null) {
-                log.warn("No path identified for file '{}'", filename);
-                throw new FileNotFoundException("File resolver failed to identity file " + filename);
-            }
-            String inputLine = "file://" + filePath.toString();
-            log.info("Inserting {} in {}.", inputLine, localInputTempFile);
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(localInputTempFile))) {
-                writer.write(inputLine);
-                writer.newLine();
-            }
-
-            // Write the input file to hdfs
-            log.info("Copying file with input paths {} to hdfs filesystem {}, {}.", localInputTempFile, fileSystem, hadoopInputFile);
-            Path src = new Path(localInputTempFile.getAbsolutePath());
-            log.info("Copying from {}", src);
-            fileSystem.copyFromLocalFile(
-                    src,
-                    hadoopInputFile);
-
-            //Start the hadoop job
-            log.info("Starting CDX job on file '{}'", filename);
-            int exitCode = 0;
-            int totalMemory = Settings.getInt(CommonSettings.HADOOP_MAP_MEMORY_MB);
-            int totalCores = Settings.getInt(CommonSettings.HADOOP_MAP_MEMORY_CORES);
-            HadoopJobUtils.setMapMemory(conf, totalMemory);
-            HadoopJobUtils.setMapCoresPerTask(conf, totalCores);
-            HadoopJobUtils.enableMapOnlyUberTask(conf, totalMemory, totalCores);
-            HadoopJobUtils.configureCaching(conf);
-            HadoopJobUtils.setBatchQueue(conf);
-            try {
-                log.info("Starting hadoop job with input {} and output {}.", hadoopInputFile, jobOutputDir);
-                exitCode = ToolRunner.run(new HadoopJobTool(conf, new CDXMapper()),
-                        new String[] {hadoopInputFile.toString(), jobOutputDir.toString()});
-                if (exitCode == 0) {
-                    log.info("CDX job for file {} was a success!", filename);
-                    collectHadoopResults(fileSystem, jobOutputDir);
-                } else {
-                    log.warn("Hadoop job failed with exit code '{}'", exitCode);
-                }
-            } catch (Exception exception) {
-                log.error("Hadoop indexing job failed to run normally.", exception);
+            HadoopJobStrategy jobStrategy = new CDXStrategy(0L, fileSystem);
+            HadoopJob job = new HadoopJob(0L, jobStrategy);
+            UUID uuid = UUID.randomUUID();
+            Path jobInputFile = jobStrategy.createJobInputFile(uuid);
+            job.setJobInputFile(jobInputFile);
+            createJobInputFile(filename, jobInputFile, fileSystem);
+            Path jobOutputDir = jobStrategy.createJobOutputDir(uuid);
+            job.setJobOutputDir(jobOutputDir);
+            int exitCode = jobStrategy.runJob(jobInputFile, jobOutputDir);
+            if (exitCode == 0) {
+                log.info("CDX job for file {} was a success!", filename);
+                collectHadoopResults(fileSystem, jobOutputDir);
+            } else {
+                log.warn("Hadoop job failed with exit code '{}'", exitCode);
             }
         } catch (IOException e) {
-            log.error("Error indexing file " + filename + " with hadoop.", e);
+            log.warn("Failure in indexing {}", filename, e);
         }
+    }
+
+    private void createJobInputFile(String filename, Path jobInputFile, FileSystem fileSystem) throws IOException {
+        //Create the input file locally
+        File localInputTempFile = File.createTempFile("cdxextract", ".txt",
+                Settings.getFile(CommonSettings.DIR_COMMONTEMPDIR));
+        FileResolver fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
+        if (fileResolver instanceof SimpleFileResolver) {
+            String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);
+            ((SimpleFileResolver) fileResolver).setDirectory(Paths.get(pillarParentDir));
+        }
+        java.nio.file.Path filePath = fileResolver.getPath(filename);
+        if (filePath == null) {
+            log.warn("No path identified for file '{}'", filename);
+            throw new FileNotFoundException("File resolver failed to identity file " + filename);
+        }
+        String inputLine = "file://" + filePath.toString();
+        log.info("Inserting {} in {}.", inputLine, localInputTempFile);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(localInputTempFile))) {
+            writer.write(inputLine);
+            writer.newLine();
+        }
+
+        // Write the input file to hdfs
+        /*log.info("Copying file with input paths {} to hdfs filesystem {}, {}.", localInputTempFile, fileSystem, jobInputFile);
+        Path src = new Path(localInputTempFile.getAbsolutePath());
+        log.info("Copying from {}", src);*/
+        try (FSDataOutputStream fsDataOutputStream = fileSystem.create(jobInputFile)) {
+            log.info("Writing data to input file.");
+            fsDataOutputStream.writeUTF("file://" + filePath.toString());
+        }
+        /*fileSystem.copyFromLocalFile(
+                src,
+                jobInputFile
+        );*/
+
 
     }
 
