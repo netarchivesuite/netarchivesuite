@@ -148,6 +148,7 @@ public class TLD {
         	            }
         	            tldList.add(tld);
                         quotedTldList.add(Pattern.quote(tld));
+                        count++;
         			}
         		}
         		log.info("Read {} TLDs from public suffix file", count);
