@@ -71,6 +71,7 @@ import dk.netarkivet.wayback.batch.WaybackCDXExtractionARCBatchJob;
 import dk.netarkivet.wayback.batch.WaybackCDXExtractionWARCBatchJob;
 import dk.netarkivet.wayback.hadoop.CDXMapper;
 import dk.netarkivet.wayback.hadoop.CDXStrategy;
+import sun.security.krb5.KrbException;
 
 /**
  * This class represents a file in the arcrepository which may be indexed by the indexer.
@@ -247,6 +248,13 @@ public class ArchiveFile {
         }
     }
 
+    public static void main(String[] args) throws KrbException, IOException {
+        HadoopJobUtils.doKerberosLogin();
+        ArchiveFile archiveFile = new ArchiveFile();
+        archiveFile.setFilename(args[0]);
+        archiveFile.hadoopIndex();
+    }
+
     private void createJobInputFile(String filename, Path jobInputFile, FileSystem fileSystem) throws IOException {
         //Create the input file locally
         File localInputTempFile = File.createTempFile("cdxextract", ".txt",
@@ -269,17 +277,17 @@ public class ArchiveFile {
         }
 
         // Write the input file to hdfs
-        /*log.info("Copying file with input paths {} to hdfs filesystem {}, {}.", localInputTempFile, fileSystem, jobInputFile);
+        log.info("Copying file with input paths {} to hdfs filesystem {}, {}.", localInputTempFile, fileSystem, jobInputFile);
         Path src = new Path(localInputTempFile.getAbsolutePath());
-        log.info("Copying from {}", src);*/
-        try (FSDataOutputStream fsDataOutputStream = fileSystem.create(jobInputFile)) {
+        log.info("Copying from {}", src);
+/*        try (FSDataOutputStream fsDataOutputStream = fileSystem.create(jobInputFile)) {
             log.info("Writing data to input file.");
             fsDataOutputStream.writeUTF("file://" + filePath.toString());
-        }
-        /*fileSystem.copyFromLocalFile(
+        }*/
+        fileSystem.copyFromLocalFile(
                 src,
                 jobInputFile
-        );*/
+        );
 
 
     }

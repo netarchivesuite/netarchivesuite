@@ -91,6 +91,7 @@ public class WaybackIndexer implements CleanupIF {
         if (Settings.getBoolean(CommonSettings.USE_BITMAG_HADOOP_BACKEND)) {
             BitmagUtils.initialize();
             try {
+                log.info("Logging in to Kerberos");
                 HadoopJobUtils.doKerberosLogin();
             } catch (KrbException | IOException e) {
                 log.error("Fatal error starting WaybackIndexer - could not connect to Hadoop. " + e.getMessage());

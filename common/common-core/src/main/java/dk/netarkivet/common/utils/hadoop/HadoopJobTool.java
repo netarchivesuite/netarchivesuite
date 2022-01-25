@@ -38,6 +38,7 @@ public class HadoopJobTool extends Configured implements Tool {
      */
     @Override
     public int run(String[] args) throws InterruptedException, IOException, ClassNotFoundException {
+        log.info("Entered run method of HadoopJobTool");
         Path inputPath = new Path(args[0]);
         Path outputPath = new Path(args[1]);
         Configuration conf = getConf();
@@ -61,6 +62,7 @@ public class HadoopJobTool extends Configured implements Tool {
             job.setOutputKeyClass(NullWritable.class);
             job.setOutputValueClass(Text.class);
 
+            log.info("Calling waitForCompletion");
             boolean success = job.waitForCompletion(true);
             if (!success){
                 log.error("Job {} failed, state is {}."

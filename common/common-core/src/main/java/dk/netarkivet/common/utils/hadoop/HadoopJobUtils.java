@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocatedFileStatus;
@@ -69,6 +71,7 @@ public class HadoopJobUtils {
         String krb5_conf = Settings.get(CommonSettings.HADOOP_KERBEROS_CONF);
         System.setProperty("java.security.krb5.conf", krb5_conf);
         sun.security.krb5.Config.refresh();
+        log.info("Kerberos: {}, {}, {}", krb5_conf, keytab, principal);
         UserGroupInformation.loginUserFromKeytab(principal, keytab);
     }
 
@@ -202,6 +205,8 @@ public class HadoopJobUtils {
      * @param outputFolder The output folder to find the job result files in.
      * @return A list of lines collected from all the output files.
      * @throws IOException If the output folder or its contents cannot be read.
+     * @deprecated Use of public static void collectOutputLines(FileSystem fileSystem, Path outputFolder, OutputStream outputStream)
+     * is always to be preferred.
      */
     public static List<String> collectOutputLines(FileSystem fileSystem, Path outputFolder) throws IOException {
         List<String> resultLines = new ArrayList<>();
@@ -221,6 +226,24 @@ public class HadoopJobUtils {
         // Clean up once output has been collected
         fileSystem.delete(outputFolder, true);
         return resultLines;
+    }
+
+    /**
+     * Method to copy output directly to any OutputStream.
+     * @param fileSystem
+     * @param outputFolder
+     * @param outputStream
+     * @throws IOException
+     */
+    public static void collectOutputLines(FileSystem fileSystem, Path outputFolder, OutputStream outputStream)
+            throws IOException {
+        RemoteIterator<LocatedFileStatus> iterator = fileSystem.listFiles(outputFolder, false);
+        while (iterator.hasNext()) {
+            Path subPath = iterator.next().getPath();
+            if (subPath.getName().startsWith("part-m")) {
+                IOUtils.copy(fileSystem.open(subPath), outputStream);
+            }
+        }
     }
 
     /**
