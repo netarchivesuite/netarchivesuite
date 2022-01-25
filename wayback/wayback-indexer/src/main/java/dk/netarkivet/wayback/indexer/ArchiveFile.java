@@ -25,8 +25,10 @@ package dk.netarkivet.wayback.indexer;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -301,16 +303,15 @@ public class ArchiveFile {
      */
     private void collectHadoopResults(FileSystem fs, Path jobOutputDir) {
         File outputFile = makeNewFileInWaybackTempDir();
-        log.info("Collecting index for '{}' from parts in '{}' to '{}'", this.getFilename(), jobOutputDir, outputFile.getAbsolutePath());
-        try {
-            List<String> cdxLines = HadoopJobUtils.collectOutputLines(fs, jobOutputDir);
-            FileUtils.writeCollectionToFile(outputFile, cdxLines);
-            log.info("Finished collecting index for '{}' to '{}'", this.getFilename(), outputFile.getAbsolutePath());
+        log.info("Collecting results for {} from {} to {}", this.getFilename(), jobOutputDir, outputFile.getAbsolutePath());
+        try (OutputStream os = new FileOutputStream(outputFile)) {
+            HadoopJobUtils.collectOutputLines(fs, jobOutputDir, os);
         } catch (IOException e) {
             log.warn("Could not collect index results from '{}'", jobOutputDir.toString(), e);
         }
+        log.info("Collected {} bytes of index for {} from {} to {}", outputFile.length(), this.getFilename(), jobOutputDir, outputFile.getAbsolutePath());
         File finalFile = moveFileToWaybackOutputDir(outputFile);
-
+        log.info("Moved index for {} to {}", this.getFilename(), finalFile.getAbsolutePath());
         // Update the file status in the object store
         originalIndexFileName = outputFile.getName();
         isIndexed = true;

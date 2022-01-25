@@ -23,7 +23,9 @@
 package dk.netarkivet.harvester.indexserver;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Hashtable;
@@ -169,24 +171,24 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             job.prepareJobInputOutput(fileSystem);
             job.run();
             // If no error is thrown, job was success
-
-            List<String> metadataLines = HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir());
-            if (metadataLines.size() > 0) {
-                File cacheFileName = getCacheFile(id);
-                if (tryToMigrateDuplicationRecords) {
-                    migrateDuplicatesHadoop(id, fileSystem, specifiedPattern, metadataLines, cacheFileName);
-                } else {
-                    copyResults(id, metadataLines, cacheFileName);
-                }
-                log.debug("Cached data for job '{}' for '{}'", id, prefix);
-                return id;
+            File cacheFileName = getCacheFile(id);
+            if (tryToMigrateDuplicationRecords) {
+                log.warn("Attempting to migrate duplication records via hadoop. This operation is not well tested.");
+                List<String> metadataLines = HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir());
+                migrateDuplicatesHadoop(id, fileSystem, specifiedPattern, metadataLines, cacheFileName);
             } else {
-                log.info("No data found for job '{}' for '{}' in local bitarchive. ", id, prefix);
+                log.info("Collecting hadoop output to {}", cacheFileName.getAbsolutePath());
+                try (OutputStream os = new FileOutputStream(cacheFileName)) {
+                    HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir(), os);
+                }
+                log.info("Collected {} bytes hadoop output to {}", cacheFileName.length(), cacheFileName.getAbsolutePath());
             }
+            log.debug("Cached data for job '{}' for '{}'", id, prefix);
+            return id;
         } catch (IOException e) {
             log.error("Error instantiating Hadoop filesystem for job {}.", id, e);
+            return null;
         }
-        return null;
     }
 
     /**

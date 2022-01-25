@@ -237,13 +237,16 @@ public class HadoopJobUtils {
      */
     public static void collectOutputLines(FileSystem fileSystem, Path outputFolder, OutputStream outputStream)
             throws IOException {
+        log.info("Starting collection of hadoop output from {}", outputFolder);
         RemoteIterator<LocatedFileStatus> iterator = fileSystem.listFiles(outputFolder, false);
         while (iterator.hasNext()) {
             Path subPath = iterator.next().getPath();
             if (subPath.getName().startsWith("part-m")) {
+                log.info("Collection output from {}", subPath);
                 IOUtils.copy(fileSystem.open(subPath), outputStream);
             }
         }
+        log.info("Finished collection of hadoop output from {}", outputFolder);
     }
 
     /**

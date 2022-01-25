@@ -24,8 +24,10 @@ package dk.netarkivet.viewerproxy.webinterface;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -218,14 +220,11 @@ public class Reporting {
                job.processOnlyFilesMatching(metadataFileSearchPattern);
                job.prepareJobInputOutput(fileSystem);
                job.run();
-
-               try {
-                   List<String> cdxLines = HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir());
-                   org.apache.commons.io.FileUtils.writeLines(cacheFile, cdxLines);
-               } catch (IOException e) {
-                   log.error("Failed getting CDX lines output for Hadoop job with ID: {}", jobid);
-                   throw new IOFailure("Failed getting " + job.getJobType() + " job results");
+               log.info("Collecting hadoop output from {} to {}", job.getJobOutputDir(), cacheFile.getAbsolutePath());
+               try (OutputStream os = new FileOutputStream(cacheFile)) {
+                   HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir(), os);
                }
+               log.info("Collected {} bytes output to {}", cacheFile.length(), cacheFile.getAbsolutePath());
                return getCachedCDXRecords(jobid);
            } catch (IOException e) {
                log.error("Error instantiating Hadoop filesystem for job {}.", jobid, e);
@@ -437,7 +436,13 @@ public class Reporting {
         if (cacheFile.length()==0 || !cacheFile.exists()) { //The || part of this is strictly unnecessary
             File outputFile = getCrawlLogUsingHadoop(jobID);
             try {
+                log.info("Copying {} to {}", outputFile.getAbsolutePath(), cacheFile.getAbsolutePath());
                 org.apache.commons.io.FileUtils.copyFile(outputFile, cacheFile);
+                if (outputFile.delete()) {
+                    log.info("Deleted {}", outputFile.getAbsolutePath());
+                } else {
+                    log.warn("Could not delete {}", outputFile.getAbsolutePath());
+                }
             } catch (IOException e) {
                 throw new RuntimeException((e));
             }
@@ -455,14 +460,22 @@ public class Reporting {
             job.processOnlyFilesMatching(metadataFileSearchPattern);
             job.prepareJobInputOutput(fileSystem);
             job.run();
-            List<String> crawlLogLines;
-            try {
-                crawlLogLines = HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir());
-            } catch (IOException e) {
-                log.error("Failed getting crawl log lines output for job with ID: {}", jobID);
-                throw new IOFailure("Failed getting " + job.getJobType() + " job results");
+            File tempOutputFile1 = File.createTempFile("unsorted_crawl", "log");
+            File tempOutputFile2 = File.createTempFile("unsorted_crawl", "log");
+            log.info("Collecting output from {} to {}", job.getJobOutputDir(), tempOutputFile1.getAbsolutePath());
+            try (OutputStream os = new FileOutputStream(tempOutputFile1)) {
+                HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir(), os);
             }
-            return createSortedResultFile(crawlLogLines);
+            log.info("Collected {} bytes to {}", tempOutputFile1.length(), tempOutputFile1.getAbsolutePath());
+            log.info("Sorting {} to {}", tempOutputFile1.getAbsolutePath(), tempOutputFile2.getAbsolutePath());
+            FileUtils.sortCrawlLogOnTimestamp(tempOutputFile1, tempOutputFile2);
+            log.info("Collected {} bytes to {}", tempOutputFile2.length(), tempOutputFile2.getAbsolutePath());
+            if (tempOutputFile1.delete()) {
+                log.info("Deleted {}", tempOutputFile1.getAbsolutePath());
+            } else {
+                log.warn("Could not delete {}", tempOutputFile1.getAbsolutePath());
+            }
+            return tempOutputFile2;
         } catch (IOException e) {
             log.error("Error instantiating Hadoop filesystem for job {}.", jobID, e);
             throw new IOFailure("Failed instantiating Hadoop filesystem.");
