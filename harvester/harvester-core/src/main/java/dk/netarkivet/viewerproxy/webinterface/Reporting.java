@@ -390,8 +390,11 @@ public class Reporting {
     }
 
     public static File getCrawlLogLinesMatchingDomain(long jobID, String domain) {
+        log.info("Finding matching crawl log lines for {} in job {}", domain, jobID);
         File cacheFile = getCrawlLogFromCacheOrHdfs(jobID);
+        log.info("Finding matching crawl log lines for {} in job {} in file {}", domain, jobID, cacheFile.getAbsoluteFile());
         List<String> matches = getMatchingDomainStringsFromFile(cacheFile, domain);
+        log.info("Found {} matches for {} in job {}", matches.size(), domain, jobID);
         return createSortedResultFile(matches);
     }
 
@@ -409,8 +412,15 @@ public class Reporting {
         try {
             String urlS = crawlLine.split("\\s+")[10];
             URL url = new URL(urlS);
-            return url.getHost().equals(domain) || url.getHost().endsWith("."+domain);
+            if (url.getHost().equals(domain) || url.getHost().endsWith("."+domain)) {
+                log.debug("Domain {} found in crawlline {}", domain, crawlLine);
+                return true;
+            } else {
+                log.debug("Domain {} not found in crawlline {}", domain, crawlLine);
+                return false;
+            }
         } catch (Exception e) {
+            log.debug("No domain to match found in {}", crawlLine);
             return false;
         }
     }
