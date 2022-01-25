@@ -461,7 +461,7 @@ public class Reporting {
             job.prepareJobInputOutput(fileSystem);
             job.run();
             File tempOutputFile1 = File.createTempFile("unsorted_crawl", "log");
-            File tempOutputFile2 = File.createTempFile("unsorted_crawl", "log");
+            File tempOutputFile2 = File.createTempFile("sorted_crawl", "log");
             log.info("Collecting output from {} to {}", job.getJobOutputDir(), tempOutputFile1.getAbsolutePath());
             try (OutputStream os = new FileOutputStream(tempOutputFile1)) {
                 HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir(), os);
