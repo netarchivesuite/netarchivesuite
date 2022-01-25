@@ -32,7 +32,7 @@ public class GetFileIDsEventHandler implements EventHandler {
 
     @Override
     public void handleEvent(OperationEvent event) {
-        //logIfFinished(event);
+        logIfFinished(event);
         log.info("Got event from client: {} ({}), {} for conversation {}.", event.getEventType(), event.getClass(), event.getInfo(), event.getConversationID());
         if (event instanceof ContributorFailedEvent) {
             log.info("Additional info: {} for conversation {}.", ((ContributorFailedEvent) event).additionalInfo(), event.getConversationID());
@@ -59,7 +59,7 @@ public class GetFileIDsEventHandler implements EventHandler {
         case IDENTIFY_TIMEOUT:
             log.info("Timed out on identify for conversation {}.", event.getConversationID());
             failed = true;
-            finish();
+            finish();  //?? Is this necessary? Don't we get a FAILED after this?
             break;
         case IDENTIFY_REQUEST_SENT:
             log.info("Received Identify Request Sent event {} for {}", event.getClass(), event.getConversationID());
@@ -122,7 +122,6 @@ public class GetFileIDsEventHandler implements EventHandler {
      * @throws InterruptedException if the thread is interrupted
      */
     public void waitForFinish() throws InterruptedException {
-        finished = false;
         synchronized (finishLock) {
             if (!finished) {
                 log.trace("Thread waiting for client to finish");

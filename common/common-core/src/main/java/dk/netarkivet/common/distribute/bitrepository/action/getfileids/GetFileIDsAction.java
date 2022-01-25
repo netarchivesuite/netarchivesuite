@@ -47,11 +47,13 @@ public class GetFileIDsAction implements ClientAction {
     @Override
     public void performAction() {
         log.info("Performing getFileIds action from {} since date {}.", pillarID, minDate);
-        GetFileIDsEventHandler eventHandler = new GetFileIDsEventHandler(pillarID);
+        //GetFileIDsEventHandler eventHandler = new GetFileIDsEventHandler(pillarID);
         Date latestDate = minDate;
         boolean newDate = true;
+        boolean finished = false;
 
         do {
+            GetFileIDsEventHandler eventHandler = new GetFileIDsEventHandler(pillarID);
             if (newDate) {
                 log.info("Performing incremental getFileIds action from {} since date {}.", pillarID, latestDate);
                 client.getFileIDs(collectionID, getQuery(pillarID, latestDate, new Date(System.currentTimeMillis())),
@@ -67,7 +69,7 @@ public class GetFileIDsAction implements ClientAction {
                     log.warn("Failed getting fileIDs from pillar '{}'.", pillarID);
                     return;
                 }
-
+                finished = !eventHandler.partialResults();
                 FileIDsData fileIDsData = eventHandler.getFileIDsData();
                 log.info("Found {} fileIds",fileIDsData.getFileIDsDataItems().getFileIDsDataItem().size());
                 for (FileIDsDataItem fileIDsDataItem : fileIDsData.getFileIDsDataItems().getFileIDsDataItem()) {
@@ -85,7 +87,7 @@ public class GetFileIDsAction implements ClientAction {
             } catch (InterruptedException e) {
                 log.error("Got interrupted while waiting for operation to complete");
             }
-        } while (eventHandler.partialResults());
+        } while (!finished);
     }
 
     private ContributorQuery[] getQuery(String pillarID, Date minDate, Date maxDate) {
