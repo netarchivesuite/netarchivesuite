@@ -410,7 +410,7 @@ public class Reporting {
 
     private static boolean lineMatchesDomain(String crawlLine, String domain) {
         try {
-            String urlS = crawlLine.split("\\s+")[10];
+            String urlS = crawlLine.split("\\s+")[3];
             URL url = new URL(urlS);
             if (url.getHost().equals(domain) || url.getHost().endsWith("."+domain)) {
                 log.debug("Domain {} found in crawlline {}", domain, crawlLine);
@@ -420,7 +420,7 @@ public class Reporting {
                 return false;
             }
         } catch (Exception e) {
-            log.debug("No domain to match found in {}", crawlLine);
+            log.debug("No domain to match found in {}", crawlLine, e);
             return false;
         }
     }
