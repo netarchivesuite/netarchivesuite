@@ -36,6 +36,9 @@
     <configuration>
         <destFile>${sonar.jacoco.reportPath}</destFile>
         <append>true</append>
+      <excludes>
+        <exclude>**com.steadystate*</exclude>
+      </excludes>
     </configuration>
     <executions>
         <execution>
