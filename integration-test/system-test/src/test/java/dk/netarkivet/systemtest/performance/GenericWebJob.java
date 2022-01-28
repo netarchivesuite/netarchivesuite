@@ -29,7 +29,7 @@ abstract class GenericWebJob extends LongRunningJob {
         String baseUrl = "http://" + testController.ENV
                 .getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        testGUIController.waitForGUIToStart(60);
+        testGUIController.waitForGUIToStart(600);
         stressTest.addFixture("Opening front page " + baseUrl);
         this.stressTest = stressTest;
     }

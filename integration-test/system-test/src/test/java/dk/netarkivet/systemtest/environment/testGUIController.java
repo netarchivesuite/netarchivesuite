@@ -41,7 +41,7 @@ public class testGUIController {
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/kill_GUIApplication.sh; sleep 10");
             Thread.sleep(3000);
             testController.runTestXCommand(TestEnvironment.JOB_ADMIN_SERVER, "./conf/start_GUIApplication.sh");
-            waitForGUIToStart(300);
+            waitForGUIToStart(600);
         } catch (Exception e) {
             throw new RuntimeException("Failed to redeploy GUI", e);
         }

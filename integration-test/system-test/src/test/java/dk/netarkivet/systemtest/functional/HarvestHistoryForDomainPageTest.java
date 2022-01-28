@@ -340,7 +340,7 @@ public class HarvestHistoryForDomainPageTest extends AbstractSystemTest {
                             + "conf/kill_GUIApplication.sh; sleep 20;"
                             + "cp conf/settings_GUIApplication.xml.original conf/settings_GUIApplication.xml; "
                             + " conf/start_GUIApplication.sh; " + "fi");
-            testGUIController.waitForGUIToStart(300);
+            testGUIController.waitForGUIToStart(600);
     }
 
     private void assertColumnIsSorted(int column, boolean ascending) {

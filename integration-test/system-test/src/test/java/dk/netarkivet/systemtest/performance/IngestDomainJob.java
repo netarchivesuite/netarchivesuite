@@ -41,7 +41,7 @@ class IngestDomainJob extends GenericWebJob {
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         String baseUrl = "http://" + testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        testGUIController.waitForGUIToStart(60);
+        testGUIController.waitForGUIToStart(600);
         stressTest.addFixture("Opening initial page " + baseUrl);
         File domainsFile = null;
         try {

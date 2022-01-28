@@ -118,7 +118,7 @@ public abstract class SeleniumTest extends ExtendedTestCase {
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         baseUrl = "http://" + testController.ENV.getGuiHost() + ":" + testController.ENV.getGuiPort();
         PageHelper.initialize(driver, baseUrl);
-        testGUIController.waitForGUIToStart(300);
+        testGUIController.waitForGUIToStart(600);
         TestEventManager.getInstance().addFixture("Selecting English as language");
         driver.findElement(By.linkText("English")).click();
     }
