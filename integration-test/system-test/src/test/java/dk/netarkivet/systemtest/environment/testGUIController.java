@@ -67,6 +67,7 @@ public class testGUIController {
         int numberOfSecondsToWaiting = 0;
         TestEventManager.getInstance().addStimuli("Waiting for GUI to start.");
         while (numberOfSecondsToWaiting++ < maxNumberOfSecondsToWait) {
+            System.out.println("Waited " + numberOfSecondsToWaiting + "/" + maxNumberOfSecondsToWait);
             PageHelper.reloadSubPage("HarvestDefinition");
             if (PageHelper.getWebDriver().getPageSource().contains("Menu")) {
                 System.out.println();
