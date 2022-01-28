@@ -38,6 +38,7 @@
         <append>true</append>
       <excludes>
         <exclude>**com.steadystate*</exclude>
+        <exclude>**com.gargoylesoftware*</exclude>
       </excludes>
     </configuration>
     <executions>
