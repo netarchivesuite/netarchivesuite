@@ -84,7 +84,9 @@ public class PageHelper {
      */
     public static void reloadSubPage(String subURL) {
         checkInitialization();
+        System.out.println("Loading subpage " + subURL);
         driver.get(baseUrl + "/" + subURL);
+        System.out.println("Loaded subpage " + subURL);
     }
 
     public static void clickLink(String linkText) {

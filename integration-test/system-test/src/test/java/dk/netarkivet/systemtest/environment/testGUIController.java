@@ -70,10 +70,11 @@ public class testGUIController {
             System.out.println("Waited " + numberOfSecondsToWaiting + "/" + maxNumberOfSecondsToWait);
             PageHelper.reloadSubPage("HarvestDefinition");
             if (PageHelper.getWebDriver().getPageSource().contains("Menu")) {
+                System.out.println("Found Menu");
                 System.out.println();
                 return;
             } else {
-                System.out.print(".");
+                System.out.print("Did not find Menu.");
             }
             try {
                 Thread.sleep(1000);
