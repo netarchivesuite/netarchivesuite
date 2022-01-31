@@ -46,7 +46,7 @@ public class GetMetadataMapperTester extends HadoopMiniClusterTestCase {
      * Test that a Hadoop job with a GetMetadataMapper produces the correct metadata lines when given
      * a crawl log url pattern and 'text/plain' mime pattern.
      */
-    @Test
+    //@Test
     public void testMetadataCrawlLogJob() throws Exception {
         String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
         File[] files = getTestFiles();
@@ -75,7 +75,7 @@ public class GetMetadataMapperTester extends HadoopMiniClusterTestCase {
      * Test that a Hadoop job with a GetMetadataMapper produces the correct metadata lines when given
      * a cdx entry url pattern and 'application/x-cdx' mime pattern.
      */
-    @Test
+    //@Test
     public void testMetadataCDXJob() throws Exception {
         String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
         File[] files = getTestFiles();
