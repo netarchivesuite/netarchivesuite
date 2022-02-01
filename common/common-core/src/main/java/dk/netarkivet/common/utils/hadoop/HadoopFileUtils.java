@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.util.UUID;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.InvalidRequestException;
 import org.apache.hadoop.fs.LocalFileSystem;
@@ -55,7 +56,20 @@ public class HadoopFileUtils {
                     InputStream srcStream = new FileInputStream(file)
             ) {
 //                All this to be able to make the copy progressable so the tasks do not time out
-                IOUtils.copyBytes(srcStream,destStream, conf, true);
+                IOUtils.copyBytes(srcStream, destStream, conf, true);
+                final FileStatus fileStatus = hdfsFileSystem.getFileStatus(dst);
+                if (fileStatus == null) {
+                    throw new IOException("Caching failed to create hdfs object " + dst);
+                } else if (fileStatus.getLen() == 0) {
+                    boolean delete = hdfsFileSystem.delete(dst, false);
+                    if (delete) {
+                        throw new IOException(
+                                "Caching created empty hdfs object " + dst + " which has now been deleted.");
+                    } else {
+                        throw new IOException(
+                                "Caching created empty hdfs object " + dst + " which could not be deleted.");
+                    }
+                }
             }
         } else {
             log.info("Cached copy found - copying not necessary.");
@@ -138,7 +152,12 @@ public class HadoopFileUtils {
         if (isLocal && cachingEnabled) {
             log.info("Replacing {} with hdfs cached version.", path);
             File localFile = ((LocalFileSystem) path.getFileSystem(context.getConfiguration())).pathToFile(path);
-            path = cacheFile(localFile, context.getConfiguration(), context);
+            try {
+                path = cacheFile(localFile, context.getConfiguration(), context);
+            } catch (Exception e) {
+                log.warn("Caching failed so keeping original path {}", path, e);
+                return path;
+            }
             log.info("New input path is {}.", path);
         }
         return path;

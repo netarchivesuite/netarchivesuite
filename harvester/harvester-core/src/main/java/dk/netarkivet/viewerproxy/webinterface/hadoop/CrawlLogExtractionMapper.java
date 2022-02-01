@@ -72,7 +72,12 @@ public class CrawlLogExtractionMapper extends Mapper<LongWritable, Text, NullWri
         } else {
             LocalFileSystem localFileSystem = ((LocalFileSystem) fileSystem);
             if (cacheHdfs) {
-                crawlLogLines = extractCrawlLogLinesWithHdfs(localFileSystem.pathToFile(path), crawlLogRegex, context);
+                try {
+                    crawlLogLines = extractCrawlLogLinesWithHdfs(localFileSystem.pathToFile(path), crawlLogRegex, context);
+                } catch (IOException e) {
+                    log.warn("Extracting crawl log via hdfs failed for {} so trying with local file.", path, e);
+                    crawlLogLines = extractCrawlLogLines(localFileSystem.pathToFile(path), crawlLogRegex);
+                }
             } else {
                 crawlLogLines = extractCrawlLogLines(localFileSystem.pathToFile(path), crawlLogRegex);
             }
