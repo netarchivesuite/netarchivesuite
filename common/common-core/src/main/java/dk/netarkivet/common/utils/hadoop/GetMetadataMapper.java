@@ -5,7 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
+import java.io.UncheckedIOException;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configuration;
@@ -21,6 +21,7 @@ import org.archive.io.ArchiveRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.netarkivet.common.utils.NamedThread;
 import dk.netarkivet.common.utils.archive.ArchiveHeaderBase;
 import dk.netarkivet.common.utils.archive.ArchiveRecordBase;
 
@@ -64,57 +65,62 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
      */
     @Override
     protected void map(LongWritable lineNumber, Text filePath, Context context) throws IOException {
-        log.info("Mapper processing line number {}", lineNumber.toString());
-        // reject empty or null file paths.
-        if (filePath == null || filePath.toString().trim().isEmpty()) {
-            return;
-        }
-        Path path = new Path(filePath.toString());
-        try (FileSystem fs = FileSystem.newInstance(context.getConfiguration());){
-            log.info("Opened FileSystem {}", fs);
+        try (NamedThread ignored = NamedThread.postfix(filePath.toString())) {
 
+            log.info("Mapper processing line number {}", lineNumber.toString());
+            // reject empty or null file paths.
+            if (filePath == null || filePath.toString().trim().isEmpty()) {
+                return;
+            }
+            Path path = new Path(filePath.toString());
             path = HadoopFileUtils.replaceWithCachedPathIfEnabled(context, path);
-            log.info("Mapper processing {}", path);
 
-            try (InputStream in = new BufferedInputStream(fs.open(path))) {
-                log.info("Opened InputStream for file.");
-                try (ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true)) {
-                    log.info("Opened ArchiveReader");
-                    for (ArchiveRecord archiveRecord : archiveReader) {
-                        context.progress();
-                        ArchiveRecordBase record = ArchiveRecordBase.wrapArchiveRecord(archiveRecord);
-                        ArchiveHeaderBase header = record.getHeader();
+            //TEST this but this fs should work for both local and hdfs files
+            try (FileSystem fs = path.getFileSystem(context.getConfiguration())) {
+                log.info("Opened FileSystem {}", fs);
 
-                        if (header.getUrl() == null) {
-                            log.info("Found header with no url - probably warcinfo record. Continuing.");
-                            continue;
+                log.info("Mapper processing {}", path);
+
+                try (InputStream in = new BufferedInputStream(fs.open(path))) {
+                    log.info("Opened InputStream for file.");
+                    try (ArchiveReader archiveReader = ArchiveReaderFactory.get(filePath.toString(), in, true)) {
+                        log.info("Opened ArchiveReader");
+                        for (ArchiveRecord archiveRecord : archiveReader) {
+                            context.progress();
+                            ArchiveRecordBase record = ArchiveRecordBase.wrapArchiveRecord(archiveRecord);
+                            ArchiveHeaderBase header = record.getHeader();
+
+                            if (header.getUrl() == null) {
+                                log.info("Found header with no url - probably warcinfo record. Continuing.");
+                                continue;
+                            }
+                            log.info("Mapper processing header url {} with mime-type {}.", header.getUrl(),
+                                    header.getMimetype());
+                            boolean recordHeaderMatchesPatterns = urlMatcher.matcher(header.getUrl()).matches()
+                                    && mimeMatcher.matcher(header.getMimetype()).matches();
+                            if (recordHeaderMatchesPatterns) {
+                                log.info("Mapper accepting header so writing to output.");
+                                writeRecordMetadataLinesToContext(record, path, context);
+                            }
                         }
-                        log.info("Mapper processing header url {} with mime-type {}.", header.getUrl(),
-                                header.getMimetype());
-                        boolean recordHeaderMatchesPatterns = urlMatcher.matcher(header.getUrl()).matches()
-                                && mimeMatcher.matcher(header.getMimetype()).matches();
-                        if (recordHeaderMatchesPatterns) {
-                            log.info("Mapper accepting header so writing to output.");
-                            writeRecordMetadataLinesToContext(record, path, context);
-                        }
+                        log.info("Finished with archive reader");
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(
+                                "Failed creating archiveReader from archive file located at '" + path.toString() + "'",
+                                e);
                     }
-                    log.info("Finished with archive reader");
                 } catch (IOException e) {
-                    log.warn("Failed creating archiveReader from archive file located at '{}'", filePath.toString(), e);
-                    throw e;
+                    throw new UncheckedIOException("Could not read input file at '{}'." + path.toString() + "'", e);
                 }
             } catch (IOException e) {
-                log.error("Could not read input file at '{}'.", path.toString(), e);
-                throw e;
+                //            log.error("Could not get FileSystem from configuration", e);
+                throw new IOException("Could not get FileSystem from configuration", e);
+            } catch (Exception e) {
+                //            log.error("Unexpected exception", e);
+                throw new IOException("Unexpected exception", e);
             }
-        } catch (IOException e) {
-            log.error("Could not get FileSystem from configuration", e);
-            throw e;
-        } catch (Exception e) {
-            log.error("Unexpected exception", e);
-            throw (e);
+            log.info("Finished map method for file {}", path.toString());
         }
-        log.info("Finished map method.");
     }
 
     /**
