@@ -31,6 +31,10 @@ import java.nio.channels.OverlappingFileLockException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +45,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * A generic cache that stores items in files. This abstract superclass handles placement of the cache directory and
@@ -159,6 +164,24 @@ public abstract class FileBasedCache<T> {
         }
     }
 
+    static class IdFilePair<T> {
+        public T id;
+        public File file;
+
+        public IdFilePair(T id, File file) {
+            this.id = id;
+            this.file = file;
+        }
+
+        public T getId() {
+            return id;
+        }
+
+        public File getFile() {
+            return file;
+        }
+    };
+
     /**
      * Utility method to get a number of cache entries at a time. Implementations of FileBasedCache may override this to
      * perform the caching more efficiently, if caching overhead per file is large.
@@ -170,15 +193,42 @@ public abstract class FileBasedCache<T> {
     public Map<T, File> get(Set<T> ids) {
         ArgumentNotValid.checkNotNull(ids, "Set<I> ids");
         Map<T, File> result = new HashMap<T, File>(ids.size());
-        for (T id : ids) {
-            if (id.equals(cache(id))) {
-                result.put(id, getCacheFile(id));
-            } else {
-                result.put(id, null);
+        boolean doParallel = Settings.getBoolean(HarvesterSettings.INDEXSERVER_FETCH_PARALLEL);
+        int poolSize = Settings.getInt(HarvesterSettings.INDEXSERVER_FETCH_POOLSIZE);
+        if (doParallel) {
+            ForkJoinPool customThreadPool = new ForkJoinPool(poolSize);
+            try {
+                return customThreadPool.submit(
+                        () -> ids.parallelStream().map(id -> new IdFilePair<T>(id, getCacheFileOrNull(id)))
+                                .collect(Collectors.toMap(IdFilePair::getId, IdFilePair::getFile))).get();
+            } catch (InterruptedException e) {
+                log.error("Unexpected Indexing error", e);
+                return result;
+            } catch (ExecutionException e) {
+                log.error("Unexpected Indexing error", e);
+                return result;
             }
+        } else {
+            for (T id : ids) {
+                if (id.equals(cache(id))) {
+                    result.put(id, getCacheFile(id));
+                } else {
+                    result.put(id, null);
+                }
+            }
+            return result;
         }
-        return result;
     }
+
+    private File getCacheFileOrNull(T id) {
+        if (id.equals(cache(id))) {
+            return getCacheFile(id);
+        } else {
+            return null;
+        }
+    }
+
+
 
     /**
      * Forgiving index generating method, that returns a file with an index, of the greatest possible subset of a given

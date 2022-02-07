@@ -76,7 +76,8 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
             path = HadoopFileUtils.replaceWithCachedPathIfEnabled(context, path);
 
             //TEST this but this fs should work for both local and hdfs files
-            try (FileSystem fs = path.getFileSystem(context.getConfiguration())) {
+            FileSystem fs = path.getFileSystem(context.getConfiguration());
+            try  {
                 log.info("Opened FileSystem {}", fs);
 
                 log.info("Mapper processing {}", path);
@@ -112,9 +113,6 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
                 } catch (IOException e) {
                     throw new UncheckedIOException("Could not read input file at '{}'." + path.toString() + "'", e);
                 }
-            } catch (IOException e) {
-                //            log.error("Could not get FileSystem from configuration", e);
-                throw new IOException("Could not get FileSystem from configuration", e);
             } catch (Exception e) {
                 //            log.error("Unexpected exception", e);
                 throw new IOException("Unexpected exception", e);

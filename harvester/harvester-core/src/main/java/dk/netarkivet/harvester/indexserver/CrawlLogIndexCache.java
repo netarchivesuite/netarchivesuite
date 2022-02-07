@@ -105,6 +105,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
         log.info("Starting to generate {} for the {} jobs: {}", getCacheDir().getName(), ids.size(), ids);
         Map<Long, File> returnMap = super.prepareCombine(ids);
         Set<Long> missing = new HashSet<Long>();
+        //TODO This looks like a/the place to parallelise
         for (Long id : returnMap.keySet()) {
             Long cached = cdxcache.cache(id);
             if (cached == null) {

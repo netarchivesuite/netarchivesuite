@@ -224,6 +224,8 @@ National Library.
             <maxsegments>42</maxsegments>
             <satisfactorythresholdpercentage>70</satisfactorythresholdpercentage>
             <tryToMigrateDuplicationRecords>false</tryToMigrateDuplicationRecords>
+            <fetchParallel>true</fetchParallel>
+            <poolsize>5</poolsize>
             <lookfordataInAllBitarchiveReplicas>false</lookfordataInAllBitarchiveReplicas>
             <indexrequestserver>
                 <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>

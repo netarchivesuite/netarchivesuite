@@ -709,6 +709,9 @@ public class HarvesterSettings {
      */
     public static String INDEXSERVER_INDEXING_TRY_TO_MIGRATE_DUPLICATION_RECORDS = "settings.harvester.indexserver.tryToMigrateDuplicationRecords";
 
+    public static String INDEXSERVER_FETCH_PARALLEL = "settings.harvester.indexserver.fetchParallel";
+    public static String INDEXSERVER_FETCH_POOLSIZE = "settings.harvester.indexserver.poolsize";
+
     /**
      * <b>settings.harvester.indexserver.indexrequestserver.class</b>: <br>
      * Setting for which type of indexrequestserver to use. The default is:
