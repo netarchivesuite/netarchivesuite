@@ -29,7 +29,9 @@
                     <exclude>*/lib/webarchive-commons-1.1.4.jar</exclude>
                     <exclude>*/lib/webarchive-commons-1.1.5.jar</exclude>
                     <!--exclude>*/lib/commons-configuration-1.6.jar</exclude-->
-                    <!--exclude>*/lib/httpclient-4.2.5.jar</exclude-->
+                    <exclude>*/lib/httpclient-4.2.5.jar</exclude>
+                    <exclude>lib/httpclient-4.2.5.jar</exclude>
+                    <exclude>org.apache.httpcomponents:httpcomponents-client:jar:4.2.5</exclude>
                     <!--exclude>*/lib/httpcore-4.2.4.jar</exclude-->
                 </excludes>
             </unpackOptions>
@@ -48,6 +50,19 @@
                     <exclude>lib/slf4j-log4j12-1.5.8.jar</exclude>
                     <exclude>lib/jcl-over-slf4j-1.5.8.jar</exclude>
                     <exclude>lib/*LBS*</exclude>
+                    <exclude>*/lib/ant*</exclude>
+                    <exclude>*/lib/ant*.jar</exclude>
+                    <exclude>*/lib/oro-2.0.8.LICENSE</exclude>
+                    <exclude>*/lib/junit-*.jar</exclude>
+                    <exclude>*/lib/junit.*</exclude>
+                    <!-- Removing duplicates. -->
+                    <exclude>*/lib/webarchive-commons-1.1.4.jar</exclude>
+                    <exclude>*/lib/webarchive-commons-1.1.5.jar</exclude>
+                    <!--exclude>*/lib/commons-configuration-1.6.jar</exclude-->
+                    <exclude>*/lib/httpclient-4.2.5.jar</exclude>
+                    <exclude>lib/httpclient-4.2.5.jar</exclude>
+                    <exclude>org.apache.httpcomponents:httpcomponents-client:jar:4.2.5</exclude>
+                    <!--exclude>*/lib/httpcore-4.2.4.jar</exclude-->
                 </excludes>
             </unpackOptions>
             <outputDirectory>/heritrix-${heritrix3.version}/</outputDirectory>
@@ -105,8 +120,11 @@
                 <!-- Removing duplicates. -->
                 <exclude>commons-configuration:commons-configuration:jar:1.6</exclude>
                 <exclude>org.apache.httpcomponents:httpclient:jar:4.2.5</exclude>
+                <exclude>org.apache.httpcomponents:httpcomponents-client:jar:4.2.5</exclude>
                 <exclude>org.apache.httpcomponents:httpcore:jar:4.2.4</exclude>
                 <exclude>org.apache.httpcomponents:httpclient:jar:4.5.12</exclude>
+                <exclude>*/lib/httpclient-4.2.5.jar</exclude>
+                <exclude>lib/httpclient-4.2.5.jar</exclude>
                 <exclude>com.sleepycat:je:jar:5.0.73</exclude>
             </excludes>
             <!--3.3.0-LBS-2014-03-->
