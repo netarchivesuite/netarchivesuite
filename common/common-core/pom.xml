@@ -12,7 +12,9 @@
 
   <name>NetarchiveSuite - common - core</name>
   <properties>
-    <bitrepository.version>1.10-SNAPSHOT</bitrepository.version>
+    <!-- This SNAPSHOT version was added in error. We will need to retest with 1.10
+     or downgrade to 1.9 for the next release -->
+    <bitrepository.version>1.9</bitrepository.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomcat.version>${tomcat-embed-core.version}</tomcat.version>
   </properties>

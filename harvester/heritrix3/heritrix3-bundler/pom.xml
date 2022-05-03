@@ -54,7 +54,7 @@
     <dependency>
       <groupId>is.landsbokasafn.crawl-rss</groupId>
       <artifactId>crawl-rss</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.0.2-SNAPSHOT</version>
       <classifier>dist</classifier>
       <type>zip</type>
       <exclusions>
