@@ -62,6 +62,7 @@
                     <exclude>*/lib/httpclient-4.2.5.jar</exclude>
                     <exclude>lib/httpclient-4.2.5.jar</exclude>
                     <exclude>org.apache.httpcomponents:httpcomponents-client:jar:4.2.5</exclude>
+                    <exclude>is.landsbokasafn.crawl-rss:crawl-rss:jar:0.0.1-SNAPSHOT</exclude>
                     <!--exclude>*/lib/httpcore-4.2.4.jar</exclude-->
                 </excludes>
             </unpackOptions>
