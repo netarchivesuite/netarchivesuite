@@ -24,7 +24,7 @@
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
     <jwat.version>1.0.4</jwat.version>
-    <derby.version>10.12.1.1</derby.version>
+    <derby.version>10.14.2.0</derby.version>
     <antiaction.version>0.1.0-RC2</antiaction.version>
     <hibernate-c3p0.version>4.3.6.Final</hibernate-c3p0.version>
     <postgresql.version>42.2.10</postgresql.version>
