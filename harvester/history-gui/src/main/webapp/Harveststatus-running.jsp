@@ -156,9 +156,9 @@ This page displays a list of running jobs.
             String incSortPic = "&uarr;"; // html entity for UPWARDS ARROW
             String descSortPic = "&darr;"; // html entity for DOWNWARDS ARROW
             String noSortPic = ""; // NO ARROW
-            String tabArrow[] = new String[10];
-            Integer tabOrder[] = new Integer[10];
-            for (int i = 0; i < 10; i++) {
+            String tabArrow[] = new String[11];
+            Integer tabOrder[] = new Integer[11];
+            for (int i = 0; i < 11; i++) {
                 tabArrow[i] = noSortPic;
                 tabOrder[i] = 0;
             }
@@ -189,18 +189,18 @@ This page displays a list of running jobs.
             String defaultSortOrderLink = "&" +Constants.SORT_ORDER_PARAM + "=INCR";
     %>
 
-    <tr class="spacerRowBig"><td colspan="13">&nbsp;</td></tr>
+    <tr class="spacerRowBig"><td colspan="14">&nbsp;</td></tr>
 
     <%-- Headline for each harvest definition --%>
     <tr id="<%=encodingHarvestName%>">
-        <th colspan="13">
+        <th colspan="14">
             <fmt:message key="table.running.jobs.harvestName"/>
             &nbsp;
             <a href="<%=harvestDetailsLink%>"><%=harvestName%></a>
         </th>
     </tr>
 
-    <tr class="spacerRowSmall"><td colspan="13">&nbsp;</td></tr>
+    <tr class="spacerRowSmall"><td colspan="14">&nbsp;</td></tr>
 
     <%-- Topmost row of headers for each column of the table --%>
     <tr>
@@ -236,6 +236,14 @@ This page displays a list of running jobs.
             <a href="<%=sortLink %>">
                 <fmt:message key="table.running.jobs.elapsedTime"/>
                 <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.ELAPSED.ordinal()]%>
+            </a>
+        </th>
+        <th class="harvestHeader" rowspan="2">
+        	<% sortLink=sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.SIZE.hashCode()+
+            (tabOrder[HarvestStatusRunningTablesSort.ColumnId.SIZE.ordinal()] == 1 ? sortOrderLink : defaultSortOrderLink) + "#"+encodingHarvestName; %>
+            <a href="<%=sortLink %>">
+            	<fmt:message key="table.running.jobs.size"/>
+            	<%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.SIZE.ordinal()]%>
             </a>
         </th>
         <th class="harvestHeader" colspan="5"><fmt:message key="table.running.jobs.queues"/></th>
@@ -326,6 +334,9 @@ This page displays a list of running jobs.
                 if (cidSort == HarvestStatusRunningTablesSort.ColumnId.QFILES) {
                     info.chooseCompareCriteria(StartedJobInfo.Criteria.QFILES);
                 }
+                if (cidSort == HarvestStatusRunningTablesSort.ColumnId.SIZE) {
+                    info.chooseCompareCriteria(StartedJobInfo.Criteria.SIZE);
+                }
             }
 
             TableSort.SortOrder order = tbs.getSortOrderByHarvestName(harvestName);
@@ -400,6 +411,7 @@ This page displays a list of running jobs.
         </td>
         <td align="right"><%=StringUtils.formatPercentage(info.getProgress())%></td>
         <td align="right"><%=info.getElapsedTime()%></td>
+        <td align="right"><%=HTMLUtils.bytesToGB(info.getTotalBytesWritten(),2)%></td>
         <td align="right"><fmt:formatNumber type="number" value="<%=info.getQueuedFilesCount()%>"/></td>
         <td align="right"><fmt:formatNumber type="number" value="<%=info.getTotalQueuesCount()%>"/></td>
         <td align="right"><fmt:formatNumber type="number" value="<%=info.getActiveQueuesCount()%>"/></td>
