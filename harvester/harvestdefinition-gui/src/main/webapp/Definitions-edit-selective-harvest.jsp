@@ -104,7 +104,8 @@ DomainConfigurations are posted as pairs
 <Constants.DOMAIN_IDENTIFIER>domainName=configurationName
     These configurations are added/included in the harvest definition
 
---%><%@ page import="java.util.ArrayList,
+--%><%@ page
+	import="java.util.ArrayList,
                  java.util.List,
                  java.util.HashMap,
                  java.util.Map,
@@ -134,8 +135,7 @@ DomainConfigurations are posted as pairs
                  dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType,
                  com.antiaction.raptor.dao.AttributeTypeBase,
                  com.antiaction.raptor.dao.AttributeBase"
-         pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+	pageEncoding="UTF-8"%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/>
 <%!private static final I18n I18N
@@ -201,7 +201,7 @@ DomainConfigurations are posted as pairs
 
 <h3 class="page_heading"><fmt:message key="pagetitle;selective.harvest"/></h3>
 
-<form method="post" action="Definitions-edit-selective-harvest.jsp">
+<form id="selective-harvest-form" method="post" action="Definitions-edit-selective-harvest.jsp">
 <%
     // create hidden fields
     if (hdd == null) {
@@ -347,7 +347,25 @@ if (hdd != null) {
     <tr>
         <th width="45%"><fmt:message key="domain"/></th>
         <th width="35%"><fmt:message key="choose.configuration"/></th>
-        <th width="10%"><fmt:message key="remove.from.list"/></th>
+        <th width="10%">
+        	<fmt:message key="remove.from.list"/>
+        	<%
+			    if (sparseDomainConfigurations.size() > 0) {
+			%>
+	        	<div id="deleteAll">
+	        	( <a  onclick="document.getElementById('confirmDeleteAll').style.display = 'block'; document.getElementById('deleteAll').style.display = 'none';">
+	        		<fmt:message key="remove.all.from.list" />
+	        	</a> )
+	        	</div>
+	        	
+	        	<div id="confirmDeleteAll" style="display:none;">
+		        	( <fmt:message key="remove.all.from.list" /> : <a onclick="var e = document.createElement('input'); e.type = 'hidden'; e.name = '<%=Constants.DELETEALL_CONFIGS_PARAM%>'; e.value=true; document.getElementById('selective-harvest-form').appendChild(e); document.getElementById('selective-harvest-form').submit();"><fmt:message key="remove.all.from.list.confirm" /></a> / <a onclick="document.getElementById('confirmDeleteAll').style.display = 'none'; document.getElementById('deleteAll').style.display = 'block';"><fmt:message key="remove.all.from.list.cancel" /></a> )       	
+	        	</div>
+				
+	        <%
+			    }
+			%>
+        </th>
     </tr>
     <%
         // New definitions do not contain any domains

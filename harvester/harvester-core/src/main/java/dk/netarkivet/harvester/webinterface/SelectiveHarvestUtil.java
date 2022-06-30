@@ -113,6 +113,15 @@ public final class SelectiveHarvestUtil {
             return;
         }
 
+        String deleteAllConfigs = request.getParameter(Constants.DELETEALL_CONFIGS_PARAM);
+        // Case where we are removing a configuration
+        // In this we make the delete, and then return;
+        if (deleteAllConfigs != null && Boolean.valueOf(deleteAllConfigs) == true ) {
+            HTMLUtils.forwardOnEmptyParameter(context, Constants.DELETEALL_CONFIGS_PARAM);
+            deleteAllConfigs(context, i18n);
+            return;
+        }
+        
         PartialHarvest hdd = updateHarvestDefinition(context, i18n, unknownDomains, illegalDomains);
 
         ExtendedFieldValueDefinition.processRequest(context, i18n, hdd, ExtendedFieldTypes.HARVESTDEFINITION);
@@ -249,6 +258,26 @@ public final class SelectiveHarvestUtil {
         hddao.removeDomainConfiguration(sph.getOid(), key);
     }
 
+    /**
+     * Delete all configuration from a harvestdefinition.
+     *
+     * @param context The web server context for the JSP page.
+     * @param i18n Translation information for this site section.
+     * @param deleteConfig the configuration to delete, in the form of a domain name, a colon, a configuration name.
+     */
+    private static void deleteAllConfigs(PageContext context, I18n i18n) {
+        HTMLUtils.forwardOnEmptyParameter(context, Constants.HARVEST_PARAM, Constants.SCHEDULE_PARAM);
+        ServletRequest request = context.getRequest();
+        String name = request.getParameter(Constants.HARVEST_PARAM);
+        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+        if (!hddao.exists(name)) {
+            HTMLUtils.forwardWithErrorMessage(context, i18n, "errormsg;harvestdefinition.0.does.not.exist", name);
+            throw new ForwardedToErrorPage("Harvestdefinition '" + name + "' does not exist");
+        }
+        SparsePartialHarvest sph = hddao.getSparsePartialHarvest(name);
+        hddao.removeAllConfigurations(sph.getOid());
+    }
+    
     /**
      * Extract domain configuration list from a map of parameters. All key that starts with Constants.DOMAIN_IDENTIFIER
      * are treated as a concatenation of : DOMAIN_IDENTIFIER + domain name. The corresponding value in the map is
