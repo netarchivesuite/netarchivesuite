@@ -312,7 +312,7 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about running jobs history. */
     RUNNINGJOBSHISTORY {
         static final String NAME = "runningjobshistory";
-        static final int REQUIRED_VERSION = 2;
+        static final int REQUIRED_VERSION = 3;
 
         @Override
         public int getRequiredVersion() {
@@ -327,7 +327,7 @@ public enum HarvesterDatabaseTables {
     /** The table containing information about running jobs monitor. */
     RUNNINGJOBSMONITOR {
         static final String NAME = "runningjobsmonitor";
-        static final int REQUIRED_VERSION = 2;
+        static final int REQUIRED_VERSION = 3;
 
         @Override
         public int getRequiredVersion() {

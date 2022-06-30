@@ -152,6 +152,10 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
 
         /** The job status. */
         private String status;
+        
+        /** Size of warc files in bytes. */
+        private long sizeOnDisk;
+        
 
         public long getDiscoveredFilesCount() {
             return discoveredFilesCount;
@@ -249,6 +253,22 @@ public class CrawlProgressMessage extends HarvesterMessage implements Serializab
         public void setStatus(String status) {
             this.status = status;
         }
+
+		/**
+		 * @return the sizeOnDisk
+		 */
+		public long getSizeOnDisk() {
+			return sizeOnDisk;
+		}
+
+		/**
+		 * @param sizeOnDisk the sizeOnDisk to set
+		 */
+		public void setSizeOnDisk(long sizeOnDisk) {
+			this.sizeOnDisk = sizeOnDisk;
+		}
+        
+        
 
     }
 

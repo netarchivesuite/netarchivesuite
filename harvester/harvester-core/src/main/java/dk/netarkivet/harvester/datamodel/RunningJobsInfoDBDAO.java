@@ -70,7 +70,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
      * Defines the order of columns in the runningJobsMonitor table. Used in SQL queries.
      */
     private static enum HM_COLUMN {
-        jobId, harvestName, elapsedSeconds, hostUrl, progress, queuedFilesCount, totalQueuesCount, activeQueuesCount, retiredQueuesCount, exhaustedQueuesCount, alertsCount, downloadedFilesCount, currentProcessedKBPerSec, processedKBPerSec, currentProcessedDocsPerSec, processedDocsPerSec, activeToeCount, status, tstamp;
+        jobId, harvestName, elapsedSeconds, hostUrl, progress, queuedFilesCount, totalQueuesCount, activeQueuesCount, retiredQueuesCount, exhaustedQueuesCount, alertsCount, downloadedFilesCount, currentProcessedKBPerSec, processedKBPerSec, currentProcessedDocsPerSec, processedDocsPerSec, activeToeCount, status, tstamp, totalBytesWritten;
 
         /**
          * Returns the rank in an SQL query (ordinal + 1).
@@ -177,7 +177,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 } else {
                     sql.append("INSERT INTO runningJobsMonitor (");
                     sql.append(HM_COLUMN.getColumnsInOrder());
-                    sql.append(") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    sql.append(") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 }
 
                 stm = c.prepareStatement(sql.toString());
@@ -201,7 +201,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 stm.setInt(HM_COLUMN.activeToeCount.rank(), startedJobInfo.getActiveToeCount());
                 stm.setInt(HM_COLUMN.status.rank(), startedJobInfo.getStatus().ordinal());
                 stm.setTimestamp(HM_COLUMN.tstamp.rank(), new Timestamp(startedJobInfo.getTimestamp().getTime()));
-
+	            stm.setLong(HM_COLUMN.totalBytesWritten.rank(), startedJobInfo.getTotalBytesWritten());
                 if (update) {
                     stm.setLong(HM_COLUMN.values().length + 1, startedJobInfo.getJobId());
                     stm.setString(HM_COLUMN.values().length + 2, startedJobInfo.getHarvestName());
@@ -234,7 +234,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 c.setAutoCommit(false);
 
                 stm = c.prepareStatement("INSERT INTO runningJobsHistory (" + HM_COLUMN.getColumnsInOrder()
-                        + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                        + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 stm.setLong(HM_COLUMN.jobId.rank(), startedJobInfo.getJobId());
                 stm.setString(HM_COLUMN.harvestName.rank(), startedJobInfo.getHarvestName());
                 stm.setLong(HM_COLUMN.elapsedSeconds.rank(), startedJobInfo.getElapsedSeconds());
@@ -255,7 +255,8 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 stm.setInt(HM_COLUMN.activeToeCount.rank(), startedJobInfo.getActiveToeCount());
                 stm.setInt(HM_COLUMN.status.rank(), startedJobInfo.getStatus().ordinal());
                 stm.setTimestamp(HM_COLUMN.tstamp.rank(), new Timestamp(startedJobInfo.getTimestamp().getTime()));
-
+                stm.setLong(HM_COLUMN.totalBytesWritten.rank(), startedJobInfo.getTotalBytesWritten());
+                
                 stm.executeUpdate();
 
                 c.commit();
@@ -351,7 +352,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 sji.setActiveToeCount(rs.getInt(HM_COLUMN.activeToeCount.rank()));
                 sji.setStatus(CrawlStatus.values()[rs.getInt(HM_COLUMN.status.rank())]);
                 sji.setTimestamp(new Date(rs.getTimestamp(HM_COLUMN.tstamp.rank()).getTime()));
-
+                sji.setTotalBytesWritten(rs.getLong(HM_COLUMN.totalBytesWritten.rank()));
                 infosForHarvest.add(sji);
             }
 
@@ -491,6 +492,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
                 sji.setActiveToeCount(rs.getInt(HM_COLUMN.activeToeCount.rank()));
                 sji.setStatus(CrawlStatus.values()[rs.getInt(HM_COLUMN.status.rank())]);
                 sji.setTimestamp(new Date(rs.getTimestamp(HM_COLUMN.tstamp.rank()).getTime()));
+                sji.setTotalBytesWritten(rs.getLong(HM_COLUMN.totalBytesWritten.rank()));
                 log.debug("getMostRecentByJobId for {}:{}", jobId, sji);
                 return sji;
             }
@@ -976,7 +978,7 @@ public class RunningJobsInfoDBDAO extends RunningJobsInfoDAO {
             sji.setActiveToeCount(rs.getInt(HM_COLUMN.activeToeCount.rank()));
             sji.setStatus(CrawlStatus.values()[rs.getInt(HM_COLUMN.status.rank())]);
             sji.setTimestamp(new Date(rs.getTimestamp(HM_COLUMN.tstamp.rank()).getTime()));
-
+            sji.setTotalBytesWritten(rs.getLong(HM_COLUMN.totalBytesWritten.rank()));
             list.add(sji);
         }
         return list;

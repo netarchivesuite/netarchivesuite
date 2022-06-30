@@ -51,7 +51,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /** list of the compare criteria. */
     public enum Criteria {
-        JOBID, HOST, PROGRESS, ELAPSED, QFILES, TOTALQ, ACTIVEQ, INACTIVEQ, EXHAUSTEDQ
+        JOBID, HOST, PROGRESS, ELAPSED, SIZE, QFILES, TOTALQ, ACTIVEQ, INACTIVEQ, EXHAUSTEDQ
     }
 
     ;
@@ -125,6 +125,9 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /** Number of alerts raised by Heritrix since the crawl began. */
     private long alertsCount;
+    
+    /** Number of byte really written (size on disk). */
+    private long totalBytesWritten;
 
     /** Current job status. */
     private CrawlStatus status;
@@ -163,6 +166,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         this.processedDocsPerSec = NOT_AVAILABLE_NUM;
         this.activeToeCount = (int) NOT_AVAILABLE_NUM;
         this.status = CrawlStatus.PRE_CRAWL;
+        this.totalBytesWritten = NOT_AVAILABLE_NUM;
     }
 
     /**
@@ -319,8 +323,8 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     public CrawlStatus getStatus() {
         return status;
     }
-
-    @Override
+    
+	@Override
     public int compareTo(StartedJobInfo o) throws NullPointerException {
 
         if (o == null) {
@@ -351,6 +355,9 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         if (compareCriteria == StartedJobInfo.Criteria.EXHAUSTEDQ) {
             return Long.valueOf(exhaustedQueuesCount).compareTo(Long.valueOf(o.exhaustedQueuesCount));
         }
+        if (compareCriteria == StartedJobInfo.Criteria.SIZE) {
+            return Long.valueOf(totalBytesWritten).compareTo(Long.valueOf(o.totalBytesWritten));
+        }
         return Long.valueOf(jobId).compareTo(Long.valueOf(o.jobId));
     }
 
@@ -365,17 +372,18 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
     }
 
     @Override
-    public String toString() {
-        return harvestName + " - " + jobId + " {" + "\n\tstatus=" + status.name() + "\n\telapsedSeconds="
-                + elapsedSeconds + "\n\thostUrl=" + hostUrl + "\n\tprogress=" + progress + "\n\tactiveToeCount="
-                + activeToeCount + "\n\talertsCount=" + alertsCount + "\n\tcurrentProcessedKBPerSec="
-                + currentProcessedKBPerSec + "\n\tprocessedKBPerSec=" + processedKBPerSec
-                + "\n\tcurrentProcessedDocsPerSec=" + currentProcessedDocsPerSec + "\n\tprocessedDocsPerSec="
-                + processedDocsPerSec + "\n\tdownloadedFilesCount=" + downloadedFilesCount + "\n\tqueuedFilesCount="
-                + queuedFilesCount + "\n\tactiveQueuesCount=" + activeQueuesCount + "\n\tinactiveQueuesCount="
-                + inactiveQueuesCount + "\n\texhaustedQueuesCount="
-                + exhaustedQueuesCount + "\n\ttotalQueuesCount=" + totalQueuesCount + "\n}";
-    }
+	public String toString() {
+		return "StartedJobInfo [compareCriteria=" + compareCriteria + ", jobId=" + jobId + ", harvestName="
+				+ harvestName + ", timestamp=" + timestamp + ", hostUrl=" + hostUrl + ", progress=" + progress
+				+ ", queuedFilesCount=" + queuedFilesCount + ", downloadedFilesCount=" + downloadedFilesCount
+				+ ", totalQueuesCount=" + totalQueuesCount + ", activeQueuesCount=" + activeQueuesCount
+				+ ", inactiveQueuesCount=" + inactiveQueuesCount + ", retiredQueuesCount=" + retiredQueuesCount
+				+ ", exhaustedQueuesCount=" + exhaustedQueuesCount + ", elapsedSeconds=" + elapsedSeconds
+				+ ", currentProcessedKBPerSec=" + currentProcessedKBPerSec + ", processedKBPerSec=" + processedKBPerSec
+				+ ", currentProcessedDocsPerSec=" + currentProcessedDocsPerSec + ", processedDocsPerSec="
+				+ processedDocsPerSec + ", activeToeCount=" + activeToeCount + ", alertsCount=" + alertsCount
+				+ ", totalBytesWritten=" + totalBytesWritten + ", status=" + status + "]";
+	}
 
     /**
      * Updates the members from a {@link CrawlProgressMessage} instance.
@@ -410,6 +418,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             sji.progress = 0;
             sji.queuedFilesCount = 0;
             sji.totalQueuesCount = 0;
+            sji.totalBytesWritten = 0;
             break;
         case CRAWLER_ACTIVE:
         case CRAWLER_PAUSING:
@@ -445,6 +454,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             sji.processedDocsPerSec = jobInfo.getProcessedDocsPerSec();
             sji.processedKBPerSec = jobInfo.getProcessedKBPerSec();
             sji.queuedFilesCount = jobInfo.getQueuedUriCount();
+            sji.totalBytesWritten = jobInfo.getSizeOnDisk();
             break;
         case CRAWLING_FINISHED:
             // Set progress to 100 %, and reset the other values .
@@ -459,6 +469,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
             sji.processedKBPerSec = 0;
             sji.queuedFilesCount = 0;
             sji.totalQueuesCount = 0;
+            sji.totalBytesWritten = jobInfo.getSizeOnDisk();
             break;
         default:
             log.debug("Nothing to do for state: {}", newStatus);
@@ -600,5 +611,21 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 	public void setInactiveQueuesCount(long inactiveQueuesCount) {
 		this.inactiveQueuesCount = inactiveQueuesCount;
 	}
+
+	/**
+	 * @return the totalBytesWritten
+	 */
+	public long getTotalBytesWritten() {
+		return totalBytesWritten;
+	}
+
+	/**
+	 * @param totalBytesWritten the totalBytesWritten to set
+	 */
+	public void setTotalBytesWritten(long totalBytesWritten) {
+		this.totalBytesWritten = totalBytesWritten;
+	}
+	
+	
 
 }

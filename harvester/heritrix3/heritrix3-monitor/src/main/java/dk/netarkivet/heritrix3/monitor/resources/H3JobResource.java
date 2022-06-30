@@ -29,6 +29,7 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -46,11 +47,11 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitorThread;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
-import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 
 public class H3JobResource implements ResourceAbstract {
 
@@ -211,7 +212,7 @@ public class H3JobResource implements ResourceAbstract {
                 sb.append("<br />\n");
                 sb.append("MaxJobRunningTime: ");
                 sb.append(h3Job.job.getMaxJobRunningTime());
-                sb.append(" ms.<br />\n");
+                sb.append(" ms.<br />\n");          	
                 
                 sb.append("</div>\n");
                 
@@ -460,6 +461,9 @@ public class H3JobResource implements ResourceAbstract {
                         sb.append("<br />\n");
                         sb.append("sizeTotalsReport.totalCount: ");
                         sb.append(job.sizeTotalsReport.totalCount);
+                        sb.append("<br />\n");
+                        sb.append("sizeTotalsReport.sizeOnDisk: ");
+                        sb.append(job.sizeTotalsReport.sizeOnDisk);
                         sb.append("<br />\n");
                     }
                     if (job.rateReport != null) {
