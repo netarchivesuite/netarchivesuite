@@ -24,6 +24,7 @@
 package dk.netarkivet.heritrix3.monitor.resources;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -33,6 +34,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.netarchivesuite.heritrix3wrapper.ScriptResult;
 
 import com.antiaction.common.filter.Caching;
@@ -162,17 +164,37 @@ public class H3FilterResource implements ResourceAbstract {
             sb.append("<br/>\n");
 
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", script);
-
-            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
-            	sb.append("<div style=\"font-size: 14px; font-weight: normal; line-height: 20px;\">\n");
-                sb.append("<p style=\"margin-top: 30px;\">Rejected regex:</p>\n");
-            	sb.append(scriptResult.script.htmlOutput);
-            	sb.append("</div>\n");
-            	sb.append("<label for=\"initials\">User initials:</label>");
-                sb.append("<input type=\"text\" id=\"initials2\" name=\"initials2\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
-                sb.append("<button type=\"submit\" name=\"remove-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-remove\"></i> Remove</button>");
+            if (scriptResult != null && scriptResult.script != null) {
+	            if (Boolean.TRUE.equals(scriptResult.script.failure)) {
+	            	if (scriptResult.script.stackTrace != null) {
+	                	sb.append("<h5>Script failed with the following stacktrace:</h5>\n");
+	                    sb.append("<pre>\n");
+	                    sb.append(StringEscapeUtils.escapeHtml(scriptResult.script.stackTrace));
+	                    sb.append("</pre>\n");
+	            	} else if (scriptResult.script.exception != null) {
+	                	sb.append("<h5>Script failed with the following message:</h5>\n");
+	                    sb.append("<pre>\n");
+	                    sb.append(StringEscapeUtils.escapeHtml(scriptResult.script.exception));
+	                    sb.append("</pre>\n");
+	            	} else {
+	                    sb.append("<b>Unknown script failure!</b></br>\n");
+	            	}
+	            	sb.append("<h5>Raw script result Xml:</h5>\n");
+	                sb.append("<pre>");
+	                sb.append(StringEscapeUtils.escapeHtml(new String(scriptResult.response, StandardCharsets.UTF_8)));
+	                sb.append("</pre>");
+	            } else {
+		            if (scriptResult.script.htmlOutput != null) {
+		            	sb.append("<div style=\"font-size: 14px; font-weight: normal; line-height: 20px;\">\n");
+		                sb.append("<p style=\"margin-top: 30px;\">Rejected regex:</p>\n");
+		            	sb.append(scriptResult.script.htmlOutput);
+		            	sb.append("</div>\n");
+		            	sb.append("<label for=\"initials\">User initials:</label>");
+		                sb.append("<input type=\"text\" id=\"initials2\" name=\"initials2\" value=\"" + initials  + "\" placeholder=\"initials\">\n");
+		                sb.append("<button type=\"submit\" name=\"remove-filter\" value=\"1\" class=\"btn btn-success\"><i class=\"icon-white icon-remove\"></i> Remove</button>");
+		            }
+	            }
             }
-            
             sb.append("</form>\n");
         } else {
             sb.append("Job ");
