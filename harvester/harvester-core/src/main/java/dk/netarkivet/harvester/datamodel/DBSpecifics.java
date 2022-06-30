@@ -282,6 +282,10 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             migrateRunningJobsMonitorTableV1ToV2();
             currentVersion = 2;
         }
+        if (currentVersion == 2 && toVersion >= 3) {
+            migrateRunningJobsMonitorTableV2ToV3();
+            currentVersion = 3;
+        }
         if (currentVersion > HarvesterDatabaseTables.RUNNINGJOBSMONITOR.getRequiredVersion()) {
             throw new NotImplementedException("No method exists for migrating table '"
                     + HarvesterDatabaseTables.RUNNINGJOBSMONITOR.getTablename() + "' from version " + currentVersion
@@ -304,6 +308,11 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             migrateRunningJobsHistoryTableV1ToV2();
             currentVersion = 2;
         }
+        if (currentVersion == 2 && toVersion >= 3) {
+        	migrateRunningJobsHistoryTableV2ToV3();
+            currentVersion = 3;
+        }
+        
         // insert new migrations here
         if (currentVersion > HarvesterDatabaseTables.RUNNINGJOBSHISTORY.getRequiredVersion()) {
             throw new NotImplementedException("No method exists for migrating table '"
@@ -507,6 +516,18 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
 
     protected abstract void createHarvestChannelTable();
 
+    /**
+     * Migrates the 'runningjobshistory' table from version 2 to version 3. This consists of adding the new column
+     * 'totalbyteswritten'.
+     */
+    protected abstract void migrateRunningJobsHistoryTableV2ToV3();
+
+    /**
+     * Migrates the 'runningjobsmonitor' table from version 2 to version 3. This consists of adding the new column
+     * 'totalbyteswritten'.
+     */
+    protected abstract void migrateRunningJobsMonitorTableV2ToV3();
+    
     /**
      * Migrates the 'jobs' table from version 3 to version 4 consisting of a change of the field forcemaxbytes from int
      * to bigint and setting its default to -1. Furthermore the default value for field num_configs is set to 0.
