@@ -237,6 +237,7 @@ public class H3JobResource implements ResourceAbstract {
                 sb.append("<a href=\"");
                 sb.append("/History/Harveststatus-running-jobdetails.jsp?jobID=");
                 sb.append(h3Job.jobId);
+                sb.append("&frontierReportMode=0");
                 sb.append("\" class=\"btn btn-default\">");
                 sb.append("Progression/Queues");
                 sb.append("</a>");

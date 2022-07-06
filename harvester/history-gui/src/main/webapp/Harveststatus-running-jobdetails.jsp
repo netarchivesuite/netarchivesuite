@@ -43,7 +43,8 @@ This page displays details about a running job.
     dk.netarkivet.harvester.harvesting.monitor.HarvestMonitor,
     dk.netarkivet.harvester.harvesting.monitor.StartedJobInfo,
     dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
-    dk.netarkivet.harvester.webinterface.ExportFrontierReportCsvQuery"
+    dk.netarkivet.harvester.webinterface.ExportFrontierReportCsvQuery
+    "
     pageEncoding="UTF-8"%>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
@@ -63,6 +64,16 @@ This page displays details about a running job.
         return;
     }
 
+    int frontierReportMode ;
+    try {
+    	frontierReportMode = HTMLUtils.parseAndCheckInteger(pageContext,
+        		Constants.FRONTIER_REPORT_MODE, 0,3);
+    } catch (ForwardedToErrorPage e) {
+    	frontierReportMode=0;
+    }
+    
+    String currentUrl = HTMLUtils.getUrl(pageContext);
+    
     Job job;
     try {
         job = JobDAO.getInstance().read(jobID);
@@ -121,7 +132,7 @@ This page displays details about a running job.
 
     InMemoryFrontierReport frontierReport =
         HarvestMonitor.getFrontierActiveAndInactiveQueuesReport(jobID, true);
-
+    
 %>
 
 <%--Make header of page--%>
@@ -177,20 +188,45 @@ This page displays details about a running job.
     <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
 
 <%
-
-    if (frontierReport.getSize() > 0) {
-
+	String seedListAsString = "";
+    if (frontierReport.getSize() > 0 && frontierReportMode > 0) {
+        
+    	seedListAsString = job.getSeedListAsString();
+    }
 %>
 
-    <tr><th width="15%" colspan="2">
-        <a id="frontierReport" name="frontierReport">&nbsp;</a> <!-- Anchor  -->
-        <fmt:message key="running.job.details.frontier.title.TopTotalEnqueuesFilter">
-            <fmt:param>
-            <%= StringUtils.formatDate(
-                    frontierReport.getTimestamp(), "yyyy/MM/dd HH:mm") %>
-            </fmt:param>
-        </fmt:message>
-    </th></tr>
+    <tr>
+	    <th width="15%" colspan="2">
+	        <a id="frontierReport" name="frontierReport">&nbsp;</a> <!-- Anchor  -->
+	        <fmt:message key="running.job.details.frontier.title.TopTotalEnqueuesFilter">
+	            <fmt:param>
+	            <%= StringUtils.formatDate(
+	                    frontierReport.getTimestamp(), "yyyy/MM/dd HH:mm") %>
+	            </fmt:param>
+	        </fmt:message>
+	    </th>
+    </tr>
+    <tr>
+    	<td width="15%"  colspan="2">
+    		<fmt:message key="running.job.details.frontier.view"/>&nbsp;
+    		 <% if (frontierReportMode == 0 ) { %>
+               	<fmt:message key="running.job.details.frontier.link.all"/>,&nbsp;
+             <%	} else { %>
+            	 <a href="<%= currentUrl %>?jobID=<%= jobID %>&frontierReportMode=0"><fmt:message key="running.job.details.frontier.link.all"/></a>,&nbsp;
+             <%} %>
+             <% if (frontierReportMode == 1 ) { %>
+               	<fmt:message key="running.job.details.frontier.link.seeds"/>,&nbsp;
+             <%	} else { %>
+            	 <a href="<%= currentUrl %>?jobID=<%= jobID %>&frontierReportMode=1"><fmt:message key="running.job.details.frontier.link.seeds"/></a>,&nbsp;
+             <%} %>
+             <% if (frontierReportMode == 2 ) { %>
+               	<fmt:message key="running.job.details.frontier.link.others"/>&nbsp;
+             <%	} else { %>
+            	 <a href="<%= currentUrl %>?jobID=<%= jobID %>&frontierReportMode=2"><fmt:message key="running.job.details.frontier.link.others"/></a>&nbsp;
+             <%} %>
+
+    	</td>
+    </tr>
     <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
     <tr>
 	    <td colspan="2">
@@ -208,30 +244,66 @@ This page displays details about a running job.
                </tr>
                <%
                    for (FrontierReportLine l : frontierReport.getLines()) {
+                	   String[] cleanDomain = l.getDomainName().split("#");
                %>
-               <tr>
-                <td><%= l.getDomainName() %></td>
-                <td align="right">
-                    <fmt:formatNumber type="number" value="<%= l.getTotalEnqueues() %>"/></td>
-                <td align="right">
-                    <fmt:formatNumber type="number" value="<%= l.getCurrentSize() %>"/></td>
-                <td align="right">
-                    <fmt:formatNumber type="number" value="<%= l.getTotalSpend()%>"/>
-                </td>
-                <td align="right">
-                    <fmt:formatNumber type="number" value="<%= l.getTotalBudget()%>"/>
-                </td>
-                <td><a href="<%= l.getLastQueuedUri() %>" target="_blank">
-                <%= StringUtils.makeEllipsis(l.getLastQueuedUri(), 30) %></a></td>
-               </tr>
-               <%  } %>
+               
+                
+	                <%  
+	                	if (frontierReportMode == 0 ) { %>
+	                		<tr>
+	                			<td><%= l.getDomainName()%></td>
+				                <td align="right">
+				                    <fmt:formatNumber type="number" value="<%= l.getTotalEnqueues() %>"/></td>
+				                <td align="right">
+				                    <fmt:formatNumber type="number" value="<%= l.getCurrentSize() %>"/></td>
+				                <td align="right">
+				                    <fmt:formatNumber type="number" value="<%= l.getTotalSpend()%>"/>
+				                </td>
+				                <td align="right">
+				                    <fmt:formatNumber type="number" value="<%= l.getTotalBudget()%>"/>
+				                </td>
+				                <td><a href="<%= l.getLastQueuedUri() %>" target="_blank">
+				                <%= StringUtils.makeEllipsis(l.getLastQueuedUri(), 30) %></a></td>
+			               </tr>
+	               	<%	} else {
+	                		if ( frontierReportMode == 1  && cleanDomain.length > 0 && seedListAsString.contains(cleanDomain[0])) {%>
+	                		<tr>
+	                			<td><%= l.getDomainName()%></td>
+				                <td align="right">
+				                    <fmt:formatNumber type="number" value="<%= l.getTotalEnqueues() %>"/></td>
+				                <td align="right">
+				                    <fmt:formatNumber type="number" value="<%= l.getCurrentSize() %>"/></td>
+				                <td align="right">
+				                    <fmt:formatNumber type="number" value="<%= l.getTotalSpend()%>"/>
+				                </td>
+				                <td align="right">
+				                    <fmt:formatNumber type="number" value="<%= l.getTotalBudget()%>"/>
+				                </td>
+				                <td><a href="<%= l.getLastQueuedUri() %>" target="_blank">
+				                <%= StringUtils.makeEllipsis(l.getLastQueuedUri(), 30) %></a></td>
+			               </tr>
+	                	<%	} else if ( frontierReportMode == 2 && cleanDomain.length > 0 && !seedListAsString.contains(cleanDomain[0])) {%>
+	                		<tr>
+	                			<td><%= l.getDomainName()%></td>
+				                <td align="right">
+				                    <fmt:formatNumber type="number" value="<%= l.getTotalEnqueues() %>"/></td>
+				                <td align="right">
+				                    <fmt:formatNumber type="number" value="<%= l.getCurrentSize() %>"/></td>
+				                <td align="right">
+				                    <fmt:formatNumber type="number" value="<%= l.getTotalSpend()%>"/>
+				                </td>
+				                <td align="right">
+				                    <fmt:formatNumber type="number" value="<%= l.getTotalBudget()%>"/>
+				                </td>
+				                <td><a href="<%= l.getLastQueuedUri() %>" target="_blank">
+				                <%= StringUtils.makeEllipsis(l.getLastQueuedUri(), 30) %></a></td>
+			               </tr>
+	                <% 		}
+	                	}
+                } %>
          </table>
 	    </td>
     </tr>
-
-
-
-<% } %>
 
     <tr class="spacerRowBig"><td colspan="2">&nbsp;</td></tr>
 
