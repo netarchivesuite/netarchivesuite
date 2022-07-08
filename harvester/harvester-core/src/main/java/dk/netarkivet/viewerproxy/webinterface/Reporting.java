@@ -23,6 +23,7 @@
 package dk.netarkivet.viewerproxy.webinterface;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -312,39 +314,9 @@ public class Reporting {
         return tempFile;
     }
 
-    /**
-     * Helper method to get sorted File of crawllog lines.
-     *
-     * @param crawlLogLines The crawllog lines output from a job.
-     * @return A File containing the sorted lines.
-     */
-    private static File createSortedResultFile(List<String> crawlLogLines) {
-        final String uuid = UUID.randomUUID().toString();
-        File tempFile = createTempResultFile(uuid);
-        File sortedTempFile = createTempResultFile(uuid + "-sorted");
-        FileUtils.writeCollectionToFile(tempFile, crawlLogLines);
-        FileUtils.sortCrawlLogOnTimestamp(tempFile, sortedTempFile);
-        FileUtils.remove(tempFile);
-        return sortedTempFile;
-    }
 
-    /**
-     * Helper method to get result from a batchjob.
-     *
-     * @param batchJob a certain FileBatchJob
-     * @return a file with the result.
-     */
-    private static File createSortedResultFile(FileBatchJob batchJob) {
-        final String uuid = UUID.randomUUID().toString();
-        File tempFile = createTempResultFile(uuid);
-        File sortedTempFile = createTempResultFile(uuid);
-        BatchStatus status = ArcRepositoryClientFactory.getViewerInstance().batch(batchJob,
-                Settings.get(CommonSettings.USE_REPLICA_ID));
-        status.getResultFile().copyTo(tempFile);
-        FileUtils.sortCrawlLogOnTimestamp(tempFile, sortedTempFile);
-        FileUtils.remove(tempFile);
-        return sortedTempFile;
-    }
+
+
 
     /**
      * Return any crawllog lines for a given jobid matching the given regular expression.
@@ -385,47 +357,31 @@ public class Reporting {
      */
     private static File getCrawlLogLinesUsingHadoop(long jobID, String regex) {
         File cacheFile = getCrawlLogFromCacheOrHdfs(jobID);
-        //TODO Use a pattern like https://stackoverflow.com/questions/65111979/write-a-streamstring-to-a-file-java
-        //to write the results directly to a file and then sort the file externally
-        //Otherwise we get an OOM here !!!!
-        List<String> matches = getMatchingStringsFromFile(cacheFile, regex);
-        return createSortedResultFile(matches);
-    }
-
-    public static File getCrawlLogLinesMatchingDomain(long jobID, String domain) {
-        log.info("Finding matching crawl log lines for {} in job {}", domain, jobID);
-        File cacheFile = getCrawlLogFromCacheOrHdfs(jobID);
-        log.info("Finding matching crawl log lines for {} in job {} in file {}", domain, jobID, cacheFile.getAbsoluteFile());
-        List<String> matches = getMatchingDomainStringsFromFile(cacheFile, domain);
-        log.info("Found {} matches for {} in job {}", matches.size(), domain, jobID);
-        return createSortedResultFile(matches);
-    }
-
-    private static List<String> getMatchingDomainStringsFromFile(File cacheFile, String domain) {
-        try {
-            return org.apache.commons.io.FileUtils.readLines(cacheFile).stream()
-                    .filter(line -> lineMatchesDomain(line, domain)).collect(Collectors.toList());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
-
-    private static boolean lineMatchesDomain(String crawlLine, String domain) {
-        try {
-            String urlS = crawlLine.split("\\s+")[10];
-            URL url = new URL(urlS);
-            if (url.getHost().equals(domain) || url.getHost().endsWith("."+domain)) {
-                log.debug("Domain {} found in crawlline {}", domain, crawlLine);
-                return true;
-            } else {
-                log.debug("Domain {} not found in crawlline {}", domain, crawlLine);
-                return false;
+        Pattern regexp = Pattern.compile(regex);
+        log.info("Filtering cache file {} with regexp {}", cacheFile.getAbsolutePath(), regex);
+        final String uuid = UUID.randomUUID().toString();
+        File tempFile = createTempResultFile(uuid);
+        log.info("Unsorted results in {}." + tempFile.getAbsolutePath());
+        File sortedTempFile = createTempResultFile(uuid + "-sorted");
+        log.info("Sorted results in {}.", sortedTempFile.getAbsolutePath());
+        try (BufferedWriter writer = Files.newBufferedWriter(tempFile.toPath())) {
+            try (BufferedReader reader = Files.newBufferedReader(cacheFile.toPath())) {
+                String line;
+                while ((line = reader.readLine()) != null ) {
+                    if (regexp.matcher(line).matches()) {
+                        writer.write(line);
+                        writer.newLine();
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading file " + cacheFile.getAbsolutePath(), e);
             }
-        } catch (Exception e) {
-            log.debug("No domain to match found in {}", crawlLine);
-            return false;
+        } catch (IOException e) {
+            throw new RuntimeException("Error writing to file " + tempFile.getAbsolutePath());
         }
+        FileUtils.sortCrawlLogOnTimestamp(tempFile, sortedTempFile);
+        FileUtils.remove(tempFile);
+        return sortedTempFile;
     }
 
     private static List<String> getMatchingStringsFromFile(File cacheFile,
@@ -440,6 +396,82 @@ public class Reporting {
         }
         return matches;
     }
+
+    /**
+     * Helper method to get sorted File of crawllog lines.
+     *
+     * @param crawlLogLines The crawllog lines output from a job.
+     * @return A File containing the sorted lines.
+     */
+    private static File createSortedResultFile(List<String> crawlLogLines) {
+        final String uuid = UUID.randomUUID().toString();
+        File tempFile = createTempResultFile(uuid);
+        File sortedTempFile = createTempResultFile(uuid + "-sorted");
+        FileUtils.writeCollectionToFile(tempFile, crawlLogLines);
+        FileUtils.sortCrawlLogOnTimestamp(tempFile, sortedTempFile);
+        FileUtils.remove(tempFile);
+        return sortedTempFile;
+    }
+
+
+    /**
+     * Helper method to get result from a batchjob.
+     *
+     * @param batchJob a certain FileBatchJob
+     * @return a file with the result.
+     */
+    private static File createSortedResultFile(FileBatchJob batchJob) {
+        final String uuid = UUID.randomUUID().toString();
+        File tempFile = createTempResultFile(uuid);
+        File sortedTempFile = createTempResultFile(uuid);
+        BatchStatus status = ArcRepositoryClientFactory.getViewerInstance().batch(batchJob,
+                Settings.get(CommonSettings.USE_REPLICA_ID));
+        status.getResultFile().copyTo(tempFile);
+        FileUtils.sortCrawlLogOnTimestamp(tempFile, sortedTempFile);
+        FileUtils.remove(tempFile);
+        return sortedTempFile;
+    }
+
+    //Called from .jsp
+    public static File getCrawlLogLinesMatchingDomain(long jobID, String domain) {
+        log.info("Finding matching crawl log lines for {} in job {}", domain, jobID);
+        File cacheFile = getCrawlLogFromCacheOrHdfs(jobID);
+        log.info("Finding matching crawl log lines for {} in job {} in file {}", domain, jobID, cacheFile.getAbsoluteFile());
+        List<String> matches = getMatchingDomainStringsFromFile(cacheFile, domain);
+        log.info("Found {} matches for {} in job {}", matches.size(), domain, jobID);
+        return createSortedResultFile(matches);
+    }
+
+    //TODO this is also a walking oom
+    private static List<String> getMatchingDomainStringsFromFile(File cacheFile, String domain) {
+        try {
+            return org.apache.commons.io.FileUtils.readLines(cacheFile).stream()
+                    .filter(line -> lineMatchesDomain(line, domain)).collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    private static boolean lineMatchesDomain(String crawlLine, String domain) {
+        int urlElement = 3;
+        String urlS = crawlLine.split("\\s+")[urlElement];
+        try {
+            URL url = new URL(urlS);
+            if (url.getHost().equals(domain) || url.getHost().endsWith("."+domain)) {
+                log.debug("Domain {} found in crawlline {}", domain, crawlLine);
+                return true;
+            } else {
+                log.debug("Domain {} not found in crawlline {}", domain, crawlLine);
+                return false;
+            }
+        } catch (Exception e) {
+            log.debug("No domain to match found in element {} of '{}' which is '{}'", urlElement, crawlLine, urlS);
+            return false;
+        }
+    }
+
+
 
     private static File getCrawlLogFromCacheOrHdfs(long jobID) {
         File cacheFile = getCrawlLogCache(jobID);
