@@ -385,6 +385,9 @@ public class Reporting {
      */
     private static File getCrawlLogLinesUsingHadoop(long jobID, String regex) {
         File cacheFile = getCrawlLogFromCacheOrHdfs(jobID);
+        //TODO Use a pattern like https://stackoverflow.com/questions/65111979/write-a-streamstring-to-a-file-java
+        //to write the results directly to a file and then sort the file externally
+        //Otherwise we get an OOM here !!!!
         List<String> matches = getMatchingStringsFromFile(cacheFile, regex);
         return createSortedResultFile(matches);
     }
