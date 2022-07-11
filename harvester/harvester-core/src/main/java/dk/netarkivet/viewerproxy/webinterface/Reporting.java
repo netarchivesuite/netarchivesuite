@@ -454,7 +454,7 @@ public class Reporting {
     }
 
     private static boolean lineMatchesDomain(String crawlLine, String domain) {
-        int urlElement = 3;
+        int urlElement = 11;
         String urlS = crawlLine.split("\\s+")[urlElement];
         try {
             URL url = new URL(urlS);
