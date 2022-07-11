@@ -317,7 +317,12 @@ public class HeritrixController extends AbstractRestHeritrixController {
             // Check engine status
             EngineResult engineResult = h3wrapper.rescanJobDirectory();
             if (engineResult != null) {
-                List<JobShort> knownJobs = engineResult.engine.jobs;
+                List<JobShort> knownJobs = null;
+                if (engineResult.engine == null) {
+                    knownJobs = new ArrayList<>();
+                } else {
+                    knownJobs = engineResult.engine.jobs;
+                }
                 if (knownJobs.size() != 1) {
                     log.warn("Should be one job but there is {} jobs: {}", knownJobs.size(),
                             knownJobsToString(engineResult));
@@ -349,7 +354,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
             // interval
             jobResult = h3wrapper.waitForJobState(jobName, null, 10, heritrix3EngineIntervalBetweenRetriesInMillis);
             // Did we get the expected state?
-            if (jobResult.job.crawlControllerState != null) {
+            if (jobResult.job != null && jobResult.job.crawlControllerState != null) {
                 log.warn("The job {} is still lurking about. Shutdown heritrix3 and ignore the job", jobName);
                 List<String> jobsToIgnore = new ArrayList<String>();
                 jobsToIgnore.add(jobName);
