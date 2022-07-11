@@ -90,9 +90,9 @@ insert into schemaversions (tablename, version )
 insert into schemaversions (tablename, version )
     values ( 'global_crawler_trap_expressions', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'runningjobshistory', 2);
+    values ( 'runningjobshistory', 3);
 insert into schemaversions ( tablename, version )
-    values ( 'runningjobsmonitor', 2);
+    values ( 'runningjobsmonitor', 3);
 insert into schemaversions ( tablename, version )
     values ( 'frontierreportmonitor', 1);
 
@@ -540,6 +540,7 @@ CREATE TABLE runningJobsHistory (
      activeToeCount integer NOT NULL,
      status int NOT NULL,
      tstamp timestamp NOT NULL,
+     totalbyteswritten bigint NOT NULL DEFAULT 0,
      PRIMARY KEY (jobId, harvestName, elapsedSeconds, tstamp)
 );
 
@@ -569,6 +570,7 @@ CREATE TABLE runningJobsMonitor (
      activeToeCount integer NOT NULL,
      status integer NOT NULL,
      tstamp timestamp NOT NULL,
+     totalbyteswritten bigint NOT NULL DEFAULT 0,
      PRIMARY KEY (jobId, harvestName)
 );
 

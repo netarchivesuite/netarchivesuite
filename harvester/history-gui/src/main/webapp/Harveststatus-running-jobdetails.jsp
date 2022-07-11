@@ -165,6 +165,7 @@ This page displays details about a running job.
                    <th><fmt:message key="table.running.jobs.elapsedTime"/></th>
                    <th><fmt:message key="table.running.jobs.progress"/></th>
                    <th><fmt:message key="table.running.jobs.queuedFiles"/></th>
+                   <th><fmt:message key="table.running.jobs.size"/></th>
                </tr>
                <%
                    for (int i = 0; i < history.length; i++) {
@@ -175,6 +176,7 @@ This page displays details about a running job.
                    <td><%= StringUtils.formatDuration(sji.getElapsedSeconds()) %></td>
                    <td align="right"><%= StringUtils.formatPercentage(sji.getProgress()) %></td>
                    <td align="right"><%= sji.getQueuedFilesCount() %></td>
+                   <td align="right"><%=HTMLUtils.bytesToGB(sji.getTotalBytesWritten(),2)%></td>
                </tr>
                <%
                    }

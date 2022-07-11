@@ -938,6 +938,33 @@ public class HTMLUtils {
         return timestamp != null ? fmt.format(timestamp) : "-";
     }
     
+    /**
+     * Method to format bytes in Go/GB
+     * 
+     * @param bytes
+     *            - the value in bytes
+     * @param digits
+     *            - number of decimals to be displayed
+     * @return human readable format string
+     */
+    
+    public static String bytesToGB(long bytes, int digits) {
+    	double bytesForWork = bytes;
+        String[] dictionary = { "bytes", "KB", "MB", "GB"}; 
+        //, "TB", "PB", "EB", "ZB", "YB" };
+        int index = 0;
+	        for (index = 1; index < dictionary.length; index++) {
+	        	// index=0 
+	        	// && bytesForWork < 1024 ) {
+	            if (bytesForWork == 0) {
+	                break;
+	            }
+	            bytesForWork = bytesForWork / 1024;
+	        }
+	        return String.format("%." + digits + "f", bytesForWork) +  dictionary[dictionary.length-1] ; 
+	        //(index == 0 ? " " + dictionary[index] : dictionary[index]);
+    }
+    
     public static void log(String classname, String msg) {
          log.info(classname + ":" +  msg);
     }

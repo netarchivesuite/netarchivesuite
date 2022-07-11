@@ -34,7 +34,7 @@ import dk.netarkivet.common.utils.TableSort;
 public class HarvestStatusRunningTablesSort {
     /** list of the column id. */
     public enum ColumnId {
-        NONE, ID, HOST, PROGRESS, ELAPSED, QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ, RETIREDQ
+        NONE, ID, HOST, PROGRESS, ELAPSED, SIZE, QFILES, TOTALQ, ACTIVEQ, EXHAUSTEDQ, RETIREDQ
     }
 
     ;
@@ -62,6 +62,8 @@ public class HarvestStatusRunningTablesSort {
             return HarvestStatusRunningTablesSort.ColumnId.PROGRESS;
         } else if (HarvestStatusRunningTablesSort.ColumnId.ELAPSED.hashCode() == columnIdInt) {
             return HarvestStatusRunningTablesSort.ColumnId.ELAPSED;
+        } else if (HarvestStatusRunningTablesSort.ColumnId.SIZE.hashCode() == columnIdInt) {
+            return HarvestStatusRunningTablesSort.ColumnId.SIZE;
         } else if (HarvestStatusRunningTablesSort.ColumnId.QFILES.hashCode() == columnIdInt) {
             return HarvestStatusRunningTablesSort.ColumnId.QFILES;
         } else if (HarvestStatusRunningTablesSort.ColumnId.TOTALQ.hashCode() == columnIdInt) {

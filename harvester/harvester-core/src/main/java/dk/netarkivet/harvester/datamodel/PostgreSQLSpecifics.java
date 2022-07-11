@@ -176,6 +176,26 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         HarvestDBConnection.updateTable("runningjobsmonitor", 1);
     }
 
+    /**
+     * Migrates the 'runningjobshistory' table from version 2 to version 3. This consists of adding the new column
+     * 'totalbyteswritten'.
+     */
+    @Override
+    protected void migrateRunningJobsHistoryTableV2ToV3() {
+        String[] sqlStatements = {"ALTER TABLE runningjobshistory ADD COLUMN totalbyteswritten BIGINT NOT NULL DEFAULT 0"};
+        HarvestDBConnection.updateTable("runningjobshistory", 3, sqlStatements);
+    }
+
+    /**
+     * Migrates the 'runningjobsmonitor' table from version 2 to version 3. This consists of adding the new column
+     * 'totalbyteswritten'.
+     */
+    @Override
+    protected void migrateRunningJobsMonitorTableV2ToV3() {
+        String[] sqlStatements = {"ALTER TABLE runningjobsmonitor ADD COLUMN totalbyteswritten BIGINT NOT NULL DEFAULT 0"};
+        HarvestDBConnection.updateTable("runningjobsmonitor", 3, sqlStatements);
+    }
+    
     // Below DB changes introduced with development release 3.15
     // with changes to tables 'runningjobshistory', 'runningjobsmonitor',
     // 'configurations', 'fullharvests', and 'jobs'.
