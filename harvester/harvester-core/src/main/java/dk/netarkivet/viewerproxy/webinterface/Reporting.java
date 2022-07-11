@@ -37,8 +37,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -359,6 +361,20 @@ public class Reporting {
         File cacheFile = getCrawlLogFromCacheOrHdfs(jobID);
         Pattern regexp = Pattern.compile(regex);
         log.info("Filtering cache file {} with regexp {}", cacheFile.getAbsolutePath(), regex);
+        Predicate<String> stringPredicate = s -> regexp.matcher(s).matches();
+        return getFilteredFile(cacheFile, stringPredicate);
+    }
+
+    //Called from .jsp
+    public static File getCrawlLogLinesMatchingDomain(long jobID, String domain) {
+        log.info("Finding matching crawl log lines for {} in job {}", domain, jobID);
+        File cacheFile = getCrawlLogFromCacheOrHdfs(jobID);
+        log.info("Finding matching crawl log lines for {} in job {} in file {}", domain, jobID, cacheFile.getAbsoluteFile());
+        Predicate<String> domainFilteringPredicate = s -> lineMatchesDomain(s, domain);
+        return getFilteredFile(cacheFile, domainFilteringPredicate);
+    }
+
+    private static File getFilteredFile(File cacheFile, Predicate<String> stringPredicate) {
         final String uuid = UUID.randomUUID().toString();
         File tempFile = createTempResultFile(uuid);
         log.info("Unsorted results in {}." + tempFile.getAbsolutePath());
@@ -368,8 +384,9 @@ public class Reporting {
             try (BufferedReader reader = Files.newBufferedReader(cacheFile.toPath())) {
                 String line;
                 while ((line = reader.readLine()) != null ) {
-                    if (regexp.matcher(line).matches()) {
-                        writer.write(line);
+                    Optional<String> result = Stream.of(line).filter(stringPredicate).findAny();
+                    if (result.isPresent()) {
+                        writer.write(result.get());
                         writer.newLine();
                     }
                 }
@@ -432,15 +449,7 @@ public class Reporting {
         return sortedTempFile;
     }
 
-    //Called from .jsp
-    public static File getCrawlLogLinesMatchingDomain(long jobID, String domain) {
-        log.info("Finding matching crawl log lines for {} in job {}", domain, jobID);
-        File cacheFile = getCrawlLogFromCacheOrHdfs(jobID);
-        log.info("Finding matching crawl log lines for {} in job {} in file {}", domain, jobID, cacheFile.getAbsoluteFile());
-        List<String> matches = getMatchingDomainStringsFromFile(cacheFile, domain);
-        log.info("Found {} matches for {} in job {}", matches.size(), domain, jobID);
-        return createSortedResultFile(matches);
-    }
+
 
     //TODO this is also a walking oom
     private static List<String> getMatchingDomainStringsFromFile(File cacheFile, String domain) {
