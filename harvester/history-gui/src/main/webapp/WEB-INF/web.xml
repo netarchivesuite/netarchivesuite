@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     <display-name>
         Harvest History
     </display-name>
+    <absolute-ordering/>
     <servlet>
         <servlet-name>HistoryServlet</servlet-name>
         <display-name>HistoryServlet</display-name>
