@@ -273,6 +273,13 @@ public abstract class HarvestDefinitionDAO implements DAO, Iterable<HarvestDefin
     public abstract void removeDomainConfiguration(Long harvestId, SparseDomainConfiguration key);
 
     /**
+     * Remove all Domain configuration from a specific PartialHarvest.
+     *
+     * @param harvestId Id for a specific PartialHarvest
+     */
+    public abstract void removeAllConfigurations(Long harvestId);
+    
+    /**
      * Update the given PartialHarvest (i.e. Selective Harvest) with a new time for the next harvestrun. If no selective
      * harvest matching the given id is found in the storage, the method should silently return.
      *

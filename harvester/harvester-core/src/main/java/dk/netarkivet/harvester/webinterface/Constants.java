@@ -109,6 +109,8 @@ public class Constants {
     public static final String DELETEDOMAIN_PARAM = "deletedomain";
 
     public static final String DELETECONFIG_PARAM = "deleteconfig";
+    
+    public static final String DELETEALL_CONFIGS_PARAM = "deleteallconfigs";
 
     public static final String EDITION_PARAM = "edition";
 

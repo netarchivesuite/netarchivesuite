@@ -1276,6 +1276,36 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             HarvestDBConnection.release(connection);
         }
     }
+    
+    /*
+     * Removes all the entry in harvest_configs, that binds a certain this PartialHarvest. TODO maybe
+     * update the edition as well.
+     */
+    @Override
+    public void removeAllConfigurations(Long harvestId) {
+        if (harvestId == null) {
+            // Don't need to do anything, if PartialHarvest is not
+            // yet stored in database
+            log.warn("No removal of domainConfiguration, " + "as harvestId is null");
+            return;
+        }
+        Connection connection = HarvestDBConnection.get();
+        PreparedStatement s = null;
+        try {
+            s = connection.prepareStatement(
+                    "DELETE FROM harvest_configs WHERE harvest_id = ? ");
+            s.setLong(1, harvestId);
+            s.executeUpdate();
+        } catch (SQLException e) {
+            log.warn("Exception thrown while removing all domainconfiguration: {}", ExceptionUtils.getSQLExceptionCause(e),
+                    e);
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+            DBUtils.rollbackIfNeeded(connection,
+                    "removing all DomainConfiguration from harvest w/id " + harvestId + " failed", harvestId);
+            HarvestDBConnection.release(connection);
+        }
+    }
 
     @Override
     public void updateNextdate(long harvestId, Date nextdate) {
