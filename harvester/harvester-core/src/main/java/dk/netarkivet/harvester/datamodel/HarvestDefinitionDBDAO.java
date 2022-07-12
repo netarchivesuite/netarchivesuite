@@ -771,7 +771,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.close();
             s = c.prepareStatement("SELECT jobs.harvest_num, SUM(historyinfo.bytecount), "
                     + "SUM(historyinfo.objectcount)," + "COUNT(jobs.status)" + " FROM jobs, historyinfo "
-                    + " WHERE jobs.harvest_id = ? AND historyinfo.job_id = jobs.job_id" + " GROUP BY jobs.harvest_num"
+                    + " WHERE jobs.harvest_id = ? AND historyinfo.job_id = jobs.job_id AND jobs.harvest_id = historyinfo.harvest_id" + " GROUP BY jobs.harvest_num"
                     + " ORDER BY jobs.harvest_num");
             s.setLong(1, harvestID);
             res = s.executeQuery();
