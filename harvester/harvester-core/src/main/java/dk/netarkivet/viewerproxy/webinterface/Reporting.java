@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.slf4j.Logger;
@@ -465,8 +466,15 @@ public class Reporting {
     private static boolean lineMatchesDomain(String crawlLine, String domain) {
         int urlElement = 10;
         String urlS = crawlLine.split("\\s+")[urlElement];
+        String[] schemes = {"http","https"};
+        UrlValidator urlValidator = new UrlValidator(schemes);
         try {
-            URL url = new URL(urlS);
+            URL url = null;
+            if (urlValidator.isValid(urlS)) {
+                url = new URL(urlS);
+            } else if (urlValidator.isValid("http://" + urlS)) {
+                url = new URL("http://" + urlS);
+            }
             if (url.getHost().equals(domain) || url.getHost().endsWith("."+domain)) {
                 log.debug("Domain {} found in crawlline {}", domain, crawlLine);
                 return true;
@@ -475,7 +483,7 @@ public class Reporting {
                 return false;
             }
         } catch (Exception e) {
-            log.debug("No domain to match found in element {} of '{}' which is '{}'", urlElement, crawlLine, urlS);
+            log.warn("Exception finding seed domain. No domain to match found in element {} of '{}' which is '{}'", urlElement, crawlLine, urlS, e);
             return false;
         }
     }
