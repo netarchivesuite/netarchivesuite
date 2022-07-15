@@ -19,8 +19,8 @@
     <webarchive-commons.version>1.1.5</webarchive-commons.version>
     <!-- Heritrix versions are from https://github.com/netarchivesuite/heritrix3 which tracks the official
      repository at https://github.com/internetarchive/heritrix3 as closely as we can -->
-    <heritrix3.version>3.4.0-NAS-7.4-SNAPSHOT</heritrix3.version>
-    <heritrix3-wrapper.version>1.0.5-SNAPSHOT</heritrix3-wrapper.version>
+    <heritrix3.version>3.4.0-NAS-7.4</heritrix3.version>
+    <heritrix3-wrapper.version>1.0.5</heritrix3-wrapper.version>
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
     <jwat.version>1.0.4</jwat.version>
@@ -134,7 +134,6 @@
   <description>The NetarchiveSuite is a complete web archiving software package developed from 2004 and onwards. The
     primary function of the NetarchiveSuite is to plan, schedule and run web harvests of parts of the Internet. It
     scales to a wide range of tasks, from small, thematic harvests (e.g. related to special events, or special
-    domains) to harvesting and archiving the content of an entire national domain. The NetarchiveSuite is built
     around the Heritrix web crawler.
   </description>
 
