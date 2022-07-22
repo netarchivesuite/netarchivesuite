@@ -545,6 +545,13 @@ public class HeritrixController extends AbstractRestHeritrixController {
             currentActiveToecount = -1;
         }
         jStatus.setActiveToeCount(currentActiveToecount);
+        
+        Long sizeOnDisk = job.job.sizeTotalsReport.sizeOnDisk;
+        if (sizeOnDisk == null) {
+        	sizeOnDisk = -1L;
+        }
+        jStatus.setSizeOnDisk(sizeOnDisk);
+        
     }
 
     /**
