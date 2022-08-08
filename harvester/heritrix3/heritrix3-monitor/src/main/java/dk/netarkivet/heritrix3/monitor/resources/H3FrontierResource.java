@@ -131,8 +131,10 @@ public class H3FrontierResource implements ResourceAbstract {
         }
 
         String additionalParams = "";
-    	if (q.length() > 0) {
-            additionalParams += "&q=" + URLEncoder.encode(q, "UTF-8");
+        String regexWithCharEscaped = q.replace("\\", "\\\\");
+        
+    	if (regexWithCharEscaped.length() > 0) {
+            additionalParams += "&q=" + URLEncoder.encode(regexWithCharEscaped, "UTF-8");
     	}
     	if (initials.length() > 0) {
             additionalParams += "&initials=" + URLEncoder.encode(initials, "UTF-8");
@@ -144,10 +146,10 @@ public class H3FrontierResource implements ResourceAbstract {
         if (deleteStr != null && "1".equals(deleteStr) && initials != null && initials.length() > 0) {
             script += "\n";
             script += "\ninitials = \"" + initials + "\"";
-            script += "\ndeleteFromFrontier '" + q + "'\n";
+            script += "\ndeleteFromFrontier '" + regexWithCharEscaped  + "'\n";
         } else {
             script += "\n";
-            script += "\nlistFrontier '" + q + "', " + linesPerPage + ", " + (page - 1) + "\n";
+            script += "\nlistFrontier '" + regexWithCharEscaped + "', " + linesPerPage + ", " + (page - 1) + "\n";
         }
 
         long jobId = numerics.get(0);

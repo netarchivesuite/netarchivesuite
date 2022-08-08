@@ -771,7 +771,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.close();
             s = c.prepareStatement("SELECT jobs.harvest_num, SUM(historyinfo.bytecount), "
                     + "SUM(historyinfo.objectcount)," + "COUNT(jobs.status)" + " FROM jobs, historyinfo "
-                    + " WHERE jobs.harvest_id = ? AND historyinfo.job_id = jobs.job_id" + " GROUP BY jobs.harvest_num"
+                    + " WHERE jobs.harvest_id = ? AND historyinfo.job_id = jobs.job_id AND jobs.harvest_id = historyinfo.harvest_id" + " GROUP BY jobs.harvest_num"
                     + " ORDER BY jobs.harvest_num");
             s.setLong(1, harvestID);
             res = s.executeQuery();
@@ -1273,6 +1273,36 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             DBUtils.closeStatementIfOpen(s);
             DBUtils.rollbackIfNeeded(connection,
                     "removing DomainConfiguration from harvest w/id " + harvestId + " failed", harvestId);
+            HarvestDBConnection.release(connection);
+        }
+    }
+    
+    /*
+     * Removes all the entry in harvest_configs, that binds a certain this PartialHarvest. TODO maybe
+     * update the edition as well.
+     */
+    @Override
+    public void removeAllConfigurations(Long harvestId) {
+        if (harvestId == null) {
+            // Don't need to do anything, if PartialHarvest is not
+            // yet stored in database
+            log.warn("No removal of domainConfiguration, " + "as harvestId is null");
+            return;
+        }
+        Connection connection = HarvestDBConnection.get();
+        PreparedStatement s = null;
+        try {
+            s = connection.prepareStatement(
+                    "DELETE FROM harvest_configs WHERE harvest_id = ? ");
+            s.setLong(1, harvestId);
+            s.executeUpdate();
+        } catch (SQLException e) {
+            log.warn("Exception thrown while removing all domainconfiguration: {}", ExceptionUtils.getSQLExceptionCause(e),
+                    e);
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+            DBUtils.rollbackIfNeeded(connection,
+                    "removing all DomainConfiguration from harvest w/id " + harvestId + " failed", harvestId);
             HarvestDBConnection.release(connection);
         }
     }

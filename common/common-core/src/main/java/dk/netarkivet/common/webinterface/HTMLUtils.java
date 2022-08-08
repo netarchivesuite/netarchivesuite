@@ -969,4 +969,15 @@ public class HTMLUtils {
          log.info(classname + ":" +  msg);
     }
 
+    
+    /**
+     * Return the current URL
+     *
+     * @param context The context of the web page request.
+     */
+    public static String getUrl(PageContext context){
+        ArgumentNotValid.checkNotNull(context, "context");
+        return ((HttpServletRequest) context.getRequest()).getRequestURL().toString();
+
+    }
 }

@@ -31,7 +31,7 @@ public class NASSystemUtil {
      */
     public static Application[] getStdApplications() {
         return new Application[] {
-                new Application("KB-test-bar-01", "BitarchiveApplication", null, null, "KBN"),
+                //new Application("KB-test-bar-01", "BitarchiveApplication", null, null, "KBN"),
                 //new Application("KB-TEST-BAR-016", "BitarchiveApplication", "BitApp_1", null, "KBN"),
                 //new Application("KB-TEST-BAR-016", "BitarchiveApplication", "BitApp_2", null, "KBN"),
                 //new Application("KB-TEST-BAR-016", "BitarchiveApplication", "BitApp_3", null, "KBN"),
