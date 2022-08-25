@@ -774,13 +774,15 @@ public class DomainTester extends DataModelTestCase {
         assertTrue("Configuration should have a seedlist", conf.getSeedLists().hasNext());
         SeedList seedlist = d.getSeedList((conf.getSeedLists().next()).getName());
         assertNotNull("Default seedlist should exist", seedlist);
-        assertEquals("Default seedlist should contain the domain", "http://www.foo.dk", seedlist.getSeedsAsString()
+        String expectedSeedlistAsString = "http://www.foo.dk\nhttps://www.foo.dk\nhttp://foo.dk\nhttps://foo.dk";
+        assertEquals("Default seedlist should contain the domain", expectedSeedlistAsString, seedlist.getSeedsAsString()
                 .trim());
         Domain d1 = Domain.getDefaultDomain("1.2.3.4");
         assertNotNull("Default domain for IP should be obtainable", d1);
         seedlist = d1.getSeedList((conf.getSeedLists().next()).getName());
         assertNotNull("Default seedlist should exist", seedlist);
-        assertEquals("Default seedlist should contain the domain", "http://1.2.3.4", seedlist.getSeedsAsString().trim());
+        expectedSeedlistAsString = "http://1.2.3.4\nhttps://1.2.3.4";
+        assertEquals("Default seedlist should contain the domain", expectedSeedlistAsString, seedlist.getSeedsAsString().trim());
     }
 
     /**
@@ -1046,7 +1048,7 @@ public class DomainTester extends DataModelTestCase {
         SeedList s7 = new SeedList("Åse liste", "http://plidder");
         SeedList s8 = new SeedList("ø liste", "http://plidder");
         SeedList s9 = new SeedList("Æble liste", "http://plidder");
-        SeedList defaultSeeds = new SeedList("defaultseeds", "http://www.unknowndomain.dk");
+        SeedList defaultSeeds = new SeedList("defaultseeds", "http://www.unknowndomain.dk\nhttps://www.unknowndomain.dk\nhttp://unknowndomain.dk\nhttps://unknowndomain.dk");
         d.addSeedList(s1);
         d.addSeedList(s2);
         d.addSeedList(s3);

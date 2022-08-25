@@ -171,9 +171,13 @@ public class Domain extends ExtendableEntity implements Named {
         SeedList seedlist;
         if (Constants.IP_KEY_REGEXP.matcher(domainName).matches()) {
             // IP domains should not get www
-            seedlist = new SeedList(defaultSeedListName, "http://" + domainName);
+            seedlist = new SeedList(defaultSeedListName, "http://" + domainName + "\nhttps://" + domainName);
         } else {
-            seedlist = new SeedList(defaultSeedListName, "http://www." + domainName);
+            seedlist = new SeedList(defaultSeedListName,
+                    "http://www." + domainName +
+                            "\nhttps://www." + domainName +
+                            "\nhttp://" + domainName +
+                            "\nhttps://" + domainName);
         }
         myDomain.addSeedList(seedlist);
 

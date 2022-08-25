@@ -76,7 +76,9 @@ public class GetMetadataMapper extends Mapper<LongWritable, Text, NullWritable, 
             path = HadoopFileUtils.replaceWithCachedPathIfEnabled(context, path);
 
             //TEST this but this fs should work for both local and hdfs files
-            try (FileSystem fs = path.getFileSystem(context.getConfiguration())) {
+            //try (FileSystem fs = path.getFileSystem(context.getConfiguration())) {
+            try {
+                FileSystem fs = path.getFileSystem(context.getConfiguration());
                 log.info("Opened FileSystem {}", fs);
 
                 log.info("Mapper processing {}", path);
