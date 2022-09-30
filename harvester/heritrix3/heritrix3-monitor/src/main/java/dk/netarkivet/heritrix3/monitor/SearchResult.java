@@ -26,6 +26,7 @@ package dk.netarkivet.heritrix3.monitor;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.regex.Matcher;
@@ -82,7 +83,7 @@ public class SearchResult implements Pageable {
         int limit;
         boolean b;
         while (logChannel.read(byteBuffer) != -1) {
-            byteBuffer.flip();
+            ((Buffer) byteBuffer).flip();
             pos = byteBuffer.position();
             mark = pos;
             limit = byteBuffer.limit();
