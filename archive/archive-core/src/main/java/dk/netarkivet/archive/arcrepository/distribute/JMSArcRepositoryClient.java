@@ -24,6 +24,7 @@ package dk.netarkivet.archive.arcrepository.distribute;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -480,7 +481,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
 
         try {
             // retrieve the data from this message and place it in tempDir.
-            File result = File.createTempFile("tmp", "tmp", FileUtils.getTempDir());
+            File result = Files.createTempFile(FileUtils.getTempDir().toPath(), "tmp", "tmp").toFile();
             replyCSMsg.getData(result);
 
             return result;
@@ -530,7 +531,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements ArcRepositor
 
         try {
             // retrieve the data from this message.
-            File result = File.createTempFile("tmp", "tmp", FileUtils.getTempDir());
+            File result = Files.createTempFile(FileUtils.getTempDir().toPath(), "tmp", "tmp").toFile();
             replyCSMsg.getData(result);
 
             return result;

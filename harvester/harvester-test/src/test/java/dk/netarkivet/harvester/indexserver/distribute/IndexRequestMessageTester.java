@@ -30,6 +30,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -144,8 +145,8 @@ public class IndexRequestMessageTester {
             assertTrue("Should be the right exception", e.getMessage().contains("resultFile"));
         }
         assertNull("No index file yet", irMsg.getResultFiles());
-        File tempFile = File.createTempFile("temp", "temp", TestInfo.WORKING_DIR);
-        File tempFile2 = File.createTempFile("temp", "temp", TestInfo.WORKING_DIR);
+        File tempFile = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "temp", "temp").toFile();
+        File tempFile2 = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "temp", "temp").toFile();
         List<RemoteFile> resultFiles = new ArrayList<RemoteFile>(2);
         resultFiles.add(new TestRemoteFile(tempFile, false, false, false));
         resultFiles.add(new TestRemoteFile(tempFile2, false, false, false));
@@ -179,7 +180,7 @@ public class IndexRequestMessageTester {
             assertTrue("Should be the right exception", e.getMessage().contains("resultFile"));
         }
         assertNull("No index file yet", irMsg.getResultFiles());
-        File tempFile = File.createTempFile("temp", "temp", TestInfo.WORKING_DIR);
+        File tempFile = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "temp", "temp").toFile();
         irMsg.setResultFile(new TestRemoteFile(tempFile, false, false, false));
         assertEquals("Should have index file .", tempFile.getName(), irMsg.getResultFile().getName());
         assertFalse("Should be a single-file message", irMsg.isIndexIsStoredInDirectory());
@@ -238,7 +239,7 @@ public class IndexRequestMessageTester {
         assertEquals("Must deserialize to same state", relevantState(irMsg), relevantState(irMsg2));
         irMsg.setNotOk("AARGH");
         irMsg.setFoundJobs(JOB_SET);
-        File tempFile = File.createTempFile("temp", "temp");
+        File tempFile = Files.createTempFile("temp", "temp").toFile();
         tempFile.deleteOnExit();
         List<RemoteFile> resultFiles = new ArrayList<RemoteFile>(1);
         resultFiles.add(new TestRemoteFile(tempFile, false, false, false));

@@ -25,6 +25,7 @@ package dk.netarkivet.harvester.harvesting.monitor;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -180,7 +181,7 @@ class StartedJobHistoryChartGen {
 
             File newPngFile;
             try {
-                newPngFile = File.createTempFile(jobId + "-history", "." + System.currentTimeMillis() + ".png");
+                newPngFile = Files.createTempFile(jobId + "-history", "." + System.currentTimeMillis() + ".png").toFile();
             } catch (IOException e) {
                 LOG.warn("Failed to create temp PNG file for job " + jobId);
                 return;

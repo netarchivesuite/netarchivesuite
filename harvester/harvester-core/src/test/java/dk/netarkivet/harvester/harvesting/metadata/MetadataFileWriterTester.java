@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.harvesting.metadata;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -129,7 +130,7 @@ public class MetadataFileWriterTester {
         textArray.add(someText);
         Set<File> files = new HashSet<>();
         for (int i = 0; i < 10000; i++) {
-            File f = File.createTempFile("metadata", "cdx");
+            File f = Files.createTempFile("metadata", "cdx").toFile();
             FileUtils.writeCollectionToFile(f, textArray);
             files.add(f);
         }

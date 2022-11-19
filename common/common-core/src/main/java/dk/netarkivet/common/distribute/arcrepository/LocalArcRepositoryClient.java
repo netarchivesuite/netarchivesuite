@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -180,7 +181,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         OutputStream os = null;
         File resultFile;
         try {
-            resultFile = File.createTempFile("batch", replicaId, FileUtils.getTempDir());
+            resultFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "batch", replicaId).toFile();
             os = new FileOutputStream(resultFile);
             List<File> files = new ArrayList<File>();
             final FilenameFilter filenameFilter = new FilenameFilter() {
@@ -269,7 +270,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         }
         File copiedTo = null;
         try {
-            copiedTo = File.createTempFile("removeAndGetFile", fileName);
+            copiedTo = Files.createTempFile("removeAndGetFile", fileName).toFile();
         } catch (IOException e) {
             throw new IOFailure("Cannot make temp file to copy '" + fileName + "' into", e);
         }
@@ -319,7 +320,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
             }
 
             // create a file with the results.
-            File res = File.createTempFile("all", "checksums", FileUtils.getTempDir());
+            File res = Files.createTempFile(FileUtils.getTempDir().toPath(), "all", "checksums").toFile();
             FileUtils.writeCollectionToFile(res, checksums);
             return res;
         } catch (IOException e) {
@@ -349,7 +350,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         }
 
         try {
-            File res = File.createTempFile("all", "filenames", FileUtils.getTempDir());
+            File res = Files.createTempFile(FileUtils.getTempDir().toPath(), "all", "filenames").toFile();
             FileUtils.writeCollectionToFile(res, filenames);
             return res;
         } catch (IOException e) {

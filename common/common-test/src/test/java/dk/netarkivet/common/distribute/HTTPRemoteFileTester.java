@@ -30,6 +30,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.nio.file.Files;
 
 import org.junit.After;
 import org.junit.Before;
@@ -74,25 +75,25 @@ public class HTTPRemoteFileTester {
     public void testCopyto() throws Exception {
         // Copying twice with multiple
         HTTPRemoteFile rf = new ForceRemoteHTTPRemoteFile(TestInfo.FILE1, false, false, true);
-        File tempFile = File.createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
+        File tempFile = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "TEST", "COPYTO").toFile();
         rf.copyTo(tempFile);
         String contents = FileUtils.readFile(TestInfo.FILE1);
         assertEquals("Files should be equal", contents, FileUtils.readFile(tempFile));
         assertTrue("Original file should still exist when not deletable", TestInfo.FILE1.exists());
 
-        File tempFile2 = File.createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
+        File tempFile2 = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "TEST", "COPYTO").toFile();
         rf.copyTo(tempFile2);
         assertEquals("Files should be equal, since multiple was true", contents, FileUtils.readFile(tempFile));
         assertTrue("Original file should still exist when not deletable", TestInfo.FILE1.exists());
 
         // Copying twice without multiple
         rf = new ForceRemoteHTTPRemoteFile(TestInfo.FILE1, false, false, false);
-        tempFile = File.createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
+        tempFile = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "TEST", "COPYTO").toFile();
         rf.copyTo(tempFile);
         assertEquals("Files should be equal", contents, FileUtils.readFile(tempFile));
         assertTrue("Original file should still exist when not deletable", TestInfo.FILE1.exists());
 
-        tempFile2 = File.createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
+        tempFile2 = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "TEST", "COPYTO").toFile();
         try {
             rf.copyTo(tempFile2);
             fail("Multiple copies should not be allowed");
@@ -102,7 +103,7 @@ public class HTTPRemoteFileTester {
 
         // Copying with non-multiple and deletable
         rf = new ForceRemoteHTTPRemoteFile(TestInfo.FILE1, false, true, false);
-        tempFile = File.createTempFile("TEST", "COPYTO", TestInfo.WORKING_DIR);
+        tempFile = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "TEST", "COPYTO").toFile();
         rf.copyTo(tempFile);
         assertEquals("Files should be equal", contents, FileUtils.readFile(tempFile));
         assertFalse("Original file shouldn't exist anymore", TestInfo.FILE1.exists());

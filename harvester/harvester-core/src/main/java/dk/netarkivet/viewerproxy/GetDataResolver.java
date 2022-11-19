@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -205,7 +206,7 @@ public class GetDataResolver extends CommandResolver {
     	try {
     		File tempFile = null;
     		try {
-    			tempFile = File.createTempFile(fileName, "download", FileUtils.getTempDir());
+    			tempFile = Files.createTempFile(FileUtils.getTempDir().toPath(), fileName, "download").toFile();
     			client.getFile(fileName, Replica.getReplicaFromId(Settings.get(CommonSettings.USE_REPLICA_ID)),
     					tempFile);
     			long size = tempFile.length();

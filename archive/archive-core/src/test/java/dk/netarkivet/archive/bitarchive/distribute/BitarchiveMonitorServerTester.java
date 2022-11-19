@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -745,7 +746,7 @@ Caused by: dk.netarkivet.common.exceptions.ArgumentNotValid: File '/home/svc/dev
                 msg instanceof GetAllChecksumsMessage);
 
         GetAllChecksumsMessage returnMsg = (GetAllChecksumsMessage) msg;
-        File tempFile = File.createTempFile("checksum", "all", TestInfo.BAMON_WORKING);
+        File tempFile = Files.createTempFile(TestInfo.BAMON_WORKING.toPath(), "checksum", "all").toFile();
         returnMsg.getData(tempFile);
 
         List<String> batchOutput = FileUtils.readListFromFile(tempFile);
@@ -811,7 +812,7 @@ Caused by: dk.netarkivet.common.exceptions.ArgumentNotValid: File '/home/svc/dev
                 msg instanceof GetAllFilenamesMessage);
 
         GetAllFilenamesMessage returnMsg = (GetAllFilenamesMessage) msg;
-        File tempFile = File.createTempFile("filenames", "all", TestInfo.BAMON_WORKING);
+        File tempFile = Files.createTempFile(TestInfo.BAMON_WORKING.toPath(), "filenames", "all").toFile();
         returnMsg.getData(tempFile);
 
         List<String> batchOutput = FileUtils.readListFromFile(tempFile);

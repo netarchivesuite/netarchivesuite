@@ -31,6 +31,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.junit.After;
@@ -167,7 +168,7 @@ public class FileChecksumServerTester {
         cfs.visit(gacMsg);
         conn.waitForConcurrentTasksToFinish();
         // retrieve the results
-        File tmp = File.createTempFile("tmp2", "tmp", TestInfo.BASE_FILE_DIR);
+        File tmp = Files.createTempFile(TestInfo.BASE_FILE_DIR.toPath(), "tmp2", "tmp").toFile();
         gacMsg.getData(tmp);
 
         String archive = FileUtils.readFile(tmp);
@@ -183,7 +184,7 @@ public class FileChecksumServerTester {
         // file in the list of all the filenames.
         GetChecksumMessage csMsg;
         // Get the filenames
-        File outfile = File.createTempFile("tmp", "tmp");
+        File outfile = Files.createTempFile("tmp", "tmp").toFile();
         afnMsg.getData(outfile);
         List<String> names = FileUtils.readListFromFile(outfile);
 
@@ -299,7 +300,7 @@ public class FileChecksumServerTester {
         cfs.visit(gacMsg);
         conn.waitForConcurrentTasksToFinish();
 
-        File tmp = File.createTempFile("tmp1", "tmp", TestInfo.BASE_FILE_DIR);
+        File tmp = Files.createTempFile(TestInfo.BASE_FILE_DIR.toPath(), "tmp1", "tmp").toFile();
         gacMsg.getData(tmp);
 
         assertNotNull("The file should exist.", tmp.isFile());
@@ -312,7 +313,7 @@ public class FileChecksumServerTester {
         conn.waitForConcurrentTasksToFinish();
 
         // Get the filenames
-        File outfile = File.createTempFile("tmp", "tmp");
+        File outfile = Files.createTempFile("tmp", "tmp").toFile();
         gafMsg.getData(outfile);
         List<String> filenames = FileUtils.readListFromFile(outfile);
 
@@ -331,7 +332,7 @@ public class FileChecksumServerTester {
         conn.waitForConcurrentTasksToFinish();
 
         // Get the filenames
-        outfile = File.createTempFile("tmp", "tmp");
+        outfile = Files.createTempFile("tmp", "tmp").toFile();
         gafMsg.getData(outfile);
         filenames = FileUtils.readListFromFile(outfile);
 

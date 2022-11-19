@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Date;
 
 import org.archive.io.ArchiveReader;
@@ -193,7 +194,7 @@ public class Bitarchive {
 
         File tmpFile = null;
         try {
-            tmpFile = File.createTempFile("BatchOutput", "", FileUtils.getTempDir());
+            tmpFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "BatchOutput", "").toFile();
             final OutputStream os = new FileOutputStream(tmpFile);
 
             try {
