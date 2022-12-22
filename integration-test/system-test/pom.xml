@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>integration-test</artifactId>
-    <version>7.4.4-SNAPSHOT</version>
+    <version>7.4.4</version>
   </parent>
 
   <artifactId>system-test</artifactId>
@@ -102,13 +102,13 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>common-core</artifactId>
-      <version>7.4.4-SNAPSHOT</version>
+      <version>7.4.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>archive-core</artifactId>
-      <version>7.4.4-SNAPSHOT</version>
+      <version>7.4.4</version>
       <scope>test</scope>
     </dependency>
 
