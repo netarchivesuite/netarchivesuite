@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>harvester</artifactId>
-    <version>7.4.4</version>
+    <version>7.4.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>harvester-test</artifactId>
