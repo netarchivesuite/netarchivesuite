@@ -975,6 +975,7 @@
         <executions>
           <execution>
             <id>attach-sources</id>
+            <phase>none</phase>
             <!--Disable the release-profile broken source plugin. See http:/<phase>none</phase>/blog.peterlynch.ca/2010/05/maven-how-to-prevent-generate-sources.html-->
           </execution>
           <execution>
