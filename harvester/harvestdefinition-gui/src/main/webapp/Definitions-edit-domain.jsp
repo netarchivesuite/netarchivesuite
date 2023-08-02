@@ -319,6 +319,10 @@ Display all the form information for this domain
         <tr>
             <th><fmt:message key="crawler.traps"/></th>
         </tr>
+        <tr><td><a id="showCrawlertraps" href="" onclick="showHideCrawlertraps();return false;">
+            <span id="showCrawlerTrap"><fmt:message key="show.crawler.traps"/></span>
+            <span id="hideCrawlerTrap"><fmt:message key="hide.crawler.traps"/></span>
+        </a></td></tr>
         <tr id="crawlertrapRow">
             <td>
                 <textarea rows="<%=Constants.CRAWLERTRAPS_ROWS%>" cols="<%=Constants.CRAWLERTRAPS_COLUMNS%>"
@@ -330,15 +334,23 @@ Display all the form information for this domain
     </table>
 </div>
 
-<a id="showCrawlertraps" href="" onclick="showCrawlertraps();return false;">
-    <fmt:message key="show.crawler.traps"/></a>
-    
+
 <script type="text/javascript">
-    document.getElementById("crawlertrapRow").style.display = "none";
-    function showCrawlertraps() {
+document.getElementById("crawlertrapRow").style.display = "none";
+document.getElementById("hideCrawlerTrap").style.display = "none";
+function showHideCrawlertraps() {
+    if (document.getElementById("hideCrawlerTrap").style.display == "none") {
+        // show crawler traps
         document.getElementById("crawlertrapRow").style.display = "block";
-        document.getElementById("showCrawlertraps").style.display = "none";
+        document.getElementById("hideCrawlerTrap").style.display = "block";
+        document.getElementById("showCrawlerTrap").style.display = "none";
+    } else {
+        // hide crawler traps
+        document.getElementById("crawlertrapRow").style.display = "none";
+        document.getElementById("hideCrawlerTrap").style.display = "none";
+        document.getElementById("showCrawlerTrap").style.display = "block";
     }
+}
 </script>
 
 <br/>
