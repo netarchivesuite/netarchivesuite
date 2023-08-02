@@ -1104,9 +1104,12 @@ public class JobDBDAO extends JobDAO {
         
         List<String> jobIdRangeIds = query.getPartialJobIdRangeAsList(false);
         List<String> jobIdRanges = query.getPartialJobIdRangeAsList(true);
+        if (!query.getJobIdRange().isEmpty()) {
+            sql.append(" AND (");
+        }
         if (!jobIdRangeIds.isEmpty()) {
         	String comma = "";
-        	sql.append(" AND (jobs.job_id IN (");
+            sql.append("jobs.job_id IN (");
         	for(String id : jobIdRangeIds) {
         		//id
         		sql.append(comma);
@@ -1119,19 +1122,30 @@ public class JobDBDAO extends JobDAO {
         	
         }
         if(!jobIdRanges.isEmpty()) {
-        	String andOr = "AND";
+            String andOr = "";
         	if (!jobIdRangeIds.isEmpty()) {
         		andOr = "OR";
         	}
         	
         	for(String range : jobIdRanges) {
         		String[] r = range.split("-");
-        		sql.append(" "+andOr+" jobs.job_id BETWEEN ? AND ? ");
-            	sq.addParameter(Long.class, Long.parseLong(r[0]));
-            	sq.addParameter(Long.class, Long.parseLong(r[1]));
+                if (r[0].isEmpty()) {
+                    // range up to, eg -10
+                    sql.append(" " + andOr + " jobs.job_id <= ? ");
+                    sq.addParameter(Long.class, Long.parseLong(r[1]));
+                } else if (r.length == 1) {
+                    // range starting from, eg 20-
+                    sql.append(" " + andOr + " jobs.job_id >= ? ");
+                    sq.addParameter(Long.class, Long.parseLong(r[0]));
+                } else {
+                    sql.append(" " + andOr + " jobs.job_id BETWEEN ? AND ? ");
+                    sq.addParameter(Long.class, Long.parseLong(r[0]));
+                    sq.addParameter(Long.class, Long.parseLong(r[1]));
+                }
+                andOr = "OR";
         	}
         }
-        if (!jobIdRangeIds.isEmpty()) {
+        if (!query.getJobIdRange().isEmpty()) {
     		sql.append(")");
     	}
 
