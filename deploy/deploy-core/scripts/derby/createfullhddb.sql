@@ -70,9 +70,9 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'config_seedlists', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'harvestdefinitions', 3);
+    values ( 'harvestdefinitions', 4);
 insert into schemaversions ( tablename, version )
-    values ( 'partialharvests', 1);
+    values ( 'partialharvests', 2);
 insert into schemaversions ( tablename, version )
     values ( 'fullharvests', 5);
 insert into schemaversions ( tablename, version )
@@ -325,8 +325,9 @@ create table partialharvests (
     harvest_id bigint not null primary key, -- Unique id for the selective/
                                             --  event harvest definition
     schedule_id bigint not null, -- Schedule for the selective/event harvest
-    nextdate timestamp           -- Time when the selective/event harvest is to
+    nextdate timestamp,          -- Time when the selective/event harvest is to
                                  --  run next time
+    crawlertraps clob(64M)        -- Regexp(s) for excluded urls.
 );
 
 create index partialharvestsnextdate ON partialharvests (nextdate);

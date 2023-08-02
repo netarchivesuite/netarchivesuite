@@ -56,9 +56,9 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'config_seedlists', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'harvestdefinitions', 3);
+    values ( 'harvestdefinitions', 4);
 insert into schemaversions ( tablename, version )
-    values ( 'partialharvests', 1);
+    values ( 'partialharvests', 2);
 insert into schemaversions ( tablename, version )
     values ( 'fullharvests', 5);
 insert into schemaversions ( tablename, version )
@@ -201,6 +201,7 @@ create table harvestdefinitions (
      submitted datetime not null,
      isactive int not null,
      edition bigint not null,
+     channel_id bigint,
      audience varchar(100)
 );
 
@@ -220,7 +221,8 @@ create table fullharvests (
 create table partialharvests (
      harvest_id bigint not null primary key,
      schedule_id bigint not null,
-     nextdate datetime
+     nextdate datetime,
+     crawlertraps longtext
 );
 
 create index partialharvestsnextdate on partialharvests (nextdate);

@@ -70,7 +70,7 @@ INSERT INTO schemaversions ( tablename, version )
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'harvestdefinitions', 4);
 INSERT INTO schemaversions ( tablename, version )
-    VALUES ( 'partialharvests', 1);
+    VALUES ( 'partialharvests', 2);
 INSERT INTO schemaversions ( tablename, version )
     VALUES ( 'fullharvests', 5);
 INSERT INTO schemaversions ( tablename, version )
@@ -294,7 +294,8 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE fullharvests TO netarchivesuite;
 CREATE TABLE partialharvests (
      harvest_id bigint NOT NULL PRIMARY KEY,
      schedule_id bigint NOT NULL,
-     nextdate timestamp
+     nextdate timestamp,
+     crawlertraps text
 );
 
 CREATE INDEX partialharvestsnextdate on partialharvests (nextdate) TABLESPACE tsindex;

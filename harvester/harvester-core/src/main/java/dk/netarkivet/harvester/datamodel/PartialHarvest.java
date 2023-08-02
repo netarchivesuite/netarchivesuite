@@ -30,6 +30,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,11 +38,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +59,7 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.datamodel.dao.DAOProviderFactory;
 import dk.netarkivet.harvester.datamodel.eav.EAV;
 import dk.netarkivet.harvester.datamodel.eav.EAV.AttributeAndType;
+import dk.netarkivet.harvester.utils.CrawlertrapsUtils;
 import dk.netarkivet.harvester.webinterface.EventHarvestUtil;
 
 /**
@@ -79,6 +83,11 @@ public class PartialHarvest extends HarvestDefinition {
      * The next date this harvest definition should run, null if never again.
      */
     private Date nextDate;
+
+    /**
+     * List of crawler traps, that is regexps that should be ignored for this partial harvest.
+     */
+    private List<String> crawlerTraps;
 
     /**
      * Create new instance of a PartialHavest configured according to the properties of the supplied
@@ -107,6 +116,7 @@ public class PartialHarvest extends HarvestDefinition {
         this.comments = comments;
         this.nextDate = schedule.getFirstEvent(new Date());
         this.audience = audience;
+        this.crawlerTraps = Collections.emptyList();
     }
 
     /**
@@ -150,6 +160,67 @@ public class PartialHarvest extends HarvestDefinition {
         this.nextDate = nextDate;
     }
 
+    /**
+     * Returns the list of regexps never to be harvested from this domain, or the empty list if none. The returned list
+     * should never be null.
+     *
+     * @return The list of regexps of url's never to be harvested when harvesting this domain. This list is immutable.
+     */
+    public List<String> getCrawlerTraps() {
+        return crawlerTraps;
+    }
+
+    /**
+     * Sets a list of regular expressions defining urls that should never be harvested from this harvest. The list (after
+     * trimming the strings, and any empty strings have been removed) is copied to a list that is stored immutably.
+     *
+     * @param regExps The list defining urls never to be harvested.
+     * @param strictMode If true, we throw ArgumentNotValid exception if invalid regexps are found
+     * @throws ArgumentNotValid if regExps is null or regExps contains invalid regular expressions (unless strictMode is
+     * false).
+     */
+    public void setCrawlerTraps(List<String> regExps, boolean strictMode) {
+        ArgumentNotValid.checkNotNull(regExps, "List<String> regExps");
+        List<String> cleanedListOfCrawlerTraps = new ArrayList<String>();
+        for (String crawlerTrap : regExps) {
+            log.trace("original trap: '" + crawlerTrap + "'");
+            String trimmedString = crawlerTrap.trim();
+            log.trace("trimmed  trap: '" + trimmedString + "'");
+            if (!(trimmedString.length() == 0)) {
+                cleanedListOfCrawlerTraps.add(crawlerTrap);
+            } else {
+                log.trace("Removed empty string from list of crawlertraps");
+            }
+        }
+        // Validate regexps
+        List<String> errMsgs = new ArrayList<String>();
+        for (String regexp : cleanedListOfCrawlerTraps) {
+        	
+        	boolean wellformed = false;
+            try {
+                Pattern.compile(regexp);
+                wellformed = CrawlertrapsUtils.isCrawlertrapsWellformedXML(regexp);
+                if (!wellformed){
+                	errMsgs.add("The expression '" + regexp + "' is not wellformed XML" 
+                    		+ " . Please correct the expression.");
+                }
+            } catch (PatternSyntaxException e) {
+                errMsgs.add("The expression '" + regexp + "' is not a proper regular expression: " 
+                		+ e.getDescription() + " . Please correct the expression.");
+            }
+        }
+        if (errMsgs.isEmpty()) {
+            if (strictMode){ 
+                throw new ArgumentNotValid(errMsgs.size() +  " errors were found: " + StringUtils.join(errMsgs, ","));
+            } else {
+                log.warn(errMsgs.size() +  " errors were found: " + StringUtils.join(errMsgs, ","));
+            }
+        }
+        crawlerTraps = Collections.unmodifiableList(cleanedListOfCrawlerTraps);
+        if (!crawlerTraps.isEmpty()) {
+            log.trace("Partial Harvest {} has {} crawlertraps", getName(), crawlerTraps.size());
+        }
+    }
     /**
      * Remove domainconfiguration from this partialHarvest.
      *

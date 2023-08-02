@@ -183,6 +183,19 @@ public final class SelectiveHarvestUtil {
 
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
         String audience = request.getParameter(Constants.AUDIENCE_PARAM);
+        String crawlertraps = request.getParameter(Constants.CRAWLERTRAPS_PARAM);
+        List<String> trapList = new ArrayList<String>();
+        if (crawlertraps.length() > 0) {
+            String[] traps = crawlertraps.split("[\\r\\n]+");
+            for (String trap : traps) {
+                if (trap.trim().length() > 0) {
+                    trapList.add(trap);
+                }
+            }
+            log.debug("Now {} crawlertraps for this harvest.", trapList.size());
+        } else {
+        	log.debug("No crawlertraps for this harvest.");
+        }
 
         List<DomainConfiguration> dc = getDomainConfigurations(request.getParameterMap());
         addDomainsToConfigurations(dc, request.getParameter(Constants.DOMAINLIST_PARAM), unknownDomains, illegalDomains);
@@ -196,6 +209,7 @@ public final class SelectiveHarvestUtil {
             }
             PartialHarvest hdd = new PartialHarvest(dc, sched, name, comments, audience);
             hdd.setActive(false);
+            hdd.setCrawlerTraps(trapList, false);
             hddao.create(hdd);
             return hdd;
         } else {
@@ -223,6 +237,7 @@ public final class SelectiveHarvestUtil {
             hdd.setSchedule(sched);
             hdd.setComments(comments);
             hdd.setAudience(audience);
+            hdd.setCrawlerTraps(trapList, false);
             hddao.update(hdd);
             return hdd;
         }

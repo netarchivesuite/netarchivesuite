@@ -159,6 +159,8 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             upgradeEavTypeAttributeTable(currentVersion, toVersion);
         } else if (tableName.equals(HarvesterDatabaseTables.EAVATTRIBUTE.getTablename())) {
             upgradeEavAttributeTable(currentVersion, toVersion);
+        } else if (tableName.equals(HarvesterDatabaseTables.PARTIALHARVESTS.getTablename())) {
+            upgradePartialharvestsTable(currentVersion, toVersion);
         } else {
             // Add new if else when other tables need to be upgraded
             throw new NotImplementedException("No method exists for migrating table '" + tableName + "' to version "
@@ -514,6 +516,19 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
     }
 
+    private void upgradePartialharvestsTable (int currentVersion, int toVersion) {
+        if (currentVersion == 1 && toVersion == 2 ) {
+            migratePartialharvestsv1tov2();
+            currentVersion = 2;
+        }
+         // insert new migrations here
+        if (currentVersion != HarvesterDatabaseTables.PARTIALHARVESTS.getRequiredVersion()) {
+            throw new NotImplementedException("No method exists for migrating table '"
+                    + HarvesterDatabaseTables.PARTIALHARVESTS.getTablename() + "' from version " + currentVersion
+                    + " to version " + toVersion);
+        }
+    }
+
     protected abstract void createHarvestChannelTable();
 
     /**
@@ -705,6 +720,12 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * Migrates the table 'ordertemplates' from version 1 to version 2, adding a boolean 'isActive" flag.
      */
     protected abstract void migrateOrderTemplatesTablev1tov2();
+
+    /**
+    * Migrates the 'partialharvests' table from version 3 to version 4 consisting of adding the bigint channel_id
+    * field.
+    */
+    protected abstract void migratePartialharvestsv1tov2();
 
     /**
      * Update all tables in the enum class {@link HarvesterDatabaseTables} to the required version. There is no attempt

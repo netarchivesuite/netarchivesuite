@@ -35,6 +35,7 @@ import static org.mockito.Mockito.when;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -195,7 +196,7 @@ public class JobDispatcherTest {
 
     private SparsePartialHarvest createDefaultSparsePartialHarvest() {
         SparsePartialHarvest harvest = new SparsePartialHarvest(9L, "TestHarvest", "A comment", 2, new Date(), true, 3,
-                "schedule", new Date(), "The audience", SELECTIVE_HARVEST_CHANNEL.getId());
+                "schedule", new Date(), "The audience", SELECTIVE_HARVEST_CHANNEL.getId(), Collections.emptyList());
         return harvest;
     }
 

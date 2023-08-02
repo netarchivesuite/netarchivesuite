@@ -384,4 +384,10 @@ public class PostgreSQLSpecifics extends DBSpecifics {
         HarvestDBConnection.executeSql("postgresql", tableName, 1 );
     }
 
+    @Override
+    protected void migratePartialharvestsv1tov2() {
+        String[] sqlStatements = {"ALTER TABLE partialharvests ADD COLUMN crawlertraps text"};
+        HarvestDBConnection.updateTable("partialharvests", 2, sqlStatements);
+    }
+
 }
