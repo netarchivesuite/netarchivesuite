@@ -38,11 +38,11 @@ import com.antiaction.common.filter.Caching;
 import com.antiaction.common.templateengine.TemplateBuilderFactory;
 
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
+import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
 import dk.netarkivet.heritrix3.monitor.NASUser;
 import dk.netarkivet.heritrix3.monitor.ResourceAbstract;
 import dk.netarkivet.heritrix3.monitor.ResourceManagerAbstract;
-import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 
 public class H3BudgetResource implements ResourceAbstract {
 
@@ -125,7 +125,12 @@ public class H3BudgetResource implements ResourceAbstract {
         	/* case new budget change */
 	        if (!submit1.isEmpty() && !budget.trim().isEmpty() && !key.trim().isEmpty()) {
 	        	script += "\ninitials = \"" + initials + "\"";
-	            script += "\nchangeBudget ('" + key+ "',"+ budget +")\n";
+	        	String[] keys = key.split("\n");
+	        	for (int i = 0; i < keys.length; i++) {
+	        		if (!keys[i].trim().isEmpty()) {
+	        			script += "\nchangeBudget ('" + keys[i].trim() + "'," + budget + ")\n";
+	        		}
+	        	}
 	        } else {
 	        	if(!submit2.isEmpty()) {
 	        		String[] queues = req.getParameterValues("queueName");
@@ -191,16 +196,16 @@ public class H3BudgetResource implements ResourceAbstract {
 
             /* Budget to modify */
             sb.append("<label style=\"cursor: default;\">Budget to modify:</label>");
-            sb.append("<input type=\"text\" id=\"key\" name=\"key\" value=\"");
+            sb.append("<textarea id=\"key\" name=\"key\" style=\"width: 306px;margin-right: 20px;\" placeholder=\"domain/host name\" rows=\"10\">\n");
             if(!submitWithInitials) {
             	sb.append(key);
             }
-            sb.append("\" style=\"width: 306px;\" placeholder=\"domain/host name\">\n");
+            sb.append("</textarea>");
             sb.append("<input type=\"text\" id=\"budget\" name=\"budget\" value=\"");
             if(!submitWithInitials) {
             	sb.append(budget);
             }
-            sb.append("\" style=\"width:100px\" placeholder=\"new budget\">\n");
+            sb.append("\" style=\"width:100px;vertical-align:top;margin-top:0\" placeholder=\"new budget\">\n");
             
             /* User initials */
             sb.append("<label style=\"cursor: default;\">User initials:</label>");
