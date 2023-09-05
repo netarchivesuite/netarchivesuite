@@ -294,12 +294,20 @@ public class HarvestStatusQuery {
 	        		if(s.contains("-")) {
 	        			//if it's a range eg 11-27
 	        			String[] range = s.split("-");
-	        			if(range.length != 2) {
+                        if(range.length > 2) {
 	        				throw new ArgumentNotValid("Invalid Job IDs range (1-10 or 1,2,3)");
 	                    }
 	        			//check if it's a number
-	        			Long.parseLong(range[0]);
-	        			Long.parseLong(range[1]);
+                        if (range[0].isEmpty()) {
+                            // range up to, eg -10
+                            Long.parseLong(range[1]);
+                        } else if (range.length == 1) {
+                            // range starting from, eg 20-
+                            Long.parseLong(range[0]);
+                        } else {
+                            Long.parseLong(range[0]);
+                            Long.parseLong(range[1]);
+                        }
 	        		} else {
 	        			//check if it's a number
 	        			Long.parseLong(s);
