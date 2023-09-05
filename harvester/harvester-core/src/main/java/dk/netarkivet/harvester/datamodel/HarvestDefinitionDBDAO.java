@@ -172,11 +172,12 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     long scheduleId = DBUtils.selectLongValue(connection,
                             "SELECT schedule_id FROM schedules WHERE name = ?", ph.getSchedule().getName());
                     try (PreparedStatement s = connection
-                            .prepareStatement("INSERT INTO partialharvests ( harvest_id, schedule_id, nextdate ) "
-                                    + "VALUES ( ?, ?, ? )");) {
+                            .prepareStatement("INSERT INTO partialharvests ( harvest_id, schedule_id, nextdate, crawlertraps ) "
+                                    + "VALUES ( ?, ?, ?, ? )");) {
                         s.setLong(1, id);
                         s.setLong(2, scheduleId);
                         DBUtils.setDateMaybeNull(s, 3, ph.getNextDate());
+                        s.setString(4, StringUtils.conjoin("\n", ph.getCrawlerTraps()));
                         s.executeUpdate();
                         createHarvestConfigsEntries(connection, ph, id);
                     }
@@ -342,7 +343,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "       harvestdefinitions.numevents," + "       harvestdefinitions.submitted,"
                     + "       harvestdefinitions.isactive," + "       harvestdefinitions.edition,"
                     + "       harvestdefinitions.audience," + "       schedules.name,"
-                    + "       partialharvests.nextdate, " + "       harvestdefinitions.channel_id "
+                    + "       partialharvests.nextdate, " + "       harvestdefinitions.channel_id, "
+                    + "       partialharvests.crawlertraps "
                     + "FROM harvestdefinitions, partialharvests, schedules" + " WHERE harvestdefinitions.harvest_id = ?"
                     + "   AND harvestdefinitions.harvest_id " + "= partialharvests.harvest_id"
                     + "   AND schedules.schedule_id " + "= partialharvests.schedule_id");
@@ -363,6 +365,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 final String scheduleName = res.getString(8);
                 final Date nextDate = DBUtils.getDateMaybeNull(res, 9);
                 final Long channelId = DBUtils.getLongMaybeNull(res, 10);
+                final String crawlertraps = res.getString(11);
                 s.close();
                 // Found partial harvest -- have to find configurations.
                 // To avoid holding on to the readlock while getting domains,
@@ -398,6 +401,10 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 if (channelId != null) {
                     ph.setChannelId(channelId);
                 }
+                boolean strictMode = false; 
+                List<String> insertList = getCrawlertrapsList(crawlertraps);
+                log.trace("Found {} crawlertraps for harvest '{}' in database", insertList.size(), name);
+                ph.setCrawlerTraps(insertList, strictMode);
 
                 readExtendedFieldValues(ph);
 
@@ -410,6 +417,19 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             throw new IOFailure("SQL Error while reading harvest definition " + harvestDefinitionID + "\n"
                     + ExceptionUtils.getSQLExceptionCause(e), e);
         }
+    }
+    private List<String> getCrawlertrapsList(String crawlertraps){
+        List<String> insertList = new ArrayList<String>();
+        if (crawlertraps != null) {
+            // don't throw exception if illegal regexps are found.
+            String[] traps = crawlertraps.split("\n");
+            for (String trap: traps) {
+                if (!trap.isEmpty()) { // Ignore empty traps (NAS-2480)
+                insertList.add(trap);
+                }
+            }
+        }
+        return insertList;
     }
 
     /**
@@ -477,11 +497,13 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             } else if (hd instanceof PartialHarvest) {
                 PartialHarvest ph = (PartialHarvest) hd;
                 s = c.prepareStatement("UPDATE partialharvests SET " + "schedule_id = "
-                        + "(SELECT schedule_id FROM schedules WHERE schedules.name = ?), " + "nextdate = ? "
+                        + "(SELECT schedule_id FROM schedules WHERE schedules.name = ?), " + "nextdate = ?, "
+                        + "crawlerTraps = ? "
                         + "WHERE harvest_id = ?");
                 s.setString(1, ph.getSchedule().getName());
                 DBUtils.setDateMaybeNull(s, 2, ph.getNextDate());
-                s.setLong(3, ph.getOid());
+                s.setString(3, StringUtils.conjoin("\n", ph.getCrawlerTraps()));
+                s.setLong(4, ph.getOid());
                 rows = s.executeUpdate();
                 log.debug("{} partialharvests records updated", rows);
                 s.close();
@@ -862,7 +884,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 + "       harvestdefinitions.comments," + "       harvestdefinitions.numevents,"
                 + "       harvestdefinitions.submitted," + "       harvestdefinitions.isactive,"
                 + "       harvestdefinitions.edition," + "       schedules.name," + "       partialharvests.nextdate, "
-                + "       harvestdefinitions.audience, " + "       harvestdefinitions.channel_id "
+                + "       harvestdefinitions.audience, " + "       harvestdefinitions.channel_id, "+ "       partialharvests.crawlerTraps "
                 + "FROM harvestdefinitions, partialharvests, schedules" + " WHERE harvestdefinitions.harvest_id "
                 + "       = partialharvests.harvest_id" + " AND (harvestdefinitions.isactive " + " = ?"
                 // This linie is duplicated to allow to select both active
@@ -877,7 +899,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 SparsePartialHarvest sph = new SparsePartialHarvest(res.getLong(1), res.getString(2), res.getString(3),
                         res.getInt(4), new Date(res.getTimestamp(5).getTime()), res.getBoolean(6), res.getLong(7),
                         res.getString(8), DBUtils.getDateMaybeNull(res, 9), res.getString(10),
-                        DBUtils.getLongMaybeNull(res, 11));
+                        DBUtils.getLongMaybeNull(res, 11), getCrawlertrapsList(res.getString(12)));
                 harvests.add(sph);
             }
             return harvests;
@@ -902,7 +924,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                         + "       harvestdefinitions.submitted," + "       harvestdefinitions.isactive,"
                         + "       harvestdefinitions.edition," + "       schedules.name,"
                         + "       partialharvests.nextdate, " + "       harvestdefinitions.audience, "
-                        + "       harvestdefinitions.channel_id "
+                        + "       harvestdefinitions.channel_id, " + "       partialharvests.crawlertraps "
                         + "FROM harvestdefinitions, partialharvests, schedules" + " WHERE harvestdefinitions.name = ?"
                         + "   AND harvestdefinitions.harvest_id " + "= partialharvests.harvest_id"
                         + "   AND schedules.schedule_id " + "= partialharvests.schedule_id");) {
@@ -912,7 +934,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 SparsePartialHarvest sph = new SparsePartialHarvest(res.getLong(1), harvestName, res.getString(2),
                         res.getInt(3), new Date(res.getTimestamp(4).getTime()), res.getBoolean(5), res.getLong(6),
                         res.getString(7), DBUtils.getDateMaybeNull(res, 8), res.getString(9),
-                        DBUtils.getLongMaybeNull(res, 10));
+                        DBUtils.getLongMaybeNull(res, 10), getCrawlertrapsList(res.getString(11)));
                 sph.setExtendedFieldValues(getExtendedFieldValues(sph.getOid()));
                 return sph;
             } else {

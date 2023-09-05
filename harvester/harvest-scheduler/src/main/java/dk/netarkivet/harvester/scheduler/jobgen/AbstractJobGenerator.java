@@ -158,6 +158,9 @@ abstract class AbstractJobGenerator implements JobGenerator {
             newJob = new Job(harvest.getOid(), cfg, orderXMLdoc, channel, harvest.getMaxCountObjects(),
                     harvest.getMaxBytes(), ((FullHarvest) harvest).getMaxJobRunningTime(), harvest.getNumEvents());
         } else {
+            // add specific crawlertraps for the harvest
+            editOrderXMLAddPerHarvestCrawlerTraps(orderXMLdoc, (PartialHarvest) harvest);
+
             newJob = new Job(harvest.getOid(), cfg, orderXMLdoc, channel, Constants.HERITRIX_MAXOBJECTS_INFINITY,
                     Constants.HERITRIX_MAXBYTES_INFINITY, Constants.HERITRIX_MAXJOBRUNNINGTIME_INFINITY,
                     harvest.getNumEvents());
@@ -290,4 +293,9 @@ abstract class AbstractJobGenerator implements JobGenerator {
         return noValidSeeds;
     }
 
+    private HeritrixTemplate editOrderXMLAddPerHarvestCrawlerTraps(HeritrixTemplate orderXMLdoc, PartialHarvest focused) {
+        log.info("Inserting {} crawlertraps for harvest '{}' into the template", focused.getCrawlerTraps().size(), focused.getName());
+        orderXMLdoc.insertCrawlerTraps(focused.getName(), focused.getCrawlerTraps());
+        return orderXMLdoc;
+    }
 }

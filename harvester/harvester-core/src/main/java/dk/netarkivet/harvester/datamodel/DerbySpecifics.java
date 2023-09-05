@@ -430,4 +430,10 @@ public abstract class DerbySpecifics extends DBSpecifics {
         HarvestDBConnection.executeSql("derby", tableName, 1 );
     }
 
+    @Override
+    protected void migratePartialharvestsv1tov2() {
+        String[] sqlStatements = {"ALTER TABLE partialharvests ADD COLUMN crawlertraps CLOB(64M)"};
+        HarvestDBConnection.updateTable("partialharvests", 2, sqlStatements);
+    }
+
 }

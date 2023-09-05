@@ -98,6 +98,8 @@ deleteconfig:
      If present, it must contain a domain name followed by a colon (:) and
      a configuration name on that domain. the given configuration from the
      given domain is deleted from the harvest.
+crawlertraps:
+     String (possibly empty) of crawlertraps for this harvest
 
 
 DomainConfigurations are posted as pairs
@@ -503,6 +505,49 @@ if (hdd != null) {
 <input type="submit" value="<fmt:message key="add.domains"/>"/>
 <br/>
 <br/>
+
+<div id="crawlertraps">
+    <%
+    %>
+    <table class="selection_table">
+        <tr>
+            <th><fmt:message key="crawler.traps"/></th>
+        </tr>
+        <tr><td><a id="showCrawlertraps" href="" onclick="showHideCrawlertraps();return false;">
+            <span id="showCrawlerTrap"><fmt:message key="show.crawler.traps"/></span>
+            <span id="hideCrawlerTrap"><fmt:message key="hide.crawler.traps"/></span>
+        </a></td></tr>
+        <tr id="crawlertrapRow">
+            <td>
+                <textarea rows="<%=Constants.CRAWLERTRAPS_ROWS%>" cols="<%=Constants.CRAWLERTRAPS_COLUMNS%>"
+                          name="<%=Constants.CRAWLERTRAPS_PARAM%>"><%=hdd != null ?
+                            HTMLUtils.escapeHtmlValues(StringUtils.conjoin("\n", hdd.getCrawlerTraps())) : ""
+                    %></textarea>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+    document.getElementById("crawlertrapRow").style.display = "none";
+    document.getElementById("hideCrawlerTrap").style.display = "none";
+    function showHideCrawlertraps() {
+        if (document.getElementById("hideCrawlerTrap").style.display == "none") {
+            // show crawler traps
+            document.getElementById("crawlertrapRow").style.display = "block";
+            document.getElementById("hideCrawlerTrap").style.display = "block";
+            document.getElementById("showCrawlerTrap").style.display = "none";
+        } else {
+            // hide crawler traps
+            document.getElementById("crawlertrapRow").style.display = "none";
+            document.getElementById("hideCrawlerTrap").style.display = "none";
+            document.getElementById("showCrawlerTrap").style.display = "block";
+        }
+    }
+</script>
+<br/>
+<br/>
+
 <input type="submit" value="<fmt:message key="save"/>"
        name="<%=Constants.SAVE_PARAM%>"/>
 </form>

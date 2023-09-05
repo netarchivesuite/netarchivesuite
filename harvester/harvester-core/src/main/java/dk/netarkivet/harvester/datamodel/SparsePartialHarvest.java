@@ -23,6 +23,7 @@
 package dk.netarkivet.harvester.datamodel;
 
 import java.util.Date;
+import java.util.List;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Named;
@@ -81,6 +82,11 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
     private Long channelId;
 
     /**
+     * List of crawler traps, that is regexps that should be ignored for this harvest.
+     */
+    private List<String> crawlerTraps;
+
+    /**
      * Create new instance of SparsePartialHarvest.
      *
      * @param oid id of this harvest.
@@ -94,10 +100,11 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
      * @param nextDate next time this harvest will run (null for never).
      * @param audience The intended audience
      * @param channelId the channel id, or null for the default one
+     * @param crawlerTraps the list of crawlertraps for this harvest
      * @throws ArgumentNotValid if oid, name or comments, or schedule is null, or name or schedule is empty.
      */
     public SparsePartialHarvest(Long oid, String name, String comments, int numEvents, Date submissionDate,
-            boolean active, long edition, String schedule, Date nextDate, String audience, Long channelId) {
+            boolean active, long edition, String schedule, Date nextDate, String audience, Long channelId, List<String> crawlerTraps) {
         super(null);
         ArgumentNotValid.checkNotNull(oid, "Long oid");
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
@@ -114,6 +121,7 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
         this.nextDate = nextDate;
         this.audience = audience;
         this.channelId = channelId;
+        this.crawlerTraps = crawlerTraps;
     }
 
     /**
@@ -204,6 +212,15 @@ public class SparsePartialHarvest extends ExtendableEntity implements Named {
     protected Long getChannelId() {
         return channelId;
     }
+
+    public List<String> getCrawlerTraps() {
+        return crawlerTraps;
+    }
+
+    public void setCrawlerTraps(List<String> crawlerTraps) {
+        this.crawlerTraps = crawlerTraps;
+    }
+
 
     @Override
     protected int getExtendedFieldType() {
