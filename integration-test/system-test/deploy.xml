@@ -1,9 +1,11 @@
 <project name="NetarchiveSuite-Deployment">
   <target name="deploy2test" description="Copies the zip file to the test server">
     <!-- Requires that a private/public key login has been enabled for this account -->
+    <!--
     <scp file="target/NetarchiveSuite-${deployable.postfix}.zip"
          toDir="devel@kb-prod-udv-001.kb.dk:~/nas_versions"
          keyfile="${user.home}/.ssh/id_rsa" />
+         -->
   </target>
 </project>
 
