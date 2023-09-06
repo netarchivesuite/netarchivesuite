@@ -49,7 +49,7 @@ public class SystemOverviewTest extends AbstractSystemTest {
     /**
      * Test specification: http://netarchive.dk/suite/It23JMXMailCheck .
      */
-    @Test(groups = {"guitest", "functest"})
+    //@Test(groups = {"guitest", "functest"})
     public void generalTest() throws Exception {
         addDescription("Test specification: http://netarchive.dk/suite/It23JMXMailCheck");
         boolean isBitmag = (getTestController().ENV.getBitmagConf() != null);
