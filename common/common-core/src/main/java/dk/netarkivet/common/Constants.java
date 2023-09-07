@@ -72,7 +72,7 @@ public final class Constants {
      * The code will try to read the heritrix version from the pom in the jar Manifest. This
      * constant is only ever read as a fallback.
      * */
-    private static final String HERITRIX3_VERSION = "3.4.0-NAS-7.2-SNAPSHOT";
+    private static final String HERITRIX3_VERSION = "3.4.0-NAS-7.5-SNAPSHOT";
 
     /**
      * Read this much data when copying data from a file channel. Note that due to a bug in java, this should never be
