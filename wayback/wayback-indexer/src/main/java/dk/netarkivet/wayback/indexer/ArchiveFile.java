@@ -244,6 +244,8 @@ public class ArchiveFile {
                 collectHadoopResults(fileSystem, jobOutputDir);
             } else {
                 log.warn("Hadoop job failed with exit code '{}'", exitCode);
+                this.setIndexingFailedAttempts(indexingFailedAttempts++);
+                (new ArchiveFileDAO()).update(this);
             }
         } catch (IOException e) {
             log.warn("Failure in indexing {}", filename, e);
