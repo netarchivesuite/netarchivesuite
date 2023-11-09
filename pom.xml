@@ -89,7 +89,7 @@
     <common-html.version>0.1.0-NAS</common-html.version>
     <common-template-engine.version>0.3.0-NAS</common-template-engine.version>
     <twitter4j-core.version>2.2.6</twitter4j-core.version>
-    <json.version>20131018</json.version>
+    <json.version>20230227</json.version>
     <!-- Sonar -->
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
