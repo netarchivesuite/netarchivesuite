@@ -276,6 +276,12 @@ public class HarvesterSettings {
      * web servers.
      */
     public static String CRAWLER_TIMEOUT_NON_RESPONDING = "settings.harvester.harvesting.heritrix.noresponseTimeout";
+
+    /**
+     * If true, upload failures will not cause a job to be marked as failed
+     */
+    public static String ALLOW_UPLOAD_FAILURES = "settings.harvester.harvesting.allowUploadFailures";
+
     /**
      * <b>settings.harvester.monitor.refreshInterval</b>:<br>
      * Time interval in seconds after which the harvest monitor pages will be automatically refreshed.

@@ -357,6 +357,7 @@
             <!-- Default is 400000000 bytes (~400 Mbytes). -->
             <minSpaceLeft>400000000</minSpaceLeft>
             <oldjobsDir>oldjobs</oldjobsDir>
+            <allowUploadFailures>false</allowUploadFailures>
             <channel/>
             <sendReadyInterval>30</sendReadyInterval>
             <sendReadyDelay>300</sendReadyDelay>

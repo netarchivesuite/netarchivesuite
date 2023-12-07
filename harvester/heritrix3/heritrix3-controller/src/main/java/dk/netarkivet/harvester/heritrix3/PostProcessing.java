@@ -318,7 +318,11 @@ public class PostProcessing {
                     File oldJobsDir = new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
                     String errorMsg = "Error uploading file '" + f.getAbsolutePath() + "' Will be moved to the oldjobs directory '"
                             + oldJobsDir.getAbsolutePath() + "'";
-                    errorMessage.append(errorMsg).append("\n").append(e.toString()).append("\n");
+                    //TODO To make upload errors non fatal, simply don't append an errorMessage here. Use a flag.
+                    boolean allowUploadFailures = Settings.getBoolean(HarvesterSettings.ALLOW_UPLOAD_FAILURES);
+                    if (!allowUploadFailures) {
+                        errorMessage.append(errorMsg).append("\n").append(e.toString()).append("\n");
+                    }
                     log.warn(errorMsg, e);
                     failedFiles.add(f);
                 }
