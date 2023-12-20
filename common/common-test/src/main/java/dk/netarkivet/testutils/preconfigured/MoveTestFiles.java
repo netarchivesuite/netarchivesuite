@@ -24,6 +24,7 @@ package dk.netarkivet.testutils.preconfigured;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -82,9 +83,7 @@ public class MoveTestFiles implements TestConfigurationIF {
 
     public File newTmpDir() {
         try {
-            File tmpFile = File.createTempFile(this.getClass().getSimpleName(), "Tmp", workingDir);
-            tmpFile.delete(); // Maybe not necessary
-            tmpFile.mkdir();
+            File tmpFile = Files.createTempDirectory(workingDir.toPath(), this.getClass().getSimpleName() + "Tmp").toFile();
             return tmpFile;
         } catch (IOException e) {
             throw new IOFailure("Failed to create a temp dir in " + workingDir, e);
