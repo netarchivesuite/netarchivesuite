@@ -23,6 +23,7 @@
 package dk.netarkivet.archive.checksum.distribute;
 
 import java.io.File;
+import java.nio.file.Files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -248,7 +249,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             }
 
             // retrieve the data as a file.
-            correctFile = File.createTempFile("correct", filename, FileUtils.getTempDir());
+            correctFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "correct", filename).toFile();
             msg.getData(correctFile);
 
             // Log and notify

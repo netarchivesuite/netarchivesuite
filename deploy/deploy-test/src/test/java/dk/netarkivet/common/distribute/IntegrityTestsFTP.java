@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.net.SocketException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -398,7 +399,7 @@ public class IntegrityTestsFTP {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.FTPRemoteFile");
         RemoteFile rf = RemoteFileFactory.getInstance(testFile2, true, false, true);
         // upload error to ftp server
-        File temp = File.createTempFile("foo", "bar");
+        File temp = Files.createTempFile("foo", "bar").toFile();
         FTPClient client = new FTPClient();
         client.connect(Settings.get(CommonSettings.FTP_SERVER_NAME),
                 Integer.parseInt(Settings.get(CommonSettings.FTP_SERVER_PORT)));

@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -240,7 +241,7 @@ public class DatabaseBasedActiveBitPreservationTester {
         List<String> filelist = new ArrayList<String>();
         filelist.add("integrity1.ARC");
         filelist.add("integrity7.ARC");
-        File tmpFile = File.createTempFile("file", "txt");
+        File tmpFile = Files.createTempFile("file", "txt").toFile();
         FileUtils.writeCollectionToFile(tmpFile, filelist);
 
         ReplicaCacheDatabase.getInstance().addFileListInformation(tmpFile, REPLICA_THREE);
@@ -291,7 +292,7 @@ public class DatabaseBasedActiveBitPreservationTester {
         checksumlist.add("1.arc##1234");
         checksumlist.add("2.arc##2345");
 
-        File checksumFile = File.createTempFile("file", "txt");
+        File checksumFile = Files.createTempFile("file", "txt").toFile();
         FileUtils.writeCollectionToFile(checksumFile, checksumlist);
 
         cache.addChecksumInformation(checksumFile, REPLICA_TWO);
@@ -307,7 +308,7 @@ public class DatabaseBasedActiveBitPreservationTester {
 
         checksumlist.clear();
         checksumlist.add("1.arc##1234");
-        checksumFile = File.createTempFile("file", "txt");
+        checksumFile = Files.createTempFile("file", "txt").toFile();
         FileUtils.writeCollectionToFile(checksumFile, checksumlist);
         cache.addChecksumInformation(checksumFile, REPLICA_TWO);
         FileUtils.remove(checksumFile);
@@ -473,7 +474,7 @@ public class DatabaseBasedActiveBitPreservationTester {
                 return overrideBatch;
             }
             try {
-                File output = File.createTempFile("Batch", ".dat", TestInfo.WORKING_DIR);
+                File output = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "Batch", ".dat").toFile();
                 File[] in_files = TestInfo.GOOD_ARCHIVE_FILE_DIR.listFiles();
                 FileOutputStream os = new FileOutputStream(output);
                 new BatchLocalFiles(in_files).run(job, os);
@@ -511,7 +512,7 @@ public class DatabaseBasedActiveBitPreservationTester {
             }
             File output = null;
             try {
-                output = File.createTempFile(fileName, ".removed", TestInfo.WORKING_DIR);
+                output = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), fileName, ".removed").toFile();
             } catch (IOException e) {
                 fail("IO error during test.");
             }
@@ -526,7 +527,7 @@ public class DatabaseBasedActiveBitPreservationTester {
         public File getAllChecksums(String replicaId) {
             try {
                 ChecksumJob job = new ChecksumJob();
-                File output = File.createTempFile("checksum", ".all", TestInfo.WORKING_DIR);
+                File output = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "checksum", ".all").toFile();
                 File[] in_files = TestInfo.GOOD_ARCHIVE_FILE_DIR.listFiles();
                 FileOutputStream os = new FileOutputStream(output);
                 new BatchLocalFiles(in_files).run(job, os);
@@ -540,7 +541,7 @@ public class DatabaseBasedActiveBitPreservationTester {
         @Override
         public File getAllFilenames(String replicaId) {
             try {
-                File result = File.createTempFile("temp", "temp");
+                File result = Files.createTempFile("temp", "temp").toFile();
                 FileWriter fw = new FileWriter(result);
                 File[] files = TestInfo.GOOD_ARCHIVE_FILE_DIR.listFiles();
 

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,7 +46,7 @@ public class CrawlLogExtractionMapperTester extends HadoopMiniClusterTestCase {
     public void testGetCrawlLogWARCMetadataFile() throws Exception {
         String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
         // Write the input lines to the the input file
-        File jobInputFile = File.createTempFile("tmp", UUID.randomUUID().toString());
+        File jobInputFile = Files.createTempFile("tmp", UUID.randomUUID().toString()).toFile();
         org.apache.commons.io.FileUtils.writeStringToFile(jobInputFile, "file://" + WARC_FILE.getAbsolutePath());
         jobInputFile.deleteOnExit();
         String regex = ".*(https?:\\/\\/(www\\.)?|dns:|ftp:\\/\\/)([\\w_-]+\\.)?([\\w_-]+\\.)?([\\w_-]+\\.)?"
@@ -84,7 +85,7 @@ public class CrawlLogExtractionMapperTester extends HadoopMiniClusterTestCase {
     public void testGetCrawlLogARCMetadataFile() throws Exception {
         String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
         // Write the input lines to the the input file
-        File jobInputFile = File.createTempFile("tmp", UUID.randomUUID().toString());
+        File jobInputFile = Files.createTempFile("tmp", UUID.randomUUID().toString()).toFile();
         org.apache.commons.io.FileUtils.writeStringToFile(jobInputFile, "file://" + ARC_FILE.getAbsolutePath());
         jobInputFile.deleteOnExit();
         String regex = ".*(https?:\\/\\/(www\\.)?|dns:|ftp:\\/\\/)([\\w_-]+\\.)?([\\w_-]+\\.)?([\\w_-]+\\.)?"
@@ -125,7 +126,7 @@ public class CrawlLogExtractionMapperTester extends HadoopMiniClusterTestCase {
     private static File createTempResultFile(String uuidSuffix) {
         File tempFile;
         try {
-            tempFile = File.createTempFile("temp", uuidSuffix + ".txt");
+            tempFile = Files.createTempFile("temp", uuidSuffix + ".txt").toFile();
             tempFile.deleteOnExit();
         } catch (IOException e) {
             throw new IOFailure("Unable to create temporary file", e);

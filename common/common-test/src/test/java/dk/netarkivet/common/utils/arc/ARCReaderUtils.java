@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,8 +71,8 @@ public class ARCReaderUtils {
         try {
             // create an index of the arc-file
 
-            File cdxFile = File.createTempFile("reader-utils", "");
-            File cdxFileSorted = File.createTempFile("reader-utils", "");
+            File cdxFile = Files.createTempFile("reader-utils", "").toFile();
+            File cdxFileSorted = Files.createTempFile("reader-utils", "").toFile();
             CDXUtils.writeCDXInfo(ArcFile, new FileOutputStream(cdxFile));
             FileUtils.makeSortedFile(cdxFile, cdxFileSorted);
             FileUtils.copyFile(cdxFileSorted, new File("/tmp/svc/index/"));

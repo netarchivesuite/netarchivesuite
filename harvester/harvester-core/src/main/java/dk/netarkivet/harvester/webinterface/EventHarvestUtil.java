@@ -25,6 +25,7 @@ package dk.netarkivet.harvester.webinterface;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -74,7 +75,7 @@ public final class EventHarvestUtil {
     		addConfigurations(pageContext, I18N, harvestName, illegalSeeds);
     	} else {
     		//the new seeds is contained indirectly in the formdata in a separate file.
-    		File seedsFile = File.createTempFile("seeds", ".txt", FileUtils.getTempDir());
+    		File seedsFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "seeds", ".txt").toFile();
     		try {
 				processMultidataForm(pageContext, seedsFile, attributeMap);
 			} catch (Throwable e) {

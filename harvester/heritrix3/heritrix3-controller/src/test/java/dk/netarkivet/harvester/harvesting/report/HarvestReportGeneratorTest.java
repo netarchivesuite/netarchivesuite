@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Set;
 
 import org.junit.Test;
@@ -36,8 +37,8 @@ public class HarvestReportGeneratorTest {
 	public void testReportGenerator() throws IOException {
 		File crawldir = new File("src/test/resources/crawldir");
 		PersistentJobData pjd = new PersistentJobData(crawldir);
-		File h3Bundle = File.createTempFile("fake-path-to-h3-bundle", "");
-		File certificat = File.createTempFile("fake-path-to-h3-certificat", "");
+		File h3Bundle = Files.createTempFile("fake-path-to-h3-bundle", "").toFile();
+		File certificat = Files.createTempFile("fake-path-to-h3-certificat", "").toFile();
 		Settings.set(HarvesterSettings.HERITRIX3_BUNDLE, h3Bundle.getAbsolutePath());
 		Settings.set(HarvesterSettings.HERITRIX3_CERTIFICATE, certificat.getAbsolutePath());
 		Heritrix3Files files = Heritrix3Files.getH3HeritrixFiles(crawldir, 

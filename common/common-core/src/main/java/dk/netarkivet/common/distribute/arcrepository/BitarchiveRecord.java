@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
 
 import org.archive.io.ArchiveReader;
 import org.archive.io.ArchiveReaderFactory;
@@ -121,7 +122,7 @@ public class BitarchiveRecord implements Serializable {
             } else {
                 File localTmpFile = null;
                 try {
-                    localTmpFile = File.createTempFile("BitarchiveRecord-" + fileName, ".tmp", FileUtils.getTempDir());
+                    localTmpFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "BitarchiveRecord-" + fileName, ".tmp").toFile();
                     record.dump(new FileOutputStream(localTmpFile));
                     objectAsRemoteFile = RemoteFileFactory.getMovefileInstance(localTmpFile);
                     isStoredAsRemoteFile = true;

@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
@@ -206,7 +207,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
         // byte[] contents = new byte[(int) record.getLength()];
         OutputStream os = null;
         try {
-            File tmp = File.createTempFile("uploadtest-", ".tmp");
+            File tmp = Files.createTempFile("uploadtest-", ".tmp").toFile();
             os = new FileOutputStream(tmp);
             record.getData(os);
             assertEquals("Size of record should be equal to 1254", 1254, tmp.length());

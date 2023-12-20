@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 import dk.netarkivet.common.CommonSettings;
@@ -73,7 +74,7 @@ public class RunChecksum {
         PreservationArcRepositoryClient arcrep = ArcRepositoryClientFactory.getPreservationInstance();
         BatchStatus lbs = arcrep.batch(new ChecksumJob(), bitarchive);
         RemoteFile result = lbs.getResultFile();
-        File localFile = File.createTempFile("checksum_tool", "results");
+        File localFile = Files.createTempFile("checksum_tool", "results").toFile();
         localFile.deleteOnExit();
         result.copyTo(localFile);
         result.cleanup();

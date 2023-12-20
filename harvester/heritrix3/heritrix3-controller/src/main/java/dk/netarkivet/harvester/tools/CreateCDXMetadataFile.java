@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -256,7 +257,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                 System.out.println("Got results from archive. Processing data");
                 File resultFile = null;
                 try {
-                    resultFile = File.createTempFile("extract-batch", ".cdx", FileUtils.getTempDir());
+                    resultFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "extract-batch", ".cdx").toFile();
                     resultFile.deleteOnExit();
                     status.copyResults(resultFile);
                     arcifyResultFile(resultFile, jobID, harvestId);

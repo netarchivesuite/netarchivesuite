@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -411,7 +412,7 @@ public class FTPValidator {
             return false;
         }
         //upload error to ftp server
-        File temp = File.createTempFile("foo", "bar", tmpDir);
+        File temp = Files.createTempFile(tmpDir.toPath(), "foo", "bar").toFile();
         FTPClient client = new FTPClient();
         client.connect(ftpHost,ftpPort); 
         client.login(ftpUser, ftpPasswd);
