@@ -163,6 +163,9 @@ public class HeritrixController extends AbstractRestHeritrixController {
             jobResult = h3wrapper.buildJobConfiguration(jobName);
             log.trace("Result of buildJobConfiguration() operation: " + new String(jobResult.response, "UTF-8"));
             if (jobResult.status == ResultStatus.OK) {
+                if (jobResult.job == null) {
+                    throw new IllegalState("Attempt to build job " + jobName + " returned a null job.");
+                }
                 if (jobResult.job.statusDescription.equalsIgnoreCase("Unbuilt")) {
                     throw new HeritrixLaunchException("The job '" + jobName + "' could not be built. Last loglines are "
                             + StringUtils.join(jobResult.job.jobLogTail, "\n"));
@@ -177,26 +180,31 @@ public class HeritrixController extends AbstractRestHeritrixController {
                             + StringUtils.join(jobResult.job.jobLogTail, "\n"));
                 } else {
                     throw new IllegalState(
-                            "Unknown job.statusdescription returned from h3: " + jobResult.job.statusDescription);
+                            "Unexpected job.statusdescription returned from h3: " + jobResult.job.statusDescription);
                 }
             } else {
                 throw new IllegalState(
-                        "Unknown ResultStatus returned from h3wrapper: " + ResultStatus.toString(jobResult.status));
+                        "Unexpected ResultStatus returned from h3wrapper: " + ResultStatus.toString(jobResult.status));
             }
 
             jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.NASCENT, 60, 1000);
-            if (jobResult.job.crawlControllerState.equalsIgnoreCase(CrawlControllerState.NASCENT.toString())) {
+            if (jobResult.job != null && jobResult.job.crawlControllerState.equalsIgnoreCase(CrawlControllerState.NASCENT.toString())) {
                 log.info("The H3 job {} in now in state CrawlControllerState.NASCENT", jobName);
+            } else if (jobResult.job == null) {
+                log.warn("The Heritrix server failed to return information on the Job {}.", jobName);
             } else {
                 log.warn("The job state is now {}. Should have been CrawlControllerState.NASCENT",
                         jobResult.job.crawlControllerState);
             }
+
             jobResult = h3wrapper.launchJob(jobName);
 
             log.trace("Result of launchJob() operation: " + new String(jobResult.response, "UTF-8"));
             jobResult = h3wrapper.waitForJobState(jobName, CrawlControllerState.PAUSED, 60, 1000);
-            if (jobResult.job.crawlControllerState.equalsIgnoreCase(CrawlControllerState.PAUSED.toString())) {
+            if (jobResult.job != null &&  jobResult.job.crawlControllerState.equalsIgnoreCase(CrawlControllerState.PAUSED.toString())) {
                 log.info("The H3 job {} in now in state CrawlControllerState.PAUSED", jobName);
+            } else if (jobResult.job == null) {
+                log.warn("The Heritrix server failed to return information on the Job {}.", jobName);
             } else {
                 log.warn("The job state is now {}. Should have been CrawlControllerState.PAUSED",
                         jobResult.job.crawlControllerState);
@@ -215,14 +223,16 @@ public class HeritrixController extends AbstractRestHeritrixController {
             }
             log.info("The parameter pauseAtStart is {}", pauseAtStart);
             // if param pauseAtStart is false
-            if (pauseAtStart == false) {
+            if (jobResult.job != null &&  pauseAtStart == false) {
                 jobResult = h3wrapper.unpauseJob(jobName);
                 log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
 
                 // POST: h3 is running, and the job with name 'jobName' is running
                 log.trace("h3-State after unpausing job '{}': {}", jobName, new String(jobResult.response, "UTF-8"));
-            } else {
+            } else if (jobResult.job != null) {
                 log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
+            } else {
+                log.warn("The status of job {} could not not be determined.", jobResult.status);
             }
 
         } catch (UnsupportedEncodingException e) {
@@ -234,7 +244,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
     public void requestCrawlStop(String reason) {
         log.info("Terminating job {}. Reason: {}", this.jobName, reason);
         JobResult jobResult = h3wrapper.job(jobName);
-        if (jobResult != null) {
+        if (jobResult != null && jobResult.job != null) {
             if (jobResult.job.isRunning) {
                 JobResult result = h3wrapper.terminateJob(this.jobName);
                 if (!result.job.isRunning) {
@@ -318,10 +328,12 @@ public class HeritrixController extends AbstractRestHeritrixController {
             EngineResult engineResult = h3wrapper.rescanJobDirectory();
             if (engineResult != null) {
                 List<JobShort> knownJobs = null;
-                if (engineResult.engine == null) {
-                    knownJobs = new ArrayList<>();
-                } else {
+                if (engineResult.engine != null) {
                     knownJobs = engineResult.engine.jobs;
+                }
+                if (knownJobs == null) {
+                    log.warn("Query returned a null list of jobs for heritrix engine for crawl {}. Treating as an empty list.", crawlDir.getAbsolutePath());
+                    knownJobs = new ArrayList<>();
                 }
                 if (knownJobs.size() != 1) {
                     log.warn("Should be one job but there is {} jobs: {}", knownJobs.size(),
@@ -334,7 +346,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
             // Check that job jobName still exists in H3 engine
             jobResult = h3wrapper.job(jobName);
             if (jobResult != null) {
-                if (jobResult.status == ResultStatus.OK && jobResult.job.crawlControllerState != null) {
+                if (jobResult.status == ResultStatus.OK && jobResult.job != null && jobResult.job.crawlControllerState != null) {
                     String TEARDOWN = "teardown";
                     if (jobResult.job.availableActions.contains(TEARDOWN)) {
                         log.info("Tearing down h3 job {}", jobName);
@@ -435,9 +447,13 @@ public class HeritrixController extends AbstractRestHeritrixController {
     private void getCrawlServiceAttributes(CrawlProgressMessage cpm, JobResult job) {
         // TODO check job state??
         CrawlServiceInfo hStatus = cpm.getHeritrixStatus();
-        hStatus.setAlertCount(job.job.alertCount); // info taken from job information
         hStatus.setCurrentJob(this.jobName); // Note:Information not taken from H3
-        hStatus.setCrawling(job.job.isRunning);// info taken from job information
+        if (job.job != null) {
+            hStatus.setAlertCount(job.job.alertCount); // info taken from job information
+            hStatus.setCrawling(job.job.isRunning);// info taken from job information
+        } else {
+            log.warn("Could not update Heritrix status for alertCount or isRunning as no job returned for {}", this.jobName);
+        }
     }
 
     /**
@@ -446,8 +462,12 @@ public class HeritrixController extends AbstractRestHeritrixController {
      *
      * @param cpm the crawlProgress message being prepared
      */
-    private void fetchCrawlServiceJobAttributes(CrawlProgressMessage cpm, JobResult job) {
+    private void fetchCrawlServiceJobAttributes(CrawlProgressMessage cpm, JobResult jobResult) {
         CrawlServiceJobInfo jStatus = cpm.getJobStatus();
+        if (jobResult.job == null) {
+            log.warn("Cannot fetch job attributes as jobResult has a null job for {}", this.jobName);
+            return;
+        }
 
         /*
          * timestamp discovered queued downloaded doc/s(avg) KB/s(avg) dl-failures busy-thread mem-use-KB heap-size-KB
@@ -459,8 +479,8 @@ public class HeritrixController extends AbstractRestHeritrixController {
          * }
          */
 
-        long totalUriCount = job.job.uriTotalsReport.totalUriCount;
-        long downloadedUriCount = job.job.uriTotalsReport.downloadedUriCount;
+        long totalUriCount = jobResult.job.uriTotalsReport.totalUriCount;
+        long downloadedUriCount = jobResult.job.uriTotalsReport.downloadedUriCount;
         Double progress;
         if (totalUriCount == 0) {
             progress = 0.0;
@@ -469,7 +489,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
         }
         jStatus.setProgressStatistics(progress + "%");
 
-        Long elapsedSeconds = job.job.elapsedReport.elapsedMilliseconds;
+        Long elapsedSeconds = jobResult.job.elapsedReport.elapsedMilliseconds;
         if (elapsedSeconds == null) {
             elapsedSeconds = -1L;
         } else {
@@ -477,37 +497,37 @@ public class HeritrixController extends AbstractRestHeritrixController {
         }
         jStatus.setElapsedSeconds(elapsedSeconds);
 
-        Double currentProcessedDocsPerSec = job.job.rateReport.currentDocsPerSecond;
+        Double currentProcessedDocsPerSec = jobResult.job.rateReport.currentDocsPerSecond;
         if (currentProcessedDocsPerSec == null) {
             currentProcessedDocsPerSec = new Double(-1L);
         }
         jStatus.setCurrentProcessedDocsPerSec(currentProcessedDocsPerSec);
 
-        Double processedDocsPerSec = job.job.rateReport.averageDocsPerSecond;
+        Double processedDocsPerSec = jobResult.job.rateReport.averageDocsPerSecond;
         if (processedDocsPerSec == null) {
             processedDocsPerSec = new Double(-1L);
         }
         jStatus.setProcessedDocsPerSec(processedDocsPerSec);
 
-        Integer kbRate = job.job.rateReport.currentKiBPerSec;
+        Integer kbRate = jobResult.job.rateReport.currentKiBPerSec;
         if (kbRate == null) {
             kbRate = -1;
         }
         jStatus.setCurrentProcessedKBPerSec(kbRate);
 
-        Integer processedKBPerSec = job.job.rateReport.averageKiBPerSec;
+        Integer processedKBPerSec = jobResult.job.rateReport.averageKiBPerSec;
         if (processedKBPerSec == null) {
             processedKBPerSec = -1;
         }
         jStatus.setProcessedKBPerSec(processedKBPerSec);
 
-        Long discoveredFilesCount = job.job.uriTotalsReport.totalUriCount;
+        Long discoveredFilesCount = jobResult.job.uriTotalsReport.totalUriCount;
         if (discoveredFilesCount == null) {
             discoveredFilesCount = -1L;
         }
         jStatus.setDiscoveredFilesCount(discoveredFilesCount);
 
-        Long downloadedCount = job.job.uriTotalsReport.downloadedUriCount;
+        Long downloadedCount = jobResult.job.uriTotalsReport.downloadedUriCount;
         if (downloadedCount == null) {
             downloadedCount = -1L;
         }
@@ -517,14 +537,14 @@ public class HeritrixController extends AbstractRestHeritrixController {
          */
         String frontierShortReport = String.format(
                 "%d queues: %d active (%d in-process; %d ready; %d snoozed); %d inactive; %d retired; %d exhausted",
-                job.job.frontierReport.totalQueues, job.job.frontierReport.activeQueues,
-                job.job.frontierReport.inProcessQueues, job.job.frontierReport.readyQueues,
-                job.job.frontierReport.snoozedQueues, job.job.frontierReport.inactiveQueues,
-                job.job.frontierReport.retiredQueues, job.job.frontierReport.exhaustedQueues);
+                jobResult.job.frontierReport.totalQueues, jobResult.job.frontierReport.activeQueues,
+                jobResult.job.frontierReport.inProcessQueues, jobResult.job.frontierReport.readyQueues,
+                jobResult.job.frontierReport.snoozedQueues, jobResult.job.frontierReport.inactiveQueues,
+                jobResult.job.frontierReport.retiredQueues, jobResult.job.frontierReport.exhaustedQueues);
         jStatus.setFrontierShortReport(frontierShortReport);
 
         String newStatus = "?";
-        String StringValue = job.job.crawlControllerState;
+        String StringValue = jobResult.job.crawlControllerState;
         if (StringValue != null) {
             newStatus = (String) StringValue;
         }
@@ -545,13 +565,13 @@ public class HeritrixController extends AbstractRestHeritrixController {
             break;
         }
 
-        Integer currentActiveToecount = job.job.loadReport.busyThreads;
+        Integer currentActiveToecount = jobResult.job.loadReport.busyThreads;
         if (currentActiveToecount == null) {
             currentActiveToecount = -1;
         }
         jStatus.setActiveToeCount(currentActiveToecount);
         
-        Long sizeOnDisk = job.job.sizeTotalsReport.sizeOnDisk;
+        Long sizeOnDisk = jobResult.job.sizeTotalsReport.sizeOnDisk;
         if (sizeOnDisk == null) {
         	sizeOnDisk = -1L;
         }
