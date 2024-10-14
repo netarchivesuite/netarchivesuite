@@ -266,7 +266,7 @@ void showModBudgets() {
     modQueues.each { key, value ->
         htmlOut.println('<li>'+key)
         htmlOut.println('<input type="hidden" name="queueName" value="'+key+'"/>')
-        htmlOut.println('<input type="text" name="'+key+'-budget" style="width:100px" value="'+value+'"/></li>')
+        htmlOut.println('<input type="text" name="'+key+'-budget" style="width:100px" value="'+value+'"/> kB</li>')
 	}
 	htmlOut.println('</ul>')
 }
@@ -326,6 +326,10 @@ void changeBudget(String key, int value) {
 
 void getQueueTotalBudget() {
 	htmlOut.println appCtx.getBean("frontier").queueTotalBudget
+}
+
+void getGroupMaxAllKb() {
+    htmlOut.println appCtx.getBean("quotaenforcer").groupMaxAllKb
 }
 
 void showFilters() {

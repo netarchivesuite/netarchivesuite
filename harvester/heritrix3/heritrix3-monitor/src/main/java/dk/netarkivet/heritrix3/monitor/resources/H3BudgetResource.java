@@ -184,11 +184,20 @@ public class H3BudgetResource implements ResourceAbstract {
             }
 
             ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", originalScript);
-            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
+
+/*            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
             	sb.append("<p>Budget defined in job configuration: queue-total-budget of ");
             	sb.append(scriptResult.script.htmlOutput);
             	sb.append(" URIs.</p>");
+            }*/
+            scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy",
+                    environment.NAS_GROOVY_SCRIPT + "\ngetGroupMaxAllKb()\n");
+            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
+                sb.append("<p>Budget defined in job configuration: groupMaxAllKb of ");
+                sb.append(scriptResult.script.htmlOutput);
+                sb.append(" kB.</p>");
             }
+
 
             sb.append("<form class=\"form-horizontal\" action=\"?\" name=\"insert_form\" method=\"post\" enctype=\"application/x-www-form-urlencoded\" accept-charset=\"utf-8\">\n");
 
@@ -205,7 +214,7 @@ public class H3BudgetResource implements ResourceAbstract {
             if(!submitWithInitials) {
             	sb.append(budget);
             }
-            sb.append("\" style=\"width:100px;vertical-align:top;margin-top:0\" placeholder=\"new budget\">\n");
+            sb.append("\" style=\"width:100px;vertical-align:top;margin-top:0\" placeholder=\"new budget (kB)\">\n");
             
             /* User initials */
             sb.append("<label style=\"cursor: default;\">User initials:</label>");

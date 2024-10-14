@@ -31,6 +31,7 @@
                     <!--exclude>*/lib/commons-configuration-1.6.jar</exclude-->
                     <exclude>*/lib/httpclient-4.2.5.jar</exclude>
                     <exclude>lib/httpclient-4.2.5.jar</exclude>
+                    <exclude>*/lib/slf4j-api-1.5.2.jar</exclude>
                     <exclude>org.apache.httpcomponents:httpcomponents-client:jar:4.2.5</exclude>
                     <!--exclude>*/lib/httpcore-4.2.4.jar</exclude-->
                 </excludes>
@@ -47,6 +48,7 @@
             <unpackOptions>
                 <excludes>
                     <exclude>lib/slf4j-api-1.5.8.jar</exclude>
+                    <exclude>lib/slf4j-api-1.5.2.jar</exclude>
                     <exclude>lib/slf4j-log4j12-1.5.8.jar</exclude>
                     <exclude>lib/jcl-over-slf4j-1.5.8.jar</exclude>
                     <exclude>lib/*LBS*</exclude>
@@ -64,6 +66,8 @@
                     <exclude>org.apache.httpcomponents:httpcomponents-client:jar:4.2.5</exclude>
                     <exclude>is.landsbokasafn.crawl-rss:crawl-rss:jar:0.0.1-SNAPSHOT</exclude>
                     <exclude>lib/heritrix*</exclude>
+                    <exclude>lib/spring*</exclude>
+                    <exclude>*/lib/webarchive-commons-1.1.5.jar</exclude>
                     <!--exclude>*/lib/httpcore-4.2.4.jar</exclude-->
                 </excludes>
             </unpackOptions>
@@ -77,6 +81,7 @@
             </includes>
             <excludes>
                 <exclude>org.slf4j:*:jar</exclude>
+                <exclude>org.slf4j:slf4j-api:1.5.2:jar</exclude>
                 <exclude>ch.qos.logback:*:jar</exclude>
                 <exclude>commons-fileupload:commons-fileupload:jar</exclude>
                 <exclude>commons-httpclient:commons-httpclient:jar</exclude>
@@ -128,6 +133,8 @@
                 <exclude>*/lib/httpclient-4.2.5.jar</exclude>
                 <exclude>lib/httpclient-4.2.5.jar</exclude>
                 <exclude>com.sleepycat:je:jar:5.0.73</exclude>
+                <exclude>org.springframework:*:jar:3.0.5.RELEASE</exclude>
+                <exclude>*/lib/webarchive-commons-1.1.5.jar</exclude>
             </excludes>
             <!--3.3.0-LBS-2014-03-->
             <outputDirectory>/heritrix-${heritrix3.version}/lib/</outputDirectory>
