@@ -33,5 +33,5 @@ setup a small standalone system.
 Developer documentation
 =======================
 
-See [developer wiki](https://kb-dk.atlassian.net/wiki/spaces/NAS/Development).
+See [developer wiki](https://kb-dk.atlassian.net/wiki/spaces/NAS/pages/21671439/Development).
 
