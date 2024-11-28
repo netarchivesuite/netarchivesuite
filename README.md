@@ -12,7 +12,7 @@ domains) to harvesting and archiving the content of an entire national domain. T
 preservation functionality. The systems architecture allows for the software to be distributed among several 
 machines, possibly on more than one geographical location. 
 
-See the [wiki documentation]([https://kb-dk.atlassian.net/wiki/spaces/NAS/overview](https://kb-dk.atlassian.net/wiki/spaces/NAS/Documentation) for further details.
+See the [wiki documentation]([https://kb-dk.atlassian.net/wiki/spaces/NAS/overview]) for further details.
 
 History
 ========
@@ -27,7 +27,7 @@ and the Austrian National Libraries (ONB) joined the project in 2008.
 Getting Started
 ===============
 
-See the [Quickstart manual](https://kb-dk.atlassian.net/wiki/spaces/NAS/Quick+Start+Manual) for a short guide on how to 
+See the [Quickstart manual](https://kb-dk.atlassian.net/wiki/spaces/NASDOC73/pages/21077317/Quick+Start+Manual) for a short guide on how to 
 setup a small standalone system.
 
 Developer documentation
