@@ -12,7 +12,7 @@ domains) to harvesting and archiving the content of an entire national domain. T
 preservation functionality. The systems architecture allows for the software to be distributed among several 
 machines, possibly on more than one geographical location. 
 
-See the [wiki documentation]([https://kb-dk.atlassian.net/wiki/spaces/NAS/overview]) for further details.
+See the [wiki documentation](https://kb-dk.atlassian.net/wiki/spaces/NAS/overview) for further details.
 
 History
 ========
