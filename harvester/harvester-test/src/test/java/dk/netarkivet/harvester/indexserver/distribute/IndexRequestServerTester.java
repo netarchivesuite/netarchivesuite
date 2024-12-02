@@ -31,6 +31,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -210,7 +211,7 @@ public class IndexRequestServerTester {
         assertTrue("Should be OK", msg.isOk());
 
         // Check contents of file replied
-        File extractFile = File.createTempFile("extr", "act", TestInfo.WORKING_DIR);
+        File extractFile = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "extr", "act").toFile();
         assertFalse("Message should not indicate directory", msg.isIndexIsStoredInDirectory());
         RemoteFile resultFile = msg.getResultFile();
         resultFile.copyTo(extractFile);

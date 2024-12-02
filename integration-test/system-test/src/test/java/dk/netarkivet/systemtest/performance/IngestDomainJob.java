@@ -7,6 +7,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -45,7 +46,7 @@ class IngestDomainJob extends GenericWebJob {
         stressTest.addFixture("Opening initial page " + baseUrl);
         File domainsFile = null;
         try {
-            domainsFile = File.createTempFile("domains", "txt", new File("."));
+            domainsFile = Files.createTempFile(new File(".").toPath(), "domains", "txt").toFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -62,7 +63,7 @@ class IngestDomainJob extends GenericWebJob {
         stressTest.addStep("Checking for existence of domains file", "The file should exist.");
         if (!backupEnv.equals("prod")) {
             File tempFile = null;
-            tempFile = File.createTempFile("domains", "txt", new File("."));
+            tempFile = Files.createTempFile(new File(".").toPath(), "domains", "txt").toFile();
             LineIterator lineIterator = FileUtils.lineIterator(domainsFile);
             List<String> lines = new ArrayList<>();
             int lineCount=0;

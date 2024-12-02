@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
@@ -248,7 +249,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
         File removedEntryFile;
         try {
             // Initialise file and writer.
-            removedEntryFile = File.createTempFile(filename, "tmp", FileUtils.getTempDir());
+            removedEntryFile = Files.createTempFile(FileUtils.getTempDir().toPath(), filename, "tmp").toFile();
             FileWriter fw = new FileWriter(removedEntryFile);
 
             // Write the bad entry.
@@ -417,7 +418,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     public File getArchiveAsFile() {
         File tempFile = null;
         try {
-            tempFile = File.createTempFile("allFilenamesAndChecksums", "tmp", FileUtils.getTempDir());
+            tempFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "allFilenamesAndChecksums", "tmp").toFile();
             log.debug("Creating temporary file for checksums: " + tempFile.getAbsolutePath());
             dumpDatabaseToFile(tempFile, false);
             log.debug("Dumped checksums to temporary file: " + tempFile.getAbsolutePath());
@@ -479,7 +480,7 @@ public class DatabaseChecksumArchive implements ChecksumArchive {
     public File getAllFilenames() {
         File tempFile = null;
         try {
-            tempFile = File.createTempFile("allFilenames", "tmp", FileUtils.getTempDir());
+            tempFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "allFilenames", "tmp").toFile();
         } catch (IOException e) {
             throw new IOFailure(e.toString());
         }

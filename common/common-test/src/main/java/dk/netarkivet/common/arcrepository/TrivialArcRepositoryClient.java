@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.regex.Pattern;
 
 import org.archive.io.ArchiveReader;
@@ -154,7 +155,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
         OutputStream os = null;
         File resultFile;
         try {
-            resultFile = File.createTempFile("batch", replicaId, FileUtils.getTempDir());
+            resultFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "batch", replicaId).toFile();
             os = new FileOutputStream(resultFile);
             File[] files = dir.listFiles(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
@@ -217,7 +218,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
         // Ignores bitarchiveId, checksum, and credentials for now
         File copiedTo = null;
         try {
-            copiedTo = File.createTempFile("removeAndGetFile", fileName);
+            copiedTo = Files.createTempFile("removeAndGetFile", fileName).toFile();
         } catch (IOException e) {
             throw new IOFailure("Cannot make temp file to copy '" + fileName + "' into", e);
         }

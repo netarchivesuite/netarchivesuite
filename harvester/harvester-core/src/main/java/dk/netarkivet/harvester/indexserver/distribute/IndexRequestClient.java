@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.indexserver.distribute;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
@@ -251,7 +252,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long> implements Job
         File tmpFile = null;
         try {
             // We cannot unzip directly from a stream, so we make a temp file.
-            tmpFile = File.createTempFile("remotefile-unzip", ".gz", FileUtils.getTempDir());
+            tmpFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "remotefile-unzip", ".gz").toFile();
             remoteFile.copyTo(tmpFile);
             ZipUtils.gunzipFile(tmpFile, destFile);
             try {

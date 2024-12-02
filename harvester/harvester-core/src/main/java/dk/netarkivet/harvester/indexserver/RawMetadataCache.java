@@ -237,7 +237,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             File cacheFileName) {
         File migration = null;
         try {
-            migration = File.createTempFile("migration", "txt");
+            migration = Files.createTempFile("migration", "txt").toFile();
         } catch (IOException e) {
             throw new IOFailure("Could not create temporary output file.");
         }
@@ -264,7 +264,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
     private File createTempOutputFile() {
         File crawllog = null;
         try {
-            crawllog = File.createTempFile("dedup", "txt");
+            crawllog = Files.createTempFile("dedup", "txt").toFile();
         } catch (IOException e) {
             throw new IOFailure("Could not create temporary output file.");
         }
@@ -369,7 +369,7 @@ public class RawMetadataCache extends FileBasedCache<Long> implements RawDataCac
             BatchStatus b2 = arcrep.batch(job2, replicaUsed);
             File migration = null;
             try {
-                migration = File.createTempFile("migration", "txt");
+                migration = Files.createTempFile("migration", "txt").toFile();
             } catch (IOException e) {
                 throw new IOFailure("Could not create temporary output file.");
             }

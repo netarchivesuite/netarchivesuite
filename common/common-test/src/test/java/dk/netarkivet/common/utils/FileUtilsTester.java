@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -254,7 +255,7 @@ public class FileUtilsTester {
     @Test
     public void testGetEphemeralInputStream() throws Exception {
         // Check that closing removes the file
-        File f = File.createTempFile("foo", "bar", WORKING);
+        File f = Files.createTempFile(WORKING.toPath(), "foo", "bar").toFile();
         InputStream in = FileUtils.getEphemeralInputStream(f);
         assertTrue("Temp file should exist before close", f.exists());
         in.close();

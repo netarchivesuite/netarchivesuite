@@ -261,8 +261,7 @@ public class ArchiveFile {
 
     private void createJobInputFile(String filename, Path jobInputFile, FileSystem fileSystem) throws IOException {
         //Create the input file locally
-        File localInputTempFile = File.createTempFile("cdxextract", ".txt",
-                Settings.getFile(CommonSettings.DIR_COMMONTEMPDIR));
+        File localInputTempFile = Files.createTempFile(Settings.getFile(CommonSettings.DIR_COMMONTEMPDIR).toPath(), "cdxextract", ".txt").toFile();
         FileResolver fileResolver = SettingsFactory.getInstance(CommonSettings.FILE_RESOLVER_CLASS);
         if (fileResolver instanceof SimpleFileResolver) {
             String pillarParentDir = Settings.get(CommonSettings.HADOOP_MAPRED_INPUT_FILES_PARENT_DIR);

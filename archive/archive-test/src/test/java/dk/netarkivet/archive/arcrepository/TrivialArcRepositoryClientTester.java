@@ -27,6 +27,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.nio.file.Files;
 
 import org.junit.After;
 import org.junit.Before;
@@ -89,7 +90,7 @@ public class TrivialArcRepositoryClientTester {
         status.getResultFile().appendTo(out);
         assertEquals("Should list the one file",
         		TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE.getName() + "\n", out.toString());
-        File f = File.createTempFile("foo", "bar", FileUtils.getTempDir());
+        File f = Files.createTempFile(FileUtils.getTempDir().toPath(), "foo", "bar").toFile();
         arcrep.getFile(TestInfo.DISTRIBUTE_ARCREPOSITORY_SAMPLE_FILE.getName(),
                 Replica.getReplicaFromId("TWO"), f);
         assertEquals("Should have expected contents back",

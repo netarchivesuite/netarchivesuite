@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -307,8 +308,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             batchTimer.schedule(batchTimeoutTask, batchTimeout);
             this.noOfFilesProcessed = 0;
             try {
-                this.batchResultFile = File.createTempFile(bitarchiveBatchID, "batch_aggregation",
-                        FileUtils.getTempDir());
+                this.batchResultFile = Files.createTempFile(FileUtils.getTempDir().toPath(), bitarchiveBatchID, "batch_aggregation").toFile();
             } catch (IOException e) {
                 log.warn("Unable to create file for batch output");
                 throw new IOFailure("Unable to create file for batch output", e);

@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -557,7 +558,7 @@ public class FileBasedActiveBitPreservationTester {
          */
         public BatchStatus batch(FileBatchJob job, String locationName, RemoteFile file) throws IOException {
             BatchStatus lbs = null;
-            File tmpfile = File.createTempFile("DummyBatch", "");
+            File tmpfile = Files.createTempFile("DummyBatch", "").toFile();
             OutputStream os = new FileOutputStream(tmpfile);
             // The file name
             File bitarchive_dir = new File(TestInfo.WORKING_DIR, locationName);
@@ -640,7 +641,7 @@ public class FileBasedActiveBitPreservationTester {
                 return overrideBatch;
             }
             try {
-                File output = File.createTempFile("Batch", ".dat", TestInfo.WORKING_DIR);
+                File output = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "Batch", ".dat").toFile();
                 File[] in_files = TestInfo.GOOD_ARCHIVE_FILE_DIR.listFiles();
                 FileOutputStream os = new FileOutputStream(output);
                 new BatchLocalFiles(in_files).run(job, os);
@@ -673,7 +674,7 @@ public class FileBasedActiveBitPreservationTester {
             }
             File output = null;
             try {
-                output = File.createTempFile(fileName, ".removed", TestInfo.WORKING_DIR);
+                output = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), fileName, ".removed").toFile();
             } catch (IOException e) {
                 fail("IO error during test.");
             }
@@ -687,7 +688,7 @@ public class FileBasedActiveBitPreservationTester {
         public File getAllChecksums(String replicaId) {
             try {
                 BatchStatus bs = batch(new ChecksumJob(), replicaId);
-                File result = File.createTempFile("all", ".checksum", TestInfo.WORKING_DIR);
+                File result = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "all", ".checksum").toFile();
                 bs.copyResults(result);
                 return result;
             } catch (IOException e) {
@@ -700,7 +701,7 @@ public class FileBasedActiveBitPreservationTester {
         public File getAllFilenames(String replicaId) {
             try {
                 BatchStatus bs = batch(new FileListJob(), replicaId);
-                File result = File.createTempFile("all", ".filename", TestInfo.WORKING_DIR);
+                File result = Files.createTempFile(TestInfo.WORKING_DIR.toPath(), "all", ".filename").toFile();
                 bs.copyResults(result);
                 return result;
             } catch (IOException e) {
