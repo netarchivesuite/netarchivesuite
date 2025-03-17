@@ -19,7 +19,7 @@
     <webarchive-commons.version>1.1.8</webarchive-commons.version>
     <!-- Heritrix versions are from https://github.com/netarchivesuite/heritrix3 which tracks the official
      repository at https://github.com/internetarchive/heritrix3 as closely as we can -->
-    <heritrix3.version>3.4.0-NAS-7.6</heritrix3.version>
+    <heritrix3.version>3.7.0-NAS-7.7</heritrix3.version>
     <heritrix3-wrapper.version>1.0.5</heritrix3-wrapper.version>
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
@@ -50,7 +50,7 @@
     <maven-assembly-plugin.version>2.4.1</maven-assembly-plugin.version>
     <mysql-connector-java.version>5.1.13</mysql-connector-java.version>
     <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
-    <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
     <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
     <maven-deploy-plugin.version>2.8.1</maven-deploy-plugin.version>
     <maven-release-plugin.version>2.5.2</maven-release-plugin.version>
@@ -922,6 +922,13 @@
           <configuration>
             <source>${maven.compiler.source}</source>
             <target>${maven.compiler.target}</target>
+            <compilerArgs>
+              <arg>-J--add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED </arg>
+              <arg>-J--add-exports jdk.jconsole/sun.tools.jconsole=ALL-UNNAMED</arg>
+              <arg>-J--add-opens java.management/javax.management.openmbean=ALL-UNNAMED</arg>
+              <arg>-J--add-exports jdk.naming.rmi/com.sun.jndi.rmi.registry=ALL-UNNAMED</arg>
+              <arg>-J--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
+            </compilerArgs>
           </configuration>
         </plugin>
 
@@ -942,8 +949,15 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
+          <!--<source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>-->
+          <compilerArgs>
+            <arg>-J--add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED </arg>
+            <arg>-J--add-exports jdk.jconsole/sun.tools.jconsole=ALL-UNNAMED</arg>
+            <arg>-J--add-opens java.management/javax.management.openmbean=ALL-UNNAMED</arg>
+            <arg>-J--add-exports jdk.naming.rmi/com.sun.jndi.rmi.registry=ALL-UNNAMED</arg>
+            <arg>-J--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
+          </compilerArgs>
         </configuration>
       </plugin>
 
@@ -1102,6 +1116,11 @@
               <groupId>org.jacoco</groupId>
               <artifactId>jacoco-maven-plugin</artifactId>
               <version>${jacoco.version}</version>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-war-plugin</artifactId>
+              <version>3.4.0</version>
             </plugin>
           </plugins>
         </pluginManagement>
