@@ -5,7 +5,7 @@
 
   <groupId>org.netarchivesuite</groupId>
   <artifactId>netarchivesuite</artifactId>
-  <version>7.7</version>
+  <version>7.8-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>NetarchiveSuite</name>
@@ -152,7 +152,7 @@
     <url>https://github.com/netarchivesuite/netarchivesuite</url>
     <connection>scm:git:https://github.com/netarchivesuite/netarchivesuite.git</connection>
     <developerConnection>scm:git:git@github.com:netarchivesuite/netarchivesuite.git</developerConnection>
-    <tag>netarchivesuite-7.7</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
@@ -912,7 +912,7 @@
             <dependency>
               <groupId>org.netarchivesuite</groupId>
               <artifactId>build-tools</artifactId>
-              <version>7.7</version>
+              <version>7.8-SNAPSHOT</version>
             </dependency>
           </dependencies>
         </plugin>
