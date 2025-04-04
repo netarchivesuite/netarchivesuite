@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -363,7 +364,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      */
     protected static File getSortedCDX(File cdxFile) {
         try {
-            final File tmpFile = File.createTempFile("sorted", "cdx", FileUtils.getTempDir());
+            final File tmpFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "sorted", "cdx").toFile();
             // This throws IOFailure, if the sorting operation fails
             FileUtils.sortCDX(cdxFile, tmpFile);
             tmpFile.deleteOnExit();
@@ -382,7 +383,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      */
     protected static File getSortedCrawlLog(File file) {
         try {
-            File tmpCrawlLog = File.createTempFile("sorted", "crawllog", FileUtils.getTempDir());
+            File tmpCrawlLog = Files.createTempFile(FileUtils.getTempDir().toPath(), "sorted", "crawllog").toFile();
             // This throws IOFailure, if the sorting operation fails
             FileUtils.sortCrawlLog(file, tmpCrawlLog);
             tmpCrawlLog.deleteOnExit();

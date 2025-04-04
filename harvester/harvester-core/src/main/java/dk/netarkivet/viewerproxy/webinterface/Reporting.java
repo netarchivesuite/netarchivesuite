@@ -143,7 +143,7 @@ public class Reporting {
         fileListJob.processOnlyFilesMatching(acceptedPatterns);
         File f;
         try {
-            f = File.createTempFile(jobid + "-files", ".txt", FileUtils.getTempDir());
+            f = Files.createTempFile(FileUtils.getTempDir().toPath(), jobid + "-files", ".txt").toFile();
         } catch (IOException e) {
             throw new IOFailure("Could not create temporary file", e);
         }
@@ -257,7 +257,7 @@ public class Reporting {
 
         File f;
         try {
-            f = File.createTempFile(jobid + "-reports", ".cdx", FileUtils.getTempDir());
+            f = Files.createTempFile(FileUtils.getTempDir().toPath(), jobid + "-reports", ".cdx").toFile();
         } catch (IOException e) {
             throw new IOFailure("Could not create temporary file", e);
         }
@@ -309,7 +309,7 @@ public class Reporting {
     private static File createTempResultFile(String uuidSuffix) {
         File tempFile;
         try {
-            tempFile = File.createTempFile("temp", uuidSuffix + ".txt", FileUtils.getTempDir());
+            tempFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "temp", uuidSuffix + ".txt").toFile();
             tempFile.deleteOnExit();
         } catch (IOException e) {
             throw new IOFailure("Unable to create temporary file", e);
@@ -522,8 +522,8 @@ public class Reporting {
             job.processOnlyFilesMatching(metadataFileSearchPattern);
             job.prepareJobInputOutput(fileSystem);
             job.run();
-            File tempOutputFile1 = File.createTempFile("unsorted_crawl", "log");
-            File tempOutputFile2 = File.createTempFile("sorted_crawl", "log");
+            File tempOutputFile1 = Files.createTempFile("unsorted_crawl", "log").toFile();
+            File tempOutputFile2 = Files.createTempFile("sorted_crawl", "log").toFile();
             log.info("Collecting output from {} to {}", job.getJobOutputDir(), tempOutputFile1.getAbsolutePath());
             try (OutputStream os = new FileOutputStream(tempOutputFile1)) {
                 HadoopJobUtils.collectOutputLines(fileSystem, job.getJobOutputDir(), os);

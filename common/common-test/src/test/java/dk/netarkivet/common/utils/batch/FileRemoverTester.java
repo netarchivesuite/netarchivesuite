@@ -26,6 +26,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.junit.Test;
 
@@ -39,7 +40,7 @@ public class FileRemoverTester {
         FileBatchJob job = new FileRemover();
         job.initialize(null);
         File tmp = null;
-        tmp = File.createTempFile("test", "fileremover");
+        tmp = Files.createTempFile("test", "fileremover").toFile();
         job.processFile(tmp, null);
         job.finish(null);
         assertFalse(tmp.exists());

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
@@ -37,7 +38,7 @@ public class FindRelevantCrawllogLines {
 					+ metadatafile.getAbsolutePath());
 			System.exit(1);
 		}
-		File resultFile1 = File.createTempFile("FindRelevant", "matchingLines", new File("/tmp"));
+		File resultFile1 = Files.createTempFile(new File("/tmp").toPath(), "FindRelevant", "matchingLines").toFile();
 		
 		String regexp = getRegexpToFindDomainLines(domain);
 		File resultFile = resultFile1;	

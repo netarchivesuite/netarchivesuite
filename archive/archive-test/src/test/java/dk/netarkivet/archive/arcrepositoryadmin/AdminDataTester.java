@@ -32,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -117,7 +118,7 @@ public class AdminDataTester {
         LogbackRecorder lr = LogbackRecorder.startRecorder();
         ad = UpdateableAdminData.getUpdateableInstance();
         assertFalse("No replyInfo has been set", ad.hasReplyInfo(myFile));
-        StoreMessage myReplyInfo = new StoreMessage(Channels.getError(), File.createTempFile("dummy", "dummy"));
+        StoreMessage myReplyInfo = new StoreMessage(Channels.getError(), Files.createTempFile("dummy", "dummy").toFile());
         // ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
         ad.addEntry(myFile, myReplyInfo, "checksum");
         assertTrue("replyInfo has been set", ad.hasReplyInfo(myFile));
@@ -199,7 +200,7 @@ public class AdminDataTester {
     @Test
     public void testPersistence() throws IOException {
         ad = UpdateableAdminData.getInstance();
-        StoreMessage myReplyInfo = new StoreMessage(Channels.getError(), File.createTempFile("dummy", "dummy"));
+        StoreMessage myReplyInfo = new StoreMessage(Channels.getError(), Files.createTempFile("dummy", "dummy").toFile());
         String myChecksum = "Dummychecksum";
         ad.addEntry(myFile, myReplyInfo, myChecksum);
         String myBA = "TestIDofbitarchive";

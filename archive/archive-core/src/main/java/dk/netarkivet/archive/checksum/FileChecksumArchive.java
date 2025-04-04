@@ -28,6 +28,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -729,7 +730,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
         File removedEntryFile;
         try {
             // Initialise file and writer.
-            removedEntryFile = File.createTempFile(filename, "tmp", FileUtils.getTempDir());
+            removedEntryFile = Files.createTempFile(FileUtils.getTempDir().toPath(), filename, "tmp").toFile();
             FileWriter fw = new FileWriter(removedEntryFile);
 
             // Write the bad entry.
@@ -759,7 +760,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
 
         try {
             // create new temporary file of the archive.
-            File tempFile = File.createTempFile("tmp", "tmp", FileUtils.getTempDir());
+            File tempFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "tmp", "tmp").toFile();
             synchronized (this) {
                 FileUtils.copyFile(checksumFile, tempFile);
             }
@@ -783,7 +784,7 @@ public final class FileChecksumArchive implements ChecksumArchive {
         synchronizeMemoryWithFile();
 
         try {
-            File tempFile = File.createTempFile("tmp", "tmp", FileUtils.getTempDir());
+            File tempFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "tmp", "tmp").toFile();
             FileWriter fw = new FileWriter(tempFile);
 
             try {

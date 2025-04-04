@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.nio.file.Files;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -48,7 +49,7 @@ public class NASEnvironmentTester extends DataModelTestCase {
                 + "2005-05-06T11:47:34.753Z -9998          - https://rex.qb.dk/F L http://www.qb.dk/ no-type #030 - - 3t\n"
                 + "2005-05-06T11:47:30.544Z   200      13750 http://www.kb.dk/ - - text/html #001 20050506114730466+32 U4X3Z5EGCNUYTMIXST6BJXGA5SBKTEAJ 3t\n";
 
-        File tempFile = File.createTempFile("NASEnvironmentTest-mock-crawllog-", ".tmp");
+        File tempFile = Files.createTempFile("NASEnvironmentTest-mock-crawllog-", ".tmp").toFile();
         tempFile.deleteOnExit();
         String crawlLogFilePath = tempFile.getAbsolutePath();
 

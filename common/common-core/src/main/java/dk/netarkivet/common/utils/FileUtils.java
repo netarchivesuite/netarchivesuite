@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -1060,7 +1061,7 @@ public class FileUtils {
         for (int tries = 0; tries < MAX_RETRIES; tries++) {
             File newDir;
             try {
-                newDir = File.createTempFile(prefix, null, inDir);
+                newDir = Files.createTempFile(inDir.toPath(), prefix, null).toFile();
             } catch (IOException e) {
                 final String errMsg = "Couldn't create temporary file in '" + inDir.getAbsolutePath()
                         + "' with prefix '" + prefix + "'";
@@ -1169,7 +1170,7 @@ public class FileUtils {
 
             if (stream != null) {
                 // Make stream into file, and return it.
-                File tmpFile = File.createTempFile("tmp", "tmp");
+                File tmpFile = Files.createTempFile("tmp", "tmp").toFile();
                 StreamUtils.copyInputStreamToOutputStream(stream, new FileOutputStream(tmpFile));
                 return tmpFile;
             } else {

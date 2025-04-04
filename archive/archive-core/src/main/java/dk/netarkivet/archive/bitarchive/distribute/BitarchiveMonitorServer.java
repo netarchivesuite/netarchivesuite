@@ -25,6 +25,7 @@ package dk.netarkivet.archive.bitarchive.distribute;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -476,7 +477,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler implements Ob
         RemoteFile resultsFile = null;
         try {
             // Post process the file.
-            File postFile = File.createTempFile("post", "batch", FileUtils.getTempDir());
+            File postFile = Files.createTempFile(FileUtils.getTempDir().toPath(), "post", "batch").toFile();
             try {
                 // retrieve the batchjob
                 FileBatchJob bj = batchjobs.remove(bjs.originalRequestID);

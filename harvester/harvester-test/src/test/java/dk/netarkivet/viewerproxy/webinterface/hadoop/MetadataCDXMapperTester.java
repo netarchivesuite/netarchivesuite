@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,7 +45,7 @@ public class MetadataCDXMapperTester extends HadoopMiniClusterTestCase {
     public void testCDXIndexWARCMetadataFile() throws Exception {
         String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
         // Write the input lines to the the input file
-        File jobInputFile = File.createTempFile("tmp", UUID.randomUUID().toString());
+        File jobInputFile = Files.createTempFile("tmp", UUID.randomUUID().toString()).toFile();
         org.apache.commons.io.FileUtils.writeStringToFile(jobInputFile, "file://" + WARC_FILE.getAbsolutePath());
         jobInputFile.deleteOnExit();
 
@@ -71,7 +72,7 @@ public class MetadataCDXMapperTester extends HadoopMiniClusterTestCase {
     public void testCDXIndexARCMetadataFile() throws Exception {
         String outputURI = "hdfs://localhost:" + hdfsCluster.getNameNodePort() + "/" + UUID.randomUUID().toString();
         // Write the input lines to the the input file
-        File jobInputFile = File.createTempFile("tmp", UUID.randomUUID().toString());
+        File jobInputFile = Files.createTempFile("tmp", UUID.randomUUID().toString()).toFile();
         org.apache.commons.io.FileUtils.writeStringToFile(jobInputFile, "file://" + ARC_FILE.getAbsolutePath());
         jobInputFile.deleteOnExit();
 
