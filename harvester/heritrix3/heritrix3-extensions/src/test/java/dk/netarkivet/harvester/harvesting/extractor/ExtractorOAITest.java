@@ -30,7 +30,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.util.Collection;
 
-import org.apache.commons.httpclient.URIException;
+import org.archive.url.URIException;
 import org.archive.io.ReplayCharSequence;
 import org.archive.modules.CrawlURI;
 import org.archive.modules.extractor.Extractor;
@@ -119,7 +119,6 @@ public class ExtractorOAITest {
             @Override
             public Recorder getRecorder() {
                 return new Recorder(new File("/"), "") {
-                    @Override
                     public ReplayCharSequence getReplayCharSequence() throws IOException {
                         return new TestReplayCharSequence(xmlText);
                     }

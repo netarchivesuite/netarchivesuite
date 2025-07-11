@@ -5,7 +5,7 @@
 
   <groupId>org.netarchivesuite</groupId>
   <artifactId>netarchivesuite</artifactId>
-  <version>7.8-SNAPSHOT</version>
+  <version>7.7</version>
   <packaging>pom</packaging>
 
   <name>NetarchiveSuite</name>
@@ -17,10 +17,10 @@
     <maven.compiler.release>8</maven.compiler.release>
     <slf4j.version>1.7.25</slf4j.version>
     <logback.version>${logback-core.version}</logback.version>
-    <webarchive-commons.version>1.1.8</webarchive-commons.version>
+    <webarchive-commons.version>2.0.1</webarchive-commons.version>
     <!-- Heritrix versions are from https://github.com/netarchivesuite/heritrix3 which tracks the official
      repository at https://github.com/internetarchive/heritrix3 as closely as we can -->
-    <heritrix3.version>3.7.0-NAS-7.7</heritrix3.version>
+    <heritrix3.version>3.10.0-NAS-7.8-SNAPSHOT</heritrix3.version>
     <heritrix3-wrapper.version>1.0.7</heritrix3-wrapper.version>
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
@@ -152,7 +152,7 @@
     <url>https://github.com/netarchivesuite/netarchivesuite</url>
     <connection>scm:git:https://github.com/netarchivesuite/netarchivesuite.git</connection>
     <developerConnection>scm:git:git@github.com:netarchivesuite/netarchivesuite.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>netarchivesuite-7.7</tag>
   </scm>
 
   <distributionManagement>
@@ -912,7 +912,7 @@
             <dependency>
               <groupId>org.netarchivesuite</groupId>
               <artifactId>build-tools</artifactId>
-              <version>7.8-SNAPSHOT</version>
+              <version>7.7</version>
             </dependency>
           </dependencies>
         </plugin>

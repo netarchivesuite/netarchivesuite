@@ -23,7 +23,7 @@
 
 package dk.netarkivet.harvester.harvesting;
 
-import org.apache.commons.httpclient.URIException;
+import org.archive.url.URIException;
 import org.archive.net.UURI;
 
 /**

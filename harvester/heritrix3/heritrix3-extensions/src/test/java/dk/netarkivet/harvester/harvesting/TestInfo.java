@@ -43,7 +43,7 @@ public class TestInfo {
 
     public static final File ONE_LEVEL_ORDER_FILE = new File(TEMPLATES_DIR, "OneLevel-order.xml");
 
-    static final File ORIGINALS_DIR = new File(BASEDIR, "originals");
+    public static final File ORIGINALS_DIR = new File(BASEDIR, "originals");
 
     static final File WORKING_DIR = new File(BASEDIR, "working");
     static final File CRAWLDIR_ORIGINALS_DIR = new File(BASEDIR, "crawldir");

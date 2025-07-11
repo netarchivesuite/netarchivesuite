@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.archive.format.ArchiveFileConstants;
 import org.archive.format.arc.ARCConstants;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.WriterPoolSettings;
@@ -282,19 +283,19 @@ public final class ARCUtils {
     public static Map<String, Object> getHeadersFromARCFile(InputStream in, Long offset) throws IOException {
         Map<String, Object> headers = new HashMap<String, Object>();
         // extra needed headers.
-        headers.put(ARCRecordMetaData.VERSION_FIELD_KEY, "");
-        headers.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, offset);
+        headers.put(ArchiveFileConstants.VERSION_FIELD_KEY, "");
+        headers.put(ArchiveFileConstants.ABSOLUTE_OFFSET_KEY, offset);
 
         String line = InputStreamUtils.readLine(in);
         String[] tmp = line.split(" ");
 
         // decode header.
         if (tmp.length == 5) {
-            headers.put(ARCRecordMetaData.URL_FIELD_KEY, tmp[0]);
-            headers.put(ARCRecordMetaData.IP_HEADER_FIELD_KEY, tmp[1]);
-            headers.put(ARCRecordMetaData.DATE_FIELD_KEY, tmp[2]);
-            headers.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY, tmp[3]);
-            headers.put(ARCRecordMetaData.LENGTH_FIELD_KEY, tmp[4]);
+            headers.put(ArchiveFileConstants.URL_FIELD_KEY, tmp[0]);
+            headers.put(ARCConstants.IP_HEADER_FIELD_KEY, tmp[1]);
+            headers.put(ArchiveFileConstants.DATE_FIELD_KEY, tmp[2]);
+            headers.put(ArchiveFileConstants.MIMETYPE_FIELD_KEY, tmp[3]);
+            headers.put(ArchiveFileConstants.LENGTH_FIELD_KEY, tmp[4]);
         } else {
             throw new IOException("Does not include required metadata to be a valid ARC header: " + line);
         }
@@ -303,7 +304,7 @@ public final class ARCUtils {
         Matcher m = HTTP_HEADER_PATTERN.matcher(line);
 
         if (m.matches()) {
-            headers.put(ARCRecordMetaData.STATUSCODE_FIELD_KEY, m.group(1));
+            headers.put(ARCConstants.STATUSCODE_FIELD_KEY, m.group(1));
             // not valid META DATA
             headers.put(RESPONSETEXT, line);
         }
