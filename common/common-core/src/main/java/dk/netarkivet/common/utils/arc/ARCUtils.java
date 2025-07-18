@@ -282,19 +282,19 @@ public final class ARCUtils {
     public static Map<String, Object> getHeadersFromARCFile(InputStream in, Long offset) throws IOException {
         Map<String, Object> headers = new HashMap<String, Object>();
         // extra needed headers.
-        headers.put(ARCRecordMetaData.VERSION_FIELD_KEY, "");
-        headers.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, offset);
+        headers.put(ARCConstants.VERSION_FIELD_KEY, "");
+        headers.put(ARCConstants.ABSOLUTE_OFFSET_KEY, offset);
 
         String line = InputStreamUtils.readLine(in);
         String[] tmp = line.split(" ");
 
         // decode header.
         if (tmp.length == 5) {
-            headers.put(ARCRecordMetaData.URL_FIELD_KEY, tmp[0]);
-            headers.put(ARCRecordMetaData.IP_HEADER_FIELD_KEY, tmp[1]);
-            headers.put(ARCRecordMetaData.DATE_FIELD_KEY, tmp[2]);
-            headers.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY, tmp[3]);
-            headers.put(ARCRecordMetaData.LENGTH_FIELD_KEY, tmp[4]);
+            headers.put(ARCConstants.URL_FIELD_KEY, tmp[0]);
+            headers.put(ARCConstants.IP_HEADER_FIELD_KEY, tmp[1]);
+            headers.put(ARCConstants.DATE_FIELD_KEY, tmp[2]);
+            headers.put(ARCConstants.MIMETYPE_FIELD_KEY, tmp[3]);
+            headers.put(ARCConstants.LENGTH_FIELD_KEY, tmp[4]);
         } else {
             throw new IOException("Does not include required metadata to be a valid ARC header: " + line);
         }
@@ -303,7 +303,7 @@ public final class ARCUtils {
         Matcher m = HTTP_HEADER_PATTERN.matcher(line);
 
         if (m.matches()) {
-            headers.put(ARCRecordMetaData.STATUSCODE_FIELD_KEY, m.group(1));
+            headers.put(ARCConstants.STATUSCODE_FIELD_KEY, m.group(1));
             // not valid META DATA
             headers.put(RESPONSETEXT, line);
         }

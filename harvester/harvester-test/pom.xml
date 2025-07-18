@@ -50,6 +50,11 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.netpreserve.commons</groupId>
+      <artifactId>webarchive-commons</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!-- Test dependencies. -->
 
     <dependency>

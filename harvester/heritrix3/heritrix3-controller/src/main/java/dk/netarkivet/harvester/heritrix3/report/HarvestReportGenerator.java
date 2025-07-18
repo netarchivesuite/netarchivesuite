@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.httpclient.URIException;
+import org.archive.url.URIException;
 import org.archive.url.UsableURI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

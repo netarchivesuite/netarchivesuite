@@ -24,7 +24,7 @@ package dk.netarkivet.common.utils;
 
 import static org.junit.Assert.fail;
 
-import org.apache.commons.httpclient.URIException;
+import org.archive.url.URIException;
 import org.archive.url.UsableURI;
 import org.junit.Test;
 

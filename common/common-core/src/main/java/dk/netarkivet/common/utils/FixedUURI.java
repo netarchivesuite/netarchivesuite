@@ -23,7 +23,7 @@
 
 package dk.netarkivet.common.utils;
 
-import org.apache.commons.httpclient.URIException;
+import org.archive.url.URIException;
 import org.archive.url.UsableURI;
 
 /**

@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.archive.format.warc.WARCConstants;
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.warc.WARCRecord;
@@ -123,8 +124,8 @@ public class ExtractCDXFromWarcJob extends ArchiveBatchJob {
             ip = ((ARCRecord) rec).getMetaData().getIp();
             archiveFilename = ((ARCRecord) rec).getMetaData().getArcFile().getName();
         } else if (rec instanceof WARCRecord) {
-            ip = (String) rec.getHeader().getHeaderValue(WARCRecord.HEADER_KEY_IP);
-            archiveFilename = (String) rec.getHeader().getHeaderValue(WARCRecord.HEADER_KEY_FILENAME);
+            ip = (String) rec.getHeader().getHeaderValue(WARCConstants.HEADER_KEY_IP);
+            archiveFilename = (String) rec.getHeader().getHeaderValue(WARCConstants.HEADER_KEY_FILENAME);
         } else {
             throw new ArgumentNotValid("Do not know how to find the IP and filename for this type of ArchiveRecord: "
                     + rec.getClass().getName());
