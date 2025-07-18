@@ -12,15 +12,15 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-    <maven.compiler.release>8</maven.compiler.release>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.release>11</maven.compiler.release>
     <slf4j.version>1.7.25</slf4j.version>
     <logback.version>${logback-core.version}</logback.version>
-    <webarchive-commons.version>1.1.8</webarchive-commons.version>
+    <webarchive-commons.version>2.0.2</webarchive-commons.version>
     <!-- Heritrix versions are from https://github.com/netarchivesuite/heritrix3 which tracks the official
      repository at https://github.com/internetarchive/heritrix3 as closely as we can -->
-    <heritrix3.version>3.7.0-NAS-7.7</heritrix3.version>
+    <heritrix3.version>3.10.0</heritrix3.version>
     <heritrix3-wrapper.version>1.0.7</heritrix3-wrapper.version>
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
@@ -916,6 +916,26 @@
             </dependency>
           </dependencies>
         </plugin>
+<!--        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-toolchains-plugin</artifactId>
+          <version>3.2.0</version>
+          <executions>
+            <execution>
+              <phase>validate</phase>
+              <goals>
+                <goal>toolchain</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <toolchains>
+              <jdk>
+                <majorVersion>11</majorVersion>
+              </jdk>
+            </toolchains>
+          </configuration>
+        </plugin>-->
 
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -924,11 +944,12 @@
             <source>${maven.compiler.source}</source>
             <target>${maven.compiler.target}</target>
             <compilerArgs>
-              <arg>-J--add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED </arg>
-              <arg>-J--add-exports jdk.jconsole/sun.tools.jconsole=ALL-UNNAMED</arg>
-              <arg>-J--add-opens java.management/javax.management.openmbean=ALL-UNNAMED</arg>
-              <arg>-J--add-exports jdk.naming.rmi/com.sun.jndi.rmi.registry=ALL-UNNAMED</arg>
-              <arg>-J--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
+              <arg>--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
+              <arg>--add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED</arg>
+              <arg>--add-exports=jdk.jconsole/sun.tools.jconsole=ALL-UNNAMED</arg>
+              <arg>--add-opens=java.management/javax.management.openmbean=ALL-UNNAMED</arg>
+              <arg>--add-modules=jdk.naming.rmi</arg>
+              <arg>--add-exports=jdk.naming.rmi/com.sun.jndi.rmi.registry=ALL-UNNAMED</arg>
             </compilerArgs>
           </configuration>
         </plugin>
@@ -947,19 +968,12 @@
     </pluginManagement>
 
     <plugins>
+<!--      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-toolchains-plugin</artifactId>
+      </plugin>-->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <!--<source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>-->
-          <compilerArgs>
-            <arg>-J--add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED </arg>
-            <arg>-J--add-exports jdk.jconsole/sun.tools.jconsole=ALL-UNNAMED</arg>
-            <arg>-J--add-opens java.management/javax.management.openmbean=ALL-UNNAMED</arg>
-            <arg>-J--add-exports jdk.naming.rmi/com.sun.jndi.rmi.registry=ALL-UNNAMED</arg>
-            <arg>-J--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
-          </compilerArgs>
-        </configuration>
       </plugin>
 
       <plugin>

@@ -35,6 +35,10 @@ public class MetadataIndexingApplication {
      */
     public static void main(String[] args) throws Exception {
 
+        if (args.length < 1) {
+            usage();
+            System.exit(1);
+        }
         String localInputFileString = args[0];
         if (localInputFileString == null || localInputFileString.length() == 0) {
             usage();

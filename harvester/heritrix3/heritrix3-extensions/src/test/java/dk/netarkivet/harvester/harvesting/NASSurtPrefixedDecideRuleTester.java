@@ -27,12 +27,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import org.apache.commons.httpclient.URIException;
 import org.archive.modules.CrawlURI;
 import org.archive.modules.SchedulingConstants;
 import org.archive.modules.deciderules.surt.SurtPrefixedDecideRule;
 import org.archive.net.UURI;
 import org.archive.net.UURIFactory;
+import org.archive.url.URIException;
 import org.archive.util.SurtPrefixSet;
 import org.junit.Assert;
 import org.junit.Test;
@@ -2195,7 +2195,7 @@ public class NASSurtPrefixedDecideRuleTester {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             Assert.fail("Unexpected exception!");
-        } catch (URIException e) {
+        } catch (org.archive.url.URIException e) {
             e.printStackTrace();
             Assert.fail("Unexpected exception!");
         }

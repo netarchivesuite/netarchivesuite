@@ -21,11 +21,12 @@ $SCRIPT_DIR/libs/*:\
 $CLASSPATH;
 
 java \
+ --add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED \
  -Dsettings.common.hadoop.mapred.metadataExtractionJob.inputDir=/user/${clusterUser}/input \
  -Dsettings.common.hadoop.mapred.metadataExtractionJob.outputDir=/user/${clusterUser}/output \
  -Dsettings.common.hadoop.kerberos.principal=${kerberosPrincipal} \
  -Dsettings.common.hadoop.kerberos.keytab=$keytab \
  -Dsettings.common.hadoop.mapred.hadoopUberJar=$SCRIPT_DIR/libs/hadoop-uber-jar-${project.version}-shaded.jar \
  -Dsettings.common.hadoop.kerberos.krb5-conf=/etc/krb5.conf \
- MetadataIndexingApplication $2
+ MetadataIndexingApplication "$inputFile"
 

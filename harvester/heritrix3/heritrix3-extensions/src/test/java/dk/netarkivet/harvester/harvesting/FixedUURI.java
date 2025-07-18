@@ -23,8 +23,8 @@
 
 package dk.netarkivet.harvester.harvesting;
 
-import org.apache.commons.httpclient.URIException;
 import org.archive.net.UURI;
+import org.archive.url.URIException;
 
 /**
  * Fixed UURI which extends UURI to fix an NPE bug in getReferencedHost.
@@ -56,10 +56,9 @@ public class FixedUURI extends UURI {
      * Return the hostname for this URI, giving the looked-up host on dns-URLS.
      *
      * @return hostname for this URI, or null if this cannot be calculated.
-     * @throws URIException on serious parse errors.
      * @see UURI#getReferencedHost()
      */
-    public String getReferencedHost() throws URIException {
+    public String getReferencedHost() throws org.archive.url.URIException {
         if (getHost() == null && getScheme() == null) {
             return null;
         }
