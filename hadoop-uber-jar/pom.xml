@@ -57,6 +57,10 @@
           <groupId>com.google.guava</groupId>
           <artifactId>guava-parent</artifactId>
         </exclusion>
+          <exclusion>
+              <groupId>org.archive.heritrix</groupId>
+              <artifactId>*</artifactId>
+          </exclusion>
       </exclusions>
     </dependency>
 
@@ -77,6 +81,10 @@
           <groupId>com.google.guava</groupId>
           <artifactId>guava-parent</artifactId>
         </exclusion>
+          <exclusion>
+              <groupId>org.archive.heritrix</groupId>
+              <artifactId>*</artifactId>
+          </exclusion>
       </exclusions>
     </dependency>
 

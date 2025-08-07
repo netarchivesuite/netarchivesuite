@@ -1,31 +1,20 @@
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.security.UserGroupInformation;
-import org.apache.hadoop.util.ToolRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.hadoop.GetMetadataMapper;
-import dk.netarkivet.common.utils.hadoop.HadoopFileUtils;
 import dk.netarkivet.common.utils.hadoop.HadoopJob;
 import dk.netarkivet.common.utils.hadoop.HadoopJobStrategy;
 import dk.netarkivet.common.utils.hadoop.HadoopJobTool;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.hadoop.MetadataExtractionStrategy;
-import sun.security.krb5.KrbException;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.util.ToolRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class MetadataIndexingApplication {
     private static final Logger log = LoggerFactory.getLogger(MetadataIndexingApplication.class);
