@@ -627,13 +627,13 @@
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
-        <version>${commons-codec.version}</version>
+        <version>1.19.0</version>
       </dependency>
 
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
+        <version>2.6</version>
       </dependency>
 
       <dependency>
@@ -642,6 +642,11 @@
         <version>${commons-pool.version}</version>
       </dependency>
 
+        <dependency>
+            <groupId>dnsjava</groupId>
+            <artifactId>dnsjava</artifactId>
+            <version>3.6.3</version>
+        </dependency>
 
       <dependency>
         <groupId>org.mortbay.jetty</groupId>
@@ -871,17 +876,17 @@
 
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>${maven-javadoc-plugin.version}</version>
+          <version>3.11.2</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>${maven-deploy-plugin.version}</version>
+          <version>3.1.4</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>${maven-assembly-plugin.version}</version>
+          <version>3.7.1</version>
         </plugin>
 
         <plugin>
@@ -892,7 +897,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>license-maven-plugin</artifactId>
-          <version>${license-maven-plugin.version}</version>
+          <version>2.6.0</version>
         </plugin>
 
         <!-- mvn com.googlecode.maven-java-formatter-plugin:maven-java-formatter-plugin:format -->
@@ -943,8 +948,8 @@
             <target>${maven.compiler.target}</target>
             <compilerArgs>
               <arg>--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
-<!--              <arg>&#45;&#45;add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED</arg>-->
-<!--              <arg>&#45;&#45;add-exports=jdk.jconsole/sun.tools.jconsole=ALL-UNNAMED</arg>-->
+              <arg>--add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED</arg>
+              <arg>--add-exports=jdk.jconsole/sun.tools.jconsole=ALL-UNNAMED</arg>
               <arg>--add-opens=java.management/javax.management.openmbean=ALL-UNNAMED</arg>
               <arg>--add-modules=jdk.naming.rmi</arg>
               <arg>--add-exports=jdk.naming.rmi/com.sun.jndi.rmi.registry=ALL-UNNAMED</arg>
@@ -959,15 +964,29 @@
           <!-- Read jUnit categories to be excluded from Maven property -->
           <configuration>
             <excludedGroups>${test.excluded.groups}</excludedGroups>
-
-                  <argLine>
-                      --add-opens=java.base/java.lang=ALL-UNNAMED
-                      --add-opens=java.base/java.util=ALL-UNNAMED
-                  </argLine>
-
+            <argLine>
+                --add-opens=java.base/java.lang=ALL-UNNAMED
+                --add-opens=java.base/java.util=ALL-UNNAMED
+            </argLine>
           </configuration>
         </plugin>
 
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.13</version>
+        </plugin>
+
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-war-plugin</artifactId>
+              <version>3.4.0</version>
+          </plugin>
+
+          <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.2.0</version>
+          </plugin>
       </plugins>
     </pluginManagement>
 

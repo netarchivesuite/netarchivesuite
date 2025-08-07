@@ -31,7 +31,7 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>common-test</artifactId>
-      <version>7.8-SNAPSHOT</version>
+        <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 

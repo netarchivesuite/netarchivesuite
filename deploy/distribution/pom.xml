@@ -101,7 +101,7 @@
     <dependency>
       <groupId>org.netarchivesuite</groupId>
       <artifactId>heritrix3-monitor</artifactId>
-      <version>7.8-SNAPSHOT</version>
+        <version>${project.version}</version>
     </dependency>
 
     <dependency>
