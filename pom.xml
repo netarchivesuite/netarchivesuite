@@ -97,7 +97,7 @@
     <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
     <sonar.language>java</sonar.language>
     <!--    <jacoco.version>0.7.2.201409121644</jacoco.version> -->
-    <jacoco.version>0.7.9</jacoco.version>
+    <jacoco.version>0.8.13</jacoco.version>
     <hadoop.version>3.3.1</hadoop.version>
   </properties>
 
@@ -869,6 +869,17 @@
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
+          <configuration>
+            <argLine>
+              -Dfile.encoding=UTF-8
+              -Duser.language=en -Duser.country=US -Duser.variant=US -Duser.timezone=Europe/Copenhagen
+              --add-opens=java.base/java.lang=ALL-UNNAMED
+              --add-opens=java.base/java.util=ALL-UNNAMED
+            </argLine>
+            <!-- Hack to prevent running out of DB connections during test.-->
+            <forkCount>1</forkCount>
+            <reuseForks>false</reuseForks>
+          </configuration>
         </plugin>
 
         <plugin>
@@ -1121,7 +1132,7 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-war-plugin</artifactId>
-              <version>3.4.0</version>
+              <version>2.6</version>
             </plugin>
           </plugins>
         </pluginManagement>

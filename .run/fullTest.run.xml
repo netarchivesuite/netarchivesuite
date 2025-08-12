@@ -6,15 +6,18 @@
         <MavenGeneralSettings>
           <option name="alwaysUpdateSnapshots" value="false" />
           <option name="checksumPolicy" value="NOT_SET" />
+          <option name="customMavenHome" value="/usr/share/maven" />
+          <option name="emulateTerminal" value="false" />
           <option name="failureBehavior" value="AT_END" />
           <option name="localRepository" value="" />
           <option name="mavenHome" value="/usr/share/maven" />
+          <option name="mavenHomeTypeForPersistence" value="CUSTOM" />
           <option name="nonRecursive" value="false" />
           <option name="outputLevel" value="INFO" />
-          <option name="pluginUpdatePolicy" value="DEFAULT" />
           <option name="printErrorStackTraces" value="false" />
+          <option name="showDialogWithAdvancedSettings" value="false" />
           <option name="threads" />
-          <option name="usePluginRegistry" value="false" />
+          <option name="useMavenConfig" value="true" />
           <option name="userSettingsFile" value="" />
           <option name="workOffline" value="false" />
         </MavenGeneralSettings>
@@ -22,6 +25,7 @@
       <option name="myRunnerSettings" />
       <option name="myRunnerParameters">
         <MavenRunnerParameters>
+          <option name="cmdOptions" />
           <option name="profiles">
             <set />
           </option>
@@ -31,17 +35,31 @@
               <option value="install" />
             </list>
           </option>
+          <option name="multimoduleDir" />
           <option name="pomFileName" />
           <option name="profilesMap">
             <map>
               <entry key="fullTest" value="true" />
             </map>
           </option>
+          <option name="projectsCmdOptionValues">
+            <list />
+          </option>
           <option name="resolveToWorkspace" value="false" />
           <option name="workingDirPath" value="$PROJECT_DIR$" />
         </MavenRunnerParameters>
       </option>
     </MavenSettings>
+    <extension name="net.ashald.envfile">
+      <option name="IS_ENABLED" value="false" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+      </ENTRIES>
+    </extension>
     <method v="2" />
   </configuration>
 </component>
