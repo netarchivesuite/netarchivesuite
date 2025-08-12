@@ -113,7 +113,6 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>1.6.3</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

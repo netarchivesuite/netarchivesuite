@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -14,12 +15,12 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-<!--    <maven.compiler.release>11</maven.compiler.release>-->
-    <webarchive-commons.version>2.0.2</webarchive-commons.version>
+    <!--    <maven.compiler.release>11</maven.compiler.release>-->
+
     <!-- Heritrix versions are from https://github.com/netarchivesuite/heritrix3 which tracks the official
      repository at https://github.com/internetarchive/heritrix3 as closely as we can -->
     <heritrix3.version>3.10.0</heritrix3.version>
-    <heritrix3-wrapper.version>1.0.7</heritrix3-wrapper.version>
+
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
     <jwat.version>1.0.4</jwat.version>
@@ -198,32 +199,41 @@
       <dependency>
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>
-        <version>${json.version}</version>
+        <version>20131018</version>
       </dependency>
 
       <dependency>
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
-        <version>${xerces.version}</version>
+        <version>2.11.0</version>
       </dependency>
 
 
       <dependency>
         <groupId>org.twitter4j</groupId>
         <artifactId>twitter4j-core</artifactId>
-        <version>${twitter4j-core.version}</version>
+        <version>2.2.6</version>
       </dependency>
 
       <dependency>
         <groupId>com.antiaction</groupId>
         <artifactId>common-html</artifactId>
-        <version>${common-html.version}</version>
+        <version>0.1.0-NAS</version>
       </dependency>
-
+      <dependency>
+        <groupId>com.antiaction</groupId>
+        <artifactId>common-servlet</artifactId>
+        <version>0.1.0-NAS</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-validator</groupId>
+        <artifactId>commons-validator</artifactId>
+        <version>1.4.0</version>
+      </dependency>
       <dependency>
         <groupId>com.antiaction</groupId>
         <artifactId>common-template-engine</artifactId>
-        <version>${common-template-engine.version}</version>
+        <version>0.3.0-NAS</version>
       </dependency>
 
       <dependency>
@@ -233,11 +243,21 @@
       </dependency>
 
       <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
-        <version>${mail.version}</version>
+        <groupId>com.jcraft</groupId>
+        <artifactId>jsch</artifactId>
+        <version>0.1.52</version>
       </dependency>
 
+      <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>1.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>1.6.3</version>
+      </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-all</artifactId>
@@ -248,24 +268,22 @@
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derbyclient</artifactId>
-        <version>${derby.version}</version>
+        <version>10.12.1.1</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derby</artifactId>
-        <version>${derby.version}</version>
+        <version>10.12.1.1</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derbytools</artifactId>
-        <version>${derby.version}</version>
+        <version>10.12.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derbynet</artifactId>
-        <version>${derby.version}</version>
+        <version>10.12.1.1</version>
       </dependency>
 
       <dependency>
@@ -277,50 +295,50 @@
       <dependency>
         <groupId>berkeleydb</groupId>
         <artifactId>je</artifactId>
-        <version>${je.version}</version>
+        <version>3.2.76</version>
       </dependency>
 
       <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-java</artifactId>
-        <version>${selenium-api.version}</version>
+        <version>3.14.0</version>
       </dependency>
 
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-api</artifactId>
-        <version>${selenium-api.version}</version>
+        <version>3.14.0</version>
       </dependency>
 
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-firefox-driver</artifactId>
-        <version>${selenium-api.version}</version>
+        <version>3.14.0</version>
       </dependency>
 
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-support</artifactId>
-        <version>${selenium-api.version}</version>
+        <version>3.14.0</version>
       </dependency>
 
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>htmlunit-driver</artifactId>
-        <version>${htmlunit-driver.version}</version>
+        <version>2.33.0</version>
       </dependency>
 
       <dependency>
         <groupId>org.jaccept</groupId>
         <artifactId>jaccept-core</artifactId>
-        <version>${jaccept-core.version}</version>
+        <version>0.4</version>
       </dependency>
 
       <dependency>
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-all</artifactId>
-        <version>${hamcrest-all.version}</version>
+        <version>1.3</version>
       </dependency>
 
       <dependency>
@@ -328,37 +346,51 @@
         <artifactId>slf4j-api</artifactId>
         <version>2.0.17</version>
       </dependency>
-
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>jul-to-slf4j</artifactId>
         <version>2.0.17</version>
       </dependency>
-
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>log4j-over-slf4j</artifactId>
         <version>2.0.17</version>
       </dependency>
-
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>jcl-over-slf4j</artifactId>
         <version>2.0.17</version>
       </dependency>
-
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>2.0.17</version>
+      </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
         <version>2.0.17</version>
-        <scope>test</scope>
-        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.17</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>1.5.18</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>1.5.18</version>
       </dependency>
 
       <dependency>
         <groupId>mockobjects</groupId>
         <artifactId>mockobjects-core</artifactId>
-        <version>${mockobjects-core.version}</version>
+        <version>0.09</version>
       </dependency>
 
       <dependency>
@@ -367,41 +399,64 @@
         <version>0.9.5.4</version>
       </dependency>
 
+      <!-- bitrepository dependencies -->
+      <!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-server -->
       <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>1.5.18</version>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-server</artifactId>
+        <version>1.19</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.bitrepository.reference</groupId>
+        <artifactId>bitrepository-core</artifactId>
+        <version>1.9</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.bitrepository.reference</groupId>
+        <artifactId>bitrepository-client</artifactId>
+        <version>1.9</version>
+      </dependency>
+
+      <!-- bitrepository settings complete -->
 
       <dependency>
         <groupId>org.apache.tomcat.embed</groupId>
         <artifactId>tomcat-embed-core</artifactId>
-        <version>${tomcat-embed-core.version}</version>
+        <version>8.5.50</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.tomcat</groupId>
         <artifactId>tomcat-servlet-api</artifactId>
-        <version>${tomcat-embed-core.version}</version>
+        <version>8.5.50</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.tomcat.embed</groupId>
         <artifactId>tomcat-embed-jasper</artifactId>
-        <version>${tomcat-embed-core.version}</version>
+        <version>8.5.50</version>
       </dependency>
-
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-logging-juli</artifactId>
+        <version>8.5.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jasper</artifactId>
+        <version>8.5.50</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jasper-el</artifactId>
+        <version>8.5.50</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.tomcat</groupId>
         <artifactId>tomcat-jsp-api</artifactId>
-        <version>${tomcat-embed-core.version}</version>
+        <version>8.5.50</version>
       </dependency>
 
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-core</artifactId>
-        <version>1.5.18</version>
-      </dependency>
 
       <dependency>
         <groupId>commons-collections</groupId>
@@ -412,7 +467,7 @@
       <dependency>
         <groupId>org.netpreserve.commons</groupId>
         <artifactId>webarchive-commons</artifactId>
-        <version>${webarchive-commons.version}</version>
+        <version>2.0.2</version>
         <exclusions>
           <exclusion>
             <groupId>org.json</groupId>
@@ -460,39 +515,35 @@
       <dependency>
         <groupId>org.archive.heritrix</groupId>
         <artifactId>heritrix-engine</artifactId>
-        <version>${heritrix3.version}</version>
+        <version>3.10.0</version>
       </dependency>
-
       <dependency>
         <groupId>org.archive.heritrix</groupId>
         <artifactId>heritrix-commons</artifactId>
-        <version>${heritrix3.version}</version>
+        <version>3.10.0</version>
       </dependency>
-
       <dependency>
         <groupId>org.archive.heritrix</groupId>
         <artifactId>heritrix</artifactId>
-        <version>${heritrix3.version}</version>
+        <version>3.10.0</version>
         <classifier>dist</classifier>
         <type>zip</type>
       </dependency>
-
       <dependency>
         <groupId>org.archive.heritrix</groupId>
         <artifactId>heritrix-contrib</artifactId>
-        <version>${heritrix3.version}</version>
+        <version>3.10.0</version>
       </dependency>
-
       <dependency>
         <groupId>org.netarchivesuite</groupId>
         <artifactId>heritrix3-wrapper</artifactId>
-        <version>${heritrix3-wrapper.version}</version>
+        <version>1.0.7</version>
       </dependency>
 
       <dependency>
         <groupId>org.netpreserve.openwayback</groupId>
         <artifactId>openwayback-core</artifactId>
-        <version>${openwayback.version}</version>
+        <version>2.4.0</version>
         <exclusions>
           <exclusion>
             <groupId>com.sleepycat</groupId>
@@ -504,22 +555,22 @@
       <dependency>
         <groupId>org.jwat</groupId>
         <artifactId>jwat-common</artifactId>
-        <version>${jwat.version}</version>
+        <version>1.1.3</version>
       </dependency>
       <dependency>
         <groupId>org.jwat</groupId>
         <artifactId>jwat-gzip</artifactId>
-        <version>${jwat.version}</version>
+        <version>1.1.3</version>
       </dependency>
       <dependency>
         <groupId>org.jwat</groupId>
         <artifactId>jwat-arc</artifactId>
-        <version>${jwat.version}</version>
+        <version>1.1.3</version>
       </dependency>
       <dependency>
         <groupId>org.jwat</groupId>
         <artifactId>jwat-warc</artifactId>
-        <version>${jwat.version}</version>
+        <version>1.1.3</version>
       </dependency>
 
       <dependency>
@@ -534,94 +585,86 @@
         </exclusions>
       </dependency>
 
+
+
+      <!-- Hibernate -->
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-c3p0</artifactId>
-        <version>${hibernate-c3p0.version}</version>
+        <version>4.3.6.Final</version>
       </dependency>
-
-      <!-- Hibernate -->
-
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate</artifactId>
-        <version>${hibernate.version}</version>
+        <version>3.3.0.SP1</version>
         <type>pom</type>
       </dependency>
-
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-core</artifactId>
-        <version>${hibernate.version}</version>
+        <version>3.3.0.SP1</version>
       </dependency>
-
-      <!-- bad version? -->
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-annotations</artifactId>
-        <version>${hibernate-annotations.version}</version>
+        <version>3.3.0.ga</version>
       </dependency>
-
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-commons-annotations</artifactId>
-        <version>${hibernate-annotations.version}</version>
+        <version>3.3.0.ga</version>
       </dependency>
-
-      <!-- good guess -->
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>ejb3-persistence</artifactId>
-        <version>${ejb3-persistence.version}</version>
+        <version>1.0.2.GA</version>
       </dependency>
-
       <dependency>
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
-        <version>${postgresql.version}</version>
+        <version>42.7.7</version>
       </dependency>
 
       <dependency>
         <groupId>javassist</groupId>
         <artifactId>javassist</artifactId>
-        <version>${javassist.version}</version>
+        <version>3.9.0.GA</version>
       </dependency>
 
       <dependency>
         <groupId>org.htmlparser</groupId>
         <artifactId>htmlparser</artifactId>
-        <version>${htmlparser.version}</version>
+        <version>1.6</version>
       </dependency>
 
       <dependency>
         <groupId>jaxen</groupId>
         <artifactId>jaxen</artifactId>
-        <version>${jaxen.version}</version>
+        <version>2.0.0</version>
       </dependency>
-
 
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
-        <version>${servlet-api.version}</version>
+        <version>2.5</version>
       </dependency>
 
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>${commons-io.version}</version>
+        <version>2.20.0</version>
       </dependency>
 
       <dependency>
         <groupId>commons-cli</groupId>
         <artifactId>commons-cli</artifactId>
-        <version>${commons-cli.version}</version>
+        <version>1.9.0</version>
       </dependency>
 
       <dependency>
         <groupId>commons-net</groupId>
         <artifactId>commons-net</artifactId>
-        <version>${commons-net.version}</version>
+        <version>3.11.1</version>
       </dependency>
 
       <dependency>
@@ -639,55 +682,65 @@
       <dependency>
         <groupId>commons-pool</groupId>
         <artifactId>commons-pool</artifactId>
-        <version>${commons-pool.version}</version>
+        <version>1.6</version>
       </dependency>
 
-        <dependency>
-            <groupId>dnsjava</groupId>
-            <artifactId>dnsjava</artifactId>
-            <version>3.6.3</version>
-        </dependency>
+      <dependency>
+        <groupId>org.apache.ant</groupId>
+        <artifactId>ant-jsch</artifactId>
+        <version>1.9.6</version>
+      </dependency>
+
+      <dependency>
+        <groupId>dnsjava</groupId>
+        <artifactId>dnsjava</artifactId>
+        <version>3.6.3</version>
+      </dependency>
 
       <dependency>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty</artifactId>
-        <version>${jetty.version}</version>
+        <version>6.1.26</version>
         <scope>compile</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>4.4.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>xalan</artifactId>
+        <version>2.7.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.sleepycat</groupId>
+        <artifactId>je</artifactId>
+        <version>5.0.73</version>
       </dependency>
 
       <dependency>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-util</artifactId>
-        <version>${jetty.version}</version>
-        <scope>compile</scope>
+        <version>6.1.26</version>
       </dependency>
       <dependency>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-sslengine</artifactId>
-        <version>${jetty.version}</version>
-        <scope>compile</scope>
+        <version>6.1.26</version>
       </dependency>
       <dependency>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-ajp</artifactId>
-        <version>${jetty.version}</version>
-        <scope>compile</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>${jetty-servlet-api.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jsp-2.1-glassfish</artifactId>
-        <version>${jsp-2.1-glassfish.version}</version>
+        <version>6.1.26</version>
       </dependency>
       <dependency>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jsp-2.1-jetty</artifactId>
-        <version>${jetty.version}</version>
+        <version>6.1.26</version>
         <exclusions>
           <exclusion>  <!-- Excluded because it conflicts with dependency on later version of ecj -->
             <groupId>org.eclipse.jdt</groupId>
@@ -697,46 +750,56 @@
       </dependency>
       <dependency>
         <groupId>org.mortbay.jetty</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.5-20081211</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jsp-2.1-glassfish</artifactId>
+        <version>2.1.v20100127</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
         <artifactId>jsp-api-2.1-glassfish</artifactId>
-        <version>${jsp-2.1-glassfish.version}</version>
+        <version>2.1.v20100127</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jdt.core.compiler</groupId>
         <artifactId>ecj</artifactId>
-        <version>${ecj.version}</version>
+        <version>4.4.2</version>
       </dependency>
       <dependency>
         <groupId>dom4j</groupId>
         <artifactId>dom4j</artifactId>
-        <version>${dom4j.version}</version>
+        <version>1.6.1</version>
       </dependency>
       <dependency>
         <groupId>commons-fileupload</groupId>
         <artifactId>commons-fileupload</artifactId>
-        <version>${commons-fileupload.version}</version>
+        <version>1.6.0</version>
       </dependency>
       <dependency>
         <groupId>com.sun.messaging.mq</groupId>
         <artifactId>jms</artifactId>
-        <version>${jms.version}</version>
+        <version>4.4.1</version>
       </dependency>
 
       <dependency>
         <groupId>com.sun.messaging.mq</groupId>
         <artifactId>imq</artifactId>
-        <version>${jms.version}</version>
+        <version>4.4.1</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.lucene</groupId>
         <artifactId>lucene-core</artifactId>
-        <version>${lucene-core.version}</version>
+        <version>4.4.0</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.lucene</groupId>
         <artifactId>lucene-analyzers-common</artifactId>
-        <version>${lucene-core.version}</version>
+        <version>4.4.0</version>
       </dependency>
 
       <dependency>
@@ -749,80 +812,80 @@
       <dependency>
         <groupId>org.cthul</groupId>
         <artifactId>cthul-matchers</artifactId>
-        <version>${cthul-matchers.version}</version>
+        <version>1.1.0</version>
       </dependency>
 
       <dependency>
         <groupId>fastutil</groupId>
         <artifactId>fastutil</artifactId>
-        <version>${fastutil.version}</version>
+        <version>5.0.7</version>
       </dependency>
 
       <dependency>
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
-        <version>${mysql-connector-java.version}</version>
+        <version>5.1.13</version>
       </dependency>
 
       <dependency>
         <groupId>jfree</groupId>
         <artifactId>jfreechart</artifactId>
-        <version>${jfreechart.version}</version>
+        <version>1.0.13</version>
       </dependency>
 
       <dependency>
         <groupId>com.hp.gagawa</groupId>
         <artifactId>gagawa</artifactId>
-        <version>${gagawa.version}</version>
+        <version>1.0.1</version>
       </dependency>
 
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
-        <version>${guava.version}</version>
+        <version>27.0-jre</version>
       </dependency>
 
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
-        <version>${commons-logging.version}</version>
+        <version>1.3.5</version>
       </dependency>
 
       <dependency>
         <groupId>it.unimi.dsi</groupId>
         <artifactId>mg4j</artifactId>
-        <version>${mg4j.version}</version>
+        <version>1.0.1</version>
         <scope>test</scope>
       </dependency>
 
       <dependency>
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
-        <version>${h2.version}</version>
+        <version>1.4.178</version>
       </dependency>
 
       <dependency>
         <groupId>commons-httpclient</groupId>
         <artifactId>commons-httpclient</artifactId>
-        <version>${commons-httpclient.version}</version>
+        <version>3.1</version>
       </dependency>
 
       <dependency>
         <groupId>org.gnu.inet</groupId>
         <artifactId>libidn</artifactId>
-        <version>${libidn.version}</version>
+        <version>1.15</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>${commons-lang3.version}</version>
+        <version>3.18.0</version>
       </dependency>
 
       <dependency>
         <groupId>mockobjects</groupId>
         <artifactId>mockobjects-jdk1.4-j2ee1.3</artifactId>
-        <version>${mockobjects-core.version}</version>
+        <version>0.09</version>
       </dependency>
 
       <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
@@ -835,7 +898,7 @@
       <dependency>
         <groupId>org.apache.hadoop</groupId>
         <artifactId>hadoop-client</artifactId>
-        <version>${hadoop.version}</version>
+        <version>3.4.1</version>
         <exclusions>
           <exclusion> <!-- Excluded because it conflicts with tomcat's ServletRequest -->
             <groupId>javax.servlet</groupId>
@@ -851,8 +914,38 @@
           </exclusion>
         </exclusions>
       </dependency>
-
-      <dependency> <!-- Added this since it apparently helps Hadoop play nice with Xerces -->
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-common</artifactId>
+        <version>3.4.1</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>dnsjava</groupId>
+            <artifactId>dnsjava</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-minicluster</artifactId>
+        <version>3.4.1</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-mapreduce-client-core</artifactId>
+        <version>3.4.1</version>
+      </dependency>
+      <dependency>
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>
         <version>1.4.01</version>
@@ -864,6 +957,11 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.2.4</version>
+        </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.4.2</version>
@@ -919,26 +1017,26 @@
             </dependency>
           </dependencies>
         </plugin>
-<!--        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-toolchains-plugin</artifactId>
-          <version>3.2.0</version>
-          <executions>
-            <execution>
-              <phase>validate</phase>
-              <goals>
-                <goal>toolchain</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <toolchains>
-              <jdk>
-                <majorVersion>11</majorVersion>
-              </jdk>
-            </toolchains>
-          </configuration>
-        </plugin>-->
+        <!--        <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-toolchains-plugin</artifactId>
+                  <version>3.2.0</version>
+                  <executions>
+                    <execution>
+                      <phase>validate</phase>
+                      <goals>
+                        <goal>toolchain</goal>
+                      </goals>
+                    </execution>
+                  </executions>
+                  <configuration>
+                    <toolchains>
+                      <jdk>
+                        <majorVersion>11</majorVersion>
+                      </jdk>
+                    </toolchains>
+                  </configuration>
+                </plugin>-->
 
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -965,8 +1063,9 @@
           <configuration>
             <excludedGroups>${test.excluded.groups}</excludedGroups>
             <argLine>
-                --add-opens=java.base/java.lang=ALL-UNNAMED
-                --add-opens=java.base/java.util=ALL-UNNAMED
+              --add-opens=java.base/java.lang=ALL-UNNAMED
+              --add-opens=java.base/java.util=ALL-UNNAMED
+              --add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED
             </argLine>
           </configuration>
         </plugin>
@@ -977,24 +1076,31 @@
           <version>0.8.13</version>
         </plugin>
 
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-war-plugin</artifactId>
-              <version>3.4.0</version>
-          </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>3.4.0</version>
+        </plugin>
 
-          <plugin>
+        <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.2.0</version>
-          </plugin>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.2.1</version>
+        </plugin>
+
+        <plugin>
+          <groupId>ru.concerteza.buildnumber</groupId>
+          <artifactId>maven-jgit-buildnumber-plugin</artifactId>
+          <version>1.2.9</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
     <plugins>
-<!--      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-toolchains-plugin</artifactId>
-      </plugin>-->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
@@ -1023,7 +1129,6 @@
       <plugin>
         <!-- install source jars to maven repo http://maven.apache.org/plugins/maven-source-plugin/usage.html -->
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.2.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -1079,7 +1184,6 @@
       <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>${maven-jgit-buildnumber-plugin.version}</version>
         <executions>
           <execution>
             <id>git-buildnumber</id>
@@ -1153,12 +1257,10 @@
             <plugin>
               <groupId>org.jacoco</groupId>
               <artifactId>jacoco-maven-plugin</artifactId>
-              <version>${jacoco.version}</version>
             </plugin>
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-war-plugin</artifactId>
-              <version>3.4.0</version>
             </plugin>
           </plugins>
         </pluginManagement>
@@ -1237,9 +1339,8 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${javadoc-plugin.version}</version>
         <configuration>
-          <source>8</source>
+          <source>17</source>
           <detectJavaApiLink>false</detectJavaApiLink>
           <linksource>true</linksource>
           <quiet>true</quiet>

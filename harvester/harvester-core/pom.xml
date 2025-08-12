@@ -83,7 +83,6 @@
     <dependency>
       <groupId>org.gnu.inet</groupId>
       <artifactId>libidn</artifactId>
-      <version>${libidn.version}</version>
     </dependency>
 
     <dependency>
@@ -127,7 +126,6 @@
     <dependency>
       <groupId>com.antiaction</groupId>
       <artifactId>common-servlet</artifactId>
-      <version>${common-html.version}</version>
     </dependency>
 
     <dependency>
@@ -153,7 +151,6 @@
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
-      <version>1.4.0</version>
     </dependency>
   </dependencies>
 
@@ -208,7 +205,6 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco.version}</version>
         <configuration>
           <destFile>${sonar.jacoco.reportPath}</destFile>
           <append>true</append>

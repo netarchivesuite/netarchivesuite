@@ -109,7 +109,6 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-c3p0</artifactId>
-      <!--<version>3.3.0.SP1</version>-->
     </dependency>
 
     <dependency>
@@ -164,7 +163,6 @@
      <plugin>
     <groupId>org.jacoco</groupId>
     <artifactId>jacoco-maven-plugin</artifactId>
-    <version>${jacoco.version}</version>
     <configuration>
         <destFile>${sonar.jacoco.reportPath}</destFile>
         <append>true</append>

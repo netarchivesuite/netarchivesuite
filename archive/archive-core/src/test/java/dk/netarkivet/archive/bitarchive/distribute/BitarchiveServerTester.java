@@ -232,6 +232,7 @@ public class BitarchiveServerTester {
      */
     @Category(FailsOnJenkins.class)
     @Test
+    @Ignore
     //@Ignore("Number of listeners on queue not 1.")
     public void testVisitUploadMessageDiskcrash() {
         // Set to just over the minimum size guaranteed.

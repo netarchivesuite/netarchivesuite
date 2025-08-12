@@ -42,7 +42,6 @@
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-      <version>${jaxen.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -50,7 +49,6 @@
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant-jsch</artifactId>
-      <version>1.9.6</version>
       <scope>test</scope>
     </dependency>
 
@@ -69,7 +67,6 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco.version}</version>
         <configuration>
           <destFile>${sonar.jacoco.reportPath}</destFile>
           <append>true</append>

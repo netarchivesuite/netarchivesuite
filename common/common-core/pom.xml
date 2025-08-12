@@ -26,19 +26,16 @@
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-server</artifactId>
-      <version>1.19</version>
     </dependency>
 
     <dependency>
       <groupId>org.bitrepository.reference</groupId>
       <artifactId>bitrepository-core</artifactId>
-      <version>${bitrepository.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.bitrepository.reference</groupId>
       <artifactId>bitrepository-client</artifactId>
-      <version>${bitrepository.version}</version>
     </dependency>
 
     <!-- bitrepository settings complete -->
@@ -47,32 +44,26 @@
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-core</artifactId>
-      <version>${tomcat.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-logging-juli</artifactId>
-      <version>8.5.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-jasper</artifactId>
-      <version>${tomcat.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jasper</artifactId>
-      <version>${tomcat.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jasper-el</artifactId>
-      <version>${tomcat.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jsp-api</artifactId>
-      <version>${tomcat.version}</version>
     </dependency>
 
 
@@ -104,7 +95,6 @@
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-      <version>${jaxen.version}</version>
       <exclusions>
         <exclusion>
           <groupId>xerces</groupId>
@@ -116,13 +106,11 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
-      <version>4.4.1</version>
     </dependency>
 
     <dependency>
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>
-      <version>2.7.1</version>
     </dependency>
 
 
@@ -273,7 +261,6 @@
     <dependency>
       <groupId>berkeleydb</groupId>
       <artifactId>je</artifactId>
-      <version><!-- FIXME: 3.3.82 -->3.2.76</version>
     </dependency>
 
     <dependency>
@@ -300,29 +287,12 @@
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-client</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!--TODO exclude dnsjava and add as separate dep. -->
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
-      <version>${hadoop.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>dnsjava</groupId>
-          <artifactId>dnsjava</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/dnsjava/dnsjava -->
@@ -336,22 +306,6 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
-
-      <dependency>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-common</artifactId>
-          <version>3.4.1</version>
-          <exclusions>
-              <exclusion>
-                  <groupId>org.slf4j</groupId>
-                  <artifactId>slf4j-log4j12</artifactId>
-              </exclusion>
-              <exclusion>
-                  <groupId>dnsjava</groupId>
-                  <artifactId>dnsjava</artifactId>
-              </exclusion>
-          </exclusions>
-      </dependency>
 
       <dependency>
       <groupId>${project.groupId}</groupId>
@@ -379,7 +333,6 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco.version}</version>
         <configuration>
           <destFile>${sonar.jacoco.reportPath}</destFile>
           <append>true</append>
