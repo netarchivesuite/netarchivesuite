@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import javax.inject.Provider;
@@ -112,7 +112,7 @@ public class SnapshotHarvestDefinitionTester {
         PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(requestStub);
 
         snapshotHarvestDefinition.processRequest(pageContext, I18N);
-        verifyZeroInteractions(harvestDefinitionDAOMock, jobDaoMock);
+        verifyNoInteractions(harvestDefinitionDAOMock, jobDaoMock);
 
         when(requestStub.getParameter(Constants.UPDATE_PARAM)).thenReturn("yes");
         when(requestStub.getParameter(Constants.DOMAIN_PARAM)).thenReturn(newHDname);

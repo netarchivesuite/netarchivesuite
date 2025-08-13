@@ -123,14 +123,12 @@
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-jasper</artifactId>
-      <version>${tomcat-embed-core.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-servlet-api</artifactId>
-      <version>${tomcat-embed-core.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -148,7 +146,6 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jsp-api</artifactId>
-      <version>${tomcat-embed-core.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -193,13 +190,14 @@
             -DXjava.security.policy=tests/dk/netarkivet/ant-test.policy
             -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
             -Duser.language=en -Duser.country=US -Duser.variant=US -Duser.timezone=Europe/Copenhagen
+            --add-opens=java.base/java.lang=ALL-UNNAMED
+            --add-opens=java.base/java.util=ALL-UNNAMED
           </argLine>
         </configuration>
       </plugin>
     <plugin>
     <groupId>org.jacoco</groupId>
     <artifactId>jacoco-maven-plugin</artifactId>
-    <version>${jacoco.version}</version>
     <configuration>
         <destFile>${sonar.jacoco.reportPath}</destFile>
         <append>true</append>

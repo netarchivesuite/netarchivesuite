@@ -37,18 +37,11 @@
     <dependency>
       <groupId>org.netpreserve.openwayback</groupId>
       <artifactId>openwayback-core</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>com.sleepycat</groupId>
-          <artifactId>je</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.netpreserve.commons</groupId>
       <artifactId>webarchive-commons</artifactId>
-      <version>1.1.8</version>
     </dependency>
 
     <dependency>
@@ -57,4 +50,15 @@
     </dependency>
 
   </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.netpreserve.commons</groupId>
+        <artifactId>webarchive-commons</artifactId>
+        <version>1.1.9</version>
+        <!--It seems openwayback 2.4.0 requires webarchive-commons 1.1.9      -->
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>

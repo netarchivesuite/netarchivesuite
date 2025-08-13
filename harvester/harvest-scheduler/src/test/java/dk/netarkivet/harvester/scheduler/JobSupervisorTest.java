@@ -22,23 +22,21 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import org.junit.Test;
 
+import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Provider;
-
-import org.junit.Test;
-import org.mockito.Matchers;
-
-import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobStatus;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class JobSupervisorTest {
     private JobSupervisor jobSupervisor;
@@ -87,7 +85,7 @@ public class JobSupervisorTest {
         verify(pastActiveMock).getActualStart();
         verify(futureActiveMock).getActualStart();
         verify(pastObsoleteJobMock).setStatus(JobStatus.FAILED);
-        verify(pastObsoleteJobMock).appendHarvestErrors(Matchers.any(String.class));
+        verify(pastObsoleteJobMock).appendHarvestErrors(any(String.class));
         verifyNoMoreInteractions(pastActiveMock, futureActiveMock);
 
         verify(jobDaoMock).update(pastObsoleteJobMock);

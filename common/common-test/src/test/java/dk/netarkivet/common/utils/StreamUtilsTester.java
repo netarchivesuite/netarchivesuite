@@ -22,13 +22,15 @@
  */
 package dk.netarkivet.common.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import javax.servlet.jsp.JspWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,16 +39,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.servlet.jsp.JspWriter;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Unit tests for the StreamUtils class.

@@ -23,26 +23,25 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.GregorianCalendar;
-import java.util.List;
-
-import org.junit.Test;
-
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.harvester.datamodel.eav.ContentAttrType_Generic;
 import dk.netarkivet.harvester.datamodel.eav.ContentAttribute_Generic;
 import dk.netarkivet.harvester.datamodel.eav.EAV;
 import dk.netarkivet.harvester.test.utils.OrderXmlBuilder;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for the DomainConfiguration class. Also widely tested from other places.
