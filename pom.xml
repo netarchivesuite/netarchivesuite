@@ -17,10 +17,10 @@
     <maven.compiler.release>8</maven.compiler.release>
     <slf4j.version>1.7.25</slf4j.version>
     <logback.version>${logback-core.version}</logback.version>
-    <webarchive-commons.version>2.0.1</webarchive-commons.version>
+    <webarchive-commons.version>3.0.0</webarchive-commons.version>
     <!-- Heritrix versions are from https://github.com/netarchivesuite/heritrix3 which tracks the official
      repository at https://github.com/internetarchive/heritrix3 as closely as we can -->
-    <heritrix3.version>3.10.0-NAS-7.8-SNAPSHOT</heritrix3.version>
+    <heritrix3.version>3.10.1-NAS-7.8-SNAPSHOT</heritrix3.version>
     <heritrix3-wrapper.version>1.0.7</heritrix3-wrapper.version>
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
@@ -85,7 +85,7 @@
     <logback-core.version>1.2.3</logback-core.version>
     <je.version>3.2.76</je.version>
     <mockobjects-core.version>0.09</mockobjects-core.version>
-    <commons-lang3.version>3.5</commons-lang3.version>
+    <commons-lang3.version>3.18.0</commons-lang3.version>
     <mail.version>1.4</mail.version>
     <common-html.version>0.1.0-NAS</common-html.version>
     <common-template-engine.version>0.3.0-NAS</common-template-engine.version>
