@@ -1211,7 +1211,7 @@ public class DomainDBDAO extends DomainDAO {
         try {
             List<String> domainConfigurationNames = DBUtils.selectStringList(c, "SELECT configurations.name "
                     + " FROM configurations, domains " + "WHERE domains.domain_id = configurations.domain_id "
-                    + " AND domains.name = ?", domainName);
+                    + " AND domains.name = ? " + "ORDER by configurations.name" , domainName);
             if (domainConfigurationNames.size() == 0) {
                 throw new UnknownID("No domain exists with name '" + domainName + "'");
             }
