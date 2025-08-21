@@ -71,6 +71,8 @@ public class HarvestHistoryTableHelper {
         }
         if (sortOrderParameter != null) {
             sortOrder = sortOrderParameter;
+        } else if (sortField.equals(HarvestHistoryTableHelper.START_TIME_FIELD)) {
+            sortOrder = Constants.SORT_ORDER_DESC;
         } else {
             sortOrder = Constants.SORT_ORDER_ASC;
         }
