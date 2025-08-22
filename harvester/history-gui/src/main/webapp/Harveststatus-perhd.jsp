@@ -50,6 +50,7 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                  dk.netarkivet.harvester.webinterface.HarvestStatus,
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.HarvestStatusQuery"
+         pageEncoding="UTF-8"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %>
 <fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
