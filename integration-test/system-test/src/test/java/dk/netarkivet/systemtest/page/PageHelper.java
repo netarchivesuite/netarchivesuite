@@ -35,7 +35,7 @@ public class PageHelper {
     private static Map<MenuPages, String> pageMapping = new HashMap<MenuPages, String>();
 
     public static enum MenuPages {
-        Frontpage, SelectiveHarvests, SnapshotHarvests, Schedules, FindDomains, CreateDomain, DomainStatistics, AliasSummary, EditHarvestTemplates, GlobalCrawlerTraps, ExtendedFields, AllJobs, AllJobsPerDomain, RunningJobs, Filestatus, BatchjobOverview, ViewerproxyStatus, OverviewOfTheSystemState
+        Frontpage, SelectiveHarvests, SnapshotHarvests, Schedules, FindDomains, CreateDomain, DomainStatistics, AliasSummary, EditHarvestTemplates, GlobalCrawlerTraps, ExtendedFields, AllJobs, AllJobsPerDomain, RunningJobs, Filestatus, BatchjobOverview, OverviewOfTheSystemState
     }
 
     static {
@@ -55,7 +55,6 @@ public class PageHelper {
         pageMapping.put(MenuPages.RunningJobs, "History/Harveststatus-running.jsp");
         pageMapping.put(MenuPages.Filestatus, "HarvestDefinition/Definitions-selective-harvests.jsp");
         pageMapping.put(MenuPages.BatchjobOverview, "BitPreservation/Bitpreservation-filestatus.jsp");
-        pageMapping.put(MenuPages.ViewerproxyStatus, "QA/QA-status.jsp");
         pageMapping.put(MenuPages.OverviewOfTheSystemState, "Status/Monitor-JMXsummary.jsp");
     }
 

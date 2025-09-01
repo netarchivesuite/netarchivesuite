@@ -8,14 +8,12 @@ import java.util.List;
 
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.viewerproxy.webinterface.CrawlLogLinesMatchingRegexp;
+import dk.netarkivet.harvester.webinterface.CrawlLogLinesMatchingRegexp;
 
 /**
  * Find relevant crawllog lines for a specific domain in a specific metadata file 
  * args: domain metadatafile
  * 
- * Note: currently the regexp is embedded in the jsp page harvester/qa-gui/src/main/webapp/QA-searchcrawllog.jsp
- * but should probably be removed to the Reporting class ./harvester/harvester-core/src/main/java/dk/netarkivet/viewerproxy/webinterface/Reporting.java
  * 
  */
 public class FindRelevantCrawllogLines {

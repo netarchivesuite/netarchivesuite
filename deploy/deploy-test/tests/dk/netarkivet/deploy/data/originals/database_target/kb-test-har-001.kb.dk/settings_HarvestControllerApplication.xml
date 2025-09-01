@@ -66,7 +66,6 @@
                 <baseDir>.</baseDir>            
             </arcrepository>
         </archive>
-        <!-- viewerproxy.baseDir is set below -->            
         <!-- harvester.harvesting.serverDir is set below -->            
     <harvester>
                          <harvesting>

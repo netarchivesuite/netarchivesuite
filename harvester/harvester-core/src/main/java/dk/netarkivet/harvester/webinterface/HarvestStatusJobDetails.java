@@ -153,17 +153,6 @@ public class HarvestStatusJobDetails {
         out.println("<td>" + job.getMaxBytesPerDomain() + "</td>");
         out.println("</tr>");
         out.println("</table>");
-        //display the searchFilter if QA webpages are deployed--
-
-        if (SiteSection.isDeployed(Constants.QA_SITESECTION_DIRNAME)) {
-            out.println("<h3>" + I18N.getString(locale, "subtitle.job.qa.selection") + "</h3>");
-            out.println("<table class=\"selection_table\"><tr><td>");
-            out.println("<p><a href=\"/" + Constants.QA_SITESECTION_DIRNAME + "/QA-changeIndex.jsp?" + Constants.JOB_PARAM + "=" +
-            job.getJobID() + "&" + Constants.INDEXLABEL_PARAM + "=" + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(I18N.getString(
-                    locale, "job.0", job.getJobID()))) + "\">" + I18N.getString(locale, "select.job.for.qa.with.viewerproxy") + "</a></p>");
-            out.println("</td></tr>");
-            out.println("<tr><td>" + I18N.getString(locale, "helptext;select.job.for.qa.with.viewerproxy") + "</td></tr></table>");
-        }
         out.println("<h3>" + I18N.getString(locale, "subtitle.job.domainconfigurations") + "</h3>");
         out.println("<table class=\"selection_table\"><tr>");
         out.println("<th>" + I18N.getString(locale, "table.job.domainconfigurations.domain") + "</th>");
@@ -233,36 +222,35 @@ public class HarvestStatusJobDetails {
             String shownSeed = StringUtils.makeEllipsis(seed,
                     Constants.MAX_SHOWN_SIZE_OF_URL);
 
-            out.println("<a target=\"viewerproxy\" href=\"" + HTMLUtils.escapeHtmlValues(url) + "\">" +
+            out.println("<a href=\"" + HTMLUtils.escapeHtmlValues(url) + "\">" +
                     HTMLUtils.escapeHtmlValues(shownSeed) + "</a><br/>");
         }
         out.println("</p>");
 
 
-        if (SiteSection.isDeployed(Constants.QA_SITESECTION_DIRNAME)
-                && job.getStatus().ordinal() > JobStatus.STARTED.ordinal()) {
+        if (job.getStatus().ordinal() > JobStatus.STARTED.ordinal()) {
             //make links to reports from harvest, extracted from viewerproxy.
             String harvestprefix = job.getHarvestFilenamePrefix();
 
             out.println("<h3>" +  I18N.getString(locale, "subtitle;reports.for.job") + "</h3>");
-            out.println("<p><a href=\"/QA/QA-getreports.jsp?jobid=" + jobID + "\">" + I18N.getString(locale, "harvest.reports") + "</a></p>");
-            out.println("<p><a href=\"/QA/QA-getfiles.jsp?jobid=" + jobID + "&harvestprefix=" + harvestprefix + "\">" + I18N.getString(locale, "harvest.files") + "</a></p>");
+            out.println("<p><a href=\"/History/Harveststatus-getreports.jsp?" + Constants.JOB_PARAM + "=" + jobID + "\">" + I18N.getString(locale, "harvest.reports") + "</a></p>");
+            out.println("<p><a href=\"/History/Harveststatus-getfiles.jsp?" + Constants.JOB_PARAM + "=" + jobID + "&harvestprefix=" + harvestprefix + "\">" + I18N.getString(locale, "harvest.files") + "</a></p>");
 
             //search in crawl-logs
             out.println("<p>");
-            out.println("<form method=\"post\" action=\"/QA/QA-searchcrawllog.jsp\">");
-            out.println("<input type=\"hidden\" name=\"" + dk.netarkivet.viewerproxy.webinterface.Constants.JOBID_PARAM + "\" value=\"" + jobID + "\" />");
+            out.println("<form method=\"post\" action=\"/History/Harveststatus-searchcrawllog.jsp\">");
+            out.println("<input type=\"hidden\" name=\"" + Constants.JOB_PARAM + "\" value=\"" + jobID + "\" />");
             out.println("<input type=\"submit\" value=\"" + I18N.getString(locale, "display.crawl.log.lines.matching.regexp") + "\" />");
-            out.println("<input type=\"text\" name=\"" + dk.netarkivet.viewerproxy.webinterface.Constants.REGEXP_PARAM + "\" size=\"60\"/>");
+            out.println("<input type=\"text\" name=\"" + Constants.REGEXP_PARAM + "\" size=\"60\"/>");
             out.println("</form></p>");
 
             //make submit button for recalling crawl.log relevant for the specific domains.
             out.println("<p>");
 
-            out.println("<form method=\"post\" action=\"/QA/QA-searchcrawllog.jsp\">");
-            out.println("<input type=\"hidden\" name=\"" + dk.netarkivet.viewerproxy.webinterface.Constants.JOBID_PARAM + "\" value=\"" + jobID + "\" />");
+            out.println("<form method=\"post\" action=\"/History/Harveststatus-searchcrawllog.jsp\">");
+            out.println("<input type=\"hidden\" name=\"" + Constants.JOB_PARAM + "\" value=\"" + jobID + "\" />");
             out.println("<input type=\"submit\" value=\"" + I18N.getString(locale, "crawl.log.lines.for.domain") + "\" />");
-            out.println("<select name=\"" + dk.netarkivet.viewerproxy.webinterface.Constants.DOMAIN_PARAM + "\">");
+            out.println("<select name=\"" + Constants.DOMAIN_SEARCH_PARAM + "\">");
             for (String domain : job.getDomainConfigurationMap().keySet()) {
                 out.println("<option value=" + HTMLUtils.escapeHtmlValues(domain) + ">" + HTMLUtils.escapeHtmlValues(domain) + "</option>");
             }

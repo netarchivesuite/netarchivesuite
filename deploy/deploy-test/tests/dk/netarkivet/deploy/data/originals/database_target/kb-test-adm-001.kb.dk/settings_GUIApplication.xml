@@ -81,6 +81,5 @@
                             <dir>adminDB</dir>
                         </database>
                     </admin></archive>
-        <!-- viewerproxy.baseDir is set below -->            
         <!-- harvester.harvesting.serverDir is set below -->            
     </settings>

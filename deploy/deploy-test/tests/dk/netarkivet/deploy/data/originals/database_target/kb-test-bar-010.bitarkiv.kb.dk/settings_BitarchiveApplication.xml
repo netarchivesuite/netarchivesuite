@@ -68,6 +68,5 @@
         <bitarchive>
                             <baseFileDir>q:\bitarkiv</baseFileDir>
                         </bitarchive></archive>
-        <!-- viewerproxy.baseDir is set below -->            
         <!-- harvester.harvesting.serverDir is set below -->            
     </settings>

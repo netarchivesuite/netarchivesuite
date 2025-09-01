@@ -141,10 +141,6 @@
                 <webapplication>webpages/BitPreservation.war</webapplication>
             </siteSection>
             <siteSection>
-                <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
-                <webapplication>webpages/QA.war</webapplication>
-            </siteSection>
-            <siteSection>
                 <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
                 <webapplication>webpages/Status.war</webapplication>
             </siteSection>
@@ -363,11 +359,8 @@
         <reregisterDelay>1</reregisterDelay>
         <preferredMaxJMXLogLength>70</preferredMaxJMXLogLength>
         <absoluteMaxJMXLogLength>100</absoluteMaxJMXLogLength>
-    </monitor><viewerproxy>
-        <baseDir>viewerproxy</baseDir>
-        <tryLookupUriAsFtp>false</tryLookupUriAsFtp>
-        <maxSizeInBrowser>100000000</maxSizeInBrowser>
-    </viewerproxy><wayback>
+    </monitor>
+    <wayback>
          <urlcanonicalizer>
              <classname>
                org.archive.wayback.util.url.AggressiveUrlCanonicalizer

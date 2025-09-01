@@ -74,12 +74,10 @@
         <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
         <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>
         <class>dk.netarkivet.archive.webinterface.BitPreservationSiteSection</class>
-        <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
         <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
         <webapplication>webpages/HarvestDefinition.war</webapplication>
         <webapplication>webpages/History.war</webapplication>
         <webapplication>webpages/BitPreservation.war</webapplication>
-        <webapplication>webpages/QA.war</webapplication>
         <webapplication>webpages/Status.war</webapplication>
       </siteSection>
       <language>
@@ -109,9 +107,6 @@
     </mail>
     <cacheDir>cache</cacheDir>
   </common>
-  <viewerproxy>
-    <baseDir>viewerproxy</baseDir>
-  </viewerproxy>
   <harvester>
     <datamodel>
       <domain>

@@ -28,9 +28,6 @@ grant codeBase "file:tmpdircommon/Status/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:tmpdircommon/QA/jsp/-" {
-  permission java.security.AllPermission;
-};
 
 grant codeBase "file:tmpdircommon/History/jsp/-" {
   permission java.security.AllPermission;

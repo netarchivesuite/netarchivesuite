@@ -230,13 +230,6 @@ National Library.
                 <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>
             </indexrequestserver>
         </indexserver>
-        <viewerproxy>
-            <baseDir>viewerproxy</baseDir>
-            <tryLookupUriAsFtp>false</tryLookupUriAsFtp>
-            <!-- 10 MB -->
-            <maxSizeInBrowser>10000000</maxSizeInBrowser>
-            <allowFileDownloads>true</allowFileDownloads>
-        </viewerproxy>
         <webinterface>
             <maxCrawlLogInBrowser>1000</maxCrawlLogInBrowser>
             <runningjobsFilteringMethod>database</runningjobsFilteringMethod>

@@ -155,24 +155,6 @@
                      for this site section.-->
                 <webapplication>webpages/BitPreservation</webapplication>
             </siteSection>
-            <siteSection>
-                <!-- A subclass of SiteSection that defines this part of the
-                     web interface. -->
-                <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection
-                </class>
-                <!-- The directory or war-file containing the web application
-                     for this site section.-->
-                <webapplication>webpages/QA</webapplication>
-            </siteSection>
-            <siteSection>
-                <!-- A subclass of SiteSection that defines this part of the
-                     web interface. -->
-                <class>dk.netarkivet.monitor.webinterface.StatusSiteSection
-                </class>
-                <!-- The directory or war-file containing the web application
-                     for this site section.-->
-                <webapplication>webpages/Status</webapplication>
-            </siteSection>
         </webinterface>
         <database xsi:type="derbydatabase">
             <!-- The full URL for connecting to the database.
@@ -353,11 +335,6 @@
             <baseDir>bitpreservation</baseDir>
         </bitpreservation>
     </archive>
-    <viewerproxy>
-        <!-- The main directory for the ViewerProxy, used for storing the Lucene
-             index for the jobs being viewed -->
-        <baseDir>viewerproxy</baseDir>
-    </viewerproxy>
     <monitor>
         <jmxUsername>monitorRole</jmxUsername>
         <jmxPassword>test</jmxPassword>

@@ -350,7 +350,6 @@ public final class Constants {
     public static final String WARFILENAMES[] = {
     		"BitPreservation.war",
     		"HarvestDefinition.war",
-    		"QA.war",
     		"HarvestChannel.war",
     		"History.war",
     		"Status.war"

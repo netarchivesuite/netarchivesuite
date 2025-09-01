@@ -65,13 +65,6 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>qa-gui</artifactId>
-      <type>war</type>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>history-gui</artifactId>
       <type>war</type>
       <version>${project.version}</version>

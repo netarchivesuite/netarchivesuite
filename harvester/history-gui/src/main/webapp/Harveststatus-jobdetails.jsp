@@ -164,28 +164,6 @@ and reponse.getLocale use this locale.
                               value="<%=job.getMaxBytesPerDomain()%>"/></td>
     </tr>
 </table>
-<%-- display the searchFilter if QA webpages are deployed--%>
-<%
-    if (SiteSection.isDeployed(Constants.QA_SITESECTION_DIRNAME)) { %>
-<h3><fmt:message key="subtitle.job.qa.selection"/></h3>
-<table class="selection_table">
-    <tr>
-        <td>
-            <p><a href="/<%=Constants.QA_SITESECTION_DIRNAME
-            %>/QA-changeIndex.jsp?<%=Constants.JOB_PARAM%>=<%=
-            job.getJobID()%>&<%=Constants.INDEXLABEL_PARAM%>=<%=
-            HTMLUtils.escapeHtmlValues(HTMLUtils.encode(I18N.getString(
-            response.getLocale(), "job.0", job.getJobID())))%>">
-                <fmt:message key="select.job.for.qa.with.viewerproxy"/>
-            </a></p>
-        </td>
-    </tr>
-    <tr>
-        <td><fmt:message key="helptext;select.job.for.qa.with.viewerproxy"/>
-        </td>
-    </tr>
-</table>
-<% } %>
 <h3><fmt:message key="subtitle.job.domainconfigurations"/></h3>
 <table class="selection_table">
     <tr>
@@ -260,7 +238,7 @@ and reponse.getLocale use this locale.
             String shownSeed = StringUtils.makeEllipsis(seed,
             	Constants.MAX_SHOWN_SIZE_OF_URL);
     %>
-    <a target="viewerproxy"
+    <a
        href="<%=HTMLUtils.escapeHtmlValues(url)%>"><%=
         HTMLUtils.escapeHtmlValues(shownSeed)%>
     </a>
@@ -271,33 +249,32 @@ and reponse.getLocale use this locale.
 </p>
 
 <%
-if (SiteSection.isDeployed(Constants.QA_SITESECTION_DIRNAME)
-    && job.getStatus().ordinal() > JobStatus.STARTED.ordinal()) {
+if (job.getStatus().ordinal() > JobStatus.STARTED.ordinal()) {
     //make links to reports from harvest, extracted from viewerproxy.
     String harvestprefix = job.getHarvestFilenamePrefix();
 %>
 <h3><fmt:message key="subtitle;reports.for.job"/></h3>
-<p><a href="/QA/QA-getreports.jsp?jobid=<%=jobID%>"><fmt:message key="harvest.reports"/></a></p>
-<p><a href="/QA/QA-getfiles.jsp?jobid=<%=jobID%>&harvestprefix=<%=harvestprefix%>"><fmt:message key="harvest.files"/></a></p>
+<p><a href="/History/Harveststatus-getreports.jsp?<%= Constants.JOB_PARAM %>=<%=jobID%>"><fmt:message key="harvest.reports"/></a></p>
+<p><a href="/History/Harveststatus-getfiles.jsp?<%= Constants.JOB_PARAM %>=<%=jobID%>&harvestprefix=<%=harvestprefix%>"><fmt:message key="harvest.files"/></a></p>
 
 <!-- search in crawl-logs -->
 <p>
-<form method="post" action="/QA/QA-searchcrawllog.jsp">
-<input type="hidden" name="<%= dk.netarkivet.viewerproxy.webinterface.Constants.JOBID_PARAM %>"
+<form method="post" action="/History/Harveststatus-searchcrawllog.jsp">
+<input type="hidden" name="<%= Constants.JOB_PARAM %>"
 value="<%= jobID %>"/>
        <input type="submit" value="<fmt:message key="display.crawl.log.lines.matching.regexp"/>"/>
-       <input type="text" name="<%= dk.netarkivet.viewerproxy.webinterface.Constants.REGEXP_PARAM %>" size="60"/>
+       <input type="text" name="<%= Constants.REGEXP_PARAM %>" size="60"/>
 </form>
 </p>
 
 <p>
 <!-- make submit button for recalling crawl.log relevant for the specific domains. -->
 
-<form method="post" action="/QA/QA-searchcrawllog.jsp">
-    <input type="hidden" name="<%= dk.netarkivet.viewerproxy.webinterface.Constants.JOBID_PARAM %>"
+<form method="post" action="/History/Harveststatus-searchcrawllog.jsp">
+    <input type="hidden" name="<%= Constants.JOB_PARAM %>"
            value="<%= jobID %>"/>
     <input type="submit" value="<fmt:message key="crawl.log.lines.for.domain"/>"/>
-    <select name="<%= dk.netarkivet.viewerproxy.webinterface.Constants.DOMAIN_PARAM %>">
+    <select name="<%= Constants.DOMAIN_SEARCH_PARAM %>">
         <% for (String domain : job.getDomainConfigurationMap().keySet()) {
         %>
         <option value="<%=HTMLUtils.escapeHtmlValues(domain)%>"><%=HTMLUtils.escapeHtmlValues(domain)%></option>

@@ -280,7 +280,7 @@ public class SiteSectionTester {
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Should throws expected exception", "String dirName", e.getMessage());
         }
-        assertTrue("Should find deployed sitesection", SiteSection.isDeployed("QA"));
+        assertTrue("Should find deployed sitesection", SiteSection.isDeployed("History"));
         assertFalse("Should not find undeployed sitesection", SiteSection.isDeployed("Fnord"));
     }
 

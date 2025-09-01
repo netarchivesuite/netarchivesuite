@@ -242,13 +242,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="*.tld"/>
             </webinf>
         </war>
-        <war destfile="${webpages}/QA.war" basedir="${webpages}/QA" update="no" webxml="${webpages}/QA/WEB-INF/web.xml">
-            <include name="**/*"/>
-            <exclude name="WEB-INF/web.xml"/>
-            <webinf dir="lib/taglibs">
-                <include name="*.tld"/>
-            </webinf>
-        </war>
         <war destfile="${webpages}/Status.war" basedir="${webpages}/Status" webxml="${webpages}/Status/WEB-INF/web.xml">
             <include name="**/*"/>
             <exclude name="WEB-INF/web.xml"/>

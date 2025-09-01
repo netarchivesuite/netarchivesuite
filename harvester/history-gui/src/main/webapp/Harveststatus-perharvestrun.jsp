@@ -380,37 +380,6 @@ function resetPagination() {
     %>
 
 </table>
-<%-- Display index link for DONE or FAILED job ID's. --%>
-<%-- Display the index link, only if QA webpages are deployed. --%>
-<%
-    if (!jobIDs.isEmpty() && SiteSection.isDeployed(Constants.QA_SITESECTION_DIRNAME)) { %>
-<h3><fmt:message key="subtitle.job.qa.selection"/></h3>
-<table class="selection_table">
-    <tr>
-        <td>
-            <form action="/<%=Constants.QA_SITESECTION_DIRNAME%>/QA-changeIndex.jsp"
-                  method="POST" name="QAform" id="QAform">
-                <% for (Long jobID : jobIDs) { %>
-                <input type="hidden" name="<%=Constants.JOB_PARAM%>"
-                       value="<%=jobID%>"/>
-                <% } %>
-                <input type="hidden" name="<%=Constants.INDEXLABEL_PARAM%>"
-                       value="<fmt:message key="harvest.0.run.1">
-                    <fmt:param value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"/>
-                    <fmt:param value="<%=harvestNum%>"/>
-                </fmt:message>">
-                <p><a href="/<%=Constants.QA_SITESECTION_DIRNAME%>/QA-changeIndex.jsp"
-                      onclick="document.getElementById('QAform').submit();return false;">
-                    <fmt:message key="select.jobs.for.qa.with.viewerproxy"/>
-                </a></p>
-            </form>
-        </td>
-    </tr>
-    <tr>
-        <td><fmt:message key="helptext;select.jobs.for.qa.with.viewerproxy"/>
-        </td>
-    </tr>
-</table>
-<%  }
+<%  
     HTMLUtils.generateFooter(out);
 %>

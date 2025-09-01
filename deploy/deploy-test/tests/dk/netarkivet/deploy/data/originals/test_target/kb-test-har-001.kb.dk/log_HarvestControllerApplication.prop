@@ -34,5 +34,4 @@ sun.jmx.level=WARNING
 Harvest\ Definition.level=SEVERE
 Bit\ Preservation.level=SEVERE
 History.level=SEVERE
-QA.level=SEVERE
 Status.level=SEVERE

@@ -53,10 +53,6 @@ grant codeBase "file:TEMPDIR/Status/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:TEMPDIR/QA/jsp/-" {
-  permission java.security.AllPermission;
-};
-
 grant codeBase "file:TEMPDIR/History/jsp/-" {
   permission java.security.AllPermission;
 };

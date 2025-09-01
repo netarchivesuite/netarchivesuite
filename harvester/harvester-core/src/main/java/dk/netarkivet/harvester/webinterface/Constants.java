@@ -192,14 +192,11 @@ public class Constants {
     public static final String TRAP_DESCRIPTION = "trap_description";
 
     /**
-     * Names of the two directories for the sitesections belonging to the harvester package, and the directory belonging
-     * to the viewerproxy package.
+     * Names of the directory for the sitesections belonging to the harvester package
      */
     public static final String DEFINITIONS_SITESECTION_DIRNAME = "HarvestDefinition";
 
     public static final String HISTORY_SITESECTION_DIRNAME = "History";
-
-    public static final String QA_SITESECTION_DIRNAME = "QA";
 
     /**
      * The maximum length of a seed before it is truncated before showing it.
@@ -283,5 +280,13 @@ public class Constants {
     /** Frontier report mode to display all queues or not  */
     public static final String FRONTIER_REPORT_MODE="frontierReportMode";
 
+    /** The harvestprefix parameter. */
+    public static final String HARVESTPREFIX_PARAM = "harvestprefix";
+
+    /** The domain attribute. */
+    //public static final String DOMAIN_PARAM = "domain";
+
+    /** The regexp attribute. */
+    public static final String REGEXP_PARAM = "regexp";
 	
 }

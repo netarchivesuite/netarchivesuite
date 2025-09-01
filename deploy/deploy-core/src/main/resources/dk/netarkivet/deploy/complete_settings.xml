@@ -172,10 +172,6 @@
                 <webapplication>webpages/BitPreservation.war</webapplication>
             </siteSection>
             <siteSection>
-                <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
-                <webapplication>webpages/QA.war</webapplication>
-            </siteSection>
-            <siteSection>
                 <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
                 <webapplication>webpages/Status.war</webapplication>
             </siteSection>
@@ -489,13 +485,6 @@
                 <class>dk.netarkivet.harvester.indexserver.distribute.IndexRequestServer</class>
             </indexrequestserver>
         </indexserver>
-        <viewerproxy>
-            <baseDir>viewerproxy</baseDir>
-            <tryLookupUriAsFtp>false</tryLookupUriAsFtp>
-            <!-- 10 MB -->
-            <maxSizeInBrowser>10000000</maxSizeInBrowser>
-            <allowFileDownloads>true</allowFileDownloads>
-        </viewerproxy>
         <webinterface>
             <maxCrawlLogInBrowser>1000</maxCrawlLogInBrowser>
             <runningjobsFilteringMethod>database</runningjobsFilteringMethod>

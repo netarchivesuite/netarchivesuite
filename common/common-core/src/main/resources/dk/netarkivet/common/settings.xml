@@ -139,10 +139,6 @@ National Library.
                 <webapplication>webpages/BitPreservation.war</webapplication>
             </siteSection>
             <siteSection>
-                <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
-                <webapplication>webpages/QA.war</webapplication>
-            </siteSection>
-            <siteSection>
                 <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
                 <webapplication>webpages/Status.war</webapplication>
             </siteSection>

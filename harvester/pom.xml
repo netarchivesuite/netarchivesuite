@@ -20,7 +20,6 @@
     <module>harvestchannel-gui</module>
     <module>harvestdefinition-gui</module>
     <module>history-gui</module>
-    <module>qa-gui</module>
     <module>harvester-test</module>
   </modules>
 
