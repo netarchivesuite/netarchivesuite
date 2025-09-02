@@ -259,6 +259,7 @@ void printCrawlLog(String regex) {
 
 void showModBudgets() {
     def modQueues = job.jobContext.data.get("manually-added-queues")
+    unit = isQuotaEnforcer() ? "kB" : "URIs"
     if(modQueues.size() > 0) {
         htmlOut.println('<p style="margin-top: 50px;">Budgets of following domains/hosts have been changed in the current job :</p>')
     }
@@ -266,12 +267,12 @@ void showModBudgets() {
     modQueues.each { key, value ->
         htmlOut.println('<li>'+key)
         htmlOut.println('<input type="hidden" name="queueName" value="'+key+'"/>')
-        htmlOut.println('<input type="text" name="'+key+'-budget" style="width:100px" value="'+value+'"/> kB</li>')
+        htmlOut.println('<input type="text" name="'+key+'-budget" style="width:100px" value="'+value+'"/> ' + unit + '</li>')
 	}
 	htmlOut.println('</ul>')
 }
 
-void changeBudget(String key, int value) {
+boolean isQuotaEnforcer() {
 	isQuotaEnforcer = false
 	try { 
 	   quotaEnforcerBean = appCtx.getBean("quotaenforcer")
@@ -283,6 +284,10 @@ void changeBudget(String key, int value) {
 	} catch(Exception e1) {
 	   //Catch block 
 	}
+}
+
+void changeBudget(String key, int value) {
+	isQuotaEnforcer = isQuotaEnforcer()
 	//case quotaenforcer
 	if(isQuotaEnforcer == true) {
 		propertyName = "quotaenforcer.groupMaxAllKb"
