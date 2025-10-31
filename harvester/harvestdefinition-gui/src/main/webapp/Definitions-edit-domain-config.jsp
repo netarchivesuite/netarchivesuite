@@ -57,8 +57,12 @@ passwordList:
 
 
 --%><%@ page import="java.text.NumberFormat,
+                 java.text.Normalizer,
+                 java.util.Comparator,
+                 java.util.Collections,
                  java.util.HashSet,
                  java.util.Iterator,
+                 java.util.ArrayList,
                  java.util.List,
                  java.util.Locale,
                  java.util.Set,
@@ -337,9 +341,19 @@ Display all the form information for this domain
    							}
                         }
    						
+                        // Sort allSeedLists (case and accent insensitive)
+                        List<SeedList> sortedAllSeedLists = new ArrayList<>(allSeedLists);
+                        Collections.sort(sortedAllSeedLists, new Comparator<SeedList>() {
+                            @Override
+                            public int compare(SeedList s1, SeedList s2) {
+                                String name1 = Normalizer.normalize(s1.getName(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+                                String name2 = Normalizer.normalize(s2.getName(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+                                return name1.compareTo(name2);
+                            }
+                        });
    						//Display multi-select showing all seedlists with
                         //actual seedlists pre-selected
-                        for (SeedList sl : allSeedLists) {
+                        for (SeedList sl : sortedAllSeedLists) {
                             String selected = "";
                             if (actualSeedLists.contains(sl)) {
                                 selected = "selected=\"selected\"";

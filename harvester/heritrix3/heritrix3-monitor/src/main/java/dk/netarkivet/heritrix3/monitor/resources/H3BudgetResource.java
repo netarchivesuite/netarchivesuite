@@ -37,6 +37,8 @@ import org.netarchivesuite.heritrix3wrapper.ScriptResult;
 import com.antiaction.common.filter.Caching;
 import com.antiaction.common.templateengine.TemplateBuilderFactory;
 
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.heritrix3.monitor.Heritrix3JobMonitor;
 import dk.netarkivet.heritrix3.monitor.HttpLocaleHandler.HttpLocale;
 import dk.netarkivet.heritrix3.monitor.NASEnvironment;
@@ -84,6 +86,8 @@ public class H3BudgetResource implements ResourceAbstract {
 
         TemplateBuilderFactory<MasterTemplateBuilder> tplBuilder = TemplateBuilderFactory.getInstance(environment.templateMaster, "master.tpl", "UTF-8", MasterTemplateBuilder.class);
         MasterTemplateBuilder masterTplBuilder = tplBuilder.getTemplateBuilder();
+        
+        boolean maxObjectsIsSetByQuotaEnforcer = Settings.getBoolean(HarvesterSettings.OBJECT_LIMIT_SET_BY_QUOTA_ENFORCER);
 
         StringBuilder sb = new StringBuilder();
 
@@ -183,19 +187,26 @@ public class H3BudgetResource implements ResourceAbstract {
             	sb.append("<div class=\"notify notify-red\"><span class=\"symbol icon-error\"></span> Budget must be a number!</div>");
             }
 
-            ScriptResult scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", originalScript);
-
-/*            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
-            	sb.append("<p>Budget defined in job configuration: queue-total-budget of ");
-            	sb.append(scriptResult.script.htmlOutput);
-            	sb.append(" URIs.</p>");
-            }*/
-            scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy",
-                    environment.NAS_GROOVY_SCRIPT + "\ngetGroupMaxAllKb()\n");
-            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
-                sb.append("<p>Budget defined in job configuration: groupMaxAllKb of ");
-                sb.append(scriptResult.script.htmlOutput);
-                sb.append(" kB.</p>");
+            ScriptResult scriptResult;
+            String placeholderBudget = "new budget ";
+            if (maxObjectsIsSetByQuotaEnforcer) {
+            	// object limit is set by quota enforcer
+            	placeholderBudget = placeholderBudget + "(kB)";
+            	scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy",
+            			environment.NAS_GROOVY_SCRIPT + "\ngetGroupMaxAllKb()\n");
+            	if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
+            		sb.append("<p>Budget defined in job configuration: groupMaxAllKb of ");
+            		sb.append(scriptResult.script.htmlOutput);
+            		sb.append(" kB.</p>");
+            	}
+            } else {
+            	placeholderBudget = placeholderBudget + "(URIs)";
+            	scriptResult = h3Job.h3wrapper.ExecuteShellScriptInJob(h3Job.jobResult.job.shortName, "groovy", originalScript);
+	            if (scriptResult != null && scriptResult.script != null && scriptResult.script.htmlOutput != null) {
+	            	sb.append("<p>Budget defined in job configuration: queue-total-budget of ");
+	            	sb.append(scriptResult.script.htmlOutput);
+	            	sb.append(" URIs.</p>");
+	            }
             }
 
 
@@ -214,7 +225,7 @@ public class H3BudgetResource implements ResourceAbstract {
             if(!submitWithInitials) {
             	sb.append(budget);
             }
-            sb.append("\" style=\"width:100px;vertical-align:top;margin-top:0\" placeholder=\"new budget (kB)\">\n");
+            sb.append("\" style=\"width:100px;vertical-align:top;margin-top:0\" placeholder=\"" + placeholderBudget + "\">\n");
             
             /* User initials */
             sb.append("<label style=\"cursor: default;\">User initials:</label>");

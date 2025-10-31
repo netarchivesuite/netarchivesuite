@@ -247,10 +247,9 @@ public class H3JobResource implements ResourceAbstract {
                 
                 /* Show Crawllog on H3 GUI*/
                 URL url1 = new URL(h3Job.hostUrl);
+                String href = url1.getHost() + ":" + url1.getPort()+ "/engine/anypath/" + h3Job.crawlLogFilePath + "?format=paged&pos=-1&lines=-1000&reverse=y";
                 sb.append("<a href=\"");
-                sb.append("https://"+url1.getHost()+":"+url1.getPort()+"/engine/anypath/");
-                sb.append(h3Job.crawlLogFilePath);
-                sb.append("?format=paged&pos=-1&lines=-1000&reverse=y");
+                sb.append("https://"+ href.replace("//", "/"));
                 sb.append("\" class=\"btn btn-default\">");
                 sb.append("Remote H3 Crawllog viewer");
                 sb.append("</a>");
