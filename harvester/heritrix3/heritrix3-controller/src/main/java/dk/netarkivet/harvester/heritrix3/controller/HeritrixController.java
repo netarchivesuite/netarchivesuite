@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import dk.netarkivet.common.utils.ExceptionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -111,8 +112,8 @@ public class HeritrixController extends AbstractRestHeritrixController {
             engineResult = h3wrapper.waitForEngineReady(heritrix3EngineRetries,
                     heritrix3EngineIntervalBetweenRetriesInMillis);
         } catch (Throwable e) {
-            e.printStackTrace();
-            throw new IOFailure("Heritrix3 engine not started: " + e);
+//            e.printStackTrace();
+            throw new IOFailure("Heritrix3 engine not started: ", e);
         }
 
         if (engineResult != null) {
@@ -137,7 +138,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
         // Create a new job
         File cxmlFile = getHeritrixFiles().getOrderFile();
         File seedsFile = getHeritrixFiles().getSeedsFile();
-        JobResult jobResult;
+        JobResult jobResult = null;
 
         File jobDir = files.getHeritrixJobDir();
         if (!jobDir.exists()) {
@@ -160,9 +161,22 @@ public class HeritrixController extends AbstractRestHeritrixController {
 
             log.trace("Result of rescanJobDirectory() operation: " + new String(engineResult.response, "UTF-8"));
 
-            jobResult = h3wrapper.buildJobConfiguration(jobName);
-            log.trace("Result of buildJobConfiguration() operation: " + new String(jobResult.response, "UTF-8"));
-            if (jobResult.status == ResultStatus.OK) {
+            try {
+                jobResult = h3wrapper.buildJobConfiguration(jobName);
+            } catch (Exception e) {
+                log.error(ExceptionUtils.getStackTrace(e));
+            }
+            try {
+                jobResult = h3wrapper.job(jobName);
+            } catch (Exception e) {
+                log.error(ExceptionUtils.getStackTrace(e));
+            }
+            if (jobResult != null ) {
+                log.trace("Result of buildJobConfiguration() operation: " + new String(jobResult.response, "UTF-8"));
+            } else {
+                throw new IllegalState("Attempt to build job configuration returned a null result from the heritrix engine");
+            }
+            if (jobResult != null && jobResult.status == ResultStatus.OK) {
                 if (jobResult.job == null) {
                     throw new IllegalState("Attempt to build job " + jobName + " returned a null job.");
                 }

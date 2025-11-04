@@ -28,6 +28,7 @@
                     <!-- Removing duplicates. -->
                     <exclude>*/lib/webarchive-commons-1.1.4.jar</exclude>
                     <exclude>*/lib/webarchive-commons-1.1.5.jar</exclude>
+                    <exclude>*/lib/webarchive-commons-2.0.2.jar</exclude>
                     <!--exclude>*/lib/commons-configuration-1.6.jar</exclude-->
                     <exclude>*/lib/httpclient-4.2.5.jar</exclude>
                     <exclude>lib/httpclient-4.2.5.jar</exclude>
@@ -68,6 +69,7 @@
                     <exclude>lib/heritrix*</exclude>
                     <exclude>lib/spring*</exclude>
                     <exclude>*/lib/webarchive-commons-1.1.5.jar</exclude>
+                    <exclude>**/jobs/**</exclude>
                     <!--exclude>*/lib/httpcore-4.2.4.jar</exclude-->
                 </excludes>
             </unpackOptions>
@@ -130,11 +132,13 @@
                 <exclude>org.apache.httpcomponents:httpcomponents-client:jar:4.2.5</exclude>
                 <exclude>org.apache.httpcomponents:httpcore:jar:4.2.4</exclude>
                 <exclude>org.apache.httpcomponents:httpclient:jar:4.5.12</exclude>
+                <exclude>org.netpreserve.commons:webarchive-commons:jar</exclude>
                 <exclude>*/lib/httpclient-4.2.5.jar</exclude>
                 <exclude>lib/httpclient-4.2.5.jar</exclude>
                 <exclude>com.sleepycat:je:jar:5.0.73</exclude>
                 <exclude>org.springframework:*:jar:3.0.5.RELEASE</exclude>
                 <exclude>*/lib/webarchive-commons-1.1.5.jar</exclude>
+                <exclude>lib/webarchive-commons-2.0.2.jar</exclude>
             </excludes>
             <!--3.3.0-LBS-2014-03-->
             <outputDirectory>/heritrix-${heritrix3.version}/lib/</outputDirectory>

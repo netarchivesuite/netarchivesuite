@@ -19,7 +19,7 @@
 
     <!-- Heritrix versions are from https://github.com/netarchivesuite/heritrix3 which tracks the official
      repository at https://github.com/internetarchive/heritrix3 as closely as we can -->
-    <heritrix3.version>3.10.0-NAS-7.8-SNAPSHOT</heritrix3.version>
+    <heritrix3.version>3.12.1-NAS-7.9-SNAPSHOT</heritrix3.version>
     <heritrix3-wrapper.version>1.0.7</heritrix3-wrapper.version>
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
@@ -992,6 +992,30 @@
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>3.11.2</version>
+          <configuration>
+            <source>17</source>
+            <detectJavaApiLink>false</detectJavaApiLink>
+            <linksource>true</linksource>
+            <quiet>true</quiet>
+            <additionalOptions>
+              <additionalOption>-Xdoclint:none</additionalOption>
+            </additionalOptions>
+
+            <additionalJOptions>
+              <additionalJOption>-J--add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED</additionalJOption>
+              <additionalJOption>-J--add-opens=java.management/javax.management.openmbean=ALL-UNNAMED</additionalJOption>
+              <additionalJOption>-J--add-exports=jdk.naming.rmi/com.sun.jndi.rmi.registry=ALL-UNNAMED</additionalJOption>
+              <additionalJOption>-J--add-exports=java.rmi/sun.rmi.registry=ALL-UNNAMED</additionalJOption>
+              <additionalJOption>-J--add-opens=jdk.naming.rmi/com.sun.jndi.rmi.registry=ALL-UNNAMED</additionalJOption>
+              <additionalJOption>-J--add-opens=java.base/java.lang=ALL-UNNAMED</additionalJOption>
+              <additionalJOption>-J--add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED</additionalJOption>
+            </additionalJOptions>
+            <additionalOptions>
+              --add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED
+            </additionalOptions>
+            <failOnError>false</failOnError>
+            <javadocExecutable>/usr/lib/jvm/java-17-openjdk-amd64/bin/javadoc</javadocExecutable>
+          </configuration>
         </plugin>
 
         <plugin>
@@ -1336,17 +1360,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <source>17</source>
-          <detectJavaApiLink>false</detectJavaApiLink>
-          <linksource>true</linksource>
-          <quiet>true</quiet>
-          <additionalOptions>
-            <additionalOption>-Xdoclint:none</additionalOption>
-          </additionalOptions>
-          <failOnError>false</failOnError>
-          <javadocExecutable>/usr/bin/javadoc</javadocExecutable>
-        </configuration>
         <reportSets>
           <reportSet>
             <id>aggregate</id>
