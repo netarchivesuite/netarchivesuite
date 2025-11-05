@@ -200,9 +200,6 @@ public final class Constants {
      */
     static final String[] SETTINGS_ARCHIVE_ARC_BASEDIR_LEAF = ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN.replace(
             CommonSettings.SETTINGS + ".", "").split("[.]");
-    /** The path to the viewer proxy base dir leaf from settings. */
-    static final String[] SETTINGS_VIEWERPROXY_BASEDIR_LEAF = HarvesterSettings.VIEWERPROXY_DIR.replace(
-            CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path from monitor to the jmxUsername leaf. */
     static final String[] SETTINGS_MONITOR_JMX_NAME_LEAF = MonitorSettings.JMX_USERNAME_SETTING.replace(
             CommonSettings.SETTINGS + ".", "").split("[.]");
@@ -431,7 +428,6 @@ public final class Constants {
             "dk/netarkivet/common/settings.xml",
             "dk/netarkivet/common/distribute/arcrepository/LocalArcRepositoryClientSettings.xml",
             "dk/netarkivet/harvester/settings.xml", "dk/netarkivet/monitor/settings.xml",
-            "dk/netarkivet/wayback/settings.xml",
             "dk/netarkivet/archive/arcrepository/distribute/JMSArcRepositoryClientSettings.xml",
             "dk/netarkivet/harvester/indexserver/distribute/IndexRequestClientSettings.xml",
             "dk/netarkivet/common/utils/EMailNotificationsSettings.xml",

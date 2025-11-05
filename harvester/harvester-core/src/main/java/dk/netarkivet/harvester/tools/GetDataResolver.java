@@ -21,6 +21,12 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
+/**
+ * TODO:
+ * Refactor this class so that the methods get these objects as either a String, List, or
+ * just write them to a temporary file. Then Harveststatus-download-report-template.jsp can
+ * read them into the body of the jsp page just as Harveststatus-searchcrawllog.jsp does.
+ */
 public class GetDataResolver {
 
 	/**

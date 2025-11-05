@@ -902,15 +902,6 @@ public class LinuxMachine extends Machine {
                 }
             }
 
-            // get the viewerproxy.baseDir directories.
-            dirs = app.getSettingsValues(Constants.SETTINGS_VIEWERPROXY_BASEDIR_LEAF);
-            if (dirs != null && dirs.length > 0) {
-                for (String dir : dirs) {
-                    res.append(createPathToDir(dir));
-                    res.append(scriptCreateDir(dir, false));
-                }
-            }
-
             // get the common.tempDir directories. But only those,
             // which are not the same as the machine common.tempDir.
             dirs = app.getSettingsValues(Constants.SETTINGS_TEMPDIR_LEAF);

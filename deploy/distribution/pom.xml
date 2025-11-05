@@ -152,7 +152,6 @@
             </goals>
             <configuration>
               <appendAssemblyId>false</appendAssemblyId>
-              <!--<classifier>prod</classifier>-->
               <finalName>NetarchiveSuite-${project.version}</finalName>
               <descriptors>
                 <descriptor>src/main/assembly/distribution.xml</descriptor>

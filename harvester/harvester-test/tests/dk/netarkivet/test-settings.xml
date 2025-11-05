@@ -143,10 +143,10 @@ National Library.
                 <checkinterval>5000</checkinterval>
                 <indexingtimeout>172800</indexingtimeout>
         </indexserver>
-        <viewerproxy>
+        <history>
             <!-- 10 MB -->
             <maxSizeInBrowser>10000000</maxSizeInBrowser>
-        </viewerproxy>
+        </history>
     </harvester>
 
     <wayback><hibernate><showSql>false</showSql></hibernate>

@@ -236,10 +236,10 @@ National Library.
             <metadata_cache_dir>metadata_cache</metadata_cache_dir>
         </webinterface>
         <!--Although the Viewerproxy no longer exists, these settings are still used until renamed -->
-        <viewerproxy>
+        <history>
             <!--<baseDir>viewerproxy</baseDir>--> <!-- Only used in deploy application -->
             <maxSizeInBrowser>1000000</maxSizeInBrowser>
             <allowFileDownloads>true</allowFileDownloads>
-        </viewerproxy>
+        </history>
     </harvester>
 </settings>

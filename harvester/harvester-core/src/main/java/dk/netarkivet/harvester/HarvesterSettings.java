@@ -730,35 +730,21 @@ public class HarvesterSettings {
     public static String INDEXSERVER_INDEXING_LOOKFORDATAINOTHERBITARCHIVEREPLICAS = "settings.harvester.indexserver.lookfordataInAllBitarchiveReplicas";
 
     /***************************/
-    /* Viewerproxy - settings. */
+    /* History settings migrated from old Viewerproxy settings. */
     /***************************/
 
     /**
-     * <b>settings.viewerproxy.baseDir</b>: <br>
-     * The main directory for the ViewerProxy, used for storing the Lucene index for the jobs being viewed. This
-     * directory can be used by multiple ViewerProxy applications running on the same machine.
-     */
-    public static String VIEWERPROXY_DIR = "settings.harvester.viewerproxy.baseDir";
-
-    /**
-     * <b>settings.viewerproxy.tryLookupUriAsFtp</b>: <br>
-     * If we fail to lookup an URI, we will try changing the protocol to ftp, if this setting is set to true. The
-     * default is false.
-     */
-    public static String TRY_LOOKUP_URI_AS_FTP = "settings.harvester.viewerproxy.tryLookupUriAsFtp";
-
-    /**
-     * <b>settings.viewerproxy.maxSizeInBrowser</b> The size (in bytes) of the largest object to be returned for viewing
+     * <b>settings.harvester.history.maxSizeInBrowser</b> The size (in bytes) of the largest object to be returned for viewing
      * in the browser window. Larger objects will be returned with the appropriate http header for saving them to a
      * file.
      */
-    public static String MAXIMUM_OBJECT_IN_BROWSER = "settings.harvester.viewerproxy.maxSizeInBrowser";
+    public static String MAXIMUM_OBJECT_IN_BROWSER = "settings.harvester.history.maxSizeInBrowser";
 
     /**
-     * <b>settings.harvester.viewerproxy.allowFileDownloads</b> If set to false, there will be no links to
+     * <b>settings.harvester.history.allowFileDownloads</b> If set to false, there will be no links to
      * allow download of warcfiles via the Viewerproxy GUI.
      */
-    public static String ALLOW_FILE_DOWNLOADS = "settings.harvester.viewerproxy.allowFileDownloads";
+    public static String ALLOW_FILE_DOWNLOADS = "settings.harvester.history.allowFileDownloads";
 
     /**
      * <b>settings.harvester.webinterface.maxCrawlLogInBrowser</b>: The maximum length (in lines) of 

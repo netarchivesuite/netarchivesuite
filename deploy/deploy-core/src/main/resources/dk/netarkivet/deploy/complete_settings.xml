@@ -490,6 +490,12 @@
             <runningjobsFilteringMethod>database</runningjobsFilteringMethod>
             <metadata_cache_dir>metadata_cache</metadata_cache_dir>
         </webinterface>
+        <!--Although the Viewerproxy no longer exists, these settings are still used until renamed -->
+        <history>
+            <!--<baseDir>viewerproxy</baseDir>--> <!-- Only used in deploy application -->
+            <maxSizeInBrowser>1000000</maxSizeInBrowser>
+            <allowFileDownloads>true</allowFileDownloads>
+        </history>
     </harvester><monitor>
         <jmxUsername>monitorRole</jmxUsername>
         <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
@@ -500,56 +506,4 @@
         <reregisterDelay>1</reregisterDelay>
         <preferredMaxJMXLogLength>70</preferredMaxJMXLogLength>
         <absoluteMaxJMXLogLength>100</absoluteMaxJMXLogLength>
-    </monitor><wayback>
-        <urlcanonicalizer>
-            <classname>
-              org.archive.wayback.util.url.AggressiveUrlCanonicalizer
-            </classname>
-        </urlcanonicalizer>
-        <hibernate>
-            <c3p0>
-                <acquireIncrement>1</acquireIncrement>
-                <idleTestPeriod>100</idleTestPeriod>
-                <maxSize>100</maxSize>
-                <maxStatements>100</maxStatements>
-                <minSize>10</minSize>
-                <timeout>100</timeout>
-            </c3p0>
-            <connectionUrl>jdbc:derby:derbyDB/wayback_indexer_db;create=true</connectionUrl>
-            <dbDriverClass>org.apache.derby.jdbc.ClientDriver</dbDriverClass>
-            <useReflectionOptimizer>false</useReflectionOptimizer>
-            <transactionFactory>org.hibernate.transaction.JDBCTransactionFactory</transactionFactory>
-            <dialect>org.hibernate.dialect.DerbyDialect</dialect>
-            <showSql>true</showSql>
-            <formatSql>true</formatSql>
-            <hbm2ddlAuto>update</hbm2ddlAuto>
-            <user/>
-            <password/>
-        </hibernate>
-        <indexer>
-            <replicaId>ONE</replicaId>
-            <finalBatchOutputDir>batchOutputDir</finalBatchOutputDir>
-            <tempBatchOutputDir>tempdir</tempBatchOutputDir>
-            <maxFailedAttempts>3</maxFailedAttempts>
-            <recentProducerSince>86400000</recentProducerSince>
-            <recentProducerInterval>1800000</recentProducerInterval>
-            <producerDelay>0</producerDelay>
-            <producerInterval>86400000</producerInterval>
-            <consumerThreads>5</consumerThreads>
-            <initialFiles/>
-        </indexer>
-        <aggregator>
-            <indexFileOutputDir>indexDir</indexFileOutputDir>
-            <tempAggregatorDir>aggregator_tempdir</tempAggregatorDir>
-            <!-- 600000 milliseconds = 10 minutes -->
-            <aggregationInterval>600000</aggregationInterval>
-            <!-- 102400 KB = 100 MB -->
-            <maxIntermediateIndexFileSize>102400</maxIntermediateIndexFileSize>
-            <!-- 104857600 KB = 100 GB -->
-            <maxMainIndexFileSize>104857600</maxMainIndexFileSize>
-        </aggregator>
-        <resourcestore>
-            <cachedir>filecache</cachedir>
-            <maxfiles>100</maxfiles>
-        </resourcestore>
-    </wayback></settings>
+    </monitor></settings>
