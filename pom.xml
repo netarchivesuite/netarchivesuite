@@ -19,7 +19,7 @@
 
     <!-- Heritrix versions are from https://github.com/netarchivesuite/heritrix3 which tracks the official
      repository at https://github.com/internetarchive/heritrix3 as closely as we can -->
-    <heritrix3.version>3.12.1-NAS-7.9-SNAPSHOT</heritrix3.version>
+    <heritrix3.version>3.12.1-NAS-8.0</heritrix3.version>
     <heritrix3-wrapper.version>1.0.7</heritrix3-wrapper.version>
     <wayback.version>1.8.0-20130411</wayback.version>
     <openwayback.version>2.0.0</openwayback.version>
