@@ -1,4 +1,4 @@
-package dk.netarkivet.harvester.webinterface.hadoop;
+package dk.netarkivet.viewerproxy.webinterface.hadoop;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

@@ -27,6 +27,8 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.HttpsClientBuilder;
 import dk.netarkivet.common.utils.Settings;
 
+import javax.net.ssl.SSLHandshakeException;
+
 /**
  * A FileResolver client to communicate with a service implementing the FileResolver API
  * e.g. url's like http://some.url.dk/555-.*
@@ -38,6 +40,7 @@ public class FileResolverRESTClient implements FileResolver {
 
     static {
         String privateKeyFile = Settings.get(CommonSettings.FILE_RESOLVER_KEYFILE);
+        log.info("Building FileResolverRESTClient with private key file: {}", privateKeyFile);
         clientBuilder = new HttpsClientBuilder(privateKeyFile);
     }
 
@@ -92,10 +95,11 @@ public class FileResolverRESTClient implements FileResolver {
         try {
             String pattern = filepattern.pattern();
             URI uri = new URL(baseUrl + "/" + URLEncoder.encode(pattern, StandardCharsets.UTF_8.toString())).toURI().normalize();
+            log.debug("Calling FileResolver: {}", uri);
             CGIRequestBuilder requestBuilder = new CGIRequestBuilder(uri);
             HttpUriRequest request = requestBuilder.buildFileResolverRequest(exactfilename);
             CloseableHttpClient httpClient = clientBuilder.getHttpsClient();
-
+            log.debug("Request: {}, client {}", request, httpClient);
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 if (statusCode != 200) {

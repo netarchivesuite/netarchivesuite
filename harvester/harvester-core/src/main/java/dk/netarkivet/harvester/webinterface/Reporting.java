@@ -68,8 +68,8 @@ import dk.netarkivet.common.utils.hadoop.HadoopJob;
 import dk.netarkivet.common.utils.hadoop.HadoopJobStrategy;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
 import dk.netarkivet.common.utils.service.FileResolver;
-import dk.netarkivet.harvester.webinterface.hadoop.CrawlLogExtractionStrategy;
-import dk.netarkivet.harvester.webinterface.hadoop.MetadataCDXExtractionStrategy;
+import dk.netarkivet.viewerproxy.webinterface.hadoop.CrawlLogExtractionStrategy;
+import dk.netarkivet.viewerproxy.webinterface.hadoop.MetadataCDXExtractionStrategy;
 
 /**
  * Methods for generating the batch results needed in the part job reports in the job details page

@@ -26,6 +26,13 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+    <!--
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hadoop-uber-jar</artifactId>
+      <version>7.6</version>
+    </dependency>
+    -->
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
