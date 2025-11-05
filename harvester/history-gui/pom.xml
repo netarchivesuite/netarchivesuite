@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.netarchivesuite</groupId>
     <artifactId>harvester</artifactId>
-    <version>7.9-SNAPSHOT</version>
+    <version>8.0</version>
   </parent>
 
   <artifactId>history-gui</artifactId>
