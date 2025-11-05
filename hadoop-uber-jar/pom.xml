@@ -39,26 +39,6 @@
 
     <dependency>
       <groupId>org.netarchivesuite</groupId>
-      <artifactId>wayback-indexer</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava-parent</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.netarchivesuite</groupId>
       <artifactId>harvester-core</artifactId>
       <version>${project.version}</version>
       <exclusions>

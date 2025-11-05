@@ -45,12 +45,6 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wayback-indexer</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>hadoop-uber-jar-invoker</artifactId>
       <version>${project.version}</version>
     </dependency>
