@@ -2,6 +2,7 @@ package dk.netarkivet.viewerproxy.webinterface.hadoop;
 
 import java.util.UUID;
 
+import dk.netarkivet.common.utils.hadoop.HadoopException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -49,16 +50,17 @@ public class CrawlLogExtractionStrategy implements HadoopJobStrategy {
 	}
 
 	@Override
-	public int runJob(Path jobInputFile, Path jobOutputDir) {
+	public void runJob(Path jobInputFile, Path jobOutputDir) throws HadoopException {
 		int exitCode;
 		try {
 			exitCode = ToolRunner.run(new HadoopJobTool(hadoopConf, new CrawlLogExtractionMapper()),
 					new String[] { jobInputFile.toString(), jobOutputDir.toString() });
 		} catch (Exception e) {
-			log.warn("Crawl log extraction job with ID {} failed to run normally.", jobID, e);
-			exitCode = 1;
-		}
-		return exitCode;
+            throw new HadoopException("Crawl log extraction job with ID " + jobID + " failed to run normally.", e);
+        }
+        if (exitCode != 0) {
+            throw new HadoopException("Crawl log extraction job with ID " + jobID + " failed with exit code " + exitCode);
+        }
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package dk.netarkivet.viewerproxy.webinterface.hadoop;
 
 import java.util.UUID;
 
+import dk.netarkivet.common.utils.hadoop.HadoopException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -48,16 +49,18 @@ public class MetadataCDXExtractionStrategy implements HadoopJobStrategy {
 	}
 
 	@Override
-	public int runJob(Path jobInputFile, Path jobOutputDir) {
-		int exitCode;
-		try {
-			exitCode = ToolRunner.run(new HadoopJobTool(hadoopConf, new dk.netarkivet.viewerproxy.webinterface.hadoop.MetadataCDXMapper()),
-					new String[] { jobInputFile.toString(), jobOutputDir.toString() });
-		} catch (Exception e) {
-			log.warn("Metadata CDX extraction job with ID {} failed to run normally.", jobID, e);
-			exitCode = 1;
-		}
-		return exitCode;
+	public void runJob(Path jobInputFile, Path jobOutputDir) throws HadoopException {
+        int exitCode;
+        try {
+            exitCode = ToolRunner.run(new HadoopJobTool(hadoopConf,
+                                                        new MetadataCDXMapper()),
+                                      new String[]{jobInputFile.toString(), jobOutputDir.toString()});
+        } catch (Exception e) {
+            throw new HadoopException("Metadata CDX extraction job with ID " + jobID + " failed to run normally.", e);
+        }
+        if (exitCode != 0) {
+            throw new HadoopException("Metadata CDX extraction job with ID " + jobID + " failed with exit code " + exitCode);
+        }
 	}
 
 	@Override

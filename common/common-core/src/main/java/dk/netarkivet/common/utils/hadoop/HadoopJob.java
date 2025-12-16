@@ -109,13 +109,13 @@ public class HadoopJob {
      */
     public void run() {
         log.info("Starting {} job for jobID {} on {} file(s) matching pattern '{}'",
-                jobType, jobID, fileCount, filenamePattern);
-        int exitCode = jobStrategy.runJob(jobInputFile, jobOutputDir);
-        if (exitCode == 0) {
+                 jobType, jobID, fileCount, filenamePattern);
+        try {
+            jobStrategy.runJob(jobInputFile, jobOutputDir);
             log.info("{} job with jobID {} was a success!", jobType, jobID);
-        } else {
-            log.warn("{} job with ID {} failed with exit code '{}'", jobType, jobID, exitCode);
-            throw new IOFailure("Hadoop job failed with exit code "+exitCode);
+        } catch (HadoopException e) {
+            log.warn("{} job with ID {} failed", jobType, jobID, e);
+            throw new IOFailure(jobType + " Hadoop job with id " + jobID + " failed", e);
         }
     }
 
