@@ -16,7 +16,7 @@ public interface HadoopJobStrategy {
      * @param jobOutputDir The Path specifying the job's output directory.
      * @return An exit code for the job.
      */
-    int runJob(Path jobInputFile, Path jobOutputDir);
+    void runJob(Path jobInputFile, Path jobOutputDir) throws HadoopException;
 
     /**
      * Create the job input file with name from a uuid.

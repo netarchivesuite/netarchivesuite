@@ -3,6 +3,7 @@ package dk.netarkivet.common.utils.hadoop;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import dk.netarkivet.common.exceptions.IOFailure;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -51,18 +52,19 @@ public class MetadataExtractionStrategy implements HadoopJobStrategy {
     }
 
     @Override
-    public int runJob(Path jobInputFile, Path jobOutputDir) {
+    public void runJob(Path jobInputFile, Path jobOutputDir) throws HadoopException {
         int exitCode;
         try {
             log.info("URL/MIME patterns used for metadata extraction job {} are '{}' and '{}'",
-                    jobID, urlPattern, mimePattern);
+                     jobID, urlPattern, mimePattern);
             exitCode = ToolRunner.run(new HadoopJobTool(hadoopConf, new GetMetadataMapper()),
-                    new String[] {jobInputFile.toString(), jobOutputDir.toString()});
+                                      new String[]{jobInputFile.toString(), jobOutputDir.toString()});
         } catch (Exception e) {
-            log.warn("Metadata extraction job with ID {} failed to run normally.", jobID, e);
-            exitCode = 1;
+            throw new HadoopException("Metadata extraction job with ID " + jobID + " failed to run normally.", e);
         }
-        return exitCode;
+        if (exitCode != 0) {
+            throw new HadoopException("Metadata extraction job with ID " + jobID + " failed with exit code " + exitCode);
+        }
     }
 
     @Override
