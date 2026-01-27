@@ -435,11 +435,16 @@ public class HeritrixController extends AbstractRestHeritrixController {
                 progressStatisticsLegend);
         cpm.setHostUrl(getHeritrixJobConsoleURL());
         JobResult jobResult = h3wrapper.job(jobName);
-        if (jobResult != null) {
-            getCrawlServiceAttributes(cpm, jobResult);
-        } else {
-            log.warn("Unable to get Heritrix3 status for job '{}'", jobName);
+        if (jobResult == null || jobResult.status != ResultStatus.OK) {
+            String errMsg =
+                "Problem when sending job request to Heritrix, " +
+                (jobResult == null
+                    ? "jobResult == null"
+                    : "resultstate = " + jobResult.status);
+                log.warn(errMsg);
+                throw new IOFailure(errMsg);
         }
+        getCrawlServiceAttributes(cpm, jobResult);
         if (cpm.crawlIsFinished()) {
             cpm.setStatus(CrawlStatus.CRAWLING_FINISHED);
             // No need to go further, CrawlService.Job bean does not exist
