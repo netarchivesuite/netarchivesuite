@@ -617,8 +617,16 @@ public class HeritrixController extends AbstractRestHeritrixController {
         postRequest.addHeader("Accept", "application/xml");
         postRequest.setEntity(postEntity);
         ScriptResult result = h3wrapper.scriptResult(postRequest);
-        return FullFrontierReport.parseContentsAsXML(jobName, result.response,
-                dk.netarkivet.harvester.heritrix3.Constants.XML_RAWOUT_TAG);
+        if (result != null && result.status == ResultStatus.OK) {
+            return FullFrontierReport.parseContentsAsXML(jobName, result.response,
+                   dk.netarkivet.harvester.heritrix3.Constants.XML_RAWOUT_TAG);
+        }
+        LOG.error("Could not get full frontier report from Heritrix, " +
+            (result == null
+                ? "result == null"
+                : "resultstate = " + result.status)
+                 );
+        return new FullFrontierReport(jobName);
     }
 
     @Override
