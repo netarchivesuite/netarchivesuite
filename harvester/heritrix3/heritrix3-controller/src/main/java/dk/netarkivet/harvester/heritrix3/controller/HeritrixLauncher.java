@@ -103,10 +103,42 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
             heritrixController.requestCrawlStart();
                 
             log.info("Starting periodic CrawlControl with CRAWL_CONTROL_WAIT_PERIOD={} seconds", CRAWL_CONTROL_WAIT_PERIOD);            
-          
+            int consecutiveCcFailures = 0;
+            long firstCcFailureTs = 0;
+            long backoffMs = 1000;
+            
+            final int MAX_CC_FAILS = 10;
+            final long MAX_CC_FAIL_WINDOW_MS = 10 * 60 * 1000; // 10 min
+
             while (!crawlIsOver) {
                 CrawlControl cc = new CrawlControl();
-                cc.run();
+                boolean ccOk = cc.run();
+                if (!ccOk) {
+                    long now = System.currentTimeMillis();
+                    if (consecutiveCcFailures == 0) firstCcFailureTs = now;
+                    consecutiveCcFailures++;
+                    log.warn("CrawlControl failed ({} consecutive failures, {}s since first).",
+                             consecutiveCcFailures, (now - firstCcFailureTs) / 1000);
+                    if (consecutiveCcFailures >= MAX_CC_FAILS ||
+                        now - firstCcFailureTs >= MAX_CC_FAIL_WINDOW_MS) {
+                        log.error("Aborting crawl control loop due to repeated IOFailure/HTTP errors.");
+                        crawlIsOver = true;
+                        continue;
+                        // OR throw new HarvestingAbort("Heritrix unresponsive: repeated IO failures") ?
+                    }
+                    try {
+                        Thread.sleep(backoffMs); // Back off to lower load -- 1, 2, 4, 8, 16, 30 seconds
+                    } catch (InterruptedException e) {
+                        log.warn("Wait interrupted: {}", e.toString());
+                    }
+                    backoffMs = Math.min(backoffMs * 2, 30_000);
+                    continue; // Skip rest of loop, i.e. fra.run()
+                }
+                // cc ok => reset failure budget
+                consecutiveCcFailures = 0;
+                firstCcFailureTs = 0;
+                backoffMs = 1000;
+
                 FrontierReportAnalyzer fra = new FrontierReportAnalyzer(heritrixController);
                 fra.run();
                 if (!crawlIsOver) {
