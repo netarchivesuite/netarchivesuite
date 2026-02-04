@@ -185,7 +185,7 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
      * <p>
      */
 
-    enum CcOutcome {
+    private enum CcOutcome {
         OK,          // crawl pågår normalt
         CRAWL_OVER,  // crawl är färdig (inte fel)
         FAILED       // tillfälligt fel (IO/HTTP), kan retryas
