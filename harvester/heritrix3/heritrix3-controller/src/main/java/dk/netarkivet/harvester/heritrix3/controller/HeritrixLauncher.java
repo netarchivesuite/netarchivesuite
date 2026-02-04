@@ -172,18 +172,18 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
     private class CrawlControl implements Runnable {
        
         @Override
-        public void run() {
+        public boolean void run() { // Returns if the run was OK
             CrawlProgressMessage cpm = null;
             try {
                 cpm = heritrixController.getCrawlProgress();
             } catch (IOFailure e) {
                 // Log a warning and retry
                 log.warn("IOFailure while getting crawl progress", e);
-                return;
+                return false;
             } catch (HarvestingAbort e) {
                 log.warn("Got HarvestingAbort exception while getting crawl progress. Means crawl is over", e);
                 crawlIsOver = true;
-                return;
+                return false;
             }
             JMSConnectionFactory.getInstance().send(cpm);
 
@@ -191,12 +191,13 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
             if (cpm.crawlIsFinished()) {
                 log.info("Job ID {}: crawl is finished.", files.getJobID());
                 crawlIsOver = true;
-                return;
+                return true;
             }
             
             log.info("Job ID: " + files.getJobID() + ", Harvest ID: " + files.getHarvestID() + ", " + cpm.getHostUrl()
                     + "\n" + cpm.getProgressStatisticsLegend() + "\n" + cpm.getJobStatus().getStatus() + " "
                     + cpm.getJobStatus().getProgressStatistics());
+            return true;
         }
 
     }
