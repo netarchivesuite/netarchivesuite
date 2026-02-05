@@ -209,7 +209,7 @@ public class PartialHarvest extends HarvestDefinition {
                 		+ e.getDescription() + " . Please correct the expression.");
             }
         }
-        if (errMsgs.isEmpty()) {
+        if (!errMsgs.isEmpty()) {
             if (strictMode){ 
                 throw new ArgumentNotValid(errMsgs.size() +  " errors were found: " + StringUtils.join(errMsgs, ","));
             } else {
