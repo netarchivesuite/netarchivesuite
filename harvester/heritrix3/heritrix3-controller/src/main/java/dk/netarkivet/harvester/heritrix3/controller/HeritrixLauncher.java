@@ -103,19 +103,66 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
             heritrixController.requestCrawlStart();
                 
             log.info("Starting periodic CrawlControl with CRAWL_CONTROL_WAIT_PERIOD={} seconds", CRAWL_CONTROL_WAIT_PERIOD);            
-          
+            int consecutiveCcFailures = 0;
+            long firstCcFailureTs = 0;
+            long backoffMs = 1000; // 1,2,4,8,16,30 s
+            
+            final int MAX_CC_FAILS = 10;
+            final long MAX_CC_FAIL_WINDOW_MS = 10 * 60 * 1000; // 10 min
+
             while (!crawlIsOver) {
                 CrawlControl cc = new CrawlControl();
-                cc.run();
-                FrontierReportAnalyzer fra = new FrontierReportAnalyzer(heritrixController);
-                fra.run();
-                if (!crawlIsOver) {
-                    try {
-                    Thread.sleep(CRAWL_CONTROL_WAIT_PERIOD*1000L);
-                    } catch (InterruptedException e) {
-                        log.warn("Wait interrupted: " + e);
+                CcOutcome outcome = cc.run();
+                
+                if (outcome == CcOutcome.OK) {
+                    // Reset failure budget on success
+                    consecutiveCcFailures = 0;
+                    firstCcFailureTs = 0;
+                    backoffMs = 1000;
+            
+                    FrontierReportAnalyzer fra = new FrontierReportAnalyzer(heritrixController);
+                    fra.run();
+                    if (!crawlIsOver) {
+                        try {
+                            Thread.sleep(CRAWL_CONTROL_WAIT_PERIOD * 1000L);
+                        } catch (InterruptedException e) {
+                            log.warn("Wait interrupted: {}", e.toString());
+                        }
                     }
+                    continue;
                 }
+
+                if (outcome == CcOutcome.CRAWL_OVER) {
+                    // crawlIsOver is already set by cc.run(); do not run fra
+                    break;
+                }
+
+                // outcome == FAILED
+                long now = System.currentTimeMillis();
+                if (consecutiveCcFailures == 0) firstCcFailureTs = now;
+                consecutiveCcFailures++;
+                log.warn("CrawlControl failed ({} consecutive failures, {}s since first).",
+                         consecutiveCcFailures, (now - firstCcFailureTs) / 1000);
+                if (consecutiveCcFailures >= MAX_CC_FAILS ||
+                    now - firstCcFailureTs >= MAX_CC_FAIL_WINDOW_MS) {
+            
+                    String msg = "Heritrix unresponsive: repeated crawl-control failures (" +
+                                 consecutiveCcFailures + " in a row, " +
+                                 ((now - firstCcFailureTs) / 1000) + "s). Aborting harvest.";
+                    log.error(msg);
+            
+                    // IMPORTANT: throw so upper-level catch(Throwable) sets crawlException != null ==> jobstatus = FAILED
+                    throw new IOFailure(msg);
+                }
+                try {
+                    // Back off to lower load -- 1, 2, 4, 8, 16, 30 seconds
+                    log.warn("Backing off for {} ms before retry", backoffMs);
+                    Thread.sleep(backoffMs);
+                } catch (InterruptedException e) {
+                    log.warn("Wait interrupted: {}", e.toString());
+                }
+                backoffMs = Math.min(backoffMs * 2, 30_000);
+                // Skip fra.run() on failure
             }
             log.info("CrawlJob is now over");
         } catch (IOFailure e) {
@@ -137,21 +184,30 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
      * message to the monitor, and checks whether the crawl is finished, in which case crawl control will be ended.
      * <p>
      */
+
+    private enum CcOutcome {
+        OK,          // crawl pågår normalt
+        CRAWL_OVER,  // crawl är färdig (inte fel)
+        FAILED       // tillfälligt fel (IO/HTTP), kan retryas
+    }
+
+    
     private class CrawlControl implements Runnable {
        
         @Override
-        public void run() {
+        public boolean void run() { // Returns if the run was OK
             CrawlProgressMessage cpm = null;
             try {
                 cpm = heritrixController.getCrawlProgress();
+                return CcOutcome.OK;
             } catch (IOFailure e) {
                 // Log a warning and retry
                 log.warn("IOFailure while getting crawl progress", e);
-                return;
+                return CcOutcome.FAILED;
             } catch (HarvestingAbort e) {
                 log.warn("Got HarvestingAbort exception while getting crawl progress. Means crawl is over", e);
                 crawlIsOver = true;
-                return;
+                return CcOutcome.CRAWL_OVER;
             }
             JMSConnectionFactory.getInstance().send(cpm);
 
@@ -159,12 +215,13 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
             if (cpm.crawlIsFinished()) {
                 log.info("Job ID {}: crawl is finished.", files.getJobID());
                 crawlIsOver = true;
-                return;
+                return CcOutcome.CRAWL_OVER;
             }
             
             log.info("Job ID: " + files.getJobID() + ", Harvest ID: " + files.getHarvestID() + ", " + cpm.getHostUrl()
                     + "\n" + cpm.getProgressStatisticsLegend() + "\n" + cpm.getJobStatus().getStatus() + " "
                     + cpm.getJobStatus().getProgressStatistics());
+            return CcOutcome.CRAWL_OVER;
         }
 
     }
