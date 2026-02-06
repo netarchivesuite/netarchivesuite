@@ -276,7 +276,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
 
     @Override
     public void stopHeritrix() {
-        log.debug("Stopping Heritrix3");
+        log.debug("Stopping Heritrix3 for {}", jobName);
         try {
             // Check if a heritrix3 process still exists for this jobName
             ProcessBuilder processBuilder = new ProcessBuilder("pgrep", "-f", jobName);
@@ -292,9 +292,9 @@ public class HeritrixController extends AbstractRestHeritrixController {
             if (processBuilder.start().waitFor() == 0) { // The process is still alive, kill it
                 log.info("Heritrix3 process still running, pkill'ing heritrix3 ");
                 ProcessBuilder killerProcessBuilder = new ProcessBuilder("pkill", "-f", jobName);
-                int pkillExitValue = killerProcessBuilder.start().exitValue();
+                int pkillExitValue = killerProcessBuilder.start().waitFor();
                 if (pkillExitValue != 0) {
-                    log.warn("Non xero exit value ({}) when trying to pkill Heritrix3.", pkillExitValue);
+                    log.warn("Non zero exit value ({}) when trying to pkill Heritrix3 for {}.", pkillExitValue, jobName);
                 } else {
                     log.info("Heritrix process terminated successfully with the pkill command {}",
                             killerProcessBuilder.command());
@@ -303,9 +303,9 @@ public class HeritrixController extends AbstractRestHeritrixController {
                 log.info("Heritrix3 stopped successfully.");
             }
         } catch (IOException e) {
-            log.warn("Exception while trying to shutdown heritrix", e);
+            log.warn("Exception while trying to shutdown heritrix for {}.", jobName, e);
         } catch (InterruptedException e) {
-            log.debug("stopHeritrix call interupted", e);
+            log.debug("stopHeritrix call interupted for {}.", jobName, e);
         }
     }
 
@@ -390,11 +390,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
                     throw new IOFailure("Heritrix3 could not be shut down");
                 }
             } else {
-                EngineResult result = h3wrapper.exitJavaProcess(null);
-                if (result == null || (result.status != ResultStatus.RESPONSE_EXCEPTION
-                        && result.status != ResultStatus.OFFLINE)) {
-                    throw new IOFailure("Heritrix3 could not be shut down");
-                }
+                stopHeritrix();
             }
         } catch (Throwable e) {
             throw new IOFailure("Unknown error during communication with heritrix3", e);
