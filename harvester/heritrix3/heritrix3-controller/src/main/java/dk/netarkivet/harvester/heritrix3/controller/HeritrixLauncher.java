@@ -106,6 +106,8 @@ public class HeritrixLauncher extends HeritrixLauncherAbstract {
           
             while (!crawlIsOver) {
                 CrawlControl cc = new CrawlControl();
+                //Note that this calls the run method directly so the CrawlControl is
+                //not in a separate thread. It could even just be inlined here.
                 cc.run();
                 FrontierReportAnalyzer fra = new FrontierReportAnalyzer(heritrixController);
                 fra.run();
