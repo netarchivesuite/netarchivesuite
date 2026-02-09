@@ -227,6 +227,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
             // check if param pauseAtStart is true
             ScriptResult scriptResult = h3wrapper.ExecuteShellScriptInJob(jobName, "groovy",
                     "rawOut.println crawlController.pauseAtStart\n");
+            log.info("The result of the script execution to find pauseAtStart is {}", scriptResult);
             boolean pauseAtStart = false;
             if (scriptResult != null && scriptResult.script != null) {
                 String rawOutput = scriptResult.script.rawOutput; // false\n or true\n
@@ -237,12 +238,16 @@ public class HeritrixController extends AbstractRestHeritrixController {
             }
             log.info("The parameter pauseAtStart is {}", pauseAtStart);
             // if param pauseAtStart is false
-            if (jobResult.job != null &&  pauseAtStart == false) {
-                jobResult = h3wrapper.unpauseJob(jobName);
-                log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
-
+            if (jobResult.job != null &&  pauseAtStart == true) {
+                JobResult unpauseJobResult = h3wrapper.unpauseJob(jobName);
+                if (unpauseJobResult != null) {
+                    log.info("Unpausing job gave result {}", unpauseJobResult);
+                } else {
+                    log.warn("Unpausing job gave null result");
+                }
+                //log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
                 // POST: h3 is running, and the job with name 'jobName' is running
-                log.trace("h3-State after unpausing job '{}': {}", jobName, new String(jobResult.response, "UTF-8"));
+                //log.trace("h3-State after unpausing job '{}': {}", jobName, new String(jobResult.response, "UTF-8"));
             } else if (jobResult.job != null) {
                 log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
             } else {
@@ -262,7 +267,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
             if (jobResult.job.isRunning) {
                 JobResult result = h3wrapper.terminateJob(this.jobName);
                 if (!result.job.isRunning) {
-                    log.warn("Job '{}' terminated", this.jobName);
+                    log.info("Job '{}' terminated", this.jobName);
                 } else {
                     log.warn("Job '{}' not terminated correctly", this.jobName);
                 }
@@ -387,13 +392,14 @@ public class HeritrixController extends AbstractRestHeritrixController {
                 EngineResult result = h3wrapper.exitJavaProcess(jobsToIgnore);
                 if (result == null || (result.status != ResultStatus.RESPONSE_EXCEPTION
                         && result.status != ResultStatus.OFFLINE)) {
-                    throw new IOFailure("Heritrix3 could not be shut down");
+                    throw new IOFailure("Heritrix3 could not be shut down for " + jobName);
                 }
             } else {
                 stopHeritrix();
             }
         } catch (Throwable e) {
-            throw new IOFailure("Unknown error during communication with heritrix3", e);
+            log.warn("Exception during cleanup of crawl {}. Will now kill heritrix.", jobName, e);
+            stopHeritrix();
         }
     }
 
