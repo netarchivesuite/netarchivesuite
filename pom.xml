@@ -78,7 +78,7 @@
     <jaccept-core.version>0.4</jaccept-core.version>
     <hamcrest-all.version>1.3</hamcrest-all.version>
     <tomcat-embed-core.version>8.5.50</tomcat-embed-core.version>
-    <logback-core.version>1.2.3</logback-core.version>
+    <logback-core.version>1.2.9</logback-core.version>
     <je.version>3.2.76</je.version>
     <mockobjects-core.version>0.09</mockobjects-core.version>
     <commons-lang3.version>3.5</commons-lang3.version>
