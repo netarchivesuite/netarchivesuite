@@ -59,7 +59,7 @@
     <commons-pool.version>1.6</commons-pool.version>
     <jfreechart.version>1.0.13</jfreechart.version>
     <gagawa.version>1.0.1</gagawa.version>
-    <guava.version>27.0-jre</guava.version>
+    <guava.version>32.0.0-jre</guava.version>
     <javax.inject.version>1</javax.inject.version>
     <commons-logging.version>1.2</commons-logging.version>
     <mg4j.version>1.0.1</mg4j.version>
