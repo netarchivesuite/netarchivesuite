@@ -16,7 +16,7 @@
      or downgrade to 1.9 for the next release -->
     <bitrepository.version>1.9</bitrepository.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomcat.version>${tomcat-embed-core.version}</tomcat.version>
+    <tomcat.version>8.5.61</tomcat.version>
   </properties>
 
   <dependencies>
