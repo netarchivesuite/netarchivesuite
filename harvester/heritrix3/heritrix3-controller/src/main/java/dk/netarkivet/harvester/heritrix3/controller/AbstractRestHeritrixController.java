@@ -99,8 +99,14 @@ public abstract class AbstractRestHeritrixController implements IHeritrixControl
             UnzipUtils.unzip(zipFileStr, 1, heritrixBaseDir.getAbsolutePath());
 
             if (files.getCertificateFile() != null) {
-                log.debug("Copying override keystore into heritrix dir");
-                Heritrix3Wrapper.copyFileAs(files.getCertificateFile(), heritrixBaseDir, "h3server.jks");
+                File certificateFile = files.getCertificateFile();
+                if (!certificateFile.exists() || !certificateFile.isFile()) {
+                    throw new IOFailure("The certificate file " + certificateFile.getAbsolutePath() + " does not exist.");
+                }
+                Heritrix3Wrapper.copyFileAs(certificateFile, heritrixBaseDir, "h3server.jks");
+                log.info("Copying override keystore from {} to {}/{}.", certificateFile.getAbsolutePath(), heritrixBaseDir, "h3server.jks");
+            } else {
+                log.info("No certificate file specified. Using default keystore.");
             }
 
             /** The bin/heritrix script should read the following environment-variables:

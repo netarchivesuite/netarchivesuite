@@ -333,73 +333,67 @@ public class HeritrixController extends AbstractRestHeritrixController {
     }
 
     /**
-     * Cleanup after an Heritrix3 process. This entails sending the shutdown command to the Heritrix3 process, and
-     * killing it forcefully, if it is still alive after waiting the period of time specified by the
-     * CommonSettings.PROCESS_TIMEOUT setting.
-     *
+     * Tear down the completed crawl job and stop the heritrix engine.
      * @param crawlDir the crawldir to cleanup (argument is currently not used)
      * @see IHeritrixController#cleanup()
      */
     public void cleanup(File crawlDir) {
-        JobResult jobResult;
         try {
-            // Check engine status
-            EngineResult engineResult = h3wrapper.rescanJobDirectory();
-            if (engineResult != null) {
-                List<JobShort> knownJobs = null;
-                if (engineResult.engine != null) {
-                    knownJobs = engineResult.engine.jobs;
-                }
-                if (knownJobs == null) {
-                    log.warn("Query returned a null list of jobs for heritrix engine for crawl {}. Treating as an empty list.", crawlDir.getAbsolutePath());
-                    knownJobs = new ArrayList<>();
-                }
-                if (knownJobs.size() != 1) {
-                    log.warn("Should be one job but there is {} jobs: {}", knownJobs.size(),
-                            knownJobsToString(engineResult));
-                }
-            } else {
-                log.warn("Unresponsive Heritrix3 engine. Let's try continuing the cleanup anyway");
-            }
-
-            // Check that job jobName still exists in H3 engine
-            jobResult = h3wrapper.job(jobName);
-            if (jobResult != null) {
-                if (jobResult.status == ResultStatus.OK && jobResult.job != null && jobResult.job.crawlControllerState != null) {
-                    String TEARDOWN = "teardown";
-                    if (jobResult.job.availableActions.contains(TEARDOWN)) {
-                        log.info("Tearing down h3 job {}", jobName);
-                        jobResult = h3wrapper.teardownJob(jobName);
-                    } else {
-                        String errMsg = "Tearing down h3 job '" + jobName
-                                + "' not possible. Not one of the actions available: "
-                                + StringUtils.join(jobResult.job.availableActions, ",");
-                        log.warn(errMsg);
-                        throw new IOFailure(errMsg);
-                    }
-                }
-            } else {
-                throw new IOFailure("Unexpected error during communication with heritrix3 during cleanup");
-            }
-            // Wait for the state: jobResult.job.crawlControllerState == null (but we only try ten times with 1 second
-            // interval
-            jobResult = h3wrapper.waitForJobState(jobName, null, 10, heritrix3EngineIntervalBetweenRetriesInMillis);
-            // Did we get the expected state?
-            if (jobResult.job != null && jobResult.job.crawlControllerState != null) {
-                log.warn("The job {} is still lurking about. Shutdown heritrix3 and ignore the job", jobName);
-                List<String> jobsToIgnore = new ArrayList<String>();
-                jobsToIgnore.add(jobName);
-                EngineResult result = h3wrapper.exitJavaProcess(jobsToIgnore);
-                if (result == null || (result.status != ResultStatus.RESPONSE_EXCEPTION
-                        && result.status != ResultStatus.OFFLINE)) {
-                    throw new IOFailure("Heritrix3 could not be shut down for " + jobName);
-                }
-            } else {
-                stopHeritrix();
-            }
+            tearDownJob();
+            stopHeritrixEngine();
         } catch (Throwable e) {
-            log.warn("Exception during cleanup of crawl {}. Will now kill heritrix.", jobName, e);
+            log.warn("Exception during cleanup of heritrix for {}. Will now kill heritrix.", jobName, e);
             stopHeritrix();
+        }
+    }
+
+    private void stopHeritrixEngine() {
+        log.info("Attempting to shutdown heritrix3 for {}", jobName);
+        JobResult jobResult = h3wrapper.job(jobName);
+        EngineResult result;
+        if (jobResult != null && jobResult.job != null && jobResult.job.crawlControllerState == null) {
+            log.info("Heritrix job {} successfully torn down, will now stop heritrix.", jobName);
+            result = h3wrapper.exitJavaProcess(List.of());
+        } else if (jobResult != null && jobResult.job != null && jobResult.job.crawlControllerState != null) {
+            log.warn("The job {} is still lurking about. Shutdown heritrix3 and ignore the job", jobName);
+            result = h3wrapper.exitJavaProcess(List.of(jobName));
+        } else {
+            log.warn("Heritrix3 did not respond to job query for {}. Kill heritrix anyway.", jobName);
+            result = h3wrapper.exitJavaProcess(List.of());
+        }
+        if (result == null || (result.status != ResultStatus.RESPONSE_EXCEPTION
+                && result.status != ResultStatus.OFFLINE)) {
+            log.info("Heritrix3 not stopped successfully for {} so falling back to killing heritrix.", jobName);
+            stopHeritrix();
+        } else {
+            log.info("Heritrix3 stopped successfully for {}.", jobName);
+        }
+    }
+
+    private void tearDownJob() {
+        log.info("Attempting to tear down h3 job {}", jobName);
+        JobResult jobResult = h3wrapper.job(jobName);
+        if (jobResult != null) {
+            if (jobResult.status == ResultStatus.OK && jobResult.job != null && jobResult.job.crawlControllerState != null) {
+                String TEARDOWN = "teardown";
+                if (jobResult.job.availableActions.contains(TEARDOWN)) {
+                    log.info("Tearing down h3 job {}", jobName);
+                    h3wrapper.teardownJob(jobName);
+                    jobResult = h3wrapper.waitForJobState(jobName, null, 10, heritrix3EngineIntervalBetweenRetriesInMillis);
+                    if (jobResult != null && jobResult.job != null && jobResult.job.crawlControllerState == null) {
+                        log.info("Tear down of h3 job {} completed successfully.", jobName);
+                    } else {
+                        log.info("Tear down of h3 job {} failed.", jobName);
+                    }
+                } else {
+                    String errMsg = "Tearing down h3 job '" + jobName
+                            + "' not possible. Not one of the actions available: "
+                            + StringUtils.join(jobResult.job.availableActions, ",");
+                    log.warn(errMsg);
+                }
+            }
+        } else {
+            log.warn("Unable to get JobAttributes for job '{}'", jobName);
         }
     }
 
