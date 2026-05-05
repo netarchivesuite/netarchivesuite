@@ -90,7 +90,7 @@
                 <exclude>commons-cli:commons-cli:jar</exclude>
                 <exclude>commons-codec:commons-codec:jar</exclude>
                 <exclude>commons-io:commons-io:jar</exclude>
-                <exclude>commons-lang:commons-lang:jar</exclude>
+                <!--<exclude>commons-lang:commons-lang:jar</exclude>-->
                 <exclude>commons-logging:commons-logging:jar</exclude>
                 <exclude>commons-net:commons-net:jar</exclude>
                 <exclude>fastutil:fastutil:jar</exclude>
@@ -118,6 +118,7 @@
                 <!-- mail -->
                 <exclude>javax.mail:mail:jar</exclude>
                 <exclude>javax.activation:activation:jar</exclude>
+                <exclude>jakarta.activation:jakarta.activation-api:jar</exclude>
                 <!-- xml -->
                 <!--exclude>jaxen:jaxen:jar</exclude-->
                 <exclude>jdom:jdom:jar</exclude>
