@@ -68,10 +68,6 @@
         </exclusion>
         <exclusion>
           <groupId>org.archive.heritrix</groupId>
-          <artifactId>heritrix</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.archive.heritrix</groupId>
           <artifactId>heritrix-commons</artifactId>
         </exclusion>
         <exclusion>
