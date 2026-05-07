@@ -95,9 +95,13 @@ public class PutFileEventHandler implements EventHandler {
             finish();
             break;
         case COMPONENT_COMPLETE:
+            //TODO Add logging
+            log.info("Got COMPONENT_COMPLETE event for component {} for conversation {}.", ((ContributorEvent) event).getContributorID(), event.getConversationID());
             componentCompleteEvents.add((ContributorEvent) event);
             break;
         case COMPONENT_FAILED:
+            //TODO Add logging
+            log.info("Got COMPONENT_FAILED event for component {} for conversation {}.", ((ContributorFailedEvent) event).getContributorID(), event.getConversationID());
             componentFailedEvents.add((ContributorFailedEvent) event);
             break;
         default:
