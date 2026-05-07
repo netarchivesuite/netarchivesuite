@@ -54,17 +54,13 @@
     <dependency>
       <groupId>is.landsbokasafn.crawl-rss</groupId>
       <artifactId>crawl-rss</artifactId>
-      <version>0.0.3</version>
+      <version>0.0.4-SNAPSHOT</version>
       <classifier>dist</classifier>
       <type>zip</type>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-log4j12</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.archive.heritrix</groupId>
-          <artifactId>heritrix</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.archive.heritrix</groupId>
