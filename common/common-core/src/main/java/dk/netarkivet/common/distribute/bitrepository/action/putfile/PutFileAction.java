@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bitrepository.bitrepositoryelements.ChecksumDataForFileTYPE;
+import org.bitrepository.bitrepositoryelements.ChecksumSpecTYPE;
 import org.bitrepository.bitrepositoryelements.ChecksumType;
 import org.bitrepository.common.utils.SettingsUtils;
 import org.bitrepository.modify.putfile.PutFileClient;
@@ -54,7 +55,11 @@ public class PutFileAction implements ClientAction {
 
             ChecksumDataForFileTYPE checksumData = BitmagUtils.getValidationChecksum(targetFile,
                     BitmagUtils.getChecksumSpec(ChecksumType.MD5));
-            client.putFile(collectionID, url, fileID, targetFile.length(), checksumData, null,
+            //TODO log checksum being sent
+            //TODO Can we work out what it means that the 6th parameter here is null?
+            ChecksumSpecTYPE checksumRequestsForValidation = BitmagUtils.getChecksumSpec(ChecksumType.MD5);
+            log.info("Putting file {} with checksum {} to bitmag", fileID, checksumData.getChecksumValue());
+            client.putFile(collectionID, url, fileID, targetFile.length(), checksumData, checksumRequestsForValidation,
                     eventHandler, "PutFile from NAS");
             eventHandler.waitForFinish();
 

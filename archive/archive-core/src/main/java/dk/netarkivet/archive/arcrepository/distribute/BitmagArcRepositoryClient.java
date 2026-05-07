@@ -455,15 +455,15 @@ public class BitmagArcRepositoryClient extends Synchronizer implements ArcReposi
         ArgumentNotValid.checkExistsNormalFile(file, "File file");
         boolean success = false;
 
-        log.info("Calling putFileClient.");
+        //TODO improve this log message
+        log.info("Calling putFileClient for '{}'.", file.getAbsolutePath());
         PutFileClient putFileClientLocal = BitmagUtils.getPutFileClient();
         PutFileAction putfileInstance = new PutFileAction(putFileClientLocal, collectionId, file, fileId);
         putfileInstance.performAction();
 
         if (putfileInstance.actionIsSuccess()) {
             success = true;
-            log.info("BitmagArcRepositoryClient uploadFile.");
-            log.info("File '{}' uploaded successfully. ",file.getAbsolutePath());
+            log.info("{}: File '{}' uploaded successfully. ",this.getClass(), file.getAbsolutePath());
         } else {
             log.warn("Upload of file '{}' failed ", file.getAbsolutePath());
         }
