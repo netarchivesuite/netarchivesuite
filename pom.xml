@@ -144,8 +144,8 @@
   <inceptionYear>2005</inceptionYear>
 
   <scm>
-    <url>https://git@github.com/netarchivesuite/netarchivesuite</url>
-    <connection>scm:git:https://git@github.com/netarchivesuite/netarchivesuite.git</connection>
+    <url>https://github.com/netarchivesuite/netarchivesuite</url>
+    <connection>scm:git:https://github.com/netarchivesuite/netarchivesuite.git</connection>
     <developerConnection>scm:git:git@github.com:netarchivesuite/netarchivesuite.git</developerConnection>
     <tag>netarchivesuite-8.0</tag>
   </scm>
