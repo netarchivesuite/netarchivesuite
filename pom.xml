@@ -37,7 +37,7 @@
     <jetty.version>6.1.26</jetty.version>
     <jsp-2.1-glassfish.version>2.1.v20091210</jsp-2.1-glassfish.version>
     <ecj.version>4.4.2</ecj.version>
-    <dom4j.version>1.6.1</dom4j.version>
+    <dom4j.version>2.1.4</dom4j.version>
     <jetty-servlet-api.version>2.5-20081211</jetty-servlet-api.version>
     <commons-fileupload.version>1.3.3</commons-fileupload.version>
     <jms.version>4.4.1</jms.version>
@@ -789,7 +789,7 @@
         <version>${ecj.version}</version>
       </dependency>
       <dependency>
-        <groupId>dom4j</groupId>
+        <groupId>org.dom4j</groupId>
         <artifactId>dom4j</artifactId>
         <version>${dom4j.version}</version>
       </dependency>
