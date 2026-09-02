@@ -174,15 +174,19 @@ public class HTMLUtils {
      * specify it, use the overloaded method.
      *
      * @param context The context of the web page request.
-     * @param refreshInSeconds auto-refresh time in seconds
+     * @param refreshInSeconds auto-refresh time in seconds (zero or negative values disable refresh)
      * @throws IOException if an error occurs during writing of output.
      */
     public static void generateHeader(PageContext context, long refreshInSeconds) throws IOException {
         ArgumentNotValid.checkNotNull(context, "context");
         String url = ((HttpServletRequest) context.getRequest()).getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
-        String title = getTitle((HttpServletRequest)context.getRequest(), url, locale);
-        generateHeader(title, refreshInSeconds, context);
+        String title = getTitle((HttpServletRequest) context.getRequest(), url, locale);
+        if (refreshInSeconds > 0) {
+            generateHeader(title, refreshInSeconds, context);
+        } else {
+            generateHeader(title, context);
+        }
     }
 
     /**
@@ -232,7 +236,7 @@ public class HTMLUtils {
      *
      * @param title An internationalised title of the page.
      * @param context The context of the web page request.
-     * @param refreshInSeconds auto-refresh time in seconds
+     * @param refreshInSeconds auto-refresh time in seconds (zero or negative values disable refresh)
      * @throws IOException if an error occurs during writing to output.
      */
     public static void generateHeader(String title, long refreshInSeconds, PageContext context) throws IOException {
