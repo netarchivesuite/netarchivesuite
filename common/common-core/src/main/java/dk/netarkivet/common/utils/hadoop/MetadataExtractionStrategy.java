@@ -3,7 +3,6 @@ package dk.netarkivet.common.utils.hadoop;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import dk.netarkivet.common.exceptions.IOFailure;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;

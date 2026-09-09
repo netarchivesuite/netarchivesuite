@@ -23,9 +23,6 @@
 package dk.netarkivet.common.webinterface;
 
 import java.io.File;
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
@@ -46,7 +43,6 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.hadoop.HadoopJobUtils;
-import sun.security.krb5.KrbException;
 
 /**
  * A class representing an HttpServer. This class loads web applications as given in settings.

@@ -2,7 +2,6 @@ package dk.netarkivet.systemtest.performance;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;

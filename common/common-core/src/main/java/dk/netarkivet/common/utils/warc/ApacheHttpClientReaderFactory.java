@@ -1,7 +1,6 @@
 package dk.netarkivet.common.utils.warc;
 
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
 
 public class ApacheHttpClientReaderFactory {
 

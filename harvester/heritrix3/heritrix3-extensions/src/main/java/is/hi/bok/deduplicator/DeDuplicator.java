@@ -22,11 +22,6 @@
  */
 package is.hi.bok.deduplicator;
 
-import static is.hi.bok.deduplicator.DedupAttributeConstants.A_CONTENT_STATE_KEY;
-import static is.hi.bok.deduplicator.DedupAttributeConstants.CONTENT_UNCHANGED;
-import static org.archive.modules.recrawl.RecrawlAttributeConstants.A_CONTENT_DIGEST;
-import static org.archive.modules.recrawl.RecrawlAttributeConstants.A_FETCH_HISTORY;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;

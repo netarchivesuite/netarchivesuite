@@ -22,7 +22,6 @@
  */
 package dk.netarkivet.archive.bitarchive;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.File;

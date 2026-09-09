@@ -37,7 +37,6 @@ import org.junit.Test;
 
 import dk.netarkivet.common.arcrepository.TestArcRepositoryClient;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.archive.ArchiveBatchJob;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.metadata.MetadataFile;
 import dk.netarkivet.testutils.FileAsserts;

@@ -22,24 +22,13 @@
  */
 package dk.netarkivet.systemtest.functional;
 
-import static dk.netarkivet.systemtest.page.DomainWebTestHelper.HIDE_UNUSED_CONFIGURATIONS_LINK;
-import static dk.netarkivet.systemtest.page.DomainWebTestHelper.HIDE_UNUSED_SEED_LISTS_LINK;
-import static dk.netarkivet.systemtest.page.DomainWebTestHelper.SHOW_UNUSED_CONFIGURATIONS_LINK;
-import static dk.netarkivet.systemtest.page.DomainWebTestHelper.SHOW_UNUSED_SEED_LISTS_LINK;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.ui.Select;
@@ -49,8 +38,6 @@ import org.testng.annotations.Test;
 import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.SeleniumSession;
-import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
-import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 
 public class TemplatePageTest extends AbstractSystemTest {

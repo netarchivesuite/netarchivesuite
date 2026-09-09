@@ -6,15 +6,9 @@ import static org.hamcrest.Matchers.containsString;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.openqa.selenium.By;
-import org.testng.annotations.Test;
-
 import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.HarvestUtils;
-import dk.netarkivet.systemtest.environment.TestEnvironment;
-import dk.netarkivet.systemtest.environment.TestEnvironmentController;
 import dk.netarkivet.systemtest.page.DomainConfigurationPageHelper;
-import dk.netarkivet.systemtest.page.PageHelper;
 import dk.netarkivet.systemtest.page.SelectiveHarvestPageHelper;
 
 public class HarvesterStartStopTest extends AbstractSystemTest {

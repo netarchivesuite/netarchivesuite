@@ -50,7 +50,6 @@ import org.archive.io.warc.WARCWriter;
 import org.archive.io.warc.WARCWriterPoolSettings;
 import org.archive.io.warc.WARCWriterPoolSettingsData;
 import org.archive.uid.UUIDGenerator;
-import org.archive.util.anvl.ANVLRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -6,9 +6,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
-import dk.netarkivet.common.utils.Settings;
 
 /** Abstraction layer above the Apache RequestBuilder to use for building requests to interact with cgi-services */
 public class CGIRequestBuilder {

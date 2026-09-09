@@ -23,7 +23,6 @@
 package dk.netarkivet.deploy;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
@@ -34,7 +33,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.io.filefilter.FileFileFilter;
 
 import dk.netarkivet.common.utils.Settings;
 
