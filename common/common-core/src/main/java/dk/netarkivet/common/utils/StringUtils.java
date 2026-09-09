@@ -174,24 +174,7 @@ public final class StringUtils {
         }
         return res.toString();
     }
-
-    /**
-     * Repeat the string n times.
-     *
-     * @param s A string to repeat.
-     * @param n How many times to repeat it.
-     * @return A repeated string.
-     * @throws ArgumentNotValid if a negative amount is specified.
-     */
-    public static String repeat(String s, int n) {
-        ArgumentNotValid.checkNotNegative(n, "int n");
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < n; i++) {
-            sb.append(s);
-        }
-        return sb.toString();
-    }
-
+    
     /**
      * Change all Strings to Integers.
      *

@@ -376,7 +376,7 @@ public final class ScriptConstants {
      * @return A line of dashes.
      */
     public static String writeDashLine() {
-        return "echo " + StringUtils.repeat("-", SCRIPT_DASH_NUM_REPEAT);
+        return "echo " + "-".repeat(SCRIPT_DASH_NUM_REPEAT);
     }
 
     /**

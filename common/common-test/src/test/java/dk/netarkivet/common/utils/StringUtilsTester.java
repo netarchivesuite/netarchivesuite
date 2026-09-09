@@ -99,18 +99,6 @@ public class StringUtilsTester {
     }
 
     @Test
-    public void testRepeat() throws Exception {
-        assertEquals("Should repeat single string three times with arg 3", "ababab", StringUtils.repeat("ab", 3));
-        assertEquals("Should give nothing on zero repeats", "", StringUtils.repeat("foo", 0));
-        try {
-            StringUtils.repeat("foo", -1);
-            fail("Should not be possible to repeat negative amount");
-        } catch (ArgumentNotValid e) {
-            StringAsserts.assertStringContains("Should mention amount", " -1", e.getMessage());
-        }
-    }
-
-    @Test
     public void testSplitString() {
         String input = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam volutpat euismod aliquet. Nullam vestibulum mollis arcu, quis laoreet nibh aliquet et. In at ligula pellentesque magna placerat luctus. Donec mauris nibh, lacinia non feugiat quis, dapibus id orci. Suspendisse sollicitudin suscipit sodales. Mauris interdum consectetur nunc sed interdum. Nulla facilisi. Quisque urna lectus, tempor ut feugiat sit amet, congue eget lectus. Duis eget interdum turpis. Morbi turpis arcu, venenatis ac venenatis nec, pretium ac tellus. Fusce condimentum iaculis sem. Cras eros dui, imperdiet vitae faucibus feugiat, pellentesque eu quam. In dignissim facilisis sollicitudin. Cras tincidunt arcu at lectus tincidunt a porta lorem accumsan. Pellentesque porta, est at viverra sagittis, est elit congue lorem, feugiat lobortis tellus nisl in augue.";
         String output = StringUtils.splitStringOnWhitespace(input, 50);

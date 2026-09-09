@@ -56,9 +56,7 @@ public class ScheduleDBDAOTester extends DataModelTestCase {
         Schedule s1 = TestInfo.getDefaultSchedule();
         ScheduleDAO dao = ScheduleDAO.getInstance();
         StringBuilder build = new StringBuilder(3030);
-        for (int i = 0; i < 101; i++) {
-            build.append(THIRTY_CHAR_STRING);
-        }
+        build.append(THIRTY_CHAR_STRING.repeat(101));
         s1.setComments(build.toString());
         try {
             dao.update(s1);
@@ -67,9 +65,7 @@ public class ScheduleDBDAOTester extends DataModelTestCase {
             // expected
         }
         build = new StringBuilder(330);
-        for (int i = 0; i < 11; i++) {
-            build.append(THIRTY_CHAR_STRING);
-        }
+        build.append(THIRTY_CHAR_STRING.repeat(11));
         Schedule s2 = new RepeatingSchedule(new Date(), 2, new HourlyFrequency(2), build.toString(), "Small comment");
         try {
             dao.create(s2);
