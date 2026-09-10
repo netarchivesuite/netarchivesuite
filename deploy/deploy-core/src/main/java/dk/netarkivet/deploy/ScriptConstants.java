@@ -23,7 +23,6 @@
 package dk.netarkivet.deploy;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.StringUtils;
 
 /**
  * This class contains constants and functions specific for creating the scripts and other files for the different

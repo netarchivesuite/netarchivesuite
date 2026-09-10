@@ -36,7 +36,6 @@ import java.util.List;
 import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.testutils.StringAsserts;
 
 /**
  * Unit tests for the class StringUtils.
