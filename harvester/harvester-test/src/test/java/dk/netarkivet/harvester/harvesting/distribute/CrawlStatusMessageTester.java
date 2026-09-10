@@ -45,11 +45,11 @@ public class CrawlStatusMessageTester {
     @Test
     public void testJobFinishedCTOR() {
         CrawlStatusMessage csm;
-        csm = new CrawlStatusMessage(12l, JobStatus.DONE, null);
-        assertEquals("Don't get back the id we entered", 12l, csm.getJobID());
+        csm = new CrawlStatusMessage(12L, JobStatus.DONE, null);
+        assertEquals("Don't get back the id we entered", 12L, csm.getJobID());
         assertEquals("Don't get back the status we entered", JobStatus.DONE, csm.getStatusCode());
-        csm = new CrawlStatusMessage(12l, JobStatus.FAILED, null);
-        assertEquals("Don't get back the id we entered", 12l, csm.getJobID());
+        csm = new CrawlStatusMessage(12L, JobStatus.FAILED, null);
+        assertEquals("Don't get back the id we entered", 12L, csm.getJobID());
         assertEquals("Don't get back the status we entered", JobStatus.FAILED, csm.getStatusCode());
     }
 
@@ -78,14 +78,14 @@ public class CrawlStatusMessageTester {
     @Test
     public void testJobNotFinishedCTOR() {
         CrawlStatusMessage csm;
-        csm = new CrawlStatusMessage(12l, JobStatus.NEW);
-        assertEquals("Don't get back the id we entered", 12l, csm.getJobID());
+        csm = new CrawlStatusMessage(12L, JobStatus.NEW);
+        assertEquals("Don't get back the id we entered", 12L, csm.getJobID());
         assertEquals("Don't get back the status we entered", JobStatus.NEW, csm.getStatusCode());
-        csm = new CrawlStatusMessage(12l, JobStatus.STARTED);
-        assertEquals("Don't get back the id we entered", 12l, csm.getJobID());
+        csm = new CrawlStatusMessage(12L, JobStatus.STARTED);
+        assertEquals("Don't get back the id we entered", 12L, csm.getJobID());
         assertEquals("Don't get back the status we entered", JobStatus.STARTED, csm.getStatusCode());
-        csm = new CrawlStatusMessage(12l, JobStatus.SUBMITTED);
-        assertEquals("Don't get back the id we entered", 12l, csm.getJobID());
+        csm = new CrawlStatusMessage(12L, JobStatus.SUBMITTED);
+        assertEquals("Don't get back the id we entered", 12L, csm.getJobID());
         assertEquals("Don't get back the status we entered", JobStatus.SUBMITTED, csm.getStatusCode());
     }
 
@@ -98,7 +98,7 @@ public class CrawlStatusMessageTester {
             // expected
         }
         try {
-            new CrawlStatusMessage(12l, null);
+            new CrawlStatusMessage(12L, null);
             fail("CTOR without RemoteFile should fail if JobStatus is null");
         } catch (ArgumentNotValid e) {
             // expected
@@ -111,7 +111,7 @@ public class CrawlStatusMessageTester {
      */
     @Test
     public void testSerializable() throws IOException, ClassNotFoundException {
-        CrawlStatusMessage csm = new CrawlStatusMessage(0l, JobStatus.DONE, null);
+        CrawlStatusMessage csm = new CrawlStatusMessage(0L, JobStatus.DONE, null);
         CrawlStatusMessage csm2 = (CrawlStatusMessage) Serial.serial(csm);
         assertEquals("Deserialization error for CrawlStatusMessage", relevantState(csm), relevantState(csm2));
     }
