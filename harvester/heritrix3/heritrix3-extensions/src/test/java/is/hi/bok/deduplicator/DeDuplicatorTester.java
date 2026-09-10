@@ -1,9 +1,5 @@
 package is.hi.bok.deduplicator;
 
-import static org.junit.Assert.*;
-import is.hi.bok.deduplicator.DeDuplicator;
-import is.hi.bok.deduplicator.DeDuplicator.FilterMode;
-
 import org.junit.Test;
 
 public class DeDuplicatorTester {

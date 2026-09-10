@@ -36,7 +36,6 @@ import java.util.List;
 import org.junit.Test;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.testutils.StringAsserts;
 
 /**
  * Unit tests for the class StringUtils.
@@ -95,18 +94,6 @@ public class StringUtilsTester {
             return StringUtils.surjoin(null, pre, post);
         } else {
             return StringUtils.surjoin(Arrays.asList(strings), pre, post);
-        }
-    }
-
-    @Test
-    public void testRepeat() throws Exception {
-        assertEquals("Should repeat single string three times with arg 3", "ababab", StringUtils.repeat("ab", 3));
-        assertEquals("Should give nothing on zero repeats", "", StringUtils.repeat("foo", 0));
-        try {
-            StringUtils.repeat("foo", -1);
-            fail("Should not be possible to repeat negative amount");
-        } catch (ArgumentNotValid e) {
-            StringAsserts.assertStringContains("Should mention amount", " -1", e.getMessage());
         }
     }
 

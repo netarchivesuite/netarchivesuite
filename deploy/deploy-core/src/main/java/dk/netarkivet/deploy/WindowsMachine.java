@@ -364,8 +364,7 @@ public class WindowsMachine extends Machine {
         File killAllScript = new File(directory, Constants.SCRIPT_NAME_KILL_ALL + scriptExtension);
         try {
             // Initialise script
-            PrintWriter killPrinter = new PrintWriter(killAllScript, getTargetEncoding());
-            try {
+            try (PrintWriter killPrinter = new PrintWriter(killAllScript, getTargetEncoding())) {
                 killPrinter.println(ScriptConstants.ECHO_KILL_ALL_APPS + Constants.COLON + Constants.SPACE
                         + Constants.APOSTROPHE + hostname + Constants.APOSTROPHE);
                 killPrinter.println(ScriptConstants.CD + Constants.SPACE + Constants.QUOTE_MARK + getConfDirPath()
@@ -383,10 +382,8 @@ public class WindowsMachine extends Machine {
                 // Add 10 seconds timeout to allow the shutdown to complete before exiting the ssh connection
                 killPrinter.print(ScriptConstants.OPERATING_SYSTEM_WINDOWS_10_SECONDS_WAIT);
                 killPrinter.println();
-		    } finally {
-                // close script
-                killPrinter.close();
             }
+            // close script
         } catch (IOException e) {
             String msg = "Problems creating local kill all script. ";
             log.trace(msg, e);
@@ -407,8 +404,7 @@ public class WindowsMachine extends Machine {
         File startAllScript = new File(directory, Constants.SCRIPT_NAME_START_ALL + scriptExtension);
         try {
             // Initialise script
-            PrintWriter startPrinter = new PrintWriter(startAllScript, getTargetEncoding());
-            try {
+            try (PrintWriter startPrinter = new PrintWriter(startAllScript, getTargetEncoding())) {
                 startPrinter.println(ScriptConstants.ECHO_START_ALL_APPS + Constants.COLON + Constants.SPACE
                         + Constants.APOSTROPHE + hostname + Constants.APOSTROPHE);
                 startPrinter.println(ScriptConstants.CD + Constants.SPACE + Constants.QUOTE_MARK + getConfDirPath()
@@ -426,10 +422,8 @@ public class WindowsMachine extends Machine {
                 // Add 10 seconds timeout to allow the Starting to complete before exiting the ssh connection
                 startPrinter.print(ScriptConstants.OPERATING_SYSTEM_WINDOWS_10_SECONDS_WAIT);
                 startPrinter.println();
-		    } finally {
-                // close script
-                startPrinter.close();
             }
+            // close script
         } catch (IOException e) {
             String msg = "Problems during creation of the local start " + "all script.";
             log.trace(msg, e);
@@ -475,8 +469,7 @@ public class WindowsMachine extends Machine {
             File appKillPsScript = new File(directory, killPsName);
             try {
                 // make print writer for writing to file
-                PrintWriter appPrint = new PrintWriter(appKillScript, getTargetEncoding());
-                try {
+                try (PrintWriter appPrint = new PrintWriter(appKillScript, getTargetEncoding())) {
                     // initiate variables
                     String tmpRunApp = Constants.FILE_TEMPORARY_RUN_WINDOWS_NAME + id;
                     // get the content for the kill script of
@@ -514,19 +507,14 @@ public class WindowsMachine extends Machine {
                     appPrint.println();
                     // :DONE
                     appPrint.println(Constants.COLON + ScriptConstants.LABEL_DONE);
-                } finally {
-                    // close file
-                    appPrint.close();
                 }
+                // close file
                 // Printer for making the kill process file.
-                PrintWriter appPsPrint = new PrintWriter(appKillPsScript, getTargetEncoding());
-                try {
+                try (PrintWriter appPsPrint = new PrintWriter(appKillPsScript, getTargetEncoding())) {
                     // write dummy line in kill script.
                     appPsPrint.println("ECHO Not started!");
-                } finally {
-                    // close file
-                    appPsPrint.close();
                 }
+                // close file
             } catch (IOException e) {
                 String msg = "Cannot create the kill script for " + "application: " + app.getIdentification()
                         + ", at machine: '" + hostname + "'";
@@ -590,8 +578,7 @@ public class WindowsMachine extends Machine {
                 + scriptExtension);
         try {
             // make print writer for writing to file
-            PrintWriter appPrint = new PrintWriter(appStartScript, getTargetEncoding());
-            try {
+            try (PrintWriter appPrint = new PrintWriter(appStartScript, getTargetEncoding())) {
                 // initiate variables
                 String id = app.getIdentification();
                 String tmpRunApp = Constants.FILE_TEMPORARY_RUN_WINDOWS_NAME + id;
@@ -624,10 +611,8 @@ public class WindowsMachine extends Machine {
                 appPrint.println();
                 // :DONE
                 appPrint.println(Constants.COLON + ScriptConstants.LABEL_DONE);
-            } finally {
-                // close file
-                appPrint.close();
             }
+            // close file
         } catch (IOException e) {
             String msg = "Cannot create the start script for application: " + app.getIdentification()
                     + ", at machine: '" + hostname + "'";
@@ -698,8 +683,7 @@ public class WindowsMachine extends Machine {
                 + Constants.EXTENSION_VBS_FILES);
         try {
             // make print writer for writing to file
-            PrintWriter vbsPrint = new PrintWriter(appStartSupportScript, getTargetEncoding());
-            try {
+            try (PrintWriter vbsPrint = new PrintWriter(appStartSupportScript, getTargetEncoding())) {
                 // initiate variables
                 String id = app.getIdentification();
                 String killPsName = Constants.SCRIPT_KILL_PS + id + scriptExtension;
@@ -728,10 +712,8 @@ public class WindowsMachine extends Machine {
                 }
                 String str = Template.untemplate(windowsStartVbsScriptTpl.mainScript, env, true, "\r\n");
                 vbsPrint.print(str);
-            } finally {
-                // close file
-                vbsPrint.close();
             }
+            // close file
         } catch (IOException e) {
             String msg = "Cannot create the start script for application: " + app.getIdentification()
                     + ", at machine: '" + hostname + "'";
@@ -983,8 +965,7 @@ public class WindowsMachine extends Machine {
         File dirScript = new File(directory, getMakeDirectoryName());
         try {
             // make print writer for writing to file
-            PrintWriter dirPrint = new PrintWriter(dirScript, getTargetEncoding());
-            try {
+            try (PrintWriter dirPrint = new PrintWriter(dirScript, getTargetEncoding())) {
                 // go to correct directory
                 dirPrint.print(ScriptConstants.CD + Constants.SPACE);
                 dirPrint.print(getInstallDirPath());
@@ -1015,10 +996,8 @@ public class WindowsMachine extends Machine {
                     dirPrint.print(createPathToDir(dir));
                     dirPrint.print(scriptCreateDir(dir, resetTempDir));
                 }
-            } finally {
-                // close file
-                dirPrint.close();
             }
+            // close file
         } catch (IOException e) {
             String msg = "Problems creating install directory script. ";
             log.trace(msg, e);
@@ -1181,8 +1160,7 @@ public class WindowsMachine extends Machine {
             File restartScript = new File(dir, Constants.SCRIPT_NAME_RESTART + scriptExtension);
 
             // make print writer for writing to file
-            PrintWriter restartPrint = new PrintWriter(restartScript, getTargetEncoding());
-            try {
+            try (PrintWriter restartPrint = new PrintWriter(restartScript, getTargetEncoding())) {
                 restartPrint.println(ScriptConstants.CD + Constants.SPACE + Constants.QUOTE_MARK + getConfDirPath()
                         + Constants.QUOTE_MARK);
 
@@ -1203,10 +1181,8 @@ public class WindowsMachine extends Machine {
                 restartPrint.print(Constants.SPACE);
                 restartPrint.print(Constants.SCRIPT_NAME_START_ALL + scriptExtension);
                 restartPrint.print(Constants.NEWLINE);
-            } finally {
-                // close file
-                restartPrint.close();
             }
+            // close file
         } catch (IOException e) {
             // Log the error and throw an IOFailure.
             log.trace(Constants.MSG_ERROR_RESTART_FILE, e);
@@ -1226,16 +1202,13 @@ public class WindowsMachine extends Machine {
             File waitScript = new File(dir, Constants.SCRIPT_NAME_WAIT + Constants.EXTENSION_VBS_FILES);
 
             // make print writer for writing to file
-            PrintWriter waitPrint = new PrintWriter(waitScript, getTargetEncoding());
-            try {
+            try (PrintWriter waitPrint = new PrintWriter(waitScript, getTargetEncoding())) {
                 // Create the wait script.
                 waitPrint.print(ScriptConstants.VB_WRITE_WAIT + Constants.SPACE
                         + (Constants.WAIT_TIME_DURING_RESTART * Constants.TIME_SECOND_IN_MILLISECONDS));
                 waitPrint.print(Constants.NEWLINE);
-            } finally {
-                // close file
-                waitPrint.close();
             }
+            // close file
         } catch (IOException e) {
             // log error and throw a IOFailure.
             log.trace(Constants.MSG_ERROR_WAIT_FILE, e);

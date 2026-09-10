@@ -325,22 +325,19 @@ public class ExtendedDNSFetcher extends Processor {
         } else {
             rec.getRecordedInput().setDigest((MessageDigest)null);
         }
-        InputStream is = curi.getRecorder().inputWrap(
-                new ByteArrayInputStream(dnsRecord));
-
-        if (digestContent) {
-            rec.getRecordedInput().startDigest();
-        }
 
         // Reading from the wrapped stream, behind the scenes, will write
         // files into scratch space
-        try {
+        try (InputStream is = curi.getRecorder().inputWrap(
+                new ByteArrayInputStream(dnsRecord))) {
+            if (digestContent) {
+                rec.getRecordedInput().startDigest();
+            }
             byte[] buf = new byte[256];
             while (is.read(buf) != -1) {
                 continue;
             }
         } finally {
-            is.close();
             rec.closeRecorders();
         }
         curi.setContentSize(dnsRecord.length);

@@ -36,7 +36,6 @@ import org.testng.annotations.Test;
 import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.HarvestUtils;
 import dk.netarkivet.systemtest.NASAssert;
-import dk.netarkivet.systemtest.SeleniumTest;
 import dk.netarkivet.systemtest.page.DomainWebTestHelper;
 import dk.netarkivet.systemtest.page.PageHelper;
 

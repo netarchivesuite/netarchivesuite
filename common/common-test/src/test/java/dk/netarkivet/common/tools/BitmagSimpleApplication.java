@@ -1,11 +1,8 @@
 package dk.netarkivet.common.tools;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Set;
-import java.util.UUID;
 
 import dk.netarkivet.common.distribute.bitrepository.BitmagUtils;
 import dk.netarkivet.common.distribute.bitrepository.action.ClientAction;

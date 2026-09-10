@@ -29,16 +29,12 @@ import java.util.Set;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.testng.annotations.Test;
 
-import dk.netarkivet.archive.arcrepository.distribute.BitmagArcRepositoryClient;
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.systemtest.AbstractSystemTest;
 import dk.netarkivet.systemtest.Application;
 import dk.netarkivet.systemtest.NASAssert;
 import dk.netarkivet.systemtest.NASSystemUtil;
 import dk.netarkivet.systemtest.page.PageHelper;
-import dk.netarkivet.common.utils.Settings;
 
 /**
  * Test specification: http://netarchive.dk/suite/TEST1 .

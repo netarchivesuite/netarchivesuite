@@ -65,8 +65,7 @@ public class TestWindowsMachine extends WindowsMachine {
                 + Constants.EXTENSION_VBS_FILES);
         try {
             // make print writer for writing to file
-            PrintWriter vbsPrint = new PrintWriter(appStartSupportScript, getTargetEncoding());
-            try {
+            try (PrintWriter vbsPrint = new PrintWriter(appStartSupportScript, getTargetEncoding())) {
                 // initiate variables
                 String id = app.getIdentification();
                 String killPsName = Constants.SCRIPT_KILL_PS + id + scriptExtension;
@@ -162,10 +161,8 @@ public class TestWindowsMachine extends WindowsMachine {
                  */
                 // Loop
                 vbsPrint.println(ScriptConstants.VB_LOOP);
-            } finally {
-                // close file
-                vbsPrint.close();
             }
+            // close file
         } catch (IOException e) {
             String msg = "Cannot create the start script for application: " + app.getIdentification()
                     + ", at machine: '" + hostname + "'";

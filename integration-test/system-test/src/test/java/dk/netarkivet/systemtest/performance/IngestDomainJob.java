@@ -2,7 +2,6 @@ package dk.netarkivet.systemtest.performance;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -63,13 +62,15 @@ class IngestDomainJob extends GenericWebJob {
         if (!backupEnv.equals("prod")) {
             File tempFile = null;
             tempFile = File.createTempFile("domains", "txt", new File("."));
-            LineIterator lineIterator = FileUtils.lineIterator(domainsFile);
-            List<String> lines = new ArrayList<>();
-            int lineCount=0;
-            while (lineCount < 20000) {
-                final String next = lineIterator.next();
-                lines.add(next);
-                lineCount++;
+            List<String> lines;
+            try (LineIterator lineIterator = FileUtils.lineIterator(domainsFile)) {
+                lines = new ArrayList<>();
+                int lineCount = 0;
+                while (lineCount < 20000) {
+                    final String next = lineIterator.next();
+                    lines.add(next);
+                    lineCount++;
+                }
             }
             FileUtils.writeLines(tempFile, lines);
             domainsFile = tempFile;

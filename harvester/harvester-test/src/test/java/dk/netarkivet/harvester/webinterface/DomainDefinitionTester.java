@@ -95,7 +95,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         parameterMap.put(Constants.CONFIG_NAME_PARAM, new String[] {"new_config"});
         parameterMap.put(Constants.ORDER_XML_NAME_PARAM, new String[] {"OneLevel-order"});
         parameterMap.put(Constants.SEEDLIST_LIST_PARAM, new String[] {"seeds", "defaultseeds"});
-        parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {1L + ""});
         parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {""});
         parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
         parameterMap.put(Constants.ALIAS_PARAM, new String[] {""});
@@ -158,7 +158,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         parameterMap.put("configName", new String[] {"new_config"});
         parameterMap.put("order_xml", new String[] {"OneLevel-order"});
         parameterMap.put("seedListList", new String[] {"seeds", "defaultseeds"});
-        parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {1L + ""});
         parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {""});
         parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
         parameterMap.put(Constants.ALIAS_PARAM, new String[] {""});
@@ -203,7 +203,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         parameterMap.put("maxRate", new String[] {"20"});
         parameterMap.put("maxObjects", new String[] {"10"});
         parameterMap.put("seedListList", new String[] {"seeds"});
-        parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {1L + ""});
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
@@ -240,7 +240,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         TestServletRequest request = new TestServletRequest();
         parameterMap.put(Constants.SEEDLIST_NAME_PARAM, new String[] {"seeds"});
         parameterMap.put(Constants.SEED_LIST_PARAMETER, new String[] {"www.netarkivet.dk\nwww.netarchive.dk"});
-        parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {1L + ""});
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
@@ -269,7 +269,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {".*/cgi-bin/.*\n.*/ignore/.*"});
         parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
         parameterMap.put(Constants.ALIAS_PARAM, new String[] {""});
-        parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {1L + ""});
         request.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
@@ -298,7 +298,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
         parameterMap.put(Constants.ALIAS_PARAM, new String[] {"kb.dk"});
         parameterMap.put(Constants.DEFAULT_PARAM, new String[] {"conf2"});
-        parameterMap.put(Constants.EDITION_PARAM, new String[] {1l + ""});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {1L + ""});
         TestServletRequest request = new TestServletRequest();
         parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {""});
         parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
@@ -313,7 +313,7 @@ public class DomainDefinitionTester extends HarvesterWebinterfaceTestCase {
         parameterMap.put(Constants.DOMAIN_PARAM, new String[] {"netarkivet.dk"});
 
         parameterMap.put(Constants.DEFAULT_PARAM, new String[] {"conf2"});
-        parameterMap.put(Constants.EDITION_PARAM, new String[] {2l + ""});
+        parameterMap.put(Constants.EDITION_PARAM, new String[] {2L + ""});
         parameterMap.put(Constants.CRAWLERTRAPS_PARAM, new String[] {""});
         parameterMap.put(Constants.COMMENTS_PARAM, new String[] {""});
         request = new TestServletRequest();

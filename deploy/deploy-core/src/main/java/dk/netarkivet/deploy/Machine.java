@@ -279,8 +279,7 @@ public abstract class Machine {
         File secPolFile = new File(directory, Constants.SECURITY_POLICY_FILE_NAME);
         try {
             // init writer
-            PrintWriter secPrinter = new PrintWriter(secPolFile, getTargetEncoding());
-            try {
+            try (PrintWriter secPrinter = new PrintWriter(secPolFile, getTargetEncoding())) {
                 // read the inherited security policy file.
                 String prop = FileUtils.readFile(inheritedSecurityPolicyFile);
 
@@ -322,8 +321,6 @@ public abstract class Machine {
                     }
                     secPrinter.write("};");
                 }
-            } finally {
-                secPrinter.close();
             }
         } catch (IOException e) {
             log.warn("IOException while creating security policy file: ", e);
@@ -346,9 +343,8 @@ public abstract class Machine {
                     + Constants.SLF4J_CONFIG_APPLICATION_SUFFIX);
             try {
                 // init writer
-                PrintWriter logPrinter = new PrintWriter(logProp, getTargetEncoding());
 
-                try {
+                try (PrintWriter logPrinter = new PrintWriter(logProp, getTargetEncoding())) {
                     // read the inherited log property file.
                     String prop = FileUtils.readFile(inheritedSlf4jConfigFile);
 
@@ -357,8 +353,6 @@ public abstract class Machine {
                     prop = modifyLogProperties(prop);
                     // write to file.
                     logPrinter.write(prop);
-                } finally {
-                    logPrinter.close();
                 }
             } catch (IOException e) {
                 log.warn("IOException while creating SLF4J config file:", e);
@@ -389,8 +383,7 @@ public abstract class Machine {
         File jmxFile = new File(directory, Constants.JMX_PASSWORD_FILE_NAME);
         try {
             // init writer
-            PrintWriter jw = new PrintWriter(jmxFile, getTargetEncoding());
-            try {
+            try (PrintWriter jw = new PrintWriter(jmxFile, getTargetEncoding())) {
                 // Write the header of the jmxremote.password file.
                 jw.print(ScriptConstants.JMXREMOTE_PASSWORD_HEADER);
 
@@ -402,8 +395,6 @@ public abstract class Machine {
                 logins.append(getHeritrixLogin());
 
                 jw.print(logins.toString());
-            } finally {
-                jw.close();
             }
         } catch (IOException e) {
             log.trace("IOException while creating jmxremote.password:", e);
@@ -422,8 +413,7 @@ public abstract class Machine {
         File jmxFile = new File(directory, Constants.JMX_ACCESS_FILE_NAME);
         try {
             // init writer
-            PrintWriter jw = new PrintWriter(jmxFile, getTargetEncoding());
-            try {
+            try (PrintWriter jw = new PrintWriter(jmxFile, getTargetEncoding())) {
                 // Write the header of the jmxremote.password file.
                 jw.print(ScriptConstants.JMXREMOTE_ACCESS_HEADER);
 
@@ -435,8 +425,6 @@ public abstract class Machine {
                 logins.append(getHeritrixUsername());
 
                 jw.print(logins.toString());
-            } finally {
-                jw.close();
             }
         } catch (IOException e) {
             log.trace("IOException while creating jmxremote.access file:", e);

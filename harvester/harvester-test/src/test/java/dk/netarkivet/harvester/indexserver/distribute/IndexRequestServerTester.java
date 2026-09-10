@@ -220,18 +220,13 @@ public class IndexRequestServerTester {
         // the order, which is dubious in relation to sets anyway.
 
         Set<Long> longFromExtractFile = new HashSet<Long>();
-        FileInputStream fis = new FileInputStream(extractFile);
-        try {
+        try (FileInputStream fis = new FileInputStream(extractFile)) {
             for (int i = 0; i < JOB_SET.size(); i++) {
                 longFromExtractFile.add(Long.valueOf(fis.read()));
             }
             assertEquals("End of file expected after this", -1, fis.read());
         } catch (IOException e) {
             fail("Exception thrown: " + e);
-        } finally {
-            if (fis != null) {
-                fis.close();
-            }
         }
         assertTrue("JOBSET, and the contents of extractfile should be identical",
                 longFromExtractFile.containsAll(JOB_SET));

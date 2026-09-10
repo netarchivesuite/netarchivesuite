@@ -83,9 +83,7 @@ public class ChecksumCalculatorTester {
         final String digest = new BigInteger(1, data).toString(RADIX_SIXTEEN);
         final int leadingZeros = digestLength - digest.length();
         final StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < leadingZeros; i++) {
-            buf.append('0');
-        }
+        buf.append("0".repeat(Math.max(0, leadingZeros)));
         buf.append(digest);
         ArgumentNotValid.checkTrue(digestLength == buf.length(), "The digestLength '" + digestLength
                 + "' should be equal to buf.length '" + buf.length() + "'.");

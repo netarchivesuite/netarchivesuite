@@ -192,15 +192,9 @@ public class XmlUtils {
      * @throws IOFailure On trouble writing XML file to disk.
      */
     public static void writeXmlToFile(Document doc, File f) throws IOFailure {
-        FileOutputStream fos = null;
         try {
-            try {
-                fos = new FileOutputStream(f);
+            try (FileOutputStream fos = new FileOutputStream(f)) {
                 StreamUtils.writeXmlToStream(doc, fos);
-            } finally {
-                if (fos != null) {
-                    fos.close();
-                }
             }
         } catch (IOException e) {
             throw new IOFailure("Unable to write XML to file '" + f.getAbsolutePath() + "'", e);

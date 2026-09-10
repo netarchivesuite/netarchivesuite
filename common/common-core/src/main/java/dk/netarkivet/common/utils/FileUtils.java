@@ -315,16 +315,12 @@ public class FileUtils {
         ArgumentNotValid.checkNotNull(file, "File file");
         StringBuffer sb = new StringBuffer();
 
-        BufferedReader br = new BufferedReader(new FileReader(file));
-
-        try {
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             int i;
 
             while ((i = br.read()) != -1) {
                 sb.append((char) i);
             }
-        } finally {
-            br.close();
         }
 
         return sb.toString();
@@ -346,15 +342,7 @@ public class FileUtils {
             throw new IOFailure(errMsg);
         }
         try {
-            FileInputStream inStream = null;
-            FileOutputStream outStream = null;
-            FileChannel in = null;
-            FileChannel out = null;
-            try {
-                inStream = new FileInputStream(from);
-                outStream = new FileOutputStream(to);
-                in = inStream.getChannel();
-                out = outStream.getChannel();
+            try (FileInputStream inStream = new FileInputStream(from); FileOutputStream outStream = new FileOutputStream(to); FileChannel in = inStream.getChannel(); FileChannel out = outStream.getChannel()) {
                 long bytesTransferred = 0;
                 do {
                     // Note: in.size() is called every loop, because if it should
@@ -363,19 +351,6 @@ public class FileUtils {
                     bytesTransferred += in.transferTo(bytesTransferred,
                             Math.min(Constants.IO_CHUNK_SIZE, in.size() - bytesTransferred), out);
                 } while (bytesTransferred < in.size());
-            } finally {
-                if (inStream != null) {
-                    inStream.close();
-                }
-                if (outStream != null) {
-                    outStream.close();
-                }
-                if (in != null) {
-                    in.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
             }
         } catch (IOException e) {
             final String errMsg = "Error copying file '" + from.getAbsolutePath() + "' to '" + to.getAbsolutePath()
@@ -578,17 +553,11 @@ public class FileUtils {
         ArgumentNotValid.checkNotNull(file, "file");
         ArgumentNotValid.checkNotNull(collection, "collection");
         try {
-            PrintWriter writer = null;
-            try {
-                writer = new PrintWriter(new FileWriter(file));
+            try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
                 for (String fileName : collection) {
                     writer.println(fileName);
                 }
                 writer.flush();
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
             }
         } catch (IOException e) {
             String msg = "Error writing collection to file '" + file.getAbsolutePath() + "'";
@@ -827,14 +796,11 @@ public class FileUtils {
 
         byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
         try {
-            FileInputStream in = new FileInputStream(f);
-            try {
+            try (FileInputStream in = new FileInputStream(f)) {
                 int bytesRead;
                 while ((bytesRead = in.read(buffer)) > 0) {
                     out.write(buffer, 0, bytesRead);
                 }
-            } finally {
-                in.close();
             }
         } catch (IOException e) {
             final String errMsg = "Error writing file '" + f.getAbsolutePath() + "' to stream";
@@ -856,14 +822,11 @@ public class FileUtils {
 
         byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
         try {
-            FileOutputStream out = new FileOutputStream(f);
-            try {
+            try (FileOutputStream out = new FileOutputStream(f)) {
                 int bytesRead;
                 while ((bytesRead = in.read(buffer)) > 0) {
                     out.write(buffer, 0, bytesRead);
                 }
-            } finally {
-                out.close();
             }
         } catch (IOException e) {
             final String errMsg = "Error writing stream to file '" + f.getAbsolutePath() + "'.";

@@ -70,7 +70,7 @@ public class StreamUtils {
         byte[] buf = new byte[Constants.IO_BUFFER_SIZE];
         int read = 0;
         try {
-            try {
+            try (in) {
                 while ((read = in.read(buf)) != -1) {
                     String s = new String(buf, UTF8_CHARSET);
                     if (s.length() < read) {
@@ -82,8 +82,6 @@ public class StreamUtils {
                     // Reinitializing the buffer to avoid garbage in buffer
                     buf = new byte[Constants.IO_BUFFER_SIZE];
                 }
-            } finally {
-                in.close();
             }
         } catch (IOException e) {
             String errMsg = "Trouble copying inputstream " + in + " to JspWriter " + out;
@@ -105,7 +103,7 @@ public class StreamUtils {
         ArgumentNotValid.checkNotNull(out, "OutputStream out");
 
         try {
-            try {
+            try (in) {
                 if (in instanceof FileInputStream && out instanceof FileOutputStream) {
                     FileChannel inChannel = ((FileInputStream) in).getChannel();
                     FileChannel outChannel = ((FileOutputStream) out).getChannel();
@@ -123,8 +121,6 @@ public class StreamUtils {
                     }
                 }
                 out.flush();
-            } finally {
-                in.close();
             }
         } catch (IOException e) {
             String errMsg = "Trouble copying inputstream " + in + " to outputstream " + out;
@@ -178,7 +174,7 @@ public class StreamUtils {
         byte[] buf = new byte[Constants.IO_BUFFER_SIZE];
         int read = 0;
         try {
-            try {
+            try (in) {
                 while ((read = in.read(buf)) != -1) {
                     String s = new String(buf, UTF8_CHARSET);
                     if (s.length() < read) {
@@ -190,8 +186,6 @@ public class StreamUtils {
                     // Reinitializing the buffer to avoid garbage in buffer
                     buf = new byte[Constants.IO_BUFFER_SIZE];
                 }
-            } finally {
-                in.close();
             }
         } catch (IOException e) {
             String errMsg = "Trouble reading inputstream '" + in + "'";

@@ -225,9 +225,7 @@ public abstract class AdminData {
      */
     protected void read() throws IOFailure {
         try {
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(adminDataFile));
+            try (BufferedReader reader = new BufferedReader(new FileReader(adminDataFile))) {
                 /*
                  * Check version. When this check is done, we either have - dataVersion.equals(versionNumber)) &&
                  * !validOldVersion, or - !dataVersion.equals(versionNumber)) && validOldVersion The latter applies if
@@ -245,7 +243,7 @@ public abstract class AdminData {
                     validOldVersion = true;
                 }
                 if (!dataVersion.equals(VERSION_NUMBER) && !validOldVersion) {
-                    throw new IOFailure("Invalid version '" + dataVersion + "' when reading from adminDataFile '" +  adminDataFile.getAbsolutePath() + "'");
+                    throw new IOFailure("Invalid version '" + dataVersion + "' when reading from adminDataFile '" + adminDataFile.getAbsolutePath() + "'");
                 }
                 // Now read the data file, depending on version.
                 if (dataVersion.equals(VERSION_NUMBER)) {
@@ -253,10 +251,6 @@ public abstract class AdminData {
                     readCurrentVersion(reader);
                 } else {
                     readValidOldVersion(reader);
-                }
-            } finally {
-                if (reader != null) {
-                    reader.close();
                 }
             }
         } catch (FileNotFoundException e) {

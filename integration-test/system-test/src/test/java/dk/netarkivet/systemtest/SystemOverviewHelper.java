@@ -1,8 +1,5 @@
 package dk.netarkivet.systemtest;
 
-import static org.testng.Assert.assertTrue;
-import static org.testng.FileAssert.fail;
-
 import java.util.List;
 
 import org.openqa.selenium.By;

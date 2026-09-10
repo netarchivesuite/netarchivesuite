@@ -166,19 +166,8 @@ public class ProcessUtils {
         return new Thread() {
             public void run() {
                 try {
-                    InputStream reader = null;
-                    OutputStream writer = null;
-                    try {
-                        reader = new BufferedInputStream(inputStream);
-                        writer = new BufferedOutputStream(outputStream);
+                    try (InputStream reader = new BufferedInputStream(inputStream); OutputStream writer = new BufferedOutputStream(outputStream)) {
                         copyContents(reader, writer, maxCollect);
-                    } finally {
-                        if (reader != null) {
-                            reader.close();
-                        }
-                        if (writer != null) {
-                            writer.close();
-                        }
                     }
                 } catch (IOException e) {
                     // This seems ugly

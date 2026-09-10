@@ -204,11 +204,9 @@ public class HarvestReportGenerator {
         // read whether or not to disregard the SeedURL information
         // in the crawl.log
         boolean disregardSeedUrls = Settings.getBoolean(HarvesterSettings.DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG);
-        log.info("DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG: " + disregardSeedUrls); 
-        BufferedReader in = null;
+        log.info("DISREGARD_SEEDURL_INFORMATION_IN_CRAWLLOG: " + disregardSeedUrls);
 
-        try {
-            in = new BufferedReader(new FileReader(file));
+        try (BufferedReader in = new BufferedReader(new FileReader(file))) {
             String line;
             int lineCnt = 0;
             while ((line = in.readLine()) != null) {
@@ -224,17 +222,9 @@ public class HarvestReportGenerator {
             String msg = "Unable to open/read crawl.log file '" + file.getAbsolutePath() + "'.";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
-        } finally {
-        	
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    log.debug("Unable to close {}", file, e);
-                    // Can't throw here, as would destroy the real exception
-                }
-            }
         }
+
+        // Can't throw here, as would destroy the real exception
     }
 
     /**

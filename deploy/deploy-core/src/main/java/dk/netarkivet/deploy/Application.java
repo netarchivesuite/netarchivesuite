@@ -169,12 +169,9 @@ public class Application {
                 + Constants.EXTENSION_XML_FILES);
         try {
             // initiate writer
-            PrintWriter pw = new PrintWriter(settingsFile, targetEncoding);
-            try {
+            try (PrintWriter pw = new PrintWriter(settingsFile, targetEncoding)) {
                 // Extract the XML content of the branch for this application
                 pw.println(settings.getXML());
-            } finally {
-                pw.close();
             }
         } catch (FileNotFoundException e) {
             log.debug("Cannot create settings file for an application.", e);

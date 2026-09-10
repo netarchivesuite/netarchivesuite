@@ -1372,7 +1372,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.setString(2, dcKey.getDomainName());
             s.setString(3, dcKey.getConfigurationName());
             s.executeUpdate();
-            s.close();
         } catch (SQLException e) {
             log.warn("Exception thrown while adding domainConfiguration: {}", ExceptionUtils.getSQLExceptionCause(e),
                     e);
@@ -1405,7 +1404,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 throw new IOFailure("Could not map harvest channel " + channel.getId() + " to harvest definition "
                         + harvestDefinitionId);
             }
-            s.close();
         } catch (SQLException e) {
             log.warn("Exception thrown while mapping to harvest channel: {}", ExceptionUtils.getSQLExceptionCause(e),
                     e);

@@ -7,7 +7,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,8 +25,6 @@ import org.slf4j.LoggerFactory;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.HttpsClientBuilder;
 import dk.netarkivet.common.utils.Settings;
-
-import javax.net.ssl.SSLHandshakeException;
 
 /**
  * A FileResolver client to communicate with a service implementing the FileResolver API

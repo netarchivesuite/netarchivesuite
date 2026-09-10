@@ -1,7 +1,5 @@
 package dk.netarkivet.systemtest.performance;
 
-import static org.testng.Assert.assertTrue;
-
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

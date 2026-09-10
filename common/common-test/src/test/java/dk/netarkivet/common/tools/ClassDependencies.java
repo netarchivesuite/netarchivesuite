@@ -845,11 +845,13 @@ public class ClassDependencies {
             String lPath = path.toLowerCase();
             if (lPath.endsWith(".zip") || lPath.endsWith(".jar")) {
                 try {
-                    ZipFile zip = findJar(path);
-                    if (zip == null) {
-                        continue;
+                    Enumeration e;
+                    try (ZipFile zip = findJar(path)) {
+                        if (zip == null) {
+                            continue;
+                        }
+                        e = zip.entries();
                     }
-                    Enumeration e = zip.entries();
                     while (e.hasMoreElements()) {
                         ZipEntry ze = (ZipEntry) e.nextElement();
                         String zpath = ze.getName();

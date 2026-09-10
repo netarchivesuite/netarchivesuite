@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 
 import org.jaccept.TestEventManager;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import dk.netarkivet.systemtest.environment.TestEnvironment;

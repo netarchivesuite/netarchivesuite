@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.harvester.scheduler;
 
-import java.io.File;
-
 /**
  * Contains test information about all scheduler test data.
  */

@@ -37,7 +37,7 @@ import org.archive.modules.extractor.Extractor;
 import org.archive.net.UURIFactory;
 import org.archive.util.Recorder;
 //import org.archive.util.HttpRecorder;
-import org.junit.Test;
+
 
 @SuppressWarnings({"serial"})
 public class ExtractorOAITest {
