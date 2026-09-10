@@ -83,79 +83,73 @@ public class IngestDomainList {
         ArgumentNotValid.checkNotNull(theLocale, "Locale theLocale");
         Domain myDomain;
         String domainName;
-        BufferedReader in = null;
         int countDomains = 0;
         List<String> invalidDomains = new ArrayList<String>();
         int countCreatedDomains = 0;
         boolean print = (out != null);
-        try {
-            in = new BufferedReader(new InputStreamReader(new FileInputStream(domainList), "UTF-8"));
-
-            while ((domainName = in.readLine()) != null) {
-                domainName = domainName.trim();
-                if (domainName.isEmpty()) {
-                	continue; // Skip empty lines
-                }
-                try {
-                    countDomains++;
-                    if ((countDomains % PRINT_INTERVAL) == 0) {
-                        Date d = new Date();
-                        String msg = "Domain #" + countDomains + ": " + domainName + " added at " + d;
-                        log.info(msg);
-                        if (print) {
-                            out.print(I18N.getString(theLocale, "domain.number.0.1.added.at.2", countDomains,
-                                    domainName, d));
-                            out.print("<br/>");
-                            out.flush();
-                        }
-                    }
-
-                    if (DomainUtils.isValidDomainName(domainName)) {
-                        if (!dao.exists(domainName)) {
-                            myDomain = Domain.getDefaultDomain(domainName);
-                            dao.create(myDomain);
-                            countCreatedDomains++;
-                        }
-                    } else {
-                        log.debug("domain '{}' is not a valid domain Name", domainName);
-                        invalidDomains.add(domainName);
-                        if (print) {
-                            out.print(I18N.getString(theLocale, "errormsg;domain.0.is.not.a.valid" + ".domainname",
-                                    domainName));
-                            out.print("<br/>");
-                            out.flush();
-                        }
-                    }
-                } catch (Exception e) {
-                    log.debug("Could not create domain '{}'", domainName, e);
-                    if (print) {
-                        out.print(I18N.getString(theLocale, "errormsg;unable.to.create" + ".domain.0.due.to.error.1",
-                                domainName, e.getMessage()));
-                        out.print("<br/>\n");
-                        out.flush();
-                    }
-                }
-            }
-            log.info("Looked at {} domains, created {} new domains and found {} invalid domains", countDomains, countCreatedDomains, invalidDomains.size());
-            if (!invalidDomains.isEmpty()) {
-                log.warn("Found the following {} invalid domains during ingest", invalidDomains.size(), StringUtils.conjoin(",", invalidDomains));
-            }
-        } catch (FileNotFoundException e) {
-            String msg = "File '" + domainList.getAbsolutePath() + "' not found";
-            log.debug(msg);
-            throw new IOFailure(msg, e);
-        } catch (IOException e) {
-            String msg = " Can't read the domain-file '" + domainList.getAbsolutePath() + "'.";
-            log.debug(msg);
-            throw new IOFailure(msg, e);
-        } finally {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(domainList), "UTF-8"))) {
             try {
-                if (in != null) {
-                    in.close();
+
+                while ((domainName = in.readLine()) != null) {
+                    domainName = domainName.trim();
+                    if (domainName.isEmpty()) {
+                        continue; // Skip empty lines
+                    }
+                    try {
+                        countDomains++;
+                        if ((countDomains % PRINT_INTERVAL) == 0) {
+                            Date d = new Date();
+                            String msg = "Domain #" + countDomains + ": " + domainName + " added at " + d;
+                            log.info(msg);
+                            if (print) {
+                                out.print(I18N.getString(theLocale, "domain.number.0.1.added.at.2", countDomains,
+                                        domainName, d));
+                                out.print("<br/>");
+                                out.flush();
+                            }
+                        }
+
+                        if (DomainUtils.isValidDomainName(domainName)) {
+                            if (!dao.exists(domainName)) {
+                                myDomain = Domain.getDefaultDomain(domainName);
+                                dao.create(myDomain);
+                                countCreatedDomains++;
+                            }
+                        } else {
+                            log.debug("domain '{}' is not a valid domain Name", domainName);
+                            invalidDomains.add(domainName);
+                            if (print) {
+                                out.print(I18N.getString(theLocale, "errormsg;domain.0.is.not.a.valid" + ".domainname",
+                                        domainName));
+                                out.print("<br/>");
+                                out.flush();
+                            }
+                        }
+                    } catch (Exception e) {
+                        log.debug("Could not create domain '{}'", domainName, e);
+                        if (print) {
+                            out.print(I18N.getString(theLocale, "errormsg;unable.to.create" + ".domain.0.due.to.error.1",
+                                    domainName, e.getMessage()));
+                            out.print("<br/>\n");
+                            out.flush();
+                        }
+                    }
                 }
+                log.info("Looked at {} domains, created {} new domains and found {} invalid domains", countDomains, countCreatedDomains, invalidDomains.size());
+                if (!invalidDomains.isEmpty()) {
+                    log.warn("Found the following {} invalid domains during ingest", invalidDomains.size(), StringUtils.conjoin(",", invalidDomains));
+                }
+            } catch (FileNotFoundException e) {
+                String msg = "File '" + domainList.getAbsolutePath() + "' not found";
+                log.debug(msg);
+                throw new IOFailure(msg, e);
             } catch (IOException e) {
-                throw new IOFailure("Problem closing input stream", e);
+                String msg = " Can't read the domain-file '" + domainList.getAbsolutePath() + "'.";
+                log.debug(msg);
+                throw new IOFailure(msg, e);
             }
+        } catch (IOException e) {
+            throw new IOFailure("Problem closing input stream", e);
         }
     }
 

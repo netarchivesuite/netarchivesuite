@@ -107,23 +107,20 @@ public class CrawlLogLinesMatchingRegexp extends ArchiveBatchJob {
     public void processRecord(ArchiveRecordBase record, OutputStream os) {
         ArgumentNotValid.checkNotNull(record, "ArchiveRecordBase record");
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
-        BufferedReader arcreader = new BufferedReader(new InputStreamReader(record.getInputStream()));
-        try {
-            for (String line = arcreader.readLine(); line != null; line = arcreader.readLine()) {
-                if (line.matches(regexp)) {
-                    os.write(line.getBytes("UTF-8"));
-                    os.write('\n');
-                }
+        try (BufferedReader arcreader = new BufferedReader(new InputStreamReader(record.getInputStream()))) {
+            try {
+                for (String line = arcreader.readLine(); line != null; line = arcreader.readLine()) {
+                    if (line.matches(regexp)) {
+                        os.write(line.getBytes("UTF-8"));
+                        os.write('\n');
+                    }
 
+                }
+            } catch (IOException e) {
+                throw new IOFailure("Unable to process (w)arc record", e);
             }
         } catch (IOException e) {
-            throw new IOFailure("Unable to process (w)arc record", e);
-        } finally {
-            try {
-                arcreader.close();
-            } catch (IOException e) {
-                log.warn("unable to close arcreader probably", e);
-            }
+            log.warn("unable to close arcreader probably", e);
         }
     }
 

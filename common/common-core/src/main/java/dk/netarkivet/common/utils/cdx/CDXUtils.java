@@ -108,14 +108,8 @@ public class CDXUtils {
         for (File arcfile : filesToProcess) {
             File cdxfile = new File(cdxFileDirectory, arcfile.getName() + FileUtils.CDX_EXTENSION);
             try {
-                OutputStream cdxstream = null;
-                try {
-                    cdxstream = new FileOutputStream(cdxfile);
+                try (OutputStream cdxstream = new FileOutputStream(cdxfile)) {
                     writeCDXInfo(arcfile, cdxstream);
-                } finally {
-                    if (cdxstream != null) {
-                        cdxstream.close();
-                    }
                 }
             } catch (Exception e) {
                 exceptions.put(cdxfile, e);

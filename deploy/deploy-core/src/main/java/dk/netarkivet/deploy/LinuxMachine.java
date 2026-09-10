@@ -323,8 +323,7 @@ public class LinuxMachine extends Machine {
         File killAllScript = new File(directory, Constants.SCRIPT_NAME_KILL_ALL + scriptExtension);
         try {
             // Initialise script
-            PrintWriter killPrinter = new PrintWriter(killAllScript, getTargetEncoding());
-            try {
+            try (PrintWriter killPrinter = new PrintWriter(killAllScript, getTargetEncoding())) {
                 killPrinter.println(ScriptConstants.ECHO_KILL_ALL_APPS + Constants.COLON + Constants.SPACE
                         + Constants.APOSTROPHE + hostname + Constants.APOSTROPHE);
                 killPrinter.println(ScriptConstants.BIN_BASH_COMMENT);
@@ -345,10 +344,8 @@ public class LinuxMachine extends Machine {
                 killPrinter.print(callKillHarvestDatabase());
                 // kill the admin database, if any, after the applications
                 killPrinter.print(callKillArchiveDatabase());
-            } finally {
-                // close script
-                killPrinter.close();
             }
+            // close script
         } catch (IOException e) {
             String msg = "Problems creating local kill all script. ";
             log.error(msg, e);
@@ -374,8 +371,7 @@ public class LinuxMachine extends Machine {
         File startAllScript = new File(directory, Constants.SCRIPT_NAME_START_ALL + scriptExtension);
         try {
             // Initialise script
-            PrintWriter startPrinter = new PrintWriter(startAllScript, getTargetEncoding());
-            try {
+            try (PrintWriter startPrinter = new PrintWriter(startAllScript, getTargetEncoding())) {
                 startPrinter.println(ScriptConstants.BIN_BASH_COMMENT);
                 startPrinter.println(ScriptConstants.CD + Constants.SPACE + getConfDirPath());
 
@@ -398,10 +394,8 @@ public class LinuxMachine extends Machine {
                     startPrinter.println(ScriptConstants.MULTI_SPACE_6 + appScript);
                     startPrinter.println(ScriptConstants.FI);
                 }
-            } finally {
-                // close script
-                startPrinter.close();
             }
+            // close script
         } catch (IOException e) {
             String msg = "Problems creating local start all script. ";
             log.trace(msg, e);
@@ -436,8 +430,7 @@ public class LinuxMachine extends Machine {
                     + scriptExtension);
             try {
                 // make print writer for writing to file
-                PrintWriter appPrint = new PrintWriter(appKillScript, getTargetEncoding());
-                try {
+                try (PrintWriter appPrint = new PrintWriter(appKillScript, getTargetEncoding())) {
                     // echo Killing linux application.
                     appPrint.println(ScriptConstants.ECHO_KILL_LINUX_APPLICATION + Constants.COLON + Constants.SPACE
                             + app.getIdentification());
@@ -515,10 +508,8 @@ public class LinuxMachine extends Machine {
                         // - fi
                         appPrint.println(ScriptConstants.FI);
                     }
-                } finally {
-                    // close file
-                    appPrint.close();
                 }
+                // close file
             } catch (IOException e) {
                 String msg = "Problems creating application kill script: ";
                 log.error(msg, e);
@@ -557,8 +548,7 @@ public class LinuxMachine extends Machine {
                     + scriptExtension);
             try {
                 // make print writer for writing to file
-                PrintWriter appPrint = new PrintWriter(appStartScript, getTargetEncoding());
-                try {
+                try (PrintWriter appPrint = new PrintWriter(appStartScript, getTargetEncoding())) {
                     // #!/bin/bash
                     appPrint.println(ScriptConstants.ECHO_START_LINUX_APP + Constants.COLON + Constants.SPACE
                             + app.getIdentification());
@@ -611,10 +601,8 @@ public class LinuxMachine extends Machine {
                             + ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
                     // fi
                     appPrint.println(ScriptConstants.FI);
-                } finally {
-                    // close file
-                    appPrint.close();
                 }
+                // close file
             } catch (IOException e) {
                 String msg = "Problems creating application start script. ";
                 log.trace(msg, e);
@@ -1059,8 +1047,7 @@ public class LinuxMachine extends Machine {
             File restartScript = new File(dir, Constants.SCRIPT_NAME_RESTART + scriptExtension);
 
             // make print writer for writing to file
-            PrintWriter restartPrint = new PrintWriter(restartScript, getTargetEncoding());
-            try {
+            try (PrintWriter restartPrint = new PrintWriter(restartScript, getTargetEncoding())) {
                 // init, go to directory
                 restartPrint.println(ScriptConstants.BIN_BASH_COMMENT);
                 restartPrint.println(ScriptConstants.CD + Constants.SPACE + getConfDirPath());
@@ -1078,10 +1065,8 @@ public class LinuxMachine extends Machine {
                 // call startall script.
                 restartPrint.print(Constants.DOT + Constants.SLASH + Constants.SCRIPT_NAME_START_ALL + scriptExtension);
                 restartPrint.print(Constants.NEWLINE);
-            } finally {
-                // close file
-                restartPrint.close();
             }
+            // close file
         } catch (IOException e) {
             // Log the error and throw an IOFailure.
             log.trace(Constants.MSG_ERROR_RESTART_FILE, e);
@@ -1119,8 +1104,7 @@ public class LinuxMachine extends Machine {
             String port = settings.getLeafValue(Constants.SETTINGS_ARCHIVE_DATABASE_PORT);
 
             // make print writer for writing to file
-            PrintWriter startDBPrint = new PrintWriter(startArcDBScript, getTargetEncoding());
-            try {
+            try (PrintWriter startDBPrint = new PrintWriter(startArcDBScript, getTargetEncoding())) {
                 // - #!/bin/bash
                 startDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
                 // - cd InstallDir
@@ -1158,10 +1142,8 @@ public class LinuxMachine extends Machine {
                 startDBPrint.print(Constants.EXTENSION_LOG_FILES);
                 startDBPrint.print(Constants.SPACE);
                 startDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
-            } finally {
-                // close file
-                startDBPrint.close();
             }
+            // close file
         } catch (IOException e) {
             // Log the error and throw an IOFailure.
             log.trace(Constants.MSG_ERROR_DB_START_FILE, e);
@@ -1246,8 +1228,7 @@ public class LinuxMachine extends Machine {
             String port = settings.getLeafValue(Constants.SETTINGS_ARCHIVE_DATABASE_PORT);
 
             // make print writer for writing to file
-            PrintWriter killDBPrint = new PrintWriter(killArcDBScript, getTargetEncoding());
-            try {
+            try (PrintWriter killDBPrint = new PrintWriter(killArcDBScript, getTargetEncoding())) {
                 // - #!/bin/bash
                 killDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
 
@@ -1278,10 +1259,8 @@ public class LinuxMachine extends Machine {
                 killDBPrint.print(Constants.EXTENSION_LOG_FILES);
                 killDBPrint.print(Constants.SPACE);
                 killDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
-            } finally {
-                // close file
-                killDBPrint.close();
             }
+            // close file
         } catch (IOException e) {
             // Log the error and throw an IOFailure.
             log.trace(Constants.MSG_ERROR_DB_KILL_FILE, e);
@@ -1357,8 +1336,7 @@ public class LinuxMachine extends Machine {
             String port = settings.getLeafValue(Constants.SETTINGS_HARVEST_DATABASE_PORT);
 
             // make print writer for writing to file
-            PrintWriter startDBPrint = new PrintWriter(startHarvestDBScript, getTargetEncoding());
-            try {
+            try (PrintWriter startDBPrint = new PrintWriter(startHarvestDBScript, getTargetEncoding())) {
                 // - #!/bin/bash
                 startDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
                 // - cd InstallDir
@@ -1395,10 +1373,8 @@ public class LinuxMachine extends Machine {
                 startDBPrint.print(Constants.EXTENSION_LOG_FILES);
                 startDBPrint.print(Constants.SPACE);
                 startDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
-            } finally {
-                // close file
-                startDBPrint.close();
             }
+            // close file
         } catch (IOException e) {
             // Log the error and throw an IOFailure.
             log.trace(Constants.MSG_ERROR_DB_START_FILE, e);
@@ -1497,8 +1473,7 @@ public class LinuxMachine extends Machine {
             String port = settings.getLeafValue(Constants.SETTINGS_HARVEST_DATABASE_PORT);
 
             // make print writer for writing to file
-            PrintWriter killDBPrint = new PrintWriter(killHarvestDBScript, getTargetEncoding());
-            try {
+            try (PrintWriter killDBPrint = new PrintWriter(killHarvestDBScript, getTargetEncoding())) {
                 // - #!/bin/bash
                 killDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
 
@@ -1529,10 +1504,8 @@ public class LinuxMachine extends Machine {
                 killDBPrint.print(Constants.EXTENSION_LOG_FILES);
                 killDBPrint.print(Constants.SPACE);
                 killDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
-            } finally {
-                // close file
-                killDBPrint.close();
             }
+            // close file
         } catch (IOException e) {
             // Log the error and throw an IOFailure.
             log.trace(Constants.MSG_ERROR_DB_KILL_FILE, e);
@@ -1619,8 +1592,7 @@ public class LinuxMachine extends Machine {
             updateDBSettings.close();
 
             // make print writer for writing to file
-            PrintWriter updateDBPrint = new PrintWriter(updateHarvestDBScript, getTargetEncoding());
-            try {
+            try (PrintWriter updateDBPrint = new PrintWriter(updateHarvestDBScript, getTargetEncoding())) {
                 // - #!/bin/bash
                 updateDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
 
@@ -1647,10 +1619,8 @@ public class LinuxMachine extends Machine {
                 updateDBPrint.print(Constants.EXTENSION_LOG_FILES);
                 updateDBPrint.print(Constants.SPACE);
                 updateDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
-            } finally {
-                // close file
-                updateDBPrint.close();
             }
+            // close file
         } catch (IOException e) {
             // Log the error and throw an IOFailure.
             log.trace(Constants.MSG_ERROR_DB_KILL_FILE, e);

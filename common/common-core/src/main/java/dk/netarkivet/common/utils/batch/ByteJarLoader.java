@@ -69,15 +69,16 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
         ArgumentNotValid.checkTrue(files.length != 0, "Should not be empty array");
         for (File file : files) {
             try {
-                JarFile jarFile = new JarFile(file);
-                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements();) {
-                    JarEntry entry = e.nextElement();
-                    String name = entry.getName();
-                    InputStream in = jarFile.getInputStream(entry);
-                    ByteArrayOutputStream out = new ByteArrayOutputStream((int) entry.getSize());
-                    StreamUtils.copyInputStreamToOutputStream(in, out);
-                    log.trace("Entering data for class '{}'", name);
-                    binaryData.put(name, out.toByteArray());
+                try (JarFile jarFile = new JarFile(file)) {
+                    for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
+                        JarEntry entry = e.nextElement();
+                        String name = entry.getName();
+                        InputStream in = jarFile.getInputStream(entry);
+                        ByteArrayOutputStream out = new ByteArrayOutputStream((int) entry.getSize());
+                        StreamUtils.copyInputStreamToOutputStream(in, out);
+                        log.trace("Entering data for class '{}'", name);
+                        binaryData.put(name, out.toByteArray());
+                    }
                 }
             } catch (IOException e) {
                 throw new IOFailure("Failed to load jar file '" + file.getAbsolutePath() + "': " + e);

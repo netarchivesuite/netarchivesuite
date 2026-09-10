@@ -69,9 +69,7 @@ public class BinSearch {
      */
     public static Iterable<String> getLinesInFile(File file, String prefix) {
         try {
-            RandomAccessFile in = null;
-            try {
-                in = new RandomAccessFile(file, "r");
+            try (RandomAccessFile in = new RandomAccessFile(file, "r")) {
                 long matchingline = binSearch(in, prefix);
                 if (matchingline == -1) {
                     // Simple empty Iterable
@@ -79,10 +77,6 @@ public class BinSearch {
                 }
                 long firstMatching = findFirstLine(in, prefix, matchingline);
                 return new PrefixIterable(file, firstMatching, prefix);
-            } finally {
-                if (in != null) {
-                    in.close();
-                }
             }
         } catch (IOException e) {
             String message = "IOException reading file '" + file + "'";

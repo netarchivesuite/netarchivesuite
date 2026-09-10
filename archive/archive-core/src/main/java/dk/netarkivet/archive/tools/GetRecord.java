@@ -145,14 +145,11 @@ public class GetRecord extends ToolRunnerBase {
          */
         private static void processRecord(InputStream content) {
             try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(content));
-                try {
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(content))) {
                     int i;
                     while ((i = br.read()) != -1) {
                         System.out.append((char) i);
                     }
-                } finally {
-                    br.close();
                 }
             } catch (IOException e) {
                 throw new IOFailure("Internal error: Could not read InputStream from " + "repository", e);

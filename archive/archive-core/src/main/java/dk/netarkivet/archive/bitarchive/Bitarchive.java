@@ -194,9 +194,8 @@ public class Bitarchive {
         File tmpFile = null;
         try {
             tmpFile = File.createTempFile("BatchOutput", "", FileUtils.getTempDir());
-            final OutputStream os = new FileOutputStream(tmpFile);
 
-            try {
+            try (OutputStream os = new FileOutputStream(tmpFile)) {
                 // Run the batch job
                 log.debug("Batch: Job {} started at {}", job, new Date());
                 File[] processFiles = admin.getFilesMatching(job.getFilenamePattern());
@@ -204,16 +203,12 @@ public class Bitarchive {
                 final BatchLocalFiles localBatchRunner = new BatchLocalFiles(processFiles);
                 localBatchRunner.run(job, os);
                 log.debug("Batch: Job {} finished at {}", job, new Date());
-            } finally { // Make sure the OutputStream is closed no matter what.
-                // This allows us to delete the file on Windows
-                // in case of error.
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    // We're cleaning up, failing to close won't stop us
-                    log.warn("Failed to close outputstream in batch");
-                }
-            }
+            } catch (IOException e) {
+                // We're cleaning up, failing to close won't stop us
+                log.warn("Failed to close outputstream in batch");
+            } // Make sure the OutputStream is closed no matter what.
+            // This allows us to delete the file on Windows
+            // in case of error.
             // write output from batch job back to remote file
             returnStatus = new BatchStatus(bitarchiveAppId, job.getFilesFailed(), job.getNoOfFilesProcessed(),
                     RemoteFileFactory.getMovefileInstance(tmpFile), job.getExceptions());

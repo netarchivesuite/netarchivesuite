@@ -184,11 +184,10 @@ public class HarvestJobGeneratorTest extends DataModelTestCase {
         // redirect Stdout til myOut
         PrintStream origStdout = System.out;
         ByteArrayOutputStream myOut = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(myOut));
-        try {
+        try (myOut) {
+            System.setOut(new PrintStream(myOut));
             generateJobs(new Date());
         } finally {
-            myOut.close();
             System.setOut(origStdout);
         }
         final String expectedOutput = "[WARNING-Notification] Not creating jobs "

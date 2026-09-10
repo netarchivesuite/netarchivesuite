@@ -394,9 +394,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
          */
         private void appendRemoteFileToAggregateFile(RemoteFile rf) {
             if (rf != null) {
-                OutputStream aggregateStream = null;
-                try {
-                    aggregateStream = new FileOutputStream(batchResultFile, true);
+                try (OutputStream aggregateStream = new FileOutputStream(batchResultFile, true)) {
                     rf.appendTo(aggregateStream);
 
                     try {
@@ -413,16 +411,6 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                     String errMsg = "Exception while aggregating batch output for " + rf.getName() + ": "
                             + ExceptionUtils.getStackTrace(e);
                     appendError(errMsg);
-                } finally {
-                    if (aggregateStream != null) {
-                        try {
-                            aggregateStream.close();
-                        } catch (IOException e) {
-                            String errMsg = "Exception while aggregating batch output for " + rf.getName() + ": "
-                                    + ExceptionUtils.getStackTrace(e);
-                            appendError(errMsg);
-                        }
-                    }
                 }
             }
         }

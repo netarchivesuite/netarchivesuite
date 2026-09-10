@@ -224,13 +224,8 @@ public class CreateTestInstance {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         File f = new File(filename);
 
-        FileWriter fw = new FileWriter(f);
-        try {
+        try (FileWriter fw = new FileWriter(f)) {
             fw.write(deployConfiguration.getXML());
-        } finally {
-            if (fw != null) {
-                fw.close();
-            }
         }
     }
 

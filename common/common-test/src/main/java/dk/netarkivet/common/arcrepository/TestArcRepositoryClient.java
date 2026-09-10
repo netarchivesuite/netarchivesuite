@@ -75,14 +75,8 @@ public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
         ArgumentNotValid.checkNotNull(toFile, "toFile");
         File actualFile = new File(arcDir, arcfilename);
         try {
-            InputStream in = null;
-            try {
-                in = new FileInputStream(actualFile);
+            try (InputStream in = new FileInputStream(actualFile)) {
                 FileUtils.writeStreamToFile(in, toFile);
-            } finally {
-                if (in != null) {
-                    in.close();
-                }
             }
         } catch (IOException e) {
             throw new IOFailure("Error reading file " + actualFile, e);

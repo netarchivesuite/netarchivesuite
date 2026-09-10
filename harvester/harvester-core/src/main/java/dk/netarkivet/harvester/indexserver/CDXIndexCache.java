@@ -86,27 +86,15 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long> implements
      */
     private static void concatenateFiles(Collection<File> files, File resultFile) {
         try {
-            BufferedWriter out = null;
-            try {
-                out = new BufferedWriter(new FileWriter(resultFile));
+            try (BufferedWriter out = new BufferedWriter(new FileWriter(resultFile))) {
                 for (File f : files) {
-                    BufferedReader in = null;
-                    try {
-                        in = new BufferedReader(new FileReader(f));
+                    try (BufferedReader in = new BufferedReader(new FileReader(f))) {
                         String s;
                         while ((s = in.readLine()) != null) {
                             out.write(s);
                             out.newLine();
                         }
-                    } finally {
-                        if (in != null) {
-                            in.close();
-                        }
                     }
-                }
-            } finally {
-                if (out != null) {
-                    out.close();
                 }
             }
         } catch (IOException e) {
