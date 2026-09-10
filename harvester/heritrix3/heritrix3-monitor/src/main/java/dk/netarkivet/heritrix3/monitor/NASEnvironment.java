@@ -172,7 +172,6 @@ public class NASEnvironment {
             logFileWriter.write(logEntry);
             logFileWriter.write(System.lineSeparator());
             logFileWriter.flush();
-            logFileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
