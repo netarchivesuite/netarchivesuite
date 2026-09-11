@@ -92,7 +92,6 @@
     <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
     <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
     <sonar.language>java</sonar.language>
-    <!--    <jacoco.version>0.7.2.201409121644</jacoco.version> -->
     <jacoco.version>0.8.13</jacoco.version>
     <hadoop.version>3.4.1</hadoop.version>
   </properties>
@@ -1161,32 +1160,6 @@
         </executions>
       </plugin>
 
-      <!-- Generate javadoc jar. Note: Java 8 (doclint) check has been disabled. -->
-      <!--
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <source>8</source>
-          <detectJavaApiLink>false</detectJavaApiLink>
-          <linksource>true</linksource>
-          <quiet>true</quiet>
-          <additionalOptions>
-            <additionalOption>-Xdoclint:none</additionalOption>
-          </additionalOptions>
-          <failOnError>false</failOnError>
-          <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-        </configuration>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
--->
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
@@ -1239,25 +1212,6 @@
           <autoVersionSubmodules>true</autoVersionSubmodules>
         </configuration>
       </plugin>
-      <!-- <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.7.5.201505241946</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>report</id>
-            <phase>test</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin> -->
     </plugins>
   </build>
 
@@ -1312,9 +1266,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <!--<configuration>
-              <excludedGroups>dk.netarkivet.common.utils.RequiresFileResolver.class</excludedGroups>
-            </configuration>-->
           </plugin>
         </plugins>
       </build>
