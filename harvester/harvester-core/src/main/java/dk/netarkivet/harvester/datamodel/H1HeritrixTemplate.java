@@ -363,7 +363,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
         // If an acceptiIfPrerequisite node exists, detach and insert before it
         Node acceptIfPrerequisiteNode = orderXMLdoc.selectSingleNode(DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH);
         if (acceptIfPrerequisiteNode != null) {
-            List<Node> elements = rulesMap.elements();
+            List<Element> elements = rulesMap.elements();
             int insertPosition = elements.indexOf(acceptIfPrerequisiteNode);
             decideRule.detach();
             elements.add(insertPosition, decideRule);
@@ -733,7 +733,7 @@ public class H1HeritrixTemplate extends HeritrixTemplate implements Serializable
         Node acceptIfPrerequisiteNode = template
                 .selectSingleNode(DECIDERULES_ACCEPT_IF_PREREQUISITE_XPATH);
         if (acceptIfPrerequisiteNode != null) {
-            List<Node> elements = rulesMap.elements();
+            List<Element> elements = rulesMap.elements();
             int insertPosition = elements.indexOf(acceptIfPrerequisiteNode);
             decideRule.detach();
             elements.add(insertPosition, decideRule);
