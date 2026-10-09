@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     HTMLUtils.generateHeader(I18N.getString(response.getLocale(),
                                             "pagetitle;mainmenu"), pageContext);
 %>
-    <a href="http://netarchive.dk/suite">
+    <a href="https://kb-dk.atlassian.net/wiki/spaces/NAS/overview?homepageId=2165965">
         <img src="transparent_logo.png" width="780" height="126" border="0" 
              alt="<fmt:message key="netarchive.suite"/>"/>
     </a>
