@@ -2,19 +2,19 @@
  * #%L
  * Netarchivesuite - common
  * %%
- * Copyright (C) 2005 - 2018 The Royal Danish Library, 
+ * Copyright (C) 2005 - 2018 The Royal Danish Library,
  *             the National Library of France and the Austrian National Library.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -23,6 +23,24 @@
 
 package dk.netarkivet.common.webinterface;
 
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.Constants;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringTree;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -34,69 +52,68 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.I18n;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringTree;
-
 /**
  * This is a utility class containing methods for use in the GUI for netarkivet.
  */
 public class HTMLUtils {
-    /** Date format for FMT timestamps */
+    /**
+     * Date format for FMT timestamps
+     */
     private static final String DATE_FMT_STRING = "yyyy/MM/dd HH:mm:ss";
-
-
-    /** Web page title placeholder. */
+    private static final String WEBPAGE_HEADER_TEMPLATE_TOP = """
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="Expires" content="0">
+            <meta http-equiv="Cache-Control" content="no-cache">
+            <meta http-equiv="Pragma" content="no-cache">
+            <link rel="icon" type="image/png" href="/transparent_menu_logo.png">
+            """;
+    /**
+     * Logger for this class.
+     */
+    private static final Logger log = LoggerFactory.getLogger(HTMLUtils.class);
+    /**
+     * Translations for this module.
+     */
+    private static final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
+    /**
+     * Web page title placeholder.
+     */
     private static String TITLE_PLACEHOLDER = "STRING_1";
-
-    /** External JavaScript files placeholder. */
+    /**
+     * External JavaScript files placeholder.
+     */
     private static String JS_PLACEHOLDER = "JS_TO_INCLUDE";
-
-    private static String WEBPAGE_HEADER_TEMPLATE_TOP = "<!DOCTYPE html "
-            + "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \n "
-            + "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
-            + "<html xmlns=\"http://www.w3.org/1999/xhtml\"" + " xml:lang=\"en\" lang=\"en\">\n" + "<head>\n"
-            + "<meta content=\"text/html; charset=UTF-8\" " + "http-equiv= \"content-type\" />"
-            + "<meta http-equiv=\"Expires\" content=\"0\"/>\n"
-            + "<meta http-equiv=\"Cache-Control\" content=\"no-cache\"/>\n"
-            + "<meta http-equiv=\"Pragma\" content=\"no-cache\"/> \n"
-            + "<link rel=\"shortcut icon\" type=\"image/png\" href=\"/transparent_menu_logo.png\"/>";
-
+    private static final String WEBPAGE_HEADER_TEMPLATE_BOTTOM = """
+            <title>""" + TITLE_PLACEHOLDER + """
+            </title>
+            <script>
+            function giveFocus() {
+                var e = document.getElementById('focusElement');
+                if (e != null) {
+                    var elms = e.getElementsByTagName('*');
+                    if (elms.length > 0) {
+                        var e2 = elms.item(0);
+                        if (e2 != null && typeof e2.focus === 'function') {
+                            e2.focus();
+                        }
+                    }
+                }
+            }
+            </script>
+            """ + JS_PLACEHOLDER + """
+            <link rel="stylesheet" href="./netarkivet.css">
+            <link rel="stylesheet"
+                  media="all"
+                  href="./jscalendar/calendar-win2k-cold-1.css"
+                  title="./jscalendar/win2k-cold-1">
+            </head>
+            <body onload="giveFocus()">
+            """;
     private static String WEBPAGE_HEADER_AUTOREFRESH = "<meta http-equiv=\"refresh\" content=\"" + TITLE_PLACEHOLDER
             + "\"/> \n";
-
-    private static String WEBPAGE_HEADER_TEMPLATE_BOTTOM = "<title>" + TITLE_PLACEHOLDER + "</title>\n"
-            + "<script type=\"text/javascript\">\n" + "<!--\n" + "function giveFocus() {\n"
-            + "    var e = document.getElementById('focusElement');\n" + "    if (e != null) {\n"
-            + "        var elms = e.getElementsByTagName('*');\n" + "        if (elms != null && elms.length != null "
-            + "            && elms.item != null && elms.length > 0) {\n" + "            var e2 = elms.item(0);\n"
-            + "                if (e2 != null && e2.focus != null) {\n" + "            }\n"
-            + "            e2.focus();\n" + "        }\n" + "    }\n" + "}\n" + "-->\n" + "</script>\n"
-            + JS_PLACEHOLDER + "\n" + "<link rel=\"stylesheet\" href=\"./netarkivet.css\" " + "type=\"text/css\" />\n"
-            + "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" "
-            + "href=\"./jscalendar/calendar-win2k-cold-1.css\" " + "title=\"./jscalendar/win2k-cold-1\" />\n"
-            + "</head> <body onload=\"giveFocus()\">\n";
-
-    /** Logger for this class. */
-    private static final Logger log = LoggerFactory.getLogger(HTMLUtils.class);
-    /** Translations for this module. */
-    private static final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
 
     /**
      * Private constructor. There is no reason to instantiate this class.
@@ -148,7 +165,7 @@ public class HTMLUtils {
         ArgumentNotValid.checkNotNull(context, "context");
         String url = ((HttpServletRequest) context.getRequest()).getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
-        String title = getTitle((HttpServletRequest)context.getRequest(), url, locale);
+        String title = getTitle((HttpServletRequest) context.getRequest(), url, locale);
         generateHeader(title, context);
     }
 
@@ -164,7 +181,7 @@ public class HTMLUtils {
         ArgumentNotValid.checkNotNull(context, "context");
         String url = ((HttpServletRequest) context.getRequest()).getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
-        String title = getTitle((HttpServletRequest)context.getRequest(), url, locale);
+        String title = getTitle((HttpServletRequest) context.getRequest(), url, locale);
         generateHeader(title, context, jsToInclude);
     }
 
@@ -173,7 +190,7 @@ public class HTMLUtils {
      * changing the language. The title of the page is generated internationalised from sitesections. If you want to
      * specify it, use the overloaded method.
      *
-     * @param context The context of the web page request.
+     * @param context          The context of the web page request.
      * @param refreshInSeconds auto-refresh time in seconds (zero or negative values disable refresh)
      * @throws IOException if an error occurs during writing of output.
      */
@@ -193,8 +210,8 @@ public class HTMLUtils {
      * Prints the header information for the webpages in the GUI. This includes the navigation menu, and links for
      * changing the language.
      *
-     * @param title An internationalised title of the page.
-     * @param context The context of the web page request.
+     * @param title       An internationalised title of the page.
+     * @param context     The context of the web page request.
      * @param jsToInclude path(s) to external .js files to include in header.
      * @throws IOException if an error occurs during writing to output.
      */
@@ -221,7 +238,7 @@ public class HTMLUtils {
         out.print("<table id =\"main_table\"><tr>\n");
         // fill in data in the left column
         StringBuilder sb = new StringBuilder();
-        generateNavigationTree(sb, (HttpServletRequest)context.getRequest(), url, "", locale);
+        generateNavigationTree(sb, (HttpServletRequest) context.getRequest(), url, "", locale);
         out.print(sb.toString());
         // The right column contains the active form content for this page
         out.print("<td valign = \"top\" >\n");
@@ -234,8 +251,8 @@ public class HTMLUtils {
      * Prints the header information for the webpages in the GUI. This includes the navigation menu, and links for
      * changing the language.
      *
-     * @param title An internationalised title of the page.
-     * @param context The context of the web page request.
+     * @param title            An internationalised title of the page.
+     * @param context          The context of the web page request.
      * @param refreshInSeconds auto-refresh time in seconds (zero or negative values disable refresh)
      * @throws IOException if an error occurs during writing to output.
      */
@@ -257,7 +274,7 @@ public class HTMLUtils {
         out.print("<table id =\"main_table\"><tr>\n");
         // fill in data in the left column
         StringBuilder sb = new StringBuilder();
-        generateNavigationTree(sb, (HttpServletRequest)context.getRequest(), url, "", locale);
+        generateNavigationTree(sb, (HttpServletRequest) context.getRequest(), url, "", locale);
         out.print(sb.toString());
         // The right column contains the active form content for this page
         out.print("<td valign = \"top\" >\n");
@@ -302,11 +319,11 @@ public class HTMLUtils {
      * Prints out the navigation tree appearing as a <td>in the left column of the "main_table" table. Subpages are
      * shown only for the currently-active main-heading of the sections defined in settings.
      *
-     * @param sb the <code>StringBuilder</code> to which the output must be written.
-     * @param req the HTTP request object to respond to
-     * @param url the url of the page.
+     * @param sb      the <code>StringBuilder</code> to which the output must be written.
+     * @param req     the HTTP request object to respond to
+     * @param url     the url of the page.
      * @param subMenu submenu HTML to insert when required by non JSP pages
-     * @param locale The locale selecting the language.
+     * @param locale  The locale selecting the language.
      * @throws IOException if the output cannot be written.
      */
     public static void generateNavigationTree(StringBuilder sb, HttpServletRequest req, String url, String subMenu, Locale locale) throws IOException {
@@ -532,8 +549,8 @@ public class HTMLUtils {
     /**
      * Given a URL in the sitesection hierarchy, returns the corresponding page title.
      *
-     * @param req the HTTP request object to respond to
-     * @param url a given URL
+     * @param req    the HTTP request object to respond to
+     * @param url    a given URL
      * @param locale the current locale
      * @return the corresponding page title, or string about "(no title)" if no title can be found
      * @throws ArgumentNotValid if the given url or locale is null or url is empty.
@@ -590,9 +607,9 @@ public class HTMLUtils {
      * can just return immediately). All text involved will be HTML-escaped.
      *
      * @param context The context that the error happened in (the JSP-defined pageContext, typically)
-     * @param I18N The i18n information
-     * @param label An i18n label for the error. This label should begin with "errormsg;".
-     * @param args Any extra args for i18n
+     * @param I18N    The i18n information
+     * @param label   An i18n label for the error. This label should begin with "errormsg;".
+     * @param args    Any extra args for i18n
      * @throws IOFailure If the forward fails
      */
     public static void forwardWithErrorMessage(PageContext context, I18n I18N, String label, Object... args) {
@@ -624,9 +641,9 @@ public class HTMLUtils {
      * can just return immediately). The text involved must be HTML-escaped before passing to this method.
      *
      * @param context The context that the error happened in (the JSP-defined pageContext, typically)
-     * @param i18n The i18n information
-     * @param label An i18n label for the error. This label should begin with "errormsg;".
-     * @param args Any extra args for i18n. These must be valid HTML.
+     * @param i18n    The i18n information
+     * @param label   An i18n label for the error. This label should begin with "errormsg;".
+     * @param args    Any extra args for i18n. These must be valid HTML.
      * @throws IOFailure If the forward fails.
      */
     public static void forwardWithRawErrorMessage(PageContext context, I18n i18n, String label, Object... args) {
@@ -659,14 +676,14 @@ public class HTMLUtils {
      * JSP page (a JSP page can just return immediately). All text involved will be HTML-escaped.
      *
      * @param context The context that the error happened in (the JSP-defined pageContext, typically)
-     * @param i18n The i18n information
-     * @param e The exception that is being handled.
-     * @param label An i18n label for the error. This label should begin with "errormsg;".
-     * @param args Any extra args for i18n
+     * @param i18n    The i18n information
+     * @param e       The exception that is being handled.
+     * @param label   An i18n label for the error. This label should begin with "errormsg;".
+     * @param args    Any extra args for i18n
      * @throws IOFailure If the forward fails
      */
     public static void forwardWithErrorMessage(PageContext context, I18n i18n, Throwable e, String label,
-            Object... args) {
+                                               Object... args) {
         // Note that we may not want to be to strict here
         // as otherwise information could be lost.
         ArgumentNotValid.checkNotNull(context, "context");
@@ -693,9 +710,9 @@ public class HTMLUtils {
      * Checks that the given parameters exist. If any of them do not exist, forwards to the error page and throws
      * ForwardedToErrorPage.
      *
-     * @param context The context of the current JSP page
+     * @param context    The context of the current JSP page
      * @param parameters List of parameters that must exist
-     * @throws IOFailure If the forward fails
+     * @throws IOFailure            If the forward fails
      * @throws ForwardedToErrorPage If a parameter is missing
      */
     public static void forwardOnMissingParameter(PageContext context, String... parameters) throws ForwardedToErrorPage {
@@ -719,9 +736,9 @@ public class HTMLUtils {
      * Checks that the given parameters exist and are not empty. If any of them are missing or empty, forwards to the
      * error page and throws ForwardedToErrorPage. A parameter with only whitespace is considered empty.
      *
-     * @param context The context of the current JSP page
+     * @param context    The context of the current JSP page
      * @param parameters List of parameters that must exist and be non-empty
-     * @throws IOFailure If the forward fails
+     * @throws IOFailure            If the forward fails
      * @throws ForwardedToErrorPage if a parameter was missing or empty
      */
     public static void forwardOnEmptyParameter(PageContext context, String... parameters) {
@@ -745,10 +762,10 @@ public class HTMLUtils {
      * Checks that the given parameter exists and is one of a set of values. If is is missing or doesn't equal one of
      * the given values, forwards to the error page and throws ForwardedToErrorPage.
      *
-     * @param context The context of the current JSP page
-     * @param parameter parameter that must exist
+     * @param context     The context of the current JSP page
+     * @param parameter   parameter that must exist
      * @param legalValues legal values for the parameter
-     * @throws IOFailure If the forward fails
+     * @throws IOFailure            If the forward fails
      * @throws ForwardedToErrorPage if the parameter is none of the given values
      */
     public static void forwardOnIllegalParameter(PageContext context, String parameter, String... legalValues)
@@ -774,13 +791,13 @@ public class HTMLUtils {
      * Parses a integer request parameter and checks that it lies within a given interval. If it doesn't, forwards to an
      * error page and throws ForwardedToErrorPage.
      *
-     * @param context The context this call happens in
-     * @param param A parameter to parse.
+     * @param context  The context this call happens in
+     * @param param    A parameter to parse.
      * @param minValue The minimum allowed value
      * @param maxValue The maximum allowed value
      * @return The value x parsed from the string, if minValue <= x <= maxValue
      * @throws ForwardedToErrorPage if the parameter doesn't exist, is not a parseable integer, or doesn't lie within
-     * the limits.
+     *                              the limits.
      */
     public static int parseAndCheckInteger(PageContext context, String param, int minValue, int maxValue)
             throws ForwardedToErrorPage {
@@ -811,8 +828,8 @@ public class HTMLUtils {
     /**
      * Parse an optionally present long-value from a request parameter.
      *
-     * @param context The context of the web request.
-     * @param param The name of the parameter to parse.
+     * @param context      The context of the web request.
+     * @param param        The name of the parameter to parse.
      * @param defaultValue A value to return if the parameter is not present (may be null).
      * @return Parsed value or default value if the parameter is missing or empty. Null will only be returned if passed
      * as the default value.
@@ -832,9 +849,9 @@ public class HTMLUtils {
     /**
      * Parse an optionally present date-value from a request parameter.
      *
-     * @param context The context of the web request.
-     * @param param The name of the parameter to parse
-     * @param format The format of the date, in the format defined by SimpleDateFormat
+     * @param context      The context of the web request.
+     * @param param        The name of the parameter to parse
+     * @param format       The format of the date, in the format defined by SimpleDateFormat
      * @param defaultValue A value to return if the parameter is not present (may be null)
      * @return Parsed value or default value if the parameter is missing or empty. Null will only be returned if passed
      * as the default value.
@@ -862,8 +879,8 @@ public class HTMLUtils {
     /**
      * Parse an optionally present boolean from a request parameter.
      *
-     * @param context The context of the web request.
-     * @param param The name of the parameter to parse
+     * @param context      The context of the web request.
+     * @param param        The name of the parameter to parse
      * @param defaultValue A value to return if the parameter is not present (may be null)
      * @return Parsed value or default value if the parameter is missing or empty. Null will only be returned if passed
      * as the default value.
@@ -882,7 +899,7 @@ public class HTMLUtils {
     /**
      * Create a localized string representation of the given long.
      *
-     * @param i A long integer
+     * @param i       A long integer
      * @param context The given JSP context
      * @return a localized string representation of the given long TODO Should this method throw ArgumentNotValid if the
      * context is null
@@ -895,9 +912,9 @@ public class HTMLUtils {
     /**
      * Create a localized string representation of the given long.
      *
-     * @param i A long integer
+     * @param i      A long integer
      * @param locale The given locale.
-     * @return a localized string representation of the given long 
+     * @return a localized string representation of the given long
      * TODO Should this method throw ArgumentNotValid if the locale is null
      */
     public static String localiseLong(long i, Locale locale) {
@@ -908,10 +925,10 @@ public class HTMLUtils {
     /**
      * Parse a given String for a long value.
      *
-     * @param loc The given Locale.
-     * @param paramValue The given parameter value
+     * @param loc           The given Locale.
+     * @param paramValue    The given parameter value
      * @param parameterName The given parameter name (used for debugging)
-     * @param defaultValue The default value for the parameter, in case the string cannot be parsed
+     * @param defaultValue  The default value for the parameter, in case the string cannot be parsed
      * @return the long value found in the paramValue
      */
     public static Long parseLong(Locale loc, String paramValue, String parameterName, Long defaultValue) {
@@ -941,45 +958,43 @@ public class HTMLUtils {
         SimpleDateFormat fmt = new SimpleDateFormat(DATE_FMT_STRING);
         return timestamp != null ? fmt.format(timestamp) : "-";
     }
-    
+
     /**
      * Method to format bytes in Go/GB
-     * 
-     * @param bytes
-     *            - the value in bytes
-     * @param digits
-     *            - number of decimals to be displayed
+     *
+     * @param bytes  - the value in bytes
+     * @param digits - number of decimals to be displayed
      * @return human readable format string
      */
-    
+
     public static String bytesToGB(long bytes, int digits) {
-    	double bytesForWork = bytes;
-        String[] dictionary = { "bytes", "KB", "MB", "GB"}; 
+        double bytesForWork = bytes;
+        String[] dictionary = {"bytes", "KB", "MB", "GB"};
         //, "TB", "PB", "EB", "ZB", "YB" };
         int index = 0;
-	        for (index = 1; index < dictionary.length; index++) {
-	        	// index=0 
-	        	// && bytesForWork < 1024 ) {
-	            if (bytesForWork == 0) {
-	                break;
-	            }
-	            bytesForWork = bytesForWork / 1024;
-	        }
-	        return String.format("%." + digits + "f", bytesForWork) +  dictionary[dictionary.length-1] ; 
-	        //(index == 0 ? " " + dictionary[index] : dictionary[index]);
-    }
-    
-    public static void log(String classname, String msg) {
-         log.info(classname + ":" +  msg);
+        for (index = 1; index < dictionary.length; index++) {
+            // index=0
+            // && bytesForWork < 1024 ) {
+            if (bytesForWork == 0) {
+                break;
+            }
+            bytesForWork = bytesForWork / 1024;
+        }
+        return String.format("%." + digits + "f", bytesForWork) + dictionary[dictionary.length - 1];
+        //(index == 0 ? " " + dictionary[index] : dictionary[index]);
     }
 
-    
+    public static void log(String classname, String msg) {
+        log.info(classname + ":" + msg);
+    }
+
+
     /**
      * Return the current URL
      *
      * @param context The context of the web page request.
      */
-    public static String getUrl(PageContext context){
+    public static String getUrl(PageContext context) {
         ArgumentNotValid.checkNotNull(context, "context");
         return ((HttpServletRequest) context.getRequest()).getRequestURL().toString();
 
