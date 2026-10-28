@@ -28,6 +28,7 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -247,9 +248,7 @@ public class TestFileUtils {
      * @throws IOException
      */
     public static File createTempDir(String prefix, String suffix) throws IOException {
-        File temp = File.createTempFile(prefix, suffix);
-        temp.delete();
-        temp.mkdir();
+        File temp = Files.createTempDirectory(prefix + suffix).toFile();
         return temp;
     }
 
@@ -263,9 +262,7 @@ public class TestFileUtils {
      * @throws IOException
      */
     public static File createTempDir(String prefix, String suffix, File directory) throws IOException {
-        File temp = File.createTempFile(prefix, suffix, directory);
-        temp.delete();
-        temp.mkdir();
+        File temp = Files.createTempDirectory(directory.toPath(), prefix + suffix).toFile();
         return temp;
     }
 
