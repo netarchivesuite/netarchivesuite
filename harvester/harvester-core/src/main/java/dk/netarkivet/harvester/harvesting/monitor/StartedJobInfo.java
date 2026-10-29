@@ -51,7 +51,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 
     /** list of the compare criteria. */
     public enum Criteria {
-        JOBID, HOST, PROGRESS, ELAPSED, SIZE, QFILES, TOTALQ, ACTIVEQ, INACTIVEQ, EXHAUSTEDQ
+        JOBID, HOST, PROGRESS, ELAPSED, SIZE, QFILES, TOTALQ, ACTIVEQ, INACTIVEQ, EXHAUSTEDQ, RETIREDQ
     }
 
     ;
@@ -351,6 +351,9 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
         }
         if (compareCriteria == StartedJobInfo.Criteria.INACTIVEQ) {
             return Long.valueOf(inactiveQueuesCount).compareTo(Long.valueOf(o.inactiveQueuesCount));
+        }
+        if (compareCriteria == StartedJobInfo.Criteria.RETIREDQ) {
+            return Long.valueOf(retiredQueuesCount).compareTo(Long.valueOf(o.retiredQueuesCount));
         }
         if (compareCriteria == StartedJobInfo.Criteria.EXHAUSTEDQ) {
             return Long.valueOf(exhaustedQueuesCount).compareTo(Long.valueOf(o.exhaustedQueuesCount));

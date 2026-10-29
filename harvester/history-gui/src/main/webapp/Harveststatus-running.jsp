@@ -156,9 +156,9 @@ This page displays a list of running jobs.
             String incSortPic = "&uarr;"; // html entity for UPWARDS ARROW
             String descSortPic = "&darr;"; // html entity for DOWNWARDS ARROW
             String noSortPic = ""; // NO ARROW
-            String tabArrow[] = new String[HarvestStatusRunningTablesSort.ColumnId.values().length];
-            Integer tabOrder[] = new Integer[HarvestStatusRunningTablesSort.ColumnId.values().length];
-            for (int i = 0; i < tabArrow.length; i++) {
+            String tabArrow[] = new String[11];
+            Integer tabOrder[] = new Integer[11];
+            for (int i = 0; i < 11; i++) {
                 tabArrow[i] = noSortPic;
                 tabOrder[i] = 0;
             }
@@ -278,15 +278,6 @@ This page displays a list of running jobs.
             </a>
         </th>
         <th class="harvestHeader">
-            <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.INACTIVEQ.hashCode()+
-                    (tabOrder[HarvestStatusRunningTablesSort.ColumnId.INACTIVEQ.ordinal()] == 1 ? sortOrderLink : defaultSortOrderLink) + "#"+encodingHarvestName; %>
-
-            <a href="<%=sortLink %>">
-                <fmt:message key="table.running.jobs.inactiveQueues"/>
-                <%=tabArrow[HarvestStatusRunningTablesSort.ColumnId.INACTIVEQ.ordinal()]%>
-            </a>
-        </th>
-        <th class="harvestHeader">
             <% sortLink = sortBaseLink + HarvestStatusRunningTablesSort.ColumnId.RETIREDQ.hashCode()+
                     (tabOrder[HarvestStatusRunningTablesSort.ColumnId.RETIREDQ.ordinal()] == 1 ? sortOrderLink : defaultSortOrderLink)  + "#"+encodingHarvestName; %>
             <a href="<%=sortLink %>">
@@ -334,11 +325,11 @@ This page displays a list of running jobs.
                 if (cidSort == HarvestStatusRunningTablesSort.ColumnId.EXHAUSTEDQ) {
                     info.chooseCompareCriteria(StartedJobInfo.Criteria.EXHAUSTEDQ);
                 }
+                if (cidSort == HarvestStatusRunningTablesSort.ColumnId.RETIREDQ) {
+                    info.chooseCompareCriteria(StartedJobInfo.Criteria.RETIREDQ);
+                }
                 if (cidSort == HarvestStatusRunningTablesSort.ColumnId.ACTIVEQ) {
                     info.chooseCompareCriteria(StartedJobInfo.Criteria.ACTIVEQ);
-                }
-                if (cidSort == HarvestStatusRunningTablesSort.ColumnId.INACTIVEQ) {
-                    info.chooseCompareCriteria(StartedJobInfo.Criteria.INACTIVEQ);
                 }
                 if (cidSort == HarvestStatusRunningTablesSort.ColumnId.TOTALQ) {
                     info.chooseCompareCriteria(StartedJobInfo.Criteria.TOTALQ);
