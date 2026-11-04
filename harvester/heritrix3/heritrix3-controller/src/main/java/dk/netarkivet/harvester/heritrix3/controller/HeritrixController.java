@@ -238,18 +238,12 @@ public class HeritrixController extends AbstractRestHeritrixController {
             }
             log.info("The parameter pauseAtStart is {}", pauseAtStart);
             // if param pauseAtStart is false
-            if (jobResult.job != null &&  pauseAtStart == true) {
-                JobResult unpauseJobResult = h3wrapper.unpauseJob(jobName);
-                if (unpauseJobResult != null) {
-                    log.info("Unpausing job gave result {}", unpauseJobResult);
-                } else {
-                    log.warn("Unpausing job gave null result");
-                }
-                //log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
-                // POST: h3 is running, and the job with name 'jobName' is running
-                //log.trace("h3-State after unpausing job '{}': {}", jobName, new String(jobResult.response, "UTF-8"));
-            } else if (jobResult.job != null) {
+            if (jobResult.job != null && !pauseAtStart) {
+                jobResult = h3wrapper.unpauseJob(jobName);
                 log.info("The job {} is now in state {}", jobName, jobResult.job.crawlControllerState);
+
+                // POST: h3 is running, and the job with name 'jobName' is running
+                log.trace("h3-State after unpausing job '{}': {}", jobName, new String(jobResult.response, "UTF-8"));            } else if (jobResult.job != null) {
             } else {
                 log.warn("The status of job {} could not not be determined.", jobResult.status);
             }
