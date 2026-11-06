@@ -97,7 +97,6 @@
   </properties>
 
   <modules>
-    <module>build-tools</module>
     <module>archive</module>
     <module>common</module>
     <module>deploy</module>
@@ -1045,13 +1044,6 @@
             <configFile>eclipse-formatter-settings.xml</configFile>
           </configuration>
 
-          <dependencies>
-            <dependency>
-              <groupId>org.netarchivesuite</groupId>
-              <artifactId>build-tools</artifactId>
-              <version>7.7</version>
-            </dependency>
-          </dependencies>
         </plugin>
 
         <plugin>
