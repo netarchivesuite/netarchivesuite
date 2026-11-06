@@ -238,7 +238,7 @@ public class HeritrixController extends AbstractRestHeritrixController {
             }
             log.info("The parameter pauseAtStart is {}", pauseAtStart);
             // if param pauseAtStart is false
-            if (jobResult.job != null &&  pauseAtStart == true) {
+            if (jobResult.job != null &&  pauseAtStart == false) {
                 JobResult unpauseJobResult = h3wrapper.unpauseJob(jobName);
                 if (unpauseJobResult != null) {
                     log.info("Unpausing job gave result {}", unpauseJobResult);
