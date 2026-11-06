@@ -174,16 +174,16 @@
       </snapshots>
     </repository>
 
-    <repository>
-      <id>builds.archive.org,maven2</id>
-      <url>http://builds.archive.org/maven2</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
+<!--    <repository>-->
+<!--      <id>builds.archive.org,maven2</id>-->
+<!--      <url>http://builds.archive.org/maven2</url>-->
+<!--      <releases>-->
+<!--        <enabled>true</enabled>-->
+<!--      </releases>-->
+<!--      <snapshots>-->
+<!--        <enabled>false</enabled>-->
+<!--      </snapshots>-->
+<!--    </repository>-->
 
   </repositories>
 
