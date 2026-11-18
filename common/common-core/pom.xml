@@ -329,6 +329,12 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>org.netarchivesuite</groupId>
+          <artifactId>rest-api</artifactId>
+          <version>8.4-SNAPSHOT</version>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
 
   <build>

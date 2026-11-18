@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import dk.netarkivet.restapi.RestApiRegistration;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
@@ -143,6 +144,9 @@ public class GUIWebServer implements CleanupIF {
         }
 
         //add webapps to tomcat
+
+        StandardContext rootContext = null;
+
         for (String webapp: webApps) {
             // Construct webbase from the name of the webapp.
             // (1) If the webapp is webpages/History, the webbase is /History
@@ -177,14 +181,18 @@ public class GUIWebServer implements CleanupIF {
             }
             if (webapp.equals(webApps[0])) {
                 //Re-add the 1st context as also the root context
-                StandardContext rootCtx = (StandardContext) server.addWebapp("/", warfile);
-                if (taglibsScanningDisabled) {
-                    StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootCtx.getJarScanner().getJarScanFilter();
+                rootContext = (StandardContext) server.addWebapp("/", warfile);                if (taglibsScanningDisabled) {
+                    StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) rootContext.getJarScanner().getJarScanFilter();
                     // Disable scanning for taglibs
                     jarScanFilter.setTldSkip("*");
                 }
             }
         }
+        if (rootContext == null) {
+            throw new IllegalStateException("Could not find root web application context");
+        }
+
+        RestApiRegistration.register(rootContext);
     }
 
 

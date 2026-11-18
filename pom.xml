@@ -105,6 +105,7 @@
     <module>integration-test</module>
     <module>hadoop-uber-jar</module>
     <module>hadoop-uber-jar-invoker</module>
+    <module>rest-api</module>
   </modules>
 
   <licenses>
